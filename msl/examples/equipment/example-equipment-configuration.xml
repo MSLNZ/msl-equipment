@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<msl>
+
+    <!-- The equipment that is being used to perform the measurement -->
+    <equipment alias="ref" manufacturer="Agilent" model="3458A" serial="G00001"/>
+    <equipment manufacturer="Hewlett Packard" serial="D10011"/> <!-- the alias is defined in the <equipment_connections> database -->
+    <equipment alias="mono" manufacturer="Bentham"/>
+    <equipment alias="sensor" manufacturer="Rohde &amp; Schwarz" model="NRP-Z51"/>
+    <equipment alias="adaptor" manufacturer="Agilent" serial="A00018"/>
+
+    <!-- The database that contains the information required to connect to the equipment -->
+    <equipment_connections>
+        <path>example-equipment-connections-database.xlsx</path>
+        <sheet>Connections</sheet>
+    </equipment_connections>
+
+    <!-- The equipment-register database(s) -->
+    <equipment_registers>
+        <register section="P&amp;R" date_format="%d.%m.%y">
+            <path>example-equipment-register.txt</path>
+        </register>
+        <register section="RF">
+            <path>example-equipment-connections-database.xlsx</path>
+            <sheet>Equipment</sheet>
+        </register>
+        <register section="Length" date_format="%Y-%m-%d">
+            <path>example-equipment-register.csv</path>
+        </register>
+    </equipment_registers>
+
+</msl>

@@ -1,0 +1,8 @@
+Register number	Asset number	Model	Manufacturer	Date calibrated	Serial	Description	Location	Category
+MSLE.X.YYY	00008	3458A	Agilent	29.04.14	G00001	Digital Multimeter	Light Lab	DMM
+MSLE.X.YYY	00006	Innova 70c Spectrum	Coherent Scientific		G00002	Innova 70c Spectrum Laser	Light Lab	Laser
+MSLE.X.YYY	00007	DTMc300V_sub	Bentham		G00003	Monochromator	Light Lab	Monochromator
+MSLE.X.YYY		4	MSL - Light Standards	7.11.06	G00004	I-V Converter	Light Lab	
+MSLE.X.YYY	00002	TDS1012B	Tektronix		G00005	Oscilloscope - 100MHz Dual channel	Primary Lab	Oscilloscope
+MSLE.X.YYY		AH1100	Andeen-Hagerling		G00006	Standard Capacitor frame	Primary Lab	
+MSLE.X.YYY		4210	Leeds & Northrup		G00007	1 ohm Resistor T24	Primary Lab	

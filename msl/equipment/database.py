@@ -1,5 +1,5 @@
 """
-Load equipment and connection records (rows) from the database.
+Load equipment and connection records (rows) from databases.
 """
 import os
 import re

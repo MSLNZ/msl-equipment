@@ -1,3 +1,6 @@
+"""
+MSL-Equipment package constants.
+"""
 from enum import IntEnum
 
 MSL_INTERFACE_ALIASES = {
@@ -18,7 +21,9 @@ class Backend(IntEnum):
 class MSLInterface(IntEnum):
     """
     The interface to use for the communication system that transfers data between
-    a computer and the equipment. Only used for the MSL :class:`Backend`.
+    a computer and the equipment. Only used if
+    :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>` is chosen
+    as the communication system.
     """
     NONE = 0
     ASRL = 1

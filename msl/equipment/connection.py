@@ -1,3 +1,6 @@
+"""
+Base class for establishing a connection to the equipment.
+"""
 import time
 import logging
 
@@ -8,16 +11,64 @@ class Connection(object):
 
     _backend = None
 
-    def __init__(self, equipment_record):
-        self._equipment_record = equipment_record
+    def __init__(self, record):
+        """
+        All Connection :class:`~msl.equipment.constants.Backend` classes must have this class
+        as the base class.
+
+        Do not instantiate this class directly. Use :func:`msl.equipment.factory.connect`
+        or :meth:`EquipmentRecord.connect() <msl.equipment.record_types.EquipmentRecord.connect>`
+        to connect to the equipment.
+
+        Args:
+            record (:class:`~msl.equipment.record_types.EquipmentRecord`): An
+                equipment record (a row) from the :class:`~msl.equipment.database.Database`.
+        """
+        self._record = record
 
     def read(self, termination=None, encoding=None):
+        """
+        Read the response from the equipment.
+
+        Args:
+            termination (str): Reading stops when the device stops sending data
+                (e.g., by setting appropriate bus lines) or the ``termination``
+                character sequence is detected.
+
+            encoding (str): The encoding to use for the response.
+
+        Returns:
+            :py:class:`str`: The response from the equipment.
+        """
         raise NotImplementedError
 
     def write(self, message, termination=None, encoding=None):
+        """
+        Write (send) a message to the equipment.
+
+        Args:
+            message (str): The message to write (send) to the equipment.
+            termination (str): The character sequence to append to all messages.
+            encoding (str): The encoding to use for the message.
+
+        Returns:
+            :py:class:`int`: The number of bytes written.
+        """
         raise NotImplementedError
 
+    send = write
+
     def query(self, message, delay=0.0):
+        """
+        Convenience method for performing a :meth:`.write` followed by a :meth:`.read`.
+
+        Args:
+            message (str): The message to write (send) to the equipment.
+            delay (float): The delay in seconds between write and read operations.
+
+        Returns:
+            :py:class:`str`: The response from the equipment.
+        """
         logger.debug('query: ' + message)
         self.write(message)
         if delay > 0.0:
@@ -27,23 +78,42 @@ class Connection(object):
     ask = query
 
     def disconnect(self):
+        """
+        Disconnect from the equipment. For example,
+
+        * clean up system resources from memory
+        * safely shutdown the equipment
+        """
         pass
 
     @property
     def record(self):
-        return self._equipment_record
+        """
+        :py:class:`~msl.equipment.record_types.EquipmentRecord`: The equipment record.
+        """
+        return self._record
 
     @property
     def backend(self):
+        """
+        A reference to the software :class:`~msl.equipment.constants.Backend` class that is
+        being used to communicate with the equipment.
+
+        For example, if the backend is :data:`~msl.equipment.constants.Backend.PyVISA` then
+        a Resource_ class is returned. If the backend is :data:`~msl.equipment.constants.Backend.MSL`
+        then :py:data:`None` is returned (because :data:`~msl.equipment.constants.Backend.MSL` is
+        not considered a backend for a MSL Python package).
+
+        .. _Resource: http://pyvisa.readthedocs.io/en/stable/api/resources.html#pyvisa.resources.Resource
+        """
         return self._backend
 
     def __repr__(self):
-        address = 'None' if self.record.connection is None else self.record.connection.address
         return '{}<{}|{}|{} at {}>'.format(self.__class__.__name__,
-                                           self.record.manufacturer,
-                                           self.record.model,
-                                           self.record.serial,
-                                           address)
+                                           self._record.manufacturer,
+                                           self._record.model,
+                                           self._record.serial,
+                                           self._record.connection.address)
 
     def __del__(self):
         self.disconnect()

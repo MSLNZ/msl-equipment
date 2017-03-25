@@ -2,12 +2,14 @@
 Records (rows) from the equipment-register database and the connection database.
 """
 import datetime
+
 from msl.equipment.constants import Backend, MSLInterface
+from msl.equipment import factory
 
 
 class EquipmentRecord(object):
     """
-    Contains the information about an equipment record (a row) in an equipment-registry database.
+    Contains the information about an equipment record (a row) in an Equipment-Register database.
     """
     _alias = ''
     _asset_number = ''
@@ -96,7 +98,26 @@ class EquipmentRecord(object):
         """
         return [item for item in dir(EquipmentRecord) if not (item.startswith('_')
                                                               or item == 'attributes'
+                                                              or item == 'connect'
                                                               )]
+
+    def connect(self, mode=None):
+        """
+        Establish a connection to this equipment.
+
+        Args:
+            mode (object): If not :py:data:`None` then create a connection in demo mode.
+
+                *It is recommended to specify* ``mode='demo'`` *to make it clear to those
+                reading your code that the connection is in demo mode.*
+
+        Returns:
+            A :class:`~msl.equipment.connection.Connection` object.
+
+        Raises:
+            ValueError: If any of the attribute values in :data:`connection` are invalid.
+        """
+        return factory.connect(self, mode)
 
     def __repr__(self):
         return '{}{}'.format(self.__class__.__name__,
@@ -125,9 +146,10 @@ class ConnectionRecord(object):
     @property
     def address(self):
         """
-        :py:class:`str`: The address to use for the connection (see `here`_ for examples from PyVISA).
+        :py:class:`str`: The address to use for the connection (see here_ for examples from PyVISA_).
 
         .. _here: https://pyvisa.readthedocs.io/en/stable/names.html#visa-resource-syntax-and-examples
+        .. _PyVISA: http://pyvisa.readthedocs.io/en/stable/index.html
         """
         return self._address
 
@@ -141,7 +163,7 @@ class ConnectionRecord(object):
         """
         :class:`~.constants.MSLInterface`: The interface to use for the communication system that
         transfers data between a computer and the equipment
-        (only used if ``backend`` = :data:`~msl.equipment.constants.Backend.MSL`).
+        (only used if the ``backend`` is :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>`).
         """
         return self._interface
 

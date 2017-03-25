@@ -35,7 +35,7 @@ if __name__ == '__main__':
     print('Connect to the DMM from Agilent with the serial number G00001...')
     dmm_record = dbase.records(manufacturer='Agilent', serial='G00001')
     print(dmm_record[0])
-    dmm_ref = connect(dmm_record, 'demo')
+    dmm_ref = connect(dmm_record, demo=True)
     print(dmm_ref)
     print()
 
@@ -47,7 +47,7 @@ if __name__ == '__main__':
             # a cable adaptor and a power sensor are listed as <equipment>
             # elements but they are not connectable items
             continue
-        conns[key] = connect(equip, 'demo')
+        conns[key] = connect(equip, demo=True)
     print(conns)
     print()
 

@@ -12,7 +12,7 @@ from msl.equipment.connection_pyvisa import ConnectionPyVISA
 logger = logging.getLogger(__name__)
 
 
-def connect(record, mode=None):
+def connect(record, demo=False):
     """
     Factory method to establish a connection to the equipment.
 
@@ -20,10 +20,10 @@ def connect(record, mode=None):
         record (:class:`.EquipmentRecord`): An equipment record (a row) from an
             Equipment-Register database.
 
-        mode (object): If not :py:data:`None` then create a connection in demo mode.
-
-            *It is recommended to specify* ``mode='demo'`` *to make it clear to those
-            reading your code that the connection is in demo mode.*
+        demo (bool): Whether to simulate a connection to the equipment by opening 
+            a connection in demo mode. This allows you to call :meth:`~.Connection.write` 
+            and :meth:`~.Connection.read` methods even if the equipment is not connected 
+            to the computer. 
 
     Returns:
         A :class:`~msl.equipment.connection.Connection` object.
@@ -46,7 +46,7 @@ def connect(record, mode=None):
         if _record.connection is None:
             _raise('object')
 
-        if mode is not None:
+        if demo:
             logger.demo('Connecting to {} in DEMO mode'.format(_record.connection))
             return ConnectionDemo(_record)
         else:

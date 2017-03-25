@@ -101,15 +101,15 @@ class EquipmentRecord(object):
                                                               or item == 'connect'
                                                               )]
 
-    def connect(self, mode=None):
+    def connect(self, demo=False):
         """
         Establish a connection to this equipment.
 
         Args:
-            mode (object): If not :py:data:`None` then create a connection in demo mode.
-
-                *It is recommended to specify* ``mode='demo'`` *to make it clear to those
-                reading your code that the connection is in demo mode.*
+            demo (bool): Whether to simulate a connection to the equipment by opening 
+                a connection in demo mode. This allows you to call :meth:`~.Connection.write` 
+                and :meth:`~.Connection.read` methods even if the equipment is not connected 
+                to the computer. 
 
         Returns:
             A :class:`~msl.equipment.connection.Connection` object.
@@ -117,7 +117,7 @@ class EquipmentRecord(object):
         Raises:
             ValueError: If any of the attribute values in :data:`connection` are invalid.
         """
-        return factory.connect(self, mode)
+        return factory.connect(self, demo)
 
     def __repr__(self):
         return '{}{}'.format(self.__class__.__name__,

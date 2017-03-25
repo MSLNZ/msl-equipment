@@ -16,6 +16,6 @@ if __name__ == '__main__':
     # get a specific equipment record (a DMM from Agilent) from the database and
     # then connect to this DMM in demo mode to send some messages to it
     dmm_record = dbase.records(manufacturer='Agilent', serial="G00001")[0]
-    dmm = dmm_record.connect('demo')
+    dmm = dmm_record.connect(demo=True)
     dmm.query('*IDN?')
     dmm.query('MEASure:VOLTage:DC?')

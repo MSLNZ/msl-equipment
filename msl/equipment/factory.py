@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def connect(record, demo=False):
     """
-    Factory method to establish a connection to the equipment.
+    Factory function to establish a connection to the equipment.
 
     Args:
         record (:class:`.EquipmentRecord`): An equipment record (a row) from an

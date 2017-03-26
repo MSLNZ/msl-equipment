@@ -35,8 +35,9 @@ if __name__ == '__main__':
     print('Connect to the DMM from Agilent with the serial number G00001...')
     dmm_record = dbase.records(manufacturer='Agilent', serial='G00001')
     print(dmm_record[0])
-    dmm_ref = connect(dmm_record, demo=True)
+    dmm_ref = connect(dmm_record, demo=True)  # use the factory function to connect to the equipment
     print(dmm_ref)
+    print(dmm_ref.query('*IDN?'))
     print()
 
     # connect to the <equipment> XML elements that are listed in the config file
@@ -47,9 +48,9 @@ if __name__ == '__main__':
             # a cable adaptor and a power sensor are listed as <equipment>
             # elements but they are not connectable items
             continue
-        conns[key] = connect(equip, demo=True)
+        conns[key] = equip.connect(demo=True)  # use the EquipmentRecord object to connect to the equipment
     print(conns)
     print()
 
     print("Ask the 'ref' DMM for its identity...")
-    print(conns['ref'].query('*IDN?'))
+    print(conns['ref'].ask('*IDN?'))  # 'ask' is an alias for the 'query' method

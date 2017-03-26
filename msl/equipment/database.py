@@ -170,15 +170,13 @@ class Database(object):
                             continue
 
                         if attrib == 'date_calibrated' and isinstance(value, str):
-                            date_format = register.attrib.get('date_format', '')
-                            if date_format:
-                                try:
-                                    value = datetime.datetime.strptime(value, date_format).date()
-                                except ValueError:
-                                    # if the date cannot be converted to a datetime.date object then ignore it
-                                    continue
-                            else:
-                                # if the date cannot be converted to a datetime.date object then ignore it
+                            date_format = register.attrib.get('date_format', '%d/%m/%Y')
+                            try:
+                                value = datetime.datetime.strptime(value, date_format).date()
+                            except ValueError:
+                                if len(value) > 0:
+                                    logger.error('The date "{}" cannot be converted to a datetime.date object in {}'
+                                                 .format(value, register.findtext('path')))
                                 continue
 
                         setattr(record, '_'+attrib, value)

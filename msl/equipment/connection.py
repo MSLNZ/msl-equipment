@@ -13,43 +13,36 @@ class Connection(object):
 
     def __init__(self, record):
         """
-        All Connection :class:`~msl.equipment.constants.Backend` classes must have this class
-        as the base class.
+        All Connection :class:`~msl.equipment.constants.Backend` classes must 
+        have this class as the base class.
 
         Do not instantiate this class directly. Use :func:`msl.equipment.factory.connect`
-        or :meth:`EquipmentRecord.connect() <msl.equipment.record_types.EquipmentRecord.connect>`
+        or :meth:`record.connect() <msl.equipment.record_types.EquipmentRecord.connect>`
         to connect to the equipment.
 
         Args:
-            record (:class:`~msl.equipment.record_types.EquipmentRecord`): An
-                equipment record (a row) from the :class:`~msl.equipment.database.Database`.
+            record (:class:`~.record_types.EquipmentRecord`): An equipment 
+                record (a row) from the :class:`~.database.Database`.
         """
         self._record = record
 
-    def read(self, termination=None, encoding=None):
+    def read(self):
         """
-        Read the response from the equipment.
-
-        Args:
-            termination (str): Reading stops when the device stops sending data
-                (e.g., by setting appropriate bus lines) or the ``termination``
-                character sequence is detected.
-
-            encoding (str): The encoding to use for the response.
+        Read (receive) a response from the equipment.
 
         Returns:
             :py:class:`str`: The response from the equipment.
         """
         raise NotImplementedError
 
-    def write(self, message, termination=None, encoding=None):
+    receive = read
+
+    def write(self, message):
         """
         Write (send) a message to the equipment.
 
         Args:
             message (str): The message to write (send) to the equipment.
-            termination (str): The character sequence to append to all messages.
-            encoding (str): The encoding to use for the message.
 
         Returns:
             :py:class:`int`: The number of bytes written.
@@ -60,11 +53,13 @@ class Connection(object):
 
     def query(self, message, delay=0.0):
         """
-        Convenience method for performing a :meth:`.write` followed by a :meth:`.read`.
+        Convenience method for performing a :meth:`.write` followed by a 
+        :meth:`.read`.
 
         Args:
             message (str): The message to write (send) to the equipment.
-            delay (float): The delay in seconds between write and read operations.
+            delay (float): The delay in seconds to wait between :meth:`.write` 
+                and :meth:`.read` operations.
 
         Returns:
             :py:class:`str`: The response from the equipment.
@@ -79,17 +74,23 @@ class Connection(object):
 
     def disconnect(self):
         """
-        Disconnect from the equipment. For example,
+        Implement tasks that need to be performed in order to safely disconnect 
+        from the equipment. For example,
 
         * clean up system resources from memory
-        * safely shutdown the equipment
+        * configure the equipment to be in a state that is safe for people 
+          working in the lab when the equipment is not in use
+        
+        .. note::
+           This method gets called automatically when the :class:`.Connection` 
+           object gets destroyed.
         """
         pass
 
     @property
     def record(self):
         """
-        :py:class:`~msl.equipment.record_types.EquipmentRecord`: The equipment record.
+        :py:class:`~msl.equipment.record_types.EquipmentRecord`: The equipment record from a database.
         """
         return self._record
 
@@ -102,7 +103,7 @@ class Connection(object):
         For example, if the backend is :data:`~msl.equipment.constants.Backend.PyVISA` then
         a Resource_ class is returned. If the backend is :data:`~msl.equipment.constants.Backend.MSL`
         then :py:data:`None` is returned (because :data:`~msl.equipment.constants.Backend.MSL` is
-        not considered a backend for a MSL Python package).
+        not considered a backend but rather the MSL implementation of a :class:`Connection`).
 
         .. _Resource: http://pyvisa.readthedocs.io/en/stable/api/resources.html#pyvisa.resources.Resource
         """

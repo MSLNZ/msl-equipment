@@ -32,7 +32,7 @@ class MSLInterface(IntEnum):
     PXI = 4
     VXI = 5
     TCPIP = 6
-    LIB = 7
+    SDK = 7
     TCPIP_ASRL = 8
     TCPIP_GPIB = 9
     USB_ASRL = 10

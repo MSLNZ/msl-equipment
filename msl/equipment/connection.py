@@ -1,15 +1,9 @@
 """
 Base class for establishing a connection to the equipment.
 """
-import time
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 class Connection(object):
-
-    _backend = None
 
     def __init__(self, record):
         """
@@ -26,49 +20,12 @@ class Connection(object):
         """
         self._record = record
 
-    def read(self):
+    @property
+    def equipment_record(self):
         """
-        Read a response from the equipment.
-
-        Returns:
-            :py:class:`str`: The response from the equipment.
+        :py:class:`~msl.equipment.record_types.EquipmentRecord`: The equipment record from a database.
         """
-        raise NotImplementedError
-
-    def write(self, message):
-        """
-        Write (send) a message to the equipment.
-
-        Args:
-            message (str): The message to write (send) to the equipment.
-
-        Returns:
-            :py:class:`int`: The number of bytes written.
-        """
-        raise NotImplementedError
-
-    send = write
-
-    def query(self, message, delay=0.0):
-        """
-        Convenience method for performing a :meth:`.write` followed by a 
-        :meth:`.read`.
-
-        Args:
-            message (str): The message to write (send) to the equipment.
-            delay (float): The time delay, in seconds, to wait between :meth:`.write` 
-                and :meth:`.read` operations.
-
-        Returns:
-            :py:class:`str`: The response from the equipment.
-        """
-        logger.debug('query: ' + message)
-        self.write(message)
-        if delay > 0.0:
-            time.sleep(delay)
-        return self.read()
-
-    ask = query
+        return self._record
 
     def disconnect(self):
         """
@@ -84,28 +41,6 @@ class Connection(object):
            object gets destroyed.
         """
         pass
-
-    @property
-    def record(self):
-        """
-        :py:class:`~msl.equipment.record_types.EquipmentRecord`: The equipment record from a database.
-        """
-        return self._record
-
-    @property
-    def backend(self):
-        """
-        A reference to the software :class:`~msl.equipment.constants.Backend` class that is
-        being used to communicate with the equipment.
-
-        For example, if the backend is :data:`~msl.equipment.constants.Backend.PyVISA` then
-        a Resource_ class is returned. If the backend is :data:`~msl.equipment.constants.Backend.MSL`
-        then :py:data:`None` is returned (because :data:`~msl.equipment.constants.Backend.MSL` is
-        not considered a backend but rather the MSL implementation of a :class:`Connection`).
-
-        .. _Resource: http://pyvisa.readthedocs.io/en/stable/api/resources.html#pyvisa.resources.Resource
-        """
-        return self._backend
 
     def __repr__(self):
         return '{}<{}|{}|{} at {}>'.format(self.__class__.__name__,

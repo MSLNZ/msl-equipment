@@ -6,8 +6,9 @@ import logging
 from msl.equipment.constants import Backend, MSLInterface
 from msl.equipment.record_types import EquipmentRecord
 from msl.equipment.connection_demo import ConnectionDemo
-from msl.equipment.connection_msl import ConnectionMSL
+from msl.equipment.connection_msl import ConnectionMessageBased
 from msl.equipment.connection_pyvisa import ConnectionPyVISA
+from msl.equipment.resources import find_sdk_pyclass
 
 logger = logging.getLogger(__name__)
 
@@ -55,12 +56,16 @@ def connect(record, demo=False):
             if _record.connection.backend == Backend.UNKNOWN:
                 _raise('backend')
 
-            logger.debug('Connecting to {}'.format(_record.connection))
+            logger.debug('Connecting to {} using {}'.format(_record.connection, _record.connection.backend.name))
 
             if _record.connection.backend == Backend.MSL:
                 if _record.connection.interface == MSLInterface.NONE:
                     _raise('interface')
-                return ConnectionMSL(_record)
+
+                if record.connection.interface == MSLInterface.SDK:
+                    return find_sdk_pyclass(_record)
+                else:
+                    return ConnectionMessageBased(_record)
 
             if _record.connection.backend == Backend.PyVISA:
                 return ConnectionPyVISA(_record)

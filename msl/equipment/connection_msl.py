@@ -1,14 +1,50 @@
 """
 Use MSL resources to establish a connection to the equipment.
 """
+import time
 import logging
 
+from msl.loadlib import LoadLibrary
 from msl.equipment.connection import Connection
 
 logger = logging.getLogger(__name__)
 
 
-class ConnectionMSL(Connection):
+class ConnectionSDK(Connection):
+
+    def __init__(self, record, libtype='cdll'):
+        """
+        Connect to the equipment using the manufacturers SDK.
+
+        Args:
+            record (:class:`~.record_types.EquipmentRecord`): An equipment 
+                record (a row) from the :class:`~.database.Database`.
+
+            libtype (str, optional): The library type to use for the calling convention.
+
+                The following values are allowed:
+
+                * ``libtype`` = **'cdll'**, for a **__cdecl** library
+                * ``libtype`` = **'windll'** or **'oledll'**, for a **__stdcall** library (Windows only)
+                * ``libtype`` = **'net'**, for a **.NET** library
+
+                Default is **'cdll'**.
+
+        Raises:
+            IOError: If the Python wrapper class cannot be found or if the shared library cannot be found.   
+        """
+        Connection.__init__(self, record)
+
+        libpath = record.connection.address.split('::')[2]
+        self._sdk = LoadLibrary(libpath, libtype)
+
+    @property
+    def sdk(self):
+        """The reference to the SDK object."""
+        return self._sdk.lib
+
+
+class ConnectionMessageBased(Connection):
 
     CR = '\r'
     """:py:class:`str`: The carriage-return character"""
@@ -96,3 +132,47 @@ class ConnectionMSL(Connection):
                 :meth:`~.Connection.write` messages.
         """
         self._write_termination = '' if termination is None else str(termination)
+
+    def read(self):
+        """
+        Read a response from the equipment.
+
+        Returns:
+            :py:class:`str`: The response from the equipment.
+        """
+        raise NotImplementedError
+
+    def write(self, message):
+        """
+        Write (send) a message to the equipment.
+
+        Args:
+            message (str): The message to write (send) to the equipment.
+
+        Returns:
+            :py:class:`int`: The number of bytes written.
+        """
+        raise NotImplementedError
+
+    send = write
+
+    def query(self, message, delay=0.0):
+        """
+        Convenience method for performing a :meth:`.write` followed by a 
+        :meth:`.read`.
+
+        Args:
+            message (str): The message to write (send) to the equipment.
+            delay (float): The time delay, in seconds, to wait between :meth:`.write` 
+                and :meth:`.read` operations.
+
+        Returns:
+            :py:class:`str`: The response from the equipment.
+        """
+        logger.debug('query: ' + message)
+        self.write(message)
+        if delay > 0.0:
+            time.sleep(delay)
+        return self.read()
+
+    ask = query

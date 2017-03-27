@@ -28,14 +28,12 @@ class Connection(object):
 
     def read(self):
         """
-        Read (receive) a response from the equipment.
+        Read a response from the equipment.
 
         Returns:
             :py:class:`str`: The response from the equipment.
         """
         raise NotImplementedError
-
-    receive = read
 
     def write(self, message):
         """
@@ -58,7 +56,7 @@ class Connection(object):
 
         Args:
             message (str): The message to write (send) to the equipment.
-            delay (float): The delay in seconds to wait between :meth:`.write` 
+            delay (float): The time delay, in seconds, to wait between :meth:`.write` 
                 and :meth:`.read` operations.
 
         Returns:

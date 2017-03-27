@@ -323,7 +323,6 @@ class Database(object):
         else:
             raise IOError('Unsupported equipment-registry database format ' + path)
 
-        logger.debug('Read database ' + path)
         return header, rows
 
     def _read_excel(self, path, sheet_name):
@@ -346,6 +345,7 @@ class Database(object):
         sheet = self._book.sheet_by_name(sheet_name)
         header = [str(val) for val in sheet.row_values(0)]
         rows = [[self._cell_convert(sheet.cell(r, c)) for c in range(sheet.ncols)] for r in range(1, sheet.nrows)]
+        logger.debug('Loading sheet <{}> in {}'.format(sheet_name, path))
         return header, rows
 
     def _cell_convert(self, cell):
@@ -369,6 +369,7 @@ class Database(object):
         with open(path, 'r') as fp:
             header = [val for val in fp.readline().split(delimiter)]
             rows = [[val.strip() for val in line.split(delimiter)] for line in fp.readlines() if line.strip()]
+        logger.debug('Loading database ' + path)
         return header, rows
 
     def _make_index_map(self, header, attributes):

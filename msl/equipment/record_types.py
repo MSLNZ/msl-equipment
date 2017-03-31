@@ -1,9 +1,10 @@
 """
-Records (rows) from the equipment-register database and the connection database.
+A record (a row) from an **Equipment-Register** database and a **Connections** database.
 """
+import re
 import datetime
 
-from msl.equipment.constants import Backend, MSLInterface
+from msl.equipment.constants import Backend, MSLInterface, MSL_INTERFACE_ALIASES
 from msl.equipment import factory
 
 
@@ -11,6 +12,7 @@ class EquipmentRecord(object):
 
     _alias = ''
     _asset_number = ''
+    _calibration_period = 0
     _category = ''
     _connection = None
     _date_calibrated = datetime.date(datetime.MINYEAR, 1, 1)
@@ -25,23 +27,33 @@ class EquipmentRecord(object):
     def __init__(self, **kwargs):
         """
         Contains the information about an equipment record (a row) in an 
-        Equipment-Register database.
+        **Equipment-Register** database.
         
         Args:
             **kwargs: The argument names can be any of the :class:`EquipmentRecord` 
                 attribute names. Silently ignores all invalid argument names.
 
         Raises:
-            ValueError: If the value of ``connection`` or ``date_calibrated`` is 
-            invalid.
+            ValueError: If an argument name is ``calibration_period``, ``connection`` or 
+                ``date_calibrated`` and the value is invalid.
         """
         for attrib in EquipmentRecord.attributes():
             if attrib in kwargs:
-                if attrib == 'connection' and not isinstance(kwargs[attrib], ConnectionRecord):
-                    raise ValueError('The connection value must be a ConnectionRecord object')
-                if attrib == 'date_calibrated' and not isinstance(kwargs[attrib], datetime.date):
-                    raise ValueError('The date_calibrated value must be a datetime.date object')
-                setattr(self, '_'+attrib, kwargs[attrib])
+                if attrib == 'connection':
+                    # set the connection after the manufacturer, model and serial are all set
+                    continue
+                elif attrib == 'date_calibrated':
+                    if isinstance(kwargs[attrib], datetime.date):
+                        self._date_calibrated = kwargs[attrib]
+                    else:
+                        raise ValueError('The date_calibrated value must be a datetime.date object')
+                elif attrib == 'calibration_period':
+                    self._calibration_period = int(kwargs[attrib])
+                else:
+                    setattr(self, '_'+attrib, str(kwargs[attrib]))
+
+        if 'connection' in kwargs:
+            self.connection = kwargs['connection']
 
     @property
     def alias(self):
@@ -56,6 +68,11 @@ class EquipmentRecord(object):
     def asset_number(self):
         """:py:class:`str`: The IRL/CI asset number of the equipment."""
         return self._asset_number
+
+    @property
+    def calibration_period(self):
+        """:py:class:`int`: The number of years that can pass before the equipment must be recalibrated."""
+        return self._calibration_period
 
     @property
     def category(self):
@@ -74,9 +91,27 @@ class EquipmentRecord(object):
         
         Args:
             connection_record (:class:`ConnectionRecord`): A connection record.
+        
+        Raises:
+            TypeError: If ``connection_record`` is not of type :class:`ConnectionRecord`.
+            
+            ValueError: If any of the ``manufacturer``, ``model``, ``serial`` values in 
+            the ``connection_record`` are set and they do not match those values in this
+            :class:`EquipmentRecord`.
         """
         if not isinstance(connection_record, ConnectionRecord):
-            raise TypeError('The connection type must be a ConnectionRecord object')
+            raise TypeError('The connection record must be a ConnectionRecord object')
+
+        # check that the manufacturer, model number and serial number match
+        for attrib in ('_manufacturer', '_model', '_serial'):
+            if not getattr(connection_record, attrib):
+                # it was not set in the connection_record
+                setattr(connection_record, attrib, getattr(self, attrib))
+            elif getattr(connection_record, attrib) != getattr(self, attrib):
+                msg = 'ConnectionRecord.{0} ({1}) != EquipmentRecord.{0} ({2})'\
+                    .format(attrib[1:], getattr(connection_record, attrib), getattr(self, attrib))
+                raise ValueError(msg)
+
         self._connection = connection_record
 
     @property
@@ -112,7 +147,7 @@ class EquipmentRecord(object):
 
     @property
     def section(self):
-        """:py:class:`str`: The MSL section (e.g., Light) that the equipment belongs to."""
+        """:py:class:`str`: The MSL section (e.g., P&R) that the equipment belongs to."""
         return self._section
 
     @property
@@ -138,9 +173,8 @@ class EquipmentRecord(object):
 
         Args:
             demo (bool): Whether to simulate a connection to the equipment by opening 
-                a connection in demo mode. This allows you to call :meth:`~.Connection.write` 
-                and :meth:`~.Connection.read` methods even if the equipment is not connected 
-                to the computer. 
+                a connection in demo mode. This allows you run your code if the equipment 
+                is not connected to the computer. 
 
         Returns:
             A :class:`~msl.equipment.connection.Connection` object.
@@ -174,7 +208,7 @@ class ConnectionRecord(object):
 
     def __init__(self, **kwargs):
         """
-        Contains the information about a connection record (a row) in a connection 
+        Contains the information about a connection record (a row) in a **Connections** 
         database.
 
         Args:
@@ -182,22 +216,29 @@ class ConnectionRecord(object):
                 attribute names. Silently ignores all invalid argument names.
         
         Raises:
-            ValueError: If the value of ``backend``, ``interface`` or ``properties`` 
-            is invalid.
+            ValueError: If an argument name is ``backend``, ``interface`` or 
+                ``properties`` and the value is invalid.
         """
         for attrib in ConnectionRecord.attributes():
             if attrib in kwargs:
                 if attrib == 'backend':
                     self._backend = Backend(kwargs[attrib])
                 elif attrib == 'interface':
-                    self._interface = MSLInterface(kwargs[attrib])
+                    raise ValueError('Cannot manually set the MSL interface. '
+                                     'It is automatically set based on the value of the address.')
+                elif attrib == 'address':
+                    self._address = str(kwargs[attrib])
+                    if 'backend' in kwargs and kwargs['backend'] == Backend.MSL:
+                        bad_interface = self._set_msl_interface()
+                        if bad_interface:
+                            raise ValueError('Unknown MSL Interface "{}"'.format(bad_interface))
                 elif attrib == 'properties':
                     if isinstance(kwargs[attrib], dict):
                         self._properties = kwargs[attrib]
                     else:
                         raise ValueError('The properties value must be a dictionary.')
                 else:
-                    setattr(self, '_'+attrib, kwargs[attrib])
+                    setattr(self, '_'+attrib, str(kwargs[attrib]))
 
     @property
     def address(self):
@@ -257,6 +298,26 @@ class ConnectionRecord(object):
         return [item for item in dir(ConnectionRecord) if not (item.startswith('_')
                                                                or item == 'attributes'
                                                                )]
+
+    def _set_msl_interface(self):
+        """Set the ``interface`` based on the ``address``"""
+
+        # determine the MSLInterface
+        match = re.match('[+_A-Z]+', self._address.upper())
+        interface = '' if match is None else match.group(0).replace('+', '_')
+
+        # check if aliases are used for the MSL interface
+        for name, values in MSL_INTERFACE_ALIASES.items():
+            for value in values:
+                if value in interface:
+                    interface = interface.replace(value, name)
+                    self._address = self._address.replace(value, name)
+
+        # set the interface
+        if interface in MSLInterface.__members__:
+            self._interface = getattr(MSLInterface, interface)
+            return ''
+        return interface
 
     def __str__(self):
         return '{}<{}|{}|{}>'.format(self.__class__.__name__,

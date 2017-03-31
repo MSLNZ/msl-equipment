@@ -34,19 +34,19 @@ class Database(object):
     def __init__(self, path):
         """
         Loads a configuration file to create :class:`.EquipmentRecord` objects
-        from equipment records that are in Equipment-Register databases and
-        :class:`.ConnectionRecord` objects from connection records that are in
-        Connection databases.
+        from equipment records that are in **Equipment-Register** databases and
+        :class:`.ConnectionRecord` objects from connection records that are in a
+        **Connections** database.
 
         Args:
             path (str): The path to a XML configuration file.
 
         Raises:
             IOError: If there was a problem parsing the configuration file.
-            AttributeError: If an <equipment> XML element is specified in the configuration
+            AttributeError: If an *<equipment>* XML element is specified in the configuration
                 file and it does not uniquely identify an equipment record in the
-                Equipment-Register database.
-            ValueError: If any of the values in the Connection database are invalid.
+                **Equipment-Register** database.
+            ValueError: If any of the values in the **Connections** database are invalid.
         """
         if not os.path.isfile(path):
             raise IOError('Cannot find the configuration file ' + path)
@@ -78,48 +78,34 @@ class Database(object):
                 if not self._is_key_unique(key, self._connection_records, element):
                     continue
 
-                record = ConnectionRecord()
+                conn_record = ConnectionRecord()
 
-                # auto set the attributes that are string datatypes
+                # auto set the attributes that are string data types
                 for attrib in ('address', 'manufacturer', 'model', 'serial'):
-                    setattr(record, '_'+attrib, row[self._index_map[attrib]])
+                    setattr(conn_record, '_'+attrib, row[self._index_map[attrib]])
 
                 # set the backend to use to communicate with the equipment
                 backend = row[self._index_map['backend']]
                 if backend in constants.Backend.__members__:
-                    record._backend = getattr(constants.Backend, backend)
+                    conn_record._backend = getattr(constants.Backend, backend)
                 else:
                     logger.warning('Unknown Backend "{}"'.format(backend))
 
-                # set the connection interface to use for the MSL backend
-                if record.backend == constants.Backend.MSL:
-
-                    # determine the connection interface from the address
-                    match = re.match('[+_A-Z]+', record.address.upper())
-                    interface = '' if match is None else match.group(0).replace('+', '_')
-
-                    # check if aliases are used for the connection interface
-                    for name, values in constants.MSL_INTERFACE_ALIASES.items():
-                        for value in values:
-                            if value in interface:
-                                interface = interface.replace(value, name)
-                                record._address = record.address.replace(value, name)
-
-                    # set the interface
-                    if interface in constants.MSLInterface.__members__:
-                        record._interface = getattr(constants.MSLInterface, interface)
-                    else:
-                        logger.warning('Unknown MSL Interface "{}"'.format(interface))
+                # set the MSL connection interface to use for the MSL backend
+                if conn_record.backend == constants.Backend.MSL:
+                    bad_interface = conn_record._set_msl_interface()
+                    if bad_interface:
+                        logger.warning('Unknown MSL Interface "{}"'.format(bad_interface))
 
                 # create the property dictionary
-                record._properties = {}
+                conn_record._properties = {}
                 for item in row[self._index_map['properties']].split(";"):
                     if len(item.strip()) > 1:
 
                         item_split = item.split('=')
                         k, v = item_split[0].strip(), item_split[1].strip()
 
-                        if 'ASRL' in record.interface.name:
+                        if 'ASRL' in conn_record.interface.name:
                             if k.lower().startswith('parity'):
                                 v = self._check_asrl_property(key, v, constants.Parity)
                             elif k.lower().startswith('flow'):
@@ -131,9 +117,9 @@ class Database(object):
                             elif k.lower().startswith('baud'):
                                 v = int(v)
 
-                        record._properties[k] = v
+                        conn_record._properties[k] = v
 
-                self._connection_records[key] = record
+                self._connection_records[key] = conn_record
 
         # create a dictionary of all the EquipmentRecord objects that are found in the Equipment Registers
         self._equipment_records = {}
@@ -230,8 +216,9 @@ class Database(object):
     @property
     def equipment(self):
         """
-        A :py:class:`dict` of :class:`.EquipmentRecord`\'s that were listed as <equipment> XML elements
-        in the configuration file which are being used to perform a measurement in the laboratory.
+        A :py:class:`dict` of :class:`.EquipmentRecord`\'s that were listed as *<equipment>* 
+        XML elements in the configuration file which are being used to perform a 
+        measurement in the laboratory.
         """
         return self._equipment_using
 
@@ -239,17 +226,17 @@ class Database(object):
     def path(self):
         """
         :py:class:`str`: The path to the configuration file that contains the information about the
-        Equipment-Register and Connection databases.
+        **Equipment-Register** databases and the **Connections** database.
         """
         return self._config_path
 
     def connections(self, **kwargs):
         """
-        Search the Connections database to find all connection records that
+        Search the **Connections** database to find all connection records that
         match the specified criteria.
 
         Args:
-            **kwargs: The keys can be any of the :class:`.ConnectionRecord` property names.
+            **kwargs: The argument names can be any of the :class:`.ConnectionRecord` property names.
                 The comparison for the value is performed by `regex <http://www.pyregex.com/>`_.
 
         Returns:
@@ -271,11 +258,11 @@ class Database(object):
 
     def records(self, **kwargs):
         """
-        Search the Equipment-Register database to find all equipment records that
+        Search the **Equipment-Register** databases to find all equipment records that
         match the specified criteria.
 
         Args:
-            **kwargs: The keys can be any of the :class:`.EquipmentRecord` property names.
+            **kwargs: The argument names can be any of the :class:`.EquipmentRecord` property names.
                 The comparison for the value is performed by `regex <http://www.pyregex.com/>`_.
 
         Returns:
@@ -292,7 +279,7 @@ class Database(object):
             will return a list of all equipment records that are from Agilent and that have the model number 3458A
 
             >>> records(manufacturer='Agilent', model='3458A', serial='MY45046470')  # doctest: +SKIP
-            will return a list of only one equipment record
+            will return a list of only one equipment record (if the equipment record exists)
 
             >>> records(description='I-V Converter')  # doctest: +SKIP
             will return a list of all equipment records that contain the string 'I-V Converter' in the description field

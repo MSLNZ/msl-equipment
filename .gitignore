@@ -38,3 +38,7 @@ htmlcov/
 .coverage
 junit.xml
 coverage.xml
+
+# created by the PicoScope SDK
+*Pipe_inOut
+*Pipe_inOutFifo

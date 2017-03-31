@@ -8,9 +8,7 @@ from msl.equipment import factory
 
 
 class EquipmentRecord(object):
-    """
-    Contains the information about an equipment record (a row) in an Equipment-Register database.
-    """
+
     _alias = ''
     _asset_number = ''
     _category = ''
@@ -23,6 +21,27 @@ class EquipmentRecord(object):
     _register = ''
     _section = ''
     _serial = ''
+
+    def __init__(self, **kwargs):
+        """
+        Contains the information about an equipment record (a row) in an 
+        Equipment-Register database.
+        
+        Args:
+            **kwargs: The argument names can be any of the :class:`EquipmentRecord` 
+                attribute names. Silently ignores all invalid argument names.
+
+        Raises:
+            ValueError: If the value of ``connection`` or ``date_calibrated`` is 
+            invalid.
+        """
+        for attrib in EquipmentRecord.attributes():
+            if attrib in kwargs:
+                if attrib == 'connection' and not isinstance(kwargs[attrib], ConnectionRecord):
+                    raise ValueError('The connection value must be a ConnectionRecord object')
+                if attrib == 'date_calibrated' and not isinstance(kwargs[attrib], datetime.date):
+                    raise ValueError('The date_calibrated value must be a datetime.date object')
+                setattr(self, '_'+attrib, kwargs[attrib])
 
     @property
     def alias(self):
@@ -47,6 +66,18 @@ class EquipmentRecord(object):
     def connection(self):
         """:class:`ConnectionRecord`: The information necessary to establish a connection to the equipment."""
         return self._connection
+
+    @connection.setter
+    def connection(self, connection_record):
+        """
+        Set the information necessary to establish a connection to the equipment.
+        
+        Args:
+            connection_record (:class:`ConnectionRecord`): A connection record.
+        """
+        if not isinstance(connection_record, ConnectionRecord):
+            raise TypeError('The connection type must be a ConnectionRecord object')
+        self._connection = connection_record
 
     @property
     def date_calibrated(self):
@@ -132,9 +163,7 @@ class EquipmentRecord(object):
 
 
 class ConnectionRecord(object):
-    """
-    Contains the information about a connection record (a row) in an connection database.
-    """
+
     _address = ''
     _backend = Backend.UNKNOWN
     _interface = MSLInterface.NONE
@@ -142,6 +171,33 @@ class ConnectionRecord(object):
     _model = ''
     _properties = {}
     _serial = ''
+
+    def __init__(self, **kwargs):
+        """
+        Contains the information about a connection record (a row) in a connection 
+        database.
+
+        Args:
+            **kwargs: The argument names can be any of the :class:`ConnectionRecord` 
+                attribute names. Silently ignores all invalid argument names.
+        
+        Raises:
+            ValueError: If the value of ``backend``, ``interface`` or ``properties`` 
+            is invalid.
+        """
+        for attrib in ConnectionRecord.attributes():
+            if attrib in kwargs:
+                if attrib == 'backend':
+                    self._backend = Backend(kwargs[attrib])
+                elif attrib == 'interface':
+                    self._interface = MSLInterface(kwargs[attrib])
+                elif attrib == 'properties':
+                    if isinstance(kwargs[attrib], dict):
+                        self._properties = kwargs[attrib]
+                    else:
+                        raise ValueError('The properties value must be a dictionary.')
+                else:
+                    setattr(self, '_'+attrib, kwargs[attrib])
 
     @property
     def address(self):
@@ -161,8 +217,8 @@ class ConnectionRecord(object):
     @property
     def interface(self):
         """
-        :class:`~.constants.MSLInterface`: The interface to use for the communication system that
-        transfers data between a computer and the equipment
+        :class:`~.constants.MSLInterface`: The interface to use for the communication 
+        system that transfers data between a computer and the equipment
         (only used if the ``backend`` is :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>`).
         """
         return self._interface
@@ -181,7 +237,8 @@ class ConnectionRecord(object):
     def properties(self):
         """
         :py:class:`dict`: Additional properties that are required to establish
-        a connection to the equipment, e.g., for a Serial connection {'baud_rate': 11920, 'data_bits': 8}
+        a connection to the equipment, e.g., for a Serial connection 
+        {'baud_rate': 11920, 'data_bits': 8}
         """
         return self._properties
 

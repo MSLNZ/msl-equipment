@@ -44,10 +44,10 @@ class Connection(object):
 
     def __repr__(self):
         return '{}<{}|{}|{} at {}>'.format(self.__class__.__name__,
-                                           self._record.manufacturer,
-                                           self._record.model,
-                                           self._record.serial,
-                                           self._record.connection.address)
+                                           self.equipment_record.manufacturer,
+                                           self.equipment_record.model,
+                                           self.equipment_record.serial,
+                                           self.equipment_record.connection.address)
 
     def __del__(self):
         self.disconnect()

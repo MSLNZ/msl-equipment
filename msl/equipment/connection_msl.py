@@ -36,12 +36,17 @@ class ConnectionSDK(Connection):
         Connection.__init__(self, record)
 
         libpath = record.connection.address.split('::')[2]
-        self._sdk = LoadLibrary(libpath, libtype)
+        self._lib = LoadLibrary(libpath, libtype)
+
+    @property
+    def sdk_path(self):
+        """:py:class:`str`: The path to the shared library"""
+        return self._lib.path
 
     @property
     def sdk(self):
-        """The reference to the SDK object."""
-        return self._sdk.lib
+        """The reference to the ctypes/.NET object."""
+        return self._lib.lib
 
 
 class ConnectionMessageBased(Connection):

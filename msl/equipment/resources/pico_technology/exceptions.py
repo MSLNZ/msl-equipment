@@ -1,0 +1,2 @@
+class PicoScopeError(Exception):
+    pass

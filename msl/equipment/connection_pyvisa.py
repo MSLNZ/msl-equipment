@@ -47,6 +47,8 @@ class ConnectionPyVISA(Connection):
 
         .. _PyVISA: http://pyvisa.readthedocs.io/en/stable/index.html
         """
+        self._resource = None
+
         if PYVISA_RESOURCE_MANAGER is None:
             raise ImportError(PYVISA_ERROR_MESSAGE)
 
@@ -71,5 +73,7 @@ class ConnectionPyVISA(Connection):
         .. _Close: http://pyvisa.readthedocs.io/en/stable/api/resources.html#pyvisa.resources.RegisterBasedResource.close
         .. _PyVISA: http://pyvisa.readthedocs.io/en/stable/index.html        
         """
-        self._resource.close()
-        logger.debug('Disconnected from {}'.format(self.equipment_record.connection))
+        if self._resource is not None:
+            self._resource.close()
+            logger.debug('Disconnected from {}'.format(self.equipment_record.connection))
+            self._resource = None

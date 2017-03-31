@@ -1,9 +1,8 @@
 from ctypes import c_int8, c_uint8, c_int16, c_int32, c_uint32, c_double, byref
 
 from .picoscope import PicoScope
-from .picoscope_function_pointers import ps2000_funcptrs
+from .picoscope_functions import ps2000_funcptrs
 from .picoscope_structs import PS2000TriggerChannelProperties, PS2000TriggerConditions, PS2000PwqConditions
-from .picoscope_callbacks import GetOverviewBuffersMaxMin
 
 
 class PicoScope2000(PicoScope):
@@ -36,15 +35,19 @@ class PicoScope2000(PicoScope):
 
     def __init__(self, record):
         PicoScope.__init__(self, record, ps2000_funcptrs)
+        raise NotImplementedError('The {} class has not been tested'.format(self.__class__.__name__))
 
     def close_unit(self):
-        self.CloseUnit(self._handle)
+        ret = self.sdk.ps2000_close_unit(self._handle)
+        return ret.value
 
     def flash_led(self):
-        self.FlashLed(self._handle)
+        ret = self.sdk.ps2000_flash_led(self._handle)
+        return ret.value
 
-    def get_streaming_last_values(self):
-        self.GetStreamingLastValues(self._handle, GetOverviewBuffersMaxMin)
+    def get_streaming_last_values(self, lp_get_overview_buffers_max_min):
+        ret = self.sdk.ps2000_get_streaming_last_values(self._handle, lp_get_overview_buffers_max_min)
+        return ret.value
 
     def get_streaming_values(self, no_of_values, no_of_samples_per_aggregate):
         start_time = c_double()
@@ -59,8 +62,13 @@ class PicoScope2000(PicoScope):
         overflow = c_int16()
         trigger_at = c_uint32()
         triggered = c_int16()
-        self.GetStreamingValues(self._handle, byref(start_time), byref(pbuffer_a_max), byref(pbuffer_a_min), byref(pbuffer_b_max), byref(pbuffer_b_min), byref(pbuffer_c_max), byref(pbuffer_c_min), byref(pbuffer_d_max), byref(pbuffer_d_min), byref(overflow), byref(trigger_at), byref(triggered), no_of_values, no_of_samples_per_aggregate)
-        return start_time.value, pbuffer_a_max.value, pbuffer_a_min.value, pbuffer_b_max.value, pbuffer_b_min.value, pbuffer_c_max.value, pbuffer_c_min.value, pbuffer_d_max.value, pbuffer_d_min.value, overflow.value, trigger_at.value, triggered.value
+        ret = self.sdk.ps2000_get_streaming_values(self._handle, byref(start_time), byref(pbuffer_a_max),
+                                                   byref(pbuffer_a_min), byref(pbuffer_b_max),
+                                                   byref(pbuffer_b_min), byref(pbuffer_c_max),
+                                                   byref(pbuffer_c_min), byref(pbuffer_d_max),
+                                                   byref(pbuffer_d_min), byref(overflow), byref(trigger_at),
+                                                   byref(triggered), no_of_values, no_of_samples_per_aggregate)
+        return ret.value
 
     def get_streaming_values_no_aggregation(self, no_of_values):
         start_time = c_double()
@@ -71,15 +79,20 @@ class PicoScope2000(PicoScope):
         overflow = c_int16()
         trigger_at = c_uint32()
         trigger = c_int16()
-        self.GetStreamingValuesNoAggregation(self._handle, byref(start_time), byref(pbuffer_a), byref(pbuffer_b), byref(pbuffer_c), byref(pbuffer_d), byref(overflow), byref(trigger_at), byref(trigger), no_of_values)
-        return start_time.value, pbuffer_a.value, pbuffer_b.value, pbuffer_c.value, pbuffer_d.value, overflow.value, trigger_at.value, trigger.value
+        ret = self.sdk.ps2000_get_streaming_values_no_aggregation(self._handle, byref(start_time),
+                                                                  byref(pbuffer_a), byref(pbuffer_b),
+                                                                  byref(pbuffer_c), byref(pbuffer_d),
+                                                                  byref(overflow), byref(trigger_at),
+                                                                  byref(trigger), no_of_values)
+        return ret.value
 
     def get_timebase(self, timebase, no_of_samples, oversample):
         time_interval = c_int32()
         time_units = c_int16()
         max_samples = c_int32()
-        self.GetTimebase(self._handle, timebase, no_of_samples, byref(time_interval), byref(time_units), oversample, byref(max_samples))
-        return time_interval.value, time_units.value, max_samples.value
+        ret = self.sdk.ps2000_get_timebase(self._handle, timebase, no_of_samples, byref(time_interval),
+                                           byref(time_units), oversample, byref(max_samples))
+        return ret.value
 
     def get_times_and_values(self, time_units, no_of_values):
         times = c_int32()
@@ -88,13 +101,15 @@ class PicoScope2000(PicoScope):
         buffer_c = c_int16()
         buffer_d = c_int16()
         overflow = c_int16()
-        self.GetTimesAndValues(self._handle, byref(times), byref(buffer_a), byref(buffer_b), byref(buffer_c), byref(buffer_d), byref(overflow), time_units, no_of_values)
-        return times.value, buffer_a.value, buffer_b.value, buffer_c.value, buffer_d.value, overflow.value
+        ret = self.sdk.ps2000_get_times_and_values(self._handle, byref(times), byref(buffer_a), byref(buffer_b),
+                                                   byref(buffer_c), byref(buffer_d), byref(overflow), time_units,
+                                                   no_of_values)
+        return ret.value
 
     def get_unit_info(self, string_length, line):
         string = c_int8()
-        self.GetUnitInfo(self._handle, byref(string), string_length, line)
-        return string.value
+        ret = self.sdk.ps2000_get_unit_info(self._handle, byref(string), string_length, line)
+        return ret.value
 
     def get_values(self, no_of_values):
         buffer_a = c_int16()
@@ -102,92 +117,123 @@ class PicoScope2000(PicoScope):
         buffer_c = c_int16()
         buffer_d = c_int16()
         overflow = c_int16()
-        self.GetValues(self._handle, byref(buffer_a), byref(buffer_b), byref(buffer_c), byref(buffer_d), byref(overflow), no_of_values)
-        return buffer_a.value, buffer_b.value, buffer_c.value, buffer_d.value, overflow.value
+        ret = self.sdk.ps2000_get_values(self._handle, byref(buffer_a), byref(buffer_b), byref(buffer_c),
+                                         byref(buffer_d), byref(overflow), no_of_values)
+        return ret.value
 
     def last_button_press(self):
-        self.LastButtonPress(self._handle)
+        ret = self.sdk.ps2000_last_button_press(self._handle)
+        return ret.value
 
     def open_unit(self):
-        self.OpenUnit()
+        self._handle = self.sdk.ps2000_open_unit()
+        return self._handle.value
 
     def open_unit_async(self):
-        self.OpenUnitAsync()
+        ret = self.sdk.ps2000_open_unit_async()
+        return ret.value
 
     def open_unit_progress(self):
         handle = c_int16()
         progress_percent = c_int16()
-        self.OpenUnitProgress(byref(self._handle), byref(progress_percent))
-        return handle.value, progress_percent.value
+        ret = self.sdk.ps2000_open_unit_progress(byref(handle), byref(progress_percent))
+        if handle.value > 0:
+            self._handle = handle
+        return progress_percent.value
 
     def overview_buffer_status(self):
         previous_buffer_overrun = c_int16()
-        self.OverviewBufferStatus(self._handle, byref(previous_buffer_overrun))
-        return previous_buffer_overrun.value
+        ret = self.sdk.ps2000_overview_buffer_status(self._handle, byref(previous_buffer_overrun))
+        return ret.value
 
     def ping_unit(self):
-        self.PingUnit(self._handle)
+        ret = self.sdk.ps2000PingUnit(self._handle)
+        return ret.value
 
     def ready(self):
-        self.Ready(self._handle)
+        ret = self.sdk.ps2000_ready(self._handle)
+        return ret.value
 
     def run_block(self, no_of_values, timebase, oversample):
         time_indisposed_ms = c_int32()
-        self.RunBlock(self._handle, no_of_values, timebase, oversample, byref(time_indisposed_ms))
-        return time_indisposed_ms.value
+        ret = self.sdk.ps2000_run_block(self._handle, no_of_values, timebase, oversample, byref(time_indisposed_ms))
+        return ret.value
 
     def run_streaming(self, sample_interval_ms, max_samples, windowed):
-        self.RunStreaming(self._handle, sample_interval_ms, max_samples, windowed)
+        ret = self.sdk.ps2000_run_streaming(self._handle, sample_interval_ms, max_samples, windowed)
+        return ret.value
 
     def run_streaming_ns(self, sample_interval, time_units, max_samples, auto_stop, no_of_samples_per_aggregate):
-        self.RunStreamingNs(self._handle, sample_interval, time_units, max_samples, auto_stop, no_of_samples_per_aggregate)
+        ret = self.sdk.ps2000_run_streaming_ns(self._handle, sample_interval, time_units, max_samples,
+                                               auto_stop, no_of_samples_per_aggregate)
+        return ret.value
 
     def set_adv_trigger_channel_conditions(self, n_conditions):
         conditions = PS2000TriggerConditions()
-        self.SetAdvTriggerChannelConditions(self._handle, byref(conditions), n_conditions)
-        return conditions.value
+        ret = self.sdk.ps2000SetAdvTriggerChannelConditions(self._handle, byref(conditions), n_conditions)
+        return ret.value
 
     def set_adv_trigger_channel_directions(self, channel_a, channel_b, channel_c, channel_d, ext):
-        self.SetAdvTriggerChannelDirections(self._handle, channel_a, channel_b, channel_c, channel_d, ext)
+        ret = self.sdk.ps2000SetAdvTriggerChannelDirections(self._handle, channel_a, channel_b,
+                                                            channel_c, channel_d, ext)
+        return ret.value
 
     def set_adv_trigger_channel_properties(self, n_channel_properties, auto_trigger_milliseconds):
         channel_properties = PS2000TriggerChannelProperties()
-        self.SetAdvTriggerChannelProperties(self._handle, byref(channel_properties), n_channel_properties, auto_trigger_milliseconds)
-        return channel_properties.value
+        ret = self.sdk.ps2000SetAdvTriggerChannelProperties(self._handle, byref(channel_properties),
+                                                            n_channel_properties, auto_trigger_milliseconds)
+        return ret.value
 
     def set_adv_trigger_delay(self, delay, pre_trigger_delay):
-        self.SetAdvTriggerDelay(self._handle, delay, pre_trigger_delay)
+        ret = self.sdk.ps2000SetAdvTriggerDelay(self._handle, delay, pre_trigger_delay)
+        return ret.value
 
-    def set_channel(self, channel, enabled, dc, range):
-        self.SetChannel(self._handle, channel, enabled, dc, range)
+    def set_channel(self, channel, enabled, dc, range_):
+        ret = self.sdk.ps2000_set_channel(self._handle, channel, enabled, dc, range_)
+        return ret.value
 
     def set_ets(self, mode, ets_cycles, ets_interleave):
-        self.SetEts(self._handle, mode, ets_cycles, ets_interleave)
+        ret = self.sdk.ps2000_set_ets(self._handle, mode, ets_cycles, ets_interleave)
+        return ret.value
 
     def set_led(self, state):
-        self.SetLed(self._handle, state)
+        ret = self.sdk.ps2000_set_led(self._handle, state)
+        return ret.value
 
     def set_light(self, state):
-        self.SetLight(self._handle, state)
+        ret = self.sdk.ps2000_set_light(self._handle, state)
+        return ret.value
 
-    def set_pulse_width_qualifier(self, n_conditions, direction, lower, upper, type):
+    def set_pulse_width_qualifier(self, n_conditions, direction, lower, upper, type_):
         conditions = PS2000PwqConditions()
-        self.SetPulseWidthQualifier(self._handle, byref(conditions), n_conditions, direction, lower, upper, type)
-        return conditions.value
+        ret = self.sdk.ps2000SetPulseWidthQualifier(self._handle, byref(conditions), n_conditions,
+                                                    direction, lower, upper, type_)
+        return ret.value
 
-    def set_sig_gen_arbitrary(self, offset_voltage, pk_to_pk, start_delta_phase, stop_delta_phase, delta_phase_increment, dwell_count, arbitrary_waveform_size, sweep_type, sweeps):
+    def set_sig_gen_arbitrary(self, offset_voltage, pk_to_pk, start_delta_phase, stop_delta_phase,
+                              delta_phase_increment, dwell_count, arbitrary_waveform_size, sweep_type, sweeps):
         arbitrary_waveform = c_uint8()
-        self.SetSigGenArbitrary(self._handle, offset_voltage, pk_to_pk, start_delta_phase, stop_delta_phase, delta_phase_increment, dwell_count, byref(arbitrary_waveform), arbitrary_waveform_size, sweep_type, sweeps)
-        return arbitrary_waveform.value
+        ret = self.sdk.ps2000_set_sig_gen_arbitrary(self._handle, offset_voltage, pk_to_pk,
+                                                    start_delta_phase, stop_delta_phase, delta_phase_increment,
+                                                    dwell_count, byref(arbitrary_waveform), arbitrary_waveform_size,
+                                                    sweep_type, sweeps)
+        return ret.value
 
-    def set_sig_gen_built_in(self, offset_voltage, pk_to_pk, wave_type, start_frequency, stop_frequency, increment, dwell_time, sweep_type, sweeps):
-        self.SetSigGenBuiltIn(self._handle, offset_voltage, pk_to_pk, wave_type, start_frequency, stop_frequency, increment, dwell_time, sweep_type, sweeps)
+    def set_sig_gen_built_in(self, offset_voltage, pk_to_pk, wave_type, start_frequency, stop_frequency,
+                             increment, dwell_time, sweep_type, sweeps):
+        ret = self.sdk.ps2000_set_sig_gen_built_in(self._handle, offset_voltage, pk_to_pk, wave_type,
+                                                   start_frequency, stop_frequency, increment, dwell_time,
+                                                   sweep_type, sweeps)
+        return ret.value
 
     def set_trigger(self, source, threshold, direction, delay, auto_trigger_ms):
-        self.SetTrigger(self._handle, source, threshold, direction, delay, auto_trigger_ms)
+        ret = self.sdk.ps2000_set_trigger(self._handle, source, threshold, direction, delay, auto_trigger_ms)
+        return ret.value
 
     def set_trigger2(self, source, threshold, direction, delay, auto_trigger_ms):
-        self.SetTrigger2(self._handle, source, threshold, direction, delay, auto_trigger_ms)
+        ret = self.sdk.ps2000_set_trigger2(self._handle, source, threshold, direction, delay, auto_trigger_ms)
+        return ret.value
 
     def stop(self):
-        self.Stop(self._handle)
+        ret = self.sdk.ps2000_stop(self._handle)
+        return ret.value

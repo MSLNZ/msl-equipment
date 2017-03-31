@@ -37,4 +37,4 @@ def find_sdk_pyclass(record):
             if pyclass in dir(mod):
                 return getattr(mod, pyclass)(record)
 
-    raise IOError('Cannot find ' + pyclass)
+    raise IOError('Cannot find the {} class'.format(pyclass))

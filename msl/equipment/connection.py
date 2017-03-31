@@ -29,11 +29,12 @@ class Connection(object):
 
     def disconnect(self):
         """
-        Implement tasks that need to be performed in order to safely disconnect 
-        from the equipment. For example,
+        This method should be overridden in the :class:`Connection` subclass if the 
+        subclass must implement tasks that need to be performed in order to safely 
+        disconnect from the equipment. For example,
 
-        * clean up system resources from memory
-        * configure the equipment to be in a state that is safe for people 
+        * to clean up system resources from memory (e.g., if using a SDK)
+        * to configure the equipment to be in a state that is safe for people 
           working in the lab when the equipment is not in use
         
         .. note::

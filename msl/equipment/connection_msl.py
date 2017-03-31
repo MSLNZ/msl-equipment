@@ -14,7 +14,17 @@ class ConnectionSDK(Connection):
 
     def __init__(self, record, libtype='cdll'):
         """
-        Connect to the equipment using the manufacturers SDK.
+        Base class for equipment that use the SDK provided by the manufacturer for
+        the connection.
+
+        Do not instantiate this class directly. Use :func:`msl.equipment.factory.connect`
+        or :meth:`record.connect() <msl.equipment.record_types.EquipmentRecord.connect>`
+        to connect to the equipment.
+
+        The :data:`record.connection.backend <msl.equipment.record_types.ConnectionRecord.backend>`
+        value must be equal to :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>` to use this
+        class for the communication system. This is achieved by setting the value in the **Backend** 
+        field for a connection record in the **Connections** database to be **MSL**.
 
         Args:
             record (:class:`~.record_types.EquipmentRecord`): An equipment 
@@ -63,7 +73,7 @@ class ConnectionMessageBased(Connection):
 
     def __init__(self, record):
         """
-        Use MSL resources to establish a connection to the equipment.
+        Base class for equipment that use message based communication.
 
         Do not instantiate this class directly. Use :func:`msl.equipment.factory.connect`
         or :meth:`record.connect() <msl.equipment.record_types.EquipmentRecord.connect>`
@@ -83,16 +93,14 @@ class ConnectionMessageBased(Connection):
     @property
     def encoding(self):
         """
-        :py:class:`str`: The encoding that is used for :meth:`~.Connection.read` 
-        and :meth:`~.Connection.write` operations.
+        :py:class:`str`: The encoding that is used for :meth:`read` and :meth:`write` operations.
         """
         return self._encoding
 
     @encoding.setter
     def encoding(self, encoding):
         """
-        Set the encoding to use for :meth:`~.Connection.read` and 
-        :meth:`~.Connection.write` operations.
+        Set the encoding to use for :meth:`read` and :meth:`write` operations.
         """
         _ = 'test encoding'.encode(encoding).decode(encoding)
         self._encoding = encoding
@@ -101,14 +109,14 @@ class ConnectionMessageBased(Connection):
     def read_termination(self):
         """
         :py:class:`str` or :py:data:`None`: The termination character sequence that is 
-        used for :meth:`~.Connection.read` operations.
+        used for :meth:`read` operations.
         """
         return self._read_termination
 
     @read_termination.setter
     def read_termination(self, termination):
         """
-        Set the termination character sequence to use for :meth:`~.Connection.read` 
+        Set the termination character sequence to use for :meth:`read` 
         operations.
 
         Args:
@@ -121,20 +129,18 @@ class ConnectionMessageBased(Connection):
     @property
     def write_termination(self):
         """
-        :py:class:`str`: The termination character sequence that is appended to 
-        :meth:`~.Connection.write` messages.
+        :py:class:`str`: The termination character sequence that is appended to
+        :meth:`write` messages.
         """
         return self._write_termination
 
     @write_termination.setter
     def write_termination(self, termination):
         """
-        Set the termination character sequence to append to :meth:`~.Connection.write` 
-        messages.
+        Set the termination character sequence to append to :meth:`write` messages.
 
         Args:
-            termination (str): The character sequence to append to 
-                :meth:`~.Connection.write` messages.
+            termination (str): The character sequence to append to :meth:`write` messages.
         """
         self._write_termination = '' if termination is None else str(termination)
 
@@ -163,13 +169,12 @@ class ConnectionMessageBased(Connection):
 
     def query(self, message, delay=0.0):
         """
-        Convenience method for performing a :meth:`.write` followed by a 
-        :meth:`.read`.
+        Convenience method for performing a :meth:`write` followed by a :meth:`read`.
 
         Args:
             message (str): The message to write (send) to the equipment.
-            delay (float): The time delay, in seconds, to wait between :meth:`.write` 
-                and :meth:`.read` operations.
+            delay (float): The time delay, in seconds, to wait between :meth:`write` 
+                and :meth:`read` operations.
 
         Returns:
             :py:class:`str`: The response from the equipment.

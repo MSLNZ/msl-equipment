@@ -99,7 +99,7 @@ class ConnectionDemo(Connection):
                                      caller_line.split(name)[1].replace('))', ')')))
 
         def generic_method(*args, **kwargs):
-            return 'demo:0'  # TODO decide what to return (most of the time a DLL function returns a status integer)
+            return 'demo:0'  # TODO decide what to return (most of the time a DLL function returns an integer)
         return generic_method
 
 

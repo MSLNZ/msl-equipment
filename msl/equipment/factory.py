@@ -22,9 +22,8 @@ def connect(record, demo=False):
             Equipment-Register database.
 
         demo (bool): Whether to simulate a connection to the equipment by opening 
-            a connection in demo mode. This allows you to call :meth:`~.Connection.write` 
-            and :meth:`~.Connection.read` methods even if the equipment is not connected 
-            to the computer. 
+            a connection in demo mode. This allows you run your code if the equipment 
+            is not connected to the computer. 
 
     Returns:
         A :class:`~msl.equipment.connection.Connection` object.

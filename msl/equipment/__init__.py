@@ -4,6 +4,7 @@ Manage and connect to equipment in the laboratory.
 from collections import namedtuple
 
 from msl.equipment.factory import connect
+from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
 from msl.equipment.connection_pyvisa import PYVISA_RESOURCE_MANAGER
 
 __author__ = 'Joseph Borbely'

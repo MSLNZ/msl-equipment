@@ -1,6 +1,24 @@
 from enum import IntEnum
 
 
+class PicoScopeInfo(IntEnum):
+    """
+    Constants that can be passed to the 
+    :meth:`~.picoscope_api.PicoscopeApi.get_unit_info` method.
+    """
+    PICO_DRIVER_VERSION            = 0x00000000
+    PICO_USB_VERSION               = 0x00000001
+    PICO_HARDWARE_VERSION          = 0x00000002
+    PICO_VARIANT_INFO              = 0x00000003
+    PICO_BATCH_AND_SERIAL          = 0x00000004
+    PICO_CAL_DATE                  = 0x00000005
+    PICO_KERNEL_VERSION            = 0x00000006
+    PICO_DIGITAL_HARDWARE_VERSION  = 0x00000007
+    PICO_ANALOGUE_HARDWARE_VERSION = 0x00000008
+    PICO_FIRMWARE_VERSION_1        = 0x00000009
+    PICO_FIRMWARE_VERSION_2        = 0x0000000A
+
+
 # ************************* typedef enum for ps2000 *************************
 
 

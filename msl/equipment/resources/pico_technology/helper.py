@@ -1,6 +1,7 @@
 """
-The functions in this module are only helper functions for wrapping the PicoScope 
-SDK in Python. There are no user-facing functions here, only used by developers.
+The functions in this module are only helper functions that were initially used 
+for wrapping the PicoScope SDK in Python. There are no user-facing functions 
+here, only those used by a developer.
 
 These functions are used to: 
 
@@ -73,8 +74,14 @@ def parse_pico_scope_api_header(path):
                     else:
                         if dtype == 'GetOverviewBuffersMaxMin':
                             args.extend([dtype, 'lpGetOverviewBuffersMaxMin'])
+                        elif dtype == 'void':
+                            # the following function do not take inputs
+                            # ps2000_open_unit, ps2000_open_unit_async
+                            # ps3000_open_unit, ps3000_open_unit_async
+                            pass
+                            #args.extend([dtype, None])
                         else:
-                            args.extend([dtype, ''])
+                            raise NotImplementedError
 
             # the #define statements
             if line.startswith('#define'):
@@ -382,7 +389,6 @@ def ctypes_map(dtype, hkey):
             if test in STRUCT_DATA_TYPE_ALIASES:
                 c_type = '{}'.format(STRUCT_DATA_TYPE_ALIASES[test].__name__)
 
-
     if c_type is None:
         raise ValueError('Unhandled C argument data type "{}"'.format(dtype))
 
@@ -427,7 +433,7 @@ def create_picoscope_functions_file(header_dict):
     # write a description of what follows
     fp.write('# The structure for each item in a *_funcptrs list is:\n')
     fp.write('#\n')
-    fp.write('# (SDK_function_name, return_data_type, do_error_checking_on_returned_value?,\n')
+    fp.write('# (SDK_function_name, an_alias_for_the_function_name, return_data_type, error_check_returned_value?,\n')
     fp.write('#    (ctype, SDK_type, SDK_argument_name),\n\n\n')
 
     for hkey in header_dict:
@@ -435,20 +441,25 @@ def create_picoscope_functions_file(header_dict):
         fp.write('{}_funcptrs = [\n'.format(hkey))
         fcns = []
         for key in header_dict[hkey]['functions']:
+            alias = header_dict[hkey]['functions'][key][0]
             ret = header_dict[hkey]['functions'][key][1]
             argtypes = header_dict[hkey]['functions'][key][2]
-            argtext = ''
+            s = '' if len(argtypes) > 0 else '     []\n'
             for i in range(0, len(argtypes), 2):
+                if i == 0:
+                    s = "     [({}, '{}', '{}'),\n".format(ctypes_map(argtypes[i], hkey), argtypes[i], argtypes[i+1])
+                    continue
                 try:
-                    argtext += "        ({}, '{}', '{}'),\n".format(ctypes_map(argtypes[i], hkey), argtypes[i], argtypes[i+1])
-                except:
+                    s += "      ({}, '{}', '{}'),\n".format(ctypes_map(argtypes[i], hkey), argtypes[i], argtypes[i+1])
+                except ValueError:
                     # some structs in the header files do not start with PS####, try again
                     t = hkey.replace('Api', '').upper() + '_' + argtypes[i]
-                    argtext += "        ({}, '{}', '{}'),\n".format(ctypes_map(t, hkey), argtypes[i], argtypes[i + 1])
+                    s += "      ({}, '{}', '{}'),\n".format(ctypes_map(t, hkey), argtypes[i], argtypes[i+1])
 
             # for ps2000 and ps3000 the returned value can represent many different scenarios, do not do error checking
             errcheck = hkey not in ('ps2000', 'ps3000')
-            fcns.append("('{}', {}, {},\n{}),\n".format(key, ctypes_map(ret, hkey), errcheck, argtext[:-2]))
+            fcns.append("('{}', '{}', {}, {},\n{}]\n     ),\n".format(key, alias, ctypes_map(ret, hkey),
+                                                                      errcheck, s[:-2]))
 
         for val in sorted(fcns):
             fp.write('    ' + val)
@@ -490,7 +501,10 @@ def print_class_def_signatures(header_dict):
                 print(internal[:-1])
             if hkey in ('ps2000', 'ps3000'):
                 print('        ret = self.sdk.{}({})'.format(key, sdk_args[:-2].replace('handle', 'self._handle')))
-                print('        return ret.value')
+                if ret_text:
+                    print('        return ret, (' + ret_text[:-2] + ')')
+                else:
+                    print('        return ret')
             else:
                 print('        self.sdk.{}({})'.format(key, sdk_args[:-2].replace('handle', 'self._handle')))
                 if ret_text:
@@ -499,6 +513,30 @@ def print_class_def_signatures(header_dict):
 
     print('This helps you out, but you still need to verify each function')
     print('For example, if passing a pointer to a Structure then you need to return the Structure values')
+
+
+def print_common_functions(header_dict, ps_name):
+
+    match = []
+    do_not_match = []
+    for psvalue in header_dict[ps_name]['functions'].values():
+        for hkey in header_dict:
+            if hkey == ps_name:
+                continue
+            for key, value in header_dict[hkey]['functions'].items():
+                if psvalue[0] == value[0]:  # alias match
+                    if psvalue[2] == value[2]:  # arguments match
+                        match.append((key, value))
+                    else:
+                        do_not_match.append((key, value))
+
+    print('match')
+    for m in match:
+        print('\t', m)
+
+    print('\ndo not match')
+    for m in do_not_match:
+        print('\t', m)
 
 
 if __name__ == '__main__':
@@ -532,4 +570,6 @@ if __name__ == '__main__':
 
     #create_picoscope_functions_file(header_dict)
 
-    print_class_def_signatures(header_dict)
+    #print_class_def_signatures(header_dict)
+
+    #print_common_functions(header_dict, 'ps2000aApi')

@@ -1,12 +1,13 @@
-from ctypes import c_int8, c_int16, c_uint16, c_int32, c_uint32, c_int64, c_float, c_void_p, byref
+from ctypes import c_int8, c_int16, c_uint32, c_int64, byref
 
-from .picoscope import PicoScope
-from .pico_status import c_enum
+from .error_codes import c_enum
+from .picoscope_api import PicoScopeApi
 from .picoscope_functions import ps4000Api_funcptrs
-from .picoscope_structs import PS4000PwqConditions, PS4000TriggerConditions, PS4000TriggerChannelProperties
+from .picoscope_structs import (PS4000PwqConditions, PS4000TriggerConditions,
+                                PS4000TriggerChannelProperties)
 
 
-class PicoScope4000(PicoScope):
+class PicoScope4000(PicoScopeApi):
 
     PS4000_MAX_OVERSAMPLE_12BIT = 16
     PS4000_MAX_OVERSAMPLE_8BIT = 256
@@ -32,64 +33,30 @@ class PicoScope4000(PicoScope):
     # MAX_SWEEPS_SHOTS = ((1 << 30) - 1)
 
     def __init__(self, record):
-        PicoScope.__init__(self, record, ps4000Api_funcptrs)
-        raise NotImplementedError('The {} class has not been tested'.format(self.__class__.__name__))
+        """
+        A wrapper around the PicoScope ps4000 SDK.
 
-    def close_unit(self):
-        self.sdk.ps4000CloseUnit(self._handle)
-
-    def enumerate_units(self):
-        count = c_int16()
-        serials = c_int8()
-        serial_lth = c_int16()
-        self.sdk.ps4000EnumerateUnits(byref(count), byref(serials), byref(serial_lth))
-        return count.value, serials.value, serial_lth.value
-
-    def flash_led(self, start):
-        self.sdk.ps4000FlashLed(self._handle, start)
-
-    def get_channel_information(self, info, probe, channels):
-        ranges = c_int32()
-        length = c_int32()
-        self.sdk.ps4000GetChannelInformation(self._handle, info, probe, byref(ranges), byref(length), channels)
-        return ranges.value, length.value
-
-    def get_max_down_sample_ratio(self, no_of_unaggreated_samples, down_sample_ratio_mode, segment_index):
-        max_down_sample_ratio = c_uint32()
-        self.sdk.ps4000GetMaxDownSampleRatio(self._handle, no_of_unaggreated_samples, byref(max_down_sample_ratio),
-                                             down_sample_ratio_mode, segment_index)
-        return max_down_sample_ratio.value
-
-    def get_no_of_captures(self):
-        n_captures = c_uint16()
-        self.sdk.ps4000GetNoOfCaptures(self._handle, byref(n_captures))
-        return n_captures.value
+        Args:
+            record (:class:`~msl.equipment.record_types.EquipmentRecord`): An equipment 
+                record (a row) from the :class:`~msl.equipment.database.Database`.
+        """
+        PicoScopeApi.__init__(self, record, ps4000Api_funcptrs)
 
     def get_probe(self):
+        """
+        This function is in the header file, but it is not in the manual.
+        """
         probe = c_enum()
         self.sdk.ps4000GetProbe(self._handle, byref(probe))
         return probe.value
 
-    def get_streaming_latest_values(self, lp_ps):
-        p_parameter = c_void_p()
-        self.sdk.ps4000GetStreamingLatestValues(self._handle, lp_ps, byref(p_parameter))
-        return p_parameter.value
-
-    def get_timebase(self, timebase, no_samples, oversample, segment_index):
-        time_interval_nanoseconds = c_int32()
-        max_samples = c_int32()
-        self.sdk.ps4000GetTimebase(self._handle, timebase, no_samples, byref(time_interval_nanoseconds),
-                                   oversample, byref(max_samples), segment_index)
-        return time_interval_nanoseconds.value, max_samples.value
-
-    def get_timebase2(self, timebase, no_samples, oversample, segment_index):
-        time_interval_nanoseconds = c_float()
-        max_samples = c_int32()
-        self.sdk.ps4000GetTimebase2(self._handle, timebase, no_samples, byref(time_interval_nanoseconds),
-                                    oversample, byref(max_samples), segment_index)
-        return time_interval_nanoseconds.value, max_samples.value
-
     def get_trigger_channel_time_offset(self, segment_index, channel):
+        """
+        This function gets the time, as two 4-byte values, at which the trigger occurred,
+        adjusted for the time skew of the specified channel relative to the trigger source. Call
+        it after block-mode data has been captured or when data has been retrieved from a
+        previous block-mode capture.
+        """
         time_upper = c_uint32()
         time_lower = c_uint32()
         time_units = c_enum()
@@ -98,54 +65,26 @@ class PicoScope4000(PicoScope):
         return time_upper.value, time_lower.value, time_units.value
 
     def get_trigger_channel_time_offset64(self, segment_index, channel):
+        """
+        This function gets the time, as a single 8-byte value, at which the trigger occurred,
+        adjusted for the time skew of the specified channel relative to the trigger source. Call
+        it after block-mode data has been captured or when data has been retrieved from a
+        previous block-mode capture.
+        """
         time = c_int64()
         time_units = c_enum()
         self.sdk.ps4000GetTriggerChannelTimeOffset64(self._handle, byref(time), byref(time_units),
                                                      segment_index, channel)
         return time.value, time_units.value
 
-    def get_trigger_time_offset(self, segment_index):
-        time_upper = c_uint32()
-        time_lower = c_uint32()
-        time_units = c_enum()
-        self.sdk.ps4000GetTriggerTimeOffset(self._handle, byref(time_upper), byref(time_lower),
-                                            byref(time_units), segment_index)
-        return time_upper.value, time_lower.value, time_units.value
-
-    def get_trigger_time_offset64(self, segment_index):
-        time = c_int64()
-        time_units = c_enum()
-        self.sdk.ps4000GetTriggerTimeOffset64(self._handle, byref(time), byref(time_units), segment_index)
-        return time.value, time_units.value
-
-    def get_unit_info(self, string_length, info):
-        string = c_int8()
-        required_size = c_int16()
-        self.sdk.ps4000GetUnitInfo(self._handle, byref(string), string_length, byref(required_size), info)
-        return string.value, required_size.value
-
-    def get_values(self, start_index, down_sample_ratio, down_sample_ratio_mode, segment_index):
-        no_of_samples = c_uint32()
-        overflow = c_int16()
-        self.sdk.ps4000GetValues(self._handle, start_index, byref(no_of_samples), down_sample_ratio,
-                                 down_sample_ratio_mode, segment_index, byref(overflow))
-        return no_of_samples.value, overflow.value
-
-    def get_values_async(self, start_index, no_of_samples, down_sample_ratio, down_sample_ratio_mode, segment_index):
-        lp_data_ready = c_void_p()
-        p_parameter = c_void_p()
-        self.sdk.ps4000GetValuesAsync(self._handle, start_index, no_of_samples, down_sample_ratio,
-                                      down_sample_ratio_mode, segment_index, byref(lp_data_ready), byref(p_parameter))
-        return lp_data_ready.value, p_parameter.value
-
-    def get_values_bulk(self, from_segment_index, to_segment_index):
-        no_of_samples = c_uint32()
-        overflow = c_int16()
-        self.sdk.ps4000GetValuesBulk(self._handle, byref(no_of_samples), from_segment_index, to_segment_index,
-                                     byref(overflow))
-        return no_of_samples.value, overflow.value
-
     def get_values_trigger_channel_time_offset_bulk(self, from_segment_index, to_segment_index, channel):
+        """
+        This function retrieves the time offset, as lower and upper 32-bit values, for a group of
+        waveforms obtained in rapid block mode, adjusted for the time skew relative to the
+        trigger source. The array size for ``timesUpper`` and ``timesLower`` must be greater
+        than or equal to the number of waveform time offsets requested. The segment indexes
+        are inclusive.
+        """
         times_upper = c_uint32()
         times_lower = c_uint32()
         time_units = c_enum()
@@ -155,114 +94,49 @@ class PicoScope4000(PicoScope):
         return times_upper.value, times_lower.value, time_units.value
 
     def get_values_trigger_channel_time_offset_bulk64(self, from_segment_index, to_segment_index, channel):
+        """
+        This function retrieves the time offset, as a 64-bit integer, for a group of waveforms
+        captured in rapid block mode, adjusted for the time skew relative to the trigger source.
+        The array size of ``times`` must be greater than or equal to the number of waveform
+        time offsets requested. The segment indexes are inclusive.
+        """
         times = c_int64()
         time_units = c_enum()
         self.sdk.ps4000GetValuesTriggerChannelTimeOffsetBulk64(self._handle, byref(times), byref(time_units),
                                                                from_segment_index, to_segment_index, channel)
         return times.value, time_units.value
 
-    def get_values_trigger_time_offset_bulk(self, from_segment_index, to_segment_index):
-        times_upper = c_uint32()
-        times_lower = c_uint32()
-        time_units = c_enum()
-        self.sdk.ps4000GetValuesTriggerTimeOffsetBulk(self._handle, byref(times_upper), byref(times_lower),
-                                                      byref(time_units), from_segment_index, to_segment_index)
-        return times_upper.value, times_lower.value, time_units.value
-
-    def get_values_trigger_time_offset_bulk64(self, from_segment_index, to_segment_index):
-        times = c_int64()
-        time_units = c_enum()
-        self.sdk.ps4000GetValuesTriggerTimeOffsetBulk64(self._handle, byref(times), byref(time_units),
-                                                        from_segment_index, to_segment_index)
-        return times.value, time_units.value
-
-    def hold_off(self, holdoff, type_):
-        self.sdk.ps4000HoldOff(self._handle, holdoff, type_)
-
-    def is_led_flashing(self):
-        status = c_int16()
-        self.sdk.ps4000IsLedFlashing(self._handle, byref(status))
-        return status.value
-
-    def is_ready(self):
-        ready = c_int16()
-        self.sdk.ps4000IsReady(self._handle, byref(ready))
-        return ready.value
-
-    def is_trigger_or_pulse_width_qualifier_enabled(self):
-        trigger_enabled = c_int16()
-        pulse_width_qualifier_enabled = c_int16()
-        self.sdk.ps4000IsTriggerOrPulseWidthQualifierEnabled(self._handle, byref(trigger_enabled),
-                                                             byref(pulse_width_qualifier_enabled))
-        return trigger_enabled.value, pulse_width_qualifier_enabled.value
-
-    def memory_segments(self, n_segments):
-        n_max_samples = c_int32()
-        self.sdk.ps4000MemorySegments(self._handle, n_segments, byref(n_max_samples))
-        return n_max_samples.value
-
-    def no_of_streaming_values(self):
-        no_of_values = c_uint32()
-        self.sdk.ps4000NoOfStreamingValues(self._handle, byref(no_of_values))
-        return no_of_values.value
-
-    def open_unit(self):
-        handle = c_int16()
-        self.sdk.ps4000OpenUnit(byref(handle))
-        if handle.value > 0:
-            self._handle = handle
-        return handle.value
-
-    def open_unit_async(self):
-        status = c_int16()
-        self.sdk.ps4000OpenUnitAsync(byref(status))
-        return status.value
-
     def open_unit_async_ex(self):
+        """
+        This function opens a scope device selected by serial number without blocking the
+        calling thread. You can find out when it has finished by periodically calling
+        :meth:`open_unit_progress` until that function returns a non-zero value.
+        """
         status = c_int16()
         serial = c_int8()
         self.sdk.ps4000OpenUnitAsyncEx(byref(status), byref(serial))
         return status.value, serial.value
 
     def open_unit_ex(self):
+        """
+        This function opens a scope device. The maximum number of units that can be opened
+        is determined by the operating system, the kernel driver and the PC's hardware.
+        """
         handle = c_int16()
         serial = c_int8()
         self.sdk.ps4000OpenUnitEx(byref(handle), byref(serial))
         if handle.value > 0:
             self._handle = handle
-        return serial.value
-
-    def open_unit_progress(self):
-        handle = c_int16()
-        progress_percent = c_int16()
-        complete = c_int16()
-        self.sdk.ps4000OpenUnitProgress(byref(handle), byref(progress_percent), byref(complete))
-        if handle.value > 0:
-            self._handle = handle
-        return 100 if complete.value else progress_percent.value
-
-    def ping_unit(self):
-        self.sdk.ps4000PingUnit(self._handle)
-
-    def run_block(self, no_of_pre_trigger_samples, no_of_post_trigger_samples, timebase, oversample,
-                  segment_index, lp_ready):
-        time_indisposed_ms = c_int32()
-        p_parameter = c_void_p()
-        self.sdk.ps4000RunBlock(self._handle, no_of_pre_trigger_samples, no_of_post_trigger_samples,
-                                timebase, oversample, byref(time_indisposed_ms), segment_index, lp_ready,
-                                byref(p_parameter))
-        return time_indisposed_ms.value, p_parameter.value
-
-    def run_streaming(self, sample_interval_time_units, max_pre_trigger_samples, max_post_pre_trigger_samples,
-                      auto_stop, down_sample_ratio, overview_buffer_size):
-        sample_interval = c_uint32()
-        self.sdk.ps4000RunStreaming(self._handle, byref(sample_interval), sample_interval_time_units,
-                                    max_pre_trigger_samples, max_post_pre_trigger_samples, auto_stop,
-                                    down_sample_ratio, overview_buffer_size)
-        return sample_interval.value
+        return serial.value  # TODO the the serial as a string
 
     def run_streaming_ex(self, sample_interval_time_units, max_pre_trigger_samples, max_post_pre_trigger_samples,
                          auto_stop, down_sample_ratio, down_sample_ratio_mode, overview_buffer_size):
+        """
+        This function tells the oscilloscope to start collecting data in streaming mode and with
+        a specified data reduction mode. When data has been collected from the device it is
+        aggregated and the values returned to the application. Call
+        :meth:`get_streaming_latest_values` to retrieve the data.
+        """
         sample_interval = c_uint32()
         self.sdk.ps4000RunStreamingEx(self._handle, byref(sample_interval), sample_interval_time_units,
                                       max_pre_trigger_samples, max_post_pre_trigger_samples, auto_stop,
@@ -270,134 +144,86 @@ class PicoScope4000(PicoScope):
         return sample_interval.value
 
     def set_bw_filter(self, channel, enable):
-        self.sdk.ps4000SetBwFilter(self._handle, channel, enable)
+        """
+        This function enables or disables the bandwidth-limiting filter on the specified channel.
+        """
+        return self.sdk.ps4000SetBwFilter(self._handle, channel, enable)
 
-    def set_channel(self, channel, enabled, dc, range_):
-        self.sdk.ps4000SetChannel(self._handle, channel, enabled, dc, range_)
-
-    def set_data_buffer(self, channel, buffer_lth):
+    def set_data_buffer_with_mode(self, channel, buffer_length, mode):
+        """
+        This function registers your data buffer, for non-aggregated data, with the PicoScope
+        4000 driver. You need to allocate the buffer before calling this function.
+        """
         buffer = c_int16()
-        self.sdk.ps4000SetDataBuffer(self._handle, channel, byref(buffer), buffer_lth)
+        self.sdk.ps4000SetDataBufferWithMode(self._handle, channel, byref(buffer), buffer_length, mode)
         return buffer.value
 
-    def set_data_buffer_bulk(self, channel, buffer_lth, waveform):
-        buffer = c_int16()
-        self.sdk.ps4000SetDataBufferBulk(self._handle, channel, byref(buffer), buffer_lth, waveform)
-        return buffer.value
-
-    def set_data_buffer_with_mode(self, channel, buffer_lth, mode):
-        buffer = c_int16()
-        self.sdk.ps4000SetDataBufferWithMode(self._handle, channel, byref(buffer), buffer_lth, mode)
-        return buffer.value
-
-    def set_data_buffers(self, channel, buffer_lth):
-        buffer_max = c_int16()
-        buffer_min = c_int16()
-        self.sdk.ps4000SetDataBuffers(self._handle, channel, byref(buffer_max), byref(buffer_min), buffer_lth)
-        return buffer_max.value, buffer_min.value
-
-    def set_data_buffers_with_mode(self, channel, buffer_lth, mode):
+    def set_data_buffers_with_mode(self, channel, buffer_length, mode):
+        """
+        This function registers your data buffers, for receiving aggregated data, with the
+        PicoScope 4000 driver. You need to allocate memory for the buffers before calling this
+        function.
+        """
         buffer_max = c_int16()
         buffer_min = c_int16()
         self.sdk.ps4000SetDataBuffersWithMode(self._handle, channel, byref(buffer_max), byref(buffer_min),
-                                              buffer_lth, mode)
+                                              buffer_length, mode)
         return buffer_max.value, buffer_min.value
 
-    def set_ets(self, mode, ets_cycles, ets_interleave):
-        sample_time_picoseconds = c_int32()
-        self.sdk.ps4000SetEts(self._handle, mode, ets_cycles, ets_interleave, byref(sample_time_picoseconds))
-        return sample_time_picoseconds.value
-
-    def set_ets_time_buffer(self, buffer_lth):
-        buffer = c_int64()
-        self.sdk.ps4000SetEtsTimeBuffer(self._handle, byref(buffer), buffer_lth)
-        return buffer.value
-
-    def set_ets_time_buffers(self, buffer_lth):
-        time_upper = c_uint32()
-        time_lower = c_uint32()
-        self.sdk.ps4000SetEtsTimeBuffers(self._handle, byref(time_upper), byref(time_lower), buffer_lth)
-        return time_upper.value, time_lower.value
-
     def set_ext_trigger_range(self, ext_range):
-        self.sdk.ps4000SetExtTriggerRange(self._handle, ext_range)
-
-    def set_frequency_counter(self, channel, enabled, range_, threshold_major, threshold_minor):
-        self.sdk.ps4000SetFrequencyCounter(self._handle, channel, enabled, range_, threshold_major, threshold_minor)
-
-    def set_no_of_captures(self, n_captures):
-        self.sdk.ps4000SetNoOfCaptures(self._handle, n_captures)
+        """
+        This function sets the range of the external trigger.
+        """
+        return self.sdk.ps4000SetExtTriggerRange(self._handle, ext_range)
 
     def set_probe(self, probe, range_):
-        self.sdk.ps4000SetProbe(self._handle, probe, range_)
+        """
+        This function is in the header file, but it is not in the manual.
+        """
+        return self.sdk.ps4000SetProbe(self._handle, probe, range_)
 
-    def set_pulse_width_qualifier(self, n_conditions, direction, lower, upper, type_):
+    def set_pulse_width_qualifier(self, n_conditions, direction, lower, upper, pulse_width_type):
+        """
+        This function sets up pulse width qualification, which can be used on its own for pulse
+        width triggering or combined with window triggering to produce more complex
+        triggers. The pulse width qualifier is set by defining one or more conditions structures
+        that are then ORed together. Each structure is itself the AND of the states of one or
+        more of the inputs. This AND-OR logic allows you to create any possible Boolean
+        function of the scope's inputs.
+
+        Populates the :class:`~.picoscope_structs.PS4000PwqConditions` structure.
+        """
         conditions = PS4000PwqConditions()
         self.sdk.ps4000SetPulseWidthQualifier(self._handle, byref(conditions), n_conditions, direction,
-                                              lower, upper, type_)
-        return conditions.value
-
-    def set_sig_gen_arbitrary(self, offset_voltage, pk_to_pk, start_delta_phase, stop_delta_phase,
-                              delta_phase_increment, dwell_count, arbitrary_waveform_size, sweep_type,
-                              operation_type, index_mode, shots, sweeps, trigger_type, trigger_source,
-                              ext_in_threshold):
-        arbitrary_waveform = c_int16()
-        self.sdk.ps4000SetSigGenArbitrary(self._handle, offset_voltage, pk_to_pk, start_delta_phase,
-                                          stop_delta_phase, delta_phase_increment, dwell_count,
-                                          byref(arbitrary_waveform), arbitrary_waveform_size, sweep_type,
-                                          operation_type, index_mode, shots, sweeps, trigger_type,
-                                          trigger_source, ext_in_threshold)
-        return arbitrary_waveform.value
-
-    def set_sig_gen_built_in(self, offset_voltage, pk_to_pk, wave_type, start_frequency, stop_frequency,
-                             increment, dwell_time, sweep_type, operation_type, shots, sweeps, trigger_type,
-                             trigger_source, ext_in_threshold):
-        self.sdk.ps4000SetSigGenBuiltIn(self._handle, offset_voltage, pk_to_pk, wave_type, start_frequency,
-                                        stop_frequency, increment, dwell_time, sweep_type, operation_type,
-                                        shots, sweeps, trigger_type, trigger_source, ext_in_threshold)
-
-    def set_simple_trigger(self, enable, source, threshold, direction, delay, auto_trigger_ms):
-        self.sdk.ps4000SetSimpleTrigger(self._handle, enable, source, threshold, direction, delay, auto_trigger_ms)
+                                              lower, upper, pulse_width_type)
+        return conditions.value  # TODO return structure values
 
     def set_trigger_channel_conditions(self, n_conditions):
+        """
+        This function sets up trigger conditions on the scope's inputs. The trigger is set up by
+        defining one or more :class:`~.picoscope_structs.PS4000TriggerConditions` structures that 
+        are then ORed together. Each structure is itself the AND of the states of one or more of 
+        the inputs. This ANDORlogic allows you to create any possible Boolean function of the 
+        scope's inputs.
+        """
         conditions = PS4000TriggerConditions()
         self.sdk.ps4000SetTriggerChannelConditions(self._handle, byref(conditions), n_conditions)
-        return conditions.value
+        return conditions.value  # TODO return structure values
 
     def set_trigger_channel_directions(self, channel_a, channel_b, channel_c, channel_d, ext, aux):
-        self.sdk.ps4000SetTriggerChannelDirections(self._handle, channel_a, channel_b, channel_c, channel_d, ext, aux)
+        """
+        This function sets the direction of the trigger for each channel.
+        """
+        return self.sdk.ps4000SetTriggerChannelDirections(self._handle, channel_a, channel_b, channel_c, channel_d,
+                                                          ext, aux)
 
     def set_trigger_channel_properties(self, n_channel_properties, aux_output_enable, auto_trigger_milliseconds):
+        """
+        This function is used to enable or disable triggering and set its parameters.
+
+        Populates the :class:`~.picoscope_structs.PS4000TriggerChannelProperties` structure.
+        """
         channel_properties = PS4000TriggerChannelProperties()
         self.sdk.ps4000SetTriggerChannelProperties(self._handle, byref(channel_properties), n_channel_properties,
                                                    aux_output_enable, auto_trigger_milliseconds)
-        return channel_properties.value
-
-    def set_trigger_delay(self, delay):
-        self.sdk.ps4000SetTriggerDelay(self._handle, delay)
-
-    def sig_gen_arbitrary_min_max_values(self):
-        min_arbitrary_waveform_value = c_int16()
-        max_arbitrary_waveform_value = c_int16()
-        min_arbitrary_waveform_size = c_uint32()
-        max_arbitrary_waveform_size = c_uint32()
-        self.sdk.ps4000SigGenArbitraryMinMaxValues(self._handle, byref(min_arbitrary_waveform_value),
-                                                   byref(max_arbitrary_waveform_value),
-                                                   byref(min_arbitrary_waveform_size),
-                                                   byref(max_arbitrary_waveform_size))
-        return (min_arbitrary_waveform_value.value, max_arbitrary_waveform_value.value,
-                min_arbitrary_waveform_size.value, max_arbitrary_waveform_size.value)
-
-    def sig_gen_frequency_to_phase(self, frequency, index_mode, buffer_length):
-        phase = c_uint32()
-        self.sdk.ps4000SigGenFrequencyToPhase(self._handle, frequency, index_mode, buffer_length, byref(phase))
-        return phase.value
-
-    def sig_gen_software_control(self, state):
-        self.sdk.ps4000SigGenSoftwareControl(self._handle, state)
-
-    def stop(self):
-        self.sdk.ps4000Stop(self._handle)
-
-    def trigger_within_pre_trigger_samples(self, state):
-        self.sdk.ps4000TriggerWithinPreTriggerSamples(self._handle, state)
+        return channel_properties.value  # TODO return structure values

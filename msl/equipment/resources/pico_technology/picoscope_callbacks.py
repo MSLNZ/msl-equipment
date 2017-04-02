@@ -1,7 +1,7 @@
 import sys
 from ctypes import WINFUNCTYPE, CFUNCTYPE, POINTER, c_int16, c_uint32, c_void_p, c_int32
 
-from msl.equipment.resources.pico_technology.pico_status import PICO_STATUS
+from msl.equipment.resources.pico_technology.error_codes import PICO_STATUS
 
 if sys.platform in ('win32', 'cygwin'):
     FUNCTYPE = WINFUNCTYPE

@@ -56,15 +56,13 @@ class ConnectionPyVISA(Connection):
         self._resource = PYVISA_RESOURCE_MANAGER.open_resource(record.connection.address,
                                                                **record.connection.properties)
 
-        # update the address to be the VISA resource name
-        record._connection._address = self._resource.resource_info[0].resource_name
-
         # expose all of the PyVISA Resource methods for this connection
         for method in dir(self._resource):
             if not method.startswith('_'):
                 setattr(self, method, getattr(self._resource, method))
 
         Connection.__init__(self, record)
+        logger.debug('Connected to {}'.format(self.equipment_record.connection))
 
     def disconnect(self):
         """

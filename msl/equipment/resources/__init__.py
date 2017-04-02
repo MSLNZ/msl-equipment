@@ -21,7 +21,16 @@ def find_sdk_pyclass(record):
     Raises:
         IOError: If the Python wrapper class cannot be found or if the shared library cannot be found.   
     """
-    pyclass = record.connection.address.split('::')[1]
+    address_split = record.connection.address.split('::')
+    if len(address_split) != 3:
+        msg = 'The address received is {}\nFor an SDK interface, the address must be of ' \
+              'the form SDK::PythonClassName::PathToLibrary'.format(record.connection.address)
+        raise IOError(msg)
+
+    if not os.path.isfile(address_split[2]):
+        raise IOError('Cannot find the SDK file {}'.format(address_split[2]))
+
+    pyclass = address_split[1]
 
     for root, dirs, files in os.walk(os.path.abspath(os.path.dirname(__file__))):
         for filename in fnmatch.filter(files, '*.py'):

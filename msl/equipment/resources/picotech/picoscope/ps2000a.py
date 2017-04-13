@@ -1,9 +1,13 @@
 from ctypes import byref
 
 from .picoscope_api import PicoScopeApi
-from .picoscope_functions import ps2000aApi_funcptrs
-from .picoscope_structs import (PS2000APwqConditions, PS2000ATriggerConditions,
-                                PS2000ATriggerChannelProperties, PS2000ADigitalChannelDirections)
+from .functions import ps2000aApi_funcptrs
+from .structs import (
+    PS2000APwqConditions,
+    PS2000ATriggerConditions,
+    PS2000ATriggerChannelProperties,
+    PS2000ADigitalChannelDirections
+)
 
 
 class PicoScope2000A(PicoScopeApi):
@@ -14,33 +18,35 @@ class PicoScope2000A(PicoScopeApi):
     PS2207_MAX_INTERLEAVE = 20
     PS2206_MAX_ETS_CYCLES = 250
     PS2206_MAX_INTERLEAVE = 10
-    PS2000A_EXT_MAX_VALUE = 32767
-    PS2000A_EXT_MIN_VALUE = -32767
-    PS2000A_MAX_LOGIC_LEVEL = 32767
-    PS2000A_MIN_LOGIC_LEVEL = -32767
+    EXT_MAX_VALUE = 32767
+    EXT_MIN_VALUE = -32767
+    MAX_LOGIC_LEVEL = 32767
+    MIN_LOGIC_LEVEL = -32767
     MIN_SIG_GEN_FREQ = 0.0
     MAX_SIG_GEN_FREQ = 20000000.0
-    PS2000A_MAX_SIG_GEN_BUFFER_SIZE = 8192
-    PS2000A_MIN_SIG_GEN_BUFFER_SIZE = 1
-    PS2000A_MIN_DWELL_COUNT = 3
-    # PS2000A_MAX_SWEEPS_SHOTS = ((1 << 30) - 1)
-    PS2000A_MAX_ANALOGUE_OFFSET_50MV_200MV = 0.250
-    PS2000A_MIN_ANALOGUE_OFFSET_50MV_200MV = -0.250
-    PS2000A_MAX_ANALOGUE_OFFSET_500MV_2V = 2.500
-    PS2000A_MIN_ANALOGUE_OFFSET_500MV_2V = -2.500
-    PS2000A_MAX_ANALOGUE_OFFSET_5V_20V = 20.
-    PS2000A_MIN_ANALOGUE_OFFSET_5V_20V = -20.
-    PS2000A_SHOT_SWEEP_TRIGGER_CONTINUOUS_RUN = 0xFFFFFFFF
-    PS2000A_SINE_MAX_FREQUENCY = 1000000.
-    PS2000A_SQUARE_MAX_FREQUENCY = 1000000.
-    PS2000A_TRIANGLE_MAX_FREQUENCY = 1000000.
-    PS2000A_SINC_MAX_FREQUENCY = 1000000.
-    PS2000A_RAMP_MAX_FREQUENCY = 1000000.
-    PS2000A_HALF_SINE_MAX_FREQUENCY = 1000000.
-    PS2000A_GAUSSIAN_MAX_FREQUENCY = 1000000.
-    PS2000A_PRBS_MAX_FREQUENCY = 1000000.
-    PS2000A_PRBS_MIN_FREQUENCY = 0.03
-    PS2000A_MIN_FREQUENCY = 0.03
+    MAX_SIG_GEN_BUFFER_SIZE = 8192
+    MIN_SIG_GEN_BUFFER_SIZE = 1
+    MIN_DWELL_COUNT = 3
+    # MAX_SWEEPS_SHOTS = ((1 << 30) - 1)
+    MAX_ANALOGUE_OFFSET_50MV_200MV = 0.250
+    MIN_ANALOGUE_OFFSET_50MV_200MV = -0.250
+    MAX_ANALOGUE_OFFSET_500MV_2V = 2.500
+    MIN_ANALOGUE_OFFSET_500MV_2V = -2.500
+    MAX_ANALOGUE_OFFSET_5V_20V = 20.
+    MIN_ANALOGUE_OFFSET_5V_20V = -20.
+    SHOT_SWEEP_TRIGGER_CONTINUOUS_RUN = 0xFFFFFFFF
+    SINE_MAX_FREQUENCY = 1000000.
+    SQUARE_MAX_FREQUENCY = 1000000.
+    TRIANGLE_MAX_FREQUENCY = 1000000.
+    SINC_MAX_FREQUENCY = 1000000.
+    RAMP_MAX_FREQUENCY = 1000000.
+    HALF_SINE_MAX_FREQUENCY = 1000000.
+    GAUSSIAN_MAX_FREQUENCY = 1000000.
+    PRBS_MAX_FREQUENCY = 1000000.
+    PRBS_MIN_FREQUENCY = 0.03
+    MIN_FREQUENCY = 0.03
+
+    # EXT_MAX_VOLTAGE = ?
 
     def __init__(self, record):
         """
@@ -83,13 +89,6 @@ class PicoScope2000A(PicoScopeApi):
         conditions = PS2000ATriggerConditions()
         self.sdk.ps2000aSetTriggerChannelConditions(self._handle, byref(conditions), n_conditions)
         return conditions.value  # TODO return structure values
-
-    def set_trigger_channel_directions(self, channel_a, channel_b, channel_c, channel_d, ext, aux):
-        """
-        This function sets the direction of the trigger for each channel.
-        """
-        return self.sdk.ps2000aSetTriggerChannelDirections(self._handle, channel_a, channel_b, channel_c,
-                                                           channel_d, ext, aux)
 
     def set_trigger_channel_properties(self, n_channel_properties, aux_output_enable, auto_trigger_milliseconds):
         """

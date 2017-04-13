@@ -1,12 +1,15 @@
 import sys
 from ctypes import WINFUNCTYPE, CFUNCTYPE, POINTER, c_int16, c_uint32, c_void_p, c_int32
 
-from msl.equipment.resources.pico_technology.error_codes import PICO_STATUS
+from .errors import PICO_STATUS
 
 if sys.platform in ('win32', 'cygwin'):
     FUNCTYPE = WINFUNCTYPE
 else:
     FUNCTYPE = CFUNCTYPE
+
+# since all BlockReady callbacks have the same function signature, create a generic callback function
+BlockReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_void_p)
 
 ps2000aBlockReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_void_p)
 ps3000aBlockReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_void_p)
@@ -26,11 +29,11 @@ ps6000StreamingReady  = FUNCTYPE(None, c_int16, c_uint32, c_uint32, c_int16, c_u
 
 ps2000aDataReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_uint32, c_int16, c_void_p)
 ps3000aDataReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_uint32, c_int16, c_void_p)
-ps4000DataReady  = FUNCTYPE(None, c_int16, c_int32, c_int16, c_uint32, c_int16, c_void_p)
 ps4000aDataReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_uint32, c_int16, c_void_p)
-ps5000DataReady  = FUNCTYPE(None, c_int16, c_int32, c_int16, c_uint32, c_int16, c_void_p)
 ps5000aDataReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_uint32, c_int16, c_void_p)
 ps6000DataReady  = FUNCTYPE(None, c_int16, PICO_STATUS, c_uint32, c_int16, c_void_p)
+ps4000DataReady  = FUNCTYPE(None, c_int16, c_int32, c_int16, c_uint32, c_int16, c_void_p)
+ps5000DataReady  = FUNCTYPE(None, c_int16, c_int32, c_int16, c_uint32, c_int16, c_void_p)
 
 PS3000_CALLBACK_FUNC = FUNCTYPE(None, POINTER(c_int16), c_int16)
 

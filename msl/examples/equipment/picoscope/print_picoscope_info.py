@@ -1,0 +1,28 @@
+"""
+This example prints the information available about a PicoScope. 
+"""
+from msl.examples.equipment.picoscope import record
+
+scope = record.connect()
+print('Summary for {}'.format(record))
+
+# print all information that is available about the PicoScope
+print(scope.get_unit_info())
+
+print()
+
+# use the enum value to get the calibration date, do not print the member-name prefix
+print('The PicoScope was calibrated on {}'.format(scope.get_unit_info(5, False)))
+
+# use the enum member name to get the calibration date
+print(scope.get_unit_info('cal_date'))
+
+print('The current power source is ' + scope.current_power_source())
+print('The device resolution is {!r}'.format(scope.get_device_resolution()))  # only valid for ps5000a scopes
+print('The maximum ADU value is {}'.format(scope.maximum_value()))
+print('The minimum ADU value is {}'.format(scope.minimum_value()))
+print('The voltage-offset range for a +/-1V voltage range is {}'.format(scope.get_analogue_offset('1V', 'dc')))
+print('The voltage ranges available for channel A are: {}'.format(scope.get_channel_information('A')))
+print('The maximum down-sampling ratio that can be used for a given number of samples in a given down-sampling '
+      'mode is {}'.format(scope.get_max_down_sample_ratio(1000, mode='aggregate')))
+print('The maximum number of segments allowed is {}'.format(scope.get_max_segments()))

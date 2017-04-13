@@ -1,16 +1,19 @@
 from ctypes import c_int16, c_uint32, byref
 
 from .picoscope_api import PicoScopeApi
-from .picoscope_functions import ps6000Api_funcptrs
-from .picoscope_structs import (PS6000PwqConditions, PS6000TriggerConditions,
-                                PS6000TriggerChannelProperties)
+from .functions import ps6000Api_funcptrs
+from .structs import (
+    PS6000PwqConditions,
+    PS6000TriggerConditions,
+    PS6000TriggerChannelProperties
+)
 
 
 class PicoScope6000(PicoScopeApi):
 
-    PS6000_MAX_OVERSAMPLE_8BIT = 256
-    PS6000_MAX_VALUE = 32512
-    PS6000_MIN_VALUE = -32512
+    MAX_OVERSAMPLE_8BIT = 256
+    MAX_VALUE = 32512
+    MIN_VALUE = -32512
     MAX_PULSE_WIDTH_QUALIFIER_COUNT = 16777215
     MAX_SIG_GEN_BUFFER_SIZE = 16384
     PS640X_C_D_MAX_SIG_GEN_BUFFER_SIZE = 65536
@@ -24,17 +27,19 @@ class PicoScope6000(PicoScopeApi):
     MIN_ANALOGUE_OFFSET_500MV_2V = -2.500
     MAX_ANALOGUE_OFFSET_5V_20V = 20.
     MIN_ANALOGUE_OFFSET_5V_20V = -20.
-    PS6000_MAX_ETS_CYCLES = 250
-    PS6000_MAX_INTERLEAVE = 50
-    PS6000_PRBS_MAX_FREQUENCY = 20000000.
-    PS6000_SINE_MAX_FREQUENCY = 20000000.
-    PS6000_SQUARE_MAX_FREQUENCY = 20000000.
-    PS6000_TRIANGLE_MAX_FREQUENCY = 20000000.
-    PS6000_SINC_MAX_FREQUENCY = 20000000.
-    PS6000_RAMP_MAX_FREQUENCY = 20000000.
-    PS6000_HALF_SINE_MAX_FREQUENCY = 20000000.
-    PS6000_GAUSSIAN_MAX_FREQUENCY = 20000000.
-    PS6000_MIN_FREQUENCY = 0.03
+    MAX_ETS_CYCLES = 250
+    MAX_INTERLEAVE = 50
+    PRBS_MAX_FREQUENCY = 20000000.
+    SINE_MAX_FREQUENCY = 20000000.
+    SQUARE_MAX_FREQUENCY = 20000000.
+    TRIANGLE_MAX_FREQUENCY = 20000000.
+    SINC_MAX_FREQUENCY = 20000000.
+    RAMP_MAX_FREQUENCY = 20000000.
+    HALF_SINE_MAX_FREQUENCY = 20000000.
+    GAUSSIAN_MAX_FREQUENCY = 20000000.
+    MIN_FREQUENCY = 0.03
+
+    # EXT_MAX_VOLTAGE = ?
 
     def __init__(self, record):
         """
@@ -116,13 +121,6 @@ class PicoScope6000(PicoScopeApi):
         conditions = PS6000TriggerConditions()
         self.sdk.ps6000SetTriggerChannelConditions(self._handle, byref(conditions), n_conditions)
         return conditions.value  # TODO return structure values
-
-    def set_trigger_channel_directions(self, channel_a, channel_b, channel_c, channel_d, ext, aux):
-        """
-        This function sets the direction of the trigger for each channel.
-        """
-        return self.sdk.ps6000SetTriggerChannelDirections(self._handle, channel_a, channel_b, channel_c,
-                                                          channel_d, ext, aux)
 
     def set_trigger_channel_properties(self, n_channel_properties, aux_output_enable, auto_trigger_milliseconds):
         """

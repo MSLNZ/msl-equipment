@@ -2,11 +2,14 @@
 Exceptions and error codes.
 """
 from ctypes import c_uint32
-c_enum = c_uint32
+
+from .enums import PS2000Error
 
 
 class PicoScopeError(Exception):
     pass
+
+PICO_MAC_ADDRESS                                 = 0x0000000B
 
 PICO_INFO                                        = c_uint32
 
@@ -164,29 +167,47 @@ PICO_WATCHDOGTIMER                               = 0x10000000
 
 PICO_STATUS                                      = c_uint32
 
-PICO_MAC_ADDRESS                                 = 0x0000000B
 
-
-# for ps2000 and ps3000
+# For ps2000 and ps3000
+# PS2000Error == PS3000Error so it does not matter which enum we use
 ERROR_CODES = {
-    0: ('PICO_OK',
-        'PicoScope<model={model}, serial={serial}> is functioning correctly.'),
-    1: ('PICO_MAX_UNITS_OPENED',
-        'Attempts have been made to open more than {sdk_filename_upper}_MAX_UNITS oscilloscopes.'),
-    2: ('PICO_MEM_FAIL',
-        'Not enough memory could be allocated on the host machine.'),
-    3: ('PICO_NOT_FOUND',
-        'The PicoScope<model={model}, serial={serial}> could not be found.'),
-    4: ('PICO_FW_FAIL',
-        'Unable to download firmware.'),
-    5: ('PICO_NOT_RESPONDING',
-        'The PicoScope<model={model}, serial={serial}> is not responding to '
-        'commands from the PC.'),
-    6: ('PICO_CONFIG_FAIL',
+    PS2000Error.OK: (
+        'PICO_OK',
+        'PicoScope<model={model}, serial={serial}> is functioning correctly.'
+    ),
+    PS2000Error.MAX_UNITS_OPENED: (
+        'PICO_MAX_UNITS_OPENED',
+        'Attempts have been made to open more than {sdk_filename_upper}_MAX_UNITS oscilloscopes.'
+    ),
+    PS2000Error.MEM_FAIL: (
+        'PICO_MEM_FAIL',
+        'Not enough memory could be allocated on the host machine.'
+    ),
+    PS2000Error.NOT_FOUND: (
+        'PICO_NOT_FOUND',
+        'The PicoScope<model={model}, serial={serial}> could not be found.'
+    ),
+    PS2000Error.FW_FAIL: (
+        'PICO_FW_FAIL',
+        'Unable to download firmware.'
+    ),
+    PS2000Error.NOT_RESPONDING: (
+        'PICO_NOT_RESPONDING',
+        'The PicoScope<model={model}, serial={serial}> is not responding to commands from the PC.'
+    ),
+    PS2000Error.CONFIG_FAIL: (
+        'PICO_CONFIG_FAIL',
         'The configuration information in the PicoScope<model={model}, serial={serial}> '
-        'has become corrupt or is missing.'),
-    7: ('PICO_OS_NOT_SUPPORTED',
-        'The operating system is not supported by this driver.'),
+        'has become corrupt or is missing.'
+    ),
+    PS2000Error.OS_NOT_SUPPORTED: (
+        'PICO_OS_NOT_SUPPORTED',
+        'The operating system is not supported by this driver.'
+    ),
+    PS2000Error.PICOPP_TOO_OLD: (
+        'PICOPP_TOO_OLD',
+        'The picopp.sys file is too old to be used with the device driver.'
+    ),
 }
 
 

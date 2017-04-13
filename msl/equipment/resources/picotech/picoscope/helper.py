@@ -8,6 +8,7 @@ These functions are used to:
 Print the following to stdout 
 - the #define constants
 - the function signatures for the PicoScope subclasses
+- functions with similar function signatures
 
 Create the following files:
 - picoscope_enums.py
@@ -37,6 +38,27 @@ def parse_pico_scope_api_header(path):
     Returns:
         :py:class:`dict`: {'enums': {}, 'defines': {}, 'functions': {}, 'structs': {}, 'functypes': {}}
     """
+    def process_line(string):
+        split = string.split()
+        data_type = split[0]
+        if '**' in string:
+            data_type += '**'
+        elif '*' in string:
+            data_type += '*'
+        if len(split) > 1:
+            out = [data_type, re.search('[a-zA-Z_]+', split[-1]).group(0)]
+        else:
+            if data_type == 'GetOverviewBuffersMaxMin':
+                out = [data_type, 'lpGetOverviewBuffersMaxMin']
+            elif data_type == 'void':
+                # the following function do not take inputs
+                # ps2000_open_unit, ps2000_open_unit_async
+                # ps3000_open_unit, ps3000_open_unit_async
+                out = []
+            else:
+                raise NotImplementedError
+        return out
+
     fname = os.path.basename(path)[:-2]
     header_dict = {'enums': {}, 'defines': {}, 'functions': {}, 'structs': {}, 'functypes': {}}
     with open(path, 'r') as fp:
@@ -57,31 +79,20 @@ def parse_pico_scope_api_header(path):
                     if '(' in line2:
                         continue
                     elif ');' in line2:
+                        if len(line2.strip()) > 2:
+                            # ps2000 and ps4000aApi had ');' on the same line as input arguments
+                            out = process_line(line2)
+                            if out:
+                                args.extend(out)
                         alias = function_name.replace(fname.replace('Api', ''), '')
                         if '_' in function_name:  # convert to camel case
                             alias = ''.join(x.capitalize() for x in alias.split('_')[1:])
                         header_dict[key][function_name] = alias, restype, args
                         #print('{0:<11} {1:<45} {2:<45} {3:<12} {4}'.format(fname, function_name, alias, restype, args))
                         break
-                    split_line = line2.split()
-                    dtype = split_line[0]
-                    if '**' in line2:
-                        dtype += '**'
-                    elif '*' in line2:
-                        dtype += '*'
-                    if len(split_line) > 1:
-                        args.extend([dtype, re.search('[a-zA-Z_]+', split_line[-1]).group(0)])
-                    else:
-                        if dtype == 'GetOverviewBuffersMaxMin':
-                            args.extend([dtype, 'lpGetOverviewBuffersMaxMin'])
-                        elif dtype == 'void':
-                            # the following function do not take inputs
-                            # ps2000_open_unit, ps2000_open_unit_async
-                            # ps3000_open_unit, ps3000_open_unit_async
-                            pass
-                            #args.extend([dtype, None])
-                        else:
-                            raise NotImplementedError
+                    out = process_line(line2)
+                    if out:
+                        args.extend(out)
 
             # the #define statements
             if line.startswith('#define'):
@@ -240,11 +251,12 @@ def create_picoscope_enums_file(header_dict, picostatus_h_path):
 
 def create_picoscope_structs_file(header_dict):
     """Creates the _picoscope_structs.py file"""
-    from picoscope_enums import ENUM_DATA_TYPE_NAMES
+    from msl.equipment.resources.picotech.picoscope.enums import ENUM_DATA_TYPE_NAMES
 
     fp = open('_picoscope_structs.py', 'w')
     fp.write('from ctypes import Structure, c_int16, c_uint16, c_uint32, c_int64, c_uint64\n\n')
-    fp.write('from msl.equipment.resources.pico_technology.pico_status import c_enum, PICO_STATUS\n\n')
+    fp.write('from .picoscope import c_enum\n')
+    fp.write('from .errors import PICO_STATUS\n\n')
 
     aliases = {}
     for hkey in header_dict:
@@ -296,8 +308,8 @@ def create_picoscope_structs_file(header_dict):
 
 def check_enum_struct_names():
     """Ensure that none of the items in ENUM_DATA_TYPE_NAMES are in STRUCT_DATA_TYPE_ALIASES"""
-    from picoscope_enums import ENUM_DATA_TYPE_NAMES
-    from picoscope_structs import STRUCT_DATA_TYPE_ALIASES
+    from msl.equipment.resources.picotech.picoscope.enums import ENUM_DATA_TYPE_NAMES
+    from msl.equipment.resources.picotech.picoscope.structs import STRUCT_DATA_TYPE_ALIASES
 
     for item in ENUM_DATA_TYPE_NAMES:
         if item in STRUCT_DATA_TYPE_ALIASES:
@@ -311,7 +323,7 @@ def create_callbacks_file(header_dict):
     fp = open('_picoscope_callbacks.py', 'w')
     fp.write('import sys\n')
     fp.write('from ctypes import WINFUNCTYPE, CFUNCTYPE, POINTER, c_int16, c_uint32, c_void_p, c_int32\n\n')
-    fp.write('from msl.equipment.resources.pico_technology.pico_status import PICO_STATUS\n\n')
+    fp.write('from .errors import PICO_STATUS\n\n')
     fp.write("if sys.platform in ('win32', 'cygwin'):\n")
     fp.write('    FUNCTYPE = WINFUNCTYPE\n')
     fp.write('else:\n')
@@ -357,9 +369,9 @@ def create_callbacks_file(header_dict):
 
 
 def ctypes_map(dtype, hkey):
-    from picoscope_enums import ENUM_DATA_TYPE_NAMES
-    from picoscope_structs import STRUCT_DATA_TYPE_ALIASES
-    from picoscope_callbacks import CALLBACK_NAMES
+    from msl.equipment.resources.picotech.picoscope.enums import ENUM_DATA_TYPE_NAMES
+    from msl.equipment.resources.picotech.picoscope.structs import STRUCT_DATA_TYPE_ALIASES
+    from msl.equipment.resources.picotech.picoscope.callbacks import CALLBACK_NAMES
 
     if not dtype:
         return ''
@@ -403,37 +415,35 @@ def create_picoscope_functions_file(header_dict):
     Create the _picoscope_functions.py file. 
     The lists in this file are used for creating ctypes._FuncPtr objects
     """
-    from picoscope_callbacks import CALLBACK_NAMES
-    from picoscope_structs import STRUCT_DATA_TYPE_ALIASES
+    from msl.equipment.resources.picotech.picoscope.callbacks import CALLBACK_NAMES
+    from msl.equipment.resources.picotech.picoscope.structs import STRUCT_DATA_TYPE_ALIASES
 
     fp = open('_picoscope_functions.py', 'w')
 
     fp.write('from ctypes import (c_int8, c_uint8, c_int16, c_uint16, c_int32, \n')
     fp.write('                    c_uint32, c_int64, c_uint64, c_float, c_double, c_void_p, POINTER)\n\n')
-    fp.write('from .pico_status import c_enum, PICO_STATUS, PICO_INFO\n\n')
+    fp.write('from .picoscope import c_enum\n')
+    fp.write('from .errors import PICO_STATUS, PICO_INFO\n\n')
 
     # import all the callbacks
-    callbacks_import = 'from .picoscope_callbacks import ({},\n'.format(CALLBACK_NAMES[0])
-    for idx in range(1, len(CALLBACK_NAMES)):
-        if CALLBACK_NAMES[idx].endswith('DataReady'):
+    callbacks_import = 'from .callbacks import (\n'
+    for name in CALLBACK_NAMES:
+        if name.endswith('DataReady'):
             continue
-        callbacks_import += '                                  {},\n'.format(CALLBACK_NAMES[idx])
-    fp.write(callbacks_import[:-2] + ')\n\n')
+        callbacks_import += '    {},\n'.format(name)
+    fp.write(callbacks_import + ')\n\n')
 
     # import all the structs
-    structs_import = 'from .picoscope_structs import ('
+    structs_import = 'from .structs import (\n'
     for idx, struct in enumerate(STRUCT_DATA_TYPE_ALIASES):
         s = STRUCT_DATA_TYPE_ALIASES[struct].__name__
-        if idx == 0:
-            structs_import += '{},\n'.format(s)
-        else:
-            structs_import += '                                {},\n'.format(s)
-    fp.write(structs_import[:-2] + ')\n\n\n')
+        structs_import += '    {},\n'.format(s)
+    fp.write(structs_import + ')\n\n\n')
 
     # write a description of what follows
     fp.write('# The structure for each item in a *_funcptrs list is:\n')
     fp.write('#\n')
-    fp.write('# (SDK_function_name, an_alias_for_the_function_name, return_data_type, error_check_returned_value?,\n')
+    fp.write('# (SDK_function_name, an_alias_for_the_function_name, return_data_type, errcheck_callable,\n')
     fp.write('#    (ctype, SDK_type, SDK_argument_name),\n\n\n')
 
     for hkey in header_dict:
@@ -457,7 +467,12 @@ def create_picoscope_functions_file(header_dict):
                     s += "      ({}, '{}', '{}'),\n".format(ctypes_map(t, hkey), argtypes[i], argtypes[i+1])
 
             # for ps2000 and ps3000 the returned value can represent many different scenarios, do not do error checking
-            errcheck = hkey not in ('ps2000', 'ps3000')
+            if alias in ('OpenUnit', 'OpenUnitProgress'):
+                errcheck = None
+            elif hkey in ('ps2000', 'ps3000'):
+                errcheck = "'errcheck_zero'"
+            else:
+                errcheck = "'errcheck_api'"
             fcns.append("('{}', '{}', {}, {},\n{}]\n     ),\n".format(key, alias, ctypes_map(ret, hkey),
                                                                       errcheck, s[:-2]))
 

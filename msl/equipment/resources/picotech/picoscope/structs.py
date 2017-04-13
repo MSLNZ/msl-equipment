@@ -1,6 +1,7 @@
 from ctypes import Structure, c_int16, c_uint16, c_uint32, c_int64, c_uint64
 
-from msl.equipment.resources.pico_technology.error_codes import c_enum, PICO_STATUS
+from .picoscope import c_enum
+from .errors import PICO_STATUS
 
 
 # ************************ typedef struct for ps2000 ************************

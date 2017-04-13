@@ -2,10 +2,13 @@
 A record (a row) from an **Equipment-Register** database and a **Connections** database.
 """
 import re
+import logging
 import datetime
 
 from msl.equipment.constants import Backend, MSLInterface, MSL_INTERFACE_ALIASES
 from msl.equipment import factory
+
+logger = logging.getLogger(__name__)
 
 
 class EquipmentRecord(object):
@@ -31,14 +34,18 @@ class EquipmentRecord(object):
         
         Args:
             **kwargs: The argument names can be any of the :class:`EquipmentRecord` 
-                attribute names. Silently ignores all invalid argument names.
+                attribute names.
 
         Raises:
             ValueError: If an argument name is ``calibration_period``, ``connection`` or 
                 ``date_calibrated`` and the value is invalid.
+            
+            AttributeError: If a named argument is not an :class:`EquipmentRecord` 
+                attribute name.
         """
-        for attrib in EquipmentRecord.attributes():
-            if attrib in kwargs:
+        valid_attribs = EquipmentRecord.attributes()
+        for attrib in kwargs:
+            if attrib in valid_attribs:
                 if attrib == 'connection':
                     # set the connection after the manufacturer, model and serial are all set
                     continue
@@ -51,6 +58,10 @@ class EquipmentRecord(object):
                     self._calibration_period = int(kwargs[attrib])
                 else:
                     setattr(self, '_'+attrib, str(kwargs[attrib]))
+            else:
+                msg = 'An EquipmentRecord has no "{}" attribute.\nValid attributes are {}'\
+                    .format(attrib, valid_attribs)
+                raise AttributeError(msg)
 
         if 'connection' in kwargs:
             self.connection = kwargs['connection']
@@ -213,14 +224,18 @@ class ConnectionRecord(object):
 
         Args:
             **kwargs: The argument names can be any of the :class:`ConnectionRecord` 
-                attribute names. Silently ignores all invalid argument names.
+                attribute names.
         
         Raises:
             ValueError: If an argument name is ``backend``, ``interface`` or 
                 ``properties`` and the value is invalid.
+
+            AttributeError: If a named argument is not an :class:`ConnectionRecord` 
+                attribute name.
         """
-        for attrib in ConnectionRecord.attributes():
-            if attrib in kwargs:
+        valid_attribs = ConnectionRecord.attributes()
+        for attrib in kwargs:
+            if attrib in valid_attribs:
                 if attrib == 'backend':
                     self._backend = Backend(kwargs[attrib])
                 elif attrib == 'interface':
@@ -239,6 +254,10 @@ class ConnectionRecord(object):
                         raise ValueError('The properties value must be a dictionary.')
                 else:
                     setattr(self, '_'+attrib, str(kwargs[attrib]))
+            else:
+                msg = 'A ConnectionRecord has no "{}" attribute.\nValid attributes are {}'\
+                    .format(attrib, valid_attribs)
+                raise AttributeError(msg)
 
     @property
     def address(self):
@@ -315,7 +334,7 @@ class ConnectionRecord(object):
 
         # set the interface
         if interface in MSLInterface.__members__:
-            self._interface = getattr(MSLInterface, interface)
+            self._interface = MSLInterface[interface]
             return ''
         return interface
 

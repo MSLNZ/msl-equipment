@@ -27,17 +27,15 @@ def find_sdk_pyclass(record):
               'the form SDK::PythonClassName::PathToLibrary'.format(record.connection.address)
         raise IOError(msg)
 
-    if not os.path.isfile(address_split[2]):
-        raise IOError('Cannot find the SDK file {}'.format(address_split[2]))
-
     pyclass = address_split[1]
 
     for root, dirs, files in os.walk(os.path.abspath(os.path.dirname(__file__))):
+        root_pkg = __name__ + root.replace(os.path.sep, '.').split(__name__)[1]
         for filename in fnmatch.filter(files, '*.py'):
             if filename == '__init__.py':
                 continue
 
-            module_name = '{}.{}.{}'.format(__name__, os.path.basename(root), filename[:-3])
+            module_name = '{}.{}'.format(root_pkg, filename[:-3])
             if module_name in sys.modules:
                 mod = sys.modules[module_name]
             else:

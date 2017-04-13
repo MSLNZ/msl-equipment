@@ -116,6 +116,17 @@ class Database(object):
                                 v = self._check_asrl_property(key, int(v), constants.DataBits)
                             elif k.lower().startswith('baud'):
                                 v = int(v)
+                        else:
+                            # try to convert 'v' to a Python bool, int or float
+                            if v.upper() == 'TRUE':
+                                v = True
+                            elif v.upper() == 'FALSE':
+                                v = False
+                            else:
+                                try:
+                                    v = eval(v)
+                                except:
+                                    pass  # keep the value as a string
 
                         conn_record._properties[k] = v
 

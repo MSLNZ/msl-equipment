@@ -2,11 +2,11 @@
 This :class:`~.picoscope.PicoScope` subclass implements the common functions 
 for the ps2000 and ps3000 PicoScopes.
 """
-from ctypes import (c_int8, c_int16, c_int32, c_uint32, c_double,
-                    byref, string_at, addressof)
+from ctypes import (c_int16, c_int32, c_uint32, c_double, byref)
 
+from .enums import PS2000Info
 from .picoscope import PicoScope
-from .error_codes import PicoScopeError, ERROR_CODES
+from .errors import PicoScopeError, ERROR_CODES
 
 
 class PicoScope2k3k(PicoScope):
@@ -29,26 +29,83 @@ class PicoScope2k3k(PicoScope):
             funcptrs: The appropriate function-pointer list from :mod:`.picoscope_functions`
         """
         PicoScope.__init__(self, record, funcptrs)
-        self.log.warning('The {} class has not been tested'.format(self.__class__.__name__))
+        self.enPicoScopeInfo = PS2000Info  # PS2000Info enum == PS3000Info enum
 
-    def _raise_error(self, message=None):
+        self.log.warning('The {} class has not yet been tested with a PicoScope'.format(self.__class__.__name__))
+
+        # check the equipment_record.connection.properties dictionary to see how to initialize the PicoScope
+        properties = self.equipment_record.connection.properties
+
+        open_unit = properties.get('open_unit', True)
+        open_unit_async = properties.get('open_unit_async', None)
+
+        if open_unit and open_unit_async is None:
+            self.open_unit()
+        elif open_unit_async:
+            self.open_unit_async()
+
+    def errcheck_zero(self, result, func, args):
+        """If the SDK function returns 0 then raise an exception."""
+        self.log.debug('{}.{}{}'.format(self.__class__.__name__, func.__name__, args))
+        if result == 0:
+            self.raise_exception()
+        return result
+
+    def errcheck_one(self, result, func, args):
+        """If the SDK function returns 1 then raise an exception."""
+        self.log.debug('{}.{}{}'.format(self.__class__.__name__, func.__name__, args))
+        if result == 1:
+            self.raise_exception()
+        return result
+
+    def errcheck_negative_one(self, result, func, args):
+        """If the SDK function returns -1 then raise an exception."""
+        self.log.debug('{}.{}{}'.format(self.__class__.__name__, func.__name__, args))
+        if result == -1:
+            self.raise_exception()
+        return result
+
+    def raise_exception(self, msg=None, error_code=None):
         """
-        Raise an exception. Not tested.
+        Raise an exception.
+        
+        If ``msg`` is not :py:data:`None` then display this message.
+        
+        If ``error_code`` is not :py:data:`None` then display the corrseponding error message 
+        that is specified in the programmers manual.
+        
+        If both ``msg`` and ``error_code`` are :py:data:`None` then calls the :meth:`get_unit_info`
+        method to get the last error message from the PicoScope *(this has not been tested yet)*.
+        
+        Args:
+            msg (str, optional): The error message.
+            error_code (int, optional): A number from 0 to 7 (see the programmers manual).
         """
         conn = self.equipment_record.connection
-        if message is None:
-            code = int(self.get_unit_info(6))  # passing in line=6 returns one of the error codes
-            error_name, msg = ERROR_CODES[code]
-            error_msg = msg.format(
-                model=conn.model,
-                serial=conn.serial,
-                sdk_filename=self._sdk_filename,
-                sdk_filename_upper=self._sdk_filename.upper()
-            )
-            error_message = '{}: {}'.format(error_name, error_msg)
+
+        if msg is not None:
+            raise PicoScopeError(self._base_msg + msg)
+
+        if error_code is not None:
+            if error_code < 0 or error_code > 7:
+                msg = 'Invalid error code of {}. The value must be from 0 to 7. ' \
+                      'See the programmers guide for details.'. format(error_code)
+                raise PicoScopeError(self._base_msg + msg)
         else:
-            error_message = '{}; {}\n{}'.format(self.__class__.__name__, conn, message)
-        raise PicoScopeError(error_message)
+            if self._handle is None:
+                msg = 'A connection has not been opened yet. Call open_unit()'
+                raise PicoScopeError(self._base_msg + msg)
+            error_code = int(self._get_unit_info(6))  # passing in line=6 returns one of the error codes
+
+        error_name, message = ERROR_CODES[error_code]
+        message = message.format(
+            model=conn.model,
+            serial=conn.serial,
+            sdk_filename=self.SDK_FILENAME,
+            sdk_filename_upper=self.SDK_FILENAME.upper()
+        )
+        msg = '{}: {}'.format(error_name, message)
+        raise PicoScopeError(self._base_msg + msg)
 
     def flash_led(self):
         """
@@ -111,7 +168,7 @@ class PicoScope2k3k(PicoScope):
         return ret, (start_time.value, pbuffer_a.value, pbuffer_b.value, pbuffer_c.value, pbuffer_d.value,
                      overflow.value, trigger_at.value, trigger.value)
 
-    def get_timebase(self, timebase, no_of_samples, oversample):
+    def get_timebase(self, timebase, no_of_samples, oversample=0):
         """
         This function discovers which timebases are available on the oscilloscope. You should
         set up the channels using :meth:`set_channel` and, if required, ETS mode using
@@ -124,7 +181,9 @@ class PicoScope2k3k(PicoScope):
         max_samples = c_int32()
         ret = self.GetTimebase(self._handle, timebase, no_of_samples, byref(time_interval),
                                byref(time_units), oversample, byref(max_samples))
-        return ret, (time_interval.value, time_units.value, max_samples.value)
+        if ret == 0:
+            self.raise_exception()
+        return time_interval.value*1e-9, max_samples.value, time_units.value
 
     def get_times_and_values(self, time_units, no_of_values):
         """
@@ -141,19 +200,7 @@ class PicoScope2k3k(PicoScope):
                                      byref(buffer_c), byref(buffer_d), byref(overflow), time_units, no_of_values)
         return ret, (times.value, buffer_a.value, buffer_b.value, buffer_c.value, buffer_d.value, overflow.value)
 
-    def get_unit_info(self, line):
-        """
-        This function writes oscilloscope information to a character string. If the oscilloscope
-        failed to open, only line types 0 and 6 are available to explain why the last open unit
-        call failed.
-        """
-        string = c_int8(127)
-        ret = self.GetUnitInfo(self._handle, byref(string), string.value, line)
-        if ret > 0:
-            return string_at(addressof(string)).decode('utf-8')
-        self._raise_error()
-
-    def get_values(self, no_of_values):
+    def get_values(self, num_values):
         """
         This function is used to get values in compatible streaming mode after calling
         :meth:`run_streaming`, or in block mode after calling :meth:`run_block`.
@@ -164,7 +211,7 @@ class PicoScope2k3k(PicoScope):
         buffer_d = c_int16()
         overflow = c_int16()
         ret = self.GetValues(self._handle, byref(buffer_a), byref(buffer_b), byref(buffer_c), byref(buffer_d),
-                             byref(overflow), no_of_values)
+                             byref(overflow), num_values)
         return ret, (buffer_a.value, buffer_b.value, buffer_c.value, buffer_d.value, overflow.value)
 
     def open_unit(self):
@@ -172,23 +219,33 @@ class PicoScope2k3k(PicoScope):
         This function opens a PicoScope 2000/3000 Series oscilloscope. The driver can support up to
         64 oscilloscopes.
         """
+        if self._handle is not None:
+            self.log.warning(self._base_msg[:-1] + ' is already open')
+            return
+
         ret = self.OpenUnit()
         if ret > 0:
             self._handle = c_int16(ret)
         else:
-            self._raise_open_error()
+            self.raise_exception(error_code=3)
         return ret
 
     def open_unit_async(self):
         """
         This function opens a PicoScope 2000/3000 Series oscilloscope without waiting for the
         operation to finish. You can find out when it has finished by periodically calling
-        :meth:`open_unit_progress` until that function returns a non-zero value and a valid
-        oscilloscope handle.
+        :meth:`open_unit_progress`, which returns a value of 100 when the scope is open.
         
         The driver can support up to 64 oscilloscopes.
         """
-        return self.OpenUnitAsync()
+        if self._handle is not None:
+            self.log.warning(self._base_msg[:-1] + ' is already open')
+            return
+
+        ret = self.OpenUnitAsync()
+        if ret == 0:
+            self.raise_exception('A previous open operation is already in progress.')
+        return ret
 
     def open_unit_progress(self):
         """
@@ -201,14 +258,14 @@ class PicoScope2k3k(PicoScope):
         progress_percent = c_int16()
         ret = self.OpenUnitProgress(byref(handle), byref(progress_percent))
         if ret > 0:
-            if handle.value < 1:
-                self._raise_open_error()
-            self._handle = handle
-            return 100
+            if handle.value > 0:
+                self._handle = handle
+                return 100
+            self.raise_exception(error_code=3)
         elif ret == 0:
             return progress_percent.value
         else:
-            self._raise_open_error()
+            self.raise_exception(error_code=3)
 
     def overview_buffer_status(self):
         """
@@ -221,28 +278,37 @@ class PicoScope2k3k(PicoScope):
         ret = self.OverviewBufferStatus(self._handle, byref(previous_buffer_overrun))
         return ret.value, previous_buffer_overrun.value
 
-    def ready(self):
+    def _is_ready(self):
         """
         This function checks to see if the oscilloscope has finished the last data collection
         operation.
         """
-        return self.Ready(self._handle)
+        ret = self.Ready(self._handle)
+        if ret > 0:
+            return True
+        elif ret == 0:
+            return False
+        else:
+            self.raise_exception()
 
-    def run_block(self, no_of_values, timebase, oversample):
-        """
-        This function tells the oscilloscope to start collecting data in block mode.
-        """
-        time_indisposed_ms = c_int32()
-        ret = self.RunBlock(self._handle, no_of_values, timebase, oversample, byref(time_indisposed_ms))
-        return ret.value, time_indisposed_ms.value
-
-    def run_streaming(self, sample_interval_ms, max_samples, windowed):
+    def _run_streaming(self, sample_interval_ms, max_samples, windowed):
         """
         This function tells the oscilloscope to start collecting data in compatible streaming
         mode. If this function is called when a trigger has been enabled, the trigger settings
         will be ignored.
         """
         return self.RunStreaming(self._handle, sample_interval_ms, max_samples, windowed)
+
+    def _run_streaming_ns(self, sample_interval, time_units, max_samples, auto_stop, no_of_samples_per_aggregate,
+                         overview_buffer_size):
+        """
+        This function tells the scope unit to start collecting data in fast streaming mode .
+        The function returns immediately without waiting for data to be captured. After calling
+        this function, you should next call :meth:`get_streaming_last_values` to copy the
+        data to your application's buffer.
+        """
+        return self.RunStreamingNs(self._handle, sample_interval, time_units, max_samples, auto_stop,
+                                   no_of_samples_per_aggregate, overview_buffer_size)
 
     def set_adv_trigger_channel_directions(self, channel_a, channel_b, channel_c, channel_d, ext):
         """
@@ -261,14 +327,6 @@ class PicoScope2k3k(PicoScope):
         """
         return self.SetAdvTriggerDelay(self._handle, delay, pre_trigger_delay)
 
-    def set_channel(self, channel, enabled, dc, range_enum):
-        """
-        Specifies if a channel is to be enabled, the AC/DC coupling mode and the input range.
-        
-        Note: The channels are not configured until capturing starts.
-        """
-        return self.SetChannel(self._handle, channel, enabled, dc, range_enum)
-
     def set_ets(self, mode, ets_cycles, ets_interleave):
         """
         This function is used to enable or disable ETS (equivalent time sampling) and to set
@@ -278,11 +336,10 @@ class PicoScope2k3k(PicoScope):
 
     def set_trigger(self, source, threshold, direction, delay, auto_trigger_ms):
         """
-        This function is used to enable or disable basic triggering and its parameters.
-        For oscilloscopes that support advanced triggering, see :meth:`set_adv_trigger_channel_conditions`, 
-        :meth:`set_adv_trigger_delay` and related functions.
+        This function just calls :meth:`set_trigger2`, since Python supports a 
+        floating-point value for defining the ``delay`` parameter.
         """
-        return self.SetTrigger(self._handle, source, threshold, direction, delay, auto_trigger_ms)
+        return self.set_trigger2(source, threshold, direction, delay, auto_trigger_ms)
 
     def set_trigger2(self, source, threshold, direction, delay, auto_trigger_ms):
         """

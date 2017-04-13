@@ -1,15 +1,21 @@
 from ctypes import c_int16, byref
 
 from .picoscope_api import PicoScopeApi
-from .picoscope_functions import ps3000aApi_funcptrs
-from .picoscope_structs import (PS3000ATriggerInfo, PS3000ADigitalChannelDirections,
-                                PS3000APwqConditions, PS3000APwqConditionsV2, PS3000ATriggerConditions,
-                                PS3000ATriggerConditionsV2, PS3000ATriggerChannelProperties)
+from .functions import ps3000aApi_funcptrs
+from .structs import (
+    PS3000ATriggerInfo,
+    PS3000ADigitalChannelDirections,
+    PS3000APwqConditions,
+    PS3000APwqConditionsV2,
+    PS3000ATriggerConditions,
+    PS3000ATriggerConditionsV2,
+    PS3000ATriggerChannelProperties
+)
 
 
 class PicoScope3000A(PicoScopeApi):
 
-    PS3000A_MAX_OVERSAMPLE = 256
+    MAX_OVERSAMPLE = 256
     PS3207A_MAX_ETS_CYCLES = 500
     PS3207A_MAX_INTERLEAVE = 40
     PS3206A_MAX_ETS_CYCLES = 500
@@ -21,10 +27,10 @@ class PicoScope3000A(PicoScopeApi):
     PS3204A_MAX_ETS_CYCLES = 125
     PS3204A_MAX_INTERLEAVE = 10
     PS3204MSO_MAX_INTERLEAVE = 20
-    PS3000A_EXT_MAX_VALUE = 32767
-    PS3000A_EXT_MIN_VALUE = -32767
-    PS3000A_MAX_LOGIC_LEVEL = 32767
-    PS3000A_MIN_LOGIC_LEVEL = -32767
+    EXT_MAX_VALUE = 32767
+    EXT_MIN_VALUE = -32767
+    MAX_LOGIC_LEVEL = 32767
+    MIN_LOGIC_LEVEL = -32767
     MIN_SIG_GEN_FREQ = 0.0
     MAX_SIG_GEN_FREQ = 20000000.0
     PS3207B_MAX_SIG_GEN_BUFFER_SIZE = 32768
@@ -39,17 +45,19 @@ class PicoScope3000A(PicoScopeApi):
     MIN_ANALOGUE_OFFSET_500MV_2V = -2.500
     MAX_ANALOGUE_OFFSET_5V_20V = 20.
     MIN_ANALOGUE_OFFSET_5V_20V = -20.
-    PS3000A_SHOT_SWEEP_TRIGGER_CONTINUOUS_RUN = 0xFFFFFFFF
-    PS3000A_SINE_MAX_FREQUENCY = 1000000.
-    PS3000A_SQUARE_MAX_FREQUENCY = 1000000.
-    PS3000A_TRIANGLE_MAX_FREQUENCY = 1000000.
-    PS3000A_SINC_MAX_FREQUENCY = 1000000.
-    PS3000A_RAMP_MAX_FREQUENCY = 1000000.
-    PS3000A_HALF_SINE_MAX_FREQUENCY = 1000000.
-    PS3000A_GAUSSIAN_MAX_FREQUENCY = 1000000.
-    PS3000A_PRBS_MAX_FREQUENCY = 1000000.
-    PS3000A_PRBS_MIN_FREQUENCY = 0.03
-    PS3000A_MIN_FREQUENCY = 0.03
+    SHOT_SWEEP_TRIGGER_CONTINUOUS_RUN = 0xFFFFFFFF
+    SINE_MAX_FREQUENCY = 1000000.
+    SQUARE_MAX_FREQUENCY = 1000000.
+    TRIANGLE_MAX_FREQUENCY = 1000000.
+    SINC_MAX_FREQUENCY = 1000000.
+    RAMP_MAX_FREQUENCY = 1000000.
+    HALF_SINE_MAX_FREQUENCY = 1000000.
+    GAUSSIAN_MAX_FREQUENCY = 1000000.
+    PRBS_MAX_FREQUENCY = 1000000.
+    PRBS_MIN_FREQUENCY = 0.03
+    MIN_FREQUENCY = 0.03
+
+    # EXT_MAX_VOLTAGE = ?
 
     def __init__(self, record):
         """
@@ -152,13 +160,6 @@ class PicoScope3000A(PicoScopeApi):
         conditions = PS3000ATriggerConditionsV2()
         self.sdk.ps3000aSetTriggerChannelConditionsV2(self._handle, byref(conditions), n_conditions)
         return conditions.value  # TODO return structure values
-
-    def set_trigger_channel_directions(self, channel_a, channel_b, channel_c, channel_d, ext, aux):
-        """
-        This function sets the direction of the trigger for each channel.
-        """
-        return self.sdk.ps3000aSetTriggerChannelDirections(self._handle, channel_a, channel_b, channel_c, channel_d,
-                                                           ext, aux)
 
     def set_trigger_channel_properties(self, n_channel_properties, aux_output_enable, auto_trigger_milliseconds):
         """

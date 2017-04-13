@@ -1,21 +1,24 @@
 from ctypes import c_uint8, byref
 
 from .picoscope_2k3k import PicoScope2k3k
-from .picoscope_functions import ps2000_funcptrs
-from .picoscope_structs import (PS2000TriggerChannelProperties, PS2000TriggerConditions,
-                                PS2000PwqConditions)
+from .functions import ps2000_funcptrs
+from .structs import (
+    PS2000TriggerChannelProperties,
+    PS2000TriggerConditions,
+    PS2000PwqConditions
+)
 
 
 class PicoScope2000(PicoScope2k3k):
 
-    PS2000_FIRST_USB = 1
-    PS2000_LAST_USB = 127
-    PS2000_MAX_UNITS = (PS2000_LAST_USB - PS2000_FIRST_USB + 1)
-    PS2000_MAX_TIMEBASE = 19
+    FIRST_USB = 1
+    LAST_USB = 127
+    MAX_UNITS = (LAST_USB - FIRST_USB + 1)
+    MAX_TIMEBASE = 19
     PS2105_MAX_TIMEBASE = 20
     PS2104_MAX_TIMEBASE = 19
     PS2200_MAX_TIMEBASE = 23
-    PS2000_MAX_OVERSAMPLE = 256
+    MAX_OVERSAMPLE = 256
     PS2105_MAX_ETS_CYCLES = 250
     PS2105_MAX_ETS_INTERLEAVE = 50
     PS2104_MAX_ETS_CYCLES = 125
@@ -26,13 +29,13 @@ class PicoScope2000(PicoScope2k3k):
     PS2204_MAX_ETS_INTERLEAVE = 40
     PS2205_MAX_ETS_CYCLES = 250
     PS2205_MAX_ETS_INTERLEAVE = 40
-    PS2000_MIN_ETS_CYCLES_INTERLEAVE_RATIO = 1
-    PS2000_MAX_ETS_CYCLES_INTERLEAVE_RATIO = 10
-    PS2000_MIN_SIGGEN_FREQ = 0.0
-    PS2000_MAX_SIGGEN_FREQ = 100000.0
-    PS2000_MAX_VALUE = 32767
-    PS2000_MIN_VALUE = -32767
-    PS2000_LOST_DATA = -32768
+    MIN_ETS_CYCLES_INTERLEAVE_RATIO = 1
+    MAX_ETS_CYCLES_INTERLEAVE_RATIO = 10
+    MIN_SIGGEN_FREQ = 0.0
+    MAX_SIGGEN_FREQ = 100000.0
+    MAX_VALUE = 32767
+    MIN_VALUE = -32767
+    LOST_DATA = -32768
 
     def __init__(self, record):
         """
@@ -50,16 +53,6 @@ class PicoScope2000(PicoScope2k3k):
         2104 or 2105 PC Oscilloscope and then resets the status to zero.
         """
         return self.sdk.ps2000_last_button_press(self._handle)
-
-    def run_streaming_ns(self, sample_interval, time_units, max_samples, auto_stop, no_of_samples_per_aggregate):
-        """
-        This function tells the oscilloscope to start collecting data in fast streaming mode. It
-        returns immediately without waiting for data to be captured. After calling it, you
-        should next call :meth:`get_streaming_last_values` to copy the data to your
-        application's buffer.
-        """
-        return self.sdk.ps2000_run_streaming_ns(self._handle, sample_interval, time_units, max_samples,
-                                                auto_stop, no_of_samples_per_aggregate)
 
     def set_adv_trigger_channel_conditions(self, n_conditions):
         """

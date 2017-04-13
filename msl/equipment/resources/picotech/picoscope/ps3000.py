@@ -1,16 +1,19 @@
 from ctypes import c_int16, c_uint32, byref
 
 from .picoscope_2k3k import PicoScope2k3k
-from .picoscope_functions import ps3000_funcptrs
-from .picoscope_structs import (PS3000TriggerConditions, PS3000TriggerChannelProperties,
-                                PS3000PwqConditions)
+from .functions import ps3000_funcptrs
+from .structs import (
+    PS3000TriggerConditions,
+    PS3000TriggerChannelProperties,
+    PS3000PwqConditions
+)
 
 
 class PicoScope3000(PicoScope2k3k):
 
-    PS3000_FIRST_USB = 1
-    PS3000_LAST_USB = 127
-    PS3000_MAX_UNITS = (PS3000_LAST_USB - PS3000_FIRST_USB + 1)
+    FIRST_USB = 1
+    LAST_USB = 127
+    MAX_UNITS = (LAST_USB - FIRST_USB + 1)
     PS3206_MAX_TIMEBASE = 21
     PS3205_MAX_TIMEBASE = 20
     PS3204_MAX_TIMEBASE = 19
@@ -22,20 +25,20 @@ class PicoScope3000(PicoScope2k3k):
     PS3226_MAX_TIMEBASE = 19
     PS3425_MAX_TIMEBASE = 19
     PS3426_MAX_TIMEBASE = 19
-    PS3000_MAX_OVERSAMPLE = 256
-    PS3000_MAX_VALUE = 32767
-    PS3000_MIN_VALUE = -32767
-    PS3000_LOST_DATA = -32768
-    PS3000_MIN_SIGGEN_FREQ = 0.093
-    PS3000_MAX_SIGGEN_FREQ = 1000000
+    MAX_OVERSAMPLE = 256
+    MAX_VALUE = 32767
+    MIN_VALUE = -32767
+    LOST_DATA = -32768
+    MIN_SIGGEN_FREQ = 0.093
+    MAX_SIGGEN_FREQ = 1000000
     PS3206_MAX_ETS_CYCLES = 500
     PS3206_MAX_ETS_INTERLEAVE = 100
     PS3205_MAX_ETS_CYCLES = 250
     PS3205_MAX_ETS_INTERLEAVE = 50
     PS3204_MAX_ETS_CYCLES = 125
     PS3204_MAX_ETS_INTERLEAVE = 25
-    PS3000_MAX_ETS_CYCLES_INTERLEAVE_RATIO = 10
-    PS3000_MIN_ETS_CYCLES_INTERLEAVE_RATIO = 1
+    MAX_ETS_CYCLES_INTERLEAVE_RATIO = 10
+    MIN_ETS_CYCLES_INTERLEAVE_RATIO = 1
     PS300_MAX_ETS_SAMPLES = 100000
     MAX_PULSE_WIDTH_QUALIFIER_COUNT = 16777215
     MAX_HOLDOFF_COUNT = 8388607
@@ -53,17 +56,6 @@ class PicoScope3000(PicoScope2k3k):
     def release_stream_buffer(self):
         """Not found in the manual, but it is in the header file."""
         return self.sdk.ps3000_release_stream_buffer(self._handle)
-
-    def run_streaming_ns(self, sample_interval, time_units, max_samples, auto_stop,
-                         no_of_samples_per_aggregate, overview_buffer_size):
-        """
-        This function tells the scope unit to start collecting data in fast streaming mode .
-        The function returns immediately without waiting for data to be captured. After calling
-        this function, you should next call :meth:`get_streaming_last_values` to copy the
-        data to your application's buffer.
-        """
-        return self.sdk.ps3000_run_streaming_ns(self._handle, sample_interval, time_units, max_samples,
-                                                auto_stop, no_of_samples_per_aggregate, overview_buffer_size)
 
     def save_streaming_data(self, lp_callback_func, data_buffer_size):
         """

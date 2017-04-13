@@ -1,21 +1,26 @@
+import math
 from ctypes import byref
 
-from .error_codes import c_enum
+from .picoscope import c_enum
 from .picoscope_api import PicoScopeApi
-from .picoscope_functions import ps5000aApi_funcptrs
-from .picoscope_structs import (PS5000ATriggerInfo, PS5000APwqConditions,
-                                PS5000ATriggerConditions, PS5000ATriggerChannelProperties)
+from .functions import ps5000aApi_funcptrs
+from .structs import (
+    PS5000ATriggerInfo,
+    PS5000APwqConditions,
+    PS5000ATriggerConditions,
+    PS5000ATriggerChannelProperties,
+)
 
 
 class PicoScope5000A(PicoScopeApi):
 
-    PS5000A_MAX_VALUE_8BIT = 32512
-    PS5000A_MIN_VALUE_8BIT = -32512
-    PS5000A_MAX_VALUE_16BIT = 32767
-    PS5000A_MIN_VALUE_16BIT = -32767
-    PS5000A_LOST_DATA = -32768
-    PS5000A_EXT_MAX_VALUE = 32767
-    PS5000A_EXT_MIN_VALUE = -32767
+    MAX_VALUE_8BIT = 32512
+    MIN_VALUE_8BIT = -32512
+    MAX_VALUE_16BIT = 32767
+    MIN_VALUE_16BIT = -32767
+    LOST_DATA = -32768
+    EXT_MAX_VALUE = 32767
+    EXT_MIN_VALUE = -32767
     MAX_PULSE_WIDTH_QUALIFIER_COUNT = 16777215
     MAX_DELAY_COUNT = 8388607
     PS5X42A_MAX_SIG_GEN_BUFFER_SIZE = 16384
@@ -38,15 +43,17 @@ class PicoScope5000A(PicoScopeApi):
     PS5243A_MAX_ETS_INTERLEAVE = 20
     PS5242A_MAX_ETS_CYCLES = 125
     PS5242A_MAX_ETS_INTERLEAVE = 10
-    PS5000A_SHOT_SWEEP_TRIGGER_CONTINUOUS_RUN = 0xFFFFFFFF
-    PS5000A_SINE_MAX_FREQUENCY = 20000000.
-    PS5000A_SQUARE_MAX_FREQUENCY = 20000000.
-    PS5000A_TRIANGLE_MAX_FREQUENCY = 20000000.
-    PS5000A_SINC_MAX_FREQUENCY = 20000000.
-    PS5000A_RAMP_MAX_FREQUENCY = 20000000.
-    PS5000A_HALF_SINE_MAX_FREQUENCY = 20000000.
-    PS5000A_GAUSSIAN_MAX_FREQUENCY = 20000000.
-    PS5000A_MIN_FREQUENCY = 0.03
+    SHOT_SWEEP_TRIGGER_CONTINUOUS_RUN = 0xFFFFFFFF
+    SINE_MAX_FREQUENCY = 20000000.
+    SQUARE_MAX_FREQUENCY = 20000000.
+    TRIANGLE_MAX_FREQUENCY = 20000000.
+    SINC_MAX_FREQUENCY = 20000000.
+    RAMP_MAX_FREQUENCY = 20000000.
+    HALF_SINE_MAX_FREQUENCY = 20000000.
+    GAUSSIAN_MAX_FREQUENCY = 20000000.
+    MIN_FREQUENCY = 0.03
+
+    EXT_MAX_VOLTAGE = 5.0
 
     def __init__(self, record):
         """
@@ -64,7 +71,27 @@ class PicoScope5000A(PicoScopeApi):
         """
         resolution = c_enum()
         self.sdk.ps5000aGetDeviceResolution(self._handle, byref(resolution))
-        return resolution.value
+        return self.enDeviceResolution(resolution.value)
+
+    def _get_timebase_index(self, dt):
+        """
+        See the manual for the sample interval formula as a function of device resolution.
+        """
+        resolution = self.get_device_resolution()
+        if resolution == self.enDeviceResolution.RES_8BIT:
+            if dt < 8e-9:
+                return math.log(1e9 * dt, 2)
+            else:
+                return 125e6 * dt + 2
+        elif resolution == self.enDeviceResolution.RES_12BIT:
+            if dt < 16e-9:
+                return math.log(500e6 * dt, 2) + 1
+            else:
+                return 62.5e6 * dt + 3
+        elif resolution == self.enDeviceResolution.RES_16BIT:
+            return 62.5e6 * dt + 3
+        else:  # 14- and 15-bit resolution
+            return 125e6 * dt + 2
 
     def get_trigger_info_bulk(self, from_segment_index, to_segment_index):
         """
@@ -85,7 +112,8 @@ class PicoScope5000A(PicoScopeApi):
         :meth:`set_channel` is not called, :meth:`run_block` and :meth:`run_streaming`
         may fail.
         """
-        return self.sdk.ps5000aSetDeviceResolution(self._handle, resolution)
+        r = self.convert_to_enum(resolution, self.enDeviceResolution, 'RES_')
+        return self.sdk.ps5000aSetDeviceResolution(self._handle, r)
 
     def set_pulse_width_qualifier(self, n_conditions, direction, lower, upper, pulse_width_type):
         """
@@ -117,20 +145,18 @@ class PicoScope5000A(PicoScopeApi):
         self.sdk.ps5000aSetTriggerChannelConditions(self._handle, byref(conditions), n_conditions)
         return conditions.value  # TODO return structure values
 
-    def set_trigger_channel_directions(self, channel_a, channel_b, channel_c, channel_d, ext, aux):
-        """
-        This function sets the direction of the trigger for each channel.
-        """
-        return self.sdk.ps5000aSetTriggerChannelDirections(self._handle, channel_a, channel_b, channel_c,
-                                                           channel_d, ext, aux)
-
-    def set_trigger_channel_properties(self, n_channel_properties, aux_output_enable, auto_trigger_milliseconds):
+    def set_trigger_channel_properties(self, channel_properties, timeout=0.1, aux_output_enable=0):
         """
         This function is used to enable or disable triggering and set its parameters.
 
         Populates the :class:`~.picoscope_structs.PS5000ATriggerChannelProperties` structure.
+        
+        Args:
+            aux_output_enable (int): Only used by ps5000.        
         """
-        channel_properties = PS5000ATriggerChannelProperties()
-        self.sdk.ps5000aSetTriggerChannelProperties(self._handle, byref(channel_properties), n_channel_properties,
-                                                    aux_output_enable, auto_trigger_milliseconds)
-        return channel_properties.value  # TODO return structure values
+        auto_trigger_ms = round(max(0, timeout * 1e3))
+        #channel_properties = PS5000ATriggerChannelProperties()
+        self.sdk.ps5000aSetTriggerChannelProperties(self._handle, byref(channel_properties), 1,
+                                                    aux_output_enable, auto_trigger_ms)
+
+        #return channel_properties  # TODO return structure values

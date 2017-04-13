@@ -1,25 +1,28 @@
 from ctypes import c_int8, c_int16, c_uint32, c_int64, byref
 
-from .error_codes import c_enum
+from .picoscope import c_enum
 from .picoscope_api import PicoScopeApi
-from .picoscope_functions import ps4000Api_funcptrs
-from .picoscope_structs import (PS4000PwqConditions, PS4000TriggerConditions,
-                                PS4000TriggerChannelProperties)
+from .functions import ps4000Api_funcptrs
+from .structs import (
+    PS4000PwqConditions,
+    PS4000TriggerConditions,
+    PS4000TriggerChannelProperties
+)
 
 
 class PicoScope4000(PicoScopeApi):
 
-    PS4000_MAX_OVERSAMPLE_12BIT = 16
-    PS4000_MAX_OVERSAMPLE_8BIT = 256
+    MAX_OVERSAMPLE_12BIT = 16
+    MAX_OVERSAMPLE_8BIT = 256
     PS4XXX_MAX_ETS_CYCLES = 400
     PS4XXX_MAX_INTERLEAVE = 80
     PS4262_MAX_VALUE = 32767
     PS4262_MIN_VALUE = -32767
-    PS4000_MAX_VALUE = 32764
-    PS4000_MIN_VALUE = -32764
-    PS4000_LOST_DATA = -32768
-    PS4000_EXT_MAX_VALUE = 32767
-    PS4000_EXT_MIN_VALUE = -32767
+    MAX_VALUE = 32764
+    MIN_VALUE = -32764
+    LOST_DATA = -32768
+    EXT_MAX_VALUE = 32767
+    EXT_MIN_VALUE = -32767
     MAX_PULSE_WIDTH_QUALIFIER_COUNT = 16777215
     MAX_DELAY_COUNT = 8388607
     MIN_SIG_GEN_FREQ = 0.0
@@ -31,6 +34,8 @@ class PicoScope4000(PicoScopeApi):
     PS4262_MAX_WAVEFORM_BUFFER_SIZE = 4096
     PS4262_MIN_DWELL_COUNT = 3
     # MAX_SWEEPS_SHOTS = ((1 << 30) - 1)
+
+    # EXT_MAX_VOLTAGE = ?
 
     def __init__(self, record):
         """
@@ -209,13 +214,6 @@ class PicoScope4000(PicoScopeApi):
         conditions = PS4000TriggerConditions()
         self.sdk.ps4000SetTriggerChannelConditions(self._handle, byref(conditions), n_conditions)
         return conditions.value  # TODO return structure values
-
-    def set_trigger_channel_directions(self, channel_a, channel_b, channel_c, channel_d, ext, aux):
-        """
-        This function sets the direction of the trigger for each channel.
-        """
-        return self.sdk.ps4000SetTriggerChannelDirections(self._handle, channel_a, channel_b, channel_c, channel_d,
-                                                          ext, aux)
 
     def set_trigger_channel_properties(self, n_channel_properties, aux_output_enable, auto_trigger_milliseconds):
         """

@@ -3,8 +3,9 @@ This :class:`~.picoscope.PicoScope` subclass implements the common functions
 for the PicoScopes that have a header file which ends with *Api.h, namely,
 ps2000aApi, ps3000aApi, ps4000Api, ps4000aApi, ps5000Api, ps5000aApi and ps6000Api
 """
+import numpy as np
 from ctypes import (c_int8, c_int16, c_uint16, c_int32, c_uint32, c_int64,
-                    c_float, c_void_p, byref, cast, POINTER, string_at, addressof)
+                    c_float, c_void_p, byref, cast, POINTER)
 
 from . import errors
 from .picoscope import PicoScope, c_enum
@@ -50,6 +51,9 @@ class PicoScopeApi(PicoScope):
     def errcheck_api(self, result, func, args):
         """The SDK functions return PICO_OK if the function call was successful."""
         self.log.debug('{}.{}{}'.format(self.__class__.__name__, func.__name__, args))
+        if result == errors.PICO_BUSY:
+            self.log.info('{} is busy...'.format(self._base_msg[:-1]))
+            return result
         if result != errors.PICO_OK:
             conn = self.equipment_record.connection
             error_name, msg = errors.ERROR_CODES_API[result]
@@ -740,18 +744,58 @@ class PicoScopeApi(PicoScope):
         self.allocate_buffer_memory()
         return ret
 
-    def set_sig_gen_arbitrary(self, offset_voltage, pk_to_pk, start_delta_phase, stop_delta_phase,
-                              delta_phase_increment, dwell_count, arbitrary_waveform_size, sweep_type,
-                              operation, index_mode, shots, sweeps, trigger_type, trigger_source, ext_in_threshold):
+    def set_sig_gen_arbitrary(self, waveform, sample_frequency=None, offset_voltage=0.0, pk_to_pk=None,
+                              start_delta_phase=None, stop_delta_phase=None, delta_phase_increment=0,
+                              dwell_count=None, sweep_type='up', operation='off', index_mode='single',
+                              shots=None, sweeps=None, trigger_type='rising', trigger_source=None,
+                              ext_in_threshold=0):
         """
         This function programs the signal generator to produce an arbitrary waveform.
         """
-        arbitrary_waveform = c_int16()
-        self.SetSigGenArbitrary(self._handle, offset_voltage, pk_to_pk, start_delta_phase, stop_delta_phase,
-                                delta_phase_increment, dwell_count, byref(arbitrary_waveform), arbitrary_waveform_size,
-                                sweep_type, operation, index_mode, shots, sweeps, trigger_type, trigger_source,
+        min_value, max_value, min_size, max_size = self.sig_gen_arbitrary_min_max_values()
+        if waveform.size < min_size:
+            self.raise_exception('The waveform size is {}, must be >= {}'.format(waveform.size, min_size))
+        if waveform.size > max_size:
+            self.raise_exception('The waveform size is {}, must be <= {}'.format(waveform.size, max_size))
+
+        sweep_typ = self.convert_to_enum(sweep_type, self.enSweepType)
+        extra_ops = self.convert_to_enum(operation, self.enExtraOperations)
+        mode = self.convert_to_enum(index_mode, self.enIndexMode)
+        trig_typ = self.convert_to_enum(trigger_type, self.enSigGenTrigType)
+        trig_source = self.convert_to_enum(trigger_source, self.enSigGenTrigSource)
+
+        if start_delta_phase is None and sample_frequency is None:
+            self.raise_exception('Must specify either "start_delta_phase" or "sample_frequency"')
+        if start_delta_phase is None:
+            start_delta_phase = self.sig_gen_frequency_to_phase(sample_frequency, mode, waveform.size)
+        if stop_delta_phase is None:
+            stop_delta_phase = start_delta_phase
+        if dwell_count is None:
+            dwell_count = self.MIN_DWELL_COUNT
+        if shots is None:
+            shots = self.SHOT_SWEEP_TRIGGER_CONTINUOUS_RUN
+        if sweeps is None:
+            sweeps = self.SHOT_SWEEP_TRIGGER_CONTINUOUS_RUN
+
+        # convert the waveform from volts to analog-to-digital units
+        waveform = waveform.copy()
+        max_waveform_value = np.max(np.absolute(waveform))
+        waveform /= max_waveform_value  # the waveform must be within the range -1.0 to 1.0
+        waveform *= max_value
+        waveform.round(out=waveform)
+        waveform = waveform.astype(np.int16)
+
+        if pk_to_pk is None:
+            pk_to_pk = max_waveform_value * 2.0
+
+        offset = int(round(offset_voltage * 1e6))
+        pk2pk = int(round(pk_to_pk * 1e6))
+
+        self.SetSigGenArbitrary(self._handle, offset, pk2pk, start_delta_phase, stop_delta_phase,
+                                delta_phase_increment, dwell_count, waveform, waveform.size,
+                                sweep_typ, extra_ops, mode, shots, sweeps, trig_typ, trig_source,
                                 ext_in_threshold)
-        return arbitrary_waveform.value
+        return waveform
 
     def set_sig_gen_built_in(self, offset_voltage, pk_to_pk, wave_type, start_frequency, stop_frequency, increment,
                              dwell_time, sweep_type, operation, shots, sweeps, trigger_type, trigger_source,
@@ -768,7 +812,7 @@ class PicoScopeApi(PicoScope):
     def set_sig_gen_built_in_v2(self, offset_voltage=0.0, pk_to_pk=1.0, wave_type='sine',
                                 start_frequency=1.0, stop_frequency=None, increment=0.1, dwell_time=1.0,
                                 sweep_type='up', operation='off', shots=None, sweeps=None,
-                                trigger_type='rising', trigger_source=None, ext_in_threshold=0,):
+                                trigger_type='rising', trigger_source=None, ext_in_threshold=0):
         """
         This function is an upgraded version of :meth:`set_sig_gen_built_in` with double-precision
         frequency arguments for more precise control at low frequencies.
@@ -897,15 +941,13 @@ class PicoScopeApi(PicoScope):
         that can be supplied to :meth:`set_sign_gen_arbitrary` for setting up the arbitrary
         waveform generator (AWG).
         """
-        min_arbitrary_waveform_value = c_int16()
-        max_arbitrary_waveform_value = c_int16()
-        min_arbitrary_waveform_size = c_uint32()
-        max_arbitrary_waveform_size = c_uint32()
-        self.SigGenArbitraryMinMaxValues(self._handle,
-                                         byref(min_arbitrary_waveform_value), byref(max_arbitrary_waveform_value),
-                                         byref(min_arbitrary_waveform_size), byref(max_arbitrary_waveform_size))
-        return (min_arbitrary_waveform_value.value, max_arbitrary_waveform_value.value,
-                min_arbitrary_waveform_size.value, max_arbitrary_waveform_size.value)
+        min_value = c_int16()
+        max_value = c_int16()
+        min_size = c_uint32()
+        max_size = c_uint32()
+        self.SigGenArbitraryMinMaxValues(self._handle, byref(min_value), byref(max_value),
+                                         byref(min_size), byref(max_size))
+        return min_value.value, max_value.value, min_size.value, max_size.value
 
     def sig_gen_frequency_to_phase(self, frequency, index_mode, buffer_length):
         """
@@ -913,15 +955,25 @@ class PicoScopeApi(PicoScope):
         waveform generator (AWG). The value returned depends on the length of the buffer,
         the index mode passed and the device model. The phase count can then be sent to the
         driver through :meth:`set_sig_gen_arbitrary` or :meth:`set_sig_gen_properties_arbitrary`.
+        
+        Args:
+            frequency (float): The AWG sample frequency.
+            index_mode (int, str): An IndexMode enum value or member name.
+            buffer_length (int): The size (number of samples) of the waveform.
+        
+        Returns:
+            :py:class:`int`: The phase count.
         """
+        mode = self.convert_to_enum(index_mode, self.enIndexMode)
+
         phase = c_uint32()
-        self.SigGenFrequencyToPhase(self._handle, frequency, index_mode, buffer_length, byref(phase))
+        self.SigGenFrequencyToPhase(self._handle, frequency, mode, buffer_length, byref(phase))
         return phase.value
 
     def sig_gen_software_control(self, state):
         """
         This function causes a trigger event, or starts and stops gating. It is used when the
-        signal generator is set to SIGGEN_SOFT_TRIG.
+        signal generator is set to ``SOFT_TRIG``.
         """
         return self.SigGenSoftwareControl(self._handle, state)
 

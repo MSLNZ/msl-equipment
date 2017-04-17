@@ -12,9 +12,9 @@ record = EquipmentRecord(
     connection=ConnectionRecord(
         backend=Backend.MSL,
         address='SDK::PicoScope5000A::ps5000a',
-        properties={'open_unit': True, 'resolution': '14bit', 'auto_select_power': True},
+        properties={
+            'resolution': '14bit',  # only used for ps5000a series PicoScope's
+            'auto_select_power': True,  # for PicoScopes that can be powered by an AC adaptor or by a USB cable
+        },
     )
 )
-
-# auto_select_power -> for PicoScopes that can be powered by an AC adaptor or by a USB cable
-# resolution -> only used for ps5000a series PicoScope's

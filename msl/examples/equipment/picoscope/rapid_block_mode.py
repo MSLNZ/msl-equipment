@@ -18,10 +18,9 @@ scope.set_no_of_captures(num_captures)  # set the number of captures
 scope.run_block()  # start acquisition
 scope.wait_until_ready()  # wait until all requested samples are collected
 print('The number of captures collected is {}'.format(scope.get_no_of_captures()))
-for segment in range(num_captures):  # set the data buffer for each capture and for each channel
+for index in range(num_captures):  # set the data buffer for each capture and for each channel
     for ch in scope.channel.values():
-        if ch.enabled:
-            scope.set_data_buffer(ch.channel, ch.buffer[segment:segment+1], segment_index=segment)
+        scope.set_data_buffer(ch.channel, ch.buffer[index:index+1], segment_index=index)
 scope.get_values_bulk() # fill the data buffer of Channels A and B
 scope.stop()  # stop the oscilloscope from sampling data
 

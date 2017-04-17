@@ -1,10 +1,10 @@
 """
 Acquire PicoScope data in Streaming Mode.
 """
-import _thread
-import time
 from msl.examples.equipment.picoscope import record  # import the PicoScope EquipmentRecord
 from msl.equipment.resources.picotech.picoscope import callbacks
+
+streaming_done = False
 
 
 @callbacks.ps5000aStreamingReady
@@ -12,32 +12,21 @@ def my_streaming_ready(handle, num_samples, start_index, overflow, trigger_at, t
     print('StreamingReady Callback: handle={}, num_samples={}, start_index={}, overflow={}, trigger_at={}, '
           'triggered={}, auto_stop={}, p_parameter={}'.format(handle, num_samples, start_index, overflow,
                                                               trigger_at, triggered, auto_stop, p_parameter))
-
-
-#def print_array():
-#    while True:
-#        print(scope.channel['A'].volts)
-
+    global streaming_done
+    streaming_done = bool(auto_stop)
 
 print('Example :: Streaming Mode')
-
 scope = record.connect()  # establish a connection to the PicoScope
-scope.set_channel('A', scale='10V')  # enable Channel A and set the voltage range to be +/-1V
-scope.set_timebase(1e-6, 5)  # sample the voltage on Channel A every 1 ms, for 20 ms
-
+scope.set_channel('A', scale='10V')  # enable Channel A and set the voltage range to be +/-10V
+scope.set_timebase(1e-3, 5)  # sample the voltage on Channel A every 1 ms, for 5 s
 scope.set_trigger('A', 0.0)  # Channel A is the trigger source with a trigger threshold value of 0.0 V
 scope.set_data_buffer('A')  # set the data buffer for Channel A
+scope.run_streaming()  # start streaming mode
+while not streaming_done:
+    scope.wait_until_ready()  # wait until the latest streaming values are ready
+    scope.get_streaming_latest_values(my_streaming_ready)  # get the latest streaming values
+print('Stopping the PicoScope')
+scope.stop()  # stop the oscilloscope from sampling data
 
-print(scope.channel['A'].volts)
-
-scope.run_streaming(auto_stop=False)
-scope.get_streaming_latest_values(my_streaming_ready)
-#_thread.start_new_thread(print_array, ())
-
-time.sleep(6)
-
-print(scope.channel['A'].volts)
-
-time.sleep(1)
-
-scope.stop()
+print('The time between samples is {} seconds'.format(scope.dt))
+print('The Channel A voltages are:\n{}'.format(scope.channel['A'].volts))

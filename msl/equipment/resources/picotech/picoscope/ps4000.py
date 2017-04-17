@@ -33,7 +33,7 @@ class PicoScope4000(PicoScopeApi):
     MIN_DWELL_COUNT = 10
     PS4262_MAX_WAVEFORM_BUFFER_SIZE = 4096
     PS4262_MIN_DWELL_COUNT = 3
-    # MAX_SWEEPS_SHOTS = ((1 << 30) - 1)
+    MAX_SWEEPS_SHOTS = ((1 << 30) - 1)
 
     # EXT_MAX_VOLTAGE = ?
 

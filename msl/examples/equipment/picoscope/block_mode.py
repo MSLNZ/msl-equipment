@@ -9,7 +9,7 @@ scope = record.connect()  # establish a connection to the PicoScope
 scope.set_channel('A', scale='1V')  # enable Channel A and set the voltage range to be +/-1V
 scope.set_timebase(1e-3, 20e-3)  # sample the voltage on Channel A every 1 ms, for 20 ms
 scope.set_trigger('A', 0.0)  # Channel A is the trigger source with a trigger threshold value of 0.0 V
-scope.run_block(pre_trigger=3e-3)  # start acquisition
+scope.run_block()  # start acquisition
 scope.wait_until_ready()  # wait until all requested samples are collected
 scope.set_data_buffer('A')  # set the data buffer for Channel A
 scope.get_values()  # fill the data buffer of Channel A with the values saved in the PicoScope's internal memory

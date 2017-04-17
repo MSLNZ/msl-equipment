@@ -32,7 +32,7 @@ def enumerate_units():
     """
     count = c_int16()
     serials = c_int8()
-    serial_length = c_int16(4096)
+    serial_length = c_int16()
     libtype = 'windll' if IS_WINDOWS else 'cdll'
     sdk = LoadLibrary('ps5000a', libtype)
     result = sdk.lib.ps5000aEnumerateUnits(byref(count), byref(serials), byref(serial_length))
@@ -111,6 +111,7 @@ class PicoScope(ConnectionSDK):
         self._streaming_time_units = None
 
         self._num_captures = 1
+        self._pre_trigger = 0.0
 
         # set the PicoScope SDK function signatures
         self._func_ptrs = func_ptrs
@@ -218,6 +219,10 @@ class PicoScope(ConnectionSDK):
         :py:class:`float`: The time between voltage samples (i.e., delta t).
         """
         return self._sampling_interval
+
+    @property
+    def pre_trigger(self):
+        return self._pre_trigger
 
     def allocate_buffer_memory(self):
         # allocate memory for the numpy array for each channel
@@ -344,6 +349,8 @@ class PicoScope(ConnectionSDK):
             if pre_trigger < 0:
                 self.raise_exception('The pre-trigger value cannot be negative.')
 
+            self._pre_trigger = pre_trigger
+
             n_pre = int(round(pre_trigger / self._sampling_interval))
             n_post = self._num_samples - n_pre
 
@@ -378,6 +385,8 @@ class PicoScope(ConnectionSDK):
 
         if pre_trigger < 0:
             self.raise_exception('The pre-trigger value cannot be negative.')
+
+        self._pre_trigger = pre_trigger
 
         n_pre = int(round(pre_trigger / self._sampling_interval))  # don't use self._streaming_sampling_interval
         n_post = self._num_samples - n_pre
@@ -462,7 +471,7 @@ class PicoScope(ConnectionSDK):
 
         # determine the TimeUnits enum from the sample interval
         for unit in enums.PS5000ATimeUnits:
-            num_seconds_float = dt / (10 ** (3 * unit.value) * 1e-15)
+            num_seconds_float = self._sampling_interval / (10 ** (3 * unit.value) * 1e-15)
             if num_seconds_float < 1e9:  # use <9 digits to specify the streaming sampling interval
                 self._streaming_sampling_interval = int(round(num_seconds_float))
                 self._streaming_time_units = unit

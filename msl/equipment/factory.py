@@ -1,6 +1,7 @@
 """
 Establish a connection to the equipment to send and receive messages.
 """
+import os
 import logging
 
 from msl.equipment.constants import Backend, MSLInterface
@@ -8,31 +9,39 @@ from msl.equipment.record_types import EquipmentRecord
 from msl.equipment.connection_demo import ConnectionDemo
 from msl.equipment.connection_msl import ConnectionMessageBased
 from msl.equipment.connection_pyvisa import ConnectionPyVISA
-from msl.equipment.resources import find_sdk_pyclass
+from msl.equipment.resources import find_sdk_class
 
 logger = logging.getLogger(__name__)
 
 
-def connect(record, demo=False):
-    """
-    Factory function to establish a connection to the equipment.
+def connect(record, demo=None):
+    """Factory function to establish a connection to the equipment.
 
-    Args:
-        record (:class:`.EquipmentRecord`): An equipment record (a row) from an
-            Equipment-Register database.
+    Parameters
+    ----------
+    record : :class:`~.record_types.EquipmentRecord`
+        An equipment record from an **Equipment-Register** 
+        :class:`~.database.Database`.
 
-        demo (bool): Whether to simulate a connection to the equipment by opening 
-            a connection in demo mode. This allows you run your code if the equipment 
-            is not connected to the computer. 
+    demo : :obj:`bool` or :obj:`None`
+        Whether to simulate a connection to the equipment by opening
+        a connection in demo mode. This allows you run your code if the equipment
+        is not physically connected to the computer.
+        
+        If :data:`None` then the `demo` value is read from an :obj:`os.environ`
+        variable. See :func:`msl.equipment.config.load` for more details.
 
-    Returns:
-        A :class:`~msl.equipment.connection.Connection` object.
+    Returns
+    -------
+    :class:`~msl.equipment.connection.Connection` 
+        A :class:`~msl.equipment.connection.Connection`-type object.
 
-    Raises:
-        TypeError: If the data type of ``record`` is not :class:`.EquipmentRecord`.
-        ValueError: If any of the property values in
-            :data:`record.connection.properties <msl.equipment.record_types.ConnectionRecord.properties>`
-            are invalid.
+    Raises
+    ------
+    ValueError
+        If any of the property values in
+        :data:`record.connection.properties <.record_types.ConnectionRecord.properties>`
+        are invalid.
     """
     def _connect(_record):
         """Processes a single EquipmentRecord object"""
@@ -43,31 +52,39 @@ def connect(record, demo=False):
             raise TypeError('The "record" argument must be a {}.{} object. Got {}'.format(
                 EquipmentRecord.__module__, EquipmentRecord.__name__, type(_record)))
 
-        if _record.connection is None:
+        conn = _record.connection
+
+        if conn is None:
             _raise('object')
+        if not conn.address:
+            _raise('address')
+        if conn.backend == Backend.UNKNOWN:
+            _raise('backend')
 
+        cls = None
+        if conn.backend == Backend.MSL:
+            if conn.interface == MSLInterface.NONE:
+                _raise('interface')
+            if conn.interface == MSLInterface.SDK:
+                cls = find_sdk_class(conn.address)
+            else:
+                cls = ConnectionMessageBased
+        elif conn.backend == Backend.PyVISA:
+            if demo:
+                cls = ConnectionPyVISA.resource_pyclass(conn)
+            else:
+                cls = ConnectionPyVISA
+
+        assert cls is not None, 'The Connection class is None'
+
+        logger.debug('Connecting to {} using {}'.format(conn, conn.backend.name))
         if demo:
-            logger.demo('Connecting to {} in DEMO mode'.format(_record.connection))
-            return ConnectionDemo(_record)
+            return ConnectionDemo(_record, cls)
         else:
-            if not _record.connection.address:
-                _raise('address')
-            if _record.connection.backend == Backend.UNKNOWN:
-                _raise('backend')
+            return cls(_record)
 
-            logger.debug('Connecting to {} using {}'.format(_record.connection, _record.connection.backend.name))
-
-            if _record.connection.backend == Backend.MSL:
-                if _record.connection.interface == MSLInterface.NONE:
-                    _raise('interface')
-
-                if record.connection.interface == MSLInterface.SDK:
-                    return find_sdk_pyclass(_record)
-                else:
-                    return ConnectionMessageBased(_record)
-
-            if _record.connection.backend == Backend.PyVISA:
-                return ConnectionPyVISA(_record)
+    if demo is None:
+        demo = eval(os.environ.get('demo_mode', 'False'))
 
     if isinstance(record, dict) and len(record) == 1:
         key = list(record.keys())[0]

@@ -1,37 +1,33 @@
 """
-This :class:`~.picoscope.PicoScope` subclass implements the common functions 
-for the ps2000 and ps3000 PicoScopes.
+Base class for the ps2000 and ps3000 PicoScopes.
 """
-from ctypes import (c_int16, c_int32, c_uint32, c_double, byref)
+from ctypes import c_int16, c_int32, c_uint32, c_double, byref
 
 from .enums import PS2000Info
 from .picoscope import PicoScope
-from .errors import PicoScopeError, ERROR_CODES
+from .errors import ERROR_CODES
 
 
 class PicoScope2k3k(PicoScope):
 
-    def __init__(self, record, funcptrs):
-        """
-        Use the PicoScope SDK to communicate with ps2000 and ps3000 oscilloscopes.
+    def __init__(self, record, func_ptrs):
+        """Use the PicoScope SDK to communicate with ps2000 and ps3000 oscilloscopes.        
 
-        Do not instantiate this class directly. Use :func:`msl.equipment.factory.connect`
-        or :meth:`record.connect() <msl.equipment.record_types.EquipmentRecord.connect>`
+        Do not instantiate this class directly. Use the factory method, 
+        :obj:`msl.equipment.factory.connect`, or the `record` object itself, 
+        :obj:`record.connect() <.record_types.EquipmentRecord.connect>`,
         to connect to the equipment.
 
-        The SDK version that was initially used to create this base class and the PicoScope
-        subclasses was *Pico Technology SDK 64-bit v10.6.10.24*
-
-        Args:
-            record (:class:`~msl.equipment.record_types.EquipmentRecord`): An equipment 
-                record (a row) from the :class:`~msl.equipment.database.Database`.
-
-            funcptrs: The appropriate function-pointer list from :mod:`.picoscope_functions`
+        Parameters
+        ----------
+        record : :class:`~msl.equipment.record_types.EquipmentRecord`
+            An equipment record from an **Equipment-Register** 
+            :class:`~.database.Database`.            
+        func_ptrs : :mod:`.functions`
+            The appropriate function-pointer list for the SDK. 
         """
-        PicoScope.__init__(self, record, funcptrs)
+        PicoScope.__init__(self, record, func_ptrs)
         self.enPicoScopeInfo = PS2000Info  # PS2000Info enum == PS3000Info enum
-
-        self.log.warning('The {} class has not yet been tested with a PicoScope'.format(self.__class__.__name__))
 
         # check the equipment_record.connection.properties dictionary to see how to initialize the PicoScope
         properties = self.equipment_record.connection.properties
@@ -44,28 +40,30 @@ class PicoScope2k3k(PicoScope):
         elif open_unit_async:
             self.open_unit_async()
 
+        raise ConnectionError('The {} class has not yet been tested with a PicoScope'.format(self.__class__.__name__))
+
     def errcheck_zero(self, result, func, args):
         """If the SDK function returns 0 then raise an exception."""
-        self.log.debug('{}.{}{}'.format(self.__class__.__name__, func.__name__, args))
+        self.log_errcheck(result, func, args)
         if result == 0:
-            self.raise_exception()
+            self._raise()
         return result
 
     def errcheck_one(self, result, func, args):
         """If the SDK function returns 1 then raise an exception."""
-        self.log.debug('{}.{}{}'.format(self.__class__.__name__, func.__name__, args))
+        self.log_errcheck(result, func, args)
         if result == 1:
-            self.raise_exception()
+            self._raise()
         return result
 
     def errcheck_negative_one(self, result, func, args):
         """If the SDK function returns -1 then raise an exception."""
-        self.log.debug('{}.{}{}'.format(self.__class__.__name__, func.__name__, args))
+        self.log_errcheck(result, func, args)
         if result == -1:
-            self.raise_exception()
+            self._raise()
         return result
 
-    def raise_exception(self, msg=None, error_code=None):
+    def _raise(self, msg=None, error_code=None):
         """
         Raise an exception.
         
@@ -77,25 +75,28 @@ class PicoScope2k3k(PicoScope):
         If both ``msg`` and ``error_code`` are :py:data:`None` then calls the :meth:`get_unit_info`
         method to get the last error message from the PicoScope *(this has not been tested yet)*.
         
-        Args:
-            msg (str, optional): The error message.
-            error_code (int, optional): A number from 0 to 7 (see the programmers manual).
+        Parameters
+        ----------
+        msg : :obj:`str`, optional
+            The error message.
+        error_code : :obj:`int`, optional
+            A number from 0 to 7 (see the programmers manual).
         """
         conn = self.equipment_record.connection
 
         if msg is not None:
-            raise PicoScopeError(self._base_msg + msg)
+            self.raise_exception(msg)
 
         if error_code is not None:
             if error_code < 0 or error_code > 7:
                 msg = 'Invalid error code of {}. The value must be from 0 to 7. ' \
                       'See the programmers guide for details.'. format(error_code)
-                raise PicoScopeError(self._base_msg + msg)
+                self.raise_exception(msg)
         else:
             if self._handle is None:
                 msg = 'A connection has not been opened yet. Call open_unit()'
-                raise PicoScopeError(self._base_msg + msg)
-            error_code = int(self._get_unit_info(6))  # passing in line=6 returns one of the error codes
+                self.raise_exception(msg)
+            error_code = int(self.get_unit_info(6))  # passing in line=6 returns one of the error codes
 
         error_name, message = ERROR_CODES[error_code]
         message = message.format(
@@ -105,7 +106,7 @@ class PicoScope2k3k(PicoScope):
             sdk_filename_upper=self.SDK_FILENAME.upper()
         )
         msg = '{}: {}'.format(error_name, message)
-        raise PicoScopeError(self._base_msg + msg)
+        self.raise_exception(msg)
 
     def flash_led(self):
         """
@@ -182,7 +183,7 @@ class PicoScope2k3k(PicoScope):
         ret = self.GetTimebase(self._handle, timebase, no_of_samples, byref(time_interval),
                                byref(time_units), oversample, byref(max_samples))
         if ret == 0:
-            self.raise_exception()
+            self._raise()
         return time_interval.value*1e-9, max_samples.value, time_units.value
 
     def get_times_and_values(self, time_units, no_of_values):
@@ -220,14 +221,13 @@ class PicoScope2k3k(PicoScope):
         64 oscilloscopes.
         """
         if self._handle is not None:
-            self.log.warning(self._base_msg[:-1] + ' is already open')
             return
 
         ret = self.OpenUnit()
         if ret > 0:
             self._handle = c_int16(ret)
         else:
-            self.raise_exception(error_code=3)
+            self._raise(error_code=3)
         return ret
 
     def open_unit_async(self):
@@ -239,7 +239,6 @@ class PicoScope2k3k(PicoScope):
         The driver can support up to 64 oscilloscopes.
         """
         if self._handle is not None:
-            self.log.warning(self._base_msg[:-1] + ' is already open')
             return
 
         ret = self.OpenUnitAsync()
@@ -261,11 +260,11 @@ class PicoScope2k3k(PicoScope):
             if handle.value > 0:
                 self._handle = handle
                 return 100
-            self.raise_exception(error_code=3)
+            self._raise(error_code=3)
         elif ret == 0:
             return progress_percent.value
         else:
-            self.raise_exception(error_code=3)
+            self._raise(error_code=3)
 
     def overview_buffer_status(self):
         """
@@ -289,7 +288,7 @@ class PicoScope2k3k(PicoScope):
         elif ret == 0:
             return False
         else:
-            self.raise_exception()
+            self._raise()
 
     def _run_streaming(self, sample_interval_ms, max_samples, windowed):
         """
@@ -300,7 +299,7 @@ class PicoScope2k3k(PicoScope):
         return self.RunStreaming(self._handle, sample_interval_ms, max_samples, windowed)
 
     def _run_streaming_ns(self, sample_interval, time_units, max_samples, auto_stop, no_of_samples_per_aggregate,
-                         overview_buffer_size):
+                          overview_buffer_size):
         """
         This function tells the scope unit to start collecting data in fast streaming mode .
         The function returns immediately without waiting for data to be captured. After calling
@@ -350,3 +349,16 @@ class PicoScope2k3k(PicoScope):
         and related functions.
         """
         return self.SetTrigger2(self._handle, source, threshold, direction, delay, auto_trigger_ms)
+
+    def set_adv_trigger_channel_properties(self, channel_properties, auto_trigger_milliseconds):
+        """This function is used to enable or disable triggering and set its parameters."""
+        return self.SetAdvTriggerChannelProperties(self._handle, byref(channel_properties),
+                                                   len(channel_properties), auto_trigger_milliseconds)
+
+    def set_adv_trigger_channel_conditions(self, conditions):
+        """
+        This function sets up trigger conditions on the scope's inputs. The trigger is set up by
+        defining a list of :mod:`~.picoscope_structs` ``TriggerConditions`` structures. Each structure 
+        is the AND of the states of one scope input.
+        """
+        return self.SetAdvTriggerChannelConditions(self._handle, byref(conditions), len(conditions))

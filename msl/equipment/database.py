@@ -15,45 +15,31 @@ from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
 logger = logging.getLogger(__name__)
 
 
-def load(path):
-    """
-    Load equipment and connection records (rows) from the databases that are
-    specified in a configuration file.
-
-    Args:
-        path (str): The path to a XML configuration file.
-
-    Returns:
-        :class:`Database`: The equipment and connection records in the database.
-    """
-    return Database(path)
-
-
 class Database(object):
 
     def __init__(self, path):
+        """Create :class:`.EquipmentRecord`'s and :class:`.ConnectionRecord`'s 
+        from databases that are specified in a configuration file.
+        
+        See :obj:`msl.equipment.config.load` for an example of a XML configuration
+        file.
+
+        Parameters
+        ----------
+        path : :obj:`str`
+            The path to a XML configuration file.
+
+        Raises
+        ------
+        IOError
+            If there was a problem reading the configuration file.
+        AttributeError
+            If an ``<equipment>`` XML element is specified in the configuration
+            file and it does not uniquely identify an equipment record in the
+            **Equipment-Register** database.
+        ValueError
+            If any of the values in the **Connections** database are invalid.
         """
-        Loads a configuration file to create :class:`.EquipmentRecord` objects
-        from equipment records that are in **Equipment-Register** databases and
-        :class:`.ConnectionRecord` objects from connection records that are in a
-        **Connections** database.
-
-        Args:
-            path (str): The path to a XML configuration file.
-
-        Raises:
-            IOError: If there was a problem parsing the configuration file.
-            AttributeError: If an *<equipment>* XML element is specified in the configuration
-                file and it does not uniquely identify an equipment record in the
-                **Equipment-Register** database.
-            ValueError: If any of the values in the **Connections** database are invalid.
-        """
-        if not os.path.isfile(path):
-            raise IOError('Cannot find the configuration file ' + path)
-
-        if '.xml' != os.path.splitext(path)[1].lower():
-            raise IOError('Only XML configuration files are currently supported')
-
         logger.debug('Loading databases from ' + path)
 
         self._config_path = path
@@ -226,81 +212,86 @@ class Database(object):
 
     @property
     def equipment(self):
-        """
-        A :py:class:`dict` of :class:`.EquipmentRecord`\'s that were listed as *<equipment>* 
-        XML elements in the configuration file which are being used to perform a 
-        measurement in the laboratory.
+        """:obj:`dict` of :class:`.EquipmentRecord`: Equipment records that were listed 
+        as ``<equipment>`` XML elements in the configuration.
         """
         return self._equipment_using
 
     @property
     def path(self):
-        """
-        :py:class:`str`: The path to the configuration file that contains the information about the
-        **Equipment-Register** databases and the **Connections** database.
+        """:obj:`str`: The path to the configuration file that contains the information about the
+        **Equipment-Register** and **Connections** databases and the environment variables.
         """
         return self._config_path
 
     def connections(self, **kwargs):
-        """
-        Search the **Connections** database to find all connection records that
+        """Search the **Connections** database to find all connection records that
         match the specified criteria.
 
-        Args:
-            **kwargs: The argument names can be any of the :class:`.ConnectionRecord` property names.
-                The comparison for the value is performed by `regex <http://www.pyregex.com/>`_.
+        Parameters
+        ----------
+        **kwargs
+            The argument names can be any of the :class:`.ConnectionRecord` property names.
+            The comparison for the value is performed by `regex <http://www.pyregex.com/>`_, 
+            see :mod:`re`.
 
-        Returns:
-            A :py:class:`list` of :class:`.ConnectionRecord`\'s that match the search criteria.
+        Returns
+        -------
+        :obj:`list` of :class:`.ConnectionRecord`
+            Connection records that match the search criteria.
 
-        Examples:
-            >>> connections()  # doctest: +SKIP
-            will return a list of all connection records
+        Examples
+        --------
+        >>> connections()  # doctest: +SKIP
+        will return a list of all connection records
 
-            >>> connections(manufacturer='H*P')  # doctest: +SKIP
-            will return a list of all connection records that have Hewlett Packard as the manufacturer
+        >>> connections(manufacturer='H*P')  # doctest: +SKIP
+        will return a list of all connection records that have Hewlett Packard as the manufacturer
 
-            >>> connections(address='GPIB*')  # doctest: +SKIP
-            will return a list of all connection records that use GPIB for the connection bus
+        >>> connections(address='GPIB*')  # doctest: +SKIP
+        will return a list of all connection records that use GPIB for the connection bus
         """
-        # only use the keys that are ConnectionRecord attributes
         _kwargs = {key: kwargs[key] for key in kwargs if key in self._connection_attributes}
         return [r for r in self._connection_records.values() if self._match(r, _kwargs)]
 
     def records(self, **kwargs):
-        """
-        Search the **Equipment-Register** databases to find all equipment records that
+        """Search the **Equipment-Register** databases to find all equipment records that
         match the specified criteria.
 
-        Args:
-            **kwargs: The argument names can be any of the :class:`.EquipmentRecord` property names.
-                The comparison for the value is performed by `regex <http://www.pyregex.com/>`_.
+        Parameters
+        ----------
+        **kwargs
+            The argument names can be any of the :class:`.EquipmentRecord` property names.
+            The comparison for the value is performed by `regex <http://www.pyregex.com/>`_, 
+            see :mod:`re`.
 
-        Returns:
-            A :py:class:`list` of :class:`.EquipmentRecord`\'s that match the search criteria.
+        Returns
+        -------
+        :obj:`list` of :class:`.EquipmentRecord`
+            Equipment records that match the search criteria.
 
-        Examples:
-            >>> records()  # doctest: +SKIP
-            will return a list of all equipment records
+        Examples
+        --------
+        >>> records()  # doctest: +SKIP
+        will return a list of all equipment records
 
-            >>> records(manufacturer='H*P')  # doctest: +SKIP
-            will return a list of all equipment records that have Hewlett Packard as the manufacturer
+        >>> records(manufacturer='H*P')  # doctest: +SKIP
+        will return a list of all equipment records that have Hewlett Packard as the manufacturer
 
-            >>> records(manufacturer='Agilent', model='3458A')  # doctest: +SKIP
-            will return a list of all equipment records that are from Agilent and that have the model number 3458A
+        >>> records(manufacturer='Agilent', model='3458A')  # doctest: +SKIP
+        will return a list of all equipment records that are from Agilent and that have the model number 3458A
 
-            >>> records(manufacturer='Agilent', model='3458A', serial='MY45046470')  # doctest: +SKIP
-            will return a list of only one equipment record (if the equipment record exists)
+        >>> records(manufacturer='Agilent', model='3458A', serial='MY45046470')  # doctest: +SKIP
+        will return a list of only one equipment record (if the equipment record exists)
 
-            >>> records(description='I-V Converter')  # doctest: +SKIP
-            will return a list of all equipment records that contain the string 'I-V Converter' in the description field
+        >>> records(description='I-V Converter')  # doctest: +SKIP
+        will return a list of all equipment records that contain the string 'I-V Converter' in the description field
         """
-        # only use the keys that are EquipmentRecord attributes
         _kwargs = {key: kwargs[key] for key in kwargs if key in self._equipment_attributes}
         return [r for r in self._equipment_records.values() if self._match(r, _kwargs)]
 
     def _read(self, element):
-        """Read a database file"""
+        """Read any allowed database file type"""
         path = element.findtext('path')
         if path is None:
             raise IOError('You must create a <path> </path> element in {} '
@@ -340,7 +331,14 @@ class Database(object):
             else:
                 sheet_name = names[0]
 
-        sheet = self._book.sheet_by_name(sheet_name)
+        try:
+            sheet = self._book.sheet_by_name(sheet_name)
+        except xlrd.XLRDError:
+            sheet = None
+
+        if sheet is None:
+            raise IOError('There is no sheet named "{}" in {}'.format(sheet_name, path))
+
         header = [str(val) for val in sheet.row_values(0)]
         rows = [[self._cell_convert(sheet.cell(r, c)) for c in range(sheet.ncols)] for r in range(1, sheet.nrows)]
         logger.debug('Loading sheet <{}> in {}'.format(sheet_name, path))

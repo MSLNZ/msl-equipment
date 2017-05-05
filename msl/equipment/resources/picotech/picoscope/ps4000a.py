@@ -1,14 +1,10 @@
+"""
+A wrapper around the PicoScope ps4000a SDK.
+"""
 from ctypes import c_int8, c_int16, c_uint16, c_int32, byref
 
 from .picoscope_api import PicoScopeApi
 from .functions import ps4000aApi_funcptrs
-from .structs import (
-    PS4000AConnectDetect,
-    PS4000AChannelLedSetting,
-    PS4000ACondition,
-    PS4000ADirection,
-    PS4000ATriggerChannelProperties
-)
 
 
 class PicoScope4000A(PicoScopeApi):
@@ -44,12 +40,13 @@ class PicoScope4000A(PicoScopeApi):
     # EXT_MAX_VOLTAGE = ?
 
     def __init__(self, record):
-        """
-        A wrapper around the PicoScope ps4000a SDK.
+        """A wrapper around the PicoScope ps4000a SDK.
 
-        Args:
-            record (:class:`~msl.equipment.record_types.EquipmentRecord`): An equipment 
-                record (a row) from the :class:`~msl.equipment.database.Database`.
+        Parameters
+        ----------
+        record : :class:`~msl.equipment.record_types.EquipmentRecord`
+            An equipment record from an **Equipment-Register** 
+            :class:`~msl.equipment.database.Database`.            
         """
         PicoScopeApi.__init__(self, record, ps4000aApi_funcptrs)
 
@@ -64,15 +61,11 @@ class PicoScope4000A(PicoScopeApi):
                                                buffer_length, byref(overflow))
         return buffer_max.value, buffer_min.value, overflow.value
 
-    def connect_detect(self, n_sensors):
+    def connect_detect(self, sensors):
         """
         This function is in the header file, but it is not in the manual.
-        
-        Populates the :class:`~.picoscope_structs.PS4000AConnectDetect` structure.
         """
-        sensor = PS4000AConnectDetect()
-        self.sdk.ps4000aConnectDetect(self._handle, byref(sensor), n_sensors)
-        return sensor.value  # TODO return structure values
+        return self.sdk.ps4000aConnectDetect(self._handle, byref(sensors), len(sensors))
 
     def device_meta_data(self, meta_type, operation, format_):
         """
@@ -101,17 +94,13 @@ class PicoScope4000A(PicoScopeApi):
         self.sdk.ps4000aGetString(self._handle, string_value, byref(string), byref(string_length))
         return string.value, string_length.value
 
-    def set_channel_led(self, n_led_states):
+    def set_channel_led(self, led_states):
         """
         This function is in the header file, but it is not in the manual.
-        
-        Populates the :class:`~.picoscope_structs.PS4000AChannelLedSetting` structure.
         """
-        led_states = PS4000AChannelLedSetting()
-        self.sdk.ps4000aSetChannelLed(self._handle, byref(led_states), n_led_states)
-        return led_states.value  # TODO return structure values
+        return self.sdk.ps4000aSetChannelLed(self._handle, byref(led_states), len(led_states))
 
-    def set_pulse_width_qualifier_conditions(self, n_conditions, info):
+    def set_pulse_width_qualifier_conditions(self, conditions, info):
         """
         This function sets up the conditions for pulse width qualification, which can be used on
         its own for pulse width triggering or combined with window triggering to produce more
@@ -122,12 +111,8 @@ class PicoScope4000A(PicoScopeApi):
         
         Other settings of the pulse width qualifier are configured by calling
         :meth:`set_pulse_width_qualifier_properties`.
-
-        Populates the :class:`~.picoscope_structs.PS4000ACondition` structure.
         """
-        conditions = PS4000ACondition()
-        self.sdk.ps4000aSetPulseWidthQualifierConditions(self._handle, byref(conditions), n_conditions, info)
-        return conditions.value
+        return self.sdk.ps4000aSetPulseWidthQualifierConditions(self._handle, byref(conditions), len(conditions), info)
 
     def set_pulse_width_qualifier_properties(self, direction, lower, upper, pulse_width_type):
         """
@@ -136,35 +121,8 @@ class PicoScope4000A(PicoScopeApi):
         return self.sdk.ps4000aSetPulseWidthQualifierProperties(self._handle, direction, lower,
                                                                 upper, pulse_width_type)
 
-    def set_trigger_channel_conditions(self, n_conditions, info):
-        """
-        This function sets up trigger conditions on the scope's inputs. The trigger is set up by
-        defining an array of one or more :class:`~.picoscope_structs.PS4000ACondition` structures 
-        that are then ANDed together. The function can be called multiple times, in which case the 
-        trigger logic is ORed with that defined by previous calls. This AND-OR logic allows you to
-        create any possible Boolean function of the scope's inputs.
-        """
-        conditions = PS4000ACondition()
-        self.sdk.ps4000aSetTriggerChannelConditions(self._handle, byref(conditions), n_conditions, info)
-        return conditions.value  # TODO return structure values
-
-    def set_trigger_channel_directions(self, n_directions):
+    def set_trigger_channel_directions(self, directions):
         """
         This function sets the direction of the trigger for the specified channels.
-
-        Populates the :class:`~.picoscope_structs.PS4000ADirection` structure.
         """
-        directions = PS4000ADirection()
-        self.sdk.ps4000aSetTriggerChannelDirections(self._handle, byref(directions), n_directions)
-        return directions.value  # TODO return structure values
-
-    def set_trigger_channel_properties(self, n_channel_properties, aux_output_enable, auto_trigger_milliseconds):
-        """
-        This function is used to enable or disable triggering and set its parameters.
-
-        Populates the :class:`~.picoscope_structs.PS4000ATriggerChannelProperties` structure.
-        """
-        channel_properties = PS4000ATriggerChannelProperties()
-        self.sdk.ps4000aSetTriggerChannelProperties(self._handle, byref(channel_properties), n_channel_properties,
-                                                    aux_output_enable, auto_trigger_milliseconds)
-        return channel_properties.value  # TODO return structure values
+        return self.sdk.ps4000aSetTriggerChannelDirections(self._handle, byref(directions), len(directions))

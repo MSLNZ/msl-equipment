@@ -1,48 +1,71 @@
 """
-A record (a row) from an **Equipment-Register** database and a **Connections** database.
+A record from an **Equipment-Register** database or a **Connections** database.
 """
 import re
 import logging
 import datetime
 
-from msl.equipment.constants import Backend, MSLInterface, MSL_INTERFACE_ALIASES
 from msl.equipment import factory
+from msl.equipment.constants import Backend, MSLInterface, MSL_INTERFACE_ALIASES
 
 logger = logging.getLogger(__name__)
 
 
 class EquipmentRecord(object):
 
-    _alias = ''
-    _asset_number = ''
-    _calibration_period = 0
-    _category = ''
-    _connection = None
-    _date_calibrated = datetime.date(datetime.MINYEAR, 1, 1)
-    _description = ''
-    _location = ''
-    _manufacturer = ''
-    _model = ''
-    _register = ''
-    _section = ''
-    _serial = ''
-
     def __init__(self, **kwargs):
-        """
-        Contains the information about an equipment record (a row) in an 
+        """Contains the information about an equipment record in an 
         **Equipment-Register** database.
         
-        Args:
-            **kwargs: The argument names can be any of the :class:`EquipmentRecord` 
-                attribute names.
+        Parameters
+        ----------
+        **kwargs
+            The argument names can be any of the :class:`EquipmentRecord` attribute names.
 
-        Raises:
-            ValueError: If an argument name is ``calibration_period``, ``connection`` or 
-                ``date_calibrated`` and the value is invalid.
-            
-            AttributeError: If a named argument is not an :class:`EquipmentRecord` 
-                attribute name.
+        Raises
+        ------
+        ValueError
+            If an argument name is `calibration_period`, `connection` or `date_calibrated`
+            and the value is invalid.            
+        AttributeError
+            If a named argument is not an :class:`EquipmentRecord` attribute name.
+        
+        Examples
+        --------
+        Equipment records **should** be defined in a database and instantiated by 
+        calling :obj:`msl.equipment.config.load`; however, you can still
+        manually create an equipment record.
+        
+        >>> from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
+        >>> record = EquipmentRecord(
+        ...              manufacturer='Pico Technology',
+        ...              model='5244B',
+        ...              serial='DY135/055',
+        ...              connection=ConnectionRecord(
+        ...                  backend=Backend.MSL,
+        ...                  address='SDK::PicoScope5000A::ps5000a',
+        ...                  properties={
+        ...                      'resolution': '14bit',  # only used for ps5000a series PicoScope's
+        ...                      'auto_select_power': True,  # for PicoScopes that can be powered by an AC adaptor or by a USB cable
+        ...                  },
+        ...              )
+        ...          )
+        
         """
+        self._alias = ''
+        self._asset_number = ''
+        self._calibration_period = 0
+        self._category = ''
+        self._connection = None
+        self._date_calibrated = datetime.date(datetime.MINYEAR, 1, 1)
+        self._description = ''
+        self._location = ''
+        self._manufacturer = ''
+        self._model = ''
+        self._register = ''
+        self._section = ''
+        self._serial = ''
+
         valid_attribs = EquipmentRecord.attributes()
         for attrib in kwargs:
             if attrib in valid_attribs:
@@ -68,7 +91,7 @@ class EquipmentRecord(object):
 
     @property
     def alias(self):
-        """:py:class:`str`: An alias to use to associate with this equipment."""
+        """:obj:`str`: An alias to use to associate with this equipment."""
         return self._alias
 
     @alias.setter
@@ -77,17 +100,17 @@ class EquipmentRecord(object):
 
     @property
     def asset_number(self):
-        """:py:class:`str`: The IRL/CI asset number of the equipment."""
+        """:obj:`str`: The IRL/CI asset number of the equipment."""
         return self._asset_number
 
     @property
     def calibration_period(self):
-        """:py:class:`int`: The number of years that can pass before the equipment must be recalibrated."""
+        """:obj:`int`: The number of years that can pass before the equipment must be recalibrated."""
         return self._calibration_period
 
     @property
     def category(self):
-        """:py:class:`str`: The category (e.g., Laser, DMM) that the equipment belongs to."""
+        """:obj:`str`: The category (e.g., Laser, DMM) that the equipment belongs to."""
         return self._category
 
     @property
@@ -97,18 +120,20 @@ class EquipmentRecord(object):
 
     @connection.setter
     def connection(self, connection_record):
-        """
-        Set the information necessary to establish a connection to the equipment.
+        """Set the information necessary to establish a connection to the equipment.
         
-        Args:
-            connection_record (:class:`ConnectionRecord`): A connection record.
+        Parameters
+        ----------
+        connection_record : :class:`ConnectionRecord`
+            A connection record.
         
-        Raises:
-            TypeError: If ``connection_record`` is not of type :class:`ConnectionRecord`.
-            
-            ValueError: If any of the ``manufacturer``, ``model``, ``serial`` values in 
-            the ``connection_record`` are set and they do not match those values in this
-            :class:`EquipmentRecord`.
+        Raises
+        ------
+        TypeError
+            If `connection_record` is not of type :class:`ConnectionRecord`.            
+        ValueError
+            If any of the `manufacturer`, `model`, `serial` values in the `connection_record` 
+            are set and they do not match those values in this :class:`EquipmentRecord`.
         """
         if not isinstance(connection_record, ConnectionRecord):
             raise TypeError('The connection record must be a ConnectionRecord object')
@@ -127,71 +152,77 @@ class EquipmentRecord(object):
 
     @property
     def date_calibrated(self):
-        """:py:class:`datetime.date`: The date that the equipment was last calibrated."""
+        """:class:`datetime.date`: The date that the equipment was last calibrated."""
         return self._date_calibrated
 
     @property
     def description(self):
-        """:py:class:`str`: A description of the equipment."""
+        """:obj:`str`: A description of the equipment."""
         return self._description
 
     @property
     def location(self):
-        """:py:class:`str`: The location where the equipment can usually be found."""
+        """:obj:`str`: The location where the equipment can usually be found."""
         return self._location
 
     @property
     def manufacturer(self):
-        """:py:class:`str`: The name of the manufacturer of the equipment."""
+        """:obj:`str`: The name of the manufacturer of the equipment."""
         return self._manufacturer
 
     @property
     def model(self):
-        """:py:class:`str`: The model number of the equipment."""
+        """:obj:`str`: The model number of the equipment."""
         return self._model
 
     @property
     def register(self):
-        """:py:class:`str`: The value assigned, as in MSL Policy and Procedures, for any equipment
+        """:obj:`str`: The value assigned, as in MSL Policy and Procedures, for any equipment
         that requires calibration or maintenance for projects."""
         return self._register
 
     @property
     def section(self):
-        """:py:class:`str`: The MSL section (e.g., P&R) that the equipment belongs to."""
+        """:obj:`str`: The MSL section (e.g., P&R) that the equipment belongs to."""
         return self._section
 
     @property
     def serial(self):
-        """:py:class:`str`: The serial number, or engraved unique ID, of the equipment."""
+        """:obj:`str`: The serial number, or engraved unique ID, of the equipment."""
         return self._serial
 
     @staticmethod
     def attributes():
-        """
-        Returns:
-            :py:class:`list`\[:py:class:`str`\]: A list of all the attribute names for an
-            :class:`EquipmentRecord` object.
+        """:obj:`list` of :obj:`str`: A list of all the attribute names for an 
+        :class:`EquipmentRecord` object.
         """
         return [item for item in dir(EquipmentRecord) if not (item.startswith('_')
                                                               or item == 'attributes'
                                                               or item == 'connect'
                                                               )]
 
-    def connect(self, demo=False):
-        """
-        Establish a connection to this equipment.
+    def connect(self, demo=None):
+        """Establish a connection to this equipment.
 
-        Args:
-            demo (bool): Whether to simulate a connection to the equipment by opening 
-                a connection in demo mode. This allows you run your code if the equipment 
-                is not connected to the computer. 
+        Parameters
+        ----------
+        demo : :obj:`bool` or :obj:`None`
+            Whether to simulate a connection to the equipment by opening
+            a connection in demo mode. This allows you run your code if the 
+            equipment is not physically connected to the computer.
+            
+            If :obj:`None` then the `demo` value is read from an :obj:`os.environ`
+            variable. See :obj:`msl.equipment.config.load` for more details.
 
-        Returns:
-            A :class:`~msl.equipment.connection.Connection` object.
+        Returns
+        -------
+        :class:`~msl.equipment.connection.Connection`
+            A :class:`~msl.equipment.connection.Connection`-type object.
 
-        Raises:
-            ValueError: If any of the attribute values in :data:`connection` are invalid.
+        Raises
+        ------
+        ValueError
+            If any of the attribute values in :data:`connection` are invalid.
         """
         return factory.connect(self, demo)
 
@@ -209,30 +240,51 @@ class EquipmentRecord(object):
 
 class ConnectionRecord(object):
 
-    _address = ''
-    _backend = Backend.UNKNOWN
-    _interface = MSLInterface.NONE
-    _manufacturer = ''
-    _model = ''
-    _properties = {}
-    _serial = ''
-
     def __init__(self, **kwargs):
-        """
-        Contains the information about a connection record (a row) in a **Connections** 
+        """Contains the information about a connection record in a **Connections** 
         database.
 
-        Args:
-            **kwargs: The argument names can be any of the :class:`ConnectionRecord` 
-                attribute names.
+        Parameters
+        ----------
+        **kwargs
+            The argument names can be any of the :class:`ConnectionRecord` attribute names.
         
-        Raises:
-            ValueError: If an argument name is ``backend``, ``interface`` or 
-                ``properties`` and the value is invalid.
-
-            AttributeError: If a named argument is not an :class:`ConnectionRecord` 
-                attribute name.
+        Raises
+        ------
+        ValueError
+            If an argument name is `backend`, `interface` or `properties` and the 
+            value is invalid.
+        AttributeError
+            If a named argument is not an :class:`ConnectionRecord` attribute name.
+        
+        Examples
+        --------
+        Connection records **should** be defined in a database and instantiated by 
+        calling :obj:`msl.equipment.config.load`; however, you can still
+        manually create a connection record.
+        
+        >>> from msl.equipment import ConnectionRecord, Backend
+        >>> record = ConnectionRecord(
+        ...              manufacturer='Pico Technology',
+        ...              model='5244B',
+        ...              serial='DY135/055',
+        ...              backend=Backend.MSL,
+        ...              address='SDK::PicoScope5000A::ps5000a',
+        ...              properties={
+        ...                  'resolution': '14bit',  # only used for ps5000a series PicoScope's
+        ...                  'auto_select_power': True,  # for PicoScopes that can be powered by an AC adaptor or by a USB cable
+        ...              }
+        ...          )
+        
         """
+        self._address = ''
+        self._backend = Backend.UNKNOWN
+        self._interface = MSLInterface.NONE
+        self._manufacturer = ''
+        self._model = ''
+        self._properties = {}
+        self._serial = ''
+
         valid_attribs = ConnectionRecord.attributes()
         for attrib in kwargs:
             if attrib in valid_attribs:
@@ -261,11 +313,10 @@ class ConnectionRecord(object):
 
     @property
     def address(self):
-        """
-        :py:class:`str`: The address to use for the connection (see here_ for examples from PyVISA_).
+        """:obj:`str`: The address to use for the connection (see here_ for examples
+        from National Instruments).
 
-        .. _here: https://pyvisa.readthedocs.io/en/stable/names.html#visa-resource-syntax-and-examples
-        .. _PyVISA: http://pyvisa.readthedocs.io/en/stable/index.html
+        .. _here: http://zone.ni.com/reference/en-XX/help/370131S-01/ni-visa/visaresourcesyntaxandexamples/
         """
         return self._address
 
@@ -276,50 +327,46 @@ class ConnectionRecord(object):
 
     @property
     def interface(self):
-        """
-        :class:`~.constants.MSLInterface`: The interface to use for the communication 
+        """:class:`~.constants.MSLInterface`: The interface to use for the communication 
         system that transfers data between a computer and the equipment
-        (only used if the ``backend`` is :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>`).
+        (only used if the `backend` is :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>`).
         """
         return self._interface
 
     @property
     def manufacturer(self):
-        """:py:class:`str`: The name of the manufacturer of the equipment."""
+        """:obj:`str`: The name of the manufacturer of the equipment."""
         return self._manufacturer
 
     @property
     def model(self):
-        """:py:class:`str`: The model number of the equipment."""
+        """:obj:`str`: The model number of the equipment."""
         return self._model
 
     @property
     def properties(self):
-        """
-        :py:class:`dict`: Additional properties that are required to establish
+        """:obj:`dict`: Additional properties that are required to establish
         a connection to the equipment, e.g., for a Serial connection 
-        {'baud_rate': 11920, 'data_bits': 8}
+        ``{'baud_rate': 11920, 'data_bits': 8}``.
         """
         return self._properties
 
     @property
     def serial(self):
-        """:py:class:`str`: The serial number, or engraved unique ID, of the equipment."""
+        """:obj:`str`: The serial number, or engraved unique ID, of the equipment."""
         return self._serial
 
     @staticmethod
     def attributes():
-        """
-        Returns:
-            :py:class:`list`\[:py:class:`str`\]: A list of all the attribute names for a
-            :class:`ConnectionRecord` object.
+        """:obj:`list` of :obj:`str`: A list of all the attribute names for a
+        :class:`ConnectionRecord` object.
         """
         return [item for item in dir(ConnectionRecord) if not (item.startswith('_')
                                                                or item == 'attributes'
                                                                )]
 
     def _set_msl_interface(self):
-        """Set the ``interface`` based on the ``address``"""
+        """Set the `interface` based on the `address`"""
 
         # determine the MSLInterface
         match = re.match('[+_A-Z]+', self._address.upper())

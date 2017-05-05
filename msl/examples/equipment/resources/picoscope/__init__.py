@@ -2,8 +2,7 @@
 Rather than loading a PicoScope from an Equipment-Register database, manually create an 
 EquipmentRecord for a PicoScope.
 """
-from msl.equipment.constants import Backend
-from msl.equipment import EquipmentRecord, ConnectionRecord
+from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
 
 record = EquipmentRecord(
     manufacturer='Pico Technology',

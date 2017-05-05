@@ -1,15 +1,13 @@
+"""
+A wrapper around the PicoScope ps5000a SDK.
+"""
 import math
 from ctypes import byref
 
 from .picoscope import c_enum
 from .picoscope_api import PicoScopeApi
 from .functions import ps5000aApi_funcptrs
-from .structs import (
-    PS5000ATriggerInfo,
-    PS5000APwqConditions,
-    PS5000ATriggerConditions,
-    PS5000ATriggerChannelProperties,
-)
+from .structs import PS5000ATriggerInfo
 
 
 class PicoScope5000A(PicoScopeApi):
@@ -56,18 +54,22 @@ class PicoScope5000A(PicoScopeApi):
     EXT_MAX_VOLTAGE = 5.0
 
     def __init__(self, record):
-        """
-        A wrapper around the PicoScope ps5000a SDK.
-
-        Args:
-            record (:class:`~msl.equipment.record_types.EquipmentRecord`): An equipment 
-                record (a row) from the :class:`~msl.equipment.database.Database`.
+        """A wrapper around the PicoScope ps5000a SDK.
+        
+        Parameters
+        ----------
+        record : :class:`~msl.equipment.record_types.EquipmentRecord`
+            An equipment record from an **Equipment-Register** 
+            :class:`~msl.equipment.database.Database`.            
         """
         PicoScopeApi.__init__(self, record, ps5000aApi_funcptrs)
 
     def get_device_resolution(self):
         """
-        This function retrieves the resolution the specified device will run in.
+        Returns
+        -------
+        :class:`enum.IntEnum`
+            This function retrieves the resolution the specified device will run in.
         """
         resolution = c_enum()
         self.sdk.ps5000aGetDeviceResolution(self._handle, byref(resolution))
@@ -101,7 +103,7 @@ class PicoScope5000A(PicoScopeApi):
         """
         trigger_info = PS5000ATriggerInfo()
         self.sdk.ps5000aGetTriggerInfoBulk(self._handle, byref(trigger_info), from_segment_index, to_segment_index)
-        return trigger_info.value  # TODO return structure values
+        return trigger_info
 
     def set_device_resolution(self, resolution):
         """
@@ -112,51 +114,5 @@ class PicoScope5000A(PicoScopeApi):
         :meth:`set_channel` is not called, :meth:`run_block` and :meth:`run_streaming`
         may fail.
         """
-        r = self.convert_to_enum(resolution, self.enDeviceResolution, 'RES_')
+        r = self.convert_to_enum(resolution, self.enDeviceResolution, prefix='RES_', to_upper=True)
         return self.sdk.ps5000aSetDeviceResolution(self._handle, r)
-
-    def set_pulse_width_qualifier(self, n_conditions, direction, lower, upper, pulse_width_type):
-        """
-        This function sets up pulse-width qualification, which can be used on its own for pulse
-        width triggering or combined with window triggering to produce more complex
-        triggers. The pulse-width qualifier is set by defining one or more structures that are
-        then ORed together. Each structure is itself the AND of the states of one or more of
-        the inputs. This AND-OR logic allows you to create any possible Boolean function of
-        the scope's inputs.
-
-        Populates the :class:`~.picoscope_structs.PS5000APwqConditions` structure.
-        """
-        conditions = PS5000APwqConditions()
-        self.sdk.ps5000aSetPulseWidthQualifier(self._handle, byref(conditions), n_conditions, direction, lower,
-                                               upper, pulse_width_type)
-        return conditions.value  # TODO return structure values
-
-    def set_trigger_channel_conditions(self, n_conditions):
-        """
-        This function sets up trigger conditions on the scope's inputs. The trigger is defined by
-        one or more :class:`~.picoscope_structs.PS5000ATriggerConditions` structures that are then 
-        ORed together. Each structure is itself the AND of the states of one or more of the inputs.
-        This AND-OR logic allows you to create any possible Boolean function of the scope's
-        inputs.
-        
-        If complex triggering is not required, use :meth:`set_simple_trigger`.
-        """
-        conditions = PS5000ATriggerConditions()
-        self.sdk.ps5000aSetTriggerChannelConditions(self._handle, byref(conditions), n_conditions)
-        return conditions.value  # TODO return structure values
-
-    def set_trigger_channel_properties(self, channel_properties, timeout=0.1, aux_output_enable=0):
-        """
-        This function is used to enable or disable triggering and set its parameters.
-
-        Populates the :class:`~.picoscope_structs.PS5000ATriggerChannelProperties` structure.
-        
-        Args:
-            aux_output_enable (int): Only used by ps5000.        
-        """
-        auto_trigger_ms = round(max(0, timeout * 1e3))
-        #channel_properties = PS5000ATriggerChannelProperties()
-        self.sdk.ps5000aSetTriggerChannelProperties(self._handle, byref(channel_properties), 1,
-                                                    aux_output_enable, auto_trigger_ms)
-
-        #return channel_properties  # TODO return structure values

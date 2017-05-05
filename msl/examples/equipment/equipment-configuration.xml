@@ -7,24 +7,25 @@
     <equipment alias="mono" manufacturer="Bentham"/>
     <equipment alias="sensor" manufacturer="Rohde &amp; Schwarz" model="NRP-Z51"/>
     <equipment alias="adaptor" manufacturer="Agilent" serial="A00018"/>
+    <equipment alias="filter_flipper" manufacturer="Thorlabs" model="MFF101/M" serial="37871232"/>
 
     <!-- The database that contains the information required to connect to the equipment -->
     <equipment_connections>
-        <path>example-equipment-connections-database.xlsx</path>
+        <path>equipment-connections-database.xlsx</path>
         <sheet>Connections</sheet>
     </equipment_connections>
 
     <!-- The equipment-register database(s) -->
     <equipment_registers>
         <register section="P&amp;R" date_format="%d.%m.%y">
-            <path>example-equipment-register.txt</path>
+            <path>equipment-register.txt</path>
         </register>
         <register section="RF">
-            <path>example-equipment-connections-database.xlsx</path>
+            <path>equipment-connections-database.xlsx</path>
             <sheet>Equipment</sheet>
         </register>
         <register section="Length" date_format="%Y-%m-%d">
-            <path>example-equipment-register.csv</path>
+            <path>equipment-register.csv</path>
         </register>
     </equipment_registers>
 

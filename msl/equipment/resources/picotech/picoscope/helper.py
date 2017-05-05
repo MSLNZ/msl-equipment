@@ -3,29 +3,24 @@ The functions in this module are only helper functions that were initially used
 for wrapping the PicoScope SDK in Python. There are no user-facing functions 
 here, only those used by a developer.
 
-These functions are used to: 
+These functions are used to
 
-Print the following to stdout 
-- the #define constants
-- the function signatures for the PicoScope subclasses
-- functions with similar function signatures
+Print the following to stdout
+ 
+    * the #define constants
+    * the function signatures for the PicoScope subclasses
+    * functions with similar function signatures
 
-Create the following files:
-- picoscope_enums.py
-- picoscope_structs.py
-- picoscope_callbacks.py
-- picoscope_function_pointers.py
+Create the following files
+    
+    * picoscope_enums.py
+    * picoscope_structs.py
+    * picoscope_callbacks.py
+    * picoscope_function_pointers.py
+    
 """
 import os
 import re
-
-CTYPES_MAP = {
-    'void':        'c_void_p',
-    'float':       'c_float',
-    'double':      'c_double',
-    'PICO_INFO':   'PICO_INFO',
-    'PICO_STATUS': 'PICO_STATUS',
-}
 
 
 def parse_pico_scope_api_header(path):
@@ -372,6 +367,7 @@ def ctypes_map(dtype, hkey):
     from msl.equipment.resources.picotech.picoscope.enums import ENUM_DATA_TYPE_NAMES
     from msl.equipment.resources.picotech.picoscope.structs import STRUCT_DATA_TYPE_ALIASES
     from msl.equipment.resources.picotech.picoscope.callbacks import CALLBACK_NAMES
+    from msl.equipment.resources.utils import CTYPES_MAP
 
     if not dtype:
         return ''
@@ -379,7 +375,7 @@ def ctypes_map(dtype, hkey):
     assert '**' not in dtype  # we have not dealt with a Pointer to Pointer
 
     is_pointer = '*' in dtype
-    if is_pointer:
+    if is_pointer and dtype != 'void*':
         dtype = dtype[:-1]
 
     c_type = None
@@ -401,8 +397,7 @@ def ctypes_map(dtype, hkey):
             if test in STRUCT_DATA_TYPE_ALIASES:
                 c_type = '{}'.format(STRUCT_DATA_TYPE_ALIASES[test].__name__)
 
-    if c_type is None:
-        raise ValueError('Unhandled C argument data type "{}"'.format(dtype))
+    assert c_type is not None, 'Unhandled C argument data type "{}"'.format(dtype)
 
     if is_pointer:
         return 'POINTER({})'.format(c_type)
@@ -485,9 +480,7 @@ def create_picoscope_functions_file(header_dict):
 
 
 def print_class_def_signatures(header_dict):
-    def convert(name):
-        s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-        return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+    from msl.equipment.resources.utils import camelcase_to_underscore as convert
 
     for hkey in header_dict:
         print(hkey)
@@ -566,7 +559,7 @@ if __name__ == '__main__':
     for name in filenames:
         header_dict[name] = parse_pico_scope_api_header(os.path.join(root, name + '.h'))
 
-    if 0:  # print header_dict
+    if 1:  # print header_dict
         for hkey in header_dict:
             print(hkey)
             for key in header_dict[hkey]:

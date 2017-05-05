@@ -1,13 +1,9 @@
 """
-Exceptions and error codes.
+Exceptions and error codes defined in the Pico Technology SDK v10.6.10.24
 """
 from ctypes import c_uint32
 
 from .enums import PS2000Error
-
-
-class PicoScopeError(Exception):
-    pass
 
 PICO_MAC_ADDRESS                                 = 0x0000000B
 

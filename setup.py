@@ -16,7 +16,7 @@ def read(filename):
 def fetch_init(key):
     # open the __init__.py file to determine the value instead of importing the package to get the value
     init_text = read('msl/equipment/__init__.py')
-    return re.compile(r'{}\s+=\s+(.*)'.format(key)).search(init_text).group(1)[1:-1]
+    return re.compile(r'{}\s*=\s*(.*)'.format(key)).search(init_text).group(1)[1:-1]
 
 
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
@@ -24,6 +24,7 @@ pytest_runner = ['pytest-runner'] if testing else []
 
 needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
 sphinx = ['sphinx', 'sphinx_rtd_theme'] if needs_sphinx else []
+
 
 setup(
     name='msl-equipment',
@@ -53,7 +54,8 @@ setup(
     ],
     setup_requires=sphinx + pytest_runner,
     tests_require=['pytest-cov', 'pytest'],
-    install_requires=read('requirements.txt').split('\n'),
+    install_requires=read('requirements.txt').splitlines(),
+    dependency_links=['https://github.com/MSLNZ/msl-loadlib/archive/master.zip'],
     cmdclass={
         'docs': docs_commands.BuildDocs,
         'apidocs': docs_commands.ApiDocs,

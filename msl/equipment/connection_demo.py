@@ -1,123 +1,191 @@
 """
 Simulate a connection to the equipment.
 """
-import random
+import os
+import re
 import logging
 import inspect
+import random
+import importlib
 
 from msl.equipment.connection import Connection
 
-logger = logging.getLogger(__name__)
+_backtick_regex = re.compile(r'`(.+)`')
 
 
 class ConnectionDemo(Connection):
 
-    def __init__(self, record):
-        """
-        :class:`Logs <demo_logger>` that a connection has been established.
+    def __init__(self, record, cls):
+        """Simulate a connection to the equipment.
+        
+        Establishing a connection in demo mode is useful when developing a 
+        program and the equipment is not physically connected to the computer.
 
-        Do not instantiate this class directly. Use :func:`msl.equipment.factory.connect`
-        or :meth:`record.connect() <msl.equipment.record_types.EquipmentRecord.connect>`
-        to connect to the equipment.
+        A custom `logging level`_ is used for logging messages with a connection 
+        in demo mode. The ``logging.DEMO`` `logging level`_ is set to be between 
+        ``logging.INFO`` and ``logging.WARNING``.
+        
+        The returned data type is determined from the docstring of the called function.
+        For example, if ``:rtype: int`` then an integer value is returned or if
+        ``:rtype: int, float`` then an integer and a float value is returned. Although
+        the expected data type is returned the value(s) of the returned object is randomly
+        generated. The docstring must be in either the reStructuredText_ or NumPy_ format.
+        
+        Do not instantiate this class directly. Use the factory method, 
+        :obj:`msl.equipment.factory.connect`, or the `record` object itself, 
+        :obj:`record.connect() <.record_types.EquipmentRecord.connect>`,
+        to connect to the equipment in demo mode.
 
-        Args:
-            record (:class:`~.record_types.EquipmentRecord`): An equipment 
-                record (a row) from the :class:`~.database.Database`.
+        .. _logging level: 
+            https://docs.python.org/3/library/logging.html#logging-levels
+        .. _reStructuredText: 
+            https://www.python.org/dev/peps/pep-0287/
+        .. _Numpy: 
+            https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt
+
+        Parameters
+        ----------
+        record : :class:`~.record_types.EquipmentRecord`
+            An equipment record from an **Equipment-Register** 
+            :class:`~.database.Database`.
+
+        cls : :class:`.Connection`
+            A Connection class (that has **NOT** been instantiated).            
         """
         Connection.__init__(self, record)
+        self._connection_class = cls
         logger.demo('Connected to {} in DEMO mode'.format(record.connection))
-        self._message = None
 
     def disconnect(self):
-        """
-        :class:`Logs <demo_logger>` a disconnection from the equipment.
-        """
+        """Log a disconnection from the equipment."""
         logger.demo('Disconnected from {} in DEMO mode'.format(self.equipment_record.connection))
 
-    def write(self, message):
-        """
-        :class:`Logs <demo_logger>` the write message.
-
-        Args:
-            message (str): The demo message.
-
-        Returns:
-            :py:class:`int`: To indicate that no bytes were actually written to
-            the equipment a value of -1 is returned.
-        """
-        if len(message.strip()) == 0:
-            raise RuntimeError('Cannot write an empty message')
-
-        logger.demo("{}.write('{}')".format(self.equipment_record.connection, message))
-        self._message = message
-        return -1
-
-    def read(self):
-        """
-        :class:`Logs <demo_logger>` the simulated response.
-
-        Returns:
-            :py:class:`str`: The string ``demo:`` + the simulated response.
-        """
-        if self._message is None:
-            raise RuntimeError('Cannot call read() without first calling write(message)')
-
-        # TODO add elif statements to return a more appropriate response base on the write message
-        if self._message in ('*IDN?', 'V'):
-            value = '{}, {}, {}'.format(self.equipment_record.manufacturer,
-                                        self.equipment_record.model,
-                                        self.equipment_record.serial)
-        else:
-            value = random.random()
-
-        self._message = None
-        logger.demo('{}.read() -> {}'.format(self.equipment_record.connection, value))
-        return 'demo:{}'.format(value)
-
-    def query(self, message):
-        """
-        Convenience method for :class:`logging <demo_logger>` the :meth:`.write` message and
-        then :class:`logging <demo_logger>` the :meth:`.read` response.
-
-        Args:
-            message (str): The demo message.
-
-        Returns:
-            :py:class:`str`: The string ``demo:`` + the simulated response.
-        """
-        self.write(message)
-        return self.read()
-
-    ask = query
-
     def __getattr__(self, name):
-        """Used for simulating SDK method calls"""
+        """Used for simulating method calls"""
         caller_line = inspect.getouterframes(inspect.currentframe())[1][4][0]
+        args = caller_line.split(name)[1].split(')')[0]
+        logger.demo('{}.{}{})'.format(self._connection_class.__name__, name, args))
 
-        logger.demo('{}.{}{}'.format(self.equipment_record.connection,
-                                     name,
-                                     caller_line.split(name)[1].replace('))', ')')))
+        self._docstring = getattr(self._connection_class, name).__doc__
+        if self._docstring is None:
+            self._docstring = ''
 
         def generic_method(*args, **kwargs):
-            return 'demo:0'  # TODO decide what to return (most of the time a DLL function returns an integer)
+            return self._return_types()
         return generic_method
 
+    def _return_types(self):
+        """Parses a docstring to determine the return types."""
+        int_range = (0, 10)
+        list_size = 10
+        types = self._find_return_types()
+
+        out = []
+        for t in types:
+            m = re.findall(_backtick_regex, t)
+            if m:
+                t = ' of '.join(m)
+            if t == 'bool':
+                out.append(random.random() > 0.5)
+            elif t == 'str':
+                out.append('demo:{}'.format(self.equipment_record))
+            elif t == 'int':
+                out.append(random.randint(*int_range))
+            elif t == 'float':
+                out.append(random.random())
+            elif t == 'list of bool':
+                out.append([random.random() > 0.5 for _ in range(list_size)])
+            elif t == 'list of str':
+                out.append([c for c in str(self.equipment_record)])
+            elif t == 'list of int':
+                out.append([random.randint(*int_range) for _ in range(list_size)])
+            elif t == 'list of float':
+                out.append([random.random() for _ in range(list_size)])
+            elif t.startswith('list of .'):
+                obj = self._get_object(t[8:])
+                if obj is not None:
+                    out.append([obj])
+            elif 'list' in t:
+                out.append([])
+            elif t == 'dict of bool':
+                out.append({'demo': random.random() > 0.5})
+            elif t == 'dict of str':
+                out.append({'demo': str(self.equipment_record)})
+            elif t == 'dict of int':
+                out.append({'demo': random.randint(*int_range)})
+            elif t == 'dict of float':
+                out.append({'demo': random.random()})
+            elif t.startswith('dict of .'):
+                obj = self._get_object(t[8:])
+                if obj is not None:
+                    out.append({'demo':obj})
+            elif 'dict' in t:
+                out.append({})
+            elif t.startswith('.'):  # then it is an object
+                obj = self._get_object(t)
+                if obj is not None:
+                    out.append(obj)
+
+        if len(out) == 0:
+            return None
+        elif len(out) == 1:
+            return out[0]
+        else:
+            return tuple(out)
+
+    def _find_return_types(self):
+        """Returns a list of strings of return types"""
+        types = []
+        lines = [line.rstrip() for line in self._docstring.splitlines() if line.strip()]
+        i, n = 0, len(lines)
+        while i < n:
+            if ':rtype:' in lines[i]:
+                types.append(lines[i].split(':rtype:')[1].strip())
+                break
+            if lines[i].endswith('Return') or lines[i].endswith('Returns'):
+                i += 1
+                if lines[i].endswith('-' * len('Return')):
+                    indent = len(lines[i]) - len(lines[i].lstrip())
+                    i += 1
+                    while i < n:
+                        if lines[i][indent].isspace():
+                            pass  # then this line is part of a description
+                        elif lines[i][indent] == '-':
+                            break  # then entered a new docstring section
+                        elif ' : ' in lines[i]:
+                            # then there is a variable name defined before the data type
+                            types.append(lines[i].split(' : ')[1])
+                        elif not lines[i][indent].isupper():
+                            types.append(lines[i].strip())
+                        i += 1
+            i += 1
+        if len(types) == 0 and len(lines) > 0:
+            # then maybe the first part of the first line contains the return type
+            if ': ' in lines[0]:
+                types.append(lines[0].split(': ')[0])
+        return types
+
+    def _get_object(self, _type):
+        package = os.path.splitext(self._connection_class.__module__)[0]
+        name, cls = os.path.splitext(_type)
+        try:
+            mod = importlib.import_module(name, package)
+        except ImportError:
+            return None
+        _object = getattr(mod, cls[1:])
+        try:
+            return _object()  # try to initialize it
+        except TypeError:
+            return _object
+
+
+def _demo_logger(self, msg, *args, **kwargs):
+    """A custom logger for :class:`ConnectionDemo` objects."""
+    if self.isEnabledFor(logging.DEMO):
+        self._log(logging.DEMO, msg, args, **kwargs)
 
 # create a demo logger level between INFO and WARNING
+logger = logging.getLogger(__name__)
 logging.DEMO = logging.INFO + 5
 logging.addLevelName(logging.DEMO, 'DEMO')
-
-
-def demo_logger(self, message, *args, **kws):
-    """
-    A custom logger for :class:`.ConnectionDemo` objects. The logging
-    level is set to be between the :py:data:`logging.INFO` and :py:data:`logging.WARNING`
-    `logging levels <log_level_>`_ and you can set the `log level <log_level_>`_ to be 
-    a :py:data:`logging.DEMO` value.
-    
-    .. _log_level: https://docs.python.org/3/library/logging.html#logging-levels
-    """
-    if self.isEnabledFor(logging.DEMO):
-        self._log(logging.DEMO, message, args, **kws)
-
-logging.Logger.demo = demo_logger
+logging.Logger.demo = _demo_logger

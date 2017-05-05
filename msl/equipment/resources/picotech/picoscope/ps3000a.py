@@ -1,16 +1,11 @@
+"""
+A wrapper around the PicoScope ps3000a SDK.
+"""
 from ctypes import c_int16, byref
 
 from .picoscope_api import PicoScopeApi
 from .functions import ps3000aApi_funcptrs
-from .structs import (
-    PS3000ATriggerInfo,
-    PS3000ADigitalChannelDirections,
-    PS3000APwqConditions,
-    PS3000APwqConditionsV2,
-    PS3000ATriggerConditions,
-    PS3000ATriggerConditionsV2,
-    PS3000ATriggerChannelProperties
-)
+from .structs import PS3000ATriggerInfo
 
 
 class PicoScope3000A(PicoScopeApi):
@@ -60,12 +55,13 @@ class PicoScope3000A(PicoScopeApi):
     # EXT_MAX_VOLTAGE = ?
 
     def __init__(self, record):
-        """
-        A wrapper around the PicoScope ps3000a SDK.
+        """A wrapper around the PicoScope ps3000a SDK.
 
-        Args:
-            record (:class:`~msl.equipment.record_types.EquipmentRecord`): An equipment 
-                record (a row) from the :class:`~msl.equipment.database.Database`.
+        Parameters
+        ----------
+        record : :class:`~msl.equipment.record_types.EquipmentRecord`
+            An equipment record from an **Equipment-Register** 
+            :class:`~msl.equipment.database.Database`.            
         """
         PicoScopeApi.__init__(self, record, ps3000aApi_funcptrs)
 
@@ -89,9 +85,9 @@ class PicoScope3000A(PicoScopeApi):
         """
         trigger_info = PS3000ATriggerInfo()
         self.sdk.ps3000aGetTriggerInfoBulk(self._handle, byref(trigger_info), from_segment_index, to_segment_index)
-        return trigger_info.value  # TODO return structure values
+        return trigger_info
 
-    def set_pulse_width_digital_port_properties(self, n_directions):
+    def set_pulse_width_digital_port_properties(self, directions):
         """
         This function will set the individual digital channels' pulse-width trigger directions.
         Each trigger direction consists of a channel name and a direction. If the channel is not
@@ -99,27 +95,9 @@ class PicoScope3000A(PicoScopeApi):
         the driver assumes the digital channel's pulse-width trigger direction is
         ``PS3000A_DIGITAL_DONT_CARE``.
         """
-        directions = PS3000ADigitalChannelDirections()
-        self.sdk.ps3000aSetPulseWidthDigitalPortProperties(self._handle, byref(directions), n_directions)
-        return directions.value  # TODO return structure values
+        return self.sdk.ps3000aSetPulseWidthDigitalPortProperties(self._handle, byref(directions), len(directions))
 
-    def set_pulse_width_qualifier(self, n_conditions, direction, lower, upper, pulse_width_type):
-        """
-        This function sets up pulse-width qualification, which can be used on its own for pulsewidth
-        triggering or combined with level triggering or window triggering to produce
-        more complex triggers. The pulse-width qualifier is set by defining one or more
-        structures that are then ORed together. Each structure is itself the AND of the states of
-        one or more of the inputs. This AND-OR logic allows you to create any possible
-        Boolean function of the scope's inputs.
-
-        Populates the :class:`~.picoscope_structs.PS3000APwqConditions` structure.
-        """
-        conditions = PS3000APwqConditions()
-        self.sdk.ps3000aSetPulseWidthQualifier(self._handle, byref(conditions), n_conditions, direction, lower,
-                                               upper, pulse_width_type)
-        return conditions.value  # TODO return structure values
-
-    def set_pulse_width_qualifier_v2(self, n_conditions, direction, lower, upper, pulse_width_type):
+    def set_pulse_width_qualifier_v2(self, conditions, direction, lower, upper, pulse_width_type):
         """
         This function sets up pulse-width qualification, which can be used on its own for pulse
         width triggering or combined with level triggering or window triggering to produce
@@ -127,27 +105,11 @@ class PicoScope3000A(PicoScopeApi):
         structures that are then ORed together. Each structure is itself the AND of the states of
         one or more of the inputs. This AND-OR logic allows you to create any possible
         Boolean function of the scope's inputs.
-        
-        Populates the :class:`~.picoscope_structs.PS3000APwqConditionsV2` structure.
         """
-        conditions = PS3000APwqConditionsV2()
-        self.sdk.ps3000aSetPulseWidthQualifierV2(self._handle, byref(conditions), n_conditions, direction, lower,
-                                                 upper, pulse_width_type)
-        return conditions.value  # TODO return structure values
+        return self.sdk.ps3000aSetPulseWidthQualifierV2(self._handle, byref(conditions), len(conditions),
+                                                        direction, lower, upper, pulse_width_type)
 
-    def set_trigger_channel_conditions(self, n_conditions):
-        """
-        This function sets up trigger conditions on the scope's inputs. The trigger is defined by
-        one or more :class:`~.picoscope_structs.PS3000ATriggerConditions` structures that are then 
-        ORed together. Each structure is itself the AND of the states of one or more of the inputs. 
-        This ANDOR logic allows you to create any possible Boolean function of the scope's inputs.
-        If complex triggering is not required, use :meth:`set_simple_trigger`.
-        """
-        conditions = PS3000ATriggerConditions()
-        self.sdk.ps3000aSetTriggerChannelConditions(self._handle, byref(conditions), n_conditions)
-        return conditions.value  # TODO return structure values
-
-    def set_trigger_channel_conditions_v2(self, n_conditions):
+    def set_trigger_channel_conditions_v2(self, conditions):
         """
         This function sets up trigger conditions on the scope's inputs. The trigger is defined by
         one or more :class:`~.picoscope_structs.PS3000ATriggerConditionsV2` structures that are then 
@@ -157,28 +119,13 @@ class PicoScope3000A(PicoScopeApi):
 
         If complex triggering is not required, use :meth:`set_simple_trigger`.
         """
-        conditions = PS3000ATriggerConditionsV2()
-        self.sdk.ps3000aSetTriggerChannelConditionsV2(self._handle, byref(conditions), n_conditions)
-        return conditions.value  # TODO return structure values
+        return self.sdk.ps3000aSetTriggerChannelConditionsV2(self._handle, byref(conditions), len(conditions))
 
-    def set_trigger_channel_properties(self, n_channel_properties, aux_output_enable, auto_trigger_milliseconds):
-        """
-        This function is used to enable or disable triggering and set its parameters.
-        
-        Populates the :class:`~.picoscope_structs.PS3000ATriggerChannelProperties` structure.
-        """
-        channel_properties = PS3000ATriggerChannelProperties()
-        self.sdk.ps3000aSetTriggerChannelProperties(self._handle, byref(channel_properties), n_channel_properties,
-                                                    aux_output_enable, auto_trigger_milliseconds)
-        return channel_properties.value  # TODO return structure values
-
-    def set_trigger_digital_port_properties(self, n_directions):
+    def set_trigger_digital_port_properties(self, directions):
         """
         This function will set the individual digital channels' trigger directions. Each trigger
         direction consists of a channel name and a direction. If the channel is not included in
         the array of :class:`~.picoscope_structs.PS3000ADigitalChannelDirections` the driver 
         assumes the digital channel's trigger direction is PS3000A_DIGITAL_DONT_CARE.
         """
-        directions = PS3000ADigitalChannelDirections()
-        self.sdk.ps3000aSetTriggerDigitalPortProperties(self._handle, byref(directions), n_directions)
-        return directions.value  # TODO return structure values
+        return self.sdk.ps3000aSetTriggerDigitalPortProperties(self._handle, byref(directions), len(directions))

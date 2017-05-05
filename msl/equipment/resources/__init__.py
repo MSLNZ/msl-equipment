@@ -1,33 +1,41 @@
+"""
+MSL resources for connecting to equipment.
+"""
 import os
 import sys
 import fnmatch
 import importlib
 
 
-def find_sdk_pyclass(record):
-    """
-    Find the Python class that is a wrapper around the SDK.
+def find_sdk_class(address):
+    """Find the Python class that is a wrapper around the SDK.
 
-    Do not call directly. The :func:`connection factory <msl.equipment.factory.connect>`
+    Do not call directly. The connection :func:`factory <msl.equipment.factory.connect>`
     calls this function.
 
-    Args:
-        record (:class:`.EquipmentRecord`): An equipment record (a row) from an
-            Equipment-Register database.
+    Parameters
+    ----------
+    address : :obj:`str`
+        A :data:`.msl.equipment.record_types.ConnectionRecord.address` value.
 
-    Returns:
-        The Python wrapper class.
+    Returns
+    -------
+    :class:`~msl.equipment.connection_msl.ConnectionSDK`
+        The Python wrapper class around the manufacturer's SDK.
 
-    Raises:
-        IOError: If the Python wrapper class cannot be found or if the shared library cannot be found.   
+    Raises
+    ------
+    IOError
+        If the Python wrapper class cannot be found or if the shared library 
+        cannot be found.   
     """
-    address_split = record.connection.address.split('::')
+    address_split = address.split('::')
     if len(address_split) != 3:
-        msg = 'The address received is {}\nFor an SDK interface, the address must be of ' \
-              'the form SDK::PythonClassName::PathToLibrary'.format(record.connection.address)
+        msg = 'The address received is {}\nFor an SDK interface, the address must ' \
+              'be of the form SDK::PythonClassName::PathToLibrary'.format(address)
         raise IOError(msg)
 
-    pyclass = address_split[1]
+    cls = address_split[1]
 
     for root, dirs, files in os.walk(os.path.abspath(os.path.dirname(__file__))):
         root_pkg = __name__ + root.replace(os.path.sep, '.').split(__name__)[1]
@@ -41,7 +49,7 @@ def find_sdk_pyclass(record):
             else:
                 mod = importlib.import_module(module_name)
 
-            if pyclass in dir(mod):
-                return getattr(mod, pyclass)(record)
+            if cls in dir(mod):
+                return getattr(mod, cls)
 
-    raise IOError('Cannot find the {} class'.format(pyclass))
+    raise IOError('Cannot find the {} class'.format(cls))

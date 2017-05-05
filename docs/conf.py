@@ -6,6 +6,7 @@ import sys
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 
+
 from msl import equipment
 
 # -- General configuration ------------------------------------------------
@@ -39,10 +40,17 @@ autosummary_generate = True
 # include both class docstring and __init__
 autoclass_content = "both"
 
-# Force consistency, leave only Google Style
-napoleon_numpy_docstring = False
-
-# More legible
+# Napoleon settings
+napoleon_google_docstring = False
+napoleon_numpy_docstring = True
+napoleon_include_init_with_doc = False
+napoleon_include_private_with_doc = False
+napoleon_include_special_with_doc = False
+napoleon_use_admonition_for_examples = False
+napoleon_use_admonition_for_notes = False
+napoleon_use_admonition_for_references = False
+napoleon_use_ivar = False
+napoleon_use_param = True
 napoleon_use_rtype = False
 
 # Add any paths that contain templates here, relative to this directory.
@@ -167,7 +175,6 @@ texinfo_documents = [
 ]
 
 
-
 # -- Options for Epub output ----------------------------------------------
 
 # Bibliographic Dublin Core info.
@@ -189,8 +196,8 @@ epub_copyright = copyright
 epub_exclude_files = ['search.html']
 
 
-
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/{}'.format(sys.version_info[0]), None),
+    'numpy': ('https://docs.scipy.org/doc/numpy/', None),
 }

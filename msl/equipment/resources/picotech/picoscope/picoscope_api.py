@@ -1,39 +1,43 @@
 """
-This :class:`~.picoscope.PicoScope` subclass implements the common functions 
-for the PicoScopes that have a header file which ends with *Api.h, namely,
-ps2000aApi, ps3000aApi, ps4000Api, ps4000aApi, ps5000Api, ps5000aApi and ps6000Api
+Base class for the PicoScopes that have a header file which ends with \*Api.h.
+
+Namely, ps2000aApi, ps3000aApi, ps4000Api, ps4000aApi, ps5000Api, ps5000aApi and ps6000Api.
 """
 import numpy as np
 from ctypes import (c_int8, c_int16, c_uint16, c_int32, c_uint32, c_int64,
                     c_float, c_void_p, byref, cast, POINTER)
 
-from . import errors
 from .picoscope import PicoScope, c_enum
 from .enums import PicoScopeInfoApi
+from .errors import (PICO_OK, PICO_BUSY, PICO_POWER_SUPPLY_CONNECTED,
+                     PICO_POWER_SUPPLY_NOT_CONNECTED, ERROR_CODES_API)
 
 
 class PicoScopeApi(PicoScope):
 
-    def __init__(self, record, funcptrs):
-        """
+    def __init__(self, record, func_ptrs):
+        """Base class for the PicoScopes that have a header file which ends with \*Api.h.
+        
         Use the PicoScope SDK to communicate with the ps2000a, ps3000a, ps4000, ps4000a, 
         ps5000, ps5000a and ps6000 oscilloscopes.
 
-        Do not instantiate this class directly. Use :func:`msl.equipment.factory.connect`
-        or :meth:`record.connect() <msl.equipment.record_types.EquipmentRecord.connect>`
+        Do not instantiate this class directly. Use the factory method, 
+        :obj:`msl.equipment.factory.connect`, or the `record` object itself, 
+        :obj:`record.connect() <msl.equipment.record_types.EquipmentRecord.connect>`,
         to connect to the equipment.
 
-        The SDK version that was initially used to create this base class and the PicoScope
-        subclasses was *Pico Technology SDK 64-bit v10.6.10.24*
-
-        Args:
-            record (:class:`~msl.equipment.record_types.EquipmentRecord`): An equipment 
-                record (a row) from the :class:`~msl.equipment.database.Database`.
-
-            funcptrs: The appropriate function-pointer list from :mod:`.picoscope_functions`
+        Parameters
+        ----------
+        record : :class:`~msl.equipment.record_types.EquipmentRecord`
+            An equipment record from an **Equipment-Register** 
+            :class:`~msl.equipment.database.Database`.            
+        func_ptrs : :mod:`.functions`
+            The appropriate function-pointer list for the SDK. 
         """
-        PicoScope.__init__(self, record, funcptrs)
+        PicoScope.__init__(self, record, func_ptrs)
         self.enPicoScopeInfo = PicoScopeInfoApi
+
+        self._buffer_size = None
 
         # check the equipment_record.connection.properties dictionary to see how to initialize the PicoScope
         properties = self.equipment_record.connection.properties
@@ -49,28 +53,29 @@ class PicoScopeApi(PicoScope):
             self.open_unit_async(self._auto_select_power, resolution)
 
     def errcheck_api(self, result, func, args):
-        """The SDK functions return PICO_OK if the function call was successful."""
-        self.log.debug('{}.{}{}'.format(self.__class__.__name__, func.__name__, args))
-        if result == errors.PICO_BUSY:
-            self.log.info('{} is busy...'.format(self._base_msg[:-1]))
+        """The SDK function returns PICO_OK if the function call was successful."""
+        self.log_errcheck(result, func, args)
+        if result == PICO_BUSY:
+            self.log_info(self._base_msg + ' is busy...')
             return result
-        if result != errors.PICO_OK:
+        if result != PICO_OK:
             conn = self.equipment_record.connection
-            error_name, msg = errors.ERROR_CODES_API[result]
+            error_name, msg = ERROR_CODES_API[result]
             error_msg = msg.format(
                 model=conn.model,
                 serial=conn.serial,
                 sdk_filename=self.SDK_FILENAME,
                 sdk_filename_upper=self.SDK_FILENAME.upper()
             )
-            error_message = '{}: {}'.format(error_name, error_msg)
-            raise errors.PicoScopeError(self._base_msg + error_message)
+            self.raise_exception('{}: {}'.format(error_name, error_msg))
         return result
 
     def change_power_source(self, power_state):
-        """
+        """Change the power source.
+        
         This function selects the power supply mode. You must call this function if any of the
         following conditions arises:
+        
             * USB power is required
             * the AC power adapter is connected or disconnected during use
             * a USB 3.0 scope is plugged into a USB 2.0 port (indicated if any function returns
@@ -87,9 +92,9 @@ class PicoScopeApi(PicoScope):
         This function is only valid for ps3000a, ps4000a and ps5000a. 
         """
         ret = self.CurrentPowerSource(self._handle)
-        if ret == errors.PICO_POWER_SUPPLY_CONNECTED:
+        if ret == PICO_POWER_SUPPLY_CONNECTED:
             return 'AC adaptor'
-        elif ret == errors.PICO_POWER_SUPPLY_NOT_CONNECTED:
+        elif ret == PICO_POWER_SUPPLY_NOT_CONNECTED:
             return 'USB cable'
         else:
             self.errcheck_api(ret, self.current_power_source, ())
@@ -103,57 +108,65 @@ class PicoScopeApi(PicoScope):
         """
         return self.FlashLed(self._handle, action)
 
-    def get_analogue_offset(self, vrange, coupling):
+    def get_analogue_offset(self, voltage_range, coupling):
         """
         This function is used to get the maximum and minimum allowable analog offset for a
         specific voltage range.
         
         This function is invalid for ps4000 and ps5000.
         """
-        coupling_ = self.convert_to_enum(coupling, self.enCoupling)
-        voltage_range = self.convert_to_enum(vrange, self.enRange, 'R_')
+        coupling_ = self.convert_to_enum(coupling, self.enCoupling, to_upper=True)
+        v_range = self.convert_to_enum(voltage_range, self.enRange, prefix='R_', to_upper=True)
         maximum_voltage = c_float()
         minimum_voltage = c_float()
-        self.GetAnalogueOffset(self._handle, voltage_range, coupling_, byref(maximum_voltage), byref(minimum_voltage))
+        self.GetAnalogueOffset(self._handle, v_range, coupling_, byref(maximum_voltage), byref(minimum_voltage))
         return maximum_voltage.value, minimum_voltage.value
 
-    def get_channel_information(self, channel, info='ranges', probe=0):
+    def get_channel_information(self, channel, info='ranges'):
         """
         This function queries which ranges are available on a scope device.
 
         This function is invalid for ps5000 and ps6000.
-        Args:
-            
-            channel (int): 0=ChannelA, 1=ChannelB, ...
-            info (int, str): A ``ChannelInfo`` enum value or enum member name.
-            probe (int): Not used, must be set to 0.
+        
+        Parameters
+        ----------            
+        channel : :class:`enum.IntEnum`
+            0=ChannelA, 1=ChannelB, ...
+        info : :class:`enum.IntEnum`
+            A ``ChannelInfo`` enum value or enum member name.
         """
-        ch = self.convert_to_enum(channel, self.enChannel)
-        info_ = self.convert_to_enum(info, self.enChannelInfo)
+        ch = self.convert_to_enum(channel, self.enChannel, to_upper=True)
+        info_ = self.convert_to_enum(info, self.enChannelInfo, to_upper=True)
         n = 43  # The PS4000Range enum contains the maximum number of constants = 43
         ranges = (c_int32 * n)()
         length = c_int32(n)
+        probe = 0  # not used, must be set to 0.
         self.GetChannelInformation(self._handle, info_, probe, ranges, byref(length), ch)
         return [self.enRange(ranges[i]) for i in range(length.value)]
 
-    def get_max_down_sample_ratio(self, num_unaggreated_samples, mode=None, segment_index=0):
+    def get_max_down_sample_ratio(self, num_unaggreated_samples, mode='None', segment_index=0):
         """
-        This function returns the maximum down-sampling ratio that can be used for a given
-        number of samples in a given down-sampling mode.
+        Returns
+        -------
+        :obj:`int`
+            This function returns the maximum down-sampling ratio that can be used for a given
+            number of samples in a given down-sampling mode.
         """
-        mode_ = self.convert_to_enum(mode, self.enRatioMode)
+        mode_ = self.convert_to_enum(mode, self.enRatioMode, to_upper=True)
         max_down_sample_ratio = c_uint32()
         self.GetMaxDownSampleRatio(self._handle, num_unaggreated_samples, byref(max_down_sample_ratio),
                                    mode_, segment_index)
         return max_down_sample_ratio.value
 
     def get_max_segments(self):
-        """
-        This function returns the maximum number of segments allowed for the opened
-        device. This number is the maximum value of ``nsegments`` that can be passed to
-        :meth:`memory_segments`.
+        """This function is valid for ps2000a, ps3000a, ps4000a and ps5000a.
         
-        This function is valid for ps2000a, ps3000a, ps4000a and ps5000a.
+        Returns
+        -------
+        :obj:`int`
+            This function returns the maximum number of segments allowed for the opened
+            device. This number is the maximum value of ``nsegments`` that can be passed to
+            :meth:`memory_segments`.
         """
         max_segments = c_uint16() if self.IS_PS2000A else c_uint32()
         self.GetMaxSegments(self._handle, byref(max_segments))
@@ -200,26 +213,26 @@ class PicoScopeApi(PicoScope):
 
     def get_timebase(self, timebase, num_samples=0, segment_index=0, oversample=0):
         """
-        Since Python supports the :py:class:`float` data type, this function returns 
+        Since Python supports the :obj:`float` data type, this function returns 
         :meth:`get_timebase2`. The timebase that is returned is in **seconds** (not ns).
         
         This function calculates the sampling rate and maximum number of samples for a
         given timebase under the specified conditions. The result will depend on the number of
         channels enabled by the last call to :meth:`set_channel`.
         
-        The ``oversample`` argument is only used by ps4000, ps5000 and ps6000.
+        The `oversample` argument is only used by ps4000, ps5000 and ps6000.
         """
         return self.get_timebase2(timebase, num_samples, segment_index, oversample)
 
     def get_timebase2(self, timebase, num_samples=0, segment_index=0, oversample=0):
         """
         This function is an upgraded version of :meth:`get_timebase`, and returns the time
-        interval as a ``float`` rather than an ``int32_t``. This allows it to return 
+        interval as a :obj:`float` rather than an :obj:`int`. This allows it to return 
         sub-nanosecond time intervals. See :meth:`get_timebase` for a full description.
         
         The timebase that is returned is in **seconds** (not ns).
         
-        The ``oversample`` argument is only used by ps4000, ps5000 and ps6000.
+        The `oversample` argument is only used by ps4000, ps5000 and ps6000.
         """
         num_samples = int(num_samples)
         time_interval_nanoseconds = c_float()
@@ -257,60 +270,72 @@ class PicoScopeApi(PicoScope):
         self.GetTriggerTimeOffset64(self._handle, byref(time), byref(time_units), segment_index)
         return time.value, self.enTimeUnits(time_units.value)
 
-    def get_values(self, num_samples=None, start_index=0, factor=1, ratio_mode=None, segment_index=0):
+    def get_values(self, num_samples=None, start_index=0, factor=1, ratio_mode='None', segment_index=0):
         """
         This function returns block-mode data, with or without down sampling, starting at the
         specified sample number. It is used to get the stored data from the driver after data
         collection has stopped.
         
-        Args:
-            num_samples (int): The number of samples required. If :py:data:`None` then 
-                automatically determine the number of samples to retrieve.
-            start_index (int): A zero-based index that indicates the start point for data collection. 
-                It is measured in sample intervals from the start of the buffer.
-            factor (int): The downsampling factor that will be applied to the raw data.
-            ratio_mode (int, str): Which downsampling mode to use. A ``RatioMode`` enum.
-            segment_index (int): The zero-based number of the memory segment where the data is stored.
+        Parameters
+        ----------
+        num_samples : :obj:`int` or :obj:`None`
+            The number of samples required. If :obj:`None` then automatically determine the 
+            number of samples to retrieve.
+        start_index : :obj:`int`
+            A zero-based index that indicates the start point for data collection. 
+            It is measured in sample intervals from the start of the buffer.
+        factor : :obj:`int`
+            The down-sampling factor that will be applied to the raw data.
+        ratio_mode : :class:`enum.IntEnum`
+            Which down-sampling mode to use. A ``RatioMode`` enum.
+        segment_index : :obj:`int`
+            The zero-based number of the memory segment where the data is stored.
         """
         overflow = c_int16()
         if num_samples is None:
             num_samples = self._num_samples
         n_samples = c_uint32(num_samples)
-        mode = self.convert_to_enum(ratio_mode, self.enRatioMode)
+        mode = self.convert_to_enum(ratio_mode, self.enRatioMode, to_upper=True)
         self.GetValues(self._handle, start_index, byref(n_samples), factor, mode, segment_index, byref(overflow))
         return n_samples.value, overflow.value
 
-    def get_values_async(self, lp_data_ready, num_samples=None, start_index=0, factor=1, ratio_mode=None,
+    def get_values_async(self, lp_data_ready, num_samples=None, start_index=0, factor=1, ratio_mode='None',
                          segment_index=0):
         """
         This function returns data either with or without down sampling, starting at the
         specified sample number. It is used to get the stored data from the scope after data
         collection has stopped. It returns the data using the ``lp_data_ready`` callback.
 
-        Args:
-            lp_data_ready (ctypes callback function): A ``DataReady`` callback function.
-            num_samples (int): The number of samples required. If :py:data:`None` then 
-                automatically determine the number of samples to retrieve.
-            start_index (int): A zero-based index that indicates the start point for data collection. 
-                It is measured in sample intervals from the start of the buffer.
-            factor (int): The downsampling factor that will be applied to the raw data.
-            ratio_mode (int, str): Which downsampling mode to use. A ``RatioMode`` enum.
-            segment_index (int): The zero-based number of the memory segment where the data is stored.
-
+        Parameters
+        ----------
+        lp_data_ready : ctypes callback function
+            A ``DataReady`` :mod:`callback <msl.equipment.resources.picotech.picoscope.callbacks>` function.
+        num_samples : :obj:`int` or :obj:`None`
+            The number of samples required. If :obj:`None` then automatically determine the 
+            number of samples to retrieve.
+        start_index : :obj:`int`
+            A zero-based index that indicates the start point for data collection. 
+            It is measured in sample intervals from the start of the buffer.
+        factor : :obj:`int`
+            The downsampling factor that will be applied to the raw data.
+        ratio_mode : :class:`enum.IntEnum`
+            Which down-sampling mode to use. A ``RatioMode`` enum.
+        segment_index : :obj:`int`
+            The zero-based number of the memory segment where the data is stored.
         """
         p_parameter = c_void_p()
         if num_samples is None:
             num_samples = self._num_samples
-        mode = self.convert_to_enum(ratio_mode, self.enRatioMode)
+        mode = self.convert_to_enum(ratio_mode, self.enRatioMode, to_upper=True)
         self.GetValuesAsync(self._handle, start_index, num_samples, factor, mode,
                             segment_index, lp_data_ready, byref(p_parameter))
 
-    def get_values_bulk(self, from_segment_index=0, to_segment_index=None, factor=1, ratio_mode=None):
+    def get_values_bulk(self, from_segment_index=0, to_segment_index=None, factor=1, ratio_mode='None'):
         """
         This function retrieves waveforms captured using rapid block mode. The waveforms
         must have been collected sequentially and in the same run.
         
-        The ``down_sample_ratio`` and ``down_sample_ratio_mode`` arguments are ignored for 
+        The `down_sample_ratio` and `down_sample_ratio_mode` arguments are ignored for 
         ps4000 and ps5000.
         """
         assert self.get_no_of_captures() == self._num_captures
@@ -319,7 +344,7 @@ class PicoScopeApi(PicoScope):
         num_segments = to_segment_index - from_segment_index + 1
         no_of_samples = c_uint32(self._num_samples * self._num_captures)
         overflow = (c_int16 * num_segments)()
-        mode = self.convert_to_enum(ratio_mode, self.enRatioMode)
+        mode = self.convert_to_enum(ratio_mode, self.enRatioMode, to_upper=True)
         if self.IS_PS4000 or self.IS_PS5000:
             self.GetValuesBulk(self._handle, byref(no_of_samples), from_segment_index,
                                to_segment_index, overflow)
@@ -460,7 +485,7 @@ class PicoScopeApi(PicoScope):
 
         # must call "convert_to_enum" before the "serial_ptr cast", otherwise we corrupt the pointer's memory
         if self.IS_PS5000A:
-            res_enum = self.convert_to_enum(resolution, self.enDeviceResolution, 'RES_')
+            res_enum = self.convert_to_enum(resolution, self.enDeviceResolution, prefix='RES_', to_upper=True)
 
         if self.equipment_record.serial:
             serial_ptr = cast(self.equipment_record.serial.encode(self.ENCODING), POINTER(c_int8))
@@ -476,22 +501,26 @@ class PicoScopeApi(PicoScope):
         return args
 
     def open_unit(self, auto_select_power=True, resolution='8Bit'):
-        """
+        """Open the PicoScope for communication.
+        
         This function opens a PicoScope attached to the computer. The maximum number of 
         units that can be opened depends on the operating system, the kernel driver 
         and the computer.
         
-        Args:
-            auto_select_power (bool, optional): PicoScopes that can be powered by either DC power 
-                or by USB power may raise ``PICO_POWER_SUPPLY_NOT_CONNECTED`` if the DC power 
-                supply is not connected. Passing in :py:data:`True` will automatically switch to 
-                the USB power source.
+        Parameters
+        ----------
+        auto_select_power : :obj:`bool`, optional
+            PicoScopes that can be powered by either DC power 
+            or by USB power may raise ``PICO_POWER_SUPPLY_NOT_CONNECTED`` if the DC power 
+            supply is not connected. Passing in :obj:`True` will automatically switch to 
+            the USB power source.
                 
-            resolution(str, optional): The ADC resolution: 8, 12, 14, 15 or 16Bit. 
-                Only used by the PS5000A Series and it is ignored for all other PicoScope Series.  
+        resolution : :obj:`str`, optional
+            The ADC resolution: 8, 12, 14, 15 or 16Bit. Only used by the PS5000A Series 
+            and it is ignored for all other PicoScope Series.  
         """
         if self._handle is not None:
-            self.log.warning(self._base_msg[:-1] + ' is already open')
+            self.log_warning(self._base_msg + ' is already open')
             return
 
         handle = c_int16()
@@ -501,12 +530,12 @@ class PicoScopeApi(PicoScope):
         if handle.value > 0:
             self._handle = handle
 
-        if ret == errors.PICO_OK:
-            self.log.debug('{}.open_unit{}'.format(self.__class__.__name__, args))
+        if ret == PICO_OK:
+            self.log_debug('{}.open_unit{}'.format(self.__class__.__name__, args))
             return ret
 
-        if auto_select_power and ret == errors.PICO_POWER_SUPPLY_NOT_CONNECTED:
-            self.log.debug('{}.open_unit{}'.format(self.__class__.__name__, args))
+        if auto_select_power and ret == PICO_POWER_SUPPLY_NOT_CONNECTED:
+            self.log_debug('{}.open_unit{}'.format(self.__class__.__name__, args))
             return self.change_power_source(ret)  # the ret value is the correct power_state value
 
         # raise the exception
@@ -518,17 +547,20 @@ class PicoScopeApi(PicoScope):
         it has finished by periodically calling :meth:`open_unit_progress` until that function
         returns a value of 100.
 
-        Args:
-            auto_select_power (bool, optional): PicoScopes that can be powered by either DC power 
-                or by USB power may raise ``PICO_POWER_SUPPLY_NOT_CONNECTED`` if the DC power 
-                supply is not connected. Passing in :py:data:`True` will automatically switch to 
-                the USB power source.
+        Parameters
+        ----------
+        auto_select_power : :obj:`bool`, optional
+            PicoScopes that can be powered by either DC power 
+            or by USB power may raise ``PICO_POWER_SUPPLY_NOT_CONNECTED`` if the DC power 
+            supply is not connected. Passing in :obj:`True` will automatically switch to 
+            the USB power source.
                 
-            resolution(str, optional): The ADC resolution: 8, 12, 14, 15 or 16Bit. 
-                Only used by the PS5000A Series and it is ignored for all other PicoScope Series.  
+        resolution : :obj:`str`, optional
+            The ADC resolution: 8, 12, 14, 15 or 16Bit. Only used by the PS5000A Series 
+            and it is ignored for all other PicoScope Series.  
         """
         if self._handle is not None:
-            self.log.warning(self._base_msg[:-1] + ' is already open')
+            self.log_warning(self._base_msg + ' is already open')
             return
 
         status = c_int16()
@@ -551,25 +583,14 @@ class PicoScopeApi(PicoScope):
         if handle.value > 0:
             self._handle = handle
 
-        if self._auto_select_power and ret == errors.PICO_POWER_SUPPLY_NOT_CONNECTED:
+        if self._auto_select_power and ret == PICO_POWER_SUPPLY_NOT_CONNECTED:
             ret = self.change_power_source(ret)  # the ret value is the correct power_state value
 
-        if ret == errors.PICO_OK:
+        if ret == PICO_OK:
             return 100 if complete.value else progress_percent.value
         else:
             # raise the exception
             self.errcheck_api(ret, self.open_unit_progress, ())
-
-    def raise_exception(self, msg):
-        """
-        Raise an exception.
-
-        Args:
-            msg (str): The error message.
-        """
-        conn = self.equipment_record.connection
-        base_msg = 'PicoScope<model={}, serial={}>\n'.format(conn.model, conn.serial)
-        raise errors.PicoScopeError(base_msg + msg)
 
     def _run_streaming(self, sample_interval, time_units, max_pre_trigger_samples, max_post_trigger_samples,
                        auto_stop, down_sample_ratio, down_sample_ratio_mode):
@@ -580,13 +601,13 @@ class PicoScopeApi(PicoScope):
         data. See Using streaming mode for a step-by-step guide to this process.
         
         When a trigger is set, the total number of samples stored in the driver is the sum of
-        ``max_pre_trigger_samples`` and ``max_post_trigger_samples``. If autoStop is false then
+        `max_pre_trigger_samples` and `max_post_trigger_samples`. If `auto_stop` is false then
         this will become the maximum number of samples without down sampling.
         
-        The ``down_sample_ratio_mode`` argument is ignored for ps4000 and ps5000.
+        The `down_sample_ratio_mode` argument is ignored for ps4000 and ps5000.
         """
-        units = self.convert_to_enum(time_units, self.enTimeUnits)
-        mode = self.convert_to_enum(down_sample_ratio_mode, self.enRatioMode)
+        units = self.convert_to_enum(time_units, self.enTimeUnits, to_upper=True)
+        mode = self.convert_to_enum(down_sample_ratio_mode, self.enRatioMode, to_upper=True)
         interval = c_uint32(sample_interval)
         if self.IS_PS4000 or self.IS_PS5000:
             self.RunStreaming(self._handle, byref(interval), units,
@@ -604,25 +625,29 @@ class PicoScopeApi(PicoScope):
         
         This function is only valid for ps3000a, ps4000a and ps5000a.        
         """
-        ch = self.convert_to_enum(channel, self.enChannel)
-        bw = self.convert_to_enum(bandwidth, self.enBandwidthLimiter, 'BW_')
+        ch = self.convert_to_enum(channel, self.enChannel, to_upper=True)
+        bw = self.convert_to_enum(bandwidth, self.enBandwidthLimiter, prefix='BW_', to_upper=True)
         return self.SetBandwidthFilter(self._handle, ch, bw)
 
-    def set_data_buffer(self, channel, buffer=None, mode=None, segment_index=0):
-        """
-        Set the data buffer for the specified channel.
+    def set_data_buffer(self, channel, buffer=None, mode='None', segment_index=0):
+        """Set the data buffer for the specified channel.
         
-        The ``mode`` argument is ignored for ps4000 and ps5000.        
-        The ``segment_index`` argument is ignored for ps4000, ps5000 and ps6000.
+        The `mode` argument is ignored for ps4000 and ps5000.        
+        The `segment_index` argument is ignored for ps4000, ps5000 and ps6000.
 
-        Args:
-            channel (str, int): An enum value or member name from ``Channel``. 
-            buffer (ndarray): A int16, numpy.ndarray. If :py:data:`None` then use the pre-allocated array.
-            mode (int, str): An enum value or member name from ``RatioMode``.
-            segment_index (int): The zero-based number of the memory segment where the data is stored.
+        Parameters
+        ----------
+        channel : :class:`enum.IntEnum`
+            An enum value or member name from ``Channel``. 
+        buffer : :class:`numpy.ndarray` or :obj:`None`
+            A int16, numpy array. If :obj:`None` then use a pre-allocated array.
+        mode : :class:`enum.IntEnum`
+            An enum value or member name from ``RatioMode``.
+        segment_index : :obj:`int`
+            The zero-based number of the memory segment where the data is stored.
         """
-        ch = self.convert_to_enum(channel, self.enChannel)
-        ratio_mode = self.convert_to_enum(mode, self.enRatioMode)
+        ch = self.convert_to_enum(channel, self.enChannel, to_upper=True)
+        ratio_mode = self.convert_to_enum(mode, self.enRatioMode, to_upper=True)
         if buffer is None:
             buffer = self.channel[ch.name].buffer
             self._buffer_size = buffer.size
@@ -634,7 +659,7 @@ class PicoScopeApi(PicoScope):
         else:
             return self.SetDataBuffer(self._handle, ch, buffer, buffer.size, segment_index, ratio_mode)
 
-    def set_data_buffer_bulk(self, channel, buffer, waveform, mode=None):
+    def set_data_buffer_bulk(self, channel, buffer, waveform, mode='None'):
         """
         This function allows you to associate a buffer with a specified waveform number and
         input channel in rapid block mode. The number of waveforms captured is determined
@@ -645,10 +670,10 @@ class PicoScopeApi(PicoScope):
 
         This function is only valid for ps4000, ps5000 and ps6000.
 
-        The ``down_sample_ratio_mode`` argument is ignored for ps4000 and ps5000.
+        The `down_sample_ratio_mode` argument is ignored for ps4000 and ps5000.
         """
-        ch = self.convert_to_enum(channel, self.enChannel)
-        ratio_mode = self.convert_to_enum(mode, self.enRatioMode)
+        ch = self.convert_to_enum(channel, self.enChannel, to_upper=True)
+        ratio_mode = self.convert_to_enum(mode, self.enRatioMode, to_upper=True)
         if self.IS_PS4000 or self.IS_PS5000:
             return self.SetDataBufferBulk(self._handle, ch, buffer, buffer.size, waveform)
         else:
@@ -663,9 +688,9 @@ class PicoScopeApi(PicoScope):
         
         You must allocate memory for the buffer before calling this function.
 
-        The ``mode`` argument is ignored for ps4000 and ps5000.
+        The `mode` argument is ignored for ps4000 and ps5000.
 
-        The ``segment_index`` argument is ignored for ps4000, ps5000 and ps6000.
+        The `segment_index` argument is ignored for ps4000, ps5000 and ps6000.
         """
         buffer_max = c_int16()
         buffer_min = c_int16()
@@ -692,7 +717,7 @@ class PicoScopeApi(PicoScope):
         This function is used to enable or disable ETS (equivalent-time sampling) and to set
         the ETS parameters. See ETS overview for an explanation of ETS mode.
         """
-        mode_ = self.convert_to_enum(mode, self.enEtsMode)
+        mode_ = self.convert_to_enum(mode, self.enEtsMode, to_upper=True)
         sample_time_picoseconds = c_int32()
         self.SetEts(self._handle, mode_, ets_cycles, ets_interleave, byref(sample_time_picoseconds))
         return sample_time_picoseconds.value
@@ -703,11 +728,12 @@ class PicoScopeApi(PicoScope):
         buffers contain the 64-bit timing information for each ETS sample after you run a
         block-mode ETS capture.
         
-        Args:
-            buffer (c_int64): An array of 64-bit words, each representing the time in 
-                picoseconds at which the sample was captured.
+        Parameters
+        ----------
+        buffer : ctypes array of c_int64
+            An array of 64-bit words, each representing the time in picoseconds at which 
+            the sample was captured.
         """
-        #buffer = c_int64()
         return self.SetEtsTimeBuffer(self._handle, byref(buffer), len(buffer))
 
     def set_ets_time_buffers(self, time_upper, time_lower):
@@ -721,10 +747,7 @@ class PicoScopeApi(PicoScope):
         if len(time_upper) != len(time_lower):
             msg = 'len(time_upper) != len(time_lower) -- {} != {}'.format(len(time_upper) != len(time_lower))
             self.raise_exception(msg)
-        #time_upper = c_uint32()
-        #time_lower = c_uint32()
-        self.SetEtsTimeBuffers(self._handle, byref(time_upper), byref(time_lower), len(time_upper))
-        return time_upper.value, time_lower.value
+        return self.SetEtsTimeBuffers(self._handle, byref(time_upper), byref(time_lower), len(time_upper))
 
     def set_frequency_counter(self, channel, enabled, range, threshold_major, threshold_minor):
         """
@@ -741,13 +764,13 @@ class PicoScopeApi(PicoScope):
         """
         ret = self.SetNoOfCaptures(self._handle, n_captures)
         self._num_captures = n_captures
-        self.allocate_buffer_memory()
+        self._allocate_buffer_memory()
         return ret
 
     def set_sig_gen_arbitrary(self, waveform, sample_frequency=None, offset_voltage=0.0, pk_to_pk=None,
                               start_delta_phase=None, stop_delta_phase=None, delta_phase_increment=0,
                               dwell_count=None, sweep_type='up', operation='off', index_mode='single',
-                              shots=None, sweeps=None, trigger_type='rising', trigger_source=None,
+                              shots=None, sweeps=None, trigger_type='rising', trigger_source='None',
                               ext_in_threshold=0):
         """
         This function programs the signal generator to produce an arbitrary waveform.
@@ -758,11 +781,11 @@ class PicoScopeApi(PicoScope):
         if waveform.size > max_size:
             self.raise_exception('The waveform size is {}, must be <= {}'.format(waveform.size, max_size))
 
-        sweep_typ = self.convert_to_enum(sweep_type, self.enSweepType)
-        extra_ops = self.convert_to_enum(operation, self.enExtraOperations)
-        mode = self.convert_to_enum(index_mode, self.enIndexMode)
-        trig_typ = self.convert_to_enum(trigger_type, self.enSigGenTrigType)
-        trig_source = self.convert_to_enum(trigger_source, self.enSigGenTrigSource)
+        sweep_typ = self.convert_to_enum(sweep_type, self.enSweepType, to_upper=True)
+        extra_ops = self.convert_to_enum(operation, self.enExtraOperations, to_upper=True)
+        mode = self.convert_to_enum(index_mode, self.enIndexMode, to_upper=True)
+        trig_typ = self.convert_to_enum(trigger_type, self.enSigGenTrigType, to_upper=True)
+        trig_source = self.convert_to_enum(trigger_source, self.enSigGenTrigSource, to_upper=True)
 
         if start_delta_phase is None and sample_frequency is None:
             self.raise_exception('Must specify either "start_delta_phase" or "sample_frequency"')
@@ -812,43 +835,56 @@ class PicoScopeApi(PicoScope):
     def set_sig_gen_built_in_v2(self, offset_voltage=0.0, pk_to_pk=1.0, wave_type='sine',
                                 start_frequency=1.0, stop_frequency=None, increment=0.1, dwell_time=1.0,
                                 sweep_type='up', operation='off', shots=None, sweeps=None,
-                                trigger_type='rising', trigger_source=None, ext_in_threshold=0):
+                                trigger_type='rising', trigger_source='None', ext_in_threshold=0):
         """
         This function is an upgraded version of :meth:`set_sig_gen_built_in` with double-precision
         frequency arguments for more precise control at low frequencies.
         
         This function is invalid for ps4000 and ps4000a.
         
-        Args:
-            offset_voltage (float): The voltage offset, in **volts**, to be applied to the waveform.
-            pk_to_pk (float): The peak-to-peak voltage, in **volts**, of the waveform signal.
-            wave_type (int, str): The type of waveform to be generated. ``WaveType`` enum.
-            start_frequency (float): The frequency that the signal generator will initially produce.
-            stop_frequency (float): The frequency at which the sweep reverses direction or returns 
-                to the initial frequency.
-            increment (float): The amount of frequency increase or decrease in sweep mode.
-            dwell_time (float): The time, in seconds, for which the sweep stays at each frequency.
-            sweep_type (int, str): Whether the frequency will sweep from ``start_frequency`` to 
-                ``stop_frequency``, or in the opposite direction, or repeatedly reverse direction. 
-                One of:  UP, DOWN, UPDOWN, DOWNUP
-            operation (int, str): The type of waveform to be produced, specified by one of the 
-                following enumerated types (B models only): OFF, WHITENOISE, PRBS
-            shots (int): If :py:data:`None` then start and run continuously after trigger occurs.
-            sweeps (int): If :py:data:`None` then start a sweep and continue after trigger occurs.
-            trigger_type (int, str): The type of trigger that will be applied to the signal generator.
-                One of: RISING, FALLING, GATE_HIGH, GATE_LOW.
-            trigger_source (int, str): The source that will trigger the signal generator. 
-                If :py:data:`None` then run without waiting for trigger.
-            ext_in_threshold (int): Used to set trigger level for external trigger.
+        Parameters
+        ----------
+        offset_voltage : :obj:`float`
+            The voltage offset, in **volts**, to be applied to the waveform.
+        pk_to_pk : :obj:`float`
+            The peak-to-peak voltage, in **volts**, of the waveform signal.
+        wave_type : :class:`enum.IntEnum`
+            The type of waveform to be generated. A ``WaveType`` enum.
+        start_frequency : :obj:`float`
+            The frequency that the signal generator will initially produce.
+        stop_frequency : :obj:`float`
+            The frequency at which the sweep reverses direction or returns to the initial frequency.
+        increment : :obj:`float`
+            The amount of frequency increase or decrease in sweep mode.
+        dwell_time : :obj:`float`
+            The time, in seconds, for which the sweep stays at each frequency.
+        sweep_type : :class:`enum.IntEnum`
+            Whether the frequency will sweep from `start_frequency` to `stop_frequency`, or 
+            in the opposite direction, or repeatedly reverse direction. One of:  UP, DOWN, UPDOWN, DOWNUP
+        operation : :class:`enum.IntEnum`
+            The type of waveform to be produced, specified by one of the following enumerated 
+            types (B models only): OFF, WHITENOISE, PRBS
+        shots : :obj:`int` of :obj:`None`
+            If :obj:`None` then start and run continuously after trigger occurs.
+        sweeps : :obj:`int` of :obj:`None`
+            If :obj:`None` then start a sweep and continue after trigger occurs.
+        trigger_type : :class:`enum.IntEnum` 
+            The type of trigger that will be applied to the signal generator.
+            One of: RISING, FALLING, GATE_HIGH, GATE_LOW.
+        trigger_source : :class:`enum.IntEnum` or :obj:`None`
+            The source that will trigger the signal generator. If :obj:`None` then run 
+            without waiting for trigger.
+        ext_in_threshold : :obj:`int`
+            Used to set trigger level for external trigger.
         """
         offset = int(round(offset_voltage*1e6))
         pk2pk = int(round(pk_to_pk*1e6))
 
-        wave_typ = self.convert_to_enum(wave_type, self.enWaveType)
-        sweep_typ = self.convert_to_enum(sweep_type, self.enSweepType)
-        extra_ops = self.convert_to_enum(operation, self.enExtraOperations)
-        trig_typ = self.convert_to_enum(trigger_type, self.enSigGenTrigType)
-        trig_source = self.convert_to_enum(trigger_source, self.enSigGenTrigSource)
+        wave_typ = self.convert_to_enum(wave_type, self.enWaveType, to_upper=True)
+        sweep_typ = self.convert_to_enum(sweep_type, self.enSweepType, to_upper=True)
+        extra_ops = self.convert_to_enum(operation, self.enExtraOperations, to_upper=True)
+        trig_typ = self.convert_to_enum(trigger_type, self.enSigGenTrigType, to_upper=True)
+        trig_source = self.convert_to_enum(trigger_source, self.enSigGenTrigSource, to_upper=True)
 
         if stop_frequency is None:
             stop_frequency = start_frequency
@@ -868,7 +904,7 @@ class PicoScopeApi(PicoScope):
         This function reprograms the arbitrary waveform generator. All values can be
         reprogrammed while the signal generator is waiting for a trigger.
 
-        The ``offset_voltage`` and ``pk_to_pk`` arguments are only used for ps6000.
+        The `offset_voltage` and `pk_to_pk` arguments are only used for ps6000.
 
         This function is invalid for ps4000 and ps5000.
         """
@@ -890,7 +926,7 @@ class PicoScopeApi(PicoScope):
         This function reprograms the signal generator. Values can be changed while the signal
         generator is waiting for a trigger.
         
-        The ``offset_voltage`` and ``pk_to_pk`` arguments are only used for ps6000.
+        The `offset_voltage` and `pk_to_pk` arguments are only used for ps6000.
 
         This function is invalid for ps4000 and ps5000.
         """
@@ -920,13 +956,13 @@ class PicoScopeApi(PicoScope):
         
         ps4000a overrides this method because it has a different implementation. 
         """
-        A = self.convert_to_enum(a, self.enThresholdDirection)
-        B = self.convert_to_enum(b, self.enThresholdDirection)
-        C = self.convert_to_enum(c, self.enThresholdDirection)
-        D = self.convert_to_enum(d, self.enThresholdDirection)
-        EXT = self.convert_to_enum(ext, self.enThresholdDirection)
-        AUX = self.convert_to_enum(aux, self.enThresholdDirection)
-        return self.SetTriggerChannelDirections(self._handle, A, B, C, D, EXT, AUX)
+        a_ = self.convert_to_enum(a, self.enThresholdDirection, to_upper=True)
+        b_ = self.convert_to_enum(b, self.enThresholdDirection, to_upper=True)
+        c_ = self.convert_to_enum(c, self.enThresholdDirection, to_upper=True)
+        d_ = self.convert_to_enum(d, self.enThresholdDirection, to_upper=True)
+        ext_ = self.convert_to_enum(ext, self.enThresholdDirection, to_upper=True)
+        aux_ = self.convert_to_enum(aux, self.enThresholdDirection, to_upper=True)
+        return self.SetTriggerChannelDirections(self._handle, a_, b_, c_, d_, ext_, aux_)
 
     def set_trigger_delay(self, delay):
         """
@@ -956,15 +992,21 @@ class PicoScopeApi(PicoScope):
         the index mode passed and the device model. The phase count can then be sent to the
         driver through :meth:`set_sig_gen_arbitrary` or :meth:`set_sig_gen_properties_arbitrary`.
         
-        Args:
-            frequency (float): The AWG sample frequency.
-            index_mode (int, str): An IndexMode enum value or member name.
-            buffer_length (int): The size (number of samples) of the waveform.
+        Parameters
+        ----------
+        frequency : :obj:`float`
+            The AWG sample frequency.
+        index_mode : :class:`enum.IntEnum`
+            An ``IndexMode`` enum value or member name.
+        buffer_length : :obj:`int`
+            The size (number of samples) of the waveform.
         
-        Returns:
-            :py:class:`int`: The phase count.
+        Returns
+        -------
+        :obj:`int`
+            The phase count.
         """
-        mode = self.convert_to_enum(index_mode, self.enIndexMode)
+        mode = self.convert_to_enum(index_mode, self.enIndexMode, to_upper=True)
 
         phase = c_uint32()
         self.SigGenFrequencyToPhase(self._handle, frequency, mode, buffer_length, byref(phase))
@@ -984,3 +1026,41 @@ class PicoScopeApi(PicoScope):
         This function is only valid for ps4000 and ps5000a.        
         """
         return self.TriggerWithinPreTriggerSamples(self._handle, state)
+
+    def set_trigger_channel_conditions(self, conditions, info='clear'):
+        """
+        This function sets up trigger conditions on the scope's inputs. The trigger is defined by
+        one or more :mod:`~.picoscope_structs` ``TriggerConditions`` structures that are then ORed
+        together. Each structure is itself the AND of the states of one or more of the inputs.
+        This AND-OR logic allows you to create any possible Boolean function of the scope's
+        inputs.
+        
+        The `info` parameter is only used for ps4000a and it is a ``PS4000AConditionsInfo`` enum.
+        """
+        if self.IS_PS4000A:
+            info = self.convert_to_enum(info, self.enConditionsInfo, to_upper=True)
+            ret = self.sdk.ps4000aSetTriggerChannelConditions(self._handle, byref(conditions),
+                                                              len(conditions), info)
+        else:
+            ret = self.SetTriggerChannelConditions(self._handle, byref(conditions), len(conditions))
+        return ret
+
+    def set_trigger_channel_properties(self, channel_properties, timeout=0.1, aux_output_enable=0):
+        """
+        This function is used to enable or disable triggering and set its parameters.
+
+        Parameters
+        ----------
+        channel_properties : :obj:`list` of :mod:`.picoscope_structs` 
+            A list of ``TriggerChannelProperties`` structures describing the requested properties.
+        timeout : :obj:`float`
+            The time, in seconds, for which the scope device will wait before collecting data 
+            if no trigger event occurs. If this is set to zero, the scope device will wait 
+            indefinitely for a trigger.
+        aux_output_enable : :obj:`int`
+            Zero configures the AUXIO connector as a trigger input. Any other value configures 
+            it as a trigger output. Only used by ps5000.
+        """
+        auto_trigger_ms = round(max(0.0, timeout * 1e3))
+        return self.SetTriggerChannelProperties(self._handle, byref(channel_properties),
+                                                len(channel_properties), aux_output_enable, auto_trigger_ms)

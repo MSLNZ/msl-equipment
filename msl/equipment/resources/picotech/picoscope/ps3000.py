@@ -1,12 +1,10 @@
+"""
+A wrapper around the PicoScope ps3000 SDK.
+"""
 from ctypes import c_int16, c_uint32, byref
 
 from .picoscope_2k3k import PicoScope2k3k
 from .functions import ps3000_funcptrs
-from .structs import (
-    PS3000TriggerConditions,
-    PS3000TriggerChannelProperties,
-    PS3000PwqConditions
-)
 
 
 class PicoScope3000(PicoScope2k3k):
@@ -43,13 +41,16 @@ class PicoScope3000(PicoScope2k3k):
     MAX_PULSE_WIDTH_QUALIFIER_COUNT = 16777215
     MAX_HOLDOFF_COUNT = 8388607
 
-    def __init__(self, record):
-        """
-        A wrapper around the PicoScope ps3000 SDK.
+    # EXT_MAX_VOLTAGE = ?
 
-        Args:
-            record (:class:`~msl.equipment.record_types.EquipmentRecord`): An equipment 
-                record (a row) from the :class:`~msl.equipment.database.Database`.
+    def __init__(self, record):
+        """A wrapper around the PicoScope ps3000 SDK.
+
+        Parameters
+        ----------
+        record : :class:`~msl.equipment.record_types.EquipmentRecord`
+            An equipment record from an **Equipment-Register** 
+            :class:`~msl.equipment.database.Database`.            
         """
         PicoScope2k3k.__init__(self, record, ps3000_funcptrs)
 
@@ -66,39 +67,6 @@ class PicoScope3000(PicoScope2k3k):
         data_buffers = c_int16()
         ret = self.sdk.ps3000_save_streaming_data(self._handle, lp_callback_func, byref(data_buffers), data_buffer_size)
         return ret.value, data_buffers.value
-
-    def set_adv_trigger_channel_conditions(self, n_conditions):
-        """
-        This function sets up trigger conditions on the scope's inputs. The trigger is set up by
-        defining a :class:`~.picoscope_structs.PS3000TriggerConditions` structure. Each structure 
-        is the AND of the states of one scope input.
-        """
-        conditions = PS3000TriggerConditions()
-        ret = self.sdk.ps3000SetAdvTriggerChannelConditions(self._handle, byref(conditions), n_conditions)
-        return ret.value, conditions.value  # TODO return struct values
-
-    def set_adv_trigger_channel_properties(self, n_channel_properties, auto_trigger_milliseconds):
-        """
-        This function is used to enable or disable triggering and set its parameters.
-
-        Populates the :class:`~.picoscope_structs.PS3000TriggerChannelProperties` structure.
-        """
-        channel_properties = PS3000TriggerChannelProperties()
-        ret = self.sdk.ps3000SetAdvTriggerChannelProperties(self._handle, byref(channel_properties),
-                                                            n_channel_properties, auto_trigger_milliseconds)
-        return ret.value, channel_properties.value  # TODO return struct values
-
-    def set_pulse_width_qualifier(self, n_conditions, direction, lower, upper, type):
-        """
-        This function sets up pulse width qualification, which can be used on its own for pulse
-        width triggering or combined with other triggering to produce more complex triggers.
-        The pulse width qualifier is set by defining a :class:`~.picoscope_structs.PS3000PwqConditions` 
-        structure.        
-        """
-        conditions = PS3000PwqConditions()
-        ret = self.sdk.ps3000SetPulseWidthQualifier(self._handle, byref(conditions), n_conditions, direction,
-                                                    lower, upper, type)
-        return ret.value, conditions.value  # TODO return struct values
 
     def set_siggen(self, wave_type, start_frequency, stop_frequency, increment, dwell_time, repeat, dual_slope):
         """

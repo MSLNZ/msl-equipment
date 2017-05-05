@@ -1,13 +1,13 @@
 import os
 
-from msl.equipment import database, connect
+from msl.equipment import config, connect
 
-# this if statement is used so that Sphinx does not execute this script when the docs are being built
+# this "if" statement is used so that Sphinx does not execute this script when the docs are being built
 if __name__ == '__main__':
 
     # load the database
-    path = os.path.join(os.path.dirname(__file__), 'example-equipment-configuration.xml')
-    dbase = database.load(path)
+    path = os.path.join(os.path.dirname(__file__), 'equipment-configuration.xml')
+    dbase = config.load(path)
 
     # access the equipment record for each <equipment> XML element by the alias that we assigned to it
     print('Access equipment records from the alias that was assigned to the equipment...')
@@ -16,6 +16,7 @@ if __name__ == '__main__':
     print(dbase.equipment['mono'])
     print(dbase.equipment['sensor'])
     print(dbase.equipment['adaptor'])
+    print(dbase.equipment['filter_flipper'])
     print()
 
     # search for equipment records based on some keywords
@@ -34,9 +35,7 @@ if __name__ == '__main__':
     # then connect to this DMM in demo mode
     print('Connect to the DMM from Agilent with the serial number G00001...')
     dmm_record = dbase.records(manufacturer='Agilent', serial='G00001')
-    print(dmm_record[0])
     dmm_ref = connect(dmm_record, demo=True)  # use the factory function to connect to the equipment
-    print(dmm_ref)
     print(dmm_ref.query('*IDN?'))
     print()
 

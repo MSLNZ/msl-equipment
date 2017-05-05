@@ -1,13 +1,11 @@
+"""
+A wrapper around the PicoScope ps4000 SDK.
+"""
 from ctypes import c_int8, c_int16, c_uint32, c_int64, byref
 
 from .picoscope import c_enum
 from .picoscope_api import PicoScopeApi
 from .functions import ps4000Api_funcptrs
-from .structs import (
-    PS4000PwqConditions,
-    PS4000TriggerConditions,
-    PS4000TriggerChannelProperties
-)
 
 
 class PicoScope4000(PicoScopeApi):
@@ -38,12 +36,13 @@ class PicoScope4000(PicoScopeApi):
     # EXT_MAX_VOLTAGE = ?
 
     def __init__(self, record):
-        """
-        A wrapper around the PicoScope ps4000 SDK.
+        """A wrapper around the PicoScope ps4000 SDK.
 
-        Args:
-            record (:class:`~msl.equipment.record_types.EquipmentRecord`): An equipment 
-                record (a row) from the :class:`~msl.equipment.database.Database`.
+        Parameters
+        ----------
+        record : :class:`~msl.equipment.record_types.EquipmentRecord`
+            An equipment record from an **Equipment-Register** 
+            :class:`~msl.equipment.database.Database`.            
         """
         PicoScopeApi.__init__(self, record, ps4000Api_funcptrs)
 
@@ -186,42 +185,3 @@ class PicoScope4000(PicoScopeApi):
         This function is in the header file, but it is not in the manual.
         """
         return self.sdk.ps4000SetProbe(self._handle, probe, range_)
-
-    def set_pulse_width_qualifier(self, n_conditions, direction, lower, upper, pulse_width_type):
-        """
-        This function sets up pulse width qualification, which can be used on its own for pulse
-        width triggering or combined with window triggering to produce more complex
-        triggers. The pulse width qualifier is set by defining one or more conditions structures
-        that are then ORed together. Each structure is itself the AND of the states of one or
-        more of the inputs. This AND-OR logic allows you to create any possible Boolean
-        function of the scope's inputs.
-
-        Populates the :class:`~.picoscope_structs.PS4000PwqConditions` structure.
-        """
-        conditions = PS4000PwqConditions()
-        self.sdk.ps4000SetPulseWidthQualifier(self._handle, byref(conditions), n_conditions, direction,
-                                              lower, upper, pulse_width_type)
-        return conditions.value  # TODO return structure values
-
-    def set_trigger_channel_conditions(self, n_conditions):
-        """
-        This function sets up trigger conditions on the scope's inputs. The trigger is set up by
-        defining one or more :class:`~.picoscope_structs.PS4000TriggerConditions` structures that 
-        are then ORed together. Each structure is itself the AND of the states of one or more of 
-        the inputs. This ANDORlogic allows you to create any possible Boolean function of the 
-        scope's inputs.
-        """
-        conditions = PS4000TriggerConditions()
-        self.sdk.ps4000SetTriggerChannelConditions(self._handle, byref(conditions), n_conditions)
-        return conditions.value  # TODO return structure values
-
-    def set_trigger_channel_properties(self, n_channel_properties, aux_output_enable, auto_trigger_milliseconds):
-        """
-        This function is used to enable or disable triggering and set its parameters.
-
-        Populates the :class:`~.picoscope_structs.PS4000TriggerChannelProperties` structure.
-        """
-        channel_properties = PS4000TriggerChannelProperties()
-        self.sdk.ps4000SetTriggerChannelProperties(self._handle, byref(channel_properties), n_channel_properties,
-                                                   aux_output_enable, auto_trigger_milliseconds)
-        return channel_properties.value  # TODO return structure values

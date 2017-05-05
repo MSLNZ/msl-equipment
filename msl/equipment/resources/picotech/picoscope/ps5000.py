@@ -1,12 +1,8 @@
-from ctypes import byref
-
+"""
+A wrapper around the PicoScope ps5000 SDK.
+"""
 from .picoscope_api import PicoScopeApi
 from .functions import ps5000Api_funcptrs
-from .structs import (
-    PS5000PwqConditions,
-    PS5000TriggerConditions,
-    PS5000TriggerChannelProperties
-)
 
 
 class PicoScope5000(PicoScopeApi):
@@ -35,52 +31,12 @@ class PicoScope5000(PicoScopeApi):
     # EXT_MAX_VOLTAGE = ?
 
     def __init__(self, record):
-        """
-        A wrapper around the PicoScope ps5000 SDK.
+        """A wrapper around the PicoScope ps5000 SDK.
 
-        Args:
-            record (:class:`~msl.equipment.record_types.EquipmentRecord`): An equipment 
-                record (a row) from the :class:`~msl.equipment.database.Database`.
+        Parameters
+        ----------
+        record : :class:`~msl.equipment.record_types.EquipmentRecord`
+            An equipment record from an **Equipment-Register** 
+            :class:`~msl.equipment.database.Database`.            
         """
         PicoScopeApi.__init__(self, record, ps5000Api_funcptrs)
-
-    def set_pulse_width_qualifier(self, n_conditions, direction, lower, upper, pulse_width_type):
-        """
-        This function sets up pulse width qualification, which can be used on its own for pulse
-        width triggering or combined with window triggering to produce more complex
-        triggers. The pulse width qualifier is set by defining one or more conditions structures
-        that are then ORed together. Each structure is itself the AND of the states of one or
-        more of the inputs. This AND-OR logic allows you to create any possible Boolean
-        function of the scope's inputs.
-
-        Populates the :class:`~.picoscope_structs.PS5000PwqConditions` structure.
-        """
-        conditions = PS5000PwqConditions()
-        self.sdk.ps5000SetPulseWidthQualifier(self._handle, byref(conditions), n_conditions, direction, lower,
-                                              upper, pulse_width_type)
-        return conditions.value  # TODO return structure values
-
-    def set_trigger_channel_conditions(self, n_conditions):
-        """
-        This function sets up trigger conditions on the scope's inputs. The trigger is set up by
-        defining one or more :class:`~.picoscope_structs.PS5000TriggerConditions` structures that 
-        are then ORed together. Each structure is itself the AND of the states of one or more of 
-        the inputs. This AND-OR logic allows you to create any possible Boolean function of the 
-        scope's inputs.
-        
-        If complex triggering is not required, use :meth:`set_simple_trigger`.
-        """
-        conditions = PS5000TriggerConditions()
-        self.sdk.ps5000SetTriggerChannelConditions(self._handle, byref(conditions), n_conditions)
-        return conditions.value  # TODO return structure values
-
-    def set_trigger_channel_properties(self, n_channel_properties, aux_output_enable, auto_trigger_milliseconds):
-        """
-        This function is used to enable or disable triggering and set its parameters.
-
-        Populates the :class:`~.picoscope_structs.PS5000TriggerChannelProperties` structure.
-        """
-        channel_properties = PS5000TriggerChannelProperties()
-        self.sdk.ps5000SetTriggerChannelProperties(self._handle, byref(channel_properties), n_channel_properties,
-                                                   aux_output_enable, auto_trigger_milliseconds)
-        return channel_properties.value  # TODO return structure values

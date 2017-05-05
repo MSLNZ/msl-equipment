@@ -1,3 +1,6 @@
+"""
+Structures defined in the Pico Technology SDK v10.6.10.24
+"""
 from ctypes import Structure, c_int16, c_uint16, c_uint32, c_int64, c_uint64
 
 from .picoscope import c_enum

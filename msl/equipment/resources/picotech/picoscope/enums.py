@@ -1,3 +1,6 @@
+"""
+Enums defined in the Pico Technology SDK v10.6.10.24
+"""
 from enum import IntEnum
 
 

@@ -14,6 +14,7 @@ which has the following user-facing modules to manage and connect to equipment
 
 .. autosummary::
 
+   msl.equipment.config
    msl.equipment.database
    msl.equipment.factory
 

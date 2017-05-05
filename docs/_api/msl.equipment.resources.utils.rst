@@ -1,7 +1,7 @@
-msl\.equipment\.connection\_demo module
+msl\.equipment\.resources\.utils module
 =======================================
 
-.. automodule:: msl.equipment.connection_demo
+.. automodule:: msl.equipment.resources.utils
     :members:
     :undoc-members:
     :show-inheritance:

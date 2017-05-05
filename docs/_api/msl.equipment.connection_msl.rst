@@ -1,5 +1,5 @@
-msl.equipment.connection_msl module
-===================================
+msl\.equipment\.connection\_msl module
+======================================
 
 .. automodule:: msl.equipment.connection_msl
     :members:

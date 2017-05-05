@@ -1,5 +1,5 @@
-msl.equipment.record_types module
-=================================
+msl\.equipment\.record\_types module
+====================================
 
 .. automodule:: msl.equipment.record_types
     :members:

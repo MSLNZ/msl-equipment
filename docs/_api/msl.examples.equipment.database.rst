@@ -1,7 +1,7 @@
-msl\.equipment\.connection\_pyvisa module
+msl\.examples\.equipment\.database module
 =========================================
 
-.. automodule:: msl.equipment.connection_pyvisa
+.. automodule:: msl.examples.equipment.database
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,5 +1,5 @@
-msl.equipment.constants module
-==============================
+msl\.equipment\.constants module
+================================
 
 .. automodule:: msl.equipment.constants
     :members:

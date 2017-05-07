@@ -31,23 +31,26 @@ class Database(object):
 
         Raises
         ------
+        FileNotFoundError
+            If `path` does not exist.
+        :exc:`~xml.etree.ElementTree.ParseError`
+            If the configuration file is invalid.
         IOError
-            If there was a problem reading the configuration file.
+            If an XML element content is invalid. 
         AttributeError
             If an ``<equipment>`` XML element is specified in the configuration
-            file and it does not uniquely identify an equipment record in the
+            file and it does not uniquely identify an equipment record in an
             **Equipment-Register** database.
         ValueError
             If any of the values in the **Connections** database are invalid.
         """
-        logger.debug('Loading databases from ' + path)
-
-        self._config_path = path
-
-        self._equipment_attributes = EquipmentRecord.attributes()
-        self._connection_attributes = ConnectionRecord.attributes()
+        logger.debug('Loading databases from {}'.format(path))
 
         root = ElementTree.parse(path).getroot()
+
+        self._config_path = path
+        self._equipment_attributes = EquipmentRecord.attributes()
+        self._connection_attributes = ConnectionRecord.attributes()
 
         # create a dictionary of ConnectionRecord objects
         self._connection_records = {}
@@ -243,13 +246,13 @@ class Database(object):
         Examples
         --------
         >>> connections()  # doctest: +SKIP
-        will return a list of all connection records
+        a list of all ConnectionRecords
 
         >>> connections(manufacturer='H*P')  # doctest: +SKIP
-        will return a list of all connection records that have Hewlett Packard as the manufacturer
+        a list of all ConnectionRecords that have Hewlett Packard as the manufacturer
 
         >>> connections(address='GPIB*')  # doctest: +SKIP
-        will return a list of all connection records that use GPIB for the connection bus
+        a list of all ConnectionRecords that use GPIB for the connection bus
         """
         _kwargs = {key: kwargs[key] for key in kwargs if key in self._connection_attributes}
         return [r for r in self._connection_records.values() if self._match(r, _kwargs)]
@@ -273,19 +276,19 @@ class Database(object):
         Examples
         --------
         >>> records()  # doctest: +SKIP
-        will return a list of all equipment records
+        a list of all EquipmentRecords
 
         >>> records(manufacturer='H*P')  # doctest: +SKIP
-        will return a list of all equipment records that have Hewlett Packard as the manufacturer
+        a list of all EquipmentRecords that have Hewlett Packard as the manufacturer
 
         >>> records(manufacturer='Agilent', model='3458A')  # doctest: +SKIP
-        will return a list of all equipment records that are from Agilent and that have the model number 3458A
+        a list of all EquipmentRecords that are from Agilent and that have the model number 3458A
 
         >>> records(manufacturer='Agilent', model='3458A', serial='MY45046470')  # doctest: +SKIP
-        will return a list of only one equipment record (if the equipment record exists)
+        a list of only one EquipmentRecord (if the equipment record exists, otherwise an empty list)
 
         >>> records(description='I-V Converter')  # doctest: +SKIP
-        will return a list of all equipment records that contain the string 'I-V Converter' in the description field
+        a list of all EquipmentRecords that contain 'I-V Converter' in the description field
         """
         _kwargs = {key: kwargs[key] for key in kwargs if key in self._equipment_attributes}
         return [r for r in self._equipment_records.values() if self._match(r, _kwargs)]
@@ -298,10 +301,10 @@ class Database(object):
                           'specifying where to find the database'.format(self._config_path))
 
         if not os.path.isfile(path):
-            # check if the path is a relative path (relative to the .XML file path)
+            # check if the path is a relative path (relative to the XML file path)
             path = os.path.join(os.path.dirname(self._config_path), path)
             if not os.path.isfile(path):
-                raise IOError('Cannot find the database ' + path)
+                raise FileNotFoundError('Cannot find the database ' + path)
 
         ext = os.path.splitext(path)[1].lower()
         if ext in ('.xls', '.xlsx'):

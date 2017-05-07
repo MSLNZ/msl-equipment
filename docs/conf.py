@@ -200,4 +200,6 @@ epub_exclude_files = ['search.html']
 intersphinx_mapping = {
     'python': ('https://docs.python.org/{}'.format(sys.version_info[0]), None),
     'numpy': ('https://docs.scipy.org/doc/numpy/', None),
+    'msl.loadlib': ('https://msl-loadlib.readthedocs.io/en/stable/', None),
+    'pyvisa': ('https://pyvisa.readthedocs.io/en/stable/', None),
 }

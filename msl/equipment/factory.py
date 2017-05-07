@@ -1,15 +1,15 @@
 """
 Establish a connection to the equipment to send and receive messages.
 """
-import os
 import logging
 
-from msl.equipment.constants import Backend, MSLInterface
-from msl.equipment.record_types import EquipmentRecord
-from msl.equipment.connection_demo import ConnectionDemo
-from msl.equipment.connection_msl import ConnectionMessageBased
-from msl.equipment.connection_pyvisa import ConnectionPyVISA
-from msl.equipment.resources import find_sdk_class
+from .config import CONFIG
+from .constants import Backend, MSLInterface
+from .record_types import EquipmentRecord
+from .connection_demo import ConnectionDemo
+from .connection_msl import ConnectionMessageBased
+from .connection_pyvisa import ConnectionPyVISA
+from .resources import find_sdk_class
 
 logger = logging.getLogger(__name__)
 
@@ -25,11 +25,11 @@ def connect(record, demo=None):
 
     demo : :obj:`bool` or :obj:`None`
         Whether to simulate a connection to the equipment by opening
-        a connection in demo mode. This allows you run your code if the equipment
-        is not physically connected to the computer.
+        a connection in demo mode. This allows you run your code if the 
+        equipment is not physically connected to the computer.
         
-        If :data:`None` then the `demo` value is read from an :obj:`os.environ`
-        variable. See :func:`msl.equipment.config.load` for more details.
+        If :data:`None` then the `demo` value is read from a :obj:`~.config.CONFIG`
+        variable. See :obj:`msl.equipment.config.load` for more details.
 
     Returns
     -------
@@ -40,7 +40,7 @@ def connect(record, demo=None):
     ------
     ValueError
         If any of the property values in
-        :data:`record.connection.properties <.record_types.ConnectionRecord.properties>`
+        :obj:`record.connection.properties <.record_types.ConnectionRecord.properties>`
         are invalid.
     """
     def _connect(_record):
@@ -84,7 +84,7 @@ def connect(record, demo=None):
             return cls(_record)
 
     if demo is None:
-        demo = eval(os.environ.get('demo_mode', 'False'))
+        demo = CONFIG['demo_mode']
 
     if isinstance(record, dict) and len(record) == 1:
         key = list(record.keys())[0]

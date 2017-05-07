@@ -3,12 +3,13 @@ Use PyVISA_ as the backend to communicate with the equipment.
 
 .. _PyVISA: http://pyvisa.readthedocs.io/en/stable/index.html
 """
-from msl.equipment.connection import Connection
-from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
+from .config import CONFIG
+from .connection import Connection
+from .record_types import EquipmentRecord, ConnectionRecord
 
-_pyvisa_resource_manager = None
 _VisaIOError = None
-_pyvisa_class_resources = {}
+_pyvisa_resource_classes = {}
+_pyvisa_resource_manager = None
 
 
 class ConnectionPyVISA(Connection):
@@ -44,7 +45,7 @@ class ConnectionPyVISA(Connection):
         rm = ConnectionPyVISA.resource_manager()
         self._resource = rm.open_resource(record.connection.address, **record.connection.properties)
 
-        # expose all of the PyVISA Resource methods for this connection object
+        # expose all of the PyVISA Resource methods to ConnectionPyVISA
         for method in dir(self._resource):
             if not method.startswith('_'):
                 setattr(self, method, getattr(self._resource, method))
@@ -53,25 +54,20 @@ class ConnectionPyVISA(Connection):
         self.log_debug('Connected to {}'.format(record.connection))
 
     def disconnect(self):
-        """Close_ the PyVISA_ connection.
-
-        .. _Close: http://pyvisa.readthedocs.io/en/stable/api/resources.html#pyvisa.resources.RegisterBasedResource.close
-        .. _PyVISA: http://pyvisa.readthedocs.io/en/stable/index.html        
-        """
+        """Calls :meth:`~pyvisa.resources.Resource.close`."""
         if self._resource is not None:
             self._resource.close()
             self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
             self._resource = None
 
     @staticmethod
-    def resource_manager(pyvisa_backend=None):
-        """Return the PyVISA `Resource Manager`_. 
+    def resource_manager(visa_library=None):
+        """Return the PyVISA :class:`~pyvisa.highlevel.ResourceManager`. 
     
-        Only **one** `Resource Manager`_ session is created per Python runtime and therefore 
-        multiple calls to this function returns the same `Resource Manager`_ object.
-    
-        .. _Resource Manager:
-            http://pyvisa.readthedocs.io/en/stable/api/resourcemanager.html#pyvisa.highlevel.ResourceManager
+        Only **one** Resource Manager session is created per Python runtime 
+        and therefore multiple calls to this function will return the same 
+        :class:`~pyvisa.highlevel.ResourceManager` object.
+
         .. _NI-VISA:
             https://www.ni.com/visa/
         .. _PyVISA-py:
@@ -81,53 +77,52 @@ class ConnectionPyVISA(Connection):
     
         Parameters
         ----------
-        pyvisa_backend : :obj:`str` or :obj:`None`
-            The backend to use for PyVISA. For example:
+        visa_library : :class:`~pyvisa.highlevel.VisaLibraryBase`, :obj:`str` or :obj:`None`
+            The library to use for PyVISA. For example:
     
                 * ``@ni`` to use NI-VISA_        
                 * ``@py`` to use PyVISA-py_
                 * ``@sim`` to use PyVISA-sim_
     
-            If :data:`None` then the `pyvisa_backend` value is read from an 
-            :obj:`os.environ` variable. See :func:`msl.equipment.config.load` 
+            If :data:`None` then the `visa_library` value is read from a 
+            :obj:`~.config.CONFIG` variable. See :obj:`msl.equipment.config.load` 
             for more details.
         
         Returns
         -------
-        `Resource Manager`_
+        :class:`~pyvisa.highlevel.ResourceManager`
             The PyVISA Resource Manager.
         
         Raises
         ------
         ValueError
-            If the PyVISA backend cannot be found.
+            If the PyVISA backend wrapper cannot be found.
+        OSError
+            If the VISA library cannot be found.
         """
-        global _pyvisa_resource_manager, _VisaIOError, _pyvisa_class_resources
+        global _pyvisa_resource_manager, _VisaIOError, _pyvisa_resource_classes
         if _pyvisa_resource_manager is not None:
             return _pyvisa_resource_manager
 
-        import os
         import pyvisa
 
         _VisaIOError = pyvisa.errors.VisaIOError
 
         for item in dir(pyvisa.resources):
             if item.endswith('Instrument'):
-                key = item.replace('Instrument', '')
-                _pyvisa_class_resources[key] = getattr(pyvisa.resources, item)
+                key = item[:-len('Instrument')]
+                _pyvisa_resource_classes[key] = getattr(pyvisa.resources, item)
 
-        if pyvisa_backend is None:
-            pyvisa_backend = os.environ.get('PyVISA-backend', '@ni')
+        if visa_library is None:
+            visa_library = CONFIG['PyVISA_library']
 
-        _pyvisa_resource_manager = pyvisa.ResourceManager(pyvisa_backend)
+        _pyvisa_resource_manager = pyvisa.ResourceManager(visa_library)
         return _pyvisa_resource_manager
 
     @staticmethod
     def resource_pyclass(record):
-        """Finds the PyVISA `resource class`_ that can be used to open the `record`.
+        """Find the PyVISA :class:`~pyvisa.resources.Resource` that can open the `record`.
          
-        .. _resource class: http://pyvisa.readthedocs.io/en/stable/api/resources.html
-        
         Parameters
         ----------
         record : :class:`~.record_types.EquipmentRecord` or :class:`~.record_types.ConnectionRecord`
@@ -135,8 +130,8 @@ class ConnectionPyVISA(Connection):
 
         Returns
         -------
-        `resource class`_
-            The appropriate PyVISA resource class.        
+        :class:`~pyvisa.resources.Resource`
+            The appropriate PyVISA Resource class that can open the `record`.        
         """
         if isinstance(record, EquipmentRecord):
             if record.connection is None:
@@ -158,6 +153,6 @@ class ConnectionPyVISA(Connection):
             return rm._resource_classes[(info.interface_type, info.resource_class)]
         except _VisaIOError:
             # try to figure it out manually...
-            for key, value in _pyvisa_class_resources.items():
+            for key, value in _pyvisa_resource_classes.items():
                 if address.startswith(key):
                     return value

@@ -31,6 +31,7 @@ Package Structure
    :maxdepth: 2
 
    msl.equipment <_api/msl.equipment>
+   msl.equipment.config <_api/msl.equipment.config>
    msl.equipment.connection <_api/msl.equipment.connection>
    msl.equipment.connection_demo <_api/msl.equipment.connection_demo>
    msl.equipment.connection_msl <_api/msl.equipment.connection_msl>

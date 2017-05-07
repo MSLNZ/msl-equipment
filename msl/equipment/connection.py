@@ -42,12 +42,12 @@ class Connection(object):
         
         For example:
 
-            * to clean up system resources from memory (e.g., if using a SDK)
+            * to clean up system resources from memory (e.g., if using a manufacturer's SDK)
             * to configure the equipment to be in a state that is safe for people 
               working in the lab when the equipment is not in use
         
-        Notes
-        -----
+        Note
+        ----
         This method gets called automatically when the :class:`.Connection` 
         object gets destroyed.
         """

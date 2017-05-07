@@ -19,7 +19,7 @@ class Bentham(Connection, Client64):
         This class can be used with either a 32-bit or 64-bit Python interpreter
         to call the 32-bit functions in ``benhw32_cdecl.dll``.
 
-        The :class:`record.connection.properties <msl.equipment.record_types.ConnectionRecord.properties>`
+        The :obj:`record.connection.properties <msl.equipment.record_types.ConnectionRecord.properties>`
         dictionary for a Bentham device supports the following key-value pairs::
         
             'model': 'C:\path\\to\System.cfg',  # default is '' 

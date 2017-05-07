@@ -1,5 +1,6 @@
 """
-This example shows how to get information about devices found on USB ports, that are not currently ``open()``.
+This example shows how to get information about devices found on USB ports, 
+that are not currently ``open()``.
 """
 
 # this if statement is used so that Sphinx does not execute this script when the docs are being built

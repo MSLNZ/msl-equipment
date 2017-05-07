@@ -202,7 +202,7 @@ class EquipmentRecord(object):
                                                               )]
 
     def connect(self, demo=None):
-        """Establish a connection to this equipment.
+        """Establish a connection to the equipment.
 
         Parameters
         ----------
@@ -211,7 +211,7 @@ class EquipmentRecord(object):
             a connection in demo mode. This allows you run your code if the 
             equipment is not physically connected to the computer.
             
-            If :obj:`None` then the `demo` value is read from an :obj:`os.environ`
+            If :data:`None` then the `demo` value is read from a :obj:`~.config.CONFIG`
             variable. See :obj:`msl.equipment.config.load` for more details.
 
         Returns
@@ -222,7 +222,9 @@ class EquipmentRecord(object):
         Raises
         ------
         ValueError
-            If any of the attribute values in :data:`connection` are invalid.
+            If any of the property values in
+            :obj:`record.connection.properties <.ConnectionRecord.properties>`
+            are invalid.
         """
         return factory.connect(self, demo)
 
@@ -345,7 +347,7 @@ class ConnectionRecord(object):
 
     @property
     def properties(self):
-        """:obj:`dict`: Additional properties that are required to establish
+        """:obj:`dict`: Additional properties that may be used to establish
         a connection to the equipment, e.g., for a Serial connection 
         ``{'baud_rate': 11920, 'data_bits': 8}``.
         """

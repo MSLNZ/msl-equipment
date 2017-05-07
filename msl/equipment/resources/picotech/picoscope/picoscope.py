@@ -58,7 +58,7 @@ class PicoScope(ConnectionSDK):
         :obj:`record.connect() <.record_types.EquipmentRecord.connect>`,
         to connect to the equipment.
         
-        The :class:`record.connection.properties <msl.equipment.record_types.ConnectionRecord.properties>`
+        The :obj:`record.connection.properties <msl.equipment.record_types.ConnectionRecord.properties>`
         dictionary for a PicoScope supports the following key-value pairs::
         
             'open_unit': bool,  # default is True 

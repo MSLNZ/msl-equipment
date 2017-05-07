@@ -22,9 +22,9 @@ class FilterFlipper(MotionControl):
 
         Parameters
         ----------
-        record : :class:`~.record_types.EquipmentRecord`
+        record : :class:`~msl.equipment.record_types.EquipmentRecord`
             An equipment record from an **Equipment-Register** 
-            :class:`~.database.Database`.
+            :class:`~msl.equipment.database.Database`.
         """
         MotionControl.__init__(self, record, FilterFlipper_FCNS)
 

@@ -1,5 +1,5 @@
-msl\.equipment\.resources\.picotech\.picoscope\.ps5000a module
-==============================================================
+msl.equipment.resources.picotech.picoscope.ps5000a module
+=========================================================
 
 .. automodule:: msl.equipment.resources.picotech.picoscope.ps5000a
     :members:

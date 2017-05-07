@@ -1,5 +1,5 @@
-msl\.equipment\.resources\.thorlabs\.motion\_control package
-============================================================
+msl.equipment.resources.thorlabs.motion_control package
+=======================================================
 
 .. automodule:: msl.equipment.resources.thorlabs.motion_control
     :members:

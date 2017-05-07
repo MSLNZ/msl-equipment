@@ -1,5 +1,5 @@
-msl\.examples package
-=====================
+msl.examples package
+====================
 
 .. automodule:: msl.examples
     :members:

@@ -2,4 +2,4 @@ enum34 ; python_version < '3.4'
 xlrd
 pyvisa>=1.6
 numpy
-msl-loadlib==0.2.3
+msl-loadlib>=0.3.0

@@ -30,7 +30,7 @@ setup(
     name='msl-equipment',
     version=fetch_init('__version__'),
     author=fetch_init('__author__'),
-    author_email='joseph.borbely@callaghaninnovation.govt.nz',
+    author_email='joseph.borbely@measurement.govt.nz',
     url='https://github.com/MSLNZ/msl-equipment',
     description='Manage and connect to equipment in the laboratory.',
     long_description=read('README.rst'),

@@ -25,6 +25,7 @@ pytest_runner = ['pytest-runner'] if testing else []
 needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
 sphinx = ['sphinx', 'sphinx_rtd_theme'] if needs_sphinx else []
 
+requirements = [pkg for pkg in read('requirements.txt').splitlines() if not pkg.startswith('http')]
 
 setup(
     name='msl-equipment',
@@ -54,7 +55,7 @@ setup(
     ],
     setup_requires=sphinx + pytest_runner,
     tests_require=['pytest-cov', 'pytest'],
-    install_requires=read('requirements.txt').splitlines(),
+    install_requires=['msl-loadlib==0.3.0'] + requirements,
     dependency_links=['https://github.com/MSLNZ/msl-loadlib/tarball/master#egg=msl-loadlib-0.3.0'],
     cmdclass={
         'docs': docs_commands.BuildDocs,

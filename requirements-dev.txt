@@ -8,4 +8,3 @@ xlrd
 pyvisa>=1.6
 https://github.com/MSLNZ/msl-loadlib/archive/master.zip
 numpy
-mock

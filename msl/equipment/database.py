@@ -3,6 +3,7 @@ Load equipment and connection records (rows) from databases.
 """
 import os
 import re
+import ast
 import logging
 import datetime
 from xml.etree import ElementTree
@@ -113,7 +114,7 @@ class Database(object):
                                 v = False
                             else:
                                 try:
-                                    v = eval(v)
+                                    v = ast.literal_eval(v)
                                 except:
                                     pass  # keep the value as a string
 
@@ -182,7 +183,7 @@ class Database(object):
             # search for the equipment in the database
             equipment = self.records(**element.attrib)
             if len(equipment) == 0:
-                raise AttributeError('No equipment records found with attributes {}'.format(element.attrib))
+                raise AttributeError('No equipment record found with attributes {}'.format(element.attrib))
             if len(equipment) > 1:
                 raise AttributeError('The equipment specified is not unique. There are {} equipment '
                                      'records for {}'.format(len(equipment), element.attrib))

@@ -9,11 +9,13 @@ sys.path.insert(0, os.path.abspath('..'))
 
 from msl import equipment
 
-import mock
+#import mock
 
-MOCK_MODULES = ['msl.loadlib', 'numpy', 'pyvisa', 'xlrd']
-for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.Mock()
+autodoc_mock_imports = ['msl.loadlib', 'numpy', 'pyvisa', 'xlrd']
+#for mod_name in MOCK_MODULES:
+#    sys.modules[mod_name] = mock.Mock()
+
+
 
 # -- General configuration ------------------------------------------------
 

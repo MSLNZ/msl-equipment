@@ -9,12 +9,12 @@ from msl.loadlib import Server32
 
 class Bentham32(Server32):
 
-    def __init__(self, host, port, quiet):
+    def __init__(self, host, port, quiet, **kwargs):
         """A wrapper around the Bentham SDK benhw32_cdecl.dll.
         
         Do not instantiate this class directly. Use :class:`.benhw64.Bentham`.
         """
-        Server32.__init__(self, 'benhw32_cdecl.dll', 'cdll', host, port, quiet)
+        Server32.__init__(self, kwargs['lib_path'], 'cdll', host, port, quiet)
 
         self.lib.BI_automeasure.restype = c_int
         self.lib.BI_automeasure.argtypes = [POINTER(c_double)]

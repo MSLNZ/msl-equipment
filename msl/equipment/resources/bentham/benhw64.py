@@ -22,8 +22,8 @@ class Bentham(Connection, Client64):
         The :obj:`record.connection.properties <msl.equipment.record_types.ConnectionRecord.properties>`
         dictionary for a Bentham device supports the following key-value pairs::
         
-            'model': 'C:\path\\to\System.cfg',  # default is '' 
-            'setup': 'C:\path\\to\System.atr',  # default is ''
+            'model': 'C:\\path\\to\\System.cfg',  # default is '' 
+            'setup': 'C:\\path\\to\\System.atr',  # default is ''
         
         If both properties are not defined in the **Connections** 
         :class:`~msl.equipment.database.Database` then you will have to call 
@@ -40,16 +40,19 @@ class Bentham(Connection, Client64):
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
             An equipment record from an **Equipment-Register** 
             :class:`~msl.equipment.database.Database`.
-            
-        Note
-        ----
-        The paths to ``benhw32_cdecl.dll`` and ``IEEE_32M.dll`` **MUST** be in your 
-        environment ``PATH`` in order for the shared library to be loaded.
         """
         Connection.__init__(self, record)
-        path = os.path.dirname(record.connection.address.split('::')[2])
-        self.log_debug('Starting 32-bit Python server for "benhw32"')
-        Client64.__init__(self, 'benhw32', append_path=[os.path.dirname(__file__), path])
+
+        path = record.connection.address.split('::')[2]
+        head, tail = os.path.split(path)
+        self._tail = tail
+        self.log_debug('Starting 32-bit server for {}'.format(tail))
+
+        # the IEEE_32M.dll library must be available on PATH
+        env_path = [head, os.path.join(head, 'IEEE', 'Dummy')]
+
+        Client64.__init__(self, 'benhw32', append_sys_path=os.path.dirname(__file__),
+                          append_environ_path=env_path, lib_path=path)
 
         self._hw_id = None
 
@@ -74,13 +77,17 @@ class Bentham(Connection, Client64):
 
     def disconnect(self):
         self.errcheck(self.request32('close'))
+        self.log_debug('Stopping 32-bit server for {}'.format(self._tail))
         self.shutdown_server32()
 
     def errcheck(self, result, *args, append_msg=''):
         frame = inspect.getouterframes(inspect.currentframe())[1]
         self.log_debug('{}.{}{} -> {}'.format(self.__class__.__name__, frame.function, args, result))
         if result != BI_OK:
-            self.raise_exception('{}: {} {}'.format(*ERROR_CODES[result], append_msg))
+            e, m = ERROR_CODES[result]
+            print(append_msg)
+            print('{0}: {1} {2}'.format(e, m, append_msg))
+            self.raise_exception('{0}: {1} {2}'.format(e, m, append_msg))
         return result
 
     def get(self, hw_id, token, index):

@@ -52,8 +52,9 @@ class FilterWheel102C(ConnectionSDK):
         The :obj:`record.connection.properties <msl.equipment.record_types.ConnectionRecord.properties>`
         dictionary for a FilterWheel102C device supports the following key-value pairs::
             
-            'baud_rate': int,  # default is 115200 
-            'timeout': int,  # default is 10
+            'port': str,  # mandatory, example 'COM3'
+            'baud_rate': int,  # optional, default is 115200 
+            'timeout': int,  # optional, default is 10
         
         .. _here:
             https://www.thorlabs.com/software_pages/viewsoftwarepage.cfm?code=FW102C&viewtab=2
@@ -148,7 +149,17 @@ class FilterWheel102C(ConnectionSDK):
 
         baud = record.connection.properties.get('baud_rate', 115200)
         timeout = record.connection.properties.get('timeout', 10)
-        self.open(record.serial, baud, timeout)
+        port = record.connection.properties.get('port', None)
+
+        if port is None:
+            msg = 'You must specify the port, e.g. port=COM3, in the Properties field of the Connections database'
+            self.raise_exception(msg)
+
+        ports = self.get_ports()
+        if port not in ports:
+            self.raise_exception('Invalid port {}. Available ports: {}'.format(port, ', '.join(ports.keys())))
+
+        self.open(port, baud, timeout)
         self._max_position = int(self.get_position_count())
 
     def close(self):
@@ -227,16 +238,22 @@ class FilterWheel102C(ConnectionSDK):
         return velocity.value
 
     def get_ports(self):
-        """List all the COM ports that a filter wheel is connected to.
+        """List all the COM ports on the computer.
         
         Returns
         -------
-        :obj:`list` of :obj:`str`
-            The ports list includes a serial number and a device descriptor.
+        :obj:`dict` of :obj:`str`
+            A dictionary where the keys are the port numbers, e.g. COM1, COM3,
+            and the values are a description about each device connected to the 
+            port.
         """
-        ports = create_string_buffer(1024)
-        self.sdk.GetPorts(ports)
-        return [port for port in ports.raw.decode().split(',')]
+        ports_ptr = create_string_buffer(256)
+        self.sdk.GetPorts(ports_ptr)
+        ports_list = ports_ptr.raw.decode().rstrip('\x00').rstrip(',').split(',')
+        ports = {}
+        for i in range(0, len(ports_list), 2):
+            ports[ports_list[i]] = ports_list[i+1]
+        return ports
 
     def get_position(self):
         """        
@@ -304,36 +321,36 @@ class FilterWheel102C(ConnectionSDK):
         self.sdk.GetTriggerMode(self._handle, byref(mode))
         return TriggerMode(mode.value)
 
-    def is_open(self, serial_num):
-        """Check opened status of port.
+    def is_open(self, port):
+        """Check if the COM port is open.
 
         Parameters
         ----------
-        serial_num : :obj:`str`
-            The serial number of the device to be checked.
+        port : :obj:`str`
+            The port to be checked, e.g. ``'COM3'``.
 
         Returns
         -------
         :obj:`bool`
-            :obj:`True` if port is opened; :obj:`False` if port is closed.
+            :obj:`True` if the port is opened; :obj:`False` if the port is closed.
         """
-        return bool(self.sdk.IsOpen(str(serial_num).encode()))
+        return bool(self.sdk.IsOpen(port.encode()))
 
-    def open(self, serial_num, baud_rate, timeout):
+    def open(self, port, baud_rate, timeout):
         """Open a COM port for communication.
         
         Parameters
         ----------
-        serial_num : :obj:`str`
-            The serial number of the device to be opened, use the :meth:`get_ports` 
-            function to get list of available serial numbers.
+        port : :obj:`str`
+            The port to be opened, use the :meth:`get_ports` 
+            function to get list of available ports.
         baud_rate : :obj:`int`
             The number of bits per second to use for the communication protocol.        
         timeout : :obj:`int`
             Set the timeout value, in seconds. 
         """
         if self._handle is None:
-            self._handle = self.sdk.Open(str(serial_num).encode(), baud_rate, timeout)
+            self._handle = self.sdk.Open(port.encode(), baud_rate, timeout)
 
     def save(self):
         """Save the current settings as the default settings on power up."""
@@ -383,7 +400,7 @@ class FilterWheel102C(ConnectionSDK):
             If the value of `position` is invalid.
         """
         if position < 1 or position > self._max_position:
-            msg = 'Invalid position. Must be >0 and <{}'.format(self._max_position+1)
+            msg = 'Invalid position of {}. Must be 1 <= position <= {}'.format(position, self._max_position)
             raise ValueError(msg)
         self.sdk.SetPosition(self._handle, position)
 

@@ -1,12 +1,13 @@
 """
-A wrapper around Thorlabs.MotionControl.FilterFlipper.dll
+This module provides all the functionality required to control a 
+Filter Flipper (MFF101).
 """
-from ctypes import create_string_buffer, byref, c_int64
+from ctypes import byref, c_int64
 from ctypes.wintypes import WORD, DWORD
 
 from .motion_control import MotionControl
 from .api_functions import FilterFlipper_FCNS
-from .structs import TLI_HardwareInformation, FF_IOSettings
+from .structs import FF_IOSettings
 from .enums import FF_IOModes, FF_SignalModes
 
 
@@ -18,7 +19,7 @@ class FilterFlipper(MotionControl):
     MAX_PULSE_WIDTH = 200
 
     def __init__(self, record):
-        """A wrapper around Thorlabs.MotionControl.FilterFlipper.dll
+        """A wrapper around Thorlabs.MotionControl.FilterFlipper
 
         Parameters
         ----------
@@ -36,11 +37,11 @@ class FilterFlipper(MotionControl):
         ConnectionError
             If not successful.
         """
-        return self.sdk.FF_Open(self._serial)
+        self.sdk.FF_Open(self._serial)
 
     def close(self):
-        """list of int: Disconnect and close the device."""
-        return self.sdk.FF_Close(self._serial)
+        """Disconnect and close the device."""
+        self.sdk.FF_Close(self._serial)
 
     def check_connection(self):
         """Check connection.
@@ -53,8 +54,8 @@ class FilterFlipper(MotionControl):
         return self.sdk.FF_CheckConnection(self._serial)
 
     def identify(self):
-        """Sends a command to the device to make it identify iteself."""
-        return self.sdk.FF_Identify(self._serial)
+        """Sends a command to the device to make it identify itself."""
+        self.sdk.FF_Identify(self._serial)
 
     def get_hardware_info(self):
         """Gets the hardware information from the device.
@@ -69,30 +70,7 @@ class FilterFlipper(MotionControl):
         ConnectionError
             If not successful.
         """
-        firmware_version = DWORD()
-        hardware_version = WORD()
-        modification_state = WORD()
-        typ = WORD()
-        num_channels = WORD()
-        model_size = TLI_HardwareInformation.modelNumber.size
-        model = create_string_buffer(model_size)
-        notes_size = TLI_HardwareInformation.notes.size
-        notes = create_string_buffer(notes_size)
-
-        self.sdk.FF_GetHardwareInfo(self._serial, model, model_size, byref(typ), byref(num_channels),
-                                    notes, notes_size, byref(firmware_version), byref(hardware_version),
-                                    byref(modification_state))
-
-        info = TLI_HardwareInformation()
-        info.serialNumber = int(self._serial)
-        info.modelNumber = model.value
-        info.type = typ.value
-        info.numChannels = num_channels.value
-        info.notes = notes.value
-        info.firmwareVersion = firmware_version.value
-        info.hardwareVersion = hardware_version.value
-        info.modificationState = modification_state.value
-        return info
+        return self._get_hardware_info(self.sdk.FF_GetHardwareInfo)
 
     def get_firmware_version(self):
         """Gets version number of the device firmware.
@@ -117,32 +95,24 @@ class FilterFlipper(MotionControl):
     def load_settings(self):
         """Update device with stored settings.
 
-        Returns
-        -------
-        :obj:`bool`
-            Whether loading the settings was successful.
-
         Raises
         ------
         ConnectionError
             If not successful.
         """
-        return self.sdk.FF_LoadSettings(self._serial)
+        if not self.sdk.FF_LoadSettings(self._serial):
+            self.raise_exception('Error loading the stored settings.')
 
     def persist_settings(self):
         """Persist the devices current settings.
 
-        Returns
-        -------
-        :obj:`bool`: 
-            Whether successful.
-
         Raises
         ------
         ConnectionError
             If not successful.
         """
-        return self.sdk.FF_PersistSettings(self._serial)
+        if not self.sdk.FF_PersistSettings(self._serial):
+            self.raise_exception('Error to persist the current settings.')
 
     def get_number_positions(self):
         """Get number of positions available from the device.
@@ -165,7 +135,7 @@ class FilterFlipper(MotionControl):
         ConnectionError
             If not successful.
         """
-        return self.sdk.FF_Home(self._serial)
+        self.sdk.FF_Home(self._serial)
 
     def move_to_position(self, position, wait=False):
         """Move the device to the specified position (index).
@@ -183,14 +153,13 @@ class FilterFlipper(MotionControl):
         ConnectionError
             If not successful.
         """
-        ret = self.sdk.FF_MoveToPosition(self._serial, position)
+        self.sdk.FF_MoveToPosition(self._serial, position)
         if wait:
             self.clear_message_queue()
             msg_type, msg_id, msg_data = self.wait_for_message()
             while msg_type != 2 or msg_id != 1:
                 msg_type, msg_id, msg_data = self.wait_for_message()
             assert self.get_position() == position, 'Wait until move finished is not working'
-        return ret
 
     def get_position(self):
         """Get the current position (index).
@@ -227,7 +196,7 @@ class FilterFlipper(MotionControl):
         ConnectionError
             If not successful.
         """
-        return self.sdk.FF_RequestIOSettings(self._serial)
+        self.sdk.FF_RequestIOSettings(self._serial)
 
     def set_io_settings(self, transit_time=500,
                         oper1=FF_IOModes.FF_ToggleOnPositiveEdge, sig1=FF_SignalModes.FF_InputButton, pw1=200,
@@ -278,7 +247,7 @@ class FilterFlipper(MotionControl):
         settings.digIO2OperMode = self.convert_to_enum(oper2, FF_IOModes, prefix='FF_')
         settings.digIO2SignalMode = self.convert_to_enum(sig2, FF_SignalModes, prefix='FF_')
         settings.digIO2PulseWidth = int(pw2)
-        return self.sdk.FF_SetIOSettings(self._serial, byref(settings))
+        self.sdk.FF_SetIOSettings(self._serial, byref(settings))
 
     def get_transit_time(self):
         """Gets the transit time.
@@ -307,7 +276,7 @@ class FilterFlipper(MotionControl):
             msg = 'Invalid transit time value of {} ms; {} <= transit_time <= {}'.format(
                 transit_time, self.MIN_TRANSIT_TIME, self.MAX_TRANSIT_TIME)
             self.raise_exception(msg)
-        return self.sdk.FF_SetTransitTime(self._serial, int(transit_time))
+        self.sdk.FF_SetTransitTime(self._serial, int(transit_time))
 
     def request_status(self):
         """Request status bits.
@@ -322,19 +291,20 @@ class FilterFlipper(MotionControl):
         ConnectionError
             If not successful.
         """
-        return self.sdk.FF_RequestStatus(self._serial)
+        self.sdk.FF_RequestStatus(self._serial)
 
     def get_status_bits(self):
-        """
-        This returns the latest status bits received from the device.
+        """Get the current status bits.
         
-        To get new status bits, use :meth:`.request_status` or use the polling 
+        
+        This returns the latest status bits received from the device. To get 
+        new status bits, use :meth:`.request_status` or use the polling 
         function, :meth:`.start_polling`
         
         Returns
         -------
         :obj:`int`
-            The status bits from the device
+            The status bits from the device.
         """
         return self.sdk.FF_GetStatusBits(self._serial)
 
@@ -367,7 +337,7 @@ class FilterFlipper(MotionControl):
 
     def stop_polling(self):
         """Stops the internal polling loop."""
-        return self.sdk.FF_StopPolling(self._serial)
+        self.sdk.FF_StopPolling(self._serial)
 
     def time_since_last_msg_received(self):
         """Gets the time, in milliseconds, since tha last message was received.
@@ -397,7 +367,7 @@ class FilterFlipper(MotionControl):
         msg_timeout : :obj:`int`
             The last message error timeout in ms. Set to 0 to disable.
         """
-        return self.sdk.FF_EnableLastMsgTimer(self._serial, enable, msg_timeout)
+        self.sdk.FF_EnableLastMsgTimer(self._serial, enable, msg_timeout)
 
     def has_last_msg_timer_overrun(self):
         """Queries if the time since the last message has exceeded the 
@@ -426,11 +396,11 @@ class FilterFlipper(MotionControl):
         ConnectionError
             If not successful.
         """
-        return self.sdk.FF_RequestSettings(self._serial)
+        self.sdk.FF_RequestSettings(self._serial)
 
     def clear_message_queue(self):
         """Clears the device message queue."""
-        return self.sdk.FF_ClearMessageQueue(self._serial)
+        self.sdk.FF_ClearMessageQueue(self._serial)
 
     def register_message_callback(self, callback):
         """Registers a callback on the message queue.
@@ -440,10 +410,10 @@ class FilterFlipper(MotionControl):
         callback : :obj:`.callbacks.MotionControlCallback`
             A function to be called whenever messages are received.
         """
-        return self.sdk.FF_RegisterMessageCallback(self._serial, callback)
+        self.sdk.FF_RegisterMessageCallback(self._serial, callback)
 
     def message_queue_size(self):
-        """Gets the MessageQueue size.
+        """Gets the size of the message queue.
         
         Returns
         -------

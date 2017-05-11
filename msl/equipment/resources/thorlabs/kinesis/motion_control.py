@@ -2,12 +2,13 @@
 Base **Thorlabs.MotionControl** class.
 """
 from ctypes import c_int, byref, create_string_buffer
+from ctypes.wintypes import WORD, DWORD
 
 from msl.loadlib import LoadLibrary
 
 from msl.equipment.connection_msl import ConnectionSDK
 from .errors import ERROR_CODES, FT_OK
-from .structs import TLI_DeviceInfo
+from .structs import TLI_DeviceInfo, TLI_HardwareInformation
 from .messages import MessageTypes, MessageID
 
 _motion_control_device_manager = None
@@ -100,6 +101,7 @@ class MotionControl(ConnectionSDK):
             func.argtypes = [v[0] for v in item[3]]
 
         self._serial = record.serial.encode()
+        self.build_device_list()
         self.open()
         self._is_open = True
 
@@ -258,3 +260,46 @@ class MotionControl(ConnectionSDK):
         _type = MessageTypes[msg_type]
         _id = MessageID[_type][msg_id]
         return 'Type:{}; ID:{}; Data:{}'.format(_type, _id, msg_data)
+
+    def _get_hardware_info(self, sdk_function):
+        """Gets the hardware information from the device.
+        
+        The SDK function signature must be
+                
+        sdk_function(char const * serialNo, char * modelNo, DWORD sizeOfModelNo, WORD * type, WORD * numChannels, 
+        char * notes, DWORD sizeOfNotes, DWORD * firmwareVersion, WORD * hardwareVersion, WORD * modificationState);
+
+        Returns
+        -------
+        :class:`.structs.TLI_HardwareInformation`
+            The hardware information.
+
+        Raises
+        ------
+        ConnectionError
+            If not successful.
+        """
+        firmware_version = DWORD()
+        hardware_version = WORD()
+        modification_state = WORD()
+        typ = WORD()
+        num_channels = WORD()
+        model_size = TLI_HardwareInformation.modelNumber.size
+        model = create_string_buffer(model_size)
+        notes_size = TLI_HardwareInformation.notes.size
+        notes = create_string_buffer(notes_size)
+
+        sdk_function(self._serial, model, model_size, byref(typ), byref(num_channels),
+                     notes, notes_size, byref(firmware_version), byref(hardware_version),
+                     byref(modification_state))
+
+        info = TLI_HardwareInformation()
+        info.serialNumber = int(self._serial)
+        info.modelNumber = model.value
+        info.type = typ.value
+        info.numChannels = num_channels.value
+        info.notes = notes.value
+        info.firmwareVersion = firmware_version.value
+        info.hardwareVersion = hardware_version.value
+        info.modificationState = modification_state.value
+        return info

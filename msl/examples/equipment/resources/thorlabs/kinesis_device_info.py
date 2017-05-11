@@ -1,6 +1,6 @@
 """
 This example shows how to get information about devices found on USB ports, 
-that are not currently ``open()``.
+that are not currently ``open()`` using the Thorlabs Kinesis SDK.
 """
 
 # this if statement is used so that Sphinx does not execute this script when the docs are being built
@@ -27,8 +27,11 @@ if __name__ == '__main__':
     filter_flippers = MotionControl.get_device_list(MotionControl.Filter_Flipper)
     print('The Filter Flipper\'s that are connected are: {}'.format(filter_flippers))
 
-    flippers_wheels = MotionControl.get_device_list(MotionControl.Filter_Flipper, MotionControl.Filter_Wheel)
-    print('The Filter Flipper\'s and Filter Wheel\'s that are connected are: {}'.format(flippers_wheels))
+    lts = MotionControl.get_device_list(MotionControl.Long_Travel_Stage)
+    print('The Long Travel Stage\'s that are connected are: {}'.format(lts))
+
+    devices = MotionControl.get_device_list(MotionControl.Filter_Flipper, MotionControl.Long_Travel_Stage)
+    print('The Filter Flipper\'s and Long Travel Stage\'s that are connected are: {}'.format(devices))
 
     info = MotionControl.get_device_info(all_devices[0])
     print('The device info for the device with serial# {} is:'.format(all_devices[0]))

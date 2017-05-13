@@ -3,7 +3,7 @@ Use PyVISA_ as the backend to communicate with the equipment.
 
 .. _PyVISA: http://pyvisa.readthedocs.io/en/stable/index.html
 """
-from .config import CONFIG
+from . import config
 from .connection import Connection
 from .record_types import EquipmentRecord, ConnectionRecord
 
@@ -114,7 +114,7 @@ class ConnectionPyVISA(Connection):
                 _pyvisa_resource_classes[key] = getattr(pyvisa.resources, item)
 
         if visa_library is None:
-            visa_library = CONFIG['PyVISA_library']
+            visa_library = config.PyVISA_LIBRARY
 
         _pyvisa_resource_manager = pyvisa.ResourceManager(visa_library)
         return _pyvisa_resource_manager

@@ -2,7 +2,6 @@
 Load a XML configuration file.
 """
 import os
-import sys
 import logging
 from xml.etree import ElementTree
 
@@ -29,10 +28,13 @@ def load(path):
     +================+===================================+=========================================+
     | PyVISA_LIBRARY | @ni, @py, @sim, /path/to/lib\@ni  | The PyVISA backend_ library to use.     |
     +----------------+-----------------------------------+-----------------------------------------+
-    |   DEMO_MODE    | true, false                       | Open **all** connections in demo mode?  |
+    |   DEMO_MODE    | true, false                       | Whether to open **all** connections in  |
+    |                |                                   | demo mode.                              |
     +----------------+-----------------------------------+-----------------------------------------+
-    |   SDK_PATH     | I:\Photometry\SDKs                | A path that contains SDK libraries.     |
-    |                |                                   | Accepts a recursive="true" attribute.   |
+    |   SDK_PATH     | /path/to/SDKs, D:/data/SDKs       | A path that contains SDK libraries.     |
+    |                |                                   | Accepts a *recursive="true"* attribute. |
+    |                |                                   | Appends the path(s) to                  |
+    |                |                                   | :obj:`os.environ['PATH'] <os.environ>`  |
     +----------------+-----------------------------------+-----------------------------------------+
     
     .. _backend: http://pyvisa.readthedocs.io/en/stable/backends.html
@@ -48,7 +50,7 @@ def load(path):
             <!-- Open all connections in demo mode -->
             <DEMO_MODE>true</DEMO_MODE>
 
-            <!-- Add a path to sys.path where SDK files are located -->
+            <!-- Add a path to os.environ['PATH'] where SDK files are located -->
             <SDK_PATH>I:\Photometry\SDKs</SDK_PATH>
 
             <!-- Recursively add SDK paths starting from a root path -->
@@ -103,12 +105,6 @@ def load(path):
     :exc:`~xml.etree.ElementTree.ParseError`
         If the configuration file is invalid.
     """
-    def append_path(p):
-        SDK_PATH.append(p)
-        sys.path.append(p)
-        os.environ['PATH'] += os.pathsep + p
-        logger.debug('append SDK_PATH %s', p)
-
     logger.debug('Loading {}'.format(path))
     root = ElementTree.parse(path).getroot()
 
@@ -131,8 +127,11 @@ def load(path):
             continue
         if element.attrib.get('recursive', 'false').lower() == 'true':
             for root, dirs, files in os.walk(element.text):
-                append_path(root)
+                SDK_PATH.append(root)
         else:
-            append_path(element.text)
+            SDK_PATH.append(element.text)
+    for p in SDK_PATH:
+        os.environ['PATH'] += os.pathsep + p
+        logger.debug('append SDK_PATH %s', p)
 
     return Database(path)

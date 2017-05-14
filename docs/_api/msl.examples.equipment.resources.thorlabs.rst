@@ -12,6 +12,7 @@ Submodules
 .. toctree::
 
    msl.examples.equipment.resources.thorlabs.fw102c
+   msl.examples.equipment.resources.thorlabs.kinesis_device_info
+   msl.examples.equipment.resources.thorlabs.lts150
    msl.examples.equipment.resources.thorlabs.mff101
-   msl.examples.equipment.resources.thorlabs.motion_control_device_info
 

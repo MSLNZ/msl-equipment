@@ -11,7 +11,7 @@ Subpackages
 
 .. toctree::
 
-    msl.equipment.resources.thorlabs.motion_control
+    msl.equipment.resources.thorlabs.kinesis
 
 Submodules
 ----------

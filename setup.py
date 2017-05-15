@@ -55,8 +55,8 @@ setup(
     ],
     setup_requires=sphinx + pytest_runner,
     tests_require=['pytest-cov', 'pytest'],
-    install_requires=['msl-loadlib==0.3.0'] + requirements,
-    dependency_links=['https://github.com/MSLNZ/msl-loadlib/tarball/master#egg=msl-loadlib-0.3.0'],
+    install_requires=['msl-loadlib==0.3.1'] + requirements,
+    dependency_links=['https://github.com/MSLNZ/msl-loadlib/tarball/master#egg=msl-loadlib-0.3.1'],
     cmdclass={
         'docs': docs_commands.BuildDocs,
         'apidocs': docs_commands.ApiDocs,

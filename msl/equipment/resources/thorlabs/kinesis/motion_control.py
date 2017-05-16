@@ -14,13 +14,11 @@ from .messages import MessageTypes, MessageID
 _motion_control_device_manager = None
 
 
-def device_manager(root_path='C:/Program Files/Thorlabs/Kinesis'):
-    """Returns a reference to the DeviceManager library. 
+def device_manager():
+    """Returns a reference to the DeviceManager library.
     
-    Parameters
-    ----------
-    root_path : :obj:`str`
-        The path to the Thorlabs.MotionControl.DeviceManager.dll library.
+    The ``Thorlabs.MotionControl.DeviceManager.dll`` library must be available on
+    :obj:`os.environ['PATH'] <os.environ>`.
 
     Returns
     -------
@@ -29,9 +27,7 @@ def device_manager(root_path='C:/Program Files/Thorlabs/Kinesis'):
     """
     global _motion_control_device_manager
     if _motion_control_device_manager is None:
-        import os
-        path = os.path.join(root_path, 'Thorlabs.MotionControl.DeviceManager.dll')
-        _motion_control_device_manager = LoadLibrary(path).lib
+        _motion_control_device_manager = LoadLibrary('Thorlabs.MotionControl.DeviceManager.dll').lib
     return _motion_control_device_manager
 
 

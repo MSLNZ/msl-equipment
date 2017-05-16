@@ -9,7 +9,7 @@ from .record_types import EquipmentRecord
 from .connection_demo import ConnectionDemo
 from .connection_msl import ConnectionMessageBased
 from .connection_pyvisa import ConnectionPyVISA
-from .resources.utils import find_sdk_class
+from .resources import find_sdk_class
 
 logger = logging.getLogger(__name__)
 

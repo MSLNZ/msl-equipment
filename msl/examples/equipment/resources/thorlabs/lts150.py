@@ -8,7 +8,7 @@ if __name__ == '__main__':
     import time
     from logging.config import fileConfig
 
-    from msl.equipment.config import load
+    from msl.equipment.config import Config
     from msl.examples.equipment import EXAMPLES_DIR
 
     log_config = os.path.join(EXAMPLES_DIR, 'logging-config.ini')
@@ -17,7 +17,7 @@ if __name__ == '__main__':
     # the 'config.xml' file contains
     # <equipment alias="stage" manufacturer="Thorlabs" model="LTS150/M"/>
     # and the appropriate <equipment_connections> and <equipment_registers> XML elements
-    db = load('C:/Users/j.borbely/Desktop/config.xml')
+    db = Config('C:/Users/j.borbely/code/git/few-photons/config.xml').database()
 
     stage = db.equipment['stage'].connect()
     print(stage)

@@ -11,7 +11,8 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEMO, format="[%(levelname)s] %(asctime)s -- %(name)s -- %(message)s")
 
     # load the database
-    dbase = config.load(os.path.join(EXAMPLES_DIR, 'equipment-configuration.xml'))
+    cfg = config.Config(os.path.join(EXAMPLES_DIR, 'equipment-configuration.xml'))
+    dbase = cfg.database()
 
     # get a specific equipment record (a DMM from Agilent) from the database and
     # then connect to this DMM in demo mode to send some messages to it

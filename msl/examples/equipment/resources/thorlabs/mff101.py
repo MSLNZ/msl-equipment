@@ -11,10 +11,10 @@ to the computer.
 if __name__ == '__main__':
     import os
     import time
-    from msl.equipment.config import load
+    from msl.equipment.config import Config
     from msl.examples.equipment import EXAMPLES_DIR
 
-    db = load(os.path.join(EXAMPLES_DIR, 'equipment-configuration.xml'))
+    db = Config(os.path.join(EXAMPLES_DIR, 'equipment-configuration.xml')).database()
     flipper = db.equipment['filter_flipper'].connect()
 
     print(flipper)

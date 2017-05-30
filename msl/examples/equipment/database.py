@@ -7,7 +7,7 @@ if __name__ == '__main__':
 
     # load the database
     path = os.path.join(os.path.dirname(__file__), 'equipment-configuration.xml')
-    dbase = config.load(path)
+    dbase = config.Config(path).database()
 
     # access the equipment record for each <equipment> XML element by the alias that we assigned to it
     print('Access equipment records from the alias that was assigned to the equipment...')

@@ -3,9 +3,8 @@ Simulate a connection to the equipment.
 """
 import os
 import re
-import logging
-import inspect
 import random
+import logging
 import importlib
 
 from msl.equipment.connection import Connection
@@ -62,15 +61,15 @@ class ConnectionDemo(Connection):
 
     def __getattr__(self, name):
         """Used for simulating method calls"""
-        caller_line = inspect.getouterframes(inspect.currentframe())[1][4][0]
-        args = caller_line.split(name)[1].split(')')[0]
-        logger.demo('{}.{}{})'.format(self._connection_class.__name__, name, args))
-
         self._docstring = getattr(self._connection_class, name).__doc__
         if self._docstring is None:
             self._docstring = ''
 
         def generic_method(*args, **kwargs):
+            params = ', '.join(map(str, args))
+            for key, value in kwargs.items():
+                params += ', {}={}'.format(key, value)
+            logger.demo('{}.{}({})'.format(self._connection_class.__name__, name, params))
             return self._return_types()
         return generic_method
 

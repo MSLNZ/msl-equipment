@@ -5,9 +5,13 @@ that are not currently ``open()`` using the Thorlabs Kinesis SDK.
 
 # this if statement is used so that Sphinx does not execute this script when the docs are being built
 if __name__ == '__main__':
+    import os
     import sys
 
     from msl.equipment.resources.thorlabs import MotionControl
+
+    # add the Kinesis folder to the PATH
+    os.environ['PATH'] += os.pathsep + 'C:/Program Files/Thorlabs/Kinesis'
 
     print('Building the device list...')
     MotionControl.build_device_list()

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <msl>
 
+    <!-- Add the Thorlabs Kinesis directory to the PATH -->
+    <SDK_PATH>C:/Program Files/Thorlabs/Kinesis</SDK_PATH>
+
     <!-- The equipment that is being used to perform the measurement -->
     <equipment alias="ref" manufacturer="Agilent" model="3458A" serial="G00001"/>
     <equipment manufacturer="Hewlett Packard" serial="D10011"/> <!-- the alias is defined in the <equipment_connections> database -->

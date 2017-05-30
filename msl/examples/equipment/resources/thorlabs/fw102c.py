@@ -15,7 +15,7 @@ if __name__ == '__main__':
     from msl.equipment.constants import Backend
     from msl.equipment import EquipmentRecord, ConnectionRecord
 
-    path = r'C:\Users\j.borbely\Downloads\AppNotes_FW102C_v400\AppNotes_FW102C\LabVIEW\Thorlabs_FW102C\Library\FilterWheel102_win64.dll'
+    path = r'C:\Program Files\Thorlabs\FilterWheel102_win64.dll'
 
     record = EquipmentRecord(
         manufacturer='Thorlabs',

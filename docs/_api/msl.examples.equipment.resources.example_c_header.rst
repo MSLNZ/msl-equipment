@@ -1,5 +1,5 @@
-msl.examples.equipment.resources.example_c_header module
-========================================================
+msl\.examples\.equipment\.resources\.example\_c\_header module
+==============================================================
 
 .. automodule:: msl.examples.equipment.resources.example_c_header
     :members:

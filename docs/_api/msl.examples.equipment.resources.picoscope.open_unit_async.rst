@@ -1,5 +1,5 @@
-msl.examples.equipment.resources.picoscope.open_unit_async module
-=================================================================
+msl\.examples\.equipment\.resources\.picoscope\.open\_unit\_async module
+========================================================================
 
 .. automodule:: msl.examples.equipment.resources.picoscope.open_unit_async
     :members:

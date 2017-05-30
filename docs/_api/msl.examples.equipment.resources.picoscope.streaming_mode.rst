@@ -1,5 +1,5 @@
-msl.examples.equipment.resources.picoscope.streaming_mode module
-================================================================
+msl\.examples\.equipment\.resources\.picoscope\.streaming\_mode module
+======================================================================
 
 .. automodule:: msl.examples.equipment.resources.picoscope.streaming_mode
     :members:

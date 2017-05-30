@@ -1,5 +1,5 @@
-msl.equipment.config module
-===========================
+msl\.equipment\.config module
+=============================
 
 .. automodule:: msl.equipment.config
     :members:

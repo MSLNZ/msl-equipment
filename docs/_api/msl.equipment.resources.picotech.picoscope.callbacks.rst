@@ -1,5 +1,5 @@
-msl.equipment.resources.picotech.picoscope.callbacks module
-===========================================================
+msl\.equipment\.resources\.picotech\.picoscope\.callbacks module
+================================================================
 
 .. automodule:: msl.equipment.resources.picotech.picoscope.callbacks
     :members:

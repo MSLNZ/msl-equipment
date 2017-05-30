@@ -1,5 +1,5 @@
-msl.equipment.resources.picotech.picoscope.ps3000 module
-========================================================
+msl\.equipment\.resources\.picotech\.picoscope\.ps3000 module
+=============================================================
 
 .. automodule:: msl.equipment.resources.picotech.picoscope.ps3000
     :members:

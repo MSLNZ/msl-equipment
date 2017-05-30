@@ -1,5 +1,5 @@
-msl.equipment.resources.thorlabs.kinesis package
-================================================
+msl\.equipment\.resources\.thorlabs\.kinesis package
+====================================================
 
 .. automodule:: msl.equipment.resources.thorlabs.kinesis
     :members:

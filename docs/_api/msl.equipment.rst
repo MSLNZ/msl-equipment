@@ -1,5 +1,5 @@
-msl.equipment package
-=====================
+msl\.equipment package
+======================
 
 .. automodule:: msl.equipment
     :members:

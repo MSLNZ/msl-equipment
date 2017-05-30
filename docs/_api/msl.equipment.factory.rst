@@ -1,5 +1,5 @@
-msl.equipment.factory module
-============================
+msl\.equipment\.factory module
+==============================
 
 .. automodule:: msl.equipment.factory
     :members:

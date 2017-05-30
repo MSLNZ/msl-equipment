@@ -1,5 +1,5 @@
-msl.examples.equipment.resources.thorlabs package
-=================================================
+msl\.examples\.equipment\.resources\.thorlabs package
+=====================================================
 
 .. automodule:: msl.examples.equipment.resources.thorlabs
     :members:

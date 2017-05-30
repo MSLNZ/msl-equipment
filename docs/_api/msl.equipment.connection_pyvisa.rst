@@ -1,5 +1,5 @@
-msl.equipment.connection_pyvisa module
-======================================
+msl\.equipment\.connection\_pyvisa module
+=========================================
 
 .. automodule:: msl.equipment.connection_pyvisa
     :members:

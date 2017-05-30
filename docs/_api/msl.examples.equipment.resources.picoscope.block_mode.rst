@@ -1,5 +1,5 @@
-msl.examples.equipment.resources.picoscope.block_mode module
-============================================================
+msl\.examples\.equipment\.resources\.picoscope\.block\_mode module
+==================================================================
 
 .. automodule:: msl.examples.equipment.resources.picoscope.block_mode
     :members:

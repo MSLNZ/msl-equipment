@@ -1,5 +1,5 @@
-msl.equipment.resources.thorlabs package
-========================================
+msl\.equipment\.resources\.thorlabs package
+===========================================
 
 .. automodule:: msl.equipment.resources.thorlabs
     :members:

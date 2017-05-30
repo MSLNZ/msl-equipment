@@ -1,5 +1,5 @@
-msl.examples.equipment.resources.thorlabs.fw102c module
-=======================================================
+msl\.examples\.equipment\.resources\.thorlabs\.fw102c module
+============================================================
 
 .. automodule:: msl.examples.equipment.resources.thorlabs.fw102c
     :members:

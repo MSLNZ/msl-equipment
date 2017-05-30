@@ -1,5 +1,5 @@
-msl.equipment.resources.thorlabs.kinesis.api_functions module
-=============================================================
+msl\.equipment\.resources\.thorlabs\.kinesis\.api\_functions module
+===================================================================
 
 .. automodule:: msl.equipment.resources.thorlabs.kinesis.api_functions
     :members:

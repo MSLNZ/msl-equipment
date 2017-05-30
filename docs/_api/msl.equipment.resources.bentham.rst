@@ -1,5 +1,5 @@
-msl.equipment.resources.bentham package
-=======================================
+msl\.equipment\.resources\.bentham package
+==========================================
 
 .. automodule:: msl.equipment.resources.bentham
     :members:

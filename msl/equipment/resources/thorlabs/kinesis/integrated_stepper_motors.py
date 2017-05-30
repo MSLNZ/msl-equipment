@@ -63,6 +63,7 @@ class IntegratedStepperMotors(MotionControl):
             :class:`~msl.equipment.database.Database`.
         """
         MotionControl.__init__(self, record, IntegratedStepperMotors_FCNS)
+        self.load_settings()
         self.reset_stage_to_defaults()
         time.sleep(0.1)  # need to wait some time for the default settings to be reset
 
@@ -223,6 +224,9 @@ class IntegratedStepperMotors(MotionControl):
 
     def load_settings(self):
         """Update device with stored settings.
+
+        The settings are read from ``ThorlabsDefaultSettings.xml``, which
+        gets created when the Kinesis software is installed.
 
         Raises
         ------
@@ -1850,7 +1854,10 @@ class IntegratedStepperMotors(MotionControl):
 
     def get_real_value_from_device_unit(self, device_value, unit_type):
         """Converts a device value to a real-world value.
-        
+
+        Either :meth:`load_settings` or :meth:`set_motor_params_ext` must be called before
+        calling this function, otherwise the returned value will always be 0.0.
+
         Parameters
         ----------
         device_value : :obj:`int`
@@ -1875,6 +1882,9 @@ class IntegratedStepperMotors(MotionControl):
 
     def get_device_unit_from_real_value(self, real_value, unit_type):
         """Converts a real-world value to a device value.
+
+        Either :meth:`load_settings` or :meth:`set_motor_params_ext` must be called before
+        calling this function, otherwise the returned value will always be 0.
 
         Parameters
         ----------

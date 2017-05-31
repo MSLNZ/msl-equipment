@@ -7,6 +7,7 @@ import ctypes
 BYTE = ctypes.c_byte
 WORD = ctypes.c_ushort
 DWORD = ctypes.c_ulong
+HINSTANCE = ctypes.c_void_p
 
 CTYPES_MAP = {
     'void': None,

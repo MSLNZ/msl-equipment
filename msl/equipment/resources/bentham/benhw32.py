@@ -2,9 +2,9 @@
 A wrapper around the Bentham SDK benhw32_cdecl.dll.
 """
 from ctypes import c_char_p, c_short, c_int, c_long, c_double, POINTER, create_string_buffer
-from ctypes.wintypes import HINSTANCE
 
 from msl.loadlib import Server32
+from msl.equipment.resources.utils import HINSTANCE
 
 
 class Bentham32(Server32):

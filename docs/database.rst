@@ -20,16 +20,15 @@ MSL sections. However, it is vital that each equipment record can only be unique
 **Equipment-Register** database. These databases are never to be copied from one MSL section to another
 *(although keeping backups are required)*. Rather if you are borrowing equipment from another team you
 simply specify the path to that teams **Equipment-Register** database in your configuration file. See
-:obj:`msl.equipment.config.load` for more details on how to specify multiple **Equipment-Register**
+:obj:`msl.equipment.config.Config` for more details on how to specify multiple **Equipment-Register**
 databases in a configuration file. The owner of the equipment is responsible for ensuring that the
 information about the equipment is updated in their **Equipment-Register** database. The user of
 the equipment has access to this information through an :class:`~msl.equipment.record_types.EquipmentRecord`
 object.
 
 Each **record** in an **Equipment-Register** database is converted into an
-:class:`~msl.equipment.record_types.EquipmentRecord` object when a configuration file is
-:obj:`loaded <msl.equipment.config.load>`. Each **field** is an property name for an
-:class:`~msl.equipment.record_types.EquipmentRecord`.
+:class:`~msl.equipment.record_types.EquipmentRecord` object when a configuration file is loaded.
+Each **field** is an property name for an :class:`~msl.equipment.record_types.EquipmentRecord`.
 
 Example **Equipment-Register** database:
 

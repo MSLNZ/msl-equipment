@@ -28,8 +28,8 @@ def connect(record, demo=None):
         a connection in demo mode. This allows you run your code if the 
         equipment is not physically connected to the computer.
         
-        If :data:`None` then the `demo` value is read from a :obj:`~.config.CONFIG`
-        variable. See :obj:`msl.equipment.config.load` for more details.
+        If :data:`None` then the `demo` value is read from a configuration
+        variable. See :obj:`msl.equipment.config.Config` for more details.
 
     Returns
     -------

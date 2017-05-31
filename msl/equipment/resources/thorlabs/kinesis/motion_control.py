@@ -2,10 +2,10 @@
 Base **Thorlabs.MotionControl** class.
 """
 from ctypes import c_int, byref, create_string_buffer
-from ctypes.wintypes import WORD, DWORD
 
 from msl.loadlib import LoadLibrary
 
+from msl.equipment.resources.utils import WORD, DWORD
 from msl.equipment.connection_msl import ConnectionSDK
 from .errors import ERROR_CODES, FT_OK
 from .structs import TLI_DeviceInfo, TLI_HardwareInformation

@@ -3,7 +3,8 @@ Structs defined in the Thorlabs Kinesis software v1.11.0
 """
 from ctypes import c_bool, c_char, c_ushort, c_uint16, c_short, \
     c_int16, c_uint, c_int, c_int32, c_uint32, c_float, Structure
-from ctypes.wintypes import BYTE, WORD, DWORD
+
+from msl.equipment.resources.utils import BYTE, WORD, DWORD
 
 NUM_TIA_RANGES = 16
 

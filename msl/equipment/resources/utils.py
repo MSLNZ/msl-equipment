@@ -2,7 +2,11 @@
 Utility functions/classes to help create modules in the **resources** package.
 """
 import re
+import ctypes
 
+BYTE = ctypes.c_byte
+WORD = ctypes.c_ushort
+DWORD = ctypes.c_ulong
 
 CTYPES_MAP = {
     'void': None,

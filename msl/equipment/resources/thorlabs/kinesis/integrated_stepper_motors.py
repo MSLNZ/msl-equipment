@@ -10,10 +10,10 @@ of **Integrated Stepper Motors** including:
 import os
 import time
 from ctypes import c_short, c_int, c_uint, c_int64, c_double, byref, create_string_buffer
-from ctypes.wintypes import WORD, DWORD
 
 from enum import IntEnum
 
+from msl.equipment.resources.utils import WORD, DWORD
 from .motion_control import MotionControl
 from .api_functions import IntegratedStepperMotors_FCNS
 from .structs import (

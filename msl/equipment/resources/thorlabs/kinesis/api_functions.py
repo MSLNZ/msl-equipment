@@ -3,7 +3,8 @@ C Functions defined in the Thorlabs Kinesis software v1.11.0
 """
 from ctypes import c_char, c_byte, c_bool, c_short, c_ushort, c_int16, c_uint16, \
     c_int, c_uint, c_int32, c_int64, c_double, c_long, c_float, c_char_p, POINTER
-from ctypes.wintypes import BYTE, WORD, DWORD
+
+from msl.equipment.resources.utils import BYTE, WORD, DWORD
 
 from .callbacks import MotionControlCallback
 
@@ -65,6 +66,7 @@ from .structs import (
     TPZ_IOSettings,
     TSG_IOSettings,
 )
+
 
 Benchtop_BrushlessMotor_FCNS = [
     ('BMC_Open', c_short, 'errcheck_api',

@@ -1,6 +1,13 @@
-from ctypes import WINFUNCTYPE
+from msl.loadlib import IS_WINDOWS
 
-MotionControlCallback = WINFUNCTYPE(None)
+if IS_WINDOWS:
+    from ctypes import WINFUNCTYPE
+    FUNCTYPE = WINFUNCTYPE
+else:
+    from ctypes import CFUNCTYPE
+    FUNCTYPE = CFUNCTYPE
+
+MotionControlCallback = FUNCTYPE(None)
 """A callback to register for a MotionControl message queue.
 
 Example usage::

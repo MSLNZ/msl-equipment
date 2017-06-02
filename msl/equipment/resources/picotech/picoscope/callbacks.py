@@ -1,15 +1,17 @@
 """
 Callback functions in the Pico Technology SDK v10.6.10.24
 """
-from ctypes import WINFUNCTYPE, CFUNCTYPE, POINTER, c_int16, c_uint32, c_void_p, c_int32
+from ctypes import POINTER, c_int16, c_uint32, c_void_p, c_int32
 
 from msl.loadlib import IS_WINDOWS
 
 from .errors import PICO_STATUS
 
 if IS_WINDOWS:
+    from ctypes import WINFUNCTYPE
     FUNCTYPE = WINFUNCTYPE
 else:
+    from ctypes import CFUNCTYPE
     FUNCTYPE = CFUNCTYPE
 
 # since all BlockReady callbacks have the same function signature, create a generic callback function

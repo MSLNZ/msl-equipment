@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     current_position = stage.get_position()
     print('Current position = {}'.format(current_position))
-    print('Acceleration, Velocity = {}, {}'.format(*stage.get_vel_params()))
+    print('Max Velocity, Acceleration = {}, {}'.format(*stage.get_vel_params()))
 
     new_position = current_position + 1000000
     print('Move to {}'.format(new_position))

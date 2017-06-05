@@ -1,5 +1,5 @@
-msl\.examples\.equipment\.resources\.picoscope package
-======================================================
+msl.examples.equipment.resources.picoscope package
+==================================================
 
 .. automodule:: msl.examples.equipment.resources.picoscope
     :members:

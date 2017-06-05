@@ -1,5 +1,5 @@
-msl\.equipment\.resources\.picotech\.picoscope\.picoscope module
-================================================================
+msl.equipment.resources.picotech.picoscope.picoscope module
+===========================================================
 
 .. automodule:: msl.equipment.resources.picotech.picoscope.picoscope
     :members:

@@ -1,5 +1,5 @@
-msl\.equipment\.resources\.thorlabs\.kinesis\.enums module
-==========================================================
+msl.equipment.resources.thorlabs.kinesis.enums module
+=====================================================
 
 .. automodule:: msl.equipment.resources.thorlabs.kinesis.enums
     :members:

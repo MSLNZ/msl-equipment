@@ -1,5 +1,5 @@
-msl\.equipment\.resources\.bentham\.errors module
-=================================================
+msl.equipment.resources.bentham.errors module
+=============================================
 
 .. automodule:: msl.equipment.resources.bentham.errors
     :members:

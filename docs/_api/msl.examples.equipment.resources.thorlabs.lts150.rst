@@ -1,5 +1,5 @@
-msl\.examples\.equipment\.resources\.thorlabs\.lts150 module
-============================================================
+msl.examples.equipment.resources.thorlabs.lts150 module
+=======================================================
 
 .. automodule:: msl.examples.equipment.resources.thorlabs.lts150
     :members:

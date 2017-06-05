@@ -1,5 +1,5 @@
-msl\.examples\.equipment\.resources package
-===========================================
+msl.examples.equipment.resources package
+========================================
 
 .. automodule:: msl.examples.equipment.resources
     :members:

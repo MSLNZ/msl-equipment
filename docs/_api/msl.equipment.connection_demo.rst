@@ -1,5 +1,5 @@
-msl\.equipment\.connection\_demo module
-=======================================
+msl.equipment.connection_demo module
+====================================
 
 .. automodule:: msl.equipment.connection_demo
     :members:

@@ -1,5 +1,5 @@
-msl\.equipment\.database module
-===============================
+msl.equipment.database module
+=============================
 
 .. automodule:: msl.equipment.database
     :members:

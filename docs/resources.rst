@@ -42,6 +42,7 @@ For example, the **Address** field for equipment from **Bentham Instruments Ltd*
 
     * :class:`~msl.equipment.resources.thorlabs.kinesis.filter_flipper.FilterFlipper` - MFF101, MFF102
     * :class:`~msl.equipment.resources.thorlabs.kinesis.integrated_stepper_motors.IntegratedStepperMotors` - LTS150, LTS300, MLJ050, K10CR1
+    * :class:`~msl.equipment.resources.thorlabs.kinesis.kcube_solenoid.KCubeSolenoid` - KSC101
 
   * :class:`~msl.equipment.resources.thorlabs.fw102c.FilterWheel102C` - FW102C, FW212C
 

@@ -95,6 +95,9 @@ class FilterFlipper(MotionControl):
     def load_settings(self):
         """Update device with stored settings.
 
+        The settings are read from ``ThorlabsDefaultSettings.xml``, which
+        gets created when the Kinesis software is installed.
+
         Raises
         ------
         ConnectionError
@@ -296,7 +299,6 @@ class FilterFlipper(MotionControl):
     def get_status_bits(self):
         """Get the current status bits.
         
-        
         This returns the latest status bits received from the device. To get 
         new status bits, use :meth:`.request_status` or use the polling 
         function, :meth:`.start_polling`
@@ -316,14 +318,14 @@ class FilterFlipper(MotionControl):
         Parameters
         ----------
         milliseconds : :obj:`int`
-            The milliseconds polling rate.
+            The polling rate, in milliseconds.
 
-        Returns
-        -------
-        :obj:`bool`
-            Whether setting the polling interval was successful.
+        Raises
+        ------
+        ConnectionError
+            If not successful.
         """
-        return self.sdk.FF_StartPolling(self._serial, int(milliseconds))
+        self.sdk.FF_StartPolling(self._serial, int(milliseconds))
 
     def polling_duration(self):
         """Gets the polling loop duration.
@@ -433,6 +435,11 @@ class FilterFlipper(MotionControl):
             The message ID.
         :obj:`int`
             The message data.        
+
+        Raises
+        ------
+        ConnectionError
+            If not successful.
         """
         message_type = WORD()
         message_id = WORD()
@@ -450,7 +457,12 @@ class FilterFlipper(MotionControl):
         :obj:`int`
             The message ID.
         :obj:`int`
-            The message data.        
+            The message data.
+
+        Raises
+        ------
+        ConnectionError
+            If not successful.
         """
         message_type = WORD()
         message_id = WORD()

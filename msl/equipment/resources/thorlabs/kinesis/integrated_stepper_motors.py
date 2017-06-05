@@ -621,6 +621,11 @@ class IntegratedStepperMotors(MotionControl):
             The message ID.
         :obj:`int`
             The message data.
+
+        Raises
+        ------
+        ConnectionError
+            If not successful.
         """
         message_type = WORD()
         message_id = WORD()
@@ -1235,7 +1240,7 @@ class IntegratedStepperMotors(MotionControl):
         ConnectionError
             If not successful.
         """
-        return self.sdk.ISC_RequestStatus(self._serial)
+        self.sdk.ISC_RequestStatus(self._serial)
 
     def request_status_bits(self):
         """Request the status bits which identify the current motor state.
@@ -1942,14 +1947,14 @@ class IntegratedStepperMotors(MotionControl):
         Parameters
         ----------
         milliseconds : :obj:`int`
-            The milliseconds polling rate.
+            The polling rate, in milliseconds.
 
-        Returns
-        -------
-        :obj:`bool`
-            Whether setting the polling interval was successful.
+        Raises
+        ------
+        ConnectionError
+            If not successful.
         """
-        return self.sdk.ISC_StartPolling(self._serial, milliseconds)
+        self.sdk.ISC_StartPolling(self._serial, int(milliseconds))
 
     def stop_immediate(self):
         """Stop the current move immediately (with risk of losing track 
@@ -2002,6 +2007,11 @@ class IntegratedStepperMotors(MotionControl):
             The message ID.
         :obj:`int`
             The message data.
+
+        Raises
+        ------
+        ConnectionError
+            If not successful.
         """
         message_type = WORD()
         message_id = WORD()

@@ -110,6 +110,7 @@ class Config(object):
         logger.debug('Loading {}'.format(path))
         self._root = ElementTree.parse(path).getroot()
         self._path = path
+        self._database = None
 
         element = self._root.find('PyVISA_LIBRARY')
         if element is not None:
@@ -161,7 +162,9 @@ class Config(object):
             A reference to the equipment and connection records in the database(s)
             that are specified in the configuration file.
         """
-        return Database(self._path)
+        if self._database is None:
+            self._database = Database(self._path)
+        return self._database
 
     def value(self, tag):
         """Gets the value associated with the specified `tag`.

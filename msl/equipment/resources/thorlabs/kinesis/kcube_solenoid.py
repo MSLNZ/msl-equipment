@@ -10,7 +10,7 @@ from .api_functions import KCube_Solenoid_FCNS
 from .structs import (
     SC_CycleParameters,
     TLI_HardwareInformation,
-    KSC_MMIParams,
+    # KSC_MMIParams,
     KSC_TriggerConfig,
 )
 from .enums import (
@@ -197,22 +197,22 @@ class KCubeSolenoid(MotionControl):
         """
         return self.get_mmi_params_ext()
 
-    def get_mmi_params_block(self):
-        """Gets the MMI parameters for the device.
-
-        Returns
-        -------
-        :class:`.structs.KSC_MMIParams`
-            Options for controlling the mmi.
-
-        Raises
-        ------
-        ConnectionError
-            If not successful.
-        """
-        mmi_params = KSC_MMIParams()
-        self.sdk.SC_GetMMIParamsBlock(self._serial, byref(mmi_params))
-        return mmi_params
+    # def get_mmi_params_block(self):
+    #     """Gets the MMI parameters for the device.
+    #
+    #     Returns
+    #     -------
+    #     :class:`.structs.KSC_MMIParams`
+    #         Options for controlling the mmi.
+    #
+    #     Raises
+    #     ------
+    #     ConnectionError
+    #         If not successful.
+    #     """
+    #     mmi_params = KSC_MMIParams()
+    #     self.sdk.SC_GetMMIParamsBlock(self._serial, byref(mmi_params))
+    #     return mmi_params
 
     def get_mmi_params_ext(self):
         """Get the MMI Parameters for the KCube Display Interface.
@@ -665,22 +665,22 @@ class KCubeSolenoid(MotionControl):
             self.raise_exception(m)
         self.sdk.SC_SetMMIParams(self._serial, display_intensity)
 
-    def set_mmi_params_block(self, mmi_params):
-        """Sets the MMI parameters for the device.
-
-        Parameters
-        ----------
-        mmi_params : :class:`.structs.KSC_MMIParams`
-            Options for controlling the mmi.
-
-        Raises
-        ------
-        ConnectionError
-            If not successful.
-        """
-        if not isinstance(mmi_params, KSC_MMIParams):
-            self.raise_exception('Must pass in a KSC_MMIParams structure')
-        self.sdk.SC_SetMMIParamsBlock(self._serial, byref(mmi_params))
+    # def set_mmi_params_block(self, mmi_params):
+    #     """Sets the MMI parameters for the device.
+    #
+    #     Parameters
+    #     ----------
+    #     mmi_params : :class:`.structs.KSC_MMIParams`
+    #         Options for controlling the mmi.
+    #
+    #     Raises
+    #     ------
+    #     ConnectionError
+    #         If not successful.
+    #     """
+    #     if not isinstance(mmi_params, KSC_MMIParams):
+    #         self.raise_exception('Must pass in a KSC_MMIParams structure')
+    #     self.sdk.SC_SetMMIParamsBlock(self._serial, byref(mmi_params))
 
     def set_mmi_params_ext(self, intensity, timeout, dim_intensity):
         """Set the MMI Parameters for the KCube Display Interface.

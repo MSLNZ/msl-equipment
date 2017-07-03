@@ -3,7 +3,6 @@ Manage and connect to equipment in the laboratory.
 """
 from collections import namedtuple
 
-from msl.equipment.config import Config
 from msl.equipment.factory import connect
 from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
 from msl.equipment.constants import Backend

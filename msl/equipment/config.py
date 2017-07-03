@@ -9,12 +9,17 @@ from .database import Database
 
 logger = logging.getLogger(__name__)
 
-PyVISA_LIBRARY = '@ni'
-DEMO_MODE = False
-SDK_PATH = []
-
 
 class Config(object):
+
+    PyVISA_LIBRARY = '@ni'
+    """:obj:`str`: The PyVISA backend library to use"""
+
+    DEMO_MODE = False
+    """:obj:`bool`: Whether to open **all** connections in demo mode"""
+
+    SDK_PATH = []
+    """:obj:`list` of :obj:`str`: Paths that were appended to :obj:`os.environ['PATH'] <os.environ>`"""
 
     def __init__(self, path):
         """Load a XML configuration file.
@@ -114,29 +119,26 @@ class Config(object):
 
         element = self._root.find('PyVISA_LIBRARY')
         if element is not None:
-            global PyVISA_LIBRARY
-            PyVISA_LIBRARY = element.text
-            logger.debug('update PyVISA_LIBRARY = {}'.format(PyVISA_LIBRARY))
+            Config.PyVISA_LIBRARY = element.text
+            logger.debug('update Config.PyVISA_LIBRARY = {}'.format(Config.PyVISA_LIBRARY))
 
         element = self._root.find('DEMO_MODE')
         if element is not None:
-            global DEMO_MODE
-            DEMO_MODE = element.text.lower() == 'true'
-            logger.debug('update DEMO_MODE = {}'.format(DEMO_MODE))
+            Config.DEMO_MODE = element.text.lower() == 'true'
+            logger.debug('update Config.DEMO_MODE = {}'.format(Config.DEMO_MODE))
 
-        global SDK_PATH
         for element in self._root.findall('SDK_PATH'):
             if not os.path.isdir(element.text):
                 logger.warning('Not a valid SDK_PATH ' + element.text)
                 continue
             if element.attrib.get('recursive', 'false').lower() == 'true':
                 for root, dirs, files in os.walk(element.text):
-                    SDK_PATH.append(root)
+                    Config.SDK_PATH.append(root)
             else:
-                SDK_PATH.append(element.text)
-        for p in SDK_PATH:
+                Config.SDK_PATH.append(element.text)
+        for p in Config.SDK_PATH:
             os.environ['PATH'] += os.pathsep + p
-            logger.debug('append SDK_PATH %s', p)
+            logger.debug('append Config.SDK_PATH %s', p)
 
     @property
     def path(self):

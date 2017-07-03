@@ -3,7 +3,7 @@ Establish a connection to the equipment to send and receive messages.
 """
 import logging
 
-from . import config
+from .config import Config
 from .constants import Backend, MSLInterface
 from .record_types import EquipmentRecord
 from .connection_demo import ConnectionDemo
@@ -84,7 +84,7 @@ def connect(record, demo=None):
             return cls(_record)
 
     if demo is None:
-        demo = config.DEMO_MODE
+        demo = Config.DEMO_MODE
 
     if isinstance(record, dict) and len(record) == 1:
         key = list(record.keys())[0]

@@ -190,7 +190,7 @@ class PicoScopeApi(PicoScope):
     def get_num_of_processed_captures(self):
         """
         This function finds out how many captures in rapid block mode have been processed
-        after :meth:`run_block has been called when either the collection completed or the
+        after :meth:`run_block` has been called when either the collection completed or the
         collection of waveforms was interrupted by calling :meth:`stop`. The returned value
         (``nCaptures``) can then be used to iterate through the number of segments using
         :meth:`get_values`, or in a single call to :meth:`get_values_bulk` where it is used

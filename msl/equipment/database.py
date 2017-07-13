@@ -99,8 +99,6 @@ class Database(object):
                             k_lower = k.lower()
                             if k_lower.startswith('parity'):
                                 v = self._check_asrl_property(key, v, constants.Parity)
-                            elif k_lower.startswith('flow'):
-                                v = self._check_asrl_property(key, v, constants.FlowControl)
                             elif k_lower.startswith('stop'):
                                 v = self._check_asrl_property(key, float(v), constants.StopBits)
                             elif k_lower.startswith('data'):

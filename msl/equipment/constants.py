@@ -1,7 +1,9 @@
 """
 MSL-Equipment package constants.
 """
-from enum import IntEnum
+import enum
+import serial
+
 
 MSL_INTERFACE_ALIASES = {
     'ASRL': ('COM', 'RS', 'LPT', ),
@@ -9,7 +11,7 @@ MSL_INTERFACE_ALIASES = {
 }
 
 
-class Backend(IntEnum):
+class Backend(enum.IntEnum):
     """
     The software backend to use for the communication system.
     """
@@ -18,7 +20,7 @@ class Backend(IntEnum):
     PyVISA = 2
 
 
-class MSLInterface(IntEnum):
+class MSLInterface(enum.IntEnum):
     """
     The interface to use for the communication system that transfers data between
     a computer and the equipment. Only used if
@@ -41,41 +43,31 @@ class MSLInterface(IntEnum):
     PROLOGIX_USB = 13
 
 
-class Parity(IntEnum):
+class Parity(enum.Enum):
     """
     The parity type to use for Serial communication.
     """
-    NONE = 0
-    ODD = 1
-    EVEN = 2
-    MARK = 3
-    SPACE = 4
+    NONE = serial.PARITY_NONE
+    ODD = serial.PARITY_ODD
+    EVEN = serial.PARITY_EVEN
+    MARK = serial.PARITY_MARK
+    SPACE = serial.PARITY_SPACE
 
 
-class FlowControl(IntEnum):
-    """
-    The type of flow control (handshaking) to use for Serial communication.
-    """
-    NONE = 0
-    XON_XOFF = 1
-    RTS_CTS = 2
-    DTR_DSR = 3
-
-
-class StopBits(IntEnum):
+class StopBits(enum.Enum):
     """
     The number of stop bits to use for Serial communication.
     """
-    ONE = 10
-    ONE_POINT_FIVE = 15
-    TWO = 20
+    ONE = serial.STOPBITS_ONE
+    ONE_POINT_FIVE = serial.STOPBITS_ONE_POINT_FIVE
+    TWO = serial.STOPBITS_TWO
 
 
-class DataBits(IntEnum):
+class DataBits(enum.IntEnum):
     """
     The number of data bits to use for Serial communication.
     """
-    FIVE = 5
-    SIX = 6
-    SEVEN = 7
-    EIGHT = 8
+    FIVE = serial.FIVEBITS
+    SIX = serial.SIXBITS
+    SEVEN = serial.SEVENBITS
+    EIGHT = serial.EIGHTBITS

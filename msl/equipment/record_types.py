@@ -379,7 +379,6 @@ class ConnectionRecord(object):
             for value in values:
                 if value in interface:
                     interface = interface.replace(value, name)
-                    self._address = self._address.replace(value, name)
 
         # set the interface
         if interface in MSLInterface.__members__:

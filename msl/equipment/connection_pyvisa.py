@@ -10,6 +10,7 @@ from .record_types import EquipmentRecord, ConnectionRecord
 _VisaIOError = None
 _pyvisa_resource_classes = {}
 _pyvisa_resource_manager = None
+_pyvisa_constants = None
 
 
 class ConnectionPyVISA(Connection):
@@ -40,17 +41,34 @@ class ConnectionPyVISA(Connection):
         record : :class:`~.record_types.EquipmentRecord`
             An equipment record from an **Equipment-Register** :class:`~.database.Database`.
         """
+        Connection.__init__(self, record)
+
         self._resource = None
 
         rm = ConnectionPyVISA.resource_manager()
-        self._resource = rm.open_resource(record.connection.address, **record.connection.properties)
+
+        props = record.connection.properties
+
+        try:
+            props['parity'] = self.convert_to_enum(props['parity'], _pyvisa_constants.Parity)
+        except KeyError:
+            pass
+
+        try:
+            props['stop_bits'] = self.convert_to_enum(int(float(props['stop_bits'])*10), _pyvisa_constants.StopBits)
+        except KeyError:
+            pass
+
+        self._resource = rm.open_resource(record.connection.address, **props)
 
         # expose all of the PyVISA Resource methods to ConnectionPyVISA
         for method in dir(self._resource):
             if not method.startswith('_'):
-                setattr(self, method, getattr(self._resource, method))
+                try:
+                    setattr(self, method, getattr(self._resource, method))
+                except _VisaIOError:
+                    pass
 
-        Connection.__init__(self, record)
         self.log_debug('Connected to {}'.format(record.connection))
 
     def disconnect(self):
@@ -100,13 +118,14 @@ class ConnectionPyVISA(Connection):
         OSError
             If the VISA library cannot be found.
         """
-        global _pyvisa_resource_manager, _VisaIOError, _pyvisa_resource_classes
+        global _pyvisa_resource_manager, _VisaIOError, _pyvisa_resource_classes, _pyvisa_constants
         if _pyvisa_resource_manager is not None:
             return _pyvisa_resource_manager
 
         import pyvisa
 
         _VisaIOError = pyvisa.errors.VisaIOError
+        _pyvisa_constants = pyvisa.constants
 
         for item in dir(pyvisa.resources):
             if item.endswith('Instrument'):

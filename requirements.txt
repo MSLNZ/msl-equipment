@@ -3,3 +3,4 @@ xlrd
 pyvisa>=1.6
 numpy
 https://github.com/MSLNZ/msl-loadlib/archive/master.zip
+pyserial>=3.3

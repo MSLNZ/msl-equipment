@@ -96,17 +96,19 @@ class Database(object):
                         k, v = item_split[0].strip(), item_split[1].strip()
 
                         if 'ASRL' in conn_record.interface.name:
-                            if k.lower().startswith('parity'):
+                            k_lower = k.lower()
+                            if k_lower.startswith('parity'):
                                 v = self._check_asrl_property(key, v, constants.Parity)
-                            elif k.lower().startswith('flow'):
+                            elif k_lower.startswith('flow'):
                                 v = self._check_asrl_property(key, v, constants.FlowControl)
-                            elif k.lower().startswith('stop'):
-                                v = self._check_asrl_property(key, int(10*float(v)), constants.StopBits)
-                            elif k.lower().startswith('data'):
+                            elif k_lower.startswith('stop'):
+                                v = self._check_asrl_property(key, float(v), constants.StopBits)
+                            elif k_lower.startswith('data'):
                                 v = self._check_asrl_property(key, int(v), constants.DataBits)
-                            elif k.lower().startswith('baud'):
+                            elif k_lower.startswith('baud'):
                                 v = int(v)
-                        else:
+
+                        if isinstance(v, str):
                             # try to convert 'v' to a Python bool, int or float
                             if v.upper() == 'TRUE':
                                 v = True
@@ -406,7 +408,7 @@ class Database(object):
 
     def _check_asrl_property(self, key, value, enum):
         """Check if the enum property is valid for a Serial communication interface"""
-        if isinstance(value, int):
+        if isinstance(value, (int, float)):
             for item in enum:
                 if value == item.value:
                     return item

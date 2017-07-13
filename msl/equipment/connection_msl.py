@@ -3,7 +3,10 @@ Use MSL resources to establish a connection to the equipment.
 """
 import time
 
+import serial
+
 from msl.loadlib import LoadLibrary
+from msl.equipment import constants
 from msl.equipment.connection import Connection
 
 
@@ -82,7 +85,10 @@ class ConnectionMessageBased(Connection):
 
     _read_termination = None
     _write_termination = CR + LF
-    _encoding = 'ascii'
+    _encoding = 'utf-8'
+    _read_size = 2**14
+
+    chunk_size = _read_size
 
     def __init__(self, record):
         """Base class for equipment that use message based communication.        
@@ -132,7 +138,7 @@ class ConnectionMessageBased(Connection):
     @read_termination.setter
     def read_termination(self, termination):
         """The termination character sequence to use for :meth:`read` operations."""
-        self._read_termination = termination if termination is None else str(termination)
+        self._read_termination = '' if termination is None else str(termination)
 
     @property
     def write_termination(self):
@@ -146,7 +152,25 @@ class ConnectionMessageBased(Connection):
         """The termination character sequence to append to :meth:`write` messages."""
         self._write_termination = '' if termination is None else str(termination)
 
-    def read(self):
+    @property
+    def chunk_size(self):
+        """:obj:`int`: The number of bytes to be :meth:`read`."""
+        return self._read_size
+
+    @property
+    def read_size(self):
+        """:obj:`int`: The number of bytes to be :meth:`read`."""
+        return self._read_size
+
+    @read_size.setter
+    def read_size(self, size):
+        """The number of bytes to be :meth:`read`."""
+        size = int(size)
+        if size < 1:
+            raise ValueError('The number of bytes to read must be >0')
+        self._read_size = size
+
+    def read(self, size=None):
         """Read a response from the equipment.
 
         Returns
@@ -189,10 +213,146 @@ class ConnectionMessageBased(Connection):
         :obj:`str`
             The response from the equipment.
         """
-        self.log_debug('query: ' + message)
         self.write(message)
         if delay > 0.0:
             time.sleep(delay)
         return self.read()
 
     ask = query
+
+
+class ConnectionSerial(ConnectionMessageBased):
+
+    def __init__(self, record):
+        """Establish a connection through a Serial port.
+
+        The :obj:`record.connection.properties <msl.equipment.record_types.ConnectionRecord.properties>`
+        dictionary for a Serial connection supports the following key-value pairs::
+
+            'read_termination': str or None
+            'write_termination': str or None
+            'read_size': int (the number of bytes to be read, must be > 0)
+            'encoding': str (e.g., 'ascii')
+            'baud_rate': int (e.g., 9600, 115200)
+            'data_bits': int (e.g., 5, 6, 7, 8)
+            'stop_bits': int or float (e.g., 1, 1.5, 2)
+            'parity': str (e.g., none, even, odd, mark, space)
+            'timeout': float or None (the read timeout value)
+            'write_timeout': float or None (the write timeout value)
+            'inter_byte_timeout': float or None (the inter-character timeout)
+            'exclusive': bool (set exclusive access mode, for POSIX only)
+            'xon_xoff': bool (enable software flow control)
+            'rts_cts': bool (enable hardware (RTS/CTS) flow control)
+            'dsr_dtr': bool (enable hardware (DSR/DTR) flow control)
+        """
+        ConnectionMessageBased.__init__(self, record)
+
+        props = record.connection.properties
+
+        self._serial = serial.Serial()
+
+        self.read_termination = props.get('read_termination', self.read_termination)
+        self.write_termination = props.get('write_termination', self.write_termination)
+        self.read_size = props.get('read_size', self.read_size)
+        self.encoding = props.get('encoding', self.encoding)
+        self._serial.port = record.connection.address.split('::')[0]
+        self._serial.parity = props.get('parity', constants.Parity.NONE).value
+        self._serial.timeout = props.get('timeout', None)
+        self._serial.write_timeout = props.get('write_timeout', None)
+        self._serial.inter_byte_timeout = props.get('inter_byte_timeout', None)
+        self._serial.exclusive = props.get('exclusive', None)
+        self._serial.xonxoff = props.get('xon_xoff', False)
+        self._serial.rtscts = props.get('rts_cts', False)
+        self._serial.dsrdtr = props.get('dsr_dtr', False)
+
+        if 'baud_rate' in props:
+            self._serial.baudrate = props['baud_rate']
+        else:
+            self._serial.baudrate = props.get('baudrate', 9600)
+
+        if 'data_bits' in props:
+            self._serial.bytesize = props['data_bits']
+        else:
+            self._serial.bytesize = props.get('bytesize', constants.DataBits.EIGHT).value
+
+        if 'stop_bits' in props:
+            self._serial.stopbits = props['stop_bits'].value
+        else:
+            self._serial.stopbits = props.get('stopbits', constants.StopBits.ONE).value
+
+        try:
+            error_msg = ''
+            self._serial.open()
+        except serial.serialutil.SerialException as e:
+            error_msg = str(e)
+
+        if error_msg:
+            self.raise_exception(error_msg)
+
+        self.log_debug('Connected to {}'.format(record.connection))
+
+    @property
+    def serial(self):
+        """:obj:`serial.Serial`: The reference to the Serial object."""
+        return self._serial
+
+    @property
+    def baud_rate(self):
+        """:obj:`int`: The baud rate setting."""
+        return self._serial.baudrate
+
+    @property
+    def data_bits(self):
+        """:obj:`~.constants.DataBits`: The number of data bits."""
+        return constants.DataBits(self._serial.bytesize)
+
+    @property
+    def stop_bits(self):
+        """:obj:`~.constants.StopBits`: The stop bit setting."""
+        return constants.StopBits(self._serial.stopbits)
+
+    @property
+    def parity(self):
+        """:obj:`~.constants.Parity`: The parity setting."""
+        return constants.Parity(self._serial.parity)
+
+    def write(self, message):
+        """Write the given message over the serial port.
+
+        Parameters
+        ----------
+        message : :obj:`str`
+            The message to write.
+
+        Returns
+        -------
+        :obj:`int`:
+            The number of bytes written to the serial port.
+        """
+        data = (message + self.write_termination).encode(self.encoding)
+        self.log_debug('{}.write({})'.format(self.__class__.__name__, data))
+        return self._serial.write(data)
+
+    def read(self, size=None):
+        """Read `size` bytes from the serial port.
+
+        If a `timeout` is set it may return less characters as requested. With no
+        `timeout` it will block until the requested number of bytes is read.
+
+        Parameters
+        ----------
+        size : :obj:`int`
+            The number of bytes to read. If :obj:`None` then read :obj:`.read_size` bytes.
+
+        Returns
+        -------
+        :obj:`bytes`:
+            The bytes read from the serial port.
+        """
+        size = self.read_size if size is None else size
+        b = self._serial.read(size)
+        self.log_debug('{}.read({}) -> {}'.format(self.__class__.__name__, size, b))
+        return b
+
+    def disconnect(self):
+        self._serial.close()

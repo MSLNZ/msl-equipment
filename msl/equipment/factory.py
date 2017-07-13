@@ -7,9 +7,9 @@ from .config import Config
 from .constants import Backend, MSLInterface
 from .record_types import EquipmentRecord
 from .connection_demo import ConnectionDemo
-from .connection_msl import ConnectionMessageBased
 from .connection_pyvisa import ConnectionPyVISA
-from .resources import find_sdk_class
+from . import resources
+from . import connection_msl
 
 logger = logging.getLogger(__name__)
 
@@ -65,10 +65,14 @@ def connect(record, demo=None):
         if conn.backend == Backend.MSL:
             if conn.interface == MSLInterface.NONE:
                 _raise('interface')
-            if conn.interface == MSLInterface.SDK:
-                cls = find_sdk_class(conn.address)
+            elif conn.interface == MSLInterface.SDK:
+                cls = resources.find_sdk_class(conn)
+            elif conn.interface == MSLInterface.ASRL:
+                cls = resources.find_serial_class(conn)
+                if cls is None:
+                    cls = connection_msl.ConnectionSerial
             else:
-                cls = ConnectionMessageBased
+                cls = connection_msl.ConnectionMessageBased
         elif conn.backend == Backend.PyVISA:
             if demo:
                 cls = ConnectionPyVISA.resource_pyclass(conn)

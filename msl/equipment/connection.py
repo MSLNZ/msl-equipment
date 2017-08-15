@@ -3,6 +3,8 @@ Base class for establishing a connection to the equipment.
 """
 import logging
 
+from msl.equipment.record_types import EquipmentRecord
+
 logger = logging.getLogger(__name__)
 
 
@@ -23,6 +25,8 @@ class Connection(object):
             An equipment record from an **Equipment-Register** 
             :class:`~.database.Database`.
         """
+        if not isinstance(record, EquipmentRecord):
+            raise TypeError('Must pass in an {} object'.format(EquipmentRecord.__name__))
         self._record = record
 
     @property

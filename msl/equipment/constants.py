@@ -6,7 +6,7 @@ import serial
 
 
 MSL_INTERFACE_ALIASES = {
-    'ASRL': ('COM', 'RS', 'LPT', ),
+    'ASRL': ('COM', 'LPT', ),
     'TCPIP': ('ENET', 'ETHERNET', 'LAN', ),
 }
 

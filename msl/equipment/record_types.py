@@ -25,10 +25,13 @@ class EquipmentRecord(object):
         Raises
         ------
         ValueError
-            If an argument name is `calibration_period`, `connection` or `date_calibrated`
-            and the value is invalid.            
+            If an argument name is `calibration_period` and the value cannot be converted
+            to an :obj:`int`.
+        TypeError
+            If an argument name is `connection` or `date_calibrated` and the data type of
+            the value is invalid.
         AttributeError
-            If a named argument is not an :class:`EquipmentRecord` attribute name.
+            If an argument name is not an :class:`EquipmentRecord` attribute.
         
         Examples
         --------
@@ -76,7 +79,7 @@ class EquipmentRecord(object):
                     if isinstance(kwargs[attrib], datetime.date):
                         self._date_calibrated = kwargs[attrib]
                     else:
-                        raise ValueError('The date_calibrated value must be a datetime.date object')
+                        raise TypeError('The date_calibrated value must be a datetime.date object')
                 elif attrib == 'calibration_period':
                     self._calibration_period = int(kwargs[attrib])
                 else:

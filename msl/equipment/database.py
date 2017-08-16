@@ -168,7 +168,11 @@ class Database(object):
                                 continue
 
                         if attrib == 'calibration_period' and value:
-                            value = int(value)
+                            try:
+                                value = int(value)
+                            except ValueError:
+                                value = 0
+                                logger.error('The calibration_period must be an integer value for {}'.format(record))
 
                         setattr(record, '_'+attrib, value)
 
@@ -345,11 +349,11 @@ class Database(object):
             sheet = None
 
         if sheet is None:
-            raise IOError('There is no sheet named "{}" in {}'.format(sheet_name, path))
+            raise IOError('There is no Sheet named "{}" in {}'.format(sheet_name, path))
 
         header = [str(val) for val in sheet.row_values(0)]
         rows = [[self._cell_convert(sheet.cell(r, c)) for c in range(sheet.ncols)] for r in range(1, sheet.nrows)]
-        logger.debug('Loading sheet <{}> in {}'.format(sheet_name, path))
+        logger.debug('Loading Sheet <{}> in {}'.format(sheet_name, path))
         return header, rows
 
     def _cell_convert(self, cell):

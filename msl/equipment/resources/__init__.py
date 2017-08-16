@@ -135,6 +135,6 @@ def find_serial_class(connection_record):
     :obj:`None` if no resource class was specified in the address.
     """
     address_split = connection_record.address.split('::')
-    if len(address_split) == 1:
+    if (len(address_split) == 1) or (len(address_split) == 2 and address_split[1] == 'INSTR'):
         return check_manufacture_model_resource_name(connection_record)
     return recursive_find_resource_class(address_split[1])

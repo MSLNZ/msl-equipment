@@ -7,6 +7,8 @@ import sys
 import fnmatch
 import importlib
 
+from msl.equipment.constants import MSLInterface
+
 
 def recursive_find_resource_class(class_name):
     """Find the Python resource class.
@@ -28,10 +30,12 @@ def recursive_find_resource_class(class_name):
     if not class_name:
         raise IOError('No resource class name was specified')
 
-    for root, dirs, files in os.walk(os.path.abspath(os.path.dirname(__file__))):
+    for root, dirs, files in os.walk(os.path.dirname(__file__)):
+        if root.endswith('__pycache__'):
+            continue
         root_pkg = __name__ + root.replace(os.path.sep, '.').split(__name__)[1]
         for filename in fnmatch.filter(files, '*.py'):
-            if filename == '__init__.py':
+            if filename.startswith('__init__'):
                 continue
 
             cls = get_class('{}.{}'.format(root_pkg, filename[:-3]), class_name)
@@ -80,8 +84,8 @@ def check_manufacture_model_resource_name(connection_record):
 
     Parameters
     ----------
-    connection_record : :obj:`.msl.equipment.record_types.ConnectionRecord`
-        A :obj:`.msl.equipment.record_types.ConnectionRecord` object.
+    connection_record : :obj:`~msl.equipment.record_types.ConnectionRecord`
+        A :obj:`~msl.equipment.record_types.ConnectionRecord` object.
 
     Returns
     -------
@@ -100,8 +104,8 @@ def find_sdk_class(connection_record):
 
     Parameters
     ----------
-    connection_record : :obj:`.msl.equipment.record_types.ConnectionRecord`
-        A :obj:`.msl.equipment.record_types.ConnectionRecord` object.
+    connection_record : :obj:`~msl.equipment.record_types.ConnectionRecord`
+        A :obj:`~msl.equipment.record_types.ConnectionRecord` object.
 
     Returns
     -------
@@ -109,32 +113,50 @@ def find_sdk_class(connection_record):
 
     Raises
     ------
+    ValueError
+        If the :obj:`msl.equipment.record_types.ConnectionRecord` has an invalid
+        `interface` or `address` value.
     IOError
-        If the :obj:`.msl.equipment.record_types.ConnectionRecord.address` value does
-        not have the required format of ``SDK::PythonClassName::PathToLibrary``.
+        If the SDK class cannot be found.
     """
+    if connection_record.interface != MSLInterface.SDK:
+        msg = 'The interface is {}, must be {}'.format(repr(connection_record.interface), repr(MSLInterface.SDK))
+        raise ValueError(msg)
     address_split = connection_record.address.split('::')
     if len(address_split) != 3:
         msg = 'The address received is {}\n'.format(connection_record.address)
         msg += 'For an SDK interface, the address must be of the form SDK::PythonClassName::PathToLibrary'
-        raise IOError(msg)
+        raise ValueError(msg)
     return recursive_find_resource_class(address_split[1])
 
 
 def find_serial_class(connection_record):
-    """Find the Python resource class that is used for :obj:`~serial.Serial` communication.
+    """Find the Python resource class that is used for Serial communication.
 
     Parameters
     ----------
-    connection_record : :obj:`.msl.equipment.record_types.ConnectionRecord`
+    connection_record : :obj:`~msl.equipment.record_types.ConnectionRecord`
         A :obj:`.msl.equipment.record_types.ConnectionRecord` object.
 
     Returns
     -------
-    The Python resource class that uses :obj:`~serial.Serial` communication or
-    :obj:`None` if no resource class was specified in the address.
+    :class:`~msl.equipment.connection_msl.ConnectionSerial`
+        The Python resource class to use for Serial communication for the
+        `connection_record` or :obj:`None` a resource class cannot be found.
+
+    Raises
+    ------
+    ValueError
+        If the :obj:`~msl.equipment.record_types.ConnectionRecord` has an invalid
+        `interface`.
+    IOError
+        If the :obj:`~msl.equipment.record_types.ConnectionRecord.address` specifies
+        a Python class to use for the connection and the class cannot be found.
     """
+    if 'ASRL' not in connection_record.interface.name:
+        msg = 'The interface is {} and not a ASRL-type interface'.format(repr(connection_record.interface))
+        raise ValueError(msg)
     address_split = connection_record.address.split('::')
-    if (len(address_split) == 1) or (len(address_split) == 2 and address_split[1] == 'INSTR'):
+    if (len(address_split) == 1) or (len(address_split) == 2 and address_split[1].upper() == 'INSTR'):
         return check_manufacture_model_resource_name(connection_record)
     return recursive_find_resource_class(address_split[1])

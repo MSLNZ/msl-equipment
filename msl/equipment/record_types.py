@@ -81,7 +81,13 @@ class EquipmentRecord(object):
                     else:
                         raise TypeError('The date_calibrated value must be a datetime.date object')
                 elif attrib == 'calibration_period':
-                    self._calibration_period = int(kwargs[attrib])
+                    try:
+                        self._calibration_period = int(kwargs[attrib])
+                        err = ''
+                    except ValueError:
+                        err = 'The calibration_period must be an integer value'
+                    if err:
+                        raise ValueError(err)
                 else:
                     setattr(self, '_'+attrib, str(kwargs[attrib]))
             else:

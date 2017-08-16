@@ -9,7 +9,7 @@ import importlib
 
 from msl.equipment.connection import Connection
 
-_backtick_regex = re.compile(r'`(.+)`')
+_backtick_regex = re.compile(r'`(.+?)`')
 
 
 class ConnectionDemo(Connection):
@@ -84,6 +84,7 @@ class ConnectionDemo(Connection):
             m = re.findall(_backtick_regex, t)
             if m:
                 t = ' of '.join(m)
+
             if t == 'bool':
                 out.append(random.random() > 0.5)
             elif t == 'str':

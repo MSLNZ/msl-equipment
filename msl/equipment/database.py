@@ -43,7 +43,7 @@ class Database(object):
             file and it does not uniquely identify an equipment record in an
             **Equipment-Register** database.
         ValueError
-            If any of the values in the **Connections** database are invalid.
+            If any of the values in the database are invalid.
         """
         logger.debug('Loading databases from {}'.format(path))
 
@@ -90,35 +90,36 @@ class Database(object):
                 # create the property dictionary
                 conn_record._properties = {}
                 for item in row[self._index_map['properties']].split(";"):
-                    if len(item.strip()) > 1:
+                    item_split = item.split('=')
+                    if len(item_split) < 2:
+                        continue
 
-                        item_split = item.split('=')
-                        k, v = item_split[0].strip(), item_split[1].strip()
+                    k, v = item_split[0].strip(), item_split[1].strip()
 
-                        if 'ASRL' in conn_record.interface.name:
-                            k_lower = k.lower()
-                            if k_lower.startswith('parity'):
-                                v = self._check_asrl_property(key, v, constants.Parity)
-                            elif k_lower.startswith('stop'):
-                                v = self._check_asrl_property(key, float(v), constants.StopBits)
-                            elif k_lower.startswith('data'):
-                                v = self._check_asrl_property(key, int(v), constants.DataBits)
-                            elif k_lower.startswith('baud'):
-                                v = int(v)
+                    if 'ASRL' in conn_record.interface.name:  # includes all interfaces with ASRL, e.g. TCPIP_ASRL
+                        k_lower = k.lower()
+                        if k_lower.startswith('parity'):
+                            v = self._check_asrl_property(key, v, constants.Parity)
+                        elif k_lower.startswith('stop'):
+                            v = self._check_asrl_property(key, float(v), constants.StopBits)
+                        elif k_lower.startswith('data'):
+                            v = self._check_asrl_property(key, int(v), constants.DataBits)
+                        elif k_lower.startswith('baud'):
+                            v = int(v)
 
-                        if isinstance(v, str):
-                            # try to convert 'v' to a Python bool, int or float
-                            if v.upper() == 'TRUE':
-                                v = True
-                            elif v.upper() == 'FALSE':
-                                v = False
-                            else:
-                                try:
-                                    v = ast.literal_eval(v)
-                                except:
-                                    pass  # keep the value as a string
+                    if isinstance(v, str):
+                        # try to convert 'v' to a Python bool, int or float
+                        if v.upper() == 'TRUE':
+                            v = True
+                        elif v.upper() == 'FALSE':
+                            v = False
+                        else:
+                            try:
+                                v = ast.literal_eval(v)
+                            except:
+                                pass  # keep the value as a string
 
-                        conn_record._properties[k] = v
+                    conn_record._properties[k] = v
 
                 self._connection_records[key] = conn_record
 

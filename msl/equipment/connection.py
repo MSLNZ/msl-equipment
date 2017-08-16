@@ -2,6 +2,7 @@
 Base class for establishing a connection to the equipment.
 """
 import logging
+from enum import Enum
 
 from msl.equipment.record_types import EquipmentRecord
 
@@ -85,12 +86,12 @@ class Connection(object):
         
         Parameters
         ----------
-        item : :obj:`int` or :obj:`str`
-            If :obj:`str` then the name of a `enum` member.
-            If :obj:`int` then the value of a `enum` member.
+        item : :obj:`int`, :obj:`float` or :obj:`str`
+            If :obj:`str` then the **name** of a `enum` member.
+            If :obj:`int` or :obj:`float` then the **value** of a `enum` member.
             
-        enum : :obj:`~enum.IntEnum`
-            An integer-enum object.
+        enum : :obj:`~enum.Enum`
+            An enum object to cast the `item`.
         
         prefix : :obj:`str`, optional
             If `item` is a :obj:`str`, then `prefix` is included at the 
@@ -102,28 +103,31 @@ class Connection(object):
 
         Returns
         -------
-        :obj:`~enum.IntEnum`
+        :obj:`~enum.Enum`
             The `enum` value.
         
         Raises
         ------
         TypeError
-            If `item` is not an :obj:`int` or :obj:`str`.
+            If `item` is not an :obj:`int`, :obj:`float` or :obj:`str`.
         ValueError
             If `item` is not in `enum`.
         """
-        if isinstance(item, int):
+        if isinstance(item, Enum):
+            return item
+
+        if isinstance(item, (int, float)):
             try:
                 return enum(item)
             except ValueError:
                 pass
 
-            msg = 'Invalid value {} in {}. Allowed values are: {}'.format(item, enum, list(map(int, enum)))
+            msg = 'Invalid value {} in {}. Allowed values are: {}'.format(item, enum, [e.value for e in enum])
             Connection.log_error(msg)
             raise ValueError(msg)
 
         if not isinstance(item, str):
-            msg = 'The item must either be an enum member name (as a string) or an enum value (as an integer)'
+            msg = 'The item must either be an enum member name (as a string) or an enum value (as an integer/float)'
             Connection.log_error(msg)
             raise TypeError('{} -> {}. Got {} as a {}'.format(enum, msg, item, type(item)))
 

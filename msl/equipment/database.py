@@ -167,6 +167,9 @@ class Database(object):
                                                  .format(value, register.findtext('path')))
                                 continue
 
+                        if attrib == 'calibration_period' and value:
+                            value = int(value)
+
                         setattr(record, '_'+attrib, value)
 
                     self._equipment_records[key] = record

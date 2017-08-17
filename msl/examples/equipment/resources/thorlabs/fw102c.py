@@ -7,24 +7,27 @@ FW212C Series Motorized Filter Wheels.
 if __name__ == '__main__':
     import os
     from logging.config import fileConfig
+
     from msl.examples.equipment import EXAMPLES_DIR
+    from msl.equipment.constants import Backend
+    from msl.equipment import EquipmentRecord, ConnectionRecord
 
     log_config = os.path.join(EXAMPLES_DIR, 'logging-config.ini')
     fileConfig(log_config, disable_existing_loggers=False)
 
-    from msl.equipment.constants import Backend
-    from msl.equipment import EquipmentRecord, ConnectionRecord
-
-    path = r'C:\Program Files\Thorlabs\FilterWheel102_win64.dll'
+    # you must update the following values
+    dll_path = r'C:\Program Files\Thorlabs\FilterWheel102_win64.dll'
+    serial_number = 'TP01418262-6535'
+    port = 'COM4'
 
     record = EquipmentRecord(
         manufacturer='Thorlabs',
         model='FW212CNEB',
-        serial='TP01812252',
+        serial=serial_number,
         connection=ConnectionRecord(
             backend=Backend.MSL,
-            address='SDK::FilterWheel102C::{}'.format(path),
-            properties={'port': 'COM3'},
+            address='SDK::FilterWheel102C::{}'.format(dll_path),
+            properties={'port': port},
         ),
     )
 

@@ -8,18 +8,32 @@ if __name__ == '__main__':
     import time
     from logging.config import fileConfig
 
-    from msl.equipment.config import Config
     from msl.examples.equipment import EXAMPLES_DIR
+    from msl.equipment.constants import Backend
+    from msl.equipment import EquipmentRecord, ConnectionRecord
 
     log_config = os.path.join(EXAMPLES_DIR, 'logging-config.ini')
     fileConfig(log_config, disable_existing_loggers=False)
 
-    # the 'config.xml' file contains
-    # <equipment alias="stage" manufacturer="Thorlabs" model="LTS150/M"/>
-    # and the appropriate <equipment_connections> and <equipment_registers> XML elements
-    db = Config('C:/Users/j.borbely/code/git/few-photons/config.xml').database()
+    # you must update the following values
+    kinesis_path = 'C:/Program Files/Thorlabs/Kinesis'
+    serial_number = '45870601'
 
-    stage = db.equipment['stage'].connect()
+    # the Thorlabs.MotionControl.IntegratedStepperMotors.dll depends on other DLLs from Thorlabs
+    # make sure to add the Kinesis folder to the environment PATH
+    os.environ['PATH'] += os.pathsep + kinesis_path
+
+    record = EquipmentRecord(
+        manufacturer='Thorlabs',
+        model='LTS150/M',
+        serial=serial_number,
+        connection=ConnectionRecord(
+            backend=Backend.MSL,
+            address='SDK::IntegratedStepperMotors::Thorlabs.MotionControl.IntegratedStepperMotors.dll',
+        ),
+    )
+
+    stage = record.connect()
     print(stage)
 
     info = stage.get_hardware_info()

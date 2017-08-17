@@ -50,12 +50,12 @@ class ConnectionPyVISA(Connection):
         props = record.connection.properties
 
         try:
-            props['parity'] = self.convert_to_enum(props['parity'], _pyvisa_constants.Parity)
+            props['parity'] = self.convert_to_enum(props['parity'].name.lower(), _pyvisa_constants.Parity)
         except KeyError:
             pass
 
         try:
-            props['stop_bits'] = self.convert_to_enum(int(float(props['stop_bits'])*10), _pyvisa_constants.StopBits)
+            props['stop_bits'] = self.convert_to_enum(int(props['stop_bits'].value*10), _pyvisa_constants.StopBits)
         except KeyError:
             pass
 

@@ -1,5 +1,5 @@
 """
-This example opens the connection in async mode.
+This example opens the connection in async mode (does not work properly in Python 2.7).
 """
 
 # this "if" statement is used so that Sphinx does not execute this script when the docs are being built

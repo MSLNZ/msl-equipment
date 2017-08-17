@@ -92,7 +92,7 @@ class Database(object):
                     if len(item_split) < 2:
                         continue
 
-                    k, v = item_split[0].strip(), item_split[1].strip()
+                    k, v = item_split[0].strip(), str(item_split[1].strip())
 
                     if 'ASRL' in conn_record.interface.name or conn_record.address.startswith('COM'):
                         k_lower = k.lower()

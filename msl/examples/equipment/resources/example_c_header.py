@@ -16,25 +16,25 @@ if __name__ == '__main__':
     constants = header.constants()
     for key, value in constants.items():
         print(key, value)
-    print()
+    print('')
 
     print('***** Enums *****')
     enums = header.enums()
     for key, value in enums.items():
         print(key, value)
-    print()
+    print('')
 
     print('***** Structs *****')
     structs = header.structs()
     for key, value in structs.items():
         print(key, value)
-    print()
+    print('')
 
     print('***** Callbacks *****')
     callbacks = header.callbacks()
     for key, value in callbacks.items():
         print(key, value)
-    print()
+    print('')
 
     print('***** Functions *****')
     fcns = header.functions(fcn_regex)

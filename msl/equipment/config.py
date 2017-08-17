@@ -107,7 +107,7 @@ class Config(object):
 
         Raises
         ------
-        FileNotFoundError
+        IOError
             If `path` does not exist.
         :exc:`~xml.etree.ElementTree.ParseError`
             If the configuration file is invalid.

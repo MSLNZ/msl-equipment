@@ -1382,11 +1382,11 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        FileNotFoundError
+        IOError
             If the `path` does not exist.
         """
         if not os.path.isfile(path):
-            raise FileNotFoundError('Cannot find {}'.format(path))
+            raise IOError('Cannot find {}'.format(path))
         self.sdk.ISC_SetCalibrationFile(self._serial, path.encode(), enabled)
 
     def set_direction(self, reverse):

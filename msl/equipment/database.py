@@ -32,12 +32,10 @@ class Database(object):
 
         Raises
         ------
-        FileNotFoundError
-            If `path` does not exist.
         :exc:`~xml.etree.ElementTree.ParseError`
             If the configuration file is invalid.
         IOError
-            If an XML element content is invalid. 
+            If `path` does not exist or if an XML element content is invalid.
         AttributeError
             If an ``<equipment>`` XML element is specified in the configuration
             file and it does not uniquely identify an equipment record in an
@@ -96,7 +94,7 @@ class Database(object):
 
                     k, v = item_split[0].strip(), item_split[1].strip()
 
-                    if 'ASRL' in conn_record.interface.name:  # includes all interfaces with ASRL, e.g. TCPIP_ASRL
+                    if 'ASRL' in conn_record.interface.name or conn_record.address.startswith('COM'):
                         k_lower = k.lower()
                         if k_lower.startswith('parity'):
                             v = self._check_asrl_property(key, v, constants.Parity)
@@ -313,7 +311,7 @@ class Database(object):
             # check if the path is a relative path (relative to the XML file path)
             path = os.path.join(os.path.dirname(self._config_path), path)
             if not os.path.isfile(path):
-                raise FileNotFoundError('Cannot find the database ' + path)
+                raise IOError('Cannot find the database ' + path)
 
         ext = os.path.splitext(path)[1].lower()
         if ext in ('.xls', '.xlsx'):

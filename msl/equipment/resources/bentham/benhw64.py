@@ -70,7 +70,7 @@ class Bentham(Connection, Client64):
 
     def build_system_model(self, path):
         if not os.path.isfile(path):
-            raise FileNotFoundError('Cannot find {}'.format(path))
+            raise IOError('Cannot find {}'.format(path))
         ret, error_report = self.request32('build_system_model', path)
         self.errcheck(ret, path, append_msg=error_report)
         return ret
@@ -133,7 +133,7 @@ class Bentham(Connection, Client64):
 
     def load_setup(self, path):
         if not os.path.isfile(path):
-            raise FileNotFoundError('Cannot find {}'.format(path))
+            raise IOError('Cannot find {}'.format(path))
         return self.errcheck(self.request32('load_setup', path), path)
 
     def park(self):

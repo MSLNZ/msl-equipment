@@ -1061,6 +1061,6 @@ class PicoScopeApi(PicoScope):
             Zero configures the AUXIO connector as a trigger input. Any other value configures 
             it as a trigger output. Only used by ps5000.
         """
-        auto_trigger_ms = round(max(0.0, timeout * 1e3))
+        auto_trigger_ms = int(round(max(0.0, timeout * 1e3)))
         return self.SetTriggerChannelProperties(self._handle, byref(channel_properties),
                                                 len(channel_properties), aux_output_enable, auto_trigger_ms)

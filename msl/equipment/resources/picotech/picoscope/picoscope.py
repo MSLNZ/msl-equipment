@@ -508,13 +508,13 @@ class PicoScope(ConnectionSDK):
             self.raise_exception('Must call set_timebase(...) before setting the trigger')
 
         if ch == self.enChannel.EXT:
-            threshold_adu = round(self.EXT_MAX_VALUE * threshold/float(self.EXT_MAX_VOLTAGE))
+            threshold_adu = int(round(self.EXT_MAX_VALUE * threshold/float(self.EXT_MAX_VOLTAGE)))
         else:
             voltage_offset = self._channels_dict[ch.name].voltage_offset
             adu_per_volt = 1.0/self._channels_dict[ch.name].volts_per_adu
-            threshold_adu = round(adu_per_volt * (threshold + voltage_offset))
+            threshold_adu = int(round(adu_per_volt * (threshold + voltage_offset)))
 
-        delay_ = round(delay / self._sampling_interval)
+        delay_ = int(round(delay / self._sampling_interval))
         if delay < 0:
             msg = 'The trigger delay must be >=0 seconds, requested a delay of {} seconds'.format(delay)
             self.raise_exception(msg)
@@ -524,7 +524,7 @@ class PicoScope(ConnectionSDK):
             self.raise_exception(msg)
 
         trig_dir = self.convert_to_enum(direction, self.enThresholdDirection, to_upper=True)
-        auto_trigger_ms = round(max(0, timeout*1e3))
+        auto_trigger_ms = int(round(max(0.0, timeout*1e3)))
         return self.SetSimpleTrigger(self._handle, enable, ch, threshold_adu, trig_dir, delay_, auto_trigger_ms)
 
     def stop(self):

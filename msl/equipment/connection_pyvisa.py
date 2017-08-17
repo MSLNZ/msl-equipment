@@ -7,13 +7,11 @@ from msl.equipment.config import Config
 from msl.equipment.connection import Connection
 from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
 
-_VisaIOError = None
-_pyvisa_resource_classes = {}
-_pyvisa_resource_manager = None
-_pyvisa_constants = None
-
 
 class ConnectionPyVISA(Connection):
+
+    constants = None
+    resource_classes = {}
 
     def __init__(self, record):
         """Use PyVISA_ to establish a connection to the equipment.
@@ -50,12 +48,14 @@ class ConnectionPyVISA(Connection):
         props = record.connection.properties
 
         try:
-            props['parity'] = self.convert_to_enum(props['parity'].name.lower(), _pyvisa_constants.Parity)
+            val = props['parity'].name.lower()
+            props['parity'] = self.convert_to_enum(val, ConnectionPyVISA.constants.Parity)
         except KeyError:
             pass
 
         try:
-            props['stop_bits'] = self.convert_to_enum(int(props['stop_bits'].value*10), _pyvisa_constants.StopBits)
+            val = int(props['stop_bits'].value*10)
+            props['stop_bits'] = self.convert_to_enum(val, ConnectionPyVISA.constants.StopBits)
         except KeyError:
             pass
 
@@ -66,7 +66,7 @@ class ConnectionPyVISA(Connection):
             if not method.startswith('_'):
                 try:
                     setattr(self, method, getattr(self._resource, method))
-                except _VisaIOError:
+                except:
                     pass
 
         self.log_debug('Connected to {}'.format(record.connection))
@@ -118,31 +118,33 @@ class ConnectionPyVISA(Connection):
         OSError
             If the VISA library cannot be found.
         """
-        global _pyvisa_resource_manager, _VisaIOError, _pyvisa_resource_classes, _pyvisa_constants
-        if _pyvisa_resource_manager is not None:
-            return _pyvisa_resource_manager
-
         import pyvisa
 
-        _VisaIOError = pyvisa.errors.VisaIOError
-        _pyvisa_constants = pyvisa.constants
+        if ConnectionPyVISA.constants is None:
+            ConnectionPyVISA.constants = pyvisa.constants
 
-        for item in dir(pyvisa.resources):
-            if item.endswith('Instrument'):
-                key = item[:-len('Instrument')]
-                _pyvisa_resource_classes[key] = getattr(pyvisa.resources, item)
-            elif item == 'GPIBInterface':
-                _pyvisa_resource_classes['GPIB_INTFC'] = getattr(pyvisa.resources, item)
-            elif item == 'VXIBackplane':
-                _pyvisa_resource_classes['VXI_BACKPLANE'] = getattr(pyvisa.resources, item)
-            elif item == 'VXIMemory':
-                _pyvisa_resource_classes['VXI_MEMACC'] = getattr(pyvisa.resources, item)
+            for item in dir(pyvisa.resources):
+                if item.endswith('Instrument'):
+                    key = item[:-len('Instrument')]
+                    ConnectionPyVISA.resource_classes[key] = getattr(pyvisa.resources, item)
+                elif item == 'GPIBInterface':
+                    ConnectionPyVISA.resource_classes['GPIB_INTFC'] = pyvisa.resources.GPIBInterface
+                elif item == 'VXIBackplane':
+                    ConnectionPyVISA.resource_classes['VXI_BACKPLANE'] = pyvisa.resources.VXIBackplane
+                elif item == 'VXIMemory':
+                    ConnectionPyVISA.resource_classes['VXI_MEMACC'] = pyvisa.resources.VXIMemory
+                elif item == 'TCPIPSocket':
+                    ConnectionPyVISA.resource_classes['TCPIP_SOCKET'] = pyvisa.resources.TCPIPSocket
+                elif item == 'USBRaw':
+                    ConnectionPyVISA.resource_classes['USB_RAW'] = pyvisa.resources.USBRaw
+                elif item == 'PXIMemory':
+                    ConnectionPyVISA.resource_classes['PXI_MEMACC'] = getattr(pyvisa.resources, item)
+            for item in ('COM', 'ASRL', 'LPT1'):
+                ConnectionPyVISA.resource_classes[item] = pyvisa.resources.SerialInstrument
 
         if visa_library is None:
             visa_library = Config.PyVISA_LIBRARY
-
-        _pyvisa_resource_manager = pyvisa.ResourceManager(visa_library)
-        return _pyvisa_resource_manager
+        return pyvisa.ResourceManager(visa_library)
 
     @staticmethod
     def resource_pyclass(record):
@@ -158,6 +160,34 @@ class ConnectionPyVISA(Connection):
         :class:`~pyvisa.resources.Resource`
             The appropriate PyVISA Resource class that can open the `record`.        
         """
+        def find_class(address):
+            # try to figure out the resource class...
+            a = address.upper()
+
+            if a.startswith('GPIB') and a.endswith('INTFC'):
+                return ConnectionPyVISA.resource_classes['GPIB_INTFC']
+
+            if a.startswith('VXI') and a.endswith('BACKPLANE'):
+                return ConnectionPyVISA.resource_classes['VXI_BACKPLANE']
+
+            if a.startswith('VXI') and a.endswith('MEMACC'):
+                return ConnectionPyVISA.resource_classes['VXI_MEMACC']
+
+            if a.startswith('TCPIP') and a.endswith('SOCKET'):
+                return ConnectionPyVISA.resource_classes['TCPIP_SOCKET']
+
+            if a.startswith('USB') and a.endswith('RAW'):
+                return ConnectionPyVISA.resource_classes['USB_RAW']
+
+            if a.startswith('PXI') and a.endswith('MEMACC'):
+                return ConnectionPyVISA.resource_classes['PXI_MEMACC']
+
+            for key, value in ConnectionPyVISA.resource_classes.items():
+                if a.startswith(key):
+                    return value
+
+            raise ValueError('Cannot find PyVISA resource class for {}'.format(address))
+
         if isinstance(record, EquipmentRecord):
             if record.connection is None:
                 raise ValueError('The connection object has not been set for {}'.format(record))
@@ -176,21 +206,5 @@ class ConnectionPyVISA(Connection):
             rm = ConnectionPyVISA.resource_manager()
             info = rm.resource_info(address, extended=True)
             return rm._resource_classes[(info.interface_type, info.resource_class)]
-        except _VisaIOError:
-            # try to figure out the resource class...
-            a = address.upper()
-
-            if a.startswith('GPIB') and a.endswith('INTFC'):
-                return _pyvisa_resource_classes['GPIB_INTFC']
-
-            if a.startswith('VXI') and a.endswith('BACKPLANE'):
-                return _pyvisa_resource_classes['VXI_BACKPLANE']
-
-            if a.startswith('VXI') and a.endswith('MEMACC'):
-                return _pyvisa_resource_classes['VXI_MEMACC']
-
-            for key, value in _pyvisa_resource_classes.items():
-                if a.startswith(key):
-                    return value
-
-            raise ValueError('Cannot find PyVISA resource class for {}'.format(address))
+        except:
+            return find_class(address)

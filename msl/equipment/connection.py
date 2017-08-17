@@ -5,6 +5,7 @@ import logging
 from enum import Enum
 
 from msl.equipment.record_types import EquipmentRecord
+from msl.equipment.exceptions import MSLConnectionError
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +79,7 @@ class Connection(object):
         """
         r = self.equipment_record
         caller = '{}<{}|{}|{}>\n'.format(self.__class__.__name__, r.manufacturer, r.model, r.serial)
-        raise ConnectionError(caller + msg)
+        raise MSLConnectionError(caller + msg)
 
     @staticmethod
     def convert_to_enum(item, enum, prefix='', to_upper=False):

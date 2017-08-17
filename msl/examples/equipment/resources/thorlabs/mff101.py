@@ -14,6 +14,8 @@ if __name__ == '__main__':
     from msl.equipment.config import Config
     from msl.examples.equipment import EXAMPLES_DIR
 
+    # you will have to update the value of the serial number for the FilterFlipper
+    # in the "equipment-connections-database.xlsx" database
     db = Config(os.path.join(EXAMPLES_DIR, 'equipment-configuration.xml')).database()
     flipper = db.equipment['filter_flipper'].connect()
 

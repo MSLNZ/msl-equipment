@@ -7,7 +7,6 @@ import datetime
 
 from dateutil.relativedelta import relativedelta
 
-from msl.equipment import factory
 from msl.equipment.constants import Backend, MSLInterface, MSL_INTERFACE_ALIASES
 
 logger = logging.getLogger(__name__)
@@ -239,6 +238,7 @@ class EquipmentRecord(object):
             :obj:`record.connection.properties <.ConnectionRecord.properties>`
             are invalid.
         """
+        from msl.equipment import factory  # import here to avoid circular imports
         return factory.connect(self, demo)
 
     def __repr__(self):

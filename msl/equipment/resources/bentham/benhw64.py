@@ -80,12 +80,15 @@ class Bentham(Connection, Client64):
         self.log_debug('Stopping 32-bit server for {}'.format(self._tail))
         self.shutdown_server32()
 
-    def errcheck(self, result, *args, append_msg=''):
+    def errcheck(self, result, *args, **kwargs):
         frame = inspect.getouterframes(inspect.currentframe())[1]
         self.log_debug('{}.{}{} -> {}'.format(self.__class__.__name__, frame.function, args, result))
         if result != BI_OK:
             e, m = ERROR_CODES[result]
-            print(append_msg)
+            try:
+                append_msg = kwargs['append_msg']
+            except KeyError:
+                append_msg = ''
             print('{0}: {1} {2}'.format(e, m, append_msg))
             self.raise_exception('{0}: {1} {2}'.format(e, m, append_msg))
         return result

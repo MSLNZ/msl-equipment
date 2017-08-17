@@ -277,7 +277,7 @@ class EquipmentRecord(object):
     def next_calibration_date(self):
         """:obj:`datetime.date`: The next date that a re-calibration is due."""
         years = int(self.calibration_period)
-        months = round(12*(self.calibration_period - years))
+        months = int(round(12*(self.calibration_period - years)))
         return self.date_calibrated + relativedelta(years=years, months=months)
 
 

@@ -505,7 +505,7 @@ ERROR_CODES_API = {
     ),
     PICO_EXTERNAL_FREQUENCY_INVALID: (
         'PICO_EXTERNAL_FREQUENCY_INVALID',
-        'The frequency for the external clock is not within ±5% of the stated value.'
+        'The frequency for the external clock is not within 5% of the stated value.'
     ),
     PICO_CLOCK_CHANGE_ERROR: (
         'PICO_CLOCK_CHANGE_ERROR',
@@ -622,7 +622,7 @@ ERROR_CODES_API = {
     ),
     PICO_POWER_SUPPLY_NOT_CONNECTED: (
         'PICO_POWER_SUPPLY_NOT_CONNECTED',
-        'The DC power supply isn’t connected for PicoScope<model={model}, serial={serial}>.'
+        "The DC power supply isn't connected for PicoScope<model={model}, serial={serial}>."
     ),
     PICO_POWER_SUPPLY_REQUEST_INVALID: (
         'PICO_POWER_SUPPLY_REQUEST_INVALID',

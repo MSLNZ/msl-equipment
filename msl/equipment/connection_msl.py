@@ -50,7 +50,7 @@ class ConnectionSDK(Connection):
         """
         Connection.__init__(self, record)
         lib_path = record.connection.address.split('::')[2]
-        self._lib = LoadLibrary(lib_path, libtype)
+        self._lib = LoadLibrary(lib_path.encode(), libtype)
         self.log_debug('Connected to {}'.format(self.equipment_record.connection))
 
     @property

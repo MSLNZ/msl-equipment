@@ -5,6 +5,8 @@ import re
 import logging
 import datetime
 
+from dateutil.relativedelta import relativedelta
+
 from msl.equipment import factory
 from msl.equipment.constants import Backend, MSLInterface, MSL_INTERFACE_ALIASES
 
@@ -26,7 +28,7 @@ class EquipmentRecord(object):
         ------
         ValueError
             If an argument name is `calibration_period` and the value cannot be converted
-            to an :obj:`int`.
+            to an :obj:`float`.
         TypeError
             If an argument name is `connection` or `date_calibrated` and the data type of
             the value is invalid.
@@ -57,7 +59,7 @@ class EquipmentRecord(object):
         """
         self._alias = ''
         self._asset_number = ''
-        self._calibration_period = 0
+        self._calibration_period = 0.0
         self._category = ''
         self._connection = None
         self._date_calibrated = datetime.date(datetime.MINYEAR, 1, 1)
@@ -82,10 +84,10 @@ class EquipmentRecord(object):
                         raise TypeError('The date_calibrated value must be a datetime.date object')
                 elif attrib == 'calibration_period':
                     try:
-                        self._calibration_period = int(kwargs[attrib])
+                        self._calibration_period = max(0.0, float(kwargs[attrib]))
                         err = ''
                     except ValueError:
-                        err = 'The calibration_period must be an integer value'
+                        err = 'The calibration_period must be a number.'
                     if err:
                         raise ValueError(err)
                 else:
@@ -114,7 +116,7 @@ class EquipmentRecord(object):
 
     @property
     def calibration_period(self):
-        """:obj:`int`: The number of years that can pass before the equipment must be recalibrated."""
+        """:obj:`float`: The number of years that can pass before the equipment must be re-calibrated."""
         return self._calibration_period
 
     @property
@@ -208,6 +210,8 @@ class EquipmentRecord(object):
         return [item for item in dir(EquipmentRecord) if not (item.startswith('_')
                                                               or item == 'attributes'
                                                               or item == 'connect'
+                                                              or item == 'is_calibration_due'
+                                                              or item == 'next_calibration_date'
                                                               )]
 
     def connect(self, demo=None):
@@ -247,6 +251,34 @@ class EquipmentRecord(object):
                                      self.manufacturer,
                                      self.model,
                                      self.serial)
+
+    def is_calibration_due(self, months=0):
+        """Whether the equipment needs to be re-calibrated.
+
+        Parameters
+        ----------
+        months : :obj:`int`
+            The number of months to add to today's date to determine if
+            the equipment needs to be re-calibrated within a certain amount
+            of time. For example, if `months` = ``6`` then that is a way of
+            asking "is a re-calibration due within the next 6 months?".
+
+        Returns
+        -------
+        :obj:`bool`
+            :obj:`True` if the equipment needs to be re-calibrated, :obj:`False`
+            if it does not need to be re-calibrated.
+        """
+        if self.date_calibrated.year == datetime.MINYEAR or self.calibration_period == 0.0:
+            return False
+        ask_date = datetime.date.today() + relativedelta(months=max(0, months))
+        return ask_date >= self.next_calibration_date()
+
+    def next_calibration_date(self):
+        """:obj:`datetime.date`: The next date that a re-calibration is due."""
+        years = int(self.calibration_period)
+        months = round(12*(self.calibration_period - years))
+        return self.date_calibrated + relativedelta(years=years, months=months)
 
 
 class ConnectionRecord(object):
@@ -372,9 +404,7 @@ class ConnectionRecord(object):
         """:obj:`list` of :obj:`str`: A list of all the attribute names for a
         :class:`ConnectionRecord` object.
         """
-        return [item for item in dir(ConnectionRecord) if not (item.startswith('_')
-                                                               or item == 'attributes'
-                                                               )]
+        return [item for item in dir(ConnectionRecord) if not (item.startswith('_') or item == 'attributes')]
 
     def _set_msl_interface(self):
         """Set the `interface` based on the `address`"""

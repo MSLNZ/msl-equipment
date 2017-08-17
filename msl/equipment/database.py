@@ -169,10 +169,10 @@ class Database(object):
 
                         if attrib == 'calibration_period' and value:
                             try:
-                                value = int(value)
+                                value = float(value)
                             except ValueError:
-                                value = 0
-                                logger.error('The calibration_period must be an integer value for {}'.format(record))
+                                value = 0.0
+                                logger.error('The calibration_period must be a number for {}'.format(record))
 
                         setattr(record, '_'+attrib, value)
 

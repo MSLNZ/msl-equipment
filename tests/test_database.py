@@ -74,3 +74,23 @@ def test_database():
     assert len(dbase.equipment) == 2
     assert '712ae' in dbase.equipment  # the model number is used as the key
     assert 'dvm' in dbase.equipment  # the alias is used as the key
+
+
+def test_connection_properties():
+
+    dbase = Config(os.path.join(os.path.dirname(__file__), 'db.xml')).database()
+    props = dbase.records(serial='37871232')[0].connection.properties
+
+    assert props['a'] == 1
+    assert props['b'] == 1.1
+    assert props['c'] and isinstance(props['c'], bool)
+    assert props['d'] and isinstance(props['d'], bool)
+    assert not props['e'] and isinstance(props['e'], bool)
+    assert not props['f'] and isinstance(props['f'], bool)
+    assert props['g'] is None
+    assert props['h'] == u''
+    assert props['i'] == u'\\n'
+    assert props['j'] == u'\\r'
+    assert props['k'] == u'\\r\\n'
+    assert props['l'] == u'some text'
+    assert props['m'] == u'D:\\Data\\'

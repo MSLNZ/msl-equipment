@@ -64,7 +64,7 @@ def get_class(module_name, class_name):
     except KeyError:
         try:
             mod = importlib.import_module(module_name)
-        except ModuleNotFoundError:
+        except ImportError:
             return None
 
     try:

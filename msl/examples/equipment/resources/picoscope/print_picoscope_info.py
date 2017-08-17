@@ -13,7 +13,7 @@ if __name__ == '__main__':
     # print all information that is available about the PicoScope
     print(scope.get_unit_info())
 
-    print()
+    print('')
 
     # use the enum value to get the calibration date, do not print the member-name prefix
     print('The PicoScope was calibrated on {}'.format(scope.get_unit_info(5, False)))

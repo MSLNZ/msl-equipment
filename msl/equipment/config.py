@@ -5,7 +5,7 @@ import os
 import logging
 from xml.etree import ElementTree
 
-from .database import Database
+from msl.equipment.database import Database
 
 logger = logging.getLogger(__name__)
 

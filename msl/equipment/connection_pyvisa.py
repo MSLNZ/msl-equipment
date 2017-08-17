@@ -3,9 +3,9 @@ Use PyVISA_ as the backend to communicate with the equipment.
 
 .. _PyVISA: http://pyvisa.readthedocs.io/en/stable/index.html
 """
-from .config import Config
-from .connection import Connection
-from .record_types import EquipmentRecord, ConnectionRecord
+from msl.equipment.config import Config
+from msl.equipment.connection import Connection
+from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
 
 _VisaIOError = None
 _pyvisa_resource_classes = {}

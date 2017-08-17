@@ -3,13 +3,13 @@ Establish a connection to the equipment to send and receive messages.
 """
 import logging
 
-from .config import Config
-from .constants import Backend, MSLInterface
-from .record_types import EquipmentRecord
-from .connection_demo import ConnectionDemo
-from .connection_pyvisa import ConnectionPyVISA
-from . import resources
-from . import connection_msl
+from msl.equipment.config import Config
+from msl.equipment.constants import Backend, MSLInterface
+from msl.equipment.record_types import EquipmentRecord
+from msl.equipment.connection_demo import ConnectionDemo
+from msl.equipment.connection_pyvisa import ConnectionPyVISA
+from msl.equipment import resources
+from msl.equipment import connection_msl
 
 logger = logging.getLogger(__name__)
 

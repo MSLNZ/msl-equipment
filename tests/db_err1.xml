@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<msl>
+
+    <equipment_registers>
+        <register>
+            <path>does_not_exist.csv</path>
+        </register>
+    </equipment_registers>
+
+</msl>

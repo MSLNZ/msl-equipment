@@ -1,0 +1,8 @@
+Manufacturer,Model,Asset number,Serial,Date calibrated,Register number,Category,Location,Description
+F D080,712ae,f39a4f,49e39f1,2010-11-01,MSLA.X.Y.Z,DMM,General,Digital Multimeter
+BaaEc9,415ff4d,,50be0e,,MSLB.X.YY.Z,,Another Lab,Ozone Eater
+cbaf183d,00000,00004,C10010,2004-04-08,MSLC.X,,Light Lab,Lamp Power Supply (10A-100V)
+Bd6d850614 11,34401A,00009,D10011,2014-03-02,MSLD.XX.YY.ZZ,DMM,General,Digital Multimeter
+Company A,Milli Gauss,,E10012,,MSLE-X,,Electrical Lab,Gauss meter
+Company B,AB12CD,,F10013,2003-11-06,MSLF.XYZ,,Length Lab,1 metre ruler
+A B C,DSP4fbe,00005,G10014,,MSLG.ABC,,General,Lock-In Amplifier

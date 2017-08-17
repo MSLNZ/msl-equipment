@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<msl>
+
+    <equipment_registers>
+        <register>
+            <path>db_files/db.xlsx</path>
+            <sheet>Equipment</sheet>
+        </register>
+    </equipment_registers>
+
+    <equipment manufacturer="Not a real manufacturer"/>
+
+</msl>

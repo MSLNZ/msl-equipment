@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<msl>
+
+    <equipment_registers>
+        <register>
+            <path>db_files/db_alias.xlsx</path>
+            <sheet>Equipment</sheet>
+        </register>
+    </equipment_registers>
+
+    <equipment_connections>
+        <path>db_files/db_alias.xlsx</path>
+        <sheet>Connections</sheet>
+    </equipment_connections>
+
+    <equipment alias='defined' manufacturer="Company"/>
+
+</msl>

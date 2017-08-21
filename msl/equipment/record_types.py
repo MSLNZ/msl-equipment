@@ -67,8 +67,8 @@ class EquipmentRecord(object):
         self._manufacturer = ''
         self._model = ''
         self._register = ''
-        self._section = ''
         self._serial = ''
+        self._team = ''
 
         valid_attribs = EquipmentRecord.attributes()
         for attrib in kwargs:
@@ -203,14 +203,14 @@ class EquipmentRecord(object):
         return self._register
 
     @property
-    def team(self):
-        """:obj:`str`: The MSL team (e.g., Light) that the equipment belongs to."""
-        return self._section
-
-    @property
     def serial(self):
         """:obj:`str`: The serial number, or engraved unique ID, of the equipment."""
         return self._serial
+
+    @property
+    def team(self):
+        """:obj:`str`: The MSL team (e.g., Light) that the equipment belongs to."""
+        return self._team
 
     @staticmethod
     def attributes():

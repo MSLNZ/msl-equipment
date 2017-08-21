@@ -49,8 +49,8 @@ class EquipmentRecord(object):
         ...                  backend=Backend.MSL,
         ...                  address='SDK::PicoScope5000A::ps5000a',
         ...                  properties={
-        ...                      'resolution': '14bit',  # only used for ps5000a series PicoScope's
-        ...                      'auto_select_power': True,  # for PicoScopes that can be powered by an AC adaptor or by a USB cable
+        ...                      'resolution': '14bit',  # `resolution` is only used for ps5000a series PicoScope's
+        ...                      'auto_select_power': True,  # some PicoScopes can be powered by an AC adaptor or by USB
         ...                  },
         ...              )
         ...          )
@@ -70,30 +70,30 @@ class EquipmentRecord(object):
         self._serial = ''
         self._team = ''
 
-        valid_attribs = EquipmentRecord.attributes()
-        for attrib in kwargs:
-            if attrib in valid_attribs:
-                if attrib == 'connection':
+        valid_names = EquipmentRecord.field_names()
+        for name in kwargs:
+            if name in valid_names:
+                if name == 'connection':
                     # set the connection after the manufacturer, model and serial are all set
                     continue
-                elif attrib == 'date_calibrated':
-                    if isinstance(kwargs[attrib], datetime.date):
-                        self._date_calibrated = kwargs[attrib]
+                elif name == 'date_calibrated':
+                    if isinstance(kwargs[name], datetime.date):
+                        self._date_calibrated = kwargs[name]
                     else:
                         raise TypeError('The date_calibrated value must be a datetime.date object')
-                elif attrib == 'calibration_period':
+                elif name == 'calibration_period':
                     try:
-                        self._calibration_period = max(0.0, float(kwargs[attrib]))
+                        self._calibration_period = max(0.0, float(kwargs[name]))
                         err = ''
                     except ValueError:
                         err = 'The calibration_period must be a number.'
                     if err:
                         raise ValueError(err)
                 else:
-                    setattr(self, '_'+attrib, str(kwargs[attrib]))
+                    setattr(self, '_'+name, str(kwargs[name]))
             else:
                 msg = 'An EquipmentRecord has no "{}" attribute.\nValid attributes are {}'\
-                    .format(attrib, valid_attribs)
+                    .format(name, valid_names)
                 raise AttributeError(msg)
 
         if 'connection' in kwargs:
@@ -102,7 +102,7 @@ class EquipmentRecord(object):
     def __repr__(self):
         return '{}{}'.format(self.__class__.__name__,
                              {a: getattr(self, a) if a != 'connection' else self.connection
-                              for a in self.attributes()})
+                              for a in self.field_names()})
 
     def __str__(self):
         return '{}<{}|{}|{}>'.format(self.__class__.__name__,
@@ -213,12 +213,12 @@ class EquipmentRecord(object):
         return self._team
 
     @staticmethod
-    def attributes():
+    def field_names():
         """:obj:`list` of :obj:`str`: A list of all the attribute names for an 
         :class:`EquipmentRecord` object.
         """
         return [item for item in dir(EquipmentRecord) if not (item.startswith('_')
-                                                              or item == 'attributes'
+                                                              or item == 'field_names'
                                                               or item == 'connect'
                                                               or item == 'is_calibration_due'
                                                               or item == 'next_calibration_date'
@@ -252,7 +252,6 @@ class EquipmentRecord(object):
         from msl.equipment import factory  # import here to avoid circular imports
         return factory.connect(self, demo)
 
-
     def is_calibration_due(self, months=0):
         """Whether the equipment needs to be re-calibrated.
 
@@ -272,7 +271,7 @@ class EquipmentRecord(object):
         """
         if self.date_calibrated.year == datetime.MINYEAR or self.calibration_period == 0.0:
             return False
-        ask_date = datetime.date.today() + relativedelta(months=max(0, months))
+        ask_date = datetime.date.today() + relativedelta(months=max(0, int(months)))
         return ask_date >= self.next_calibration_date()
 
     def next_calibration_date(self):
@@ -315,8 +314,8 @@ class ConnectionRecord(object):
         ...              backend=Backend.MSL,
         ...              address='SDK::PicoScope5000A::ps5000a',
         ...              properties={
-        ...                  'resolution': '14bit',  # only used for ps5000a series PicoScope's
-        ...                  'auto_select_power': True,  # for PicoScopes that can be powered by an AC adaptor or by a USB cable
+        ...                  'resolution': '14bit',  # `resolution` is only used for ps5000a series PicoScope's
+        ...                  'auto_select_power': True,  # some PicoScopes can be powered by an AC adaptor or by USB
         ...              }
         ...          )
         

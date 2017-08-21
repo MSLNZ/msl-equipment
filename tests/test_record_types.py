@@ -10,7 +10,7 @@ from msl.equipment import constants
 
 def test_equip_record():
 
-    a = EquipmentRecord.attributes()
+    a = EquipmentRecord.field_names()
     assert 'alias' in a
     assert 'asset_number' in a
     assert 'calibration_period' in a
@@ -25,7 +25,7 @@ def test_equip_record():
     assert 'team' in a
     assert 'serial' in a
     assert 'connect' not in a
-    assert 'attributes' not in a
+    assert 'field_names' not in a
     assert 'is_calibration_due' not in a
     assert 'next_calibration_date' not in a
 

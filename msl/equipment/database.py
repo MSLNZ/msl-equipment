@@ -48,7 +48,7 @@ class Database(object):
         root = ElementTree.parse(path).getroot()
 
         self._config_path = path
-        self._equipment_attributes = EquipmentRecord.attributes()
+        self._equipment_field_names = EquipmentRecord.field_names()
         self._connection_attributes = ConnectionRecord.attributes()
 
         # create a dictionary of ConnectionRecord objects
@@ -127,10 +127,10 @@ class Database(object):
             for register in registers.findall('register'):
 
                 # the MSL team (e.g., Electrical) that this Equipment Register belongs to
-                section = register.attrib.get('team', '')
+                team = register.attrib.get('team', '')
 
                 header, rows = self._read(register)
-                self._make_index_map(header, self._equipment_attributes)
+                self._make_index_map(header, self._equipment_field_names)
 
                 for row in rows:
                     if not self._is_row_length_okay(row, header):
@@ -141,7 +141,7 @@ class Database(object):
                         continue
 
                     record = EquipmentRecord()
-                    record._section = section
+                    record._team = team
 
                     if key in self._connection_records:
                         record._connection = self._connection_records[key]
@@ -149,13 +149,13 @@ class Database(object):
                             record.alias = record.connection.properties['alias']
                             del record.connection.properties['alias']
 
-                    for attrib in self._equipment_attributes:
+                    for name in self._equipment_field_names:
                         try:
-                            value = row[self._index_map[attrib]]
+                            value = row[self._index_map[name]]
                         except KeyError:
                             continue
 
-                        if attrib == 'date_calibrated' and isinstance(value, str):
+                        if name == 'date_calibrated' and isinstance(value, str):
                             date_format = register.attrib.get('date_format', '%d/%m/%Y')
                             try:
                                 value = datetime.datetime.strptime(value, date_format).date()
@@ -165,14 +165,14 @@ class Database(object):
                                                  .format(value, register.findtext('path')))
                                 continue
 
-                        if attrib == 'calibration_period' and value:
+                        if name == 'calibration_period' and value:
                             try:
                                 value = float(value)
                             except ValueError:
-                                value = 0.0
                                 logger.error('The calibration_period must be a number for {}'.format(record))
+                                continue
 
-                        setattr(record, '_'+attrib, value)
+                        setattr(record, '_'+name, value)
 
                     self._equipment_records[key] = record
 
@@ -297,7 +297,7 @@ class Database(object):
         >>> records(description='I-V Converter')  # doctest: +SKIP
         a list of all EquipmentRecords that contain 'I-V Converter' in the description field
         """
-        _kwargs = {key: kwargs[key] for key in kwargs if key in self._equipment_attributes}
+        _kwargs = {key: kwargs[key] for key in kwargs if key in self._equipment_field_names}
         return [r for r in self._equipment_records.values() if self._match(r, _kwargs)]
 
     def _read(self, element):
@@ -378,14 +378,14 @@ class Database(object):
         logger.debug('Loading database ' + path)
         return header, rows
 
-    def _make_index_map(self, header, attributes):
-        """Determine the column numbers in the header that the attributes are located in"""
+    def _make_index_map(self, header, field_names):
+        """Determine the column index in the header that the field_names are located in"""
         self._index_map = {}
         h = [item.strip().lower().replace(' ', '_') for item in header]
         for index, label in enumerate(h):
-            for attrib in attributes:
-                if attrib not in self._index_map and attrib in label:
-                    self._index_map[attrib] = index
+            for name in field_names:
+                if name not in self._index_map and name in label:
+                    self._index_map[name] = index
                     break
 
     def _make_key(self, row):

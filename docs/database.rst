@@ -17,7 +17,7 @@ requirements needed to achieve the final measurement uncertainty.
 
 **MSL-Equipment** does not require that a *single* database is used for **ALL** equipment from **ALL**
 MSL sections. However, it is vital that each equipment record can only be uniquely found in **ONE**
-**Equipment-Register** database. These databases are never to be copied from one MSL section to another
+**Equipment-Register** database. These databases are never to be copied from one MSL team to another
 *(although keeping backups are required)*. Rather if you are borrowing equipment from another team you
 simply specify the path to that teams **Equipment-Register** database in your configuration file. See
 :obj:`msl.equipment.config.Config` for more details on how to specify multiple **Equipment-Register**

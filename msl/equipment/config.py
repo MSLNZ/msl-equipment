@@ -82,18 +82,18 @@ class Config(object):
 
                 <!-- The equipment-register database(s) -->
                 <equipment_registers>
-                    <register section="P&amp;R">
+                    <register team="P&amp;R">
                         <path>Z:\QUAL\Equipment\Equipment Register.xls</path>
                         <sheet>Equipment</sheet>
                     </register>
-                    <register section="Electrical">
+                    <register team="Electrical">
                         <path>H:\Quality\Registers\Equipment.xls</path>
                         <sheet>REG</sheet>
                     </register>
-                    <register section="Time">
+                    <register team="Time">
                         <path>W:\Registers\Equip.csv</path>
                     </register>
-                    <register section="Mass">
+                    <register team="Mass">
                         <path>Y:\databases\equipment\equip-reg.txt</path>
                     </register>
                 </equipment_registers>

@@ -126,8 +126,8 @@ class Database(object):
         for registers in root.findall('equipment_registers'):
             for register in registers.findall('register'):
 
-                # the MSL section (e.g., Electrical) that this Equipment Register belongs to
-                section = register.attrib.get('section', '')
+                # the MSL team (e.g., Electrical) that this Equipment Register belongs to
+                section = register.attrib.get('team', '')
 
                 header, rows = self._read(register)
                 self._make_index_map(header, self._equipment_attributes)

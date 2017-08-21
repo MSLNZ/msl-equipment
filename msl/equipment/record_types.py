@@ -99,6 +99,17 @@ class EquipmentRecord(object):
         if 'connection' in kwargs:
             self.connection = kwargs['connection']
 
+    def __repr__(self):
+        return '{}{}'.format(self.__class__.__name__,
+                             {a: getattr(self, a) if a != 'connection' else self.connection
+                              for a in self.attributes()})
+
+    def __str__(self):
+        return '{}<{}|{}|{}>'.format(self.__class__.__name__,
+                                     self.manufacturer,
+                                     self.model,
+                                     self.serial)
+
     @property
     def alias(self):
         """:obj:`str`: An alias to use to associate with this equipment."""
@@ -192,8 +203,8 @@ class EquipmentRecord(object):
         return self._register
 
     @property
-    def section(self):
-        """:obj:`str`: The MSL section (e.g., P&R) that the equipment belongs to."""
+    def team(self):
+        """:obj:`str`: The MSL team (e.g., Light) that the equipment belongs to."""
         return self._section
 
     @property
@@ -241,16 +252,6 @@ class EquipmentRecord(object):
         from msl.equipment import factory  # import here to avoid circular imports
         return factory.connect(self, demo)
 
-    def __repr__(self):
-        return '{}{}'.format(self.__class__.__name__,
-                             {a: getattr(self, a) if a != 'connection' else self.connection
-                              for a in self.attributes()})
-
-    def __str__(self):
-        return '{}<{}|{}|{}>'.format(self.__class__.__name__,
-                                     self.manufacturer,
-                                     self.model,
-                                     self.serial)
 
     def is_calibration_due(self, months=0):
         """Whether the equipment needs to be re-calibrated.

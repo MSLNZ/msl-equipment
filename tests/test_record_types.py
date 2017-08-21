@@ -22,7 +22,7 @@ def test_equip_record():
     assert 'manufacturer' in a
     assert 'model' in a
     assert 'register' in a
-    assert 'section' in a
+    assert 'team' in a
     assert 'serial' in a
     assert 'connect' not in a
     assert 'attributes' not in a
@@ -43,7 +43,7 @@ def test_equip_record():
     assert record.description == ''
     assert record.location == ''
     assert record.register == ''
-    assert record.section == ''
+    assert record.team == ''
 
     record = EquipmentRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055')
     assert record.manufacturer == 'ABC def'
@@ -238,7 +238,7 @@ def test_dbase():
     assert eq2.manufacturer == 'Agilent'
     assert eq2.model == '34420A'
     assert eq2.register == 'MSLE.X.YYY'
-    assert eq2.section == 'Any'
+    assert eq2.team == 'Any'
     assert eq2.serial == 'A00024'
 
     assert eq2.connection.manufacturer == 'Agilent'

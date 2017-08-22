@@ -38,5 +38,6 @@ Package Structure
    msl.equipment.connection_pyvisa <_api/msl.equipment.connection_pyvisa>
    msl.equipment.constants <_api/msl.equipment.constants>
    msl.equipment.database <_api/msl.equipment.database>
+   msl.equipment.exceptions <_api/msl.equipment.exceptions>
    msl.equipment.factory <_api/msl.equipment.factory>
    msl.equipment.record_types <_api/msl.equipment.record_types>

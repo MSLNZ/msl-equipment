@@ -11,6 +11,7 @@ from msl.equipment import constants
 def test_equip_record():
 
     a = EquipmentRecord.field_names()
+    assert len(a) == 13
     assert 'alias' in a
     assert 'asset_number' in a
     assert 'calibration_period' in a
@@ -22,8 +23,8 @@ def test_equip_record():
     assert 'manufacturer' in a
     assert 'model' in a
     assert 'register' in a
-    assert 'team' in a
     assert 'serial' in a
+    assert 'team' in a
     assert 'connect' not in a
     assert 'field_names' not in a
     assert 'is_calibration_due' not in a
@@ -99,7 +100,8 @@ def test_equip_record():
 
 def test_conn_record():
 
-    a = ConnectionRecord.attributes()
+    a = ConnectionRecord.field_names()
+    assert len(a) == 7
     assert 'address' in a
     assert 'backend' in a
     assert 'interface' in a
@@ -108,7 +110,7 @@ def test_conn_record():
     assert 'properties' in a
     assert 'serial' in a
     assert '_set_msl_interface' not in a
-    assert 'attributes' not in a
+    assert 'field_names' not in a
 
     # the default values
     record = ConnectionRecord()

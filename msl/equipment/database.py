@@ -49,14 +49,14 @@ class Database(object):
 
         self._config_path = path
         self._equipment_field_names = EquipmentRecord.field_names()
-        self._connection_attributes = ConnectionRecord.attributes()
+        self._connection_field_names = ConnectionRecord.field_names()
 
         # create a dictionary of ConnectionRecord objects
         self._connection_records = {}
         for element in root.findall('equipment_connections'):
 
             header, rows = self._read(element)
-            self._make_index_map(header, self._connection_attributes)
+            self._make_index_map(header, self._connection_field_names)
 
             for row in rows:
                 if not self._is_row_length_okay(row, header):
@@ -69,8 +69,8 @@ class Database(object):
                 conn_record = ConnectionRecord()
 
                 # auto set the attributes that are string data types
-                for attrib in ('address', 'manufacturer', 'model', 'serial'):
-                    setattr(conn_record, '_'+attrib, row[self._index_map[attrib]])
+                for name in ('address', 'manufacturer', 'model', 'serial'):
+                    setattr(conn_record, '_'+name, row[self._index_map[name]])
 
                 # set the backend to use to communicate with the equipment
                 backend = row[self._index_map['backend']]
@@ -102,8 +102,6 @@ class Database(object):
                             v = self._check_asrl_property(key, float(v), constants.StopBits)
                         elif k_lower.startswith('data'):
                             v = self._check_asrl_property(key, int(v), constants.DataBits)
-                        elif k_lower.startswith('baud'):
-                            v = int(v)
 
                     if isinstance(v, str):
                         # try to convert 'v' to a Python bool, int or float
@@ -261,7 +259,7 @@ class Database(object):
         >>> connections(address='GPIB*')  # doctest: +SKIP
         a list of all ConnectionRecords that use GPIB for the connection bus
         """
-        _kwargs = {key: kwargs[key] for key in kwargs if key in self._connection_attributes}
+        _kwargs = {key: kwargs[key] for key in kwargs if key in self._connection_field_names}
         return [r for r in self._connection_records.values() if self._match(r, _kwargs)]
 
     def records(self, **kwargs):

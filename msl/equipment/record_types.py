@@ -214,8 +214,8 @@ class EquipmentRecord(object):
 
     @staticmethod
     def field_names():
-        """:obj:`list` of :obj:`str`: A list of all the attribute names for an 
-        :class:`EquipmentRecord` object.
+        """:obj:`list` of :obj:`str`: A list of all the field names (i.e., the name of
+        each column in a database) for an :class:`EquipmentRecord`.
         """
         return [item for item in dir(EquipmentRecord) if not (item.startswith('_')
                                                               or item == 'field_names'
@@ -328,31 +328,41 @@ class ConnectionRecord(object):
         self._properties = {}
         self._serial = ''
 
-        valid_attribs = ConnectionRecord.attributes()
-        for attrib in kwargs:
-            if attrib in valid_attribs:
-                if attrib == 'backend':
-                    self._backend = Backend(kwargs[attrib])
-                elif attrib == 'interface':
+        valid_names = ConnectionRecord.field_names()
+        for name in kwargs:
+            if name in valid_names:
+                if name == 'backend':
+                    self._backend = Backend(kwargs[name])
+                elif name == 'interface':
                     raise ValueError('Cannot manually set the MSL interface. '
                                      'It is automatically set based on the value of the address.')
-                elif attrib == 'address':
-                    self._address = str(kwargs[attrib])
+                elif name == 'address':
+                    self._address = str(kwargs[name])
                     if 'backend' in kwargs and kwargs['backend'] == Backend.MSL:
                         bad_interface = self._set_msl_interface()
                         if bad_interface:
                             raise ValueError('Unknown MSL Interface "{}"'.format(bad_interface))
-                elif attrib == 'properties':
-                    if isinstance(kwargs[attrib], dict):
-                        self._properties = kwargs[attrib]
+                elif name == 'properties':
+                    if isinstance(kwargs[name], dict):
+                        self._properties = kwargs[name]
                     else:
                         raise ValueError('The properties value must be a dictionary.')
                 else:
-                    setattr(self, '_'+attrib, str(kwargs[attrib]))
+                    setattr(self, '_'+name, str(kwargs[name]))
             else:
                 msg = 'A ConnectionRecord has no "{}" attribute.\nValid attributes are {}'\
-                    .format(attrib, valid_attribs)
+                    .format(name, valid_names)
                 raise AttributeError(msg)
+
+    def __repr__(self):
+        return '{}{}'.format(self.__class__.__name__,
+                             {a: getattr(self, a) for a in self.field_names()})
+
+    def __str__(self):
+        return '{}<{}|{}|{}>'.format(self.__class__.__name__,
+                                     self.manufacturer,
+                                     self.model,
+                                     self.serial)
 
     @property
     def address(self):
@@ -400,11 +410,11 @@ class ConnectionRecord(object):
         return self._serial
 
     @staticmethod
-    def attributes():
-        """:obj:`list` of :obj:`str`: A list of all the attribute names for a
-        :class:`ConnectionRecord` object.
+    def field_names():
+        """:obj:`list` of :obj:`str`: A list of all the field names (i.e., the name of
+        each column in a database) for a :class:`ConnectionRecord`.
         """
-        return [item for item in dir(ConnectionRecord) if not (item.startswith('_') or item == 'attributes')]
+        return [item for item in dir(ConnectionRecord) if not (item.startswith('_') or item == 'field_names')]
 
     def _set_msl_interface(self):
         """Set the `interface` based on the `address`"""
@@ -424,13 +434,3 @@ class ConnectionRecord(object):
             self._interface = MSLInterface[interface]
             return ''
         return interface
-
-    def __str__(self):
-        return '{}<{}|{}|{}>'.format(self.__class__.__name__,
-                                     self.manufacturer,
-                                     self.model,
-                                     self.serial)
-
-    def __repr__(self):
-        return '{}{}'.format(self.__class__.__name__,
-                             {a: getattr(self, a) for a in self.attributes()})

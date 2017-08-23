@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<msl>
+
+    <!-- The DMM that is being used to perform the measurement -->
+    <equipment alias="dmm" model="34465A"/>
+
+    <!-- The Connection database -->
+    <equipment_connections>
+        <path>example.xlsx</path>
+        <sheet>Connections</sheet>
+    </equipment_connections>
+
+    <!-- The Equipment-Register database -->
+    <equipment_registers>
+        <register>
+            <path>example.xlsx</path>
+            <sheet>Equipment</sheet>
+        </register>
+    </equipment_registers>
+
+</msl>

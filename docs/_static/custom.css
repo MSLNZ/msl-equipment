@@ -1,3 +1,13 @@
 .red {
   color: red;
 }
+
+.blue {
+  color: blue;
+  font-style: italic;
+}
+
+/* allow table to wrap the text */
+.wy-table-responsive table th {
+    white-space: normal;
+}

@@ -12,6 +12,7 @@ Subpackages
 .. toctree::
 
     msl.equipment.resources.bentham
+    msl.equipment.resources.cmi
     msl.equipment.resources.picotech
     msl.equipment.resources.thorlabs
 

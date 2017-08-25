@@ -22,4 +22,3 @@ Submodules
 .. toctree::
 
    msl.equipment.resources.utils
-

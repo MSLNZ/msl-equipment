@@ -3,11 +3,11 @@
 =============
 MSL Resources
 =============
-MSL resource are used to control equipment.
+MSL resource are used to communicate with equipment.
 
 The following classes are available to use as the **PythonClassName** when defining the :ref:`address_syntax`
 in a :ref:`connection_database`. For example, to use the ``benhw32_cdecl.dll`` SDK that is provided from
-**Bentham Instruments Ltd** the **Address** value should be ``SDK::Bentham::benhw32_cdecl.dll``.
+`Bentham Instruments Ltd`_ the **Address** value should be ``SDK::Bentham::benhw32_cdecl.dll``.
 
 * `Bentham Instruments Ltd`_
 
@@ -19,7 +19,7 @@ in a :ref:`connection_database`. For example, to use the ``benhw32_cdecl.dll`` S
 
 * `Pico Technology`_
 
-  * PicoScope_
+  * PicoScope_ - Requires the `Pico Technology SDK`_
 
     * :class:`~msl.equipment.resources.picotech.picoscope.ps2000.PicoScope2000` - PicoScope 2000 Series
     * :class:`~msl.equipment.resources.picotech.picoscope.ps2000a.PicoScope2000A` - PicoScope 2000 Series A
@@ -43,30 +43,49 @@ in a :ref:`connection_database`. For example, to use the ``benhw32_cdecl.dll`` S
 
 .. _new_resource:
 
-Creating A New MSL Resource
+Creating a new MSL Resource
 ---------------------------
 When adding a new MSL resource class the following steps should be performed.
 
-1. Create a new Python package in **msl.equipment.resources** with the name of the Manufacturer of the equipment
-   as the package name (if the package folder does not already exist). Follow the structure of the resource packages
-   already contained in the **msl.equipment.resources** package for guidance.
-2. Create a new class within the package that you created in step 1. The class must be a subclass one of the a
-   classes found in the :mod:`msl.equipment.connection_msl` module.
-3. Run ``python setup.py apidoc`` to auto-generate the **.rst** documentation files.
-4. Copy the newly-created **.rst** files from the **docs/_autosummary** folder to the **docs/_api** folder. Note that
-   running ``python setup.py apidoc`` will generate **.rst** files for **ALL** modules in **MSL-Equipment**. Within the
-   **docs/_autosummary** folder just copy the **.rst** files that are associated with your new package/class. You can
+1. Create a fork_ of the repository_.
+2. If you are adding a new MSL Resource for equipment from a Manufacturer that does not already exist in the
+   **msl.equipment.resources** package then create a new Python package in **msl.equipment.resources** using the name
+   of the Manufacturer as the package name (use lower-case letters and, if necessary, replace whitespace with an
+   underscore). If the name of the Manufacturer already exists as a package then skip this step.
+3. Create a new Python module in the package from step 2. If it is possible, use the model number of the equipment as
+   the module name (use lower case). Using this module-naming convention might not be possible if the model number
+   contains characters that cannot be used to name Python modules. Either remove these characters when naming the module
+   or use your own judgement for what to name the module.
+4. Create a new class within the module that you created in step 3. The class must be a subclass one of the a
+   classes found in the :ref:`connection_classes`. If possible, the name of the class should also be
+   the model number of the equipment (use camel case). Write the properties and methods for the class.
+5. Add at least one example for how to use the new MSL Resource in **msl.examples.equipment**. Follow the template of
+   the other examples in the **msl.examples.equipment** package for naming conventions and for showing how to use the
+   resource.
+6. Add **.rst** files for the new MSL Resource to the **docs/_api** folder. You can either run
+   ``python setup.py apidoc`` to auto-generate the **.rst** documentation files or you can create the
+   necessary **.rst** files manually. Running ``apidoc`` will generate **.rst** files for **ALL** modules in
+   **MSL-Equipment**. Within the **docs/_autosummary** folder that gets automatically created when running ``apidoc``
+   command just copy the **.rst** files that are associated with your new MSL Resource. After copying the files you can
    delete the **docs/_autosummary** folder before running ``python setup.py docs`` otherwise you'll get numerous
-   warnings when building the documentation.
-5. Add the package to the the toctree in **docs/_api/msl.equipment.resources.rst**. If you forget to then a warning will
-   occur when building the documentation.
-6. Document that the resource class now exists for everyone to use in **docs/resources.rst**
+   warnings when building the documentation. If you want to manually create the **.rst** files then look in the
+   **docs/_api** folder for examples from other MSL Resources.
+7. Add the new package to the the **toctree** in **docs/_api/msl.equipment.resources.rst** (insert it in the file
+   alphabetically based on the package names). If you forget to do this step then a warning will occur when building
+   the documentation to help remind you to do this step.
+8. Document that the new MSL Resource class now exists for everyone to use in **docs/resources.rst**.
+9. Create a `pull request`_.
+
+.. _fork: https://help.github.com/articles/fork-a-repo/
+.. _repository: https://github.com/MSLNZ/msl-equipment
+.. _pull request: https://help.github.com/articles/creating-a-pull-request-from-a-fork/
 
 .. _Bentham Instruments Ltd: https://www.bentham.co.uk/
-.. _Pico Technology: https://www.picotech.com/
 .. _CMI: https://www.cmi.cz/?language=en
+.. _Pico Technology: https://www.picotech.com/
 .. _Thorlabs: https://www.thorlabs.com/
 
 .. _benhw32: http://support.bentham.co.uk/support/solutions/articles/5000615653-sdk-manual
-.. _PicoScope: https://www.picotech.com/downloads
 .. _Kinesis: https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=Motion_Control
+.. _Pico Technology SDK: https://www.picotech.com/downloads
+.. _PicoScope: https://www.picotech.com/products/oscilloscope

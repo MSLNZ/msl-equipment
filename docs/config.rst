@@ -6,7 +6,7 @@ Configuration File
 A configuration file is used by **MSL-Equipment** to:
 
 1. Specify which :ref:`Databases <database>` to use, which contain equipment and connection records
-2. Specify the **equipment** that is being used to perform a measurement
+2. Specify the equipment that is being used to perform a measurement
 3. Specify constants to use in your Python program
 
 The configuration file uses the eXtensible Markup Language (XML_) format to specify this information.
@@ -26,7 +26,7 @@ The following illustrates an example configuration file.
        <!-- Open all connections in demo mode -->
        <DEMO_MODE>true</DEMO_MODE>
 
-       <!-- Add a single path to where resource files are located -->
+       <!-- Add a single path to where external resource files are located -->
        <PATH>I:\Photometry\SDKs</PATH>
        <PATH recursive="false">D:\code\resources\lib</PATH>
 
@@ -40,12 +40,12 @@ The following illustrates an example configuration file.
          Specify the equipment that is being used to perform the measurement and assign an
          "alias" that you want to use to associate for each equipment. You only need to
          specify enough XML attributes to uniquely identify the equipment record in an
-         Equipment-Registry Database. For example, if there is only 1 equipment record in
-         the Equipment-Registry Databases that you specify (see the <equipment_registers>
+         Equipment-Registry database. For example, if there is only 1 equipment record in
+         the Equipment-Registry databases that you specify (see the <equipment_registers>
          tag below) that is from "Company XYZ" then specifying manufacturer="Company XYZ"
          is enough information to uniquely identify the equipment record in the
          configuration file. If in the future another equipment record is added to an
-         Equipment-Registry Database for "Company XYZ" then an exception will be raised
+         Equipment-Registry database for "Company XYZ" then an exception will be raised
          telling you to specify more information in the configuration file to uniquely
          identify a single equipment record.
        -->
@@ -53,21 +53,22 @@ The following illustrates an example configuration file.
        <equipment alias="scope" manufacturer="Pico Technologies"/>
        <equipment alias="flipper" manufacturer="Thorlabs" model="MFF101/M" serial="37871232"/>
 
-       <!-- Specify the Equipment-Register Databases to load equipment records from -->
+       <!-- Specify the Equipment-Register databases to load equipment records from -->
        <equipment_registers>
-         <!-- The "team" attribute is used to define which MSL Team the Registry belongs to -->
+         <!-- The "team" attribute is used to define which Team the Equipment-Register belongs to -->
          <register team="P&amp;R">
              <path>Z:\QUAL\Equipment\Equipment Register.xls</path>
              <!--
-               If there are multiple Sheets in the Excel file then you must specify the
-               name of the Sheet that contains the appropriate records. This Excel file
+               If there are multiple Sheets in the Excel database then you must specify the
+               name of the Sheet that contains the equipment records. This Excel database
                also contains connection records (see the <equipment_connections> tag below)
+               and so the <sheet> tag must be specified
               -->
              <sheet>Equipment</sheet>
          </register>
          <register team="Electrical">
            <path>H:\Quality\Registers\Equipment.xlsx</path>
-           <!-- No need to specify the Sheet name if there is only 1 Sheet in the Excel file -->
+           <!-- No need to specify the Sheet name if there is only 1 Sheet in the Excel database -->
          </register>
          <!-- For a text-based database (csv/txt) you should specify how the dates are formatted -->
          <register team="Time" date_format="%d.%m.%y">
@@ -75,9 +76,9 @@ The following illustrates an example configuration file.
          </register>
          <register team="Mass" date_format="%Y-%m-%d">
            <!--
-             You can also specify the database path to be relative to the location of the
-             configuration file. For example, the equip-reg.txt file is located in the
-             same directory as the configuration file.
+             You can also specify the database path to be a path that is relative to the
+             location of the configuration file. For example, the equip-reg.txt file is
+             located in the same directory as the configuration file.
            -->
            <path>equip-reg.txt</path>
          </register>
@@ -85,28 +86,23 @@ The following illustrates an example configuration file.
 
        <!--
          Specify the database that contains the information required to connect to the
-         equipment. Unlike Equipment-Register Databases you can only specify a single
-         Connections Database. The reason being that since equipment can be shared
-         between people some connection values, like the GPIB address, can vary depending
-         on who is using the equipment and what other equipment they are using. Therefore,
-         everyone could have their own Connections Database and connection records can be
-         copied from one Connection Database to another when equipment is being borrowed.
-         As opposed to equipment records in an Equipment-Register Database MUST NEVER be
-         copied to another Equipment-Register Database in order to ensure that an official
-         registry of equipment is maintained
+         equipment. Unlike the <equipment_registers> tag that allows multiple <register> tags
+         you can only specify a single Connection database
         -->
        <equipment_connections>
          <path>Z:\QUAL\Equipment\Equipment Register.xls</path>
+         <!-- Must also specify which Sheet in the Excel database contains connection records -->
          <sheet>Connections</sheet>
        </equipment_connections>
 
    </msl>
 
-The :class:`~msl.equipment.config.Config` class is used to load a configuration file. For example:
+The :class:`~msl.equipment.config.Config` class is used to load a configuration file and it is the main entryway
+into the **MSL-Equipment** package. For example:
 
 .. code-block:: python
 
   >>> from msl.equipment import Config
-  >>> cfg = Config('msl/examples/equipment/example.xml')
+  >>> cfg = Config('/path/to/my/configuration_file.xml')
 
 .. _XML: https://www.w3schools.com/Xml/

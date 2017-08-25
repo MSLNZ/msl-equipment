@@ -5,23 +5,28 @@ MSL-Equipment
 This package is used to help manage and connect to equipment in the laboratory.
 
 Three items are used by **MSL-Equipment** to help organise (and share) equipment that is available in the laboratory to
-perform a measurement:
+perform a measurement
 
-1. A :ref:`configuration`
-2. An :ref:`equipment_database`
-3. A :ref:`connection_database`
+1. :ref:`configuration`
+
+and two different types of :ref:`database`
+
+2. :ref:`equipment_database`
+3. :ref:`connection_database`
 
 The following example illustrates a configuration file that specifies a database containing 6 Digital Multimeter's
 that are available in a lab which can be used to measure a voltage. The person performing the measurement specifies
-which of the Multimeter's they are using as an **<equipment>** XML tag in the configuration file.
+which of the Multimeter's they are using as an **<equipment>** XML tag in the configuration file. They load the
+configuration file using the :obj:`~msl.equipment.config.Config` class, which is the main gateway into the
+**MSL-Equipment** package.
 
-The `configuration file`_ that specifies the example database_ to load and the Digital Multimeter to use for the voltage
+The `configuration file`_ that specifies the example_ database to load and the Digital Multimeter to use for the voltage
 measurement is as follows:
 
 .. literalinclude:: ../msl/examples/equipment/example.xml
    :language: xml
 
-Load the example database_ from the `configuration file`_:
+Load the example_ database from the `configuration file`_:
 
 .. code-block:: python
 
@@ -29,8 +34,10 @@ Load the example database_ from the `configuration file`_:
   >>> cfg = Config('msl/examples/equipment/example.xml')
   >>> db = cfg.database()
 
-Access the **Keysight 34465A** equipment record in the database_ (known by the *dmm* alias that is specified in the
-`configuration file`_) which is an :class:`~msl.equipment.record_types.EquipmentRecord` object:
+Once you have a reference to the :obj:`~msl.equipment.config.Config.database` you have access to all the records in
+the :ref:`equipment_database` and in the :ref:`connection_database`. To access the **Keysight 34465A**
+:class:`~msl.equipment.record_types.EquipmentRecord` in the example_ database (which is known by the *dmm* alias that
+is specified in the `configuration file`_) use:
 
 .. code-block:: python
 
@@ -47,12 +54,8 @@ Connect to the Digital Multimeter and query the ``*IDN?`` command:
   >>> dmm.query('*IDN?')
   'Keysight Technologies,34465A,MY54506462,A.02.14-02.40-02.14-00.49-03-01\n'
 
-Since the equipment that the person is using to perform the measurement is specified in a configuration file, if the
-they decide that they need to use a Digital Multimeter with more precision then they do not modify their code, but
-update the *model* number of the **<equipment>** tag in the `configuration file`_ to select the appropriate Digital
-Multimeter from the database_.
-
-For more examples of what a configuration file or a database can look like see the :ref:`examples`.
+For more examples of what a configuration file or a database can look like or how to use **MSL-Equipment** in your own
+application see the :ref:`examples`.
 
 ========
 Contents
@@ -66,7 +69,7 @@ Contents
    Install <install>
    Examples <examples>
    MSL Resources <resources>
-   API <api>
+   API Documentation <api>
    License <license>
    Authors <authors>
    Release Notes <changelog>
@@ -78,4 +81,4 @@ Index
 * :ref:`modindex`
 
 .. _configuration file: https://github.com/MSLNZ/msl-equipment/tree/master/msl/examples/equipment/example.xml
-.. _database: https://github.com/MSLNZ/msl-equipment/tree/master/msl/examples/equipment/example.xlsx
+.. _example: https://github.com/MSLNZ/msl-equipment/tree/master/msl/examples/equipment/example.xlsx

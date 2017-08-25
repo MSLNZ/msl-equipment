@@ -24,7 +24,7 @@ Rather, if you are borrowing equipment from another team you simply specify the 
 database in your :ref:`configuration`. The owner of the equipment is responsible for ensuring that the information about
 the equipment is up to date in their Equipment-Register database and the user of the equipment defines an
 **<equipment>** XML tag in the :ref:`configuration`. Therefore, an Equipment-Register database is to be considered as a
-**global** database that can be accessed (with read permission only) by all of MSL via the **MSL-Equipment** package.
+**global** database that can be accessed (with read permission only) by anyone via the **MSL-Equipment** package.
 
 Each **record** in an Equipment-Register database is converted into an
 :class:`~msl.equipment.record_types.EquipmentRecord`.
@@ -32,16 +32,16 @@ Each **record** in an Equipment-Register database is converted into an
 The following is an example of an Equipment-Register database (additional **fields** can also be added to a database,
 see :ref:`field_names`).
 
-+-----------------+---------+--------+--------------+--------------+---------------------------------------+
-| Manufacturer    | Model   | Serial | Date         | Calibration  | Description                           |
-|                 | Number  | Number | Calibrated   | Cycle [Years]|                                       |
-+=================+=========+========+==============+==============+=======================================+
-| Keysight        | 34465A  | MY5450 | 4 April 2014 | 5            | 6.5 digital multimeter                |
-+-----------------+---------+--------+--------------+--------------+---------------------------------------+
-| Hewlett Packard | HP8478B | BCD024 | 17 June 2017 | 3.5          | Dual element thermistor power sensors |
-+-----------------+---------+--------+--------------+--------------+---------------------------------------+
-| Agilent         | 53230A  | 49e39f | 9 Sept 2015  | 7            | Universal counter/timer               |
-+-----------------+---------+--------+--------------+--------------+---------------------------------------+
++-----------------+---------+--------+--------------+---------------+---------------------------------------+
+| Manufacturer    | Model   | Serial | Date         | Calibration   | Description                           |
+|                 | Number  | Number | Calibrated   | Cycle [Years] |                                       |
++=================+=========+========+==============+===============+=======================================+
+| Keysight        | 34465A  | MY5450 | 4 April 2014 | 5             | 6.5 digital multimeter                |
++-----------------+---------+--------+--------------+---------------+---------------------------------------+
+| Hewlett Packard | HP8478B | BCD024 | 17 June 2017 | 3.5           | Dual element thermistor power sensors |
++-----------------+---------+--------+--------------+---------------+---------------------------------------+
+| Agilent         | 53230A  | 49e39f | 9 Sept 2015  | 7             | Universal counter/timer               |
++-----------------+---------+--------+--------------+---------------+---------------------------------------+
 
 .. tip::
    Not all equipment **records** in the Equipment-Register database need to have the ability to be connected to.
@@ -69,7 +69,8 @@ The supported **fields** for an Equipment-Register database are:
 
 The text in the header of each **field** is not too particular for what it must be. The header text is parsed for one
 of the specific **field** names listed above and if the header contains one of these **field** names then that
-column is assigned to be that **field**.
+column is assigned to be that **field**. The order in which the **fields** appear in the database are not
+important.
 
 .. role:: blue
 
@@ -95,7 +96,7 @@ For example, the following headers are valid (the :blue:`blue` text is what is i
   Although using the following header will not raise an exception, you should not use the following header because
   either the :obj:`~msl.equipment.record_types.EquipmentRecord.manufacturer` or the
   :obj:`~msl.equipment.record_types.EquipmentRecord.model` will be assigned for this **field** depending on the
-  order in which the **fields** are defined in the database
+  order in which the **fields** appear in the database
 
   *The* :blue:`model` *number from the* :blue:`manufacturer`
 
@@ -169,20 +170,20 @@ The following are examples of an **Address** syntax (see more examples from `Nat
    the SDK file is located or only the filename if the path to where the SDK file is located has been added as
    a **<PATH>** XML tag in the :ref:`configuration`.
 
-+------------------------------------------------+------------------------------------------------------------------+
-| :class:`~msl.equipment.constants.MSLInterface` | Syntax                                                           |
-+================================================+==================================================================+
-| ASRL                                           | COM2                                                             |
-+------------------------------------------------+------------------------------------------------------------------+
-| ASRL                                           | COM4::INSTR                                                      |
-+------------------------------------------------+------------------------------------------------------------------+
-| ASRL                                           | COM7::**PythonClassName**                                        |
-+------------------------------------------------+------------------------------------------------------------------+
-| SDK                                            | SDK::**PythonClassName**::**PathToSDK**                          |
-+------------------------------------------------+------------------------------------------------------------------+
-| SDK                                            | SDK::Bentham::C:/Program Files/Bentham/lib/benhw32_cdecl.dll     |
-+------------------------------------------------+------------------------------------------------------------------+
-| SDK                                            | SDK::FilterFlipper::Thorlabs.MotionControl.FilterFlipper.dll     |
-+------------------------------------------------+------------------------------------------------------------------+
++------------------------------------------------+--------------------------------------------------------------+
+| :class:`~msl.equipment.constants.MSLInterface` | Syntax                                                       |
++================================================+==============================================================+
+| ASRL                                           | COM2                                                         |
++------------------------------------------------+--------------------------------------------------------------+
+| ASRL                                           | COM4::INSTR                                                  |
++------------------------------------------------+--------------------------------------------------------------+
+| ASRL                                           | COM7::**PythonClassName**                                    |
++------------------------------------------------+--------------------------------------------------------------+
+| SDK                                            | SDK::**PythonClassName**::**PathToSDK**                      |
++------------------------------------------------+--------------------------------------------------------------+
+| SDK                                            | SDK::Bentham::C:/Program Files/Bentham/lib/benhw32_cdecl.dll |
++------------------------------------------------+--------------------------------------------------------------+
+| SDK                                            | SDK::FilterFlipper::Thorlabs.MotionControl.FilterFlipper.dll |
++------------------------------------------------+--------------------------------------------------------------+
 
 .. _National Instruments: http://zone.ni.com/reference/en-XX/help/370131S-01/ni-visa/visaresourcesyntaxandexamples/

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <msl>
 
-    <!-- The DMM that is being used to perform the measurement -->
+    <!-- The Digital Multimeter that is being used to perform the measurement -->
     <equipment alias="dmm" model="34465A"/>
 
     <!-- The Connection database -->

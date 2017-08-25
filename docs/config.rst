@@ -86,8 +86,7 @@ The following illustrates an example configuration file.
 
        <!--
          Specify the database that contains the information required to connect to the
-         equipment. Unlike the <equipment_registers> tag that allows multiple <register> tags
-         you can only specify a single Connection database
+         equipment. You can create as many <equipment_connections> tags as you want
         -->
        <equipment_connections>
          <path>Z:\QUAL\Equipment\Equipment Register.xls</path>

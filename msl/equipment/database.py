@@ -1,5 +1,5 @@
 """
-Load equipment and connection records (rows) from databases.
+Load equipment and connection records from :ref:`Databases <database>`.
 """
 import os
 import re
@@ -20,43 +20,43 @@ class Database(object):
 
     def __init__(self, path):
         """Create :class:`.EquipmentRecord`'s and :class:`.ConnectionRecord`'s 
-        from databases that are specified in a configuration file.
-        
-        See :obj:`msl.equipment.config.load` for an example of a XML configuration
-        file.
+        from :ref:`Databases <database>` that are specified in a :ref:`configuration`.
+
+        This class should be accessed through the :meth:`~.config.Config.database` method
+        after a :class:`~.config.Config` object has been created.
 
         Parameters
         ----------
         path : :obj:`str`
-            The path to a XML configuration file.
+            The path to a XML :ref:`configuration`.
 
         Raises
         ------
         :exc:`~xml.etree.ElementTree.ParseError`
-            If the configuration file is invalid.
+            If the :ref:`configuration` is invalid.
         IOError
-            If `path` does not exist or if an XML element content is invalid.
+            If `path` does not exist.
         AttributeError
-            If an ``<equipment>`` XML element is specified in the configuration
-            file and it does not uniquely identify an equipment record in an
-            **Equipment-Register** database.
+            If an ``<equipment>`` XML tag is specified in the :ref:`configuration`
+            and it does not uniquely identify an equipment record in an
+            :ref:`equipment_database`.
         ValueError
-            If any of the values in the database are invalid.
+            If multiple :obj:`~.record_types.EquipmentRecord.alias`\es are defined.
         """
         logger.debug('Loading databases from {}'.format(path))
 
         root = ElementTree.parse(path).getroot()
 
         self._config_path = path
-        self._equipment_field_names = EquipmentRecord.field_names()
-        self._connection_field_names = ConnectionRecord.field_names()
+        self._equipment_property_names = EquipmentRecord().to_dict().keys()
+        self._connection_property_names = ConnectionRecord().to_dict().keys()
 
         # create a dictionary of ConnectionRecord objects
         self._connection_records = {}
         for element in root.findall('equipment_connections'):
 
             header, rows = self._read(element)
-            self._make_index_map(header, self._connection_field_names)
+            self._make_index_map(header, self._connection_property_names)
 
             for row in rows:
                 if not self._is_row_length_okay(row, header):
@@ -74,16 +74,18 @@ class Database(object):
 
                 # set the backend to use to communicate with the equipment
                 backend = row[self._index_map['backend']]
-                if backend in constants.Backend.__members__:
-                    conn_record._backend = getattr(constants.Backend, backend)
-                else:
+                try:
+                    conn_record._backend = constants.Backend[backend]
+                except ValueError:
                     logger.warning('Unknown Backend "{}"'.format(backend))
 
                 # set the MSL connection interface to use for the MSL backend
                 if conn_record.backend == constants.Backend.MSL:
-                    bad_interface = conn_record._set_msl_interface()
-                    if bad_interface:
-                        logger.warning('Unknown MSL Interface "{}"'.format(bad_interface))
+                    try:
+                        interface_name = conn_record._get_interface_name_from_address()
+                        conn_record._interface = constants.MSLInterface[interface_name]
+                    except KeyError:
+                        logger.warning('Unknown MSL Interface for "{}"'.format(conn_record))
 
                 # create the property dictionary
                 conn_record._properties = {}
@@ -128,7 +130,7 @@ class Database(object):
                 team = register.attrib.get('team', '')
 
                 header, rows = self._read(register)
-                self._make_index_map(header, self._equipment_field_names)
+                self._make_index_map(header, self._equipment_property_names)
 
                 for row in rows:
                     if not self._is_row_length_okay(row, header):
@@ -147,7 +149,7 @@ class Database(object):
                             record.alias = record.connection.properties['alias']
                             del record.connection.properties['alias']
 
-                    for name in self._equipment_field_names:
+                    for name in self._equipment_property_names:
                         try:
                             value = row[self._index_map[name]]
                         except KeyError:
@@ -163,11 +165,11 @@ class Database(object):
                                                  .format(value, register.findtext('path')))
                                 continue
 
-                        if name == 'calibration_period' and value:
+                        if name == 'calibration_cycle' and value:
                             try:
                                 value = float(value)
                             except ValueError:
-                                logger.error('The calibration_period must be a number for {}'.format(record))
+                                logger.error('The calibration_cycle must be a number for {}'.format(record))
                                 continue
 
                         setattr(record, '_'+name, value)
@@ -221,82 +223,77 @@ class Database(object):
     @property
     def equipment(self):
         """:obj:`dict` of :class:`.EquipmentRecord`: Equipment records that were listed 
-        as ``<equipment>`` XML elements in the configuration.
+        as ``<equipment>`` XML tags in the :ref:`configuration`.
         """
         return self._equipment_using
 
     @property
     def path(self):
-        """:obj:`str`: The path to the configuration file that contains the information about the
-        **Equipment-Register** and **Connections** databases and the environment variables.
+        """:obj:`str`: The path to the :ref:`configuration`.
         """
         return self._config_path
 
     def connections(self, **kwargs):
-        """Search the **Connections** database to find all connection records that
+        """Search the :ref:`connection_database` to find all :class:`.ConnectionRecord`\'s that
         match the specified criteria.
 
         Parameters
         ----------
         **kwargs
-            The argument names can be any of the :class:`.ConnectionRecord` property names.
-            The comparison for the value is performed by `regex <http://www.pyregex.com/>`_, 
-            see :mod:`re`.
+            The argument names can be any of the :class:`.ConnectionRecord` property names or
+            a ``flags`` argument, see :obj:`re.search`, for performing the search. For testing
+            regex expressions online you can use `this <https://pythex.org/>`_ website.
 
         Returns
         -------
         :obj:`list` of :class:`.ConnectionRecord`
-            Connection records that match the search criteria.
+            The connection records that match the search criteria.
 
         Examples
         --------
         >>> connections()  # doctest: +SKIP
         a list of all ConnectionRecords
-
         >>> connections(manufacturer='H*P')  # doctest: +SKIP
         a list of all ConnectionRecords that have Hewlett Packard as the manufacturer
-
         >>> connections(address='GPIB*')  # doctest: +SKIP
         a list of all ConnectionRecords that use GPIB for the connection bus
         """
-        _kwargs = {key: kwargs[key] for key in kwargs if key in self._connection_field_names}
-        return [r for r in self._connection_records.values() if self._match(r, _kwargs)]
+        _kwargs = {key: kwargs[key] for key in kwargs if key in self._connection_property_names}
+        flags = kwargs.get('flags', 0)  # used by re.search
+        return [r for r in self._connection_records.values() if self._match(r, _kwargs, flags)]
 
     def records(self, **kwargs):
-        """Search the **Equipment-Register** databases to find all equipment records that
+        """Search the :ref:`equipment_database` to find all :class:`.EquipmentRecord`\'s that
         match the specified criteria.
 
         Parameters
         ----------
         **kwargs
-            The argument names can be any of the :class:`.EquipmentRecord` property names.
-            The comparison for the value is performed by `regex <http://www.pyregex.com/>`_, 
-            see :mod:`re`.
+            The argument names can be any of the :class:`.EquipmentRecord` property names or
+            a ``flags`` argument, see :obj:`re.search`, for performing the search. For testing
+            regex expressions online you can use `this <https://pythex.org/>`_ website.
 
         Returns
         -------
         :obj:`list` of :class:`.EquipmentRecord`
-            Equipment records that match the search criteria.
+            The equipment records that match the search criteria.
 
         Examples
         --------
         >>> records()  # doctest: +SKIP
         a list of all EquipmentRecords
-
         >>> records(manufacturer='H*P')  # doctest: +SKIP
         a list of all EquipmentRecords that have Hewlett Packard as the manufacturer
-
         >>> records(manufacturer='Agilent', model='3458A')  # doctest: +SKIP
         a list of all EquipmentRecords that are from Agilent and that have the model number 3458A
-
         >>> records(manufacturer='Agilent', model='3458A', serial='MY45046470')  # doctest: +SKIP
         a list of only one EquipmentRecord (if the equipment record exists, otherwise an empty list)
-
         >>> records(description='I-V Converter')  # doctest: +SKIP
         a list of all EquipmentRecords that contain 'I-V Converter' in the description field
         """
-        _kwargs = {key: kwargs[key] for key in kwargs if key in self._equipment_field_names}
-        return [r for r in self._equipment_records.values() if self._match(r, _kwargs)]
+        _kwargs = {key: kwargs[key] for key in kwargs if key in self._equipment_property_names}
+        flags = kwargs.get('flags', 0)  # used by re.search
+        return [r for r in self._equipment_records.values() if self._match(r, _kwargs, flags)]
 
     def _read(self, element):
         """Read any allowed database file type"""
@@ -423,9 +420,9 @@ class Database(object):
         msg = 'Unknown {} value of "{}" for "{}". Must be one of: {}'
         raise ValueError(msg.format(enum.__name__, value, key, ', '.join(members)))
 
-    def _match(self, record, kwargs):
+    def _match(self, record, kwargs, flags):
         """Check if the kwargs match a database record"""
         for key, value in kwargs.items():
-            if not bool(re.search(value, str(getattr(record, key)))):
+            if not bool(re.search(value, str(getattr(record, key)), flags)):
                 return False
         return True

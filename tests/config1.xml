@@ -3,7 +3,7 @@
 
     <PyVISA_LIBRARY>@py</PyVISA_LIBRARY>
     <DEMO_MODE>true</DEMO_MODE>
-    <SDK_PATH recursive="true">docs</SDK_PATH>
+    <PATH recursive="true">docs</PATH>
 
     <SOME_VALUE>1.2345</SOME_VALUE>
 

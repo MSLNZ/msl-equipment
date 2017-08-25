@@ -17,48 +17,48 @@ def test_pyclass():
 
         for item in ('ASRL::1.2.3.4::2::INSTR', 'ASRL1::INSTR', 'COM1', 'LPT1'):
             record = EquipmentRecord(connection=ConnectionRecord(address=item))
-            assert ConnectionPyVISA.resource_pyclass(record) == pyvisa.resources.SerialInstrument
+            assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.SerialInstrument
 
         for item in ('GPIB::2', 'GPIB::1::0::INSTR'):
             record = EquipmentRecord(connection=ConnectionRecord(address=item))
-            assert ConnectionPyVISA.resource_pyclass(record) == pyvisa.resources.GPIBInstrument
+            assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.GPIBInstrument
 
         for item in ('GPIB2::INTFC', ):
             record = EquipmentRecord(connection=ConnectionRecord(address=item))
-            assert ConnectionPyVISA.resource_pyclass(record) == pyvisa.resources.GPIBInterface
+            assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.GPIBInterface
 
         for item in ('PXI::15::INSTR', 'PXI::CHASSIS1::SLOT3', 'PXI0::2-12.1::INSTR'):
             record = EquipmentRecord(connection=ConnectionRecord(address=item))
-            assert ConnectionPyVISA.resource_pyclass(record) == pyvisa.resources.PXIInstrument
+            assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.PXIInstrument
 
         for item in ('PXI0::MEMACC',):
             record = EquipmentRecord(connection=ConnectionRecord(address=item))
-            assert ConnectionPyVISA.resource_pyclass(record) == pyvisa.resources.PXIMemory
+            assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.PXIMemory
 
         for item in ('TCPIP::dev.company.com::INSTR',):
             record = EquipmentRecord(connection=ConnectionRecord(address=item))
-            assert ConnectionPyVISA.resource_pyclass(record) == pyvisa.resources.TCPIPInstrument
+            assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.TCPIPInstrument
 
         for item in ('TCPIP0::1.2.3.4::999::SOCKET',):
             record = EquipmentRecord(connection=ConnectionRecord(address=item))
-            assert ConnectionPyVISA.resource_pyclass(record) == pyvisa.resources.TCPIPSocket
+            assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.TCPIPSocket
 
         for item in ('USB::0x1234::125::A22-5::INSTR',):
             record = EquipmentRecord(connection=ConnectionRecord(address=item))
-            assert ConnectionPyVISA.resource_pyclass(record) == pyvisa.resources.USBInstrument
+            assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.USBInstrument
 
         for item in ('USB::0x5678::0x33::SN999::1::RAW',):
             record = EquipmentRecord(connection=ConnectionRecord(address=item))
-            assert ConnectionPyVISA.resource_pyclass(record) == pyvisa.resources.USBRaw
+            assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.USBRaw
 
         for item in ('VXI::1::BACKPLANE',):
             record = EquipmentRecord(connection=ConnectionRecord(address=item))
-            assert ConnectionPyVISA.resource_pyclass(record) == pyvisa.resources.VXIBackplane
+            assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.VXIBackplane
 
         for item in ('VXI::MEMACC',):
             record = EquipmentRecord(connection=ConnectionRecord(address=item))
-            assert ConnectionPyVISA.resource_pyclass(record) == pyvisa.resources.VXIMemory
+            assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.VXIMemory
 
         for item in ('VXI0::1::INSTR', 'VXI0::SERVANT'):
             record = EquipmentRecord(connection=ConnectionRecord(address=item))
-            assert ConnectionPyVISA.resource_pyclass(record) == pyvisa.resources.VXIInstrument
+            assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.VXIInstrument

@@ -22,7 +22,7 @@ def test_config_constants():
     # the default Config values
     assert Config.PyVISA_LIBRARY == '@ni'
     assert not Config.DEMO_MODE
-    assert len(Config.SDK_PATH) == 0
+    assert len(Config.PATH) == 0
 
     path = os.path.join(os.path.dirname(__file__), 'config1.xml')
     c = Config(path)
@@ -32,9 +32,9 @@ def test_config_constants():
     assert c.root.tag == 'msl'
     assert Config.PyVISA_LIBRARY == '@py'
     assert Config.DEMO_MODE
-    assert len(Config.SDK_PATH) > 0
-    assert 'docs' in Config.SDK_PATH
-    assert os.path.join('docs', '_api') in Config.SDK_PATH
+    assert len(Config.PATH) > 0
+    assert 'docs' in Config.PATH
+    assert os.path.join('docs', '_api') in Config.PATH
     assert os.path.join('docs', '_static') in os.environ['PATH']
     assert os.path.join('docs', '_templates') in os.environ['PATH']
     assert c.value('SOME_VALUE') == '1.2345'
@@ -55,6 +55,6 @@ def test_config_constants_reloaded():
     assert path == c.path
     assert Config.PyVISA_LIBRARY == '@py'
     assert Config.DEMO_MODE
-    assert 'docs' in Config.SDK_PATH
+    assert 'docs' in Config.PATH
 
     assert len(c.database().records()) == 7

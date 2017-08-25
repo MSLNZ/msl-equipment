@@ -55,17 +55,18 @@ Field Names
 +++++++++++
 The supported **fields** for an Equipment-Register database are:
 
-* **Asset Number** -- The IRL/CI asset number of the equipment
-* **Calibration Cycle** -- The number of years that can pass before the equipment must be re-calibrated
-* **Category** -- The category (e.g., Laser, DMM) that the equipment belongs to
-* **Date Calibrated** -- The date that the equipment was last calibrated
-* **Description** -- A description of the equipment
-* **Location** -- The location where the equipment can usually be found
-* **Manufacturer** -- The name of the manufacturer of the equipment
-* **Model** -- The model number of the equipment
+* **Asset Number** -- The IRL/CI asset number of the equipment.
+* **Calibration Cycle** -- The number of years that can pass before the equipment must be re-calibrated.
+* **Category** -- The category (e.g., Laser, DMM) that the equipment belongs to.
+* **Date Calibrated** -- The date that the equipment was last calibrated.
+* **Description** -- A description of the equipment.
+* **Location** -- The location where the equipment can usually be found.
+* **Manufacturer** -- The name of the manufacturer of the equipment.
+* **Model** -- The model number of the equipment.
 * **Register** -- The value assigned, as in MSL Policy and Procedures, for any equipment that requires calibration or
-  maintenance for projects
-* **Serial** -- The serial number, or engraved unique ID, of the equipment
+  maintenance for projects.
+* **Latest Report Number** -- The report number for the last time that the equipment was calibrated.
+* **Serial** -- The serial number, or engraved unique ID, of the equipment.
 
 The text in the header of each **field** is not too particular for what it must be. The header text is parsed for one
 of the specific **field** names listed above and if the header contains one of these **field** names then that
@@ -138,16 +139,16 @@ The following is an example of a Connection database (the header of each **field
 :ref:`field_names` format used in an `Equipment-Register Database`_ and so *Model #* would also be an acceptable
 header)
 
-+-----------------+----------+--------+---------+-----------------------------+-------------------------------+
-| Manufacturer    | Model    | Serial | Backend | Address                     | Properties                    |
-|                 | Number   | Number |         |                             |                               |
-+=================+==========+========+=========+=============================+===============================+
-| Keysight        | 34465A   | MY5450 | MSL     | USB::0x2A8D::0x0101::MY5450 |                               |
-+-----------------+----------+--------+---------+-----------------------------+-------------------------------+
-| Hewlett Packard | HP8478B  | BCD024 | PyVISA  | GPIB::7                     |                               |
-+-----------------+----------+--------+---------+-----------------------------+-------------------------------+
-| Agilent         | 53230A   | 49e39f | MSL     | COM2                        | baud_rate=119200; parity=even |
-+-----------------+----------+--------+---------+-----------------------------+-------------------------------+
++-----------------+--------+--------+---------+-----------------------------+-------------------------------+
+| Manufacturer    | Model  | Serial | Backend | Address                     | Properties                    |
+|                 | Number | Number |         |                             |                               |
++=================+========+========+=========+=============================+===============================+
+| Keysight        | 34465A | MY5450 | MSL     | USB::0x2A8D::0x0101::MY5450 |                               |
++-----------------+--------+--------+---------+-----------------------------+-------------------------------+
+| Hewlett Packard | 3468A  | BCD024 | PyVISA  | GPIB::7                     | alias=dmm                     |
++-----------------+--------+--------+---------+-----------------------------+-------------------------------+
+| Agilent         | 53230A | 49e39f | MSL     | COM2                        | baud_rate=119200; parity=even |
++-----------------+--------+--------+---------+-----------------------------+-------------------------------+
 
 Unlike an `Equipment-Register Database`_ each person can have their own Connection database. The reason being that since
 equipment can be shared between people some Connection values, like the GPIB address, can vary depending on who is using

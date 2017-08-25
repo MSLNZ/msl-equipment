@@ -17,24 +17,27 @@ logger = logging.getLogger(__name__)
 def connect(record, demo=None):
     """Factory function to establish a connection to the equipment.
 
+    This function should not be called directly. Use the
+    :obj:`record.connect() <.record_types.EquipmentRecord.connect>` method
+    to connect to the equipment after a :class:`~.config.Config` object has
+    been created.
+
     Parameters
     ----------
     record : :class:`~.record_types.EquipmentRecord`
-        An equipment record from an **Equipment-Register** 
-        :class:`~.database.Database`.
+        A record from an :ref:`equipment_database`.
 
     demo : :obj:`bool` or :obj:`None`
         Whether to simulate a connection to the equipment by opening
         a connection in demo mode. This allows you run your code if the 
-        equipment is not physically connected to the computer.
+        equipment is not physically connected to a computer.
         
-        If :data:`None` then the `demo` value is read from a configuration
-        variable. See :obj:`msl.equipment.config.Config` for more details.
+        If :data:`None` then the `demo` value is determined from the
+        :obj:`~.config.Config.DEMO_MODE` variable.
 
     Returns
     -------
-    :class:`~msl.equipment.connection.Connection` 
-        A :class:`~msl.equipment.connection.Connection`-type object.
+    A :class:`~.connection.Connection` subclass.
 
     Raises
     ------
@@ -42,6 +45,8 @@ def connect(record, demo=None):
         If any of the property values in
         :obj:`record.connection.properties <.record_types.ConnectionRecord.properties>`
         are invalid.
+    TypeError
+        If the `record` is not an :class:`~.record_types.EquipmentRecord`.
     """
     def _connect(_record):
         """Processes a single EquipmentRecord object"""
@@ -75,7 +80,7 @@ def connect(record, demo=None):
                 cls = connection_msl.ConnectionMessageBased
         elif conn.backend == Backend.PyVISA:
             if demo:
-                cls = ConnectionPyVISA.resource_pyclass(conn)
+                cls = ConnectionPyVISA.resource_class(conn)
             else:
                 cls = ConnectionPyVISA
 

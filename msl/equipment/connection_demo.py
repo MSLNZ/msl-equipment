@@ -18,22 +18,22 @@ class ConnectionDemo(Connection):
         """Simulate a connection to the equipment.
         
         Establishing a connection in demo mode is useful when developing a 
-        program and the equipment is not physically connected to the computer.
+        program and the equipment is not physically connected to a computer.
 
         A custom `logging level`_ is used for logging messages with a connection 
         in demo mode. The ``logging.DEMO`` `logging level`_ is set to be between 
         ``logging.INFO`` and ``logging.WARNING``.
         
         The returned data type is determined from the docstring of the called function.
-        For example, if ``:rtype: int`` then an integer value is returned or if
-        ``:rtype: int, float`` then an integer and a float value is returned. Although
+        For example, if ``:rtype: int`` then an :obj:`int` is returned or if
+        ``:rtype: int, float`` then an :obj:`int` and a :obj:`float` are returned. Although
         the expected data type is returned the value(s) of the returned object is randomly
         generated. The docstring must be in either the reStructuredText_ or NumPy_ format.
-        
-        Do not instantiate this class directly. Use the factory method, 
-        :obj:`msl.equipment.factory.connect`, or the `record` object itself, 
-        :obj:`record.connect() <.record_types.EquipmentRecord.connect>`,
-        to connect to the equipment in demo mode.
+
+        Do not instantiate this class directly. Use the
+        :obj:`record.connect(True) <.record_types.EquipmentRecord.connect>` method
+        to connect to the equipment in demo mode. Or set :obj:`~.config.Config.DEMO_MODE`
+        to be :obj:`True` in the :ref:`configuration` to open all connections in demo mode.
 
         .. _logging level: 
             https://docs.python.org/3/library/logging.html#logging-levels
@@ -45,11 +45,10 @@ class ConnectionDemo(Connection):
         Parameters
         ----------
         record : :class:`~.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~.database.Database`.
+            A record from an :ref:`equipment_database`.
 
         cls : :class:`.Connection`
-            A Connection class (that has **NOT** been instantiated).            
+            A :class:`.Connection` subclass (that has **NOT** been instantiated).
         """
         Connection.__init__(self, record)
         self._connection_class = cls

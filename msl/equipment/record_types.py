@@ -1,5 +1,5 @@
 """
-A record from an **Equipment-Register** database or a **Connections** database.
+Records from :ref:`equipment_database`\'s or a :ref:`connection_database`\'s.
 """
 import re
 import logging
@@ -15,104 +15,112 @@ logger = logging.getLogger(__name__)
 class EquipmentRecord(object):
 
     def __init__(self, **kwargs):
-        """Contains the information about an equipment record in an 
-        **Equipment-Register** database.
+        """Contains the information about an equipment record in an :ref:`equipment_database`.
         
         Parameters
         ----------
         **kwargs
-            The argument names can be any of the :class:`EquipmentRecord` attribute names.
+            The argument names can be any of the :class:`EquipmentRecord` property names.
 
         Raises
         ------
-        ValueError
-            If an argument name is `calibration_period` and the value cannot be converted
-            to an :obj:`float`.
         TypeError
             If an argument name is `connection` or `date_calibrated` and the data type of
             the value is invalid.
+        ValueError
+            If an argument name is `calibration_cycle` and the value cannot be converted
+            to a :obj:`float`.
         AttributeError
-            If an argument name is not an :class:`EquipmentRecord` attribute.
+            If an argument name is not a valid :class:`EquipmentRecord` attribute name.
         
         Examples
         --------
-        Equipment records **should** be defined in a database and instantiated by 
-        calling :obj:`msl.equipment.config.load`; however, you can still
-        manually create an equipment record.
+        Equipment records **SHOULD** be defined in an :ref:`equipment_database` and accessed
+        via the :meth:`~msl.equipment.config.Config.database` method; however, you can still
+        manually create an :class:`EquipmentRecord` and store your records in a Python module.
         
         >>> from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
-        >>> record = EquipmentRecord(
-        ...              manufacturer='Pico Technology',
-        ...              model='5244B',
-        ...              serial='DY135/055',
-        ...              connection=ConnectionRecord(
-        ...                  backend=Backend.MSL,
-        ...                  address='SDK::PicoScope5000A::ps5000a',
-        ...                  properties={
-        ...                      'resolution': '14bit',  # `resolution` is only used for ps5000a series PicoScope's
-        ...                      'auto_select_power': True,  # some PicoScopes can be powered by an AC adaptor or by USB
-        ...                  },
-        ...              )
-        ...          )
+        >>> scope = EquipmentRecord(
+        ...             manufacturer='Pico Technology',
+        ...             model='5244B',
+        ...             serial='DY135/055',
+        ...             connection=ConnectionRecord(
+        ...                 backend=Backend.MSL,
+        ...                 address='SDK::PicoScope5000A::ps5000a',
+        ...                 properties={
+        ...                     'resolution': '14bit',  # `resolution` is only used for ps5000a series PicoScope's
+        ...                     'auto_select_power': True,  # some PicoScopes can be powered by an AC adaptor or by USB
+        ...                 },
+        ...             )
+        ...         )
         
         """
+
+        # these properties are NOT defined as fields in the equipment-register database
         self._alias = ''
-        self._asset_number = ''
-        self._calibration_period = 0.0
-        self._category = ''
         self._connection = None
+        self._team = ''
+
+        # these properties can be defined as fields in the equipment-register database
+        self._asset_number = ''
+        self._calibration_cycle = 0.0
+        self._category = ''
         self._date_calibrated = datetime.date(datetime.MINYEAR, 1, 1)
         self._description = ''
+        self._latest_report_number = ''
         self._location = ''
         self._manufacturer = ''
         self._model = ''
         self._register = ''
         self._serial = ''
-        self._team = ''
+        # IMPORTANT: when a new property is added remember to include it in docs/database#field_names
 
-        valid_names = EquipmentRecord.field_names()
+        valid_names = self._valid_names()
         for name in kwargs:
-            if name in valid_names:
-                if name == 'connection':
-                    # set the connection after the manufacturer, model and serial are all set
-                    continue
-                elif name == 'date_calibrated':
-                    if isinstance(kwargs[name], datetime.date):
-                        self._date_calibrated = kwargs[name]
-                    else:
-                        raise TypeError('The date_calibrated value must be a datetime.date object')
-                elif name == 'calibration_period':
-                    try:
-                        self._calibration_period = max(0.0, float(kwargs[name]))
-                        err = ''
-                    except ValueError:
-                        err = 'The calibration_period must be a number.'
-                    if err:
-                        raise ValueError(err)
+            if name == 'connection':
+                # set the connection after the manufacturer, model and serial are all set
+                pass
+            elif name == 'date_calibrated':
+                if isinstance(kwargs[name], datetime.date):
+                    self._date_calibrated = kwargs[name]
                 else:
-                    setattr(self, '_'+name, str(kwargs[name]))
+                    raise TypeError('The date_calibrated value must be a datetime.date object')
+            elif name == 'calibration_cycle':
+                try:
+                    self._calibration_cycle = max(0.0, float(kwargs[name]))
+                    err = ''
+                except ValueError:
+                    err = 'The calibration_cycle must be a number.'
+                if err:
+                    raise ValueError(err)
             else:
-                msg = 'An EquipmentRecord has no "{}" attribute.\nValid attributes are {}'\
-                    .format(name, valid_names)
-                raise AttributeError(msg)
+                if name in valid_names:
+                    setattr(self, '_'+name, str(kwargs[name]))
+                else:
+                    err = 'An EquipmentRecord has no "{}" attribute.\nValid attributes are {}'.format(name, valid_names)
+                    raise AttributeError(err)
 
         if 'connection' in kwargs:
             self.connection = kwargs['connection']
 
     def __repr__(self):
-        return '{}{}'.format(self.__class__.__name__,
-                             {a: getattr(self, a) if a != 'connection' else self.connection
-                              for a in self.field_names()})
+        return '{}<{}|{}|{}>'.format(self.__class__.__name__, self.manufacturer, self.model, self.serial)
 
-    def __str__(self):
-        return '{}<{}|{}|{}>'.format(self.__class__.__name__,
-                                     self.manufacturer,
-                                     self.model,
-                                     self.serial)
+    def _valid_names(self):
+        """Returns a list of the valid property names for an EquipmentRecord"""
+        return sorted([k[1:] for k in vars(self)])
 
     @property
     def alias(self):
-        """:obj:`str`: An alias to use to associate with this equipment."""
+        """:obj:`str`: An alias to use to reference this equipment by.
+
+        The `alias` can be defined in different in 3 ways:
+
+        * in the **<equipment>** XML tag in a :ref:`configuration`
+        * in the **Properties** field in a :ref:`connection_database`
+        * by redefining the `alias` value after the :class:`EquipmentRecord` has been instantiated
+
+        """
         return self._alias
 
     @alias.setter
@@ -125,9 +133,9 @@ class EquipmentRecord(object):
         return self._asset_number
 
     @property
-    def calibration_period(self):
+    def calibration_cycle(self):
         """:obj:`float`: The number of years that can pass before the equipment must be re-calibrated."""
-        return self._calibration_period
+        return self._calibration_cycle
 
     @property
     def category(self):
@@ -162,7 +170,7 @@ class EquipmentRecord(object):
         # check that the manufacturer, model number and serial number match
         for attrib in ('_manufacturer', '_model', '_serial'):
             if not getattr(connection_record, attrib):
-                # it was not set in the connection_record
+                # then it was not set in the connection_record
                 setattr(connection_record, attrib, getattr(self, attrib))
             elif getattr(connection_record, attrib) != getattr(self, attrib):
                 msg = 'ConnectionRecord.{0} ({1}) != EquipmentRecord.{0} ({2})'\
@@ -180,6 +188,11 @@ class EquipmentRecord(object):
     def description(self):
         """:obj:`str`: A description of the equipment."""
         return self._description
+
+    @property
+    def latest_report_number(self):
+        """:obj:`str`: The report number for the last time that the equipment was calibrated."""
+        return self._latest_report_number
 
     @property
     def location(self):
@@ -209,20 +222,8 @@ class EquipmentRecord(object):
 
     @property
     def team(self):
-        """:obj:`str`: The MSL team (e.g., Light) that the equipment belongs to."""
+        """:obj:`str`: The team (e.g., Light Standards) that the equipment belongs to."""
         return self._team
-
-    @staticmethod
-    def field_names():
-        """:obj:`list` of :obj:`str`: A list of all the field names (i.e., the name of
-        each column in a database) for an :class:`EquipmentRecord`.
-        """
-        return [item for item in dir(EquipmentRecord) if not (item.startswith('_')
-                                                              or item == 'field_names'
-                                                              or item == 'connect'
-                                                              or item == 'is_calibration_due'
-                                                              or item == 'next_calibration_date'
-                                                              )]
 
     def connect(self, demo=None):
         """Establish a connection to the equipment.
@@ -232,15 +233,14 @@ class EquipmentRecord(object):
         demo : :obj:`bool` or :obj:`None`
             Whether to simulate a connection to the equipment by opening
             a connection in demo mode. This allows you run your code if the 
-            equipment is not physically connected to the computer.
+            equipment is not physically connected to a computer.
             
-            If :data:`None` then the `demo` value is read from a :obj:`~.config.CONFIG`
-            variable. See :obj:`msl.equipment.config.load` for more details.
+            If :data:`None` then the `demo` value is determined from the
+            :obj:`~.config.Config.DEMO_MODE` variable.
 
         Returns
         -------
-        :class:`~msl.equipment.connection.Connection`
-            A :class:`~msl.equipment.connection.Connection`-type object.
+        A :class:`~msl.equipment.connection.Connection` subclass.
 
         Raises
         ------
@@ -260,8 +260,8 @@ class EquipmentRecord(object):
         months : :obj:`int`
             The number of months to add to today's date to determine if
             the equipment needs to be re-calibrated within a certain amount
-            of time. For example, if `months` = ``6`` then that is a way of
-            asking "is a re-calibration due within the next 6 months?".
+            of time. For example, if ``months = 6`` then that is a way of
+            asking *"is a re-calibration due within the next 6 months?"*.
 
         Returns
         -------
@@ -269,28 +269,45 @@ class EquipmentRecord(object):
             :obj:`True` if the equipment needs to be re-calibrated, :obj:`False`
             if it does not need to be re-calibrated.
         """
-        if self.date_calibrated.year == datetime.MINYEAR or self.calibration_period == 0.0:
+        if self.date_calibrated.year == datetime.MINYEAR or self.calibration_cycle == 0.0:
             return False
         ask_date = datetime.date.today() + relativedelta(months=max(0, int(months)))
         return ask_date >= self.next_calibration_date()
 
     def next_calibration_date(self):
         """:obj:`datetime.date`: The next date that a re-calibration is due."""
-        years = int(self.calibration_period)
-        months = int(round(12*(self.calibration_period - years)))
+        years = int(self.calibration_cycle)
+        months = int(round(12 * (self.calibration_cycle - years)))
         return self.date_calibrated + relativedelta(years=years, months=months)
+
+    def to_dict(self):
+        """Convert this :class:`EquipmentRecord` to a dictionary.
+
+        Returns
+        -------
+        :obj:`dict`
+            The :class:`EquipmentRecord` as a dictionary.
+        """
+        d = {}
+        for name in self._valid_names():
+            if name == 'connection':
+                d[name] = self.connection.to_dict() if self.connection is not None else None
+            elif name == 'date_calibrated':
+                d[name] = self.date_calibrated.isoformat()
+            else:
+                d[name] = getattr(self, name)
+        return d
 
 
 class ConnectionRecord(object):
 
     def __init__(self, **kwargs):
-        """Contains the information about a connection record in a **Connections** 
-        database.
+        """Contains the information about a connection record in a :ref:`connection_database`.
 
         Parameters
         ----------
         **kwargs
-            The argument names can be any of the :class:`ConnectionRecord` attribute names.
+            The argument names can be any of the :class:`ConnectionRecord` property names.
         
         Raises
         ------
@@ -298,14 +315,14 @@ class ConnectionRecord(object):
             If an argument name is `backend`, `interface` or `properties` and the 
             value is invalid.
         AttributeError
-            If a named argument is not an :class:`ConnectionRecord` attribute name.
+            If an argument name is not a valid :class:`ConnectionRecord` attribute name.
         
         Examples
         --------
-        Connection records **should** be defined in a database and instantiated by 
-        calling :obj:`msl.equipment.config.load`; however, you can still
-        manually create a connection record.
-        
+        Connection records **SHOULD** be defined in a :ref:`connection_database` and accessed
+        via the :meth:`~msl.equipment.config.Config.database` method; however, you can still
+        manually create a :class:`ConnectionRecord` and store your records in a Python module.
+
         >>> from msl.equipment import ConnectionRecord, Backend
         >>> record = ConnectionRecord(
         ...              manufacturer='Pico Technology',
@@ -320,56 +337,65 @@ class ConnectionRecord(object):
         ...          )
         
         """
+
+        # these properties are NOT defined as fields in the connection database
+        self._interface = MSLInterface.NONE
+
+        # these properties can be defined as fields in the connection database
         self._address = ''
         self._backend = Backend.UNKNOWN
-        self._interface = MSLInterface.NONE
         self._manufacturer = ''
         self._model = ''
         self._properties = {}
         self._serial = ''
+        # IMPORTANT: when a new property is added remember to include it in table in docs/database#connection_database
 
-        valid_names = ConnectionRecord.field_names()
+        valid_names = self._valid_names()
         for name in kwargs:
-            if name in valid_names:
-                if name == 'backend':
+            if name == 'address':
+                # the backend value is dependent on the address value and the MSL Interface is dependant on the
+                # backend value, so deal with the backend and the interface here
+                self._address = str(kwargs[name])
+                if 'backend' in kwargs:
+                    self._backend = Backend(kwargs['backend'])
+                if self._backend == Backend.MSL:
+                    interface = MSLInterface[self._get_interface_name_from_address()]
+                    if 'interface' in kwargs:
+                        if not isinstance(kwargs['interface'], MSLInterface):
+                            raise TypeError('The interface must be of type {}'.format(MSLInterface))
+                        if kwargs['interface'] != interface:
+                            raise ValueError('The interface does not agree with what is expected from the address')
+                    self._interface = interface
+            elif name == 'backend':
+                if 'address' not in kwargs:
                     self._backend = Backend(kwargs[name])
-                elif name == 'interface':
-                    raise ValueError('Cannot manually set the MSL interface. '
-                                     'It is automatically set based on the value of the address.')
-                elif name == 'address':
-                    self._address = str(kwargs[name])
-                    if 'backend' in kwargs and kwargs['backend'] == Backend.MSL:
-                        bad_interface = self._set_msl_interface()
-                        if bad_interface:
-                            raise ValueError('Unknown MSL Interface "{}"'.format(bad_interface))
-                elif name == 'properties':
-                    if isinstance(kwargs[name], dict):
-                        self._properties = kwargs[name]
-                    else:
-                        raise ValueError('The properties value must be a dictionary.')
+            elif name == 'interface':
+                pass  # handle by `address`
+            elif name == 'properties':
+                if isinstance(kwargs[name], dict):
+                    self._properties = kwargs[name]
                 else:
-                    setattr(self, '_'+name, str(kwargs[name]))
+                    raise ValueError('The properties value must be a dictionary.')
             else:
-                msg = 'A ConnectionRecord has no "{}" attribute.\nValid attributes are {}'\
-                    .format(name, valid_names)
-                raise AttributeError(msg)
+                if name in valid_names:
+                    setattr(self, '_'+name, str(kwargs[name]))
+                else:
+                    err = 'A ConnectionRecord has no "{}" attribute.\nValid attributes are {}'.format(name, valid_names)
+                    raise AttributeError(err)
 
     def __repr__(self):
-        return '{}{}'.format(self.__class__.__name__,
-                             {a: getattr(self, a) for a in self.field_names()})
+        return '{}<{}|{}|{}>'.format(self.__class__.__name__, self.manufacturer, self.model, self.serial)
 
-    def __str__(self):
-        return '{}<{}|{}|{}>'.format(self.__class__.__name__,
-                                     self.manufacturer,
-                                     self.model,
-                                     self.serial)
+    def _valid_names(self):
+        """Returns a list of the valid property names for an ConnectionRecord"""
+        return sorted([k[1:] for k in vars(self)])
 
     @property
     def address(self):
-        """:obj:`str`: The address to use for the connection (see here_ for examples
-        from National Instruments).
+        """:obj:`str`: The address to use for the connection (see `National Instruments <NI_>`_
+        and :ref:`address_syntax` for examples).
 
-        .. _here: http://zone.ni.com/reference/en-XX/help/370131S-01/ni-visa/visaresourcesyntaxandexamples/
+        .. _NI: http://zone.ni.com/reference/en-XX/help/370131S-01/ni-visa/visaresourcesyntaxandexamples/
         """
         return self._address
 
@@ -382,7 +408,8 @@ class ConnectionRecord(object):
     def interface(self):
         """:class:`~.constants.MSLInterface`: The interface to use for the communication 
         system that transfers data between a computer and the equipment
-        (only used if the `backend` is :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>`).
+        (only used if the :obj:`.backend` is equal to
+        :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>`).
         """
         return self._interface
 
@@ -398,9 +425,14 @@ class ConnectionRecord(object):
 
     @property
     def properties(self):
-        """:obj:`dict`: Additional properties that may be used to establish
-        a connection to the equipment, e.g., for a Serial connection 
-        ``{'baud_rate': 11920, 'data_bits': 8}``.
+        """
+        :obj:`dict`: Additional properties that may be required to establish
+        a connection to the equipment, e.g., for :class:`~.connection_msl.ConnectionSerial`
+        communication you may require that::
+
+            {'baud_rate': 19200}
+
+        See the :ref:`connection_database` for examples on how to set the `properties`.
         """
         return self._properties
 
@@ -409,28 +441,27 @@ class ConnectionRecord(object):
         """:obj:`str`: The serial number, or engraved unique ID, of the equipment."""
         return self._serial
 
-    @staticmethod
-    def field_names():
-        """:obj:`list` of :obj:`str`: A list of all the field names (i.e., the name of
-        each column in a database) for a :class:`ConnectionRecord`.
+    def to_dict(self):
+        """Convert the :class:`ConnectionRecord` to a dictionary.
+
+        Returns
+        -------
+        :obj:`dict`
+            The :class:`ConnectionRecord` as a dictionary.
         """
-        return [item for item in dir(ConnectionRecord) if not (item.startswith('_') or item == 'field_names')]
+        return {n: getattr(self, n) for n in self._valid_names()}
 
-    def _set_msl_interface(self):
-        """Set the `interface` based on the `address`"""
+    def _get_interface_name_from_address(self):
+        """:obj:`str`: Gets the interface name based on the address value."""
 
-        # determine the MSLInterface
+        # determine the MSL Interface
         match = re.match('[+_A-Z]+', self._address.upper())
-        interface = '' if match is None else match.group(0).replace('+', '_')
+        interface_name = '' if match is None else match.group(0).replace('+', '_')
 
-        # check if aliases are used for the MSL interface
+        # check if aliases are used for the MSL Interface
         for name, values in MSL_INTERFACE_ALIASES.items():
             for value in values:
-                if value in interface:
-                    interface = interface.replace(value, name)
+                if value in interface_name:
+                    interface_name = interface_name.replace(value, name)
 
-        # set the interface
-        if interface in MSLInterface.__members__:
-            self._interface = MSLInterface[interface]
-            return ''
-        return interface
+        return interface_name

@@ -10,40 +10,38 @@ from msl.equipment import constants
 
 def test_equip_record():
 
-    a = EquipmentRecord.field_names()
-    assert len(a) == 13
+    a = EquipmentRecord().to_dict()
+    assert len(a) == 14
     assert 'alias' in a
     assert 'asset_number' in a
-    assert 'calibration_period' in a
+    assert 'calibration_cycle' in a
     assert 'category' in a
     assert 'connection' in a
     assert 'date_calibrated' in a
     assert 'description' in a
+    assert 'latest_report_number' in a
     assert 'location' in a
     assert 'manufacturer' in a
     assert 'model' in a
     assert 'register' in a
     assert 'serial' in a
     assert 'team' in a
-    assert 'connect' not in a
-    assert 'field_names' not in a
-    assert 'is_calibration_due' not in a
-    assert 'next_calibration_date' not in a
 
     # the default values
     record = EquipmentRecord()
-    assert record.manufacturer == ''
-    assert record.model == ''
-    assert record.serial == ''
     assert record.alias == ''
     assert record.asset_number == ''
-    assert record.calibration_period == 0.0
+    assert record.calibration_cycle == 0.0
     assert record.category == ''
     assert record.connection is None
     assert record.date_calibrated == datetime.date(datetime.MINYEAR, 1, 1)
     assert record.description == ''
+    assert record.latest_report_number == ''
     assert record.location == ''
+    assert record.manufacturer == ''
+    assert record.model == ''
     assert record.register == ''
+    assert record.serial == ''
     assert record.team == ''
 
     record = EquipmentRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055')
@@ -52,23 +50,23 @@ def test_equip_record():
     assert record.serial == 'DY135/055'
 
     today = datetime.date.today()
-    record = EquipmentRecord(date_calibrated=today, calibration_period=5)
-    assert record.calibration_period == 5.0
+    record = EquipmentRecord(date_calibrated=today, calibration_cycle=5)
+    assert record.calibration_cycle == 5.0
     assert record.date_calibrated.year == today.year
     assert record.date_calibrated.month == today.month
     assert record.date_calibrated.day == today.day
 
-    EquipmentRecord(calibration_period='5')
+    EquipmentRecord(calibration_cycle='5')
 
-    r = EquipmentRecord(calibration_period='5.7')
-    assert r.calibration_period == 5.7
+    r = EquipmentRecord(calibration_cycle='5.7')
+    assert r.calibration_cycle == 5.7
 
-    r = EquipmentRecord(calibration_period='-5.7')
-    assert r.calibration_period == 0.0
+    r = EquipmentRecord(calibration_cycle='-5.7')
+    assert r.calibration_cycle == 0.0
 
     with pytest.raises(ValueError) as err:
-        EquipmentRecord(calibration_period='is not an number')
-    assert 'calibration_period' in str(err.value)
+        EquipmentRecord(calibration_cycle='is not an number')
+    assert 'calibration_cycle' in str(err.value)
 
     with pytest.raises(TypeError) as err:
         EquipmentRecord(date_calibrated='2017-08-15')
@@ -100,7 +98,7 @@ def test_equip_record():
 
 def test_conn_record():
 
-    a = ConnectionRecord.field_names()
+    a = ConnectionRecord().to_dict()
     assert len(a) == 7
     assert 'address' in a
     assert 'backend' in a
@@ -109,8 +107,6 @@ def test_conn_record():
     assert 'model' in a
     assert 'properties' in a
     assert 'serial' in a
-    assert '_set_msl_interface' not in a
-    assert 'field_names' not in a
 
     # the default values
     record = ConnectionRecord()
@@ -187,10 +183,18 @@ def test_conn_record():
     c = ConnectionRecord(address='XXXXXX')
     assert c.interface == constants.MSLInterface.NONE
 
-    # cannot set the interface, it is automatically determined
+    # setting the interface, bad
     with pytest.raises(ValueError) as err:
-        ConnectionRecord(interface=constants.MSLInterface.GPIB)
-    assert 'interface' in str(err.value)
+        ConnectionRecord(address='COM1', backend=constants.Backend.MSL, interface=constants.MSLInterface.GPIB)
+    assert 'interface' in str(err.value) and 'address' in str(err.value)
+
+    # setting the interface, bad
+    with pytest.raises(TypeError) as err:
+        ConnectionRecord(address='COM1', backend=constants.Backend.MSL, interface=None)
+    assert 'interface' in str(err.value) and 'enum' in str(err.value)
+
+    # setting the interface, good
+    ConnectionRecord(address='COM1', backend=constants.Backend.MSL, interface=constants.MSLInterface.ASRL)
 
     # the backend must be a Backend enum
     with pytest.raises(ValueError) as err:
@@ -230,7 +234,7 @@ def test_dbase():
     eq2 = dbase.equipment['dvm']
     assert eq2.alias == 'dvm'
     assert eq2.asset_number == '00011'
-    assert eq2.calibration_period == 5
+    assert eq2.calibration_cycle == 5
     assert eq2.category == 'DVM'
     assert eq2.date_calibrated.year == 2009
     assert eq2.date_calibrated.month == 11
@@ -285,19 +289,19 @@ def test_calibration():
     assert not record.is_calibration_due()  # the date_calibrated value has not been set
 
     record = EquipmentRecord(date_calibrated=today)
-    assert not record.is_calibration_due()  # the calibration_period value has not been set
+    assert not record.is_calibration_due()  # the calibration_cycle value has not been set
 
-    record = EquipmentRecord(date_calibrated=today, calibration_period=5)
+    record = EquipmentRecord(date_calibrated=today, calibration_cycle=5)
     assert not record.is_calibration_due()
 
-    record = EquipmentRecord(date_calibrated=datetime.date(2000, 1, 1), calibration_period=1)
+    record = EquipmentRecord(date_calibrated=datetime.date(2000, 1, 1), calibration_cycle=1)
     assert record.is_calibration_due()
 
-    record = EquipmentRecord(date_calibrated=datetime.date(2000, 1, 1), calibration_period=999)
+    record = EquipmentRecord(date_calibrated=datetime.date(2000, 1, 1), calibration_cycle=999)
     assert not record.is_calibration_due()
 
     date = datetime.date(today.year-1, today.month, today.day)
-    record = EquipmentRecord(date_calibrated=date, calibration_period=1.5)
+    record = EquipmentRecord(date_calibrated=date, calibration_cycle=1.5)
     assert not record.is_calibration_due()  # not due for another 6 months
     assert record.is_calibration_due(12)
 
@@ -307,25 +311,25 @@ def test_calibration():
     assert d.month == 1
     assert d.day == 1
 
-    record = EquipmentRecord(date_calibrated=datetime.date(2000, 8, 4), calibration_period=1)
+    record = EquipmentRecord(date_calibrated=datetime.date(2000, 8, 4), calibration_cycle=1)
     d = record.next_calibration_date()
     assert d.year == 2001
     assert d.month == 8
     assert d.day == 4
 
-    record = EquipmentRecord(date_calibrated=datetime.date(2000, 12, 30), calibration_period=5.0)
+    record = EquipmentRecord(date_calibrated=datetime.date(2000, 12, 30), calibration_cycle=5.0)
     d = record.next_calibration_date()
     assert d.year == 2005
     assert d.month == 12
     assert d.day == 30
 
-    record = EquipmentRecord(date_calibrated=datetime.date(2000, 8, 4), calibration_period=1.5)
+    record = EquipmentRecord(date_calibrated=datetime.date(2000, 8, 4), calibration_cycle=1.5)
     d = record.next_calibration_date()
     assert d.year == 2002
     assert d.month == 2
     assert d.day == 4
 
-    record = EquipmentRecord(date_calibrated=datetime.date(2000, 3, 14), calibration_period=0.7)
+    record = EquipmentRecord(date_calibrated=datetime.date(2000, 3, 14), calibration_cycle=0.7)
     d = record.next_calibration_date()
     assert d.year == 2000
     assert d.month == 11

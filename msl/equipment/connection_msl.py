@@ -19,34 +19,28 @@ class ConnectionSDK(Connection):
         The :data:`record.connection.backend <msl.equipment.record_types.ConnectionRecord.backend>`
         value must be equal to :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>` 
         to use this class for the communication system. This is achieved by setting the 
-        value in the **Backend** field for a connection record in the **Connections** 
-        database to be **MSL**.
+        value in the **Backend** field for a connection record in the :ref:`connection_database`
+        to be ``MSL``.
 
-        Do not instantiate this class directly. Use the factory method, 
-        :obj:`msl.equipment.factory.connect`, or the `record` object itself, 
-        :obj:`record.connect() <.record_types.EquipmentRecord.connect>`,
+        Do not instantiate this class directly. Use the
+        :obj:`record.connect() <.record_types.EquipmentRecord.connect>` method
         to connect to the equipment.
 
         Parameters
         ----------
         record : :class:`~.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~.database.Database`.
+            A record from an :ref:`equipment_database`.
 
-        libtype : :obj:`str` or :obj:`None`
+        libtype : :obj:`str`
             The library type to use for the calling convention.
-
-            The following values are allowed:
-
-                * **'cdll'** -- for a **__cdecl** library
-                * **'windll'** or **'oledll'** -- for a **__stdcall** library (Windows only)
-                * **'net'** -- for a **.NET** library
+            See :class:`~msl.loadlib.load_library.LoadLibrary` for more information.
 
         Raises
         ------
         IOError
-            If the Python wrapper class around the SDK cannot be found or if the 
-            shared library cannot be found.   
+            If the shared library cannot be loaded.
+        TypeError
+            If either `record` or `libtype` is invalid.
         """
         Connection.__init__(self, record)
         lib_path = str(record.connection.address.split('::')[2])
@@ -60,10 +54,7 @@ class ConnectionSDK(Connection):
 
     @property
     def sdk(self):
-        """The reference to the sdk_ library.
-        
-        .. _sdk: http://msl-loadlib.readthedocs.io/en/latest/_api/msl.loadlib.load_library.html#msl.loadlib.load_library.LoadLibrary.lib
-        """
+        """The reference to the shared library, see :obj:`~msl.loadlib.load_library.LoadLibrary.lib`."""
         return self._lib.lib
 
     def log_errcheck(self, result, func, arguments):
@@ -78,10 +69,10 @@ class ConnectionSDK(Connection):
 class ConnectionMessageBased(Connection):
 
     CR = '\r'
-    """:obj:`str`: The carriage-return character"""
+    """:obj:`str`: The carriage-return character."""
 
     LF = '\n'
-    """:obj:`str`: The line-feed character"""
+    """:obj:`str`: The line-feed character."""
 
     _read_termination = None
     _write_termination = CR + LF
@@ -91,24 +82,22 @@ class ConnectionMessageBased(Connection):
     chunk_size = _read_size
 
     def __init__(self, record):
-        """Base class for equipment that use message based communication.        
+        """Base class for equipment that use message-based communication.
 
         The :data:`record.connection.backend <msl.equipment.record_types.ConnectionRecord.backend>`
         value must be equal to :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>` 
         to use this class for the communication system. This is achieved by setting the 
-        value in the **Backend** field for a connection record in the **Connections** 
-        database to be **MSL**.
+        value in the **Backend** field for a connection record in the :ref:`connection_database`
+        to be ``MSL``.
 
-        Do not instantiate this class directly. Use the factory method, 
-        :obj:`msl.equipment.factory.connect`, or the `record` object itself, 
-        :obj:`record.connect() <.record_types.EquipmentRecord.connect>`,
+        Do not instantiate this class directly. Use the
+        :obj:`record.connect() <.record_types.EquipmentRecord.connect>` method
         to connect to the equipment.
 
         Parameters
         ----------
         record : :class:`~.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~.database.Database`.
+            A record from an :ref:`equipment_database`.
         """
         Connection.__init__(self, record)
 
@@ -173,6 +162,10 @@ class ConnectionMessageBased(Connection):
     def read(self, size=None):
         """Read a response from the equipment.
 
+        Note
+        ----
+        The subclass must override this method.
+
         Returns
         -------
         :obj:`str`
@@ -182,6 +175,10 @@ class ConnectionMessageBased(Connection):
 
     def write(self, message):
         """Write (send) a message to the equipment.
+
+        Note
+        ----
+        The subclass must override this method.
 
         Parameters
         ----------
@@ -224,10 +221,11 @@ class ConnectionMessageBased(Connection):
 class ConnectionSerial(ConnectionMessageBased):
 
     def __init__(self, record):
-        """Establish a connection through a Serial port.
+        """Base class for equipment that is connected through a Serial port.
 
         The :obj:`record.connection.properties <msl.equipment.record_types.ConnectionRecord.properties>`
-        dictionary for a Serial connection supports the following key-value pairs::
+        dictionary for a Serial connection supports the following key-value pairs in the
+        :ref:`connection_database`::
 
             'read_termination': str or None
             'write_termination': str or None
@@ -244,6 +242,26 @@ class ConnectionSerial(ConnectionMessageBased):
             'xon_xoff': bool (enable software flow control)
             'rts_cts': bool (enable hardware (RTS/CTS) flow control)
             'dsr_dtr': bool (enable hardware (DSR/DTR) flow control)
+
+        The :data:`record.connection.backend <msl.equipment.record_types.ConnectionRecord.backend>`
+        value must be equal to :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>`
+        to use this class for the communication system. This is achieved by setting the
+        value in the **Backend** field for a connection record in the :ref:`connection_database`
+        to be ``MSL``.
+
+        Do not instantiate this class directly. Use the
+        :obj:`record.connect() <.record_types.EquipmentRecord.connect>` method
+        to connect to the equipment.
+
+        Parameters
+        ----------
+        record : :class:`~.record_types.EquipmentRecord`
+            A record from an :ref:`equipment_database`.
+
+        Raises
+        ------
+        :exc:`~.exceptions.MSLConnectionError`
+            If the Serial port cannot be opened.
         """
         ConnectionMessageBased.__init__(self, record)
 
@@ -317,7 +335,7 @@ class ConnectionSerial(ConnectionMessageBased):
         return constants.Parity(self._serial.parity)
 
     def write(self, message):
-        """Write the given message over the serial port.
+        """Write the given message over the Serial port.
 
         Parameters
         ----------
@@ -327,17 +345,18 @@ class ConnectionSerial(ConnectionMessageBased):
         Returns
         -------
         :obj:`int`:
-            The number of bytes written to the serial port.
+            The number of bytes written to the Serial port.
         """
         data = (message + self.write_termination).encode(self.encoding)
         self.log_debug('{}.write({})'.format(self.__class__.__name__, data))
         return self._serial.write(data)
 
     def read(self, size=None):
-        """Read `size` bytes from the serial port.
+        """Read `size` bytes from the Serial port.
 
-        If a `timeout` is set it may return less characters as requested. With no
-        `timeout` it will block until the requested number of bytes is read.
+        If a `timeout` value is set when this class is instantiated it may return less
+        bytes than requested. With no `timeout` it will block until the requested
+        number of bytes is read.
 
         Parameters
         ----------
@@ -347,7 +366,7 @@ class ConnectionSerial(ConnectionMessageBased):
         Returns
         -------
         :obj:`bytes`:
-            The bytes read from the serial port.
+            The bytes read from the Serial port.
         """
         size = self.read_size if size is None else size
         b = self._serial.read(size)
@@ -355,4 +374,5 @@ class ConnectionSerial(ConnectionMessageBased):
         return b
 
     def disconnect(self):
+        """Close the Serial port."""
         self._serial.close()

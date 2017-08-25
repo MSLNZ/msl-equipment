@@ -1,5 +1,5 @@
 """
-Utility functions/classes to help create modules in the **resources** package.
+Utility functions/classes to help create modules in the **msl.equipment.resources** package.
 """
 import re
 import ctypes
@@ -59,7 +59,7 @@ CTYPES_MAP = {
 
 
 def camelcase_to_underscore(text):
-    """Converts **CamelCaseText** to **camel_case_text**.
+    """Converts ``CamelCaseText`` to ``camel_case_text``.
     
     Parameters
     ----------
@@ -134,7 +134,7 @@ class CHeader(object):
         self._get_callbacks()
 
     def constants(self, ignore_ifdef=True):
-        """Finds the **#define** statements that in a C/C++ header file.
+        """Finds the ``#define`` statements that in a C/C++ header file.
 
         Parameters
         ----------

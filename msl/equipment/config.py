@@ -1,5 +1,5 @@
 """
-Load a XML configuration file.
+Load a XML :ref:`configuration`.
 """
 import os
 import logging
@@ -13,104 +13,59 @@ logger = logging.getLogger(__name__)
 class Config(object):
 
     PyVISA_LIBRARY = '@ni'
-    """:obj:`str`: The PyVISA backend library to use"""
+    """:obj:`str`: The PyVISA backend_ library to use.
+    
+    .. _backend: http://pyvisa.readthedocs.io/en/stable/backends.html
+    """
 
     DEMO_MODE = False
-    """:obj:`bool`: Whether to open **all** connections in demo mode"""
+    """:obj:`bool`: Whether to open connections in demo mode. 
+    
+    The equipment does not need to be connected to the computer.
+    """
 
-    SDK_PATH = []
-    """:obj:`list` of :obj:`str`: Paths that were appended to :obj:`os.environ['PATH'] <os.environ>`"""
+    PATH = []
+    """:obj:`list` of :obj:`str`: Paths that are appended to :obj:`os.environ['PATH'] <os.environ>`."""
 
     def __init__(self, path):
-        """Load a XML configuration file.
+        """Load a XML :ref:`configuration`.
 
-        This function is used to set the configuration constants to use for the Python
-        runtime and it creates :class:`.EquipmentRecord`'s from **Equipment-Register**
-        databases and :class:`.ConnectionRecord`'s from **Connection** databases.
+        This function is used to set the configuration constants to use for the Python runtime
+        and it allows you to access :class:`.EquipmentRecord`'s from an :ref:`equipment_database`
+        and :class:`.ConnectionRecord`'s from a :ref:`connection_database`.
 
-        **MSL-Equipment** configuration constants that can be defined in a configuration file:
+        **MSL-Equipment** constants that can be defined in a :ref:`configuration`:
 
         +----------------+-----------------------------------+-----------------------------------------+
         |      Name      |           Example Values          |               Description               |
         +================+===================================+=========================================+
         | PyVISA_LIBRARY | @ni, @py, @sim, /path/to/lib\@ni  | The PyVISA backend_ library to use.     |
         +----------------+-----------------------------------+-----------------------------------------+
-        |   DEMO_MODE    | true, false                       | Whether to open **all** connections in  |
-        |                |                                   | demo mode.                              |
+        |   DEMO_MODE    | true, false                       | Whether to open connections in demo     |
+        |                |                                   | mode.                                   |
         +----------------+-----------------------------------+-----------------------------------------+
-        |   SDK_PATH     | /path/to/SDKs, D:/data/SDKs       | A path that contains SDK libraries.     |
+        |     PATH       | /path/to/SDKs, D:/images          | A path that contains external resources.|
         |                |                                   | Accepts a *recursive="true"* attribute. |
         |                |                                   | Appends the path(s) to                  |
         |                |                                   | :obj:`os.environ['PATH'] <os.environ>`  |
         +----------------+-----------------------------------+-----------------------------------------+
 
-        .. _backend: http://pyvisa.readthedocs.io/en/stable/backends.html
-
         Also, the user is encouraged to define their own application-specific constants within the
         configuration file.
 
-        Example configuration file::
-
-            <?xml version="1.0" encoding="UTF-8"?>
-            <msl>
-
-                <!-- Application-specific constant to use as a warning if the temperature of a device gets too hot -->
-                <max_temperature units="C">60</max_temperature>
-
-                <!-- Use PyVISA-py as the PyVISA library -->
-                <PyVISA_LIBRARY>@py</PyVISA_LIBRARY>
-
-                <!-- Open all connections in demo mode -->
-                <DEMO_MODE>true</DEMO_MODE>
-
-                <!-- Add a path to os.environ['PATH'] where SDK files are located -->
-                <SDK_PATH>I:\Photometry\SDKs</SDK_PATH>
-
-                <!-- Recursively add SDK paths starting from a root path -->
-                <SDK_PATH recursive="true">C:\Program Files\Thorlabs</SDK_PATH>
-
-                <!-- The equipment that is being used to perform the measurement -->
-                <equipment alias="ref" manufacturer="Keysight" model="34465A" serial="MY54506462"/>
-                <equipment alias="scope" manufacturer="Pico Technologies" serial="DY135/055"/>
-                <equipment alias="flipper" manufacturer="Thorlabs" model="MFF101/M" serial="37871232"/>
-
-                <!-- The database that contains the information required to connect to the equipment -->
-                <equipment_connections>
-                    <path>Z:\QUAL\Equipment\Equipment Register.xls</path>
-                    <sheet>Connections</sheet>
-                </equipment_connections>
-
-                <!-- The equipment-register database(s) -->
-                <equipment_registers>
-                    <register team="P&amp;R">
-                        <path>Z:\QUAL\Equipment\Equipment Register.xls</path>
-                        <sheet>Equipment</sheet>
-                    </register>
-                    <register team="Electrical">
-                        <path>H:\Quality\Registers\Equipment.xls</path>
-                        <sheet>REG</sheet>
-                    </register>
-                    <register team="Time">
-                        <path>W:\Registers\Equip.csv</path>
-                    </register>
-                    <register team="Mass">
-                        <path>Y:\databases\equipment\equip-reg.txt</path>
-                    </register>
-                </equipment_registers>
-
-            </msl>
+        .. _backend: http://pyvisa.readthedocs.io/en/stable/backends.html
 
         Parameters
         ----------
         path : :obj:`str`
-            The path to a XML configuration file.
+            The path to a XML :ref:`configuration`.
 
         Raises
         ------
         IOError
             If `path` does not exist.
         :exc:`~xml.etree.ElementTree.ParseError`
-            If the configuration file is invalid.
+            If the :ref:`configuration` is invalid.
         """
         logger.debug('Loading {}'.format(path))
         self._root = ElementTree.parse(path).getroot()
@@ -127,18 +82,18 @@ class Config(object):
             Config.DEMO_MODE = element.text.lower() == 'true'
             logger.debug('update Config.DEMO_MODE = {}'.format(Config.DEMO_MODE))
 
-        for element in self._root.findall('SDK_PATH'):
+        for element in self._root.findall('PATH'):
             if not os.path.isdir(element.text):
-                logger.warning('Not a valid SDK_PATH ' + element.text)
+                logger.warning('Not a valid PATH ' + element.text)
                 continue
             if element.attrib.get('recursive', 'false').lower() == 'true':
                 for root, dirs, files in os.walk(element.text):
-                    Config.SDK_PATH.append(root)
+                    Config.PATH.append(root)
             else:
-                Config.SDK_PATH.append(element.text)
-        for p in Config.SDK_PATH:
+                Config.PATH.append(element.text)
+        for p in Config.PATH:
             os.environ['PATH'] += os.pathsep + p
-            logger.debug('append Config.SDK_PATH %s', p)
+            logger.debug('append Config.PATH %s', p)
 
     @property
     def path(self):
@@ -169,7 +124,7 @@ class Config(object):
         return self._database
 
     def value(self, tag):
-        """Gets the value associated with the specified `tag`.
+        """Gets the value associated with the specified `tag` in the configuration file.
 
         Parameters
         ----------

@@ -74,8 +74,6 @@ def connect(record, demo=None):
                 cls = resources.find_sdk_class(conn)
             elif conn.interface == MSLInterface.ASRL:
                 cls = resources.find_serial_class(conn)
-                if cls is None:
-                    cls = connection_msl.ConnectionSerial
             else:
                 cls = connection_msl.ConnectionMessageBased
         elif conn.backend == Backend.PyVISA:

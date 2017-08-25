@@ -7,6 +7,7 @@ import sys
 import fnmatch
 import importlib
 
+from msl.equipment import connection_msl
 from msl.equipment.constants import MSLInterface
 
 
@@ -142,7 +143,7 @@ def find_sdk_class(record):
 
 
 def find_serial_class(record):
-    """Find the :class:`~msl.equipment.connection_msl.ConnectionSerial` subclass.
+    """Find the :class:`~msl.equipment.connection_msl.ConnectionSerial` class.
 
     This function is not meant to be called directly.
 
@@ -153,7 +154,7 @@ def find_serial_class(record):
 
     Returns
     -------
-    A :class:`~msl.equipment.connection_msl.ConnectionSerial` subclass or :obj:`None` if a subclass cannot be found.
+    A :class:`~msl.equipment.connection_msl.ConnectionSerial` class.
 
     Raises
     ------
@@ -161,12 +162,15 @@ def find_serial_class(record):
         If the :obj:`~msl.equipment.record_types.ConnectionRecord` has an invalid `interface`.
     IOError
         If the :obj:`~msl.equipment.record_types.ConnectionRecord.address` specifies
-        a Python class to use for the connection and the class cannot be found.
+        a **PythonClassName** to use for the connection and the class cannot be found.
     """
     if 'ASRL' not in record.interface.name:
         msg = 'The interface is {} and not a ASRL-type interface'.format(repr(record.interface))
         raise ValueError(msg)
     address_split = record.address.split('::')
     if (len(address_split) == 1) or (len(address_split) == 2 and address_split[1].upper() == 'INSTR'):
-        return check_manufacture_model_resource_name(record)
+        cls = check_manufacture_model_resource_name(record)
+        if cls is None:
+            return connection_msl.ConnectionSerial
+        return cls
     return recursive_find_resource_class(address_split[1])

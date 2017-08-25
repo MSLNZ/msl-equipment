@@ -122,10 +122,10 @@ def test_find_serial_class():
     assert 'interface' in str(err.value)
 
     record = ConnectionRecord(backend=Backend.MSL, address='COM1')
-    assert resources.find_serial_class(record) is None  # would create a generic ConnectionSerial in the factory
+    assert resources.find_serial_class(record) == connection_msl.ConnectionSerial
 
     record = ConnectionRecord(backend=Backend.MSL, address='COM1::instr')
-    assert resources.find_serial_class(record) is None  # would create a generic ConnectionSerial in the factory
+    assert resources.find_serial_class(record) == connection_msl.ConnectionSerial
 
     record = ConnectionRecord(backend=Backend.MSL, address='COM1', manufacturer='CMI', model='SIA3')
     assert resources.find_serial_class(record) == resources.cmi.sia3.SIA3

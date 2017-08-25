@@ -5,7 +5,7 @@ Examples
 ========
 Some example scripts that illustrate how to use **MSL-Equipment** can be found in the GitHub repository_.
 
-See also the documentation for :ref:`configuration`\'s and :ref:`database`.
+See also the documentation for :ref:`configuration`\s and :ref:`database`.
 
 .. _repository: https://github.com/MSLNZ/msl-equipment/tree/master/msl/examples/equipment
 

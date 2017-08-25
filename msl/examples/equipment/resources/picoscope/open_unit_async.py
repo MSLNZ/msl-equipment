@@ -6,8 +6,7 @@ This example opens the connection in async mode (does not work properly in Pytho
 if __name__ == '__main__':
 
     import time
-    from msl.equipment.constants import Backend
-    from msl.equipment import EquipmentRecord, ConnectionRecord
+    from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
 
     record = EquipmentRecord(
         manufacturer='Pico Technology',

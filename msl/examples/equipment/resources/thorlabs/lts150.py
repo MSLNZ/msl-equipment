@@ -9,8 +9,7 @@ if __name__ == '__main__':
     from logging.config import fileConfig
 
     from msl.examples.equipment import EXAMPLES_DIR
-    from msl.equipment.constants import Backend
-    from msl.equipment import EquipmentRecord, ConnectionRecord
+    from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
 
     log_config = os.path.join(EXAMPLES_DIR, 'logging-config.ini')
     fileConfig(log_config, disable_existing_loggers=False)

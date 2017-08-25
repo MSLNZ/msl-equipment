@@ -11,7 +11,8 @@ to the computer.
 if __name__ == '__main__':
     import os
     import time
-    from msl.equipment.config import Config
+
+    from msl.equipment import Config
     from msl.examples.equipment import EXAMPLES_DIR
 
     # you will have to update the value of the serial number for the FilterFlipper

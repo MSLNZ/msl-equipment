@@ -6,6 +6,13 @@ msl.equipment.resources package
     :undoc-members:
     :show-inheritance:
 
+Submodules
+----------
+
+.. toctree::
+
+   msl.equipment.resources.utils
+
 Subpackages
 -----------
 
@@ -15,10 +22,3 @@ Subpackages
     msl.equipment.resources.cmi
     msl.equipment.resources.picotech
     msl.equipment.resources.thorlabs
-
-Submodules
-----------
-
-.. toctree::
-
-   msl.equipment.resources.utils

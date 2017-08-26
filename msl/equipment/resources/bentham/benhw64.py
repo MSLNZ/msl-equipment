@@ -7,6 +7,7 @@ import inspect
 from msl.loadlib import Client64
 
 from msl.equipment.connection import Connection
+from msl.equipment.exceptions import BenthamError
 from .errors import BI_OK, ERROR_CODES
 from .tokens import MonochromatorCurrentWL, BenMono
 
@@ -39,6 +40,7 @@ class Bentham(Connection, Client64):
             A record from an :ref:`equipment_database`.
         """
         Connection.__init__(self, record)
+        self.set_exception_handler(BenthamError)
 
         path = record.connection.address.split('::')[2]
         head, tail = os.path.split(path)

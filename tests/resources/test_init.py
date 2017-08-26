@@ -12,17 +12,10 @@ from msl.equipment.constants import Backend
 from msl.equipment import connection_msl
 
 
-def test_recursive_find_resource_class():
-    r = resources.recursive_find_resource_class
-
-    assert r('Bentham') == resources.bentham.benhw64.Bentham
-    assert r('PicoScope2000') == resources.picotech.picoscope.ps2000.PicoScope2000
-    assert r('PicoScope5000A') == resources.picotech.picoscope.ps5000a.PicoScope5000A
-    assert r('FilterWheelXX2C') == resources.thorlabs.fwxx2c.FilterWheelXX2C
-    assert r('FilterFlipper') == resources.thorlabs.kinesis.filter_flipper.FilterFlipper
-
-
 def test_unique_resource_class_name():
+    # This tests to make sure that every MSL Resource class name is unique.
+    # There is no need to add additional tests to this test function because it
+    # automatically walks through the msl.equipment.resources package to find and test all modules
     names = {}
     class_regex = re.compile(r'^class\s+(\w+)\(', re.MULTILINE)
 
@@ -51,6 +44,17 @@ def test_unique_resource_class_name():
                         name = obj.__name__
                         raise NameError('Class name is not unique: {}\n{}\n{}'.format(name, obj, names[name]))
                     names[obj.__name__] = obj
+
+
+def test_recursive_find_resource_class():
+    r = resources.recursive_find_resource_class
+
+    assert r('Bentham') == resources.bentham.benhw64.Bentham
+    assert r('PicoScope2000') == resources.picotech.picoscope.ps2000.PicoScope2000
+    assert r('PicoScope5000A') == resources.picotech.picoscope.ps5000a.PicoScope5000A
+    assert r('FilterWheelXX2C') == resources.thorlabs.fwxx2c.FilterWheelXX2C
+    assert r('FilterFlipper') == resources.thorlabs.kinesis.filter_flipper.FilterFlipper
+    assert r('SIA3') == resources.cmi.sia3.SIA3
 
 
 def test_check_manufacture_model_resource_name():

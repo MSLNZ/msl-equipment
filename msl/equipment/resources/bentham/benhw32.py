@@ -1,5 +1,5 @@
 """
-A wrapper around the Bentham SDK benhw32_cdecl.dll.
+A wrapper around the 32-bit Bentham ``benhw32_cdecl`` SDK.
 """
 from ctypes import c_char_p, c_short, c_int, c_long, c_double, POINTER, create_string_buffer
 
@@ -10,9 +10,15 @@ from msl.equipment.resources.utils import HINSTANCE
 class Bentham32(Server32):
 
     def __init__(self, host, port, quiet, **kwargs):
-        """A wrapper around the Bentham SDK benhw32_cdecl.dll.
+        """A wrapper around the 32-bit Bentham ``benhw32_cdecl`` SDK.
+
+        Do not instantiate this class directly.
         
-        Do not instantiate this class directly. Use :class:`.benhw64.Bentham`.
+        The SDK is provided for 32-bit Windows only. This module is run on
+        a 32-bit :class:`Server <msl.loadlib.server32.Server32>` so that the
+        the :class:`~.benhw64.Bentham` class can be run on a 64-bit Python
+        interpreter in order to access the functions in the SDK from a 64-bit
+        process.
         """
         Server32.__init__(self, kwargs['lib_path'], 'cdll', host, port, quiet)
 

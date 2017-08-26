@@ -1,5 +1,5 @@
 """
-A wrapper around the Bentham SDK benhw32_cdecl.dll.
+A wrapper around the :class:`~.benhw32.Bentham32` class.
 """
 import os
 import inspect
@@ -14,32 +14,29 @@ from .tokens import MonochromatorCurrentWL, BenMono
 class Bentham(Connection, Client64):
 
     def __init__(self, record):
-        """A wrapper around the :class:`.benhw32.Bentham32` class.
+        """A wrapper around the :class:`~.benhw32.Bentham32` class.
 
-        This class can be used with either a 32-bit or 64-bit Python interpreter
+        This class can be used with either a 32- or 64-bit Python interpreter
         to call the 32-bit functions in ``benhw32_cdecl.dll``.
 
-        The :obj:`record.connection.properties <msl.equipment.record_types.ConnectionRecord.properties>`
-        dictionary for a Bentham device supports the following key-value pairs::
-        
+        The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
+        for a Bentham device supports the following key-value pairs in the
+        :ref:`connection_database`::
+
             'model': 'C:\\path\\to\\System.cfg',  # default is '' 
             'setup': 'C:\\path\\to\\System.atr',  # default is ''
         
-        If both properties are not defined in the **Connections** 
-        :class:`~msl.equipment.database.Database` then you will have to call 
-        :meth:`build_system_model`, :meth:`load_setup` and :meth:`initialise` 
-        to configure the SDK.
+        If the ``model`` and ``setup`` values are not defined in the :ref:`connection_database`
+        then you will have to call :meth:`build_system_model`, :meth:`load_setup`
+        and :meth:`initialise` (in that order) to configure the SDK.
 
-        Do not instantiate this class directly. Use the factory method, 
-        :obj:`msl.equipment.factory.connect`, or the `record` object itself, 
-        :obj:`record.connect() <msl.equipment.record_types.EquipmentRecord.connect>`,
-        to connect to the equipment.
+        Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
+        method to connect to the equipment.
 
         Parameters
         ----------
-        record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~msl.equipment.database.Database`.
+        record : :class:`~.EquipmentRecord`
+            A record from an :ref:`equipment_database`.
         """
         Connection.__init__(self, record)
 
@@ -69,6 +66,13 @@ class Bentham(Connection, Client64):
         return reading
 
     def build_system_model(self, path):
+        """Set the model configuration file.
+
+        Parameters
+        ----------
+        path : :obj:`str`
+            The path to the ``System.cfg`` file.
+        """
         if not os.path.isfile(path):
             raise IOError('Cannot find {}'.format(path))
         ret, error_report = self.request32('build_system_model', path)
@@ -76,11 +80,13 @@ class Bentham(Connection, Client64):
         return ret
 
     def disconnect(self):
+        """Disconnect from the SDK and from the 32-bit server."""
         self.errcheck(self.request32('close'))
         self.log_debug('Stopping 32-bit server for {}'.format(self._tail))
         self.shutdown_server32()
 
     def errcheck(self, result, *args, **kwargs):
+        """Checks whether a function call to the SDK was successful."""
         frame = inspect.getouterframes(inspect.currentframe())[1]
         self.log_debug('{}.{}{} -> {}'.format(self.__class__.__name__, frame.function, args, result))
         if result != BI_OK:
@@ -129,9 +135,17 @@ class Bentham(Connection, Client64):
         self.select_wavelength(wavelength)
 
     def initialise(self):
+        """Initialize the connection."""
         return self.errcheck(self.request32('initialise'))
 
     def load_setup(self, path):
+        """Load the setup file.
+
+        Parameters
+        ----------
+        path : :obj:`str`
+            The path to the ``System.atr`` file.
+        """
         if not os.path.isfile(path):
             raise IOError('Cannot find {}'.format(path))
         return self.errcheck(self.request32('load_setup', path), path)
@@ -149,6 +163,7 @@ class Bentham(Connection, Client64):
         return self.errcheck(ret, hw_id, token, index, value)
 
     def version(self):
+        """:obj:`str`: The version number of the SDK."""
         version = self.request32('get_version')
         self.log_debug('{}.version() -> {}'.format(self.__class__.__name__, version))
         return version

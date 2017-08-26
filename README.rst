@@ -13,7 +13,7 @@ a centralized (and ideally updated) database. It allows for easily sharing equip
 any downtime in learning how to establish communication to the borrowed equipment. Therefore, you can be confident
 whether the equipment that was used for a project meets the calibration requirements needed to obtain the desired
 measurement uncertainty and you can spend your time acquiring and analysing data rather than figuring out how to
-send, for example, a ``*IDN?`` command to the equipment.
+query, for example, a ``*IDN?`` command from the equipment.
 
 Install
 -------

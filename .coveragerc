@@ -22,4 +22,4 @@ exclude_lines =
     if __name__ == .__main__.:
 
 [html]
-title = MSL-Instrument coverage report
+title = MSL-Equipment coverage report

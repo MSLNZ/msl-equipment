@@ -21,7 +21,7 @@ class Bentham(Connection, Client64):
         to call the 32-bit functions in ``benhw32_cdecl.dll``.
 
         The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
-        for a Bentham device supports the following key-value pairs in the
+        for a Bentham connection supports the following key-value pairs in the
         :ref:`connection_database`::
 
             'model': 'C:\\path\\to\\System.cfg',  # default is '' 

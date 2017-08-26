@@ -207,7 +207,7 @@ def test_conn_record():
     assert 'Backend' in str(err.value)
 
     # the properties attribute must be a dictionary
-    with pytest.raises(ValueError) as err:
+    with pytest.raises(TypeError) as err:
         ConnectionRecord(properties=[])
     assert 'dictionary' in str(err.value)
 

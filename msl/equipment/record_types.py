@@ -372,10 +372,7 @@ class ConnectionRecord(object):
             elif name == 'interface':
                 pass  # handle by `address`
             elif name == 'properties':
-                if isinstance(kwargs[name], dict):
-                    self._properties = kwargs[name]
-                else:
-                    raise ValueError('The properties value must be a dictionary.')
+                self.properties = kwargs[name]
             else:
                 if name in valid_names:
                     setattr(self, '_'+name, str(kwargs[name]))
@@ -435,6 +432,12 @@ class ConnectionRecord(object):
         See the :ref:`connection_database` for examples on how to set the `properties`.
         """
         return self._properties
+
+    @properties.setter
+    def properties(self, props):
+        if not isinstance(props, dict):
+            raise TypeError('The properties must be a dictionary')
+        self._properties = props
 
     @property
     def serial(self):

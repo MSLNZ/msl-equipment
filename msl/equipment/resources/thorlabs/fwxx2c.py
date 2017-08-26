@@ -41,16 +41,18 @@ class TriggerMode(IntEnum):
     OUTPUT = 1  #: Generate an active-high pulse when the position changes
 
 
-class FilterWheel102C(ConnectionSDK):
+class FilterWheelXX2C(ConnectionSDK):
 
     def __init__(self, record):
         """Wrapper around Thorlabs **FilterWheel102.dll**, v4.0.0.
+
+        Connects to the Thorlabs FW102C Series and FW212C Series Motorized Filter Wheels.
         
         A 64-bit version of the library can be download from here_ and it is 
         located in **AppNotes_FW102C/LabVIEW/Thorlabs_FW102C/Library/FilterWheel102_win64.dll**.
 
         The :obj:`record.connection.properties <msl.equipment.record_types.ConnectionRecord.properties>`
-        dictionary for a FilterWheel102C device supports the following key-value pairs::
+        dictionary for a FilterWheelXX2C device supports the following key-value pairs::
             
             'port': str,  # mandatory, example 'COM3'
             'baud_rate': int,  # optional, default is 115200 
@@ -58,12 +60,11 @@ class FilterWheel102C(ConnectionSDK):
         
         .. _here:
             https://www.thorlabs.com/software_pages/viewsoftwarepage.cfm?code=FW102C&viewtab=2
-        
+
         Parameters
         ----------
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~msl.equipment.database.Database`.
+            A record from an :ref:`equipment_database`.
 
         Raises
         ------
@@ -343,7 +344,7 @@ class FilterWheel102C(ConnectionSDK):
         ----------
         port : :obj:`str`
             The port to be opened, use the :meth:`get_ports` 
-            function to get list of available ports.
+            function to get a list of available ports.
         baud_rate : :obj:`int`
             The number of bits per second to use for the communication protocol.        
         timeout : :obj:`int`

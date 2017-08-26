@@ -18,5 +18,5 @@ Submodules
 
 .. toctree::
 
-   msl.equipment.resources.thorlabs.fw102c
+   msl.equipment.resources.thorlabs.fwxx2c
 

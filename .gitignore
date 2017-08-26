@@ -42,3 +42,6 @@ coverage.xml
 # created by the PicoScope SDK
 *Pipe_inOut
 *Pipe_inOutFifo
+
+# temporary files
+junk.py

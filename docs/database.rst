@@ -13,9 +13,9 @@ The database file formats that are currently supported are **.txt**, **.csv** an
 Equipment-Register Database
 ---------------------------
 The information about the equipment that is used to perform a measurement must be known and it must be kept up to date.
-Keeping a central and official (hence the word *Register*) database of the equipment that is available in the lab allows
-for easily managing this information and for helping to ensure that the equipment that is being used for a measurement
-meets the requirement needed to achieve the measurement uncertainty.
+Keeping a central and official (hence the word *Register*) database of the equipment that is available in the laboratory
+allows for easily managing this information and for helping to ensure that the equipment that is being used for a
+project meets the calibration requirements needed to obtain the desired measurement uncertainty.
 
 **MSL-Equipment** does not require that a *single* database is used for all equipment **records**. However, it is vital
 that each equipment **record** can only be uniquely found in **ONE** Equipment-Register database. The **records** in a

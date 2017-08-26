@@ -2,10 +2,16 @@
 MSL-Equipment
 =============
 
-This package is used to help manage and connect to equipment in the laboratory.
+The purpose of **MSL-Equipment** is to help facilitate the management and the control of equipment in the laboratory.
+It aims to achieve this by requiring that information about the equipment that is used in the laboratory is kept in
+a centralized (and ideally updated) database. It allows for easily sharing equipment between research teams without
+any downtime in learning how to establish communication to the borrowed equipment. Therefore, you can be confident
+whether the equipment that was used for a project meets the calibration requirements needed to obtain the desired
+measurement uncertainty and you can spend your time acquiring and analysing data rather than figuring out how to
+send, for example, a ``*IDN?`` command to the equipment.
 
-Three items are used by **MSL-Equipment** to help organise (and share) equipment that is available in the laboratory to
-perform a measurement
+Three items are used by **MSL-Equipment** to help organise, share and communicate with equipment that is available
+in the laboratory to perform a measurement
 
 1. :ref:`configuration`
 

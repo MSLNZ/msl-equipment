@@ -84,6 +84,8 @@ class ConnectionDemo(Connection):
             if m:
                 t = ' of '.join(m)
 
+            t = t.replace('~', '')
+
             if t == 'bool':
                 out.append(random.random() > 0.5)
             elif t == 'str':
@@ -117,7 +119,7 @@ class ConnectionDemo(Connection):
             elif t.startswith('dict of .'):
                 obj = self._get_object(t[8:])
                 if obj is not None:
-                    out.append({'demo':obj})
+                    out.append({'demo': obj})
             elif 'dict' in t:
                 out.append({})
             elif t.startswith('.'):  # then it is an object

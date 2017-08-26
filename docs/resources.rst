@@ -59,7 +59,7 @@ resource class, which is a wrapper around the ``benhw32_cdecl.dll`` SDK that is 
 
 Creating a new MSL Resource
 ---------------------------
-When adding a new MSL Resource class the following steps should be performed.
+When adding a new MSL Resource class the following steps should be performed. Please follow the `style guide`_.
 
 1. Create a fork_ of the repository_.
 2. If you are adding a new MSL Resource for equipment from a manufacturer that does not already exist in the
@@ -78,21 +78,27 @@ When adding a new MSL Resource class the following steps should be performed.
 5. Add at least one example for how to use the new MSL Resource in **msl.examples.equipment**. Follow the template of
    the other examples in the **msl.examples.equipment** package for naming conventions and for showing how to use the
    new MSL Resource.
-6. Add **.rst** documentation files for the new MSL Resource to the **docs/_api** folder. You can either run
+6. Create tests for the new MSL Resource. The tests cannot be dependent on whether the equipment is physically
+   connected to the computer running the test (ideally the examples that you write in step 5 will demonstrate that
+   communicating with the equipment works). See the **tests/resources** folder to see what tests other MSL
+   Resource classes are performing. You can run the tests using ``python setup.py test``.
+7. Add **.rst** documentation files for the new MSL Resource to the **docs/_api** folder. You can either run
    ``python setup.py apidoc`` to auto-generate the **.rst** documentation files or you can create the necessary
    **.rst** files manually. Running ``apidoc`` will generate **.rst** files for *ALL* modules in **MSL-Equipment**.
    Within the **docs/_autosummary** folder, that gets automatically created when running the ``apidoc`` command, only
    copy the **.rst** files that are associated with your new MSL Resource to the **docs/_api** folder. After copying
-   the files you can delete the **docs/_autosummary** folder before running ``python setup.py docs``, otherwise you
-   will get numerous warnings when building the documentation. If you want to manually create the **.rst** files then
+   the files you can delete the **docs/_autosummary** folder before running ``python setup.py docs`` to build the
+   documentation, otherwise you will get numerous warnings. If you want to manually create the **.rst** files then
    look in the **docs/_api** folder for examples from other MSL Resources.
-7. Add the new package to the **toctree** of the **Subpackages** section in **docs/_api/msl.equipment.resources.rst**
-   (insert it in the file alphabetically based on the package name). If you forget to do this step then a warning will
-   appear when building the documentation to help remind you to do this step.
-8. Specify that the new MSL Resource class now exists for everyone to use in **docs/resources.rst**. Follow the
+8. Add the new package to the **toctree** of the **Subpackages** section in **docs/_api/msl.equipment.resources.rst**,
+   only if you needed to create a new package in step 2. Insert the name of the new MSL Resource package in the file
+   alphabetically based on the package name. If you forget to do this step then a warning will appear when building
+   the documentation to help remind you to do it.
+9. Specify that the new MSL Resource class now exists for everyone to use in **docs/resources.rst**. Follow the
    template that is used for the other MSL Resources listed in this file.
-9. Create a `pull request`_.
+10. Create a `pull request`_.
 
+.. _style guide: http://msl-package-manager.readthedocs.io/en/latest/developers_guide.html#edit-the-source-code-using-the-style-guide
 .. _fork: https://help.github.com/articles/fork-a-repo/
 .. _repository: https://github.com/MSLNZ/msl-equipment
 .. _pull request: https://help.github.com/articles/creating-a-pull-request-from-a-fork/

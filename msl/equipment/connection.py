@@ -27,6 +27,7 @@ class Connection(object):
         if not isinstance(record, EquipmentRecord):
             raise TypeError('Must pass in an {} object'.format(EquipmentRecord.__name__))
         self._record = record
+        self._exception_handler = MSLConnectionError
 
     @property
     def equipment_record(self):
@@ -72,7 +73,7 @@ class Connection(object):
         """
         r = self.equipment_record
         caller = '{}<{}|{}|{}>\n'.format(self.__class__.__name__, r.manufacturer, r.model, r.serial)
-        raise MSLConnectionError(caller + msg)
+        raise self._exception_handler(caller + msg)
 
     @staticmethod
     def convert_to_enum(item, enum, prefix='', to_upper=False):
@@ -196,3 +197,21 @@ class Connection(object):
             The critical message to log.
         """
         logger.critical(msg, *args, **kwargs)
+
+    def set_exception_handler(self, handler):
+        """Set the exception handler for this connection.
+
+        Parameters
+        ----------
+        handler : :class:`~.exceptions.MSLConnectionError`
+            A subclass of :class:`~.exceptions.MSLConnectionError`
+
+        Raises
+        ------
+        TypeError:
+            If the `handler` is not a subclass of :class:`~.exceptions.MSLConnectionError`
+        """
+        if issubclass(handler, MSLConnectionError):
+            self._exception_handler = handler
+        else:
+            raise TypeError('The exception handler must be a subclass of {}'.format(MSLConnectionError))

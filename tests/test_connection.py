@@ -2,6 +2,7 @@ import enum
 
 import pytest
 
+from msl.equipment import exceptions
 from msl.equipment.connection import Connection
 from msl.equipment.record_types import ConnectionRecord, EquipmentRecord
 
@@ -61,3 +62,21 @@ def test_convert_to_enum():
     assert Connection.convert_to_enum('STarT', EnumTest4, to_upper=True) == EnumTest4.START
     with pytest.raises(ValueError):
         Connection.convert_to_enum('the end', EnumTest4)
+
+
+def test_exception_handler():
+    c = Connection(EquipmentRecord())
+    assert c._exception_handler == exceptions.MSLConnectionError
+
+    # not a class error
+    with pytest.raises(TypeError) as err:
+        c.set_exception_handler(None)
+    assert 'issubclass()' in str(err.value)
+
+    # not a subclass of MSLConnectionError
+    with pytest.raises(TypeError) as err:
+        c.set_exception_handler(IOError)
+    assert 'MSLConnectionError' in str(err.value)
+
+    c.set_exception_handler(exceptions.ThorlabsError)
+    assert c._exception_handler == exceptions.ThorlabsError

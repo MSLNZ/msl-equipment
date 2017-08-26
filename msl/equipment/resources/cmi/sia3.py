@@ -8,6 +8,7 @@ from enum import IntEnum
 
 from msl.equipment import constants
 from msl.equipment.connection_msl import ConnectionSerial
+from msl.equipment.exceptions import CMIError
 
 
 class IntegrationTime(IntEnum):
@@ -56,6 +57,7 @@ class SIA3(ConnectionSerial):
                 'dsr_dtr': False
             }
         ConnectionSerial.__init__(self, record)
+        self.set_exception_handler(CMIError)
 
     def set_integration_time(self, time):
         """Set the integration time (i.e., the gain).

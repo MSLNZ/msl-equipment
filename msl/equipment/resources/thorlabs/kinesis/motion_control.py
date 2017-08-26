@@ -1,10 +1,11 @@
 """
-Base **Thorlabs.MotionControl** class.
+Base ``Thorlabs.MotionControl`` class.
 """
 from ctypes import c_int, byref, create_string_buffer
 
 from msl.loadlib import LoadLibrary
 
+from msl.equipment.exceptions import ThorlabsError
 from msl.equipment.resources.utils import WORD, DWORD
 from msl.equipment.connection_msl import ConnectionSDK
 from .errors import ERROR_CODES, FT_OK
@@ -73,22 +74,25 @@ class MotionControl(ConnectionSDK):
         """
         Base **Thorlabs.MotionControl** class.
 
+        Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
+        method to connect to the equipment.
+
         Parameters
         ----------
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~msl.equipment.database.Database`.
+            A record from an :ref:`equipment_database`.
         api_function : :mod:`.api_functions` 
             An API function list from :mod:`.api_functions` that the subclass 
             is a wrapper around.
             
         Raises
         ------
-        ConnectionError
+        :exc:`.ThorlabsError`
             If a connection to the device cannot be established.
         """
         self._is_open = False
         ConnectionSDK.__init__(self, record, 'cdll')
+        self.set_exception_handler(ThorlabsError)
 
         for item in api_function:
             func = getattr(self.sdk, item[0])
@@ -136,12 +140,12 @@ class MotionControl(ConnectionSDK):
         
         Raises
         ------
-        ConnectionError
+        :exc:`.ThorlabsError`
             If the device list cannot be built. 
         """
         ret = device_manager().TLI_BuildDeviceList()
         if ret != 0:
-            raise ConnectionError('Error building device list')
+            raise ThorlabsError('Error building device list')
         return ret
 
     @staticmethod
@@ -165,7 +169,7 @@ class MotionControl(ConnectionSDK):
 
         Raises
         ------
-        ConnectionError
+        :exc:`.ThorlabsError`
             If there was an error getting the device list. 
         """
         n = MotionControl.SERIAL_NUMBER_BUFFER_SIZE
@@ -176,7 +180,7 @@ class MotionControl(ConnectionSDK):
         else:
             ret = device_manager().TLI_GetDeviceListByTypesExt(buffer, n, ids, len(device_ids))
         if ret != 0:
-            raise ConnectionError('Error getting device list for {}'.format(device_ids))
+            raise ThorlabsError('Error getting device list for {}'.format(device_ids))
         return [sn for sn in buffer.value.decode().split(',') if sn]
 
     @staticmethod
@@ -197,13 +201,13 @@ class MotionControl(ConnectionSDK):
 
         Raises
         ------
-        ConnectionError
+        :exc:`.ThorlabsError`
             If there was an error getting the device information. 
         """
         info = TLI_DeviceInfo()
         ret = device_manager().TLI_GetDeviceInfo(str(serial_number).encode(), byref(info))
         if ret == 0:
-            raise ConnectionError('Error getting device info for {}'.format(serial_number))
+            raise ThorlabsError('Error getting device info for {}'.format(serial_number))
         return info
 
     @staticmethod
@@ -272,7 +276,7 @@ class MotionControl(ConnectionSDK):
 
         Raises
         ------
-        ConnectionError
+        :exc:`.ThorlabsError`
             If not successful.
         """
         firmware_version = DWORD()

@@ -19,13 +19,15 @@ class FilterFlipper(MotionControl):
     MAX_PULSE_WIDTH = 200
 
     def __init__(self, record):
-        """A wrapper around Thorlabs.MotionControl.FilterFlipper
+        """A wrapper around ``Thorlabs.MotionControl.FilterFlipper.dll``.
+
+        Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
+        method to connect to the equipment.
 
         Parameters
         ----------
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~msl.equipment.database.Database`.
+            A record from an :ref:`equipment_database`.
         """
         MotionControl.__init__(self, record, FilterFlipper_FCNS)
 
@@ -34,7 +36,7 @@ class FilterFlipper(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.FF_Open(self._serial)
@@ -67,7 +69,7 @@ class FilterFlipper(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         return self._get_hardware_info(self.sdk.FF_GetHardwareInfo)
@@ -100,7 +102,7 @@ class FilterFlipper(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         if not self.sdk.FF_LoadSettings(self._serial):
@@ -111,7 +113,7 @@ class FilterFlipper(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         if not self.sdk.FF_PersistSettings(self._serial):
@@ -135,7 +137,7 @@ class FilterFlipper(MotionControl):
         
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.FF_Home(self._serial)
@@ -153,7 +155,7 @@ class FilterFlipper(MotionControl):
         
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.FF_MoveToPosition(self._serial, position)
@@ -184,7 +186,7 @@ class FilterFlipper(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         settings = FF_IOSettings()
@@ -196,7 +198,7 @@ class FilterFlipper(MotionControl):
         
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.FF_RequestIOSettings(self._serial)
@@ -226,7 +228,7 @@ class FilterFlipper(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         if transit_time > self.MAX_TRANSIT_TIME or transit_time < self.MIN_TRANSIT_TIME:
@@ -272,7 +274,7 @@ class FilterFlipper(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         if transit_time > self.MAX_TRANSIT_TIME or transit_time < self.MIN_TRANSIT_TIME:
@@ -291,7 +293,7 @@ class FilterFlipper(MotionControl):
         
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.FF_RequestStatus(self._serial)
@@ -322,7 +324,7 @@ class FilterFlipper(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.FF_StartPolling(self._serial, int(milliseconds))
@@ -395,7 +397,7 @@ class FilterFlipper(MotionControl):
         
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.FF_RequestSettings(self._serial)
@@ -438,7 +440,7 @@ class FilterFlipper(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         message_type = WORD()
@@ -461,7 +463,7 @@ class FilterFlipper(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         message_type = WORD()

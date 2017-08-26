@@ -1,11 +1,12 @@
 """
-Wrapper around Thorlabs **FilterWheel102.dll**, v4.0.0.
+Wrapper around Thorlabs ``FilterWheel102.dll``, v4.0.0.
 
 Thorlabs FW102C Series and FW212C Series Motorized Filter Wheels.
 """
 from ctypes import c_char_p, c_int, POINTER, byref, create_string_buffer
 from enum import IntEnum
 
+from msl.equipment.exceptions import ThorlabsError
 from msl.equipment.connection_msl import ConnectionSDK
 
 ERROR_CODES = {
@@ -44,22 +45,26 @@ class TriggerMode(IntEnum):
 class FilterWheelXX2C(ConnectionSDK):
 
     def __init__(self, record):
-        """Wrapper around Thorlabs **FilterWheel102.dll**, v4.0.0.
+        """Wrapper around Thorlabs ``FilterWheel102.dll``, v4.0.0.
 
         Connects to the Thorlabs FW102C Series and FW212C Series Motorized Filter Wheels.
         
         A 64-bit version of the library can be download from here_ and it is 
         located in **AppNotes_FW102C/LabVIEW/Thorlabs_FW102C/Library/FilterWheel102_win64.dll**.
 
-        The :obj:`record.connection.properties <msl.equipment.record_types.ConnectionRecord.properties>`
-        dictionary for a FilterWheelXX2C device supports the following key-value pairs::
-            
+        The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
+        for a FilterWheelXX2C connection supports the following key-value pairs in the
+        :ref:`connection_database`::
+
             'port': str,  # mandatory, example 'COM3'
             'baud_rate': int,  # optional, default is 115200 
             'timeout': int,  # optional, default is 10
         
         .. _here:
             https://www.thorlabs.com/software_pages/viewsoftwarepage.cfm?code=FW102C&viewtab=2
+
+        Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
+        method to connect to the equipment.
 
         Parameters
         ----------
@@ -68,11 +73,12 @@ class FilterWheelXX2C(ConnectionSDK):
 
         Raises
         ------
-        ConnectionError
+        :exc:`.ThorlabsError`
             If a connection to the filter wheel cannot be established.
         """
         self._handle = None
         ConnectionSDK.__init__(self, record, 'cdll')
+        self.set_exception_handler(ThorlabsError)
 
         self.sdk.GetPorts.restype = c_int
         self.sdk.GetPorts.argtypes = [c_char_p]
@@ -328,7 +334,7 @@ class FilterWheelXX2C(ConnectionSDK):
         Parameters
         ----------
         port : :obj:`str`
-            The port to be checked, e.g. ``'COM3'``.
+            The port to be checked, e.g. ``COM3``.
 
         Returns
         -------

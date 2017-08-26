@@ -25,13 +25,15 @@ from .enums import (
 class KCubeSolenoid(MotionControl):
 
     def __init__(self, record):
-        """A wrapper around Thorlabs.MotionControl.KCube.Solenoid
+        """A wrapper around ``Thorlabs.MotionControl.KCube.Solenoid.dll``.
+
+        Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
+        method to connect to the equipment.
 
         Parameters
         ----------
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register**
-            :class:`~msl.equipment.database.Database`.
+            A record from an :ref:`equipment_database`.
         """
         MotionControl.__init__(self, record, KCube_Solenoid_FCNS)
 
@@ -85,7 +87,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         on_time = c_uint()
@@ -104,7 +106,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         cycle_params = SC_CycleParameters()
@@ -131,7 +133,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self._get_hardware_info(self.sdk.SC_GetHardwareInfo)
@@ -146,7 +148,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         info = TLI_HardwareInformation()
@@ -192,7 +194,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         return self.get_mmi_params_ext()
@@ -207,7 +209,7 @@ class KCubeSolenoid(MotionControl):
     #
     #     Raises
     #     ------
-    #     ConnectionError
+    #     :exc:`~msl.equipment.exceptions.ThorlabsError`
     #         If not successful.
     #     """
     #     mmi_params = KSC_MMIParams()
@@ -230,7 +232,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         intensity = c_int16()
@@ -253,7 +255,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         message_type = WORD()
@@ -332,7 +334,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         mode1 = c_int16()
@@ -353,7 +355,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         params = KSC_TriggerConfig()
@@ -388,7 +390,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         if not self.sdk.SC_LoadSettings(self._serial):
@@ -409,7 +411,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.SC_Open(self._serial)
@@ -419,7 +421,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         if not self.sdk.SC_PersistSettings(self._serial):
@@ -450,7 +452,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.SC_RequestCycleParams(self._serial)
@@ -460,7 +462,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.SC_RequestDigitalOutputs(self._serial)
@@ -470,7 +472,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.SC_RequestHubBay(self._serial)
@@ -480,7 +482,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.SC_RequestLEDswitches(self._serial)
@@ -490,7 +492,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.SC_RequestMMIParams(self._serial)
@@ -500,7 +502,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.SC_RequestOperatingMode(self._serial)
@@ -510,7 +512,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.SC_RequestOperatingState(self._serial)
@@ -522,7 +524,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.SC_RequestSettings(self._serial)
@@ -536,7 +538,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.SC_RequestStatus(self._serial)
@@ -550,7 +552,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.SC_RequestStatusBits(self._serial)
@@ -560,7 +562,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.SC_RequestTriggerConfigParams(self._serial)
@@ -584,7 +586,7 @@ class KCubeSolenoid(MotionControl):
         ------
         ValueError
             If any of the input parameters are out of range.
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         if on_time > 100000000 or on_time < 250:
@@ -605,7 +607,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         if not isinstance(cycle_params, SC_CycleParameters):
@@ -622,7 +624,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.SC_SetDigitalOutputs(self._serial, outputs_bits)
@@ -638,7 +640,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.SC_SetLEDswitches(self._serial, led_switches)
@@ -657,7 +659,7 @@ class KCubeSolenoid(MotionControl):
         ------
         ValueError
             If the value of `display_intensity` is out of range.
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         if display_intensity > 100 or display_intensity < 0:
@@ -675,7 +677,7 @@ class KCubeSolenoid(MotionControl):
     #
     #     Raises
     #     ------
-    #     ConnectionError
+    #     :exc:`~msl.equipment.exceptions.ThorlabsError`
     #         If not successful.
     #     """
     #     if not isinstance(mmi_params, KSC_MMIParams):
@@ -700,7 +702,7 @@ class KCubeSolenoid(MotionControl):
         ------
         ValueError
             If any of the input parameters are out of range.
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         if intensity > 100 or intensity < 0:
@@ -722,7 +724,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         m = self.convert_to_enum(mode, SC_OperatingModes, prefix='SC_')
@@ -739,7 +741,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         s = self.convert_to_enum(state, SC_OperatingStates, prefix='SC_')
@@ -765,7 +767,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         m1 = self.convert_to_enum(mode1, KSC_TriggerPortMode, prefix='KSC_')
@@ -784,7 +786,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         if not isinstance(trigger_config_params, KSC_TriggerConfig):
@@ -803,7 +805,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.SC_StartPolling(self._serial, int(milliseconds))
@@ -841,7 +843,7 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ConnectionError
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         message_type = WORD()

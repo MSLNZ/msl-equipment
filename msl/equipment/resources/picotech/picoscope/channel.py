@@ -10,23 +10,23 @@ class PicoScopeChannel(object):
                  bandwidth, max_adu_value):
         """Contains the information about a PicoScope channel.
         
-        This class is used by :class:`.picoscope.PicoScope` and is not meant to be 
+        This class is used by :class:`~.picoscope.PicoScope` and is not meant to be
         called directly.
         
         Parameters
         ----------
         channel : :obj:`enum.IntEnum`
-            The channel number.
+            The ``PSX000xChannel`` enum.
         enabled : :obj:`bool`
             Whether the channel is enabled.
         coupling : :obj:`enum.IntEnum`
-            The coupling, e.g. AC or DC. 
+            The ``PSX000xCoupling`` enum, e.g. AC or DC.
         voltage_range : :obj:`float`
             The voltage range, in Volts.
         voltage_offset : :obj:`float`
             The voltage offset, in Volts.
         bandwidth : :obj:`enum.IntEnum` or :obj:`None`
-            The bandwidth used, if the PicoScope supports a ``BandwidthLimiter``.
+            The ``PSX000xBandwidthLimiter`` enum.
         max_adu_value : :obj:`int`
             The maximum analog-to-digital unit.
         """
@@ -45,7 +45,7 @@ class PicoScopeChannel(object):
 
     @property
     def channel(self):
-        """:obj:`enum.IntEnum`: The channel number."""
+        """:obj:`enum.IntEnum`: The ``PSX000xChannel`` enum."""
         return self._channel
 
     @property
@@ -55,7 +55,7 @@ class PicoScopeChannel(object):
 
     @property
     def coupling(self):
-        """:obj:`enum.IntEnum`: The coupling, e.g. AC or DC."""
+        """:obj:`enum.IntEnum`: The ``PSX000xCoupling`` enum, e.g. AC or DC."""
         return self._coupling
 
     @property
@@ -70,13 +70,12 @@ class PicoScopeChannel(object):
 
     @property
     def bandwidth(self):
-        """ :obj:`enum.IntEnum` or :obj:`None`: The bandwidth used, if 
-        the PicoScope supports a ``BandwidthLimiter``."""
+        """ :obj:`enum.IntEnum` or :obj:`None`: The ``PSX000xBandwidthLimiter`` enum."""
         return self._bandwidth
 
     @property
     def volts_per_adu(self):
-        """:obj:`float`: The connversion factor to convert ADU to volts"""
+        """:obj:`float`: The conversion factor to convert ADU to volts"""
         return self._volts_per_adu
 
     @property

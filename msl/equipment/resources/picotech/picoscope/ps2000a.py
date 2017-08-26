@@ -48,11 +48,13 @@ class PicoScope2000A(PicoScopeApi):
     def __init__(self, record):
         """A wrapper around the PicoScope ps2000a SDK.
 
+        Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
+        method to connect to the equipment.
+
         Parameters
         ----------
-        record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~msl.equipment.database.Database`.            
+        record : :class:`~.EquipmentRecord`
+            A record from an :ref:`equipment_database`.
         """
         PicoScopeApi.__init__(self, record, ps2000aApi_funcptrs)
 
@@ -66,7 +68,7 @@ class PicoScope2000A(PicoScopeApi):
         """
         This function will set the individual Digital channels trigger directions. Each trigger
         direction consists of a channel name and a direction. If the channel is not included in
-        the array of :class:`~.picoscope_structs.PS2000ADigitalChannelDirections` the driver 
+        the array of :class:`~.structs.PS2000ADigitalChannelDirections` the driver
         assumes the digital channel's trigger direction is ``PS2000A_DIGITAL_DONT_CARE``.
         """
         return self.sdk.ps2000aSetTriggerDigitalPortProperties(self._handle, byref(directions), len(directions))

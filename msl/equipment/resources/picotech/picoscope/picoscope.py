@@ -10,6 +10,7 @@ c_enum = c_uint32
 from msl.loadlib import IS_WINDOWS, LoadLibrary
 
 from msl.equipment.connection_msl import ConnectionSDK
+from msl.equipment.exceptions import PicoTechError
 from .channel import PicoScopeChannel
 from . import structs
 from . import enums
@@ -44,7 +45,7 @@ def enumerate_units():
     if result != 0:
         msg = 'Cannot enumerate units. This function does not function properly if ' \
               'you opened a connection to a PicoScope already'
-        raise ConnectionError(msg)
+        raise PicoTechError(msg)
     return string_at(addressof(serials)).decode('utf-8').strip().split(',')
 
 
@@ -53,14 +54,10 @@ class PicoScope(ConnectionSDK):
     def __init__(self, record, func_ptrs):
         """Use the PicoScope SDK to communicate with the oscilloscope.
 
-        Do not instantiate this class directly. Use the factory method, 
-        :obj:`msl.equipment.factory.connect`, or the `record` object itself, 
-        :obj:`record.connect() <.record_types.EquipmentRecord.connect>`,
-        to connect to the equipment.
-        
-        The :obj:`record.connection.properties <msl.equipment.record_types.ConnectionRecord.properties>`
-        dictionary for a PicoScope supports the following key-value pairs::
-        
+        The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
+        for a PicoScope connection supports the following key-value pairs in the
+        :ref:`connection_database`::
+
             'open_unit': bool,  # default is True 
             'open_unit_async': bool,  # default is False
             'auto_select_power': bool  # for PicoScopes that can be powered by an AC adaptor or a USB cable, default is True
@@ -69,17 +66,20 @@ class PicoScope(ConnectionSDK):
         The SDK version that was initially used to create this base class and the PicoScope
         subclasses was *Pico Technology SDK 64-bit v10.6.10.24*
 
+        Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
+        method to connect to the equipment.
+
         Parameters
         ----------
-        record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~.database.Database`.            
+        record : :class:`~.EquipmentRecord`
+            A record from an :ref:`equipment_database`.
         func_ptrs : :mod:`.functions`
             The appropriate function-pointer list for the SDK. 
         """
         self._handle = None
         libtype = 'windll' if IS_WINDOWS else 'cdll'
         ConnectionSDK.__init__(self, record, libtype)
+        self.set_exception_handler(PicoTechError)
 
         # check that the Python class matches the SDK
         self.SDK_FILENAME = os.path.splitext(os.path.basename(record.connection.address.split('::')[2]))[0]
@@ -170,7 +170,7 @@ class PicoScope(ConnectionSDK):
 
     @property
     def channel(self):
-        """:obj:`dict` of :class:`.channel.PicoScopeChannel`: The information about each channel
+        """:obj:`dict` of :class:`~.channel.PicoScopeChannel`: The information about each channel
         """
         return self._channels_dict
 
@@ -210,8 +210,9 @@ class PicoScope(ConnectionSDK):
 
         Parameters
         ----------
-        info : :class:`~.picoscope_enums.PicoScopeInfo`, optional
+        info : :class:`~.enums.PicoScopeInfoApi`, :class:`~.enums.PS2000Info` or :class:`~.enums.PS3000Info`, optional
             An enum value, or if :obj:`None` then request all information from the PicoScope.
+            The enum depends on the model number of the PicoScope that you are connected to.
         include_name : :obj:`bool`, optional
             If :obj:`True` then includes the enum member name as a prefix.
             For example, return ``CAL_DATE: 09Aug16`` if :obj:`True` else ``09Aug16``.
@@ -443,7 +444,7 @@ class PicoScope(ConnectionSDK):
 
         Raises
         ------
-        ConnectionError
+        :exc:`.PicoTechError`
             If the timebase or duration is invalid.
         """
         if len(self._channels_dict) == 0:
@@ -544,8 +545,9 @@ class PicoScope(ConnectionSDK):
         """
         This function sets up pulse width qualification, which can be used on its own for pulse
         width triggering or combined with other triggering to produce more complex triggers.
-        The pulse width qualifier is set by defining a list of  :mod:`~.picoscope_structs.` 
-        ``PwqConditions``` structures.
+        The pulse width qualifier is set by defining a list of ``PwqConditions`` structures,
+        which are found in the :mod:`~msl.equipment.resources.picotech.picoscope.structs`
+        module.
         """
         return self.SetPulseWidthQualifier(self._handle, byref(conditions), len(conditions),
                                            direction, lower, upper, pulse_width_type)

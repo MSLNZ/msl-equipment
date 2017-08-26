@@ -42,11 +42,13 @@ class PicoScope6000(PicoScopeApi):
     def __init__(self, record):
         """A wrapper around the PicoScope ps6000 SDK.
 
+        Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
+        method to connect to the equipment.
+
         Parameters
         ----------
-        record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~msl.equipment.database.Database`.            
+        record : :class:`~.EquipmentRecord`
+            A record from an :ref:`equipment_database`.
         """
         PicoScopeApi.__init__(self, record, ps6000Api_funcptrs)
 
@@ -65,10 +67,10 @@ class PicoScope6000(PicoScopeApi):
         """
         This function tells the driver where to find the buffers for aggregated data for each
         waveform in rapid block mode. The number of waveforms captured is determined by
-        the ``nCaptures`` argument sent to :meth:`set_no_of_captures`. Call one of the GetValues
-        functions to retrieve the data after capture. If you do not need two buffers, because
-        you are not using aggregate mode, then you can optionally use
-        :meth:`set_data_buffer_bulk` instead.
+        the ``nCaptures`` argument sent to :meth:`~.PicoScopeApi.set_no_of_captures`. Call
+        one of the GetValues functions to retrieve the data after capture. If you do not need
+        two buffers, because you are not using aggregate mode, then you can optionally use
+        :meth:`~.PicoScopeApi.set_data_buffer_bulk` instead.
         """
         buffer_max = c_int16()
         buffer_min = c_int16()

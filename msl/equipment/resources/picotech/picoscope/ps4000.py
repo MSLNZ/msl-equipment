@@ -38,11 +38,13 @@ class PicoScope4000(PicoScopeApi):
     def __init__(self, record):
         """A wrapper around the PicoScope ps4000 SDK.
 
+        Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
+        method to connect to the equipment.
+
         Parameters
         ----------
-        record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~msl.equipment.database.Database`.            
+        record : :class:`~.EquipmentRecord`
+            A record from an :ref:`equipment_database`.
         """
         PicoScopeApi.__init__(self, record, ps4000Api_funcptrs)
 
@@ -114,7 +116,7 @@ class PicoScope4000(PicoScopeApi):
         """
         This function opens a scope device selected by serial number without blocking the
         calling thread. You can find out when it has finished by periodically calling
-        :meth:`open_unit_progress` until that function returns a non-zero value.
+        :meth:`~.PicoScopeApi.open_unit_progress` until that function returns a non-zero value.
         """
         status = c_int16()
         serial = c_int8()
@@ -139,7 +141,7 @@ class PicoScope4000(PicoScopeApi):
         This function tells the oscilloscope to start collecting data in streaming mode and with
         a specified data reduction mode. When data has been collected from the device it is
         aggregated and the values returned to the application. Call
-        :meth:`get_streaming_latest_values` to retrieve the data.
+        :meth:`~.PicoScopeApi.get_streaming_latest_values` to retrieve the data.
         """
         sample_interval = c_uint32()
         self.sdk.ps4000RunStreamingEx(self._handle, byref(sample_interval), sample_interval_time_units,

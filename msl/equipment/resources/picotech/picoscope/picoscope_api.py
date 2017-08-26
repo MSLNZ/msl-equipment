@@ -21,16 +21,13 @@ class PicoScopeApi(PicoScope):
         Use the PicoScope SDK to communicate with the ps2000a, ps3000a, ps4000, ps4000a, 
         ps5000, ps5000a and ps6000 oscilloscopes.
 
-        Do not instantiate this class directly. Use the factory method, 
-        :obj:`msl.equipment.factory.connect`, or the `record` object itself, 
-        :obj:`record.connect() <msl.equipment.record_types.EquipmentRecord.connect>`,
-        to connect to the equipment.
+        Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
+        method to connect to the equipment.
 
         Parameters
         ----------
-        record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~msl.equipment.database.Database`.            
+        record : :class:`~.EquipmentRecord`
+            A record from an :ref:`equipment_database`.
         func_ptrs : :mod:`.functions`
             The appropriate function-pointer list for the SDK. 
         """
@@ -102,7 +99,7 @@ class PicoScopeApi(PicoScope):
     def flash_led(self, action):
         """
         This function flashes the LED on the front of the scope without blocking the calling
-        thread. Calls to :meth:`run_streaming` and :meth:`run_block` cancel any flashing
+        thread. Calls to :meth:`~.PicoScope.run_streaming` and :meth:`~.PicoScope.run_block` cancel any flashing
         started by this function. It is not possible to set the LED to be constantly illuminated,
         as this state is used to indicate that the scope has not been initialized.
         """
@@ -175,8 +172,8 @@ class PicoScopeApi(PicoScope):
     def get_no_of_captures(self):
         """
         This function finds out how many captures are available in rapid block mode after
-        :meth:`run_block` has been called when either the collection completed or the
-        collection of waveforms was interrupted by calling :meth:`stop`. The returned value
+        :meth:`~.PicoScope.run_block` has been called when either the collection completed or the
+        collection of waveforms was interrupted by calling :meth:`~.PicoScope.stop`. The returned value
         (``nCaptures``) can then be used to iterate through the number of segments using
         :meth:`get_values`, or in a single call to :meth:`get_values_bulk` where it is used
         to calculate the ``toSegmentIndex`` parameter.
@@ -190,8 +187,8 @@ class PicoScopeApi(PicoScope):
     def get_num_of_processed_captures(self):
         """
         This function finds out how many captures in rapid block mode have been processed
-        after :meth:`run_block` has been called when either the collection completed or the
-        collection of waveforms was interrupted by calling :meth:`stop`. The returned value
+        after :meth:`~.PicoScope.run_block` has been called when either the collection completed or the
+        collection of waveforms was interrupted by calling :meth:`~.PicoScope.stop`. The returned value
         (``nCaptures``) can then be used to iterate through the number of segments using
         :meth:`get_values`, or in a single call to :meth:`get_values_bulk` where it is used
         to calculate the ``toSegmentIndex`` parameter.        
@@ -205,8 +202,8 @@ class PicoScopeApi(PicoScope):
     def get_streaming_latest_values(self, lp_ps):
         """
         This function instructs the driver to return the next block of values to your
-        :meth:`streaming_ready` callback. You must have previously called
-        :meth:`run_streaming` beforehand to set up streaming.        
+        :mod:`StreamingReady callback <msl.equipment.resources.picotech.picoscope.callbacks>`.
+        You must have previously called :meth:`~.PicoScope.run_streaming` beforehand to set up streaming.
         """
         p_parameter = c_void_p()
         self.GetStreamingLatestValues(self._handle, lp_ps, byref(p_parameter))
@@ -218,7 +215,7 @@ class PicoScopeApi(PicoScope):
         
         This function calculates the sampling rate and maximum number of samples for a
         given timebase under the specified conditions. The result will depend on the number of
-        channels enabled by the last call to :meth:`set_channel`.
+        channels enabled by the last call to :meth:`~.PicoScope.set_channel`.
         
         The `oversample` argument is only used by ps4000, ps5000 and ps6000.
         """
@@ -308,8 +305,8 @@ class PicoScopeApi(PicoScope):
 
         Parameters
         ----------
-        lp_data_ready : ctypes callback function
-            A ``DataReady`` :mod:`callback <msl.equipment.resources.picotech.picoscope.callbacks>` function.
+        lp_data_ready : :mod:`callback <msl.equipment.resources.picotech.picoscope.callbacks>`
+            A :mod:`DataReady callback <msl.equipment.resources.picotech.picoscope.callbacks>` function.
         num_samples : :obj:`int` or :obj:`None`
             The number of samples required. If :obj:`None` then automatically determine the 
             number of samples to retrieve.
@@ -356,10 +353,10 @@ class PicoScopeApi(PicoScope):
     def get_values_overlapped(self, start_index, down_sample_ratio, down_sample_ratio_mode, segment_index):
         """
         This function allows you to make a deferred data-collection request, which will later be
-        executed, and the arguments validated, when you call :meth:`run_block` in block
+        executed, and the arguments validated, when you call :meth:`~.PicoScope.run_block` in block
         mode. The advantage of this function is that the driver makes contact with the scope
-        only once, when you call :meth:`run_block`, compared with the two contacts that
-        occur when you use the conventional :meth:`run_block`, :meth:`get_values` calling
+        only once, when you call :meth:`~.PicoScope.run_block`, compared with the two contacts that
+        occur when you use the conventional :meth:`~.PicoScope.run_block`, :meth:`get_values` calling
         sequence. This slightly reduces the dead time between successive captures in block
         mode.
         
@@ -375,10 +372,10 @@ class PicoScopeApi(PicoScope):
                                    from_segment_index, to_segment_index):
         """
         This function allows you to make a deferred data-collection request, which will later be
-        executed, and the arguments validated, when you call :meth:`run_block` in rapid
+        executed, and the arguments validated, when you call :meth:`~.PicoScope.run_block` in rapid
         block mode. The advantage of this method is that the driver makes contact with the
-        scope only once, when you call :meth:`run_block`, compared with the two contacts
-        that occur when you use the conventional :meth:`run_block`,
+        scope only once, when you call :meth:`~.PicoScope.run_block`, compared with the two contacts
+        that occur when you use the conventional :meth:`~.PicoScope.run_block`,
         :meth:`get_values_bulk` calling sequence. This slightly reduces the dead time
         between successive captures in rapid block mode.
         
@@ -441,8 +438,8 @@ class PicoScopeApi(PicoScope):
     def _is_ready(self):
         """
         This function may be used instead of a callback function to receive data from
-        :meth:`run_block`. To use this method, pass a NULL pointer as the lpReady
-        argument to :meth:`run_block`. You must then poll the driver to see if it has finished
+        :meth:`~.PicoScope.run_block`. To use this method, pass a NULL pointer as the lpReady
+        argument to :meth:`~.PicoScope.run_block`. You must then poll the driver to see if it has finished
         collecting the requested samples.
         """
         ready = c_int16()
@@ -474,7 +471,7 @@ class PicoScopeApi(PicoScope):
     def no_of_streaming_values(self):
         """
         This function returns the number of samples available after data collection in
-        streaming mode. Call it after calling :meth:`stop`.
+        streaming mode. Call it after calling :meth:`~.PicoScope.stop`.
         """
         no_of_values = c_uint32()
         self.NoOfStreamingValues(self._handle, byref(no_of_values))
@@ -974,7 +971,7 @@ class PicoScopeApi(PicoScope):
     def sig_gen_arbitrary_min_max_values(self):
         """
         This function returns the range of possible sample values and waveform buffer sizes
-        that can be supplied to :meth:`set_sign_gen_arbitrary` for setting up the arbitrary
+        that can be supplied to :meth:`set_sig_gen_arbitrary` for setting up the arbitrary
         waveform generator (AWG).
         """
         min_value = c_int16()
@@ -1030,9 +1027,10 @@ class PicoScopeApi(PicoScope):
     def set_trigger_channel_conditions(self, conditions, info='clear'):
         """
         This function sets up trigger conditions on the scope's inputs. The trigger is defined by
-        one or more :mod:`~.picoscope_structs` ``TriggerConditions`` structures that are then ORed
-        together. Each structure is itself the AND of the states of one or more of the inputs.
-        This AND-OR logic allows you to create any possible Boolean function of the scope's
+        one or more ``TriggerConditions`` structures, which are found in the
+        :mod:`~msl.equipment.resources.picotech.picoscope.structs` module, that are then ``ORed``
+        together. Each structure is itself the ``AND`` of the states of one or more of the inputs.
+        This ``AND-OR`` logic allows you to create any possible Boolean function of the scope's
         inputs.
         
         The `info` parameter is only used for ps4000a and it is a ``PS4000AConditionsInfo`` enum.
@@ -1051,7 +1049,7 @@ class PicoScopeApi(PicoScope):
 
         Parameters
         ----------
-        channel_properties : :obj:`list` of :mod:`.picoscope_structs` 
+        channel_properties : :obj:`list` of ``TriggerChannelProperties`` :mod:`~msl.equipment.resources.picotech.picoscope.structs`
             A list of ``TriggerChannelProperties`` structures describing the requested properties.
         timeout : :obj:`float`
             The time, in seconds, for which the scope device will wait before collecting data 

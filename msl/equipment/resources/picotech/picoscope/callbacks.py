@@ -14,36 +14,59 @@ else:
     from ctypes import CFUNCTYPE
     FUNCTYPE = CFUNCTYPE
 
-# since all BlockReady callbacks have the same function signature, create a generic callback function
 BlockReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_void_p)
+"""All BlockReady callbacks have the same function signature, so create a generic BlockReady callback."""
 
 ps2000aBlockReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_void_p)
+"""ps2000aBlockReady callback"""
 ps3000aBlockReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_void_p)
+"""ps3000aBlockReady callback"""
 ps4000BlockReady  = FUNCTYPE(None, c_int16, PICO_STATUS, c_void_p)
+"""ps4000BlockReady callback"""
 ps4000aBlockReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_void_p)
+"""ps4000aBlockReady callback"""
 ps5000BlockReady  = FUNCTYPE(None, c_int16, PICO_STATUS, c_void_p)
+"""ps5000BlockReady callback"""
 ps5000aBlockReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_void_p)
+"""ps5000aBlockReady callback"""
 ps6000BlockReady  = FUNCTYPE(None, c_int16, PICO_STATUS, c_void_p)
+"""ps6000BlockReady callback"""
 
 ps2000aStreamingReady = FUNCTYPE(None, c_int16, c_int32, c_uint32, c_int16, c_uint32, c_int16, c_int16, c_void_p)
+"""ps2000aStreamingReady callback"""
 ps3000aStreamingReady = FUNCTYPE(None, c_int16, c_int32, c_uint32, c_int16, c_uint32, c_int16, c_int16, c_void_p)
+"""ps3000aStreamingReady callback"""
 ps4000StreamingReady  = FUNCTYPE(None, c_int16, c_int32, c_uint32, c_int16, c_uint32, c_int16, c_int16, c_void_p)
+"""ps4000StreamingReady callback"""
 ps4000aStreamingReady = FUNCTYPE(None, c_int16, c_int32, c_uint32, c_int16, c_uint32, c_int16, c_int16, c_void_p)
+"""ps4000aStreamingReady callback"""
 ps5000StreamingReady  = FUNCTYPE(None, c_int16, c_int32, c_uint32, c_int16, c_uint32, c_int16, c_int16, c_void_p)
+"""ps5000StreamingReady callback"""
 ps5000aStreamingReady = FUNCTYPE(None, c_int16, c_int32, c_uint32, c_int16, c_uint32, c_int16, c_int16, c_void_p)
+"""ps5000aStreamingReady callback"""
 ps6000StreamingReady  = FUNCTYPE(None, c_int16, c_uint32, c_uint32, c_int16, c_uint32, c_int16, c_int16, c_void_p)
+"""ps6000StreamingReady callback"""
 
 ps2000aDataReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_uint32, c_int16, c_void_p)
+"""ps2000aDataReady callback"""
 ps3000aDataReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_uint32, c_int16, c_void_p)
-ps4000aDataReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_uint32, c_int16, c_void_p)
-ps5000aDataReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_uint32, c_int16, c_void_p)
-ps6000DataReady  = FUNCTYPE(None, c_int16, PICO_STATUS, c_uint32, c_int16, c_void_p)
+"""ps3000aDataReady callback"""
 ps4000DataReady  = FUNCTYPE(None, c_int16, c_int32, c_int16, c_uint32, c_int16, c_void_p)
+"""ps4000DataReady callback"""
+ps4000aDataReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_uint32, c_int16, c_void_p)
+"""ps4000aDataReady callback"""
 ps5000DataReady  = FUNCTYPE(None, c_int16, c_int32, c_int16, c_uint32, c_int16, c_void_p)
+"""ps5000DataReady callback"""
+ps5000aDataReady = FUNCTYPE(None, c_int16, PICO_STATUS, c_uint32, c_int16, c_void_p)
+"""ps5000aDataReady callback"""
+ps6000DataReady  = FUNCTYPE(None, c_int16, PICO_STATUS, c_uint32, c_int16, c_void_p)
+"""ps6000DataReady callback"""
 
 PS3000_CALLBACK_FUNC = FUNCTYPE(None, POINTER(c_int16), c_int16)
+"""PS3000_CALLBACK_FUNC callback"""
 
 GetOverviewBuffersMaxMin = FUNCTYPE(None, POINTER(POINTER(c_int16)), c_int16, c_uint32, c_int16, c_int16, c_uint32)
+"""GetOverviewBuffersMaxMin callback"""
 
 CALLBACK_NAMES = [
     'GetOverviewBuffersMaxMin',

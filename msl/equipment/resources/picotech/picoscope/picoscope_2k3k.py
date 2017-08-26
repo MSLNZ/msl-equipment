@@ -3,6 +3,7 @@ Base class for the ps2000 and ps3000 PicoScopes.
 """
 from ctypes import c_int16, c_int32, c_uint32, c_double, byref
 
+from msl.equipment.exceptions import PicoTechError
 from .enums import PS2000Info
 from .picoscope import PicoScope
 from .errors import ERROR_CODES
@@ -13,16 +14,13 @@ class PicoScope2k3k(PicoScope):
     def __init__(self, record, func_ptrs):
         """Use the PicoScope SDK to communicate with ps2000 and ps3000 oscilloscopes.        
 
-        Do not instantiate this class directly. Use the factory method, 
-        :obj:`msl.equipment.factory.connect`, or the `record` object itself, 
-        :obj:`record.connect() <.record_types.EquipmentRecord.connect>`,
-        to connect to the equipment.
+        Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
+        method to connect to the equipment.
 
         Parameters
         ----------
-        record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~.database.Database`.            
+        record : :class:`~.EquipmentRecord`
+            A record from an :ref:`equipment_database`.
         func_ptrs : :mod:`.functions`
             The appropriate function-pointer list for the SDK. 
         """
@@ -40,7 +38,7 @@ class PicoScope2k3k(PicoScope):
         elif open_unit_async:
             self.open_unit_async()
 
-        raise ConnectionError('The {} class has not yet been tested with a PicoScope'.format(self.__class__.__name__))
+        raise PicoTechError('The {} class has not yet been tested with a PicoScope'.format(self.__class__.__name__))
 
     def errcheck_zero(self, result, func, args):
         """If the SDK function returns 0 then raise an exception."""
@@ -172,7 +170,7 @@ class PicoScope2k3k(PicoScope):
     def get_timebase(self, timebase, no_of_samples, oversample=0):
         """
         This function discovers which timebases are available on the oscilloscope. You should
-        set up the channels using :meth:`set_channel` and, if required, ETS mode using
+        set up the channels using :meth:`~.PicoScope.set_channel` and, if required, ETS mode using
         :meth:`set_ets` first. Then call this function with increasing values of timebase,
         starting from 0, until you find a timebase with a sampling interval and sample count
         close enough to your requirements.
@@ -189,7 +187,7 @@ class PicoScope2k3k(PicoScope):
     def get_times_and_values(self, time_units, no_of_values):
         """
         This function is used to get values and times in block mode after calling
-        :meth:`run_block`.
+        :meth:`~.PicoScope.run_block`.
         """
         times = c_int32()
         buffer_a = c_int16()
@@ -204,7 +202,7 @@ class PicoScope2k3k(PicoScope):
     def get_values(self, num_values):
         """
         This function is used to get values in compatible streaming mode after calling
-        :meth:`run_streaming`, or in block mode after calling :meth:`run_block`.
+        :meth:`~.PicoScope.run_streaming`, or in block mode after calling :meth:`~.PicoScope.run_block`.
         """
         buffer_a = c_int16()
         buffer_b = c_int16()
@@ -298,8 +296,8 @@ class PicoScope2k3k(PicoScope):
         """
         return self.RunStreaming(self._handle, sample_interval_ms, max_samples, windowed)
 
-    def _run_streaming_ns(self, sample_interval, time_units, max_samples, auto_stop, no_of_samples_per_aggregate,
-                          overview_buffer_size):
+    def run_streaming_ns(self, sample_interval, time_units, max_samples, auto_stop, no_of_samples_per_aggregate,
+                         overview_buffer_size):
         """
         This function tells the scope unit to start collecting data in fast streaming mode .
         The function returns immediately without waiting for data to be captured. After calling
@@ -358,7 +356,8 @@ class PicoScope2k3k(PicoScope):
     def set_adv_trigger_channel_conditions(self, conditions):
         """
         This function sets up trigger conditions on the scope's inputs. The trigger is set up by
-        defining a list of :mod:`~.picoscope_structs` ``TriggerConditions`` structures. Each structure 
-        is the AND of the states of one scope input.
+        defining a list of ``TriggerConditions`` structures, which are found in the
+        :mod:`~msl.equipment.resources.picotech.picoscope.structs` module. Each structure
+        is the ``AND`` of the states of one scope input.
         """
         return self.SetAdvTriggerChannelConditions(self._handle, byref(conditions), len(conditions))

@@ -46,11 +46,13 @@ class PicoScope3000(PicoScope2k3k):
     def __init__(self, record):
         """A wrapper around the PicoScope ps3000 SDK.
 
+        Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
+        method to connect to the equipment.
+
         Parameters
         ----------
-        record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~msl.equipment.database.Database`.            
+        record : :class:`~.EquipmentRecord`
+            A record from an :ref:`equipment_database`.
         """
         PicoScope2k3k.__init__(self, record, ps3000_funcptrs)
 

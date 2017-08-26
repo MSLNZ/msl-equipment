@@ -57,11 +57,13 @@ class PicoScope3000A(PicoScopeApi):
     def __init__(self, record):
         """A wrapper around the PicoScope ps3000a SDK.
 
+        Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
+        method to connect to the equipment.
+
         Parameters
         ----------
-        record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~msl.equipment.database.Database`.            
+        record : :class:`~.EquipmentRecord`
+            A record from an :ref:`equipment_database`.
         """
         PicoScopeApi.__init__(self, record, ps3000aApi_funcptrs)
 
@@ -70,7 +72,7 @@ class PicoScope3000A(PicoScopeApi):
         This function returns the maximum number of cycles and maximum interleaving factor
         that can be used for the selected scope device in ETS mode. These values are the
         upper limits for the ``etsCycles`` and ``etsInterleave`` arguments supplied to
-        :meth:`set_ets`.
+        :meth:`~.PicoScopeApi.set_ets`.
         """
         ets_cycles = c_int16()
         ets_interleave = c_int16()
@@ -80,8 +82,10 @@ class PicoScope3000A(PicoScopeApi):
     def get_trigger_info_bulk(self, from_segment_index, to_segment_index):
         """
         This function returns trigger information in rapid block mode.
-        
-        Populates the :class:`~.picoscope_structs.PS3000ATriggerInfo` structure.
+
+        Returns
+        -------
+        The :class:`~.structs.PS3000ATriggerInfo` structure.
         """
         trigger_info = PS3000ATriggerInfo()
         self.sdk.ps3000aGetTriggerInfoBulk(self._handle, byref(trigger_info), from_segment_index, to_segment_index)
@@ -91,7 +95,7 @@ class PicoScope3000A(PicoScopeApi):
         """
         This function will set the individual digital channels' pulse-width trigger directions.
         Each trigger direction consists of a channel name and a direction. If the channel is not
-        included in the array of :class:`~.picoscope_structs.PS3000ADigitalChannelDirections` 
+        included in the array of :class:`~.structs.PS3000ADigitalChannelDirections`
         the driver assumes the digital channel's pulse-width trigger direction is
         ``PS3000A_DIGITAL_DONT_CARE``.
         """
@@ -102,8 +106,8 @@ class PicoScope3000A(PicoScopeApi):
         This function sets up pulse-width qualification, which can be used on its own for pulse
         width triggering or combined with level triggering or window triggering to produce
         more complex triggers. The pulse-width qualifier is set by defining one or more
-        structures that are then ORed together. Each structure is itself the AND of the states of
-        one or more of the inputs. This AND-OR logic allows you to create any possible
+        structures that are then ``ORed`` together. Each structure is itself the ``AND`` of the states of
+        one or more of the inputs. This ``AND-OR`` logic allows you to create any possible
         Boolean function of the scope's inputs.
         """
         return self.sdk.ps3000aSetPulseWidthQualifierV2(self._handle, byref(conditions), len(conditions),
@@ -112,12 +116,12 @@ class PicoScope3000A(PicoScopeApi):
     def set_trigger_channel_conditions_v2(self, conditions):
         """
         This function sets up trigger conditions on the scope's inputs. The trigger is defined by
-        one or more :class:`~.picoscope_structs.PS3000ATriggerConditionsV2` structures that are then 
+        one or more :class:`~.structs.PS3000ATriggerConditionsV2` structures that are then
         ORed together. Each structure is itself the AND of the states of one or more of the inputs.
         This AND-OR logic allows you to create any possible Boolean function of the scope's
         inputs.
 
-        If complex triggering is not required, use :meth:`set_simple_trigger`.
+        If complex triggering is not required, use :meth:`~.PicoScopeApi.set_simple_trigger`.
         """
         return self.sdk.ps3000aSetTriggerChannelConditionsV2(self._handle, byref(conditions), len(conditions))
 
@@ -125,7 +129,7 @@ class PicoScope3000A(PicoScopeApi):
         """
         This function will set the individual digital channels' trigger directions. Each trigger
         direction consists of a channel name and a direction. If the channel is not included in
-        the array of :class:`~.picoscope_structs.PS3000ADigitalChannelDirections` the driver 
-        assumes the digital channel's trigger direction is PS3000A_DIGITAL_DONT_CARE.
+        the array of :class:`~.structs.PS3000ADigitalChannelDirections` the driver
+        assumes the digital channel's trigger direction is ``PS3000A_DIGITAL_DONT_CARE``.
         """
         return self.sdk.ps3000aSetTriggerDigitalPortProperties(self._handle, byref(directions), len(directions))

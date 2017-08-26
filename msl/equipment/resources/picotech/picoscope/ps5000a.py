@@ -56,11 +56,13 @@ class PicoScope5000A(PicoScopeApi):
     def __init__(self, record):
         """A wrapper around the PicoScope ps5000a SDK.
         
+        Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
+        method to connect to the equipment.
+
         Parameters
         ----------
-        record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            An equipment record from an **Equipment-Register** 
-            :class:`~msl.equipment.database.Database`.            
+        record : :class:`~.EquipmentRecord`
+            A record from an :ref:`equipment_database`.
         """
         PicoScopeApi.__init__(self, record, ps5000aApi_funcptrs)
 
@@ -68,7 +70,7 @@ class PicoScope5000A(PicoScopeApi):
         """
         Returns
         -------
-        :class:`enum.IntEnum`
+        :class:`~.enums.PS5000ADeviceResolution`
             This function retrieves the resolution the specified device will run in.
         """
         resolution = c_enum()
@@ -99,7 +101,7 @@ class PicoScope5000A(PicoScopeApi):
         """
         This function is in the header file, but it is not in the manual.
 
-        Populates the :class:`~.picoscope_structs.PS5000ATriggerInfo` structure.
+        Populates the :class:`~.structs.PS5000ATriggerInfo` structure.
         """
         trigger_info = PS5000ATriggerInfo()
         self.sdk.ps5000aGetTriggerInfoBulk(self._handle, byref(trigger_info), from_segment_index, to_segment_index)
@@ -111,8 +113,8 @@ class PicoScope5000A(PicoScopeApi):
         halved. When using 15-bit resolution only 2 channels can be enabled to capture data,
         and when using 16-bit resolution only one channel is available. If resolution is
         changed, any data captured that has not been saved will be lost. If
-        :meth:`set_channel` is not called, :meth:`run_block` and :meth:`run_streaming`
-        may fail.
+        :meth:`~.PicoScope.set_channel` is not called, :meth:`~.PicoScope.run_block`
+        and :meth:`~.PicoScope.run_streaming` may fail.
         """
         r = self.convert_to_enum(resolution, self.enDeviceResolution, prefix='RES_', to_upper=True)
         return self.sdk.ps5000aSetDeviceResolution(self._handle, r)

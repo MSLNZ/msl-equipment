@@ -81,9 +81,8 @@ def test_equip_record():
 
     record = EquipmentRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055')
 
-    # the manufacturer, model and serial values all match
+    # check that the manufacturer, model and serial values all match
     record.connection = ConnectionRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055')
-
     # one of the manufacturer, model or serial values do not match
     with pytest.raises(ValueError) as err:
         record.connection = ConnectionRecord(manufacturer='XYZ')
@@ -94,6 +93,12 @@ def test_equip_record():
     with pytest.raises(ValueError) as err:
         record.connection = ConnectionRecord(manufacturer='ABC def', model='ZZZ', serial='AAA')
     assert '.serial' in str(err.value)
+
+    # check that the manufacturer, model and serial values for the ConnectionRecord get updated
+    record = EquipmentRecord(manufacturer='Company', model='ABC', serial='XYZ', connection=ConnectionRecord())
+    assert record.connection.manufacturer == 'Company'
+    assert record.connection.model == 'ABC'
+    assert record.connection.serial == 'XYZ'
 
 
 def test_conn_record():

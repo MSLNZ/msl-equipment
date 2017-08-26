@@ -36,7 +36,7 @@ system.
 Documentation
 -------------
 The documentation for **MSL-Equipment** can be found
-`here <https://readthedocs.org/projects/msl-equipment/badge/?version=latest>`_.
+`here <http://msl-equipment.readthedocs.io/en/latest/index.html>`_.
 
 .. |docs| image:: https://readthedocs.org/projects/msl-equipment/badge/?version=latest
    :target: http://msl-equipment.readthedocs.io/en/latest/?badge=latest

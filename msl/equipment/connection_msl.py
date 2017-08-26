@@ -223,8 +223,8 @@ class ConnectionSerial(ConnectionMessageBased):
     def __init__(self, record):
         """Base class for equipment that is connected through a Serial port.
 
-        The :obj:`record.connection.properties <msl.equipment.record_types.ConnectionRecord.properties>`
-        dictionary for a Serial connection supports the following key-value pairs in the
+        The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
+        for a Serial connection supports the following key-value pairs in the
         :ref:`connection_database`::
 
             'read_termination': str or None
@@ -375,4 +375,9 @@ class ConnectionSerial(ConnectionMessageBased):
 
     def disconnect(self):
         """Close the Serial port."""
-        self._serial.close()
+        try:
+            # if the subclass raised an error in the constructor before
+            # the this class is initialized then self._serial won't exist
+            self._serial.close()
+        except AttributeError:
+            pass

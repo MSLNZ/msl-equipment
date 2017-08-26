@@ -86,8 +86,8 @@ def check_manufacture_model_resource_name(record):
     ``msl.equipment.resources. + record.manufacturer.lower() + . + record.model.lower()``
     module.
 
-    For example, if the `record` is for a ``Thorlabs FW102C`` Filter Wheel
-    then check if a ``msl.equipment.resources.thorlabs.fw102C.FW102C`` resource class exists.
+    For example, if the `record` is a laser from ``Company`` with model number ``ABc123``
+    then check if a ``msl.equipment.resources.company.abc123.ABc123`` resource class exists.
 
     This function is not meant to be called directly.
 
@@ -135,10 +135,22 @@ def find_sdk_class(record):
         msg = 'The interface is {}, must be {}'.format(repr(record.interface), repr(MSLInterface.SDK))
         raise ValueError(msg)
     address_split = record.address.split('::')
-    if len(address_split) != 3:
-        msg = 'The address received is {}\n'.format(record.address)
-        msg += 'For an SDK interface, the address must be of the form SDK::PythonClassName::PathToLibrary'
+    if len(address_split) == 1:
+        msg = 'For a SDK interface, the address should be of the form SDK::PythonClassName::PathToLibrary'
         raise ValueError(msg)
+    if len(address_split) == 2:
+        cls = check_manufacture_model_resource_name(record)
+        if cls is None:
+            msg = 'The address received is {}\n'.format(record.address)
+            msg += 'Cannot automatically find the MSL Resource class.\n'
+            msg += 'For a SDK interface, the address should be of the form SDK::PythonClassName::PathToLibrary'
+            raise ValueError(msg)
+        if not issubclass(cls, connection_msl.ConnectionSDK):
+            msg = 'The address received is {}\n'.format(record.address)
+            msg += '{} is not a subclass of {}\n'.format(cls, connection_msl.ConnectionSDK)
+            msg += 'For a SDK interface, the address should be of the form SDK::PythonClassName::PathToLibrary'
+            raise ValueError(msg)
+        return cls
     return recursive_find_resource_class(address_split[1])
 
 

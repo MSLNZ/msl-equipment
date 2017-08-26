@@ -10,6 +10,8 @@ from msl.equipment.connection_demo import ConnectionDemo
 
 
 def test_exceptions():
+    Config.DEMO_MODE = False
+
     with pytest.raises(TypeError) as err:
         connect(None)  # not an EquipmentRecord
     assert 'EquipmentRecord' in str(err.value)
@@ -57,13 +59,22 @@ def test_exceptions():
         connect(EquipmentRecord(connection=ConnectionRecord(address='COM1', backend=Backend.UNKNOWN)))  # no backend
     assert 'connection backend' in str(err.value)
 
+    # the SDK library does not exist
+    with pytest.raises(IOError) as err:
+        connect(EquipmentRecord(connection=ConnectionRecord(address='SDK::FilterWheelXX2C::invalid.dll', backend=Backend.MSL)))
+    assert 'loadlib' in str(err)
+
 
 def test_demo_mode():
+    Config.DEMO_MODE = True
 
     c = connect(EquipmentRecord(connection=ConnectionRecord(address='COM1', backend=Backend.MSL)), True)
     assert isinstance(c, ConnectionDemo)
 
     c = connect(EquipmentRecord(connection=ConnectionRecord(address='COM1', backend=Backend.PyVISA)), True)
+    assert isinstance(c, ConnectionDemo)
+
+    c = connect(EquipmentRecord(connection=ConnectionRecord(address='COM1', backend=Backend.MSL)))
     assert isinstance(c, ConnectionDemo)
 
 

@@ -1,5 +1,5 @@
 """
-Use MSL resources to establish a connection to the equipment.
+Use :ref:`resources` to establish a connection to the equipment.
 """
 import time
 
@@ -43,7 +43,7 @@ class ConnectionSDK(Connection):
             If either `record` or `libtype` is invalid.
         """
         Connection.__init__(self, record)
-        lib_path = str(record.connection.address.split('::')[2])
+        lib_path = str(record.connection.address.split('::')[-1])  # the last item must be the path
         self._lib = LoadLibrary(lib_path, libtype)
         self.log_debug('Connected to {}'.format(self.equipment_record.connection))
 

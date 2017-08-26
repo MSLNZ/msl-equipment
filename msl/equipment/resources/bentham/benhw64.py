@@ -97,7 +97,6 @@ class Bentham(Connection, Client64):
                 append_msg = kwargs['append_msg']
             except KeyError:
                 append_msg = ''
-            print('{0}: {1} {2}'.format(e, m, append_msg))
             self.raise_exception('{0}: {1} {2}'.format(e, m, append_msg))
         return result
 

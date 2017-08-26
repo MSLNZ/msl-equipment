@@ -1,7 +1,7 @@
 """
 A wrapper around the PicoScope ps4000 SDK.
 """
-from ctypes import c_int8, c_int16, c_uint32, c_int64, byref
+from ctypes import c_int8, c_int16, c_uint32, c_int64, byref, string_at, addressof
 
 from .picoscope import c_enum
 from .picoscope_api import PicoScopeApi
@@ -121,7 +121,7 @@ class PicoScope4000(PicoScopeApi):
         status = c_int16()
         serial = c_int8()
         self.sdk.ps4000OpenUnitAsyncEx(byref(status), byref(serial))
-        return status.value, serial.value
+        return status.value, string_at(addressof(serial)).decode('utf-8').strip()
 
     def open_unit_ex(self):
         """
@@ -133,7 +133,7 @@ class PicoScope4000(PicoScopeApi):
         self.sdk.ps4000OpenUnitEx(byref(handle), byref(serial))
         if handle.value > 0:
             self._handle = handle
-        return serial.value  # TODO the the serial as a string
+        return string_at(addressof(serial)).decode('utf-8').strip()
 
     def run_streaming_ex(self, sample_interval_time_units, max_pre_trigger_samples, max_post_pre_trigger_samples,
                          auto_stop, down_sample_ratio, down_sample_ratio_mode, overview_buffer_size):

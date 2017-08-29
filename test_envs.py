@@ -56,6 +56,8 @@ def color_print(line):
             print(line[:-6] + colorama.Fore.GREEN + 'PASSED')
         elif line.endswith('FAILED'):
             print(line[:-6] + colorama.Fore.RED + 'FAILED')
+        elif 'FAILURES' in line:
+            print(colorama.Fore.RED + colorama.Style.BRIGHT + line)
         elif line.endswith('ERROR'):
             print(line[:-5] + colorama.Fore.RED + 'ERROR')
         elif line.startswith('___'):
@@ -72,6 +74,10 @@ def color_print(line):
             print(colorama.Fore.GREEN + colorama.Style.BRIGHT + line)
         elif line.startswith('All tests passed'):
             print(colorama.Fore.GREEN + colorama.Style.BRIGHT + line)
+        elif line.startswith('Install'):
+            print(colorama.Fore.CYAN + colorama.Style.BRIGHT + line)
+        elif line.startswith('***** '):
+            print(colorama.Fore.BLUE + colorama.Style.BRIGHT + line)
         else:
             print(line)
     else:
@@ -116,27 +122,30 @@ success = True
 for env in envs:
 
     py_exe = os.path.join(env, path, 'python')
-    print('Testing with ' + py_exe)
+    color_print('***** Testing with {} *****'.format(py_exe))
 
     proc = Popen([py_exe, 'setup.py', 'test'], stdout=PIPE, stderr=PIPE)
 
     show = False
     summary = ''
     while True:
-        try:
-            stdout = proc.stdout.readline().decode('utf-8').strip()
-        except UnicodeDecodeError:
-            stdout = proc.stdout.readline().decode('cp1252').strip()
-        if stdout == '' and proc.poll() is not None:
+        stdout = proc.stdout.readline().decode('utf-8').strip()
+        if stdout.startswith('Reading'):
+            color_print('Installing egg for' + stdout.split('Reading')[1])
+            continue
+        if stdout.startswith('Installed'):
+            color_print(stdout)
+            continue
+        if not stdout and proc.poll() is not None:
             break
-        if not stdout:
-            # if there were any "import exceptions" and pytest could not
-            # start properly then the output will be empty
-            stderr = proc.stderr.read().decode('utf-8')
-            if stderr.startswith('Traceback'):
-                print(stderr)
-                success = False
-                break
+        if stdout.startswith('collect') and 'error' in stdout:  # errors during the "collecting..."
+            summary += stdout
+            success = False
+            break
+        if 'FAILURES' in summary:
+            summary += stdout
+            success = False
+            break
         if stdout.startswith('='):
             show = True
         if show:
@@ -150,7 +159,7 @@ for env in envs:
         color_print(item)
 
     summary += stdout
-    if 'FAILURES' in summary or 'ERRORS' in summary or 'FAILED' in summary or 'ERROR' in summary:
+    if 'FAILURES' in summary or 'ERROR' in summary or 'FAILED' in summary or 'failed' in summary:
         success = False
 
     if not success:

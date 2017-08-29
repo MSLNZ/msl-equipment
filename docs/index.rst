@@ -23,7 +23,7 @@ and two different types of :ref:`database`
 The following example illustrates a configuration file that specifies a database containing 6 Digital Multimeter's
 that are available in a lab which can be used to measure a voltage. The person performing the measurement specifies
 which of the Digital Multimeter's they are using as an **<equipment>** XML tag in the configuration file. They load the
-configuration file using the :obj:`~msl.equipment.config.Config` class, which is the main gateway into the
+configuration file using the :obj:`~msl.equipment.config.Config` class, which is the main entryway in to the
 **MSL-Equipment** package.
 
 The `configuration file`_ that specifies the example_ database to load and the Digital Multimeter to use for the voltage

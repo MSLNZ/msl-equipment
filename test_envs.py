@@ -85,7 +85,7 @@ args = parser.parse_args()
 
 # get a list of all conda envs
 p = Popen(['conda', 'info', '--envs'], stdout=PIPE)
-all_envs = [item.decode() for item in p.communicate()[0].split() if 'envs' in item.decode()]
+all_envs = [item.decode('utf-8') for item in p.communicate()[0].split() if 'envs' in item.decode('utf-8')]
 
 # perform the include filter
 envs = [] if args.include else all_envs
@@ -123,13 +123,16 @@ for env in envs:
     show = False
     summary = ''
     while True:
-        stdout = proc.stdout.readline().decode().strip()
+        try:
+            stdout = proc.stdout.readline().decode('utf-8').strip()
+        except UnicodeDecodeError:
+            stdout = proc.stdout.readline().decode('cp1252').strip()
         if stdout == '' and proc.poll() is not None:
             break
         if not stdout:
             # if there were any "import exceptions" and pytest could not
             # start properly then the output will be empty
-            stderr = proc.stderr.read().decode()
+            stderr = proc.stderr.read().decode('utf-8')
             if stderr.startswith('Traceback'):
                 print(stderr)
                 success = False
@@ -142,7 +145,7 @@ for env in envs:
         if ' seconds =' in stdout:
             show = False  # once the test is finished a bunch of blank lines can be printed -- ignore these lines
 
-    stdout = proc.stdout.read().decode().strip()
+    stdout = proc.stdout.read().decode('utf-8').strip()
     for item in stdout.split('\n'):
         color_print(item)
 

@@ -1,9 +1,11 @@
 """
 Load equipment and connection records from :ref:`Databases <database>`.
 """
+from __future__ import unicode_literals
 import os
 import re
 import ast
+import codecs
 import logging
 import datetime
 from xml.etree import ElementTree
@@ -32,24 +34,27 @@ class Database(object):
 
         Raises
         ------
-        :exc:`~xml.etree.ElementTree.ParseError`
-            If the :ref:`configuration` is invalid.
         IOError
             If `path` does not exist.
+        :exc:`~xml.etree.ElementTree.ParseError`
+            If the :ref:`configuration` is invalid.
+        UnicodeError
+            For all errors that are related to encoding problems.
         AttributeError
             If an ``<equipment>`` XML tag is specified in the :ref:`configuration`
             and it does not uniquely identify an equipment record in an
             :ref:`equipment_database`.
         ValueError
-            If multiple :obj:`~.record_types.EquipmentRecord.alias`\es are defined.
+            If multiple :obj:`~.record_types.EquipmentRecord.alias`\es are specified
+            for the same :obj:`~.record_types.EquipmentRecord`.
         """
         logger.debug('Loading databases from {}'.format(path))
 
         root = ElementTree.parse(path).getroot()
 
         self._config_path = path
-        self._equipment_property_names = EquipmentRecord().to_dict().keys()
-        self._connection_property_names = ConnectionRecord().to_dict().keys()
+        self._equipment_property_names = [k for k in EquipmentRecord().to_dict()]
+        self._connection_property_names = [k for k in ConnectionRecord().to_dict()]
 
         # create a dictionary of ConnectionRecord objects
         self._connection_records = {}
@@ -89,7 +94,7 @@ class Database(object):
 
                 # create the property dictionary
                 conn_record._properties = {}
-                for item in row[self._index_map['properties']].split(";"):
+                for item in row[self._index_map['properties']].split(';'):
                     item_split = item.split('=')
                     if len(item_split) < 2:
                         continue
@@ -127,7 +132,7 @@ class Database(object):
             for register in registers.findall('register'):
 
                 # the MSL team (e.g., Electrical) that this Equipment Register belongs to
-                team = register.attrib.get('team', '')
+                team = register.attrib.get('team', u'')
 
                 header, rows = self._read(register)
                 self._make_index_map(header, self._equipment_property_names)
@@ -155,7 +160,7 @@ class Database(object):
                         except KeyError:
                             continue
 
-                        if name == 'date_calibrated' and isinstance(value, str):
+                        if name == 'date_calibrated' and not isinstance(value, datetime.date):
                             date_format = register.attrib.get('date_format', '%d/%m/%Y')
                             try:
                                 value = datetime.datetime.strptime(value, date_format).date()
@@ -310,18 +315,18 @@ class Database(object):
 
         ext = os.path.splitext(path)[1].lower()
         if ext in ('.xls', '.xlsx'):
-            header, rows = self._read_excel(path, element.findtext('sheet'))
+            header, rows = self._read_excel(path, element.findtext('sheet'), element.attrib.get('encoding', None))
         elif ext in ('.csv', '.txt'):
             delimiter = ',' if ext == '.csv' else '\t'
-            header, rows = self._read_ascii(path, delimiter)
+            header, rows = self._read_text_based(path, delimiter, element.attrib.get('encoding', 'utf8'))
         else:
             raise IOError('Unsupported equipment-registry database format ' + path)
 
         return header, rows
 
-    def _read_excel(self, path, sheet_name):
+    def _read_excel(self, path, sheet_name, encoding):
         """Read an Excel database file"""
-        self._book = xlrd.open_workbook(path, on_demand=True)
+        self._book = xlrd.open_workbook(path, on_demand=True, encoding_override=encoding)
 
         if sheet_name is None:
             names = self._book.sheet_names()
@@ -344,7 +349,7 @@ class Database(object):
         if sheet is None:
             raise IOError('There is no Sheet named "{}" in {}'.format(sheet_name, path))
 
-        header = [str(val) for val in sheet.row_values(0)]
+        header = [val for val in sheet.row_values(0)]
         rows = [[self._cell_convert(sheet.cell(r, c)) for c in range(sheet.ncols)] for r in range(1, sheet.nrows)]
         logger.debug('Loading Sheet <{}> in {}'.format(sheet_name, path))
         return header, rows
@@ -365,9 +370,9 @@ class Database(object):
         else:
             return cell.value.strip()
 
-    def _read_ascii(self, path, delimiter):
-        """Read an ASCII database file"""
-        with open(path, 'r') as fp:
+    def _read_text_based(self, path, delimiter, encoding):
+        """Read a text-based database file"""
+        with codecs.open(path, 'r', encoding) as fp:
             header = [val for val in fp.readline().split(delimiter)]
             rows = [[val.strip() for val in line.split(delimiter)] for line in fp.readlines() if line.strip()]
         logger.debug('Loading database ' + path)
@@ -376,7 +381,7 @@ class Database(object):
     def _make_index_map(self, header, field_names):
         """Determine the column index in the header that the field_names are located in"""
         self._index_map = {}
-        h = [item.strip().lower().replace(' ', '_') for item in header]
+        h = [val.strip().lower().replace(' ', '_') for val in header]
         for index, label in enumerate(h):
             for name in field_names:
                 if name not in self._index_map and name in label:
@@ -401,7 +406,7 @@ class Database(object):
     def _is_row_length_okay(self, row, header):
         """Check if the row and the header have the same length"""
         if not len(row) == len(header):
-            logger.warning('len(row) != len(header) -> row={}'.format(row))
+            logger.warning('len(row) [{}] != len(header) [{}] -> row={}'.format(len(row), len(header), row))
             return False
         return True
 

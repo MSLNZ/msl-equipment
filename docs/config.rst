@@ -55,7 +55,10 @@ The following illustrates an example configuration file.
 
        <!-- Specify the Equipment-Register databases to load equipment records from -->
        <equipment_registers>
-         <!-- The "team" attribute is used to define which Team the Equipment-Register belongs to -->
+         <!--
+           The "team" attribute is used to specify which research team the Equipment-Register
+           database belongs to
+         -->
          <register team="P&amp;R">
              <path>Z:\QUAL\Equipment\Equipment Register.xls</path>
              <!--
@@ -63,21 +66,26 @@ The following illustrates an example configuration file.
                name of the Sheet that contains the equipment records. This Excel database
                also contains connection records (see the <equipment_connections> tag below)
                and so the <sheet> tag must be specified
-              -->
+             -->
              <sheet>Equipment</sheet>
          </register>
          <register team="Electrical">
            <path>H:\Quality\Registers\Equipment.xlsx</path>
            <!-- No need to specify the Sheet name if there is only 1 Sheet in the Excel database -->
          </register>
-         <!-- For a text-based database (csv/txt) you should specify how the dates are formatted -->
-         <register team="Time" date_format="%d.%m.%y">
+         <!--
+           For a text-based database (e.g., CSV, TXT files) you can specify how the dates are
+           formatted and the encoding that is used in the file (UTF-8 is assumed if the encoding
+           is not specified). A CSV database uses "," as the delimiter and a TXT database uses
+           "\t" as the delimiter.
+         -->
+         <register team="Time" date_format="%d.%m.%y" encoding="cp1252">
            <path>W:\Registers\Equip.csv</path>
          </register>
          <register team="Mass" date_format="%Y-%m-%d">
            <!--
              You can also specify the database path to be a path that is relative to the
-             location of the configuration file. For example, the equip-reg.txt file is
+             location of the configuration file. For example, the "equip-reg.txt" file is
              located in the same directory as the configuration file.
            -->
            <path>equip-reg.txt</path>
@@ -85,19 +93,27 @@ The following illustrates an example configuration file.
        </equipment_registers>
 
        <!--
-         Specify the database that contains the information required to connect to the
+         Specify the databases that contain the information required to connect to the
          equipment. You can create as many <equipment_connections> tags as you want
-        -->
+       -->
        <equipment_connections>
          <path>Z:\QUAL\Equipment\Equipment Register.xls</path>
-         <!-- Must also specify which Sheet in the Excel database contains connection records -->
+         <!-- Must also specify which Sheet in this Excel database contains the connection records -->
          <sheet>Connections</sheet>
+       </equipment_connections>
+       <!--
+         You can also set the encoding that is used for a text-based database. The "my_connections.txt"
+         file is located in the "resources" subfolder (relative to the path of the configuration file)
+         and it is encoded with UTF-16.
+       -->
+       <equipment_connections encoding="utf-16">
+         <path>resources/my_connections.txt</path>
        </equipment_connections>
 
    </msl>
 
 The :class:`~msl.equipment.config.Config` class is used to load a configuration file and it is the main entryway
-into the **MSL-Equipment** package. For example:
+in to the **MSL-Equipment** package. For example:
 
 .. code-block:: python
 

@@ -57,22 +57,22 @@ class EquipmentRecord(object):
         """
 
         # these properties are NOT defined as fields in the equipment-register database
-        self._alias = ''
+        self._alias = u''
         self._connection = None
-        self._team = ''
+        self._team = u''
 
         # these properties can be defined as fields in the equipment-register database
-        self._asset_number = ''
+        self._asset_number = u''
         self._calibration_cycle = 0.0
-        self._category = ''
+        self._category = u''
         self._date_calibrated = datetime.date(datetime.MINYEAR, 1, 1)
-        self._description = ''
-        self._latest_report_number = ''
-        self._location = ''
-        self._manufacturer = ''
-        self._model = ''
-        self._register = ''
-        self._serial = ''
+        self._description = u''
+        self._latest_report_number = u''
+        self._location = u''
+        self._manufacturer = u''
+        self._model = u''
+        self._register = u''
+        self._serial = u''
         # IMPORTANT: when a new property is added remember to include it in docs/database#field_names
 
         valid_names = self._valid_names()
@@ -104,7 +104,7 @@ class EquipmentRecord(object):
             self.connection = kwargs['connection']
 
     def __repr__(self):
-        return '{}<{}|{}|{}>'.format(self.__class__.__name__, self.manufacturer, self.model, self.serial)
+        return u'{}<{}|{}|{}>'.format(self.__class__.__name__, self.manufacturer, self.model, self.serial)
 
     def _valid_names(self):
         """Returns a list of the valid property names for an EquipmentRecord"""
@@ -342,12 +342,12 @@ class ConnectionRecord(object):
         self._interface = MSLInterface.NONE
 
         # these properties can be defined as fields in the connection database
-        self._address = ''
+        self._address = u''
         self._backend = Backend.UNKNOWN
-        self._manufacturer = ''
-        self._model = ''
+        self._manufacturer = u''
+        self._model = u''
         self._properties = {}
-        self._serial = ''
+        self._serial = u''
         # IMPORTANT: when a new property is added remember to include it in table in docs/database#connection_database
 
         valid_names = self._valid_names()
@@ -381,7 +381,7 @@ class ConnectionRecord(object):
                     raise AttributeError(err)
 
     def __repr__(self):
-        return '{}<{}|{}|{}>'.format(self.__class__.__name__, self.manufacturer, self.model, self.serial)
+        return u'{}<{}|{}|{}>'.format(self.__class__.__name__, self.manufacturer, self.model, self.serial)
 
     def _valid_names(self):
         """Returns a list of the valid property names for an ConnectionRecord"""

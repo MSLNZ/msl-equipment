@@ -1,4 +1,5 @@
 import os
+import sys
 
 import pytest
 
@@ -94,3 +95,33 @@ def test_connection_properties():
     assert props['k'] == u'\\r\\n'
     assert props['l'] == u'some text'
     assert props['m'] == u'D:\\Data\\'
+
+
+def test_encoding():
+
+    IS_PYTHON2 = sys.version_info[0] == 2
+    if IS_PYTHON2:
+        reload(sys)  # required for the sys.setdefaultencoding() calls below
+
+    print('')
+    for cfg in ['utf8_txt.xml', 'cp1252_txt.xml', 'xlsx.xml']:
+        db = Config(os.path.join(os.path.dirname(__file__), 'db_encoding_' + cfg)).database()
+
+        if IS_PYTHON2:
+            if cfg.startswith('cp1252'):
+                sys.setdefaultencoding('cp1252')  # a legacy encoding used by Microsoft Windows
+            elif cfg.startswith('utf8'):
+                sys.setdefaultencoding('utf-8')
+
+        print(db.path)
+
+        # test printing the database records
+        for r in db.records():
+            print(r)
+            r.to_dict()
+        for r in db.connections():
+            print(r)
+            r.to_dict()
+
+        assert db.records(manufacturer='Kepco*')[0].manufacturer == u'Kepco and \u201cTMK\u201d shunt'
+        assert db.records(model='MFF101/M')[0].description == u'Motorized Filter Flip Mount for \xd825mm Optics'

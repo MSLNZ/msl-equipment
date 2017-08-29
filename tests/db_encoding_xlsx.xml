@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<msl>
+
+    <equipment_registers>
+        <register>
+            <path>db_files/db_encoding.xlsx</path>
+            <sheet>Register</sheet>
+        </register>
+    </equipment_registers>
+
+    <equipment_connections>
+        <path>db_files/db_encoding.xlsx</path>
+        <sheet>Connections</sheet>
+    </equipment_connections>
+
+</msl>

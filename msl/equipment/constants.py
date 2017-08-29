@@ -1,5 +1,5 @@
 """
-MSL-Equipment package constants.
+MSL-Equipment constants.
 """
 import enum
 import serial

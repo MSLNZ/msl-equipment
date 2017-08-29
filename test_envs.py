@@ -129,7 +129,10 @@ for env in envs:
     show = False
     summary = ''
     while True:
-        stdout = proc.stdout.readline().decode('utf-8').strip()
+        try:
+            stdout = proc.stdout.readline().decode('utf-8').strip()
+        except UnicodeDecodeError:
+            stdout = proc.stdout.readline().decode('cp1252').strip()
         if stdout.startswith('Reading'):
             color_print('Installing egg for' + stdout.split('Reading')[1])
             continue

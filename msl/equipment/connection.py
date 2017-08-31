@@ -27,6 +27,7 @@ class Connection(object):
         if not isinstance(record, EquipmentRecord):
             raise TypeError('Must pass in an {} object'.format(EquipmentRecord.__name__))
         self._record = record
+        self._record._is_connected = True
         self._exception_handler = MSLConnectionError
 
     @property

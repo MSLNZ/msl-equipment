@@ -60,6 +60,7 @@ class EquipmentRecord(object):
         self._alias = u''
         self._connection = None
         self._team = u''
+        self._is_connected = False
 
         # these properties can be defined as fields in the equipment-register database
         self._asset_number = u''
@@ -108,7 +109,7 @@ class EquipmentRecord(object):
 
     def _valid_names(self):
         """Returns a list of the valid property names for an EquipmentRecord"""
-        return sorted([k[1:] for k in vars(self)])
+        return sorted([k[1:] for k in vars(self) if k != '_is_connected'])
 
     @property
     def alias(self):
@@ -297,6 +298,11 @@ class EquipmentRecord(object):
             else:
                 d[name] = getattr(self, name)
         return d
+
+    @property
+    def is_connected(self):
+        """:obj:`bool`: Whether the connection to the equipment has been established."""
+        return self._is_connected
 
 
 class ConnectionRecord(object):

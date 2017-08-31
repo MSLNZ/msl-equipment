@@ -72,7 +72,7 @@ class Connection(object):
             The message to display when the exception is raised.
         """
         r = self.equipment_record
-        caller = '{}<{}|{}|{}>\n'.format(self.__class__.__name__, r.manufacturer, r.model, r.serial)
+        caller = u'{}<{}|{}|{}>\n'.format(self.__class__.__name__, r.manufacturer, r.model, r.serial)
         raise self._exception_handler(caller + msg)
 
     @staticmethod

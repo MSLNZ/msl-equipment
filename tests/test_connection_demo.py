@@ -52,6 +52,20 @@ class MyConnection(Connection):
         """
         pass
 
+    def get_bytes1(self):
+        """:obj:`bytes`: A bytes value."""
+        pass
+
+    def get_bytes2(self):
+        """Returns a bytes value.
+
+        Returns
+        -------
+        :obj:`bytes`
+            A bytes value.
+        """
+        pass
+
     def get_int1(self):
         """:obj:`int`: An integer value."""
         pass
@@ -105,6 +119,20 @@ class MyConnection(Connection):
         -------
         :obj:`list` of :obj:`str`
             A list of string values.
+        """
+        pass
+
+    def get_list_of_bytes1(self):
+        """:obj:`list` of :obj:`bytes`: A list of bytes values."""
+        pass
+
+    def get_list_of_bytes2(self):
+        """A list of bytes values.
+
+        Returns
+        -------
+        :obj:`list` of :obj:`bytes`
+            A list of bytes values.
         """
         pass
 
@@ -164,6 +192,20 @@ class MyConnection(Connection):
         """
         pass
 
+    def get_dict_of_bytes1(self):
+        """:obj:`dict` of :obj:`bytes`: A dictionary of bytes values."""
+        pass
+
+    def get_dict_of_bytes2(self):
+        """A dictionary of bytes values.
+
+        Returns
+        -------
+        :obj:`dict` of :obj:`bytes`
+            A dictionary of bytes values.
+        """
+        pass
+
     def get_dict_of_int1(self):
         """:obj:`dict` of :obj:`int`: A dictionary of integer values."""
         pass
@@ -205,6 +247,8 @@ class MyConnection(Connection):
             A floating-point value.
         :obj:`dict` of :obj:`int`
             A dictionary of integer values.
+        :obj:`bytes`
+            A bytes value.
         """
         pass
 
@@ -220,6 +264,9 @@ def test_return_type_builtin():
 
     assert isinstance(demo.get_string1(), str)
     assert isinstance(demo.get_string2(), str)
+
+    assert isinstance(demo.get_bytes1(), bytes)
+    assert isinstance(demo.get_bytes2(), bytes)
 
     assert isinstance(demo.get_int1(), int)
     assert isinstance(demo.get_int2(), int)
@@ -238,6 +285,12 @@ def test_return_type_builtin():
 
     x = demo.get_list_of_str2()
     assert isinstance(x, list) and isinstance(x[0], str)
+
+    x = demo.get_list_of_bytes1()
+    assert isinstance(x, list) and isinstance(x[0], bytes)
+
+    x = demo.get_list_of_bytes2()
+    assert isinstance(x, list) and isinstance(x[0], bytes)
 
     x = demo.get_list_of_int1()
     assert isinstance(x, list) and isinstance(x[0], int)
@@ -263,6 +316,12 @@ def test_return_type_builtin():
     x = demo.get_dict_of_str2()
     assert isinstance(x, dict) and isinstance(x['demo'], str)
 
+    x = demo.get_dict_of_bytes1()
+    assert isinstance(x, dict) and isinstance(x['demo'], bytes)
+
+    x = demo.get_dict_of_bytes2()
+    assert isinstance(x, dict) and isinstance(x['demo'], bytes)
+
     x = demo.get_dict_of_int1()
     assert isinstance(x, dict) and isinstance(x['demo'], int)
 
@@ -276,11 +335,12 @@ def test_return_type_builtin():
     assert isinstance(x, dict) and isinstance(x['demo'], float)
 
     x = demo.get_multiple1()
-    assert len(x) == 4
+    assert len(x) == 5
     assert isinstance(x[0], str)
     assert isinstance(x[1], float)
     assert isinstance(x[2], float)
     assert isinstance(x[3], dict) and isinstance(x[3]['demo'], int)
+    assert isinstance(x[4], bytes)
 
 
 def test_return_type_object():

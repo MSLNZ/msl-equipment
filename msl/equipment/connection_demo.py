@@ -90,6 +90,8 @@ class ConnectionDemo(Connection):
                 out.append(random.random() > 0.5)
             elif t == 'str':
                 out.append('demo:{}'.format(self.equipment_record))
+            elif t == 'bytes':
+                out.append(bytes('demo:{}'.format(self.equipment_record).encode('utf-8')))
             elif t == 'int':
                 out.append(random.randint(*int_range))
             elif t == 'float':
@@ -98,6 +100,8 @@ class ConnectionDemo(Connection):
                 out.append([random.random() > 0.5 for _ in range(list_size)])
             elif t == 'list of str':
                 out.append([c for c in str(self.equipment_record)])
+            elif t == 'list of bytes':
+                out.append([bytes(c.encode('utf-8')) for c in str(self.equipment_record)])
             elif t == 'list of int':
                 out.append([random.randint(*int_range) for _ in range(list_size)])
             elif t == 'list of float':
@@ -112,6 +116,8 @@ class ConnectionDemo(Connection):
                 out.append({'demo': random.random() > 0.5})
             elif t == 'dict of str':
                 out.append({'demo': str(self.equipment_record)})
+            elif t == 'dict of bytes':
+                out.append({'demo': bytes(str(self.equipment_record).encode('utf-8'))})
             elif t == 'dict of int':
                 out.append({'demo': random.randint(*int_range)})
             elif t == 'dict of float':

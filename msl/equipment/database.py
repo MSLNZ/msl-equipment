@@ -428,6 +428,6 @@ class Database(object):
     def _match(self, record, kwargs, flags):
         """Check if the kwargs match a database record"""
         for key, value in kwargs.items():
-            if not bool(re.search(value, str(getattr(record, key)), flags)):
+            if not bool(re.search(value, getattr(record, key), flags)):
                 return False
         return True

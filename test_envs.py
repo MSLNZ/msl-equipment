@@ -49,6 +49,7 @@ except ImportError:
 
 
 def color_print(line):
+    line = line.encode('utf-8')
     if has_colorama:
         if line.endswith('SKIPPED'):
             print(line[:-7] + colorama.Fore.YELLOW + 'SKIPPED')

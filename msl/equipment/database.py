@@ -292,8 +292,9 @@ class Database(object):
             :class:`.EquipmentRecord`\'s have a :class:`~.EquipmentRecord.connection` value is
             either :obj:`None` or :class:`.ConnectionRecord`. See the examples below.
 
-            If a `kwarg` is ``date_calibrated`` then the value must be a callable function
-            that returns a :obj:`bool`. See the examples below.
+            If a `kwarg` is ``date_calibrated`` then the value must be a callable function that
+            takes 1 input argument (a :obj:`datetime.date` object) and the function must return
+            a :obj:`bool`. See the examples below.
 
         Returns
         -------

@@ -76,6 +76,10 @@ def test_database():
     assert len(dbase.records(connection='')) == len(dbase.records()) - num_connections_expected
     assert len(dbase.records(date_calibrated=lambda date: date.year == 2010)) == 3
 
+    dbase.records(flags=1)  # a flags argument name is ok even though it not an EquipmentRecord property name
+    with pytest.raises(NameError):
+        dbase.records(unknown_name=None)
+
     assert len(dbase.connections()) == 10
     assert len(dbase.connections(backend='MSL')) == 5
     assert len(dbase.connections(backend=constants.Backend.MSL)) == 5
@@ -88,6 +92,10 @@ def test_database():
     assert len(dbase.connections(interface=constants.MSLInterface.SDK)) == 2
     assert len(dbase.connections(interface=constants.MSLInterface.USB)) == 0 # != 1 since "Fluke" uses PyVISA
     assert len(dbase.connections(interface='XXXXXX')) == 0
+
+    dbase.connections(flags=1)  # a flags argument name is ok even though it not a ConnectionRecord property name
+    with pytest.raises(NameError):
+        dbase.connections(unknown_name=None)
 
     assert len(dbase.equipment) == 2
     assert '712ae' in dbase.equipment  # the model number is used as the key

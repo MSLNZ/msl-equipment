@@ -246,14 +246,8 @@ class Database(object):
         ----------
         **kwargs
             The argument names can be any of the :class:`.ConnectionRecord` property names or
-            a ``flags`` argument, see :obj:`re.search`, for performing the search. For testing
-            regex expressions online you can use `this <https://pythex.org/>`_ website. All
-            invalid argument names are silently ignored.
-
-        Returns
-        -------
-        :obj:`list` of :class:`.ConnectionRecord`
-            The connection records that match the search criteria.
+            a ``flags`` argument of type :obj:`int`, see :obj:`re.search`, for performing the search.
+            For testing regex expressions online you can use `this <https://pythex.org/>`_ website.
 
         Examples
         --------
@@ -271,10 +265,23 @@ class Database(object):
         a list of all ConnectionRecords that use PyVISA as the backend
         >>> connections(backend='MSL')  # doctest: +SKIP
         a list of all ConnectionRecords that use MSL as the backend
+
+        Returns
+        -------
+        :obj:`list` of :class:`.ConnectionRecord`
+            The connection records that match the search criteria.
+
+        Raises
+        ------
+        NameError
+            If the name of an input argument is not a :class:`.ConnectionRecord`
+            property name or ``flags``.
         """
-        _kwargs = {key: kwargs[key] for key in kwargs if key in self._connection_property_names}
-        flags = kwargs.get('flags', 0)  # used by re.search
-        return [r for r in self._connection_records.values() if self._search(r, _kwargs, flags)]
+        flags = int(kwargs.pop('flags', 0))  # used by re.search
+        for name in kwargs:
+            if name not in self._connection_property_names:
+                raise NameError('Invalid argument name "{}" for a {}'.format(name, ConnectionRecord.__name__))
+        return [r for r in self._connection_records.values() if self._search(r, kwargs, flags)]
 
     def records(self, **kwargs):
         """Search the :ref:`equipment_database` to find all :class:`.EquipmentRecord`\'s that
@@ -284,22 +291,16 @@ class Database(object):
         ----------
         **kwargs
             The argument names can be any of the :class:`.EquipmentRecord` property names or
-            a ``flags`` argument, see :obj:`re.search`, for performing the search. For testing
-            regex expressions online you can use `this <https://pythex.org/>`_ website. All
-            invalid argument names are silently ignored.
+            a ``flags`` argument of type :obj:`int`, see :obj:`re.search`, for performing the search.
+            For testing regex expressions online you can use `this <https://pythex.org/>`_ website.
 
             If a `kwarg` is ``connection`` then the value will be used to test which
-            :class:`.EquipmentRecord`\'s have a :class:`~.EquipmentRecord.connection` value is
-            either :obj:`None` or :class:`.ConnectionRecord`. See the examples below.
+            :class:`.EquipmentRecord`\'s have a :obj:`~.EquipmentRecord.connection` value that
+            is either :obj:`None` or :class:`.ConnectionRecord`. See the examples below.
 
             If a `kwarg` is ``date_calibrated`` then the value must be a callable function that
             takes 1 input argument (a :obj:`datetime.date` object) and the function must return
             a :obj:`bool`. See the examples below.
-
-        Returns
-        -------
-        :obj:`list` of :class:`.EquipmentRecord`
-            The equipment records that match the search criteria.
 
         Examples
         --------
@@ -314,17 +315,30 @@ class Database(object):
         >>> records(description='I-V Converter')  # doctest: +SKIP
         a list of all EquipmentRecords that contain 'I-V Converter' in the description field
         >>> records(connection=True)  # doctest: +SKIP
-        a list of all EquipmentRecords that contain a ConnectionRecord
+        a list of all EquipmentRecords that can be connected to
         >>> records(connection=0)  # doctest: +SKIP
-        a list of all EquipmentRecords that do not contain a ConnectionRecord
+        a list of all EquipmentRecords that cannot be connected to
         >>> records(date_calibrated=lambda date: 1995 < date.year < 2005)  # doctest: +SKIP
         a list of all EquipmentRecords that were calibrated between the years 1995 and 2005
         >>> records(date_calibrated=lambda date: date > datetime.date(2008, 3, 15))  # doctest: +SKIP
         a list of all EquipmentRecords that were calibrated after 15 March 2008
+
+        Returns
+        -------
+        :obj:`list` of :class:`.EquipmentRecord`
+            The equipment records that match the search criteria.
+
+        Raises
+        ------
+        NameError
+            If the name of an input argument is not a :class:`.EquipmentRecord`
+            property name or ``flags``.
         """
-        _kwargs = {key: kwargs[key] for key in kwargs if key in self._equipment_property_names}
-        flags = kwargs.get('flags', 0)  # used by re.search
-        return [r for r in self._equipment_records.values() if self._search(r, _kwargs, flags)]
+        flags = int(kwargs.pop('flags', 0))  # used by re.search
+        for name in kwargs:
+            if name not in self._equipment_property_names:
+                raise NameError('Invalid argument name "{}" for an {}'.format(name, EquipmentRecord.__name__))
+        return [r for r in self._equipment_records.values() if self._search(r, kwargs, flags)]
 
     def _read(self, element):
         """Read any allowed database file type"""

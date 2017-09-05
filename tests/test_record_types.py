@@ -149,6 +149,9 @@ def test_conn_record():
     assert record.backend == constants.Backend.MSL
     assert record.interface == constants.MSLInterface.ASRL  # COM is an alias for ASRL
 
+    record = ConnectionRecord(address='ASRLCOM4', backend=constants.Backend.MSL)
+    assert record.interface == constants.MSLInterface.ASRL   # ASRLCOM is an alias for ASRL, used by PyVISA
+
     record = ConnectionRecord(address='LPT5', backend=constants.Backend.MSL)
     assert record.interface == constants.MSLInterface.ASRL   # LPT is an alias for ASRL
 

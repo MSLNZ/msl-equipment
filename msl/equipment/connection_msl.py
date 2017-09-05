@@ -310,9 +310,13 @@ class ConnectionSerial(ConnectionMessageBased):
         self.encoding = props.get('encoding', self.encoding)
         self.timeout = props.get('timeout', None)
 
-        self._serial.port = record.connection.address.split('::')[0]
+        port = record.connection.address.split('::')[0]
+        if port.startswith('ASRL'):
+            self._serial.port = port[4:]  # PyVISA prepends 'ASRL'
+        else:
+            self._serial.port = port
         self._serial.parity = props.get('parity', constants.Parity.NONE).value
-        self._serial.write_timeout = props.get('write_timeout', None)
+        self._serial.write_timeout = props.get('write_timeout', self.timeout)
         self._serial.inter_byte_timeout = props.get('inter_byte_timeout', None)
         self._serial.exclusive = props.get('exclusive', None)
         self._serial.xonxoff = props.get('xon_xoff', False)

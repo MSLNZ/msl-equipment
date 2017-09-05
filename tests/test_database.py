@@ -136,9 +136,11 @@ def test_encoding():
         for r in db.records():
             print(r)
             r.to_dict()
+            r.to_xml()
         for r in db.connections():
             print(r)
             r.to_dict()
+            r.to_xml()
 
         assert db.records(manufacturer='Kepco*')[0].manufacturer == u'Kepco and \u201cTMK\u201d shunt'
         assert db.records(model='MFF101/M')[0].description == u'Motorized Filter Flip Mount for \xd825mm Optics'

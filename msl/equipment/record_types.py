@@ -4,6 +4,7 @@ Records from :ref:`equipment_database`\'s or a :ref:`connection_database`\'s.
 import re
 import logging
 import datetime
+from xml.etree.cElementTree import Element
 
 from dateutil.relativedelta import relativedelta
 
@@ -292,11 +293,39 @@ class EquipmentRecord(object):
         for name in self._valid_names():
             if name == 'connection':
                 d[name] = self.connection.to_dict() if self.connection is not None else None
-            elif name == 'date_calibrated':
-                d[name] = self.date_calibrated.isoformat()
             else:
                 d[name] = getattr(self, name)
         return d
+
+    def to_xml(self):
+        """Convert this :class:`EquipmentRecord` to a XML :obj:`~xml.etree.ElementTree.Element`.
+
+        Note
+        ----
+        All values of the :class:`EquipmentRecord` are converted to a :obj:`str` so that the
+        returned result could be easily written to a XML file.
+
+        Returns
+        -------
+        :obj:`~xml.etree.ElementTree.Element`
+            The :class:`EquipmentRecord` as a XML element.
+        """
+        root = Element('equipment')
+        for name in self._valid_names():
+            element = Element(name)
+            if name == 'connection':
+                if self.connection is None:
+                    element.text = 'None'
+                else:
+                    for el in self.connection.to_xml():
+                        element.append(el)
+            elif name == 'date_calibrated':
+                date = getattr(self, name)
+                element.text = date.isoformat() if date.year != datetime.MINYEAR else 'None'
+            else:
+                element.text = u'{}'.format(getattr(self, name))
+            root.append(element)
+        return root
 
 
 class ConnectionRecord(object):
@@ -453,6 +482,34 @@ class ConnectionRecord(object):
             The :class:`ConnectionRecord` as a dictionary.
         """
         return {n: getattr(self, n) for n in self._valid_names()}
+
+    def to_xml(self):
+        """Convert this :class:`ConnectionRecord` to a XML :obj:`~xml.etree.ElementTree.Element`.
+
+        Note
+        ----
+        All values of the :class:`ConnectionRecord` are converted to a :obj:`str` so that the
+        returned result could be easily written to a XML file.
+
+        Returns
+        -------
+        :obj:`~xml.etree.ElementTree.Element`
+            The :class:`ConnectionRecord` as a XML element.
+        """
+        root = Element('connection')
+        for name in self._valid_names():
+            element = Element(name)
+            if name == 'properties':
+                for key, value in getattr(self, name).items():
+                    sub_element = Element(key)
+                    sub_element.text = u'{}'.format(value)
+                    element.append(sub_element)
+            elif name == 'backend' or name == 'interface':
+                element.text = str(getattr(self, name))
+            else:
+                element.text = u'{}'.format(getattr(self, name))
+            root.append(element)
+        return root
 
     def _get_interface_name_from_address(self):
         """:obj:`str`: Gets the interface name based on the address value."""

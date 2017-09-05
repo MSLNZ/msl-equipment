@@ -256,7 +256,7 @@ class Database(object):
         >>> connections(manufacturer='H*P')  # doctest: +SKIP
         a list of all ConnectionRecords that have Hewlett Packard as the manufacturer
         >>> connections(manufacturer='^Ag', model='34*')  # doctest: +SKIP
-        a list of all ConnectionRecords that have Agilent as the manufacturer and a model number beginning with '34'
+        a list of all ConnectionRecords that have Agilent as the manufacturer AND a model number beginning with '34'
         >>> connections(interface=MSLInterface.GPIB)  # doctest: +SKIP
         a list of all ConnectionRecords that use GPIB for the connection bus
         >>> connections(interface='USB')  # doctest: +SKIP
@@ -309,7 +309,7 @@ class Database(object):
         >>> records(manufacturer='H*P')  # doctest: +SKIP
         a list of all EquipmentRecords that have Hewlett Packard as the manufacturer
         >>> records(manufacturer='Agilent', model='3458A')  # doctest: +SKIP
-        a list of all EquipmentRecords that are from Agilent and that have the model number 3458A
+        a list of all EquipmentRecords that are from Agilent AND that have the model number 3458A
         >>> records(manufacturer='Agilent', model='3458A', serial='MY45046470')  # doctest: +SKIP
         a list of only one EquipmentRecord (if the equipment record exists, otherwise an empty list)
         >>> records(description='I-V Converter')  # doctest: +SKIP
@@ -331,7 +331,7 @@ class Database(object):
         Raises
         ------
         NameError
-            If the name of an input argument is not a :class:`.EquipmentRecord`
+            If the name of an input argument is not an :class:`.EquipmentRecord`
             property name or ``flags``.
         """
         flags = int(kwargs.pop('flags', 0))  # used by re.search

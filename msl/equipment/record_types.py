@@ -145,7 +145,8 @@ class EquipmentRecord(object):
 
     @property
     def connection(self):
-        """:class:`ConnectionRecord`: The information necessary to establish a connection to the equipment."""
+        """:class:`ConnectionRecord` or :obj:`None`: The information necessary to
+        establish a connection to the equipment."""
         return self._connection
 
     @connection.setter
@@ -276,7 +277,12 @@ class EquipmentRecord(object):
         return ask_date >= self.next_calibration_date()
 
     def next_calibration_date(self):
-        """:obj:`datetime.date`: The next date that a re-calibration is due."""
+        """The date that the next calibration is due.
+
+        Returns
+        -------
+        :obj:`datetime.date`
+            The next calibration date."""
         years = int(self.calibration_cycle)
         months = int(round(12 * (self.calibration_cycle - years)))
         return self.date_calibrated + relativedelta(years=years, months=months)

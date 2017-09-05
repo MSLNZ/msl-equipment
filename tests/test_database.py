@@ -101,17 +101,17 @@ def test_connection_properties():
 
     assert props['a'] == 1
     assert props['b'] == 1.1
-    assert props['c'] and isinstance(props['c'], bool)
-    assert props['d'] and isinstance(props['d'], bool)
-    assert not props['e'] and isinstance(props['e'], bool)
-    assert not props['f'] and isinstance(props['f'], bool)
+    assert isinstance(props['c'], bool) and props['c']
+    assert isinstance(props['d'], bool) and props['d']
+    assert isinstance(props['e'], bool) and not props['e']
+    assert isinstance(props['f'], bool) and not props['f']
     assert props['g'] is None
-    assert props['h'] == u''
+    assert props['h'] == ''
     assert props['i'] == ConnectionMessageBased.LF
     assert props['j'] == ConnectionMessageBased.CR
     assert props['k'] == ConnectionMessageBased.CR + ConnectionMessageBased.LF
-    assert props['l'] == u'some text'
-    assert props['m'] == u'D:\\Data\\'
+    assert props['l'] == 'some text'
+    assert props['m'] == 'D:\\Data\\'
 
 
 def test_encoding():

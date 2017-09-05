@@ -104,11 +104,11 @@ class Database(object):
                     if 'ASRL' in conn_record.interface.name or conn_record.address.startswith('COM'):
                         k_lower = k.lower()
                         if k_lower.startswith('parity'):
-                            v = self._check_asrl_property(key, v, constants.Parity)
+                            v = self._to_enum(key, v, constants.Parity)
                         elif k_lower.startswith('stop'):
-                            v = self._check_asrl_property(key, float(v), constants.StopBits)
+                            v = self._to_enum(key, float(v), constants.StopBits)
                         elif k_lower.startswith('data'):
-                            v = self._check_asrl_property(key, int(v), constants.DataBits)
+                            v = self._to_enum(key, int(v), constants.DataBits)
 
                     if isinstance(v, str):
                         # try to convert 'v' to a Python bool, int or float
@@ -247,7 +247,8 @@ class Database(object):
         **kwargs
             The argument names can be any of the :class:`.ConnectionRecord` property names or
             a ``flags`` argument, see :obj:`re.search`, for performing the search. For testing
-            regex expressions online you can use `this <https://pythex.org/>`_ website.
+            regex expressions online you can use `this <https://pythex.org/>`_ website. All
+            invalid argument names are silently ignored.
 
         Returns
         -------
@@ -260,12 +261,20 @@ class Database(object):
         a list of all ConnectionRecords
         >>> connections(manufacturer='H*P')  # doctest: +SKIP
         a list of all ConnectionRecords that have Hewlett Packard as the manufacturer
-        >>> connections(address='GPIB*')  # doctest: +SKIP
+        >>> connections(manufacturer='^Ag', model='34*')  # doctest: +SKIP
+        a list of all ConnectionRecords that have Agilent as the manufacturer and a model number beginning with '34'
+        >>> connections(interface=MSLInterface.GPIB)  # doctest: +SKIP
         a list of all ConnectionRecords that use GPIB for the connection bus
+        >>> connections(interface='USB')  # doctest: +SKIP
+        a list of all ConnectionRecords that use USB for the connection bus
+        >>> connections(backend=Backend.PyVISA)  # doctest: +SKIP
+        a list of all ConnectionRecords that use PyVISA as the backend
+        >>> connections(backend='MSL')  # doctest: +SKIP
+        a list of all ConnectionRecords that use MSL as the backend
         """
         _kwargs = {key: kwargs[key] for key in kwargs if key in self._connection_property_names}
         flags = kwargs.get('flags', 0)  # used by re.search
-        return [r for r in self._connection_records.values() if self._match(r, _kwargs, flags)]
+        return [r for r in self._connection_records.values() if self._search(r, _kwargs, flags)]
 
     def records(self, **kwargs):
         """Search the :ref:`equipment_database` to find all :class:`.EquipmentRecord`\'s that
@@ -276,7 +285,15 @@ class Database(object):
         **kwargs
             The argument names can be any of the :class:`.EquipmentRecord` property names or
             a ``flags`` argument, see :obj:`re.search`, for performing the search. For testing
-            regex expressions online you can use `this <https://pythex.org/>`_ website.
+            regex expressions online you can use `this <https://pythex.org/>`_ website. All
+            invalid argument names are silently ignored.
+
+            If a `kwarg` is ``connection`` then the value will be used to test which
+            :class:`.EquipmentRecord`\'s have a :class:`~.EquipmentRecord.connection` value is
+            either :obj:`None` or :class:`.ConnectionRecord`. See the examples below.
+
+            If a `kwarg` is ``date_calibrated`` then the value must be a callable function
+            that returns a :obj:`bool`. See the examples below.
 
         Returns
         -------
@@ -295,10 +312,18 @@ class Database(object):
         a list of only one EquipmentRecord (if the equipment record exists, otherwise an empty list)
         >>> records(description='I-V Converter')  # doctest: +SKIP
         a list of all EquipmentRecords that contain 'I-V Converter' in the description field
+        >>> records(connection=True)  # doctest: +SKIP
+        a list of all EquipmentRecords that contain a ConnectionRecord
+        >>> records(connection=0)  # doctest: +SKIP
+        a list of all EquipmentRecords that do not contain a ConnectionRecord
+        >>> records(date_calibrated=lambda date: 1995 < date.year < 2005)  # doctest: +SKIP
+        a list of all EquipmentRecords that were calibrated between the years 1995 and 2005
+        >>> records(date_calibrated=lambda date: date > datetime.date(2008, 3, 15))  # doctest: +SKIP
+        a list of all EquipmentRecords that were calibrated after 15 March 2008
         """
         _kwargs = {key: kwargs[key] for key in kwargs if key in self._equipment_property_names}
         flags = kwargs.get('flags', 0)  # used by re.search
-        return [r for r in self._equipment_records.values() if self._match(r, _kwargs, flags)]
+        return [r for r in self._equipment_records.values() if self._search(r, _kwargs, flags)]
 
     def _read(self, element):
         """Read any allowed database file type"""
@@ -410,8 +435,8 @@ class Database(object):
             return False
         return True
 
-    def _check_asrl_property(self, key, value, enum):
-        """Check if the enum property is valid for a Serial communication interface"""
+    def _to_enum(self, key, value, enum):
+        """Convert the value to an enum value"""
         if isinstance(value, (int, float)):
             for item in enum:
                 if value == item.value:
@@ -425,9 +450,29 @@ class Database(object):
         msg = 'Unknown {} value of "{}" for "{}". Must be one of: {}'
         raise ValueError(msg.format(enum.__name__, value, key, ', '.join(members)))
 
-    def _match(self, record, kwargs, flags):
+    def _search(self, record, kwargs, flags):
         """Check if the kwargs match a database record"""
         for key, value in kwargs.items():
-            if not bool(re.search(value, getattr(record, key), flags)):
-                return False
+            if key == 'backend' or key == 'interface':
+                enum = constants.Backend if key == 'backend' else constants.MSLInterface
+                try:
+                    if self._to_enum(key, value, enum) != getattr(record, key):
+                        return False
+                except ValueError:
+                    return False
+            elif key == 'connection':
+                conn = getattr(record, key)
+                if bool(value):
+                    # then want equipment records with a connection
+                    if conn is None:
+                        return False
+                else:
+                    if conn is not None:
+                        return False
+            elif key == 'date_calibrated':
+                if not value(getattr(record, key)):
+                    return False
+            else:
+                if not bool(re.search(value, getattr(record, key), flags)):
+                    return False
         return True

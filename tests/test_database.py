@@ -4,6 +4,8 @@ import sys
 import pytest
 
 from msl.equipment.config import Config
+from msl.equipment import constants
+from msl.equipment.connection_msl import ConnectionMessageBased
 
 
 def test_database_io_errors():
@@ -58,19 +60,34 @@ def test_database():
     assert len(dbase.records()) == 7 + 18
     assert len(dbase.records(manufacturer='NOPE!')) == 0
     assert len(dbase.records(manufacturer='^Ag')) == 10  # all records from Agilent
+    assert len(dbase.records(manufacturer='^Ag', connection=True)) == 3  # all records from Agilent with a ConnectionRecord
     assert len(dbase.records(manufacturer='Agilent', model='83640L')) == 1
     assert len(dbase.records(manufacturer='H*P')) == 2  # all records from Hewlett Packard
     assert len(dbase.records(manufacturer='Bd6d850614')) == 1
     assert len(dbase.records(location='General')) == 3
     assert len(dbase.records(location='RF Lab')) == 9
     assert len(dbase.records(model='00000')) == 1
+    num_connections_expected = 4
+    assert len(dbase.records(connection=True)) == num_connections_expected
+    assert len(dbase.records(connection=False)) == len(dbase.records()) - num_connections_expected
+    assert len(dbase.records(connection=1)) == num_connections_expected
+    assert len(dbase.records(connection=0)) == len(dbase.records()) - num_connections_expected
+    assert len(dbase.records(connection='anything that converts to a bool=True')) == num_connections_expected
+    assert len(dbase.records(connection='')) == len(dbase.records()) - num_connections_expected
+    assert len(dbase.records(date_calibrated=lambda date: date.year == 2010)) == 3
 
     assert len(dbase.connections()) == 10
     assert len(dbase.connections(backend='MSL')) == 5
+    assert len(dbase.connections(backend=constants.Backend.MSL)) == 5
+    assert len(dbase.connections(backend='XXXXX')) == 0
     assert len(dbase.connections(serial='A10008')) == 1
     assert len(dbase.connections(manufacturer='^Ag')) == 4  # all records from Agilent
     assert len(dbase.connections(model='DTMc300V_sub')) == 1
     assert len(dbase.connections(manufacturer='Agilent', serial='G00001')) == 1
+    assert len(dbase.connections(interface='ASRL')) == 2  # != 3 since "Coherent Scientific" uses PyVISA
+    assert len(dbase.connections(interface=constants.MSLInterface.SDK)) == 2
+    assert len(dbase.connections(interface=constants.MSLInterface.USB)) == 0 # != 1 since "Fluke" uses PyVISA
+    assert len(dbase.connections(interface='XXXXXX')) == 0
 
     assert len(dbase.equipment) == 2
     assert '712ae' in dbase.equipment  # the model number is used as the key
@@ -90,9 +107,9 @@ def test_connection_properties():
     assert not props['f'] and isinstance(props['f'], bool)
     assert props['g'] is None
     assert props['h'] == u''
-    assert props['i'] == u'\\n'
-    assert props['j'] == u'\\r'
-    assert props['k'] == u'\\r\\n'
+    assert props['i'] == ConnectionMessageBased.LF
+    assert props['j'] == ConnectionMessageBased.CR
+    assert props['k'] == ConnectionMessageBased.CR + ConnectionMessageBased.LF
     assert props['l'] == u'some text'
     assert props['m'] == u'D:\\Data\\'
 

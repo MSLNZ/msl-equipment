@@ -6,6 +6,7 @@ import pytest
 from msl.equipment.config import Config
 from msl.equipment import EquipmentRecord, ConnectionRecord
 from msl.equipment import constants
+from msl.equipment.connection_msl import ConnectionMessageBased
 
 
 def test_equip_record():
@@ -259,8 +260,8 @@ def test_dbase():
     assert eq2.connection.backend == constants.Backend.MSL
     assert eq2.connection.interface == constants.MSLInterface.ASRL
     assert eq2.connection.properties['baud_rate'] == 9600
-    assert eq2.connection.properties['read_termination'] == u'\\r\\n'
-    assert eq2.connection.properties['write_termination'] == u'\\n'
+    assert eq2.connection.properties['read_termination'] == ConnectionMessageBased.CR + ConnectionMessageBased.LF
+    assert eq2.connection.properties['write_termination'] == ConnectionMessageBased.LF
 
 
 def test_asrl():

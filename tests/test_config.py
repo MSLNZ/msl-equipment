@@ -1,5 +1,5 @@
 import os
-from xml.etree.ElementTree import ParseError
+from xml.etree.cElementTree import ParseError
 
 import pytest
 

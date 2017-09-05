@@ -3,7 +3,7 @@ Load a XML :ref:`configuration`.
 """
 import os
 import logging
-from xml.etree import ElementTree
+from xml.etree import cElementTree as ET
 
 from msl.equipment.database import Database
 
@@ -68,7 +68,7 @@ class Config(object):
             If the :ref:`configuration` is invalid.
         """
         logger.debug('Loading {}'.format(path))
-        self._root = ElementTree.parse(path).getroot()
+        self._root = ET.parse(path).getroot()
         self._path = path
         self._database = None
 

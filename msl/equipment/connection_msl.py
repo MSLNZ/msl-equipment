@@ -74,13 +74,6 @@ class ConnectionMessageBased(Connection):
     LF = '\n'
     """:obj:`str`: The line-feed character."""
 
-    _read_termination = None
-    _write_termination = CR + LF
-    _encoding = 'utf-8'
-    _read_size = 2**14
-
-    chunk_size = _read_size
-
     def __init__(self, record):
         """Base class for equipment that use message-based communication.
 
@@ -100,6 +93,12 @@ class ConnectionMessageBased(Connection):
             A record from an :ref:`equipment_database`.
         """
         Connection.__init__(self, record)
+
+        self._read_termination = None
+        self._write_termination = self.CR + self.LF
+        self._encoding = 'utf-8'
+        self._read_size = 2**14
+        self._timeout = None
 
     @property
     def encoding(self):
@@ -143,47 +142,87 @@ class ConnectionMessageBased(Connection):
 
     @property
     def chunk_size(self):
-        """:obj:`int`: The number of bytes to be :meth:`read`."""
+        """:obj:`int`: The default number of bytes to be :meth:`read`."""
         return self._read_size
 
     @property
     def read_size(self):
-        """:obj:`int`: The number of bytes to be :meth:`read`."""
+        """:obj:`int`: The default number of bytes to be :meth:`read`."""
         return self._read_size
 
     @read_size.setter
     def read_size(self, size):
         """The number of bytes to be :meth:`read`."""
-        size = int(size)
-        if size < 1:
-            raise ValueError('The number of bytes to read must be >0')
-        self._read_size = size
+        if not isinstance(size, int) or size < 1:
+            raise ValueError('The number of bytes to read must be >0 and an integer, got {}'.format(size))
+        self._read_size = int(size)
+
+    @property
+    def timeout(self):
+        """:obj:`int`, :obj:`float` or :obj:`None`: The timeout, in seconds, for I/O operations."""
+        return self._timeout
+
+    @timeout.setter
+    def timeout(self, seconds):
+        """Set the timeout, in seconds, for I/O operations."""
+        if seconds is not None:
+            if not isinstance(seconds, (int, float)) or seconds < 0:
+                raise ValueError('Not a valid timeout value: {}'.format(seconds))
+        self._timeout = seconds
 
     def read(self, size=None):
-        """Read a response from the equipment.
+        """Read the requested number of bytes.
 
-        Note
-        ----
-        The subclass must override this method.
+        .. attention::
+           The subclass must override this method.
+
+        Parameters
+        ----------
+        size : :obj:`int`, optional
+            The number of bytes to read.
+
+            This method can block until all requested bytes have been read unless a
+            :obj:`timeout` value has been set. If :obj:`None` then read
+            :obj:`read_size` bytes
 
         Returns
         -------
-        :obj:`str`
+        :obj:`bytes`
             The response from the equipment.
         """
         raise NotImplementedError
 
-    def write(self, message):
-        """Write (send) a message to the equipment.
+    def readline(self):
+        """Read bytes until a ``\\n`` character has been read.
 
-        Note
-        ----
-        The subclass must override this method.
+        This method will block until a ``\\n`` character has been read, unless a
+        :obj:`timeout` value has been set.
+
+        Returns
+        -------
+        :obj:`bytes`
+            The response from the equipment.
+        """
+        start = time.time()
+        b = self.read(1)
+        out = b
+        while b != b'\n':
+            b = self.read(1)
+            out += b
+            if self.timeout is not None and time.time() - start > self.timeout:
+                break
+        return out
+
+    def write(self, message):
+        """Write a message to the equipment.
+
+        .. attention::
+           The subclass must override this method.
 
         Parameters
         ----------
         message : :obj:`str`
-            The message to write (send) to the equipment.
+            The message to write to the equipment.
 
         Returns
         -------
@@ -192,15 +231,13 @@ class ConnectionMessageBased(Connection):
         """
         raise NotImplementedError
 
-    send = write
-
     def query(self, message, delay=0.0):
         """Convenience method for performing a :meth:`write` followed by a :meth:`read`.
 
         Parameters
         ----------
         message : :obj:`str`
-            The message to write (send) to the equipment.
+            The message to write to the equipment.
         delay : :obj:`float`
             The time delay, in seconds, to wait between :meth:`write` and 
             :meth:`read` operations.
@@ -214,8 +251,6 @@ class ConnectionMessageBased(Connection):
         if delay > 0.0:
             time.sleep(delay)
         return self.read()
-
-    ask = query
 
 
 class ConnectionSerial(ConnectionMessageBased):
@@ -273,9 +308,10 @@ class ConnectionSerial(ConnectionMessageBased):
         self.write_termination = props.get('write_termination', self.write_termination)
         self.read_size = props.get('read_size', self.read_size)
         self.encoding = props.get('encoding', self.encoding)
+        self.timeout = props.get('timeout', None)
+
         self._serial.port = record.connection.address.split('::')[0]
         self._serial.parity = props.get('parity', constants.Parity.NONE).value
-        self._serial.timeout = props.get('timeout', None)
         self._serial.write_timeout = props.get('write_timeout', None)
         self._serial.inter_byte_timeout = props.get('inter_byte_timeout', None)
         self._serial.exclusive = props.get('exclusive', None)
@@ -334,6 +370,11 @@ class ConnectionSerial(ConnectionMessageBased):
         """:obj:`~.constants.Parity`: The parity setting."""
         return constants.Parity(self._serial.parity)
 
+    @ConnectionMessageBased.timeout.setter
+    def timeout(self, seconds):
+        self._serial.timeout = seconds
+        self._timeout = self._serial.timeout
+
     def write(self, message):
         """Write the given message over the Serial port.
 
@@ -354,8 +395,8 @@ class ConnectionSerial(ConnectionMessageBased):
     def read(self, size=None):
         """Read `size` bytes from the Serial port.
 
-        If a `timeout` value is set when this class is instantiated it may return less
-        bytes than requested. With no `timeout` it will block until the requested
+        If a :obj:`.timeout` value is set when this class is instantiated it may return less
+        bytes than requested. With no :obj:`.timeout` it will block until the requested
         number of bytes is read.
 
         Parameters
@@ -368,7 +409,7 @@ class ConnectionSerial(ConnectionMessageBased):
         :obj:`bytes`:
             The bytes read from the Serial port.
         """
-        size = self.read_size if size is None else size
+        size = self.read_size if size is None else int(size)
         b = self._serial.read(size)
         self.log_debug('{}.read({}) -> {}'.format(self.__class__.__name__, size, b))
         return b

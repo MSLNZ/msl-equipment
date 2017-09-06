@@ -1,6 +1,7 @@
 """
 Use :ref:`resources` to establish a connection to the equipment.
 """
+import re
 import time
 
 import serial
@@ -126,7 +127,7 @@ class ConnectionMessageBased(Connection):
     @read_termination.setter
     def read_termination(self, termination):
         """The termination character sequence to use for :meth:`read` operations."""
-        self._read_termination = '' if termination is None else str(termination)
+        self._read_termination = None if termination is None else str(termination)
 
     @property
     def write_termination(self):
@@ -138,7 +139,7 @@ class ConnectionMessageBased(Connection):
     @write_termination.setter
     def write_termination(self, termination):
         """The termination character sequence to append to :meth:`write` messages."""
-        self._write_termination = '' if termination is None else str(termination)
+        self._write_termination = None if termination is None else str(termination)
 
     @property
     def chunk_size(self):
@@ -310,13 +311,15 @@ class ConnectionSerial(ConnectionMessageBased):
         self.encoding = props.get('encoding', self.encoding)
         self.timeout = props.get('timeout', None)
 
-        port = record.connection.address.split('::')[0]
-        if port.startswith('ASRL'):
-            self._serial.port = port[4:]  # PyVISA prepends 'ASRL'
-        else:
-            self._serial.port = port
+        # PyVISA and PyVISA-py accept various resource names: 'ASRL', 'COM', 'LPT', 'ASRLCOM'
+        # but Serial seems to only be happy with 'COM'
+        number = re.search('\d+', record.connection.address)  # get the port number from the address
+        if number is None:
+            self.raise_exception('No port number was specified -- address={}'.format(record.connection.address))
+        self._serial.port = 'COM{}'.format(number.group(0))
+
         self._serial.parity = props.get('parity', constants.Parity.NONE).value
-        self._serial.write_timeout = props.get('write_timeout', self.timeout)
+        self._serial.write_timeout = props.get('write_timeout', None)
         self._serial.inter_byte_timeout = props.get('inter_byte_timeout', None)
         self._serial.exclusive = props.get('exclusive', None)
         self._serial.xonxoff = props.get('xon_xoff', False)
@@ -379,6 +382,15 @@ class ConnectionSerial(ConnectionMessageBased):
         self._serial.timeout = seconds
         self._timeout = self._serial.timeout
 
+    def disconnect(self):
+        """Close the Serial port."""
+        try:
+            # if the subclass raised an error in the constructor before
+            # the this class is initialized then self._serial won't exist
+            self._serial.close()
+        except AttributeError:
+            pass
+
     def write(self, message):
         """Write the given message over the Serial port.
 
@@ -392,37 +404,77 @@ class ConnectionSerial(ConnectionMessageBased):
         :obj:`int`:
             The number of bytes written to the Serial port.
         """
-        data = (message + self.write_termination).encode(self.encoding)
+        if not message.endswith(self.write_termination):
+            message += self.write_termination
+        data = message.encode(self.encoding)
         self.log_debug('{}.write({})'.format(self.__class__.__name__, data))
         return self._serial.write(data)
 
     def read(self, size=None):
         """Read `size` bytes from the Serial port.
 
-        If a :obj:`.timeout` value is set when this class is instantiated it may return less
-        bytes than requested. With no :obj:`.timeout` it will block until the requested
-        number of bytes is read.
-
         Parameters
         ----------
         size : :obj:`int`
-            The number of bytes to read. If :obj:`None` then read :obj:`.read_size` bytes.
+            The number of bytes to read. If a :obj:`timeout` value is set then it may return
+            less bytes than requested. With no :obj:`timeout` it will block until the requested
+            number of bytes is read.
+
+            If `size` is :obj:`None` then either read until:
+
+            1. the :obj:`.read_termination` bytes are read (only if the termination value is not :obj:`None`)
+            2. :obj:`.read_size` bytes have been read
+            3. a :obj:`timeout` occurs (if a :obj:`timeout` has been set)
+
+            This method will block until at least one of the above is fulfilled.
 
         Returns
         -------
         :obj:`bytes`:
             The bytes read from the Serial port.
         """
-        size = self.read_size if size is None else int(size)
-        b = self._serial.read(size)
-        self.log_debug('{}.read({}) -> {}'.format(self.__class__.__name__, size, b))
-        return b
+        start = time.time()
+        if size is not None:  # then call the Serial read method for slightly more efficiency
+            out = self._serial.read(size)
+            self._check_timeout(start)
+        else:
+            count = 0
+            term_char = None if self.read_termination is None else self.read_termination.encode(self.encoding)
+            out = bytes()
+            while True:
+                b = self._serial.read()
+                out += b
+                count += 1
+                if term_char is not None and out.endswith(term_char):
+                    break
+                if count == self.read_size:
+                    msg = '{}.read() READ MAXIMUM NUMBER OF BYTES [{}], {} BYTES CURRENTLY IN BUFFER'
+                    self.log_warning(msg.format(self.__class__.__name__, count, self._serial.in_waiting))
+                    break
+                if self._check_timeout(start):
+                    break
+        self.log_debug('{}.read({}) -> {}'.format(self.__class__.__name__, size, out))
+        return out
 
-    def disconnect(self):
-        """Close the Serial port."""
-        try:
-            # if the subclass raised an error in the constructor before
-            # the this class is initialized then self._serial won't exist
-            self._serial.close()
-        except AttributeError:
-            pass
+    def readline(self):
+        """Read bytes until a ``\\n`` character has been read.
+
+        This method will block until a ``\\n`` character has been read, unless a
+        :obj:`timeout` value has been set.
+
+        Returns
+        -------
+        :obj:`bytes`
+            The response from the equipment.
+        """
+        # override this method since the Serial class probably does it more efficiently
+        out = self._serial.readline()
+        self.log_debug('{}.readline() -> {}'.format(self.__class__.__name__, out))
+        return out
+
+    def _check_timeout(self, start):
+        """:obj:`bool`: Returns whether a timeout occurred"""
+        ret = self.timeout is not None and time.time() - start >= self.timeout
+        if ret:
+            self.log_warning('{}.read() TIMEOUT OCCURRED'.format(self.__class__.__name__))
+        return ret

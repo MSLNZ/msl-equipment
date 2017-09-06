@@ -95,10 +95,10 @@ class ConnectionMessageBased(Connection):
         """
         Connection.__init__(self, record)
 
-        self._read_termination = None
-        self._write_termination = self.CR + self.LF
+        self._read_termination = ConnectionMessageBased.LF
+        self._write_termination = ConnectionMessageBased.CR + ConnectionMessageBased.LF
         self._encoding = 'utf-8'
-        self._read_size = 2**14
+        self._read_size = 2**16
         self._timeout = None
 
     @property
@@ -142,13 +142,8 @@ class ConnectionMessageBased(Connection):
         self._write_termination = None if termination is None else str(termination)
 
     @property
-    def chunk_size(self):
-        """:obj:`int`: The default number of bytes to be :meth:`read`."""
-        return self._read_size
-
-    @property
     def read_size(self):
-        """:obj:`int`: The default number of bytes to be :meth:`read`."""
+        """:obj:`int`: The maximum number of bytes to be :meth:`read`."""
         return self._read_size
 
     @read_size.setter
@@ -172,7 +167,7 @@ class ConnectionMessageBased(Connection):
         self._timeout = seconds
 
     def read(self, size=None):
-        """Read the requested number of bytes.
+        """Read the response from the equipment.
 
         .. attention::
            The subclass must override this method.
@@ -182,37 +177,12 @@ class ConnectionMessageBased(Connection):
         size : :obj:`int`, optional
             The number of bytes to read.
 
-            This method can block until all requested bytes have been read unless a
-            :obj:`timeout` value has been set. If :obj:`None` then read
-            :obj:`read_size` bytes
-
         Returns
         -------
         :obj:`str`
             The response from the equipment.
         """
         raise NotImplementedError
-
-    def readline(self):
-        """Read bytes until a ``\\n`` character has been read.
-
-        This method will block until a ``\\n`` character has been read, unless a
-        :obj:`timeout` value has been set.
-
-        Returns
-        -------
-        :obj:`str`
-            The response from the equipment.
-        """
-        start = time.time()
-        b = self.read(1)
-        out = b
-        while b != b'\n':
-            b = self.read(1)
-            out += b
-            if self.timeout is not None and time.time() - start > self.timeout:
-                break
-        return out.decode(self.encoding)
 
     def write(self, message):
         """Write a message to the equipment.
@@ -404,7 +374,7 @@ class ConnectionSerial(ConnectionMessageBased):
         :obj:`int`:
             The number of bytes written to the Serial port.
         """
-        if not message.endswith(self.write_termination):
+        if self.write_termination is not None and not message.endswith(self.write_termination):
             message += self.write_termination
         data = message.encode(self.encoding)
         self.log_debug('{}.write({})'.format(self.__class__.__name__, data))
@@ -433,48 +403,25 @@ class ConnectionSerial(ConnectionMessageBased):
         :obj:`str`:
             The response from the equipment.
         """
+        size = self.read_size if size is None else int(size)
+        term_char = None if self.read_termination is None else self.read_termination.encode(self.encoding)
+        out = bytes()
         start = time.time()
-        if size is not None:  # then call the Serial read method for slightly more efficiency
-            out = self._serial.read(size)
-            self._check_timeout(start)
-        else:
-            count = 0
-            term_char = None if self.read_termination is None else self.read_termination.encode(self.encoding)
-            out = bytes()
-            while True:
-                b = self._serial.read()
-                out += b
-                count += 1
-                if term_char is not None and out.endswith(term_char):
-                    break
-                if count == self.read_size:
-                    msg = '{}.read() READ MAXIMUM NUMBER OF BYTES [{}], {} BYTES CURRENTLY IN BUFFER'
-                    self.log_warning(msg.format(self.__class__.__name__, count, self._serial.in_waiting))
-                    break
-                if self._check_timeout(start):
-                    break
+        while True:
+            b = self._serial.read(1)
+            out += b
+            if term_char is not None and out.endswith(term_char):
+                out = out[:-len(term_char)]
+                break
+            if len(out) == size:
+                msg = '{}.read() READ MAXIMUM NUMBER OF BYTES [{}], {} BYTES CURRENTLY IN BUFFER'
+                self.log_warning(msg.format(self.__class__.__name__, len(out), self._serial.in_waiting))
+                break
+            if self.timeout is not None and time.time() - start >= self.timeout:
+                msg = '{}.read() TIMEOUT OCCURRED'.format(self.__class__.__name__)
+                self.log_warning(msg)
+                if len(out) == 0:
+                    self.raise_exception(msg)
+                break
         self.log_debug('{}.read({}) -> {}'.format(self.__class__.__name__, size, out))
         return out.decode(self.encoding)
-
-    def readline(self):
-        """Read bytes until a ``\\n`` character has been read.
-
-        This method will block until a ``\\n`` character has been read, unless a
-        :obj:`timeout` value has been set.
-
-        Returns
-        -------
-        :obj:`str`
-            The response from the equipment.
-        """
-        # override this method since the Serial class probably does it more efficiently
-        out = self._serial.readline().decode(self.encoding)
-        self.log_debug('{}.readline() -> {}'.format(self.__class__.__name__, out))
-        return out
-
-    def _check_timeout(self, start):
-        """:obj:`bool`: Returns whether a timeout occurred"""
-        ret = self.timeout is not None and time.time() - start >= self.timeout
-        if ret:
-            self.log_warning('{}.read() TIMEOUT OCCURRED'.format(self.__class__.__name__))
-        return ret

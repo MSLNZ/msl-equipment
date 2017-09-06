@@ -188,7 +188,7 @@ class ConnectionMessageBased(Connection):
 
         Returns
         -------
-        :obj:`bytes`
+        :obj:`str`
             The response from the equipment.
         """
         raise NotImplementedError
@@ -201,7 +201,7 @@ class ConnectionMessageBased(Connection):
 
         Returns
         -------
-        :obj:`bytes`
+        :obj:`str`
             The response from the equipment.
         """
         start = time.time()
@@ -212,7 +212,7 @@ class ConnectionMessageBased(Connection):
             out += b
             if self.timeout is not None and time.time() - start > self.timeout:
                 break
-        return out
+        return out.decode(self.encoding)
 
     def write(self, message):
         """Write a message to the equipment.
@@ -430,8 +430,8 @@ class ConnectionSerial(ConnectionMessageBased):
 
         Returns
         -------
-        :obj:`bytes`:
-            The bytes read from the Serial port.
+        :obj:`str`:
+            The response from the equipment.
         """
         start = time.time()
         if size is not None:  # then call the Serial read method for slightly more efficiency
@@ -454,7 +454,7 @@ class ConnectionSerial(ConnectionMessageBased):
                 if self._check_timeout(start):
                     break
         self.log_debug('{}.read({}) -> {}'.format(self.__class__.__name__, size, out))
-        return out
+        return out.decode(self.encoding)
 
     def readline(self):
         """Read bytes until a ``\\n`` character has been read.
@@ -464,11 +464,11 @@ class ConnectionSerial(ConnectionMessageBased):
 
         Returns
         -------
-        :obj:`bytes`
+        :obj:`str`
             The response from the equipment.
         """
         # override this method since the Serial class probably does it more efficiently
-        out = self._serial.readline()
+        out = self._serial.readline().decode(self.encoding)
         self.log_debug('{}.readline() -> {}'.format(self.__class__.__name__, out))
         return out
 

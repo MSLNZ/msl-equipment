@@ -2,6 +2,7 @@
 Records from :ref:`equipment_database`\'s or a :ref:`connection_database`\'s.
 """
 import re
+import enum
 import logging
 import datetime
 from xml.etree.cElementTree import Element
@@ -308,8 +309,46 @@ class EquipmentRecord(object):
 
         Note
         ----
-        All values of the :class:`EquipmentRecord` are converted to a :obj:`str` so that the
-        returned result could be easily written to a XML file.
+        All values of the :class:`EquipmentRecord` are converted to a :obj:`str`
+        so that the returned result could be easily written to a XML file.
+
+        Example
+        -------
+        If you wanted to dump the information about all the equipment that you
+        used for a measurement, as well as the data that you acquired, to a XML
+        file then the following script shows how you could use the :meth:`to_xml`
+        method to achieve that result:
+
+        .. code-block:: python
+
+            import codecs
+            from xml.dom import minidom
+            from xml.etree import cElementTree as ET
+
+            from msl.equipment import Config
+
+            # load the database from a configuration file
+            db = Config('config.xml').database()
+
+            # append the information about the equipment that you are using to a root Element
+            root = ET.Element('msl')
+            for record in db.equipment.values():
+                root.append(record.to_xml())
+
+            #
+            # ... append your data as XML Element's to the root Element
+            #
+
+            # make the XML output more human readable
+            encoding = 'utf-8'
+            output = minidom.parseString(ET.tostring(root)).toprettyxml(encoding=encoding).decode(encoding)
+
+            # print the information to stdout
+            print(output)
+
+            # write the information to a file
+            with codecs.open('output.xml', 'w', encoding=encoding) as fp:
+                fp.write(output)
 
         Returns
         -------
@@ -321,17 +360,38 @@ class EquipmentRecord(object):
             element = Element(name)
             if name == 'connection':
                 if self.connection is None:
-                    element.text = 'None'
+                    element.text = u''
                 else:
                     for el in self.connection.to_xml():
                         element.append(el)
             elif name == 'date_calibrated':
                 date = getattr(self, name)
-                element.text = date.isoformat() if date.year != datetime.MINYEAR else 'None'
+                element.text = u'{}'.format(date.isoformat()) if date.year != datetime.MINYEAR else u''
             else:
                 element.text = u'{}'.format(getattr(self, name))
             root.append(element)
         return root
+
+    def to_readable_string(self):
+        """Convert this :class:`EquipmentRecord` to an easily-readable string.
+
+        Returns
+        -------
+        :obj:`str`
+            The :class:`EquipmentRecord` as a string.
+        """
+        out = u''
+        for element in self.to_xml():
+            if element.text is not None:
+                if element.text:
+                    out += u'{} = {}\n'.format(element.tag, element.text)
+                else:
+                    out += u'{} = ""\n'.format(element.tag)
+            else:  # the connection values
+                out += u'connection\n'
+                for line in self.connection.to_readable_string().splitlines():
+                    out += u'    {}\n'.format(line)
+        return out[:-1]
 
 
 class ConnectionRecord(object):
@@ -506,16 +566,46 @@ class ConnectionRecord(object):
         for name in self._valid_names():
             element = Element(name)
             if name == 'properties':
-                for key, value in getattr(self, name).items():
-                    sub_element = Element(key)
-                    sub_element.text = u'{}'.format(value)
-                    element.append(sub_element)
+                if not self.properties:
+                    element.text = u''
+                else:
+                    for key, value in self.properties.items():
+                        prop = Element(key)
+                        if isinstance(value, enum.Enum):
+                            prop.text = u'{}'.format(str(value))
+                        elif 'termination' in key:
+                            prop.text = u'{!r}'.format(value)
+                        else:
+                            prop.text = u'{}'.format(value)
+                        element.append(prop)
             elif name == 'backend' or name == 'interface':
-                element.text = str(getattr(self, name))
+                element.text = u'{}'.format(str(getattr(self, name)))  # want to get the enum name not the enum value
             else:
                 element.text = u'{}'.format(getattr(self, name))
             root.append(element)
         return root
+
+    def to_readable_string(self):
+        """Convert this :class:`ConnectionRecord` to an easily-readable string.
+
+        Returns
+        -------
+        :obj:`str`
+            The :class:`ConnectionRecord` as a string.
+        """
+        out = u''
+        for element in self.to_xml():
+            if element.text:
+                out += u'{} = {}\n'.format(element.tag, element.text)
+            else:
+                out += u'{}'.format(element.tag)
+                if len(element) == 0:
+                    out += u" = ''\n"
+                else:
+                    out += u'\n'
+                    for prop in element:
+                        out += u'    {} = {}\n'.format(prop.tag, prop.text)
+        return out[:-1]
 
     def _get_interface_name_from_address(self):
         """:obj:`str`: Gets the interface name based on the address value."""

@@ -7,6 +7,10 @@ class MSLConnectionError(IOError):
     """Base class for all MSL :class:`~.connection.Connection` exceptions."""
 
 
+class MSLTimeoutError(MSLConnectionError):
+    """A timeout exception for I/O operations."""
+
+
 class BenthamError(MSLConnectionError):
     """Exception for equipment from Bentham."""
 

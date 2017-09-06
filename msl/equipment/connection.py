@@ -6,6 +6,7 @@ from enum import Enum
 
 from msl.equipment.record_types import EquipmentRecord
 from msl.equipment.exceptions import MSLConnectionError
+from msl.equipment.exceptions import MSLTimeoutError
 
 logger = logging.getLogger(__name__)
 
@@ -54,11 +55,11 @@ class Connection(object):
         pass
 
     def __repr__(self):
-        return '{}<{}|{}|{} at {}>'.format(self.__class__.__name__,
-                                           self.equipment_record.manufacturer,
-                                           self.equipment_record.model,
-                                           self.equipment_record.serial,
-                                           self.equipment_record.connection.address)
+        return u'{}<{}|{}|{} at {}>'.format(self.__class__.__name__,
+                                            self.equipment_record.manufacturer,
+                                            self.equipment_record.model,
+                                            self.equipment_record.serial,
+                                            self.equipment_record.connection.address)
 
     def __del__(self):
         self.disconnect()
@@ -71,9 +72,20 @@ class Connection(object):
         msg : :obj:`str`
             The message to display when the exception is raised.
         """
-        r = self.equipment_record
-        caller = u'{}<{}|{}|{}>\n'.format(self.__class__.__name__, r.manufacturer, r.model, r.serial)
-        raise self._exception_handler(caller + msg)
+        self.log_error('{!r} {}'.format(self, msg))
+        raise self._exception_handler('{!r}\n{}'.format(self, msg))
+
+    def raise_timeout(self, timeout):
+        """Raise a :exc:`~.exceptions.MSLTimeoutError`.
+
+        Parameters
+        ----------
+        timeout : :obj:`float`
+            The timeout value, in seconds.
+        """
+        msg = 'A timeout occurred after {} seconds'.format(timeout)
+        self.log_error('{!r} {}'.format(self, msg))
+        raise MSLTimeoutError('{!r}\n{}'.format(self, msg))
 
     @staticmethod
     def convert_to_enum(item, enum, prefix='', to_upper=False):

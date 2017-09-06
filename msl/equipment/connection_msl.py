@@ -98,7 +98,7 @@ class ConnectionMessageBased(Connection):
         self._read_termination = ConnectionMessageBased.LF
         self._write_termination = ConnectionMessageBased.CR + ConnectionMessageBased.LF
         self._encoding = 'utf-8'
-        self._read_size = 2**16
+        self._max_read_size = 2 ** 16
         self._timeout = None
 
     @property
@@ -142,16 +142,16 @@ class ConnectionMessageBased(Connection):
         self._write_termination = None if termination is None else str(termination)
 
     @property
-    def read_size(self):
+    def max_read_size(self):
         """:obj:`int`: The maximum number of bytes to be :meth:`read`."""
-        return self._read_size
+        return self._max_read_size
 
-    @read_size.setter
+    @max_read_size.setter
     def read_size(self, size):
         """The number of bytes to be :meth:`read`."""
         if not isinstance(size, int) or size < 1:
             raise ValueError('The number of bytes to read must be >0 and an integer, got {}'.format(size))
-        self._read_size = int(size)
+        self._max_read_size = int(size)
 
     @property
     def timeout(self):
@@ -393,7 +393,7 @@ class ConnectionSerial(ConnectionMessageBased):
             If `size` is :obj:`None` then either read until:
 
             1. the :obj:`.read_termination` bytes are read (only if the termination value is not :obj:`None`)
-            2. :obj:`.read_size` bytes have been read
+            2. :obj:`.max_read_size` bytes have been read
             3. a :obj:`timeout` occurs (if a :obj:`timeout` has been set)
 
             This method will block until at least one of the above is fulfilled.
@@ -402,26 +402,36 @@ class ConnectionSerial(ConnectionMessageBased):
         -------
         :obj:`str`:
             The response from the equipment.
+
+        Raises
+        ------
+        :exe:`~msl.equipment.exceptions.MSLTimeoutError`
+            If a timeout occurs.
         """
-        size = self.read_size if size is None else int(size)
         term_char = None if self.read_termination is None else self.read_termination.encode(self.encoding)
-        out = bytes()
         start = time.time()
-        while True:
-            b = self._serial.read(1)
-            out += b
-            if term_char is not None and out.endswith(term_char):
-                out = out[:-len(term_char)]
-                break
-            if len(out) == size:
-                msg = '{}.read() READ MAXIMUM NUMBER OF BYTES [{}], {} BYTES CURRENTLY IN BUFFER'
-                self.log_warning(msg.format(self.__class__.__name__, len(out), self._serial.in_waiting))
-                break
-            if self.timeout is not None and time.time() - start >= self.timeout:
-                msg = '{}.read() TIMEOUT OCCURRED'.format(self.__class__.__name__)
-                self.log_warning(msg)
-                if len(out) == 0:
-                    self.raise_exception(msg)
-                break
+        if size is not None:
+            out = self._serial.read(int(size))
+            self._check_timeout(start)
+        elif term_char is not None and term_char.endswith(serial.LF):
+            out = self._serial.readline()
+            self._check_timeout(start)
+        else:
+            out = bytes()
+            while True:
+                b = self._serial.read(1)
+                out += b
+                if term_char is not None and out.endswith(term_char):
+                    break
+                if len(out) == self.max_read_size:
+                    msg = '{}.read() the maximum number of bytes were read [{}], {} bytes remain in the buffer'
+                    self.log_warning(msg.format(self.__class__.__name__, len(out), self._serial.in_waiting))
+                    break
+                self._check_timeout(start)
         self.log_debug('{}.read({}) -> {}'.format(self.__class__.__name__, size, out))
-        return out.decode(self.encoding)
+        return out.decode(self.encoding).rstrip()
+
+    def _check_timeout(self, start_time):
+        """Check if a timeout occurred. Raises a MSLTimeoutError if it did occur."""
+        if self.timeout is not None and time.time() - start_time >= self.timeout:
+            self.raise_timeout(self.timeout)

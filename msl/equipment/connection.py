@@ -6,7 +6,6 @@ from enum import Enum
 
 from msl.equipment.record_types import EquipmentRecord
 from msl.equipment.exceptions import MSLConnectionError
-from msl.equipment.exceptions import MSLTimeoutError
 
 logger = logging.getLogger(__name__)
 
@@ -74,18 +73,6 @@ class Connection(object):
         """
         self.log_error('{!r} {}'.format(self, msg))
         raise self._exception_handler('{!r}\n{}'.format(self, msg))
-
-    def raise_timeout(self, timeout):
-        """Raise a :exc:`~.exceptions.MSLTimeoutError`.
-
-        Parameters
-        ----------
-        timeout : :obj:`float`
-            The timeout value, in seconds.
-        """
-        msg = 'A timeout occurred after {} seconds'.format(timeout)
-        self.log_error('{!r} {}'.format(self, msg))
-        raise MSLTimeoutError('{!r}\n{}'.format(self, msg))
 
     @staticmethod
     def convert_to_enum(item, enum, prefix='', to_upper=False):

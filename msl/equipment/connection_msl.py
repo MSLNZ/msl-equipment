@@ -7,8 +7,10 @@ import time
 import serial
 
 from msl.loadlib import LoadLibrary
+
 from msl.equipment import constants
 from msl.equipment.connection import Connection
+from msl.equipment.exceptions import MSLTimeoutError
 
 
 class ConnectionSDK(Connection):
@@ -55,7 +57,7 @@ class ConnectionSDK(Connection):
 
     @property
     def sdk(self):
-        """The reference to the shared library, see :obj:`~msl.loadlib.load_library.LoadLibrary.lib`."""
+        """:obj:`~msl.loadlib.load_library.LoadLibrary.lib`: The reference to the shared library."""
         return self._lib.lib
 
     def log_errcheck(self, result, func, arguments):
@@ -117,7 +119,7 @@ class ConnectionMessageBased(Connection):
     @property
     def read_termination(self):
         """:obj:`str` or :obj:`None`: The termination character sequence 
-        that is used for :meth:`read` operations.
+        that is used for the :meth:`read` method.
         
         Reading stops when the equipment stops sending data (e.g., by setting appropriate 
         bus lines) or the `read_termination` character sequence is detected.
@@ -126,7 +128,7 @@ class ConnectionMessageBased(Connection):
 
     @read_termination.setter
     def read_termination(self, termination):
-        """The termination character sequence to use for :meth:`read` operations."""
+        """The termination character sequence to use for the :meth:`read` method."""
         self._read_termination = None if termination is None else str(termination)
 
     @property
@@ -143,12 +145,12 @@ class ConnectionMessageBased(Connection):
 
     @property
     def max_read_size(self):
-        """:obj:`int`: The maximum number of bytes to be :meth:`read`."""
+        """:obj:`int`: The maximum number of bytes that can be :meth:`read`."""
         return self._max_read_size
 
     @max_read_size.setter
-    def read_size(self, size):
-        """The number of bytes to be :meth:`read`."""
+    def max_read_size(self, size):
+        """The maximum number of bytes that can be :meth:`read`."""
         if not isinstance(size, int) or size < 1:
             raise ValueError('The number of bytes to read must be >0 and an integer, got {}'.format(size))
         self._max_read_size = int(size)
@@ -164,7 +166,21 @@ class ConnectionMessageBased(Connection):
         if seconds is not None:
             if not isinstance(seconds, (int, float)) or seconds < 0:
                 raise ValueError('Not a valid timeout value: {}'.format(seconds))
-        self._timeout = seconds
+        self._timeout = float(seconds)
+
+    def raise_timeout(self, append_msg=''):
+        """Raise a :exc:`~.exceptions.MSLTimeoutError`.
+
+        Parameters
+        ----------
+        append_msg: :obj:`str`, optional
+            A message to append to the generic timeout message.
+        """
+        msg = 'Timeout occurred after {} seconds'.format(self.timeout)
+        if append_msg:
+            msg += ' -- ' + append_msg
+        self.log_error('{!r} {}'.format(self, msg))
+        raise MSLTimeoutError('{!r}\n{}'.format(self, msg))
 
     def read(self, size=None):
         """Read the response from the equipment.
@@ -277,7 +293,7 @@ class ConnectionSerial(ConnectionMessageBased):
 
         self.read_termination = props.get('read_termination', self.read_termination)
         self.write_termination = props.get('write_termination', self.write_termination)
-        self.read_size = props.get('read_size', self.read_size)
+        self.max_read_size = props.get('read_size', self.max_read_size)
         self.encoding = props.get('encoding', self.encoding)
         self.timeout = props.get('timeout', None)
 
@@ -383,20 +399,18 @@ class ConnectionSerial(ConnectionMessageBased):
     def read(self, size=None):
         """Read `size` bytes from the Serial port.
 
+        Trailing whitespace is stripped from the response.
+
         Parameters
         ----------
         size : :obj:`int`
-            The number of bytes to read. If a :obj:`timeout` value is set then it may return
-            less bytes than requested. With no :obj:`timeout` it will block until the requested
-            number of bytes is read.
+            The number of bytes to read. If `size` is :obj:`None` then read until:
 
-            If `size` is :obj:`None` then either read until:
-
-            1. the :obj:`.read_termination` bytes are read (only if the termination value is not :obj:`None`)
+            1. the :obj:`.read_termination` characters are read (only if the termination value is not :obj:`None`)
             2. :obj:`.max_read_size` bytes have been read
-            3. a :obj:`timeout` occurs (if a :obj:`timeout` has been set)
+            3. a :obj:`timeout` occurs (if a :obj:`timeout` value has been set)
 
-            This method will block until at least one of the above is fulfilled.
+            This method will block until at least one of the above conditions is fulfilled.
 
         Returns
         -------
@@ -408,30 +422,28 @@ class ConnectionSerial(ConnectionMessageBased):
         :exe:`~msl.equipment.exceptions.MSLTimeoutError`
             If a timeout occurs.
         """
-        term_char = None if self.read_termination is None else self.read_termination.encode(self.encoding)
-        start = time.time()
+        term = None if self.read_termination is None else self.read_termination.encode(self.encoding)
         if size is not None:
-            out = self._serial.read(int(size))
-            self._check_timeout(start)
-        elif term_char is not None and term_char.endswith(serial.LF):
+            out = self._serial.read(size)
+            if len(out) != size:
+                self.raise_timeout('received {} bytes, requested {} bytes'.format(len(out), size))
+        elif term is not None and term.endswith(serial.LF):
             out = self._serial.readline()
-            self._check_timeout(start)
+            if not out.endswith(serial.LF):
+                self.raise_timeout('did not read a {!r} character'.format(serial.LF))
         else:
             out = bytes()
+            start = time.time()
             while True:
                 b = self._serial.read(1)
                 out += b
-                if term_char is not None and out.endswith(term_char):
+                if term is not None and out.endswith(term):
                     break
                 if len(out) == self.max_read_size:
-                    msg = '{}.read() the maximum number of bytes were read [{}], {} bytes remain in the buffer'
-                    self.log_warning(msg.format(self.__class__.__name__, len(out), self._serial.in_waiting))
+                    msg = '{!r}.read() maximum number of bytes read [{}], {} bytes are in the buffer'
+                    self.log_warning(msg.format(self, len(out), self._serial.in_waiting))
                     break
-                self._check_timeout(start)
-        self.log_debug('{}.read({}) -> {}'.format(self.__class__.__name__, size, out))
+                if self.timeout is not None and time.time() - start >= self.timeout:
+                    self.raise_timeout()
+        self.log_debug('{!r}.read({}) -> {}'.format(self, size, out))
         return out.decode(self.encoding).rstrip()
-
-    def _check_timeout(self, start_time):
-        """Check if a timeout occurred. Raises a MSLTimeoutError if it did occur."""
-        if self.timeout is not None and time.time() - start_time >= self.timeout:
-            self.raise_timeout(self.timeout)

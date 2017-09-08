@@ -237,7 +237,7 @@ class IntegratedStepperMotors(MotionControl):
         filename = create_string_buffer(size)
         if not self.sdk.ISC_GetCalibrationFile(self._serial, filename, size):
             self.raise_exception('Error getting calibration file.')
-        return filename.raw.decode().rstrip('\x00')
+        return filename.raw.decode('utf-8').rstrip('\x00')
 
     def get_device_unit_from_real_value(self, real_value, unit_type):
         """Converts a real-world value to a device value.
@@ -1041,6 +1041,8 @@ class IntegratedStepperMotors(MotionControl):
         index : :obj:`int`
             The position in ``DeviceUnits`` (see manual).
         wait : :obj:`bool`
+            Wait until the device has finished moving before returning to the
+            calling program.
 
         Raises
         ------

@@ -419,7 +419,7 @@ class ConnectionSerial(ConnectionMessageBased):
 
         Raises
         ------
-        :exe:`~msl.equipment.exceptions.MSLTimeoutError`
+        :exc:`~msl.equipment.exceptions.MSLTimeoutError`
             If a timeout occurs.
         """
         term = None if self.read_termination is None else self.read_termination.encode(self.encoding)

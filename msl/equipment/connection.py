@@ -60,6 +60,12 @@ class Connection(object):
                                             self.equipment_record.serial,
                                             self.equipment_record.connection.address)
 
+    def __str__(self):
+        return u'{}<{}|{}|{}>'.format(self.__class__.__name__,
+                                      self.equipment_record.manufacturer,
+                                      self.equipment_record.model,
+                                      self.equipment_record.serial)
+
     def __del__(self):
         self.disconnect()
 

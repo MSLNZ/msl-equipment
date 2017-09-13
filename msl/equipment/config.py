@@ -63,12 +63,18 @@ class Config(object):
         Raises
         ------
         IOError
-            If `path` does not exist.
-        :exc:`~xml.etree.ElementTree.ParseError`
-            If the :ref:`configuration` is invalid.
+            If `path` does not exist or if the :ref:`configuration` is invalid.
         """
         logger.debug('Loading {}'.format(path))
-        self._root = ET.parse(path).getroot()
+        try:
+            self._root = ET.parse(path).getroot()
+            parse_err = ''
+        except ET.ParseError as err:
+            parse_err = str(err)
+
+        if parse_err:
+            raise IOError(parse_err)
+
         self._path = path
         self._database = None
 

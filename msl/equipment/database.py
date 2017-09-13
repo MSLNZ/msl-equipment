@@ -8,7 +8,7 @@ import ast
 import codecs
 import logging
 import datetime
-from xml.etree import ElementTree
+from xml.etree import cElementTree as ET
 
 import xlrd
 
@@ -35,9 +35,7 @@ class Database(object):
         Raises
         ------
         IOError
-            If `path` does not exist.
-        :exc:`~xml.etree.ElementTree.ParseError`
-            If the :ref:`configuration` is invalid.
+            If `path` does not exist or if the :ref:`configuration` is invalid.
         UnicodeError
             For all errors that are related to encoding problems.
         AttributeError
@@ -50,7 +48,14 @@ class Database(object):
         """
         logger.debug('Loading databases from {}'.format(path))
 
-        root = ElementTree.parse(path).getroot()
+        try:
+            root = ET.parse(path).getroot()
+            parse_err = ''
+        except ET.ParseError as err:
+            parse_err = str(err)
+
+        if parse_err:
+            raise IOError(parse_err)
 
         self._config_path = path
         self._equipment_property_names = [k for k in EquipmentRecord().to_dict()]

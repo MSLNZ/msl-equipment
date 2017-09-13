@@ -1,5 +1,4 @@
 import os
-from xml.etree.cElementTree import ParseError
 
 import pytest
 
@@ -13,7 +12,7 @@ def test_config_io_errors():
         Config('does_not_exist.xml')
 
     # invalid xml file
-    with pytest.raises(ParseError):
+    with pytest.raises(IOError):
         Config(os.path.join(os.path.dirname(__file__), 'config0.xml'))
 
 

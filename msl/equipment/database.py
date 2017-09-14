@@ -459,7 +459,7 @@ class Database(object):
             return False
         return True
 
-    def _to_enum(self, key, value, enum):
+    def _to_enum(self, key, value, enum, to_upper=True):
         """Convert the value to an enum value"""
         if isinstance(value, (int, float)):
             for item in enum:
@@ -467,8 +467,10 @@ class Database(object):
                     return item
             members = [str(item.value) for item in enum]
         else:
-            if value.upper() in enum.__members__:
-                return getattr(enum, value.upper())
+            if to_upper:
+                value = value.upper()
+            if value in enum.__members__:
+                return getattr(enum, value)
             members = enum.__members__
 
         msg = 'Unknown {} value of "{}" for "{}". Must be one of: {}'
@@ -480,7 +482,7 @@ class Database(object):
             if key == 'backend' or key == 'interface':
                 enum = constants.Backend if key == 'backend' else constants.MSLInterface
                 try:
-                    if self._to_enum(key, value, enum) != getattr(record, key):
+                    if self._to_enum(key, value, enum, False) != getattr(record, key):
                         return False
                 except ValueError:
                     return False

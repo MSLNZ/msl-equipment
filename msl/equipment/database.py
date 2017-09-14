@@ -504,7 +504,9 @@ class Database(object):
                     if conn is not None:
                         return False
             elif key == 'date_calibrated':
-                if not value(getattr(record, key)):  # 'value' is a callable function
+                if not callable(value):
+                    raise TypeError('The "date_calibrated" value must be a callable function')
+                if not value(getattr(record, key)):
                     return False
             elif key == 'calibration_cycle':
                 if value != record.calibration_cycle:

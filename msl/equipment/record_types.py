@@ -365,8 +365,13 @@ class EquipmentRecord(object):
                     for el in self.connection.to_xml():
                         element.append(el)
             elif name == 'date_calibrated':
-                date = getattr(self, name)
+                date = self.date_calibrated
                 element.text = u'{}'.format(date.isoformat()) if date.year != datetime.MINYEAR else u''
+            elif name == 'calibration_cycle':
+                if int(self.calibration_cycle) == self.calibration_cycle:
+                    element.text = u'{}'.format(int(self.calibration_cycle))
+                else:
+                    element.text = u'{}'.format(self.calibration_cycle)
             else:
                 element.text = u'{}'.format(getattr(self, name))
             root.append(element)

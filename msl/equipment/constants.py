@@ -28,19 +28,18 @@ class MSLInterface(enum.IntEnum):
     as the communication system.
     """
     NONE = 0
-    ASRL = 1
-    GPIB = 2
+    SDK = 1
+    ASRL = 2
     USB = 3
-    PXI = 4
-    VXI = 5
-    TCPIP = 6
-    SDK = 7
+    TCPIP = 4
+    GPIB = 5
+    PXI = 6
+    VXI = 7
     TCPIP_ASRL = 8
     TCPIP_GPIB = 9
-    USB_ASRL = 10
-    USB_GPIB = 11
-    PROLOGIX_ENET = 12
-    PROLOGIX_USB = 13
+    USB_GPIB = 10
+    # PROLOGIX_ENET = 11
+    # PROLOGIX_USB = 12
 
 
 class Parity(enum.Enum):

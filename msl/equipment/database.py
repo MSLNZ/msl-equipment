@@ -175,7 +175,7 @@ class Database(object):
                                                  .format(value, register.findtext('path')))
                                 continue
 
-                        if name == 'calibration_cycle' and value:
+                        if name == 'calibration_cycle':
                             try:
                                 value = float(value)
                             except ValueError:

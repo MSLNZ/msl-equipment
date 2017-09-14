@@ -260,7 +260,11 @@ class Database(object):
         --------
         >>> connections()  # doctest: +SKIP
         a list of all ConnectionRecords
-        >>> connections(manufacturer='H*P')  # doctest: +SKIP
+        >>> connections(manufacturer='Keysight')  # doctest: +SKIP
+        a list of all ConnectionRecords that have Keysight as the manufacturer
+        >>> records(manufacturer='Agilent|Keysight')  # doctest: +SKIP
+        a list of all ConnectionRecords that are from Agilent OR Keysight
+        >>> connections(manufacturer=r'\bH.*\bP')  # doctest: +SKIP
         a list of all ConnectionRecords that have Hewlett Packard as the manufacturer
         >>> connections(manufacturer='^Ag', model='34*')  # doctest: +SKIP
         a list of all ConnectionRecords that have Agilent as the manufacturer AND a model number beginning with '34'
@@ -315,12 +319,16 @@ class Database(object):
         --------
         >>> records()  # doctest: +SKIP
         a list of all EquipmentRecords
-        >>> records(manufacturer='H*P')  # doctest: +SKIP
-        a list of all EquipmentRecords that have Hewlett Packard as the manufacturer
+        >>> records(manufacturer='Agilent')  # doctest: +SKIP
+        a list of all EquipmentRecords that are from Agilent
+        >>> records(manufacturer='Agilent|Keysight')  # doctest: +SKIP
+        a list of all EquipmentRecords that are from Agilent OR Keysight
         >>> records(manufacturer='Agilent', model='3458A')  # doctest: +SKIP
         a list of all EquipmentRecords that are from Agilent AND that have the model number 3458A
         >>> records(manufacturer='Agilent', model='3458A', serial='MY45046470')  # doctest: +SKIP
         a list of only one EquipmentRecord (if the equipment record exists, otherwise an empty list)
+        >>> records(manufacturer=r'\bH.*\bP')  # doctest: +SKIP
+        a list of all EquipmentRecords that have Hewlett Packard as the manufacturer
         >>> records(description='I-V Converter')  # doctest: +SKIP
         a list of all EquipmentRecords that contain 'I-V Converter' in the description field
         >>> records(connection=True)  # doctest: +SKIP

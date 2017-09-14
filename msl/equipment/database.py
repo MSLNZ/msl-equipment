@@ -489,24 +489,31 @@ class Database(object):
         for key, value in kwargs.items():
             if key == 'backend' or key == 'interface':
                 enum = constants.Backend if key == 'backend' else constants.MSLInterface
-                try:
-                    if self._to_enum(key, value, enum, False) != getattr(record, key):
-                        return False
-                except ValueError:
-                    return False
-            elif key == 'connection':
-                conn = getattr(record, key)
-                if bool(value):
-                    # then want equipment records with a connection
-                    if conn is None:
+                val = getattr(record, key)
+                if isinstance(value, int):
+                    if self._to_enum(key, value, enum) != val:
                         return False
                 else:
-                    if conn is not None:
+                    x = []
+                    for s in value.split('|'):
+                        try:
+                            x.append(self._to_enum(key, s.strip(), enum, False) == val)
+                        except ValueError:
+                            pass
+                    if not any(x):
+                        return False
+            elif key == 'connection':
+                if bool(value):
+                    # then want equipment records with a connection
+                    if record.connection is None:
+                        return False
+                else:
+                    if record.connection is not None:
                         return False
             elif key == 'date_calibrated':
                 if not callable(value):
                     raise TypeError('The "date_calibrated" value must be a callable function')
-                if not value(getattr(record, key)):
+                if not value(record.date_calibrated):
                     return False
             elif key == 'calibration_cycle':
                 if value != record.calibration_cycle:

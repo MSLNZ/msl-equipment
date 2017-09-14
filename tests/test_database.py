@@ -62,7 +62,8 @@ def test_database():
     assert len(dbase.records(manufacturer='^Ag')) == 10  # all records from Agilent
     assert len(dbase.records(manufacturer='^Ag', connection=True)) == 3  # all records from Agilent with a ConnectionRecord
     assert len(dbase.records(manufacturer='Agilent', model='83640L')) == 1
-    assert len(dbase.records(manufacturer='H*P')) == 2  # all records from Hewlett Packard
+    assert len(dbase.records(manufacturer=r'\bH.*\bP')) == 2  # all records from Hewlett Packard
+    assert len(dbase.records(manufacturer=r'\bH.*\bP|^Ag')) == 12  # all records from Hewlett Packard or Agilent
     assert len(dbase.records(manufacturer='Bd6d850614')) == 1
     assert len(dbase.records(location='General')) == 3
     assert len(dbase.records(location='RF Lab')) == 9
@@ -83,14 +84,20 @@ def test_database():
     assert len(dbase.connections()) == 10
     assert len(dbase.connections(backend='MSL')) == 5
     assert len(dbase.connections(backend=constants.Backend.MSL)) == 5
+    assert len(dbase.connections(backend='PYVISA')) == 0
+    assert len(dbase.connections(backend='PyVISA')) == 5
+    assert len(dbase.connections(backend=constants.Backend.PyVISA)) == 5
+    assert len(dbase.connections(backend='PyVISA|MSL')) == 10
     assert len(dbase.connections(backend='XXXXX')) == 0
     assert len(dbase.connections(serial='A10008')) == 1
     assert len(dbase.connections(manufacturer='^Ag')) == 4  # all records from Agilent
     assert len(dbase.connections(model='DTMc300V_sub')) == 1
     assert len(dbase.connections(manufacturer='Agilent', serial='G00001')) == 1
+    assert len(dbase.connections(manufacturer='Agilent|Fluke|Thorlabs')) == 6
     assert len(dbase.connections(interface='ASRL')) == 2  # != 3 since "Coherent Scientific" uses PyVISA
     assert len(dbase.connections(interface=constants.MSLInterface.SDK)) == 2
-    assert len(dbase.connections(interface=constants.MSLInterface.USB)) == 0 # != 1 since "Fluke" uses PyVISA
+    assert len(dbase.connections(interface='ASRL|SDK')) == 4
+    assert len(dbase.connections(interface=constants.MSLInterface.USB)) == 0  # != 1 since "Fluke" uses PyVISA
     assert len(dbase.connections(interface='XXXXXX')) == 0
 
     dbase.connections(flags=1)  # a flags argument name is ok even though it not a ConnectionRecord property name

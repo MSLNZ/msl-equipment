@@ -137,7 +137,7 @@ class Database(object):
             for register in registers.findall('register'):
 
                 # the MSL team (e.g., Electrical) that this Equipment Register belongs to
-                team = register.attrib.get('team', u'')
+                team = u'{}'.format(register.attrib.get('team', ''))
 
                 header, rows = self._read(register)
                 self._make_index_map(header, self._equipment_property_names)
@@ -404,9 +404,9 @@ class Database(object):
         t = cell.ctype
         if t == xlrd.XL_CELL_NUMBER or t == xlrd.XL_CELL_BOOLEAN:
             if int(cell.value) == cell.value:
-                return str(int(cell.value))
+                return u'{}'.format(int(cell.value))
             else:
-                return str(cell.value)
+                return u'{}'.format(cell.value)
         elif t == xlrd.XL_CELL_DATE:
             date = xlrd.xldate_as_tuple(cell.value, self._book.datemode)
             return datetime.date(date[0], date[1], date[2])

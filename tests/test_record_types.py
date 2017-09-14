@@ -265,6 +265,33 @@ def test_dbase():
     assert eq2.connection.properties['read_termination'] == ConnectionMessageBased.CR + ConnectionMessageBased.LF
     assert eq2.connection.properties['write_termination'] == ConnectionMessageBased.LF
 
+    try:
+        string = unicode
+    except NameError:
+        string = str
+
+    for r in dbase.records():
+        for key, value in r.to_dict().items():
+            if key == 'calibration_cycle':
+                assert isinstance(value, float)
+            elif key == 'date_calibrated':
+                assert isinstance(value, datetime.date)
+            elif key == 'connection':
+                if isinstance(value, dict):
+                    for k, v in value.items():
+                        if k == 'backend':
+                            assert isinstance(v, constants.Backend)
+                        elif k == 'interface':
+                            assert isinstance(v, constants.MSLInterface)
+                        elif k == 'properties':
+                            assert isinstance(v, dict)
+                        else:
+                            assert isinstance(v, string)
+                else:
+                    assert value is None
+            else:
+                assert isinstance(value, string)
+
 
 def test_asrl():
     c = Config(os.path.join(os.path.dirname(__file__), 'db_asrl.xml'))

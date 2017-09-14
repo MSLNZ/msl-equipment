@@ -127,7 +127,7 @@ class EquipmentRecord(object):
 
     @alias.setter
     def alias(self, text):
-        self._alias = str(text)
+        self._alias = u'{}'.format(text)
 
     @property
     def asset_number(self):
@@ -584,7 +584,7 @@ class ConnectionRecord(object):
                             prop.text = u'{}'.format(value)
                         element.append(prop)
             elif name == 'backend' or name == 'interface':
-                element.text = u'{}'.format(str(getattr(self, name)))  # want to get the enum name not the enum value
+                element.text = u'{}'.format(getattr(self, name).name)  # want to get the enum name not the enum value
             else:
                 element.text = u'{}'.format(getattr(self, name))
             root.append(element)

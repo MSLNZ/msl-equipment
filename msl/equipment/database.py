@@ -254,6 +254,8 @@ class Database(object):
             a ``flags`` argument of type :obj:`int`, see :obj:`re.search`, for performing the search.
             For testing regex expressions online you can use `this <https://pythex.org/>`_ website.
 
+            If a `kwarg` is ``properties`` then the value must be a :obj:`dict`. See the examples below.
+
         Examples
         --------
         >>> connections()  # doctest: +SKIP
@@ -270,6 +272,8 @@ class Database(object):
         a list of all ConnectionRecords that use PyVISA as the backend
         >>> connections(backend='MSL')  # doctest: +SKIP
         a list of all ConnectionRecords that use MSL as the backend
+        >>> connections(properties={'baud_rate': 115200})  # doctest: +SKIP
+        a list of all ConnectionRecords that specify a baud rate equal to 115200 in the Properties field
 
         Returns
         -------
@@ -490,8 +494,19 @@ class Database(object):
                     if conn is not None:
                         return False
             elif key == 'date_calibrated':
-                if not value(getattr(record, key)):
+                if not value(getattr(record, key)):  # 'value' is a callable function
                     return False
+            elif key == 'calibration_cycle':
+                if value != record.calibration_cycle:
+                    return False
+            elif key == 'properties':
+                if not isinstance(value, dict):
+                    raise TypeError('The "properties" value must be a dict, got {}'.format(type(value)))
+                for k, v in value.items():
+                    if k not in record.properties:
+                        return False
+                    if v != record.properties[k]:
+                        return False
             else:
                 if not bool(re.search(value, getattr(record, key), flags)):
                     return False

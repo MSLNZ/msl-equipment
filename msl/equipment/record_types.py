@@ -368,7 +368,9 @@ class EquipmentRecord(object):
                 date = self.date_calibrated
                 element.text = u'{}'.format(date.isoformat()) if date.year != datetime.MINYEAR else u''
             elif name == 'calibration_cycle':
-                if int(self.calibration_cycle) == self.calibration_cycle:
+                if self.calibration_cycle == 0:
+                    element.text = u''
+                elif int(self.calibration_cycle) == self.calibration_cycle:
                     element.text = u'{}'.format(int(self.calibration_cycle))
                 else:
                     element.text = u'{}'.format(self.calibration_cycle)
@@ -393,7 +395,7 @@ class EquipmentRecord(object):
                 else:
                     out += u'{} = ""\n'.format(element.tag)
             else:  # the connection values
-                out += u'connection\n'
+                out += u'connection:\n'
                 for line in self.connection.to_readable_string().splitlines():
                     out += u'    {}\n'.format(line)
         return out[:-1]
@@ -604,10 +606,10 @@ class ConnectionRecord(object):
                 out += u'{} = {}\n'.format(element.tag, element.text)
             else:
                 out += u'{}'.format(element.tag)
-                if len(element) == 0:
-                    out += u" = ''\n"
+                if not element:
+                    out += u' = ""\n'
                 else:
-                    out += u'\n'
+                    out += u':\n'
                     for prop in element:
                         out += u'    {} = {}\n'.format(prop.tag, prop.text)
         return out[:-1]

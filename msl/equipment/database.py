@@ -87,7 +87,8 @@ class Database(object):
                 try:
                     conn_record._backend = constants.Backend[backend]
                 except ValueError:
-                    logger.warning('Unknown Backend "{}"'.format(backend))
+                    msg = '{} -> Unknown Backend "{}" in "{}"'
+                    logger.error(msg.format(key, backend, element.findtext('path')))
 
                 # set the MSL connection interface to use for the MSL backend
                 if conn_record.backend == constants.Backend.MSL:
@@ -95,7 +96,8 @@ class Database(object):
                         interface_name = conn_record._get_interface_name_from_address()
                         conn_record._interface = constants.MSLInterface[interface_name]
                     except KeyError:
-                        logger.warning('Unknown MSL Interface for "{}"'.format(conn_record))
+                        msg = '{} -> Unknown MSL Interface for address="{}" in "{}"'
+                        logger.error(msg.format(key, conn_record._address, element.findtext('path')))
 
                 # create the property dictionary
                 conn_record._properties = {}
@@ -108,12 +110,17 @@ class Database(object):
 
                     if 'ASRL' in conn_record.interface.name or conn_record.address.startswith('COM'):
                         k_lower = k.lower()
-                        if k_lower.startswith('parity'):
-                            v = self._to_enum(key, v, constants.Parity)
-                        elif k_lower.startswith('stop'):
-                            v = self._to_enum(key, float(v), constants.StopBits)
-                        elif k_lower.startswith('data'):
-                            v = self._to_enum(key, int(v), constants.DataBits)
+                        try:
+                            if k_lower.startswith('parity'):
+                                v = self._to_enum(key, v, constants.Parity)
+                            elif k_lower.startswith('stop'):
+                                v = self._to_enum(key, float(v), constants.StopBits)
+                            elif k_lower.startswith('data'):
+                                v = self._to_enum(key, int(v), constants.DataBits)
+                        except ValueError:
+                            msg = '{} -> Invalid "{}" value of "{}" in "{}"'
+                            logger.error(msg.format(key, k, v, element.findtext('path')))
+                            continue
 
                     if isinstance(v, str):
                         # try to convert 'v' to a Python bool, int or float
@@ -170,16 +177,19 @@ class Database(object):
                             try:
                                 value = datetime.datetime.strptime(value, date_format).date()
                             except ValueError:
-                                if len(value) > 0:
-                                    logger.error('The date "{}" cannot be converted to a datetime.date object in {}'
-                                                 .format(value, register.findtext('path')))
+                                if value:
+                                    msg = '{} -> The date "{}" cannot be converted to a datetime.date object in "{}"'
+                                    logger.error(msg.format(key, value, register.findtext('path')))
                                 continue
 
                         if name == 'calibration_cycle':
+                            if not value or value.upper() == 'N/A':
+                                continue
                             try:
                                 value = float(value)
                             except ValueError:
-                                logger.error('The calibration_cycle must be a number for {}'.format(record))
+                                msg = '{} -> The calibration cycle value, "{}", must be a number in "{}"'
+                                logger.error(msg.format(key, value, register.findtext('path')))
                                 continue
 
                         setattr(record, '_'+name, value)
@@ -408,7 +418,7 @@ class Database(object):
 
         header = [val for val in sheet.row_values(0)]
         rows = [[self._cell_convert(sheet.cell(r, c)) for c in range(sheet.ncols)] for r in range(1, sheet.nrows)]
-        logger.debug('Loading Sheet <{}> in {}'.format(sheet_name, path))
+        logger.debug('Loading Sheet <{}> in "{}"'.format(sheet_name, path))
         return header, rows
 
     def _cell_convert(self, cell):
@@ -454,16 +464,15 @@ class Database(object):
     def _is_key_unique(self, key, dictionary, element):
         """Returns whether the dictionary key is unique"""
         if key in dictionary:
-            msg = 'Manufacturer|Model|Serial is not unique -> ' \
-                  '{} in {}'.format(key, element.findtext('path'))
-            logger.warning(msg)
+            msg = 'Manufacturer|Model|Serial is not unique -> {} in "{}"'
+            logger.error(msg.format(key, element.findtext('path')))
             return False
         return True
 
     def _is_row_length_okay(self, row, header):
         """Check if the row and the header have the same length"""
         if not len(row) == len(header):
-            logger.warning('len(row) [{}] != len(header) [{}] -> row={}'.format(len(row), len(header), row))
+            logger.error('len(row) [{}] != len(header) [{}] -> row={}'.format(len(row), len(header), row))
             return False
         return True
 

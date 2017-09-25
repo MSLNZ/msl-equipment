@@ -9,7 +9,6 @@ from msl.equipment.record_types import EquipmentRecord
 from msl.equipment.connection_demo import ConnectionDemo
 from msl.equipment.connection_pyvisa import ConnectionPyVISA
 from msl.equipment import resources
-from msl.equipment import connection_msl
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +74,7 @@ def connect(record, demo=None):
             elif conn.interface == MSLInterface.ASRL:
                 cls = resources.find_serial_class(conn)
             else:
-                cls = connection_msl.ConnectionMessageBased
+                raise NotImplementedError('The {} interface has not be written yet'.format(conn.interface))
         elif conn.backend == Backend.PyVISA:
             if demo:
                 cls = ConnectionPyVISA.resource_class(conn)
@@ -83,6 +82,9 @@ def connect(record, demo=None):
                 cls = ConnectionPyVISA
 
         assert cls is not None, 'The Connection class is None'
+
+        if _record.category == 'DMM':
+            cls = resources.dmm.dmm_factory(conn, cls)
 
         logger.debug('Connecting to {} using {}'.format(conn, conn.backend.name))
         if demo:

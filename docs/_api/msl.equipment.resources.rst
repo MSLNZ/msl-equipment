@@ -11,6 +11,7 @@ Submodules
 
 .. toctree::
 
+   msl.equipment.resources.dmm
    msl.equipment.resources.utils
 
 Subpackages

@@ -9,6 +9,7 @@ import importlib
 
 from msl.equipment import connection_msl
 from msl.equipment.constants import MSLInterface
+from msl.equipment.resources import dmm
 
 
 def recursive_find_resource_class(class_name):

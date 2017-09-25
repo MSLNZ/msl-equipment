@@ -6,13 +6,8 @@ This example shows how to communicate with Thorlabs LTS150, 150-mm Translation S
 if __name__ == '__main__':
     import os
     import time
-    from logging.config import fileConfig
 
-    from msl.examples.equipment import EXAMPLES_DIR
     from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
-
-    log_config = os.path.join(EXAMPLES_DIR, 'logging-config.ini')
-    fileConfig(log_config, disable_existing_loggers=False)
 
     # you must update the following values
     kinesis_path = 'C:/Program Files/Thorlabs/Kinesis'
@@ -35,11 +30,11 @@ if __name__ == '__main__':
     stage = record.connect()
     print(stage)
 
-    info = stage.get_hardware_info()
-    print('Found device: {}'.format(info.notes))
-
     stage.start_polling(200)
     time.sleep(1)
+
+    info = stage.get_hardware_info()
+    print('Found device: {}'.format(info.notes))
 
     print('Current position = {}'.format(stage.get_position()))
 

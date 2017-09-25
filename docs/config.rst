@@ -1,4 +1,4 @@
-.. _configuration:
+.. _configuration_file:
 
 ==================
 Configuration File
@@ -21,20 +21,20 @@ The following illustrates an example configuration file.
        <!-- MSL-Equipment has it's own pre-defined variables that you can modify the value of -->
 
        <!-- Use PyVISA-py as the PyVISA backend library -->
-       <PyVISA_LIBRARY>@py</PyVISA_LIBRARY>
+       <PyVISA_library>@py</PyVISA_library>
 
        <!-- Open all connections in demo mode -->
-       <DEMO_MODE>true</DEMO_MODE>
+       <demo_mode>true</demo_mode>
 
        <!-- Add a single path to where external resource files are located -->
-       <PATH>I:\Photometry\SDKs</PATH>
-       <PATH recursive="false">D:\code\resources\lib</PATH>
+       <path>I:\Photometry\SDKs</path>
+       <path recursive="false">D:\code\resources\lib</path>
 
        <!-- Recursively add all subfolders starting from a root path (includes the root path) -->
-       <PATH recursive="true">C:\Program Files\Thorlabs</PATH>
+       <path recursive="true">C:\Program Files\Thorlabs</path>
 
        <!-- Also, the user can define their own constants -->
-       <MAX_TEMPERATURE units="C">60</MAX_TEMPERATURE>
+       <max_temperature units="C">60</max_temperature>
 
        <!--
          Specify the equipment that is being used to perform the measurement and assign an

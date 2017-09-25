@@ -31,11 +31,11 @@ if __name__ == '__main__':
     motor = record.connect()
     print(motor)
 
-    info = motor.get_hardware_info()
-    print('Found device: {}'.format(info.notes))
-
     motor.start_polling(200)
     time.sleep(1)
+
+    info = motor.get_hardware_info()
+    print('Found device: {}'.format(info.notes))
 
     pos = motor.get_position()
     print('Current position [device units]= {}'.format(pos))

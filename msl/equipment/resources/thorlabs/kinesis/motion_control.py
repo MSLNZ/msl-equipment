@@ -303,3 +303,17 @@ class MotionControl(ConnectionSDK):
         info.hardwareVersion = hardware_version.value
         info.modificationState = modification_state.value
         return info
+
+    def _wait(self, msg_id_not_equal_to_value):
+        """Wait for the move to complete
+
+        Parameters
+        ----------
+        msg_id_not_equal_to_value : :obj:`int`
+            while(messageType != 2 || messageId != `msg_id_not_equal_to_value`)
+        """
+        self.clear_message_queue()
+        _msg_type, _msg_id, _msg_data = self.wait_for_message()
+        while _msg_type != 2 or _msg_id != msg_id_not_equal_to_value:
+            _msg_type, _msg_id, _msg_data = self.wait_for_message()
+        self.log_debug('{} has finished moving'.format(self.__class__.__name__))

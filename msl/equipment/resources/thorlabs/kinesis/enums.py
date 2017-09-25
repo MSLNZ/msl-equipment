@@ -586,6 +586,12 @@ class TC_DisplayModes(IntEnum):
     TC_Current = 0x03
 
 
+class UnitType(IntEnum):
+    DISTANCE = 0
+    VELOCITY = 1
+    ACCELERATION = 2
+
+
 ENUM_CTYPE = {
     'BNT_BNCTriggerModes': WORD,
     'BNT_CurrentLimit': WORD,
@@ -673,6 +679,7 @@ ENUM_CTYPE = {
     'TIM_JogMode': c_uint16,
     'TSG_Display_Modes': c_short,
     'TSG_Hub_Analogue_Modes': c_short,
+    'UnitType': c_short,
 }
 
 

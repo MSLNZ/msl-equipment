@@ -10,8 +10,6 @@ of **Integrated Stepper Motors** including:
 import os
 from ctypes import c_short, c_int, c_uint, c_int64, c_double, byref, create_string_buffer
 
-from enum import IntEnum
-
 from msl.equipment.resources.utils import WORD, DWORD
 from .motion_control import MotionControl
 from .api_functions import IntegratedStepperMotors_FCNS
@@ -35,19 +33,8 @@ from .enums import (
     MOT_ButtonModes,
     MOT_HomeLimitSwitchDirection,
     MOT_TravelModes,
+    UnitType,
 )
-
-
-class UnitType(IntEnum):
-    """
-    An Integrated Stepper Motor device unit.
-    
-    Used to :obj:`~.IntegratedStepperMotors.get_real_value_from_device_unit`
-    and to :obj:`~.IntegratedStepperMotors.get_device_unit_from_real_value`.
-    """
-    DISTANCE = 0
-    VELOCITY = 1
-    ACCELERATION = 2
 
 
 class IntegratedStepperMotors(MotionControl):
@@ -59,7 +46,7 @@ class IntegratedStepperMotors(MotionControl):
         for an IntegratedStepperMotors connection supports the following key-value pairs in the
         :ref:`connection_database`::
 
-            'load_settings': bool,  # optional, default is True (load the default settings when connection is created)
+            'load_settings': bool,  # optional, default is True (load the settings when the connection is created)
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.
@@ -221,7 +208,7 @@ class IntegratedStepperMotors(MotionControl):
         return params
 
     def get_calibration_file(self):
-        """Get calibration file for this motor.
+        """Get the calibration file for this motor.
 
         Returns
         -------
@@ -249,7 +236,7 @@ class IntegratedStepperMotors(MotionControl):
         ----------
         real_value : :obj:`float`
             The real-world value.
-        unit_type : :class:`.UnitType`
+        unit_type : :class:`.enums.UnitType`
             The unit of the real-world value.
 
         Returns
@@ -596,7 +583,7 @@ class IntegratedStepperMotors(MotionControl):
         Returns
         -------
         :obj:`int`
-            The absolute position in ``DeviceUnits`` (see manual).
+            The move absolute position in ``DeviceUnits`` (see manual).
         """
         return self.sdk.ISC_GetMoveAbsolutePosition(self._serial)
 
@@ -637,7 +624,7 @@ class IntegratedStepperMotors(MotionControl):
         return message_type.value, message_id.value, message_data.value
 
     def get_number_positions(self):
-        """Get number of positions.
+        """Get the number of positions.
 
         This function will get the maximum position reachable by the device.
         The motor may need to be set to its :meth:`home` position before this
@@ -751,7 +738,7 @@ class IntegratedStepperMotors(MotionControl):
         ----------
         device_value : :obj:`int`
             The device value.
-        unit_type : :class:`.UnitType`
+        unit_type : :class:`.enums.UnitType`
             The unit of the device value.
 
         Returns
@@ -1405,6 +1392,11 @@ class IntegratedStepperMotors(MotionControl):
         ----------
         reverse : :obj:`bool`
             If  :obj:`True` then directions will be swapped on these moves.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
         """
         self.sdk.ISC_SetDirection(self._serial, reverse)
 
@@ -1773,7 +1765,7 @@ class IntegratedStepperMotors(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        return self.sdk.ISC_SetMoveRelativeDistance(self._serial, distance)
+        self.sdk.ISC_SetMoveRelativeDistance(self._serial, distance)
 
     def set_position_counter(self, count):
         """Set the position counter.
@@ -1883,7 +1875,7 @@ class IntegratedStepperMotors(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        return self.sdk.ISC_SetStageAxisLimits(self._serial, min_position, max_position)
+        self.sdk.ISC_SetStageAxisLimits(self._serial, min_position, max_position)
 
     def set_trigger_switches(self, indicator_bits):
         """Sets the trigger switch bits.
@@ -1899,7 +1891,7 @@ class IntegratedStepperMotors(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        return self.sdk.ISC_SetTriggerSwitches(self._serial, indicator_bits)
+        self.sdk.ISC_SetTriggerSwitches(self._serial, indicator_bits)
 
     def set_vel_params(self, max_velocity, acceleration):
         """Sets the move velocity parameters.
@@ -1919,7 +1911,7 @@ class IntegratedStepperMotors(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        return self.sdk.ISC_SetVelParams(self._serial, acceleration, max_velocity)
+        self.sdk.ISC_SetVelParams(self._serial, acceleration, max_velocity)
 
     def set_vel_params_block(self, min_velocity, max_velocity, acceleration):
         """Set the move velocity parameters.
@@ -1962,9 +1954,8 @@ class IntegratedStepperMotors(MotionControl):
         self.sdk.ISC_StartPolling(self._serial, int(milliseconds))
 
     def stop_immediate(self):
-        """Stop the current move immediately (with risk of losing track 
-        of position).
-        
+        """Stop the current move immediately (with the risk of losing track of the position).
+
         Raises
         ------
         :exc:`~msl.equipment.exceptions.ThorlabsError`
@@ -2023,20 +2014,6 @@ class IntegratedStepperMotors(MotionControl):
         message_data = DWORD()
         self.sdk.ISC_WaitForMessage(self._serial, byref(message_type), byref(message_id), byref(message_data))
         return message_type.value, message_id.value, message_data.value
-
-    def _wait(self, msg_id_not_equal_to_value):
-        """Wait for the move to complete
-        
-        Parameters
-        ----------
-        msg_id_not_equal_to_value : :obj:`int`
-            while(messageType != 2 || messageId != `msg_id_not_equal_to_value`)
-        """
-        self.clear_message_queue()
-        _msg_type, _msg_id, _msg_data = self.wait_for_message()
-        while _msg_type != 2 or _msg_id != msg_id_not_equal_to_value:
-            _msg_type, _msg_id, _msg_data = self.wait_for_message()
-        self.log_debug('{} has finished moving'.format(self.__class__.__name__))
 
 
 if __name__ == '__main__':

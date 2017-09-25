@@ -748,7 +748,7 @@ class KCubeSolenoid(MotionControl):
         self.sdk.SC_SetOperatingState(self._serial, s)
 
     def set_trigger_config_params(self, mode1, polarity1, mode2, polarity2):
-        """
+        """Set the trigger configuration parameters.
 
         Parameters
         ----------

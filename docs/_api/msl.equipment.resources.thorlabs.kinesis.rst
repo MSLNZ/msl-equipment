@@ -18,6 +18,7 @@ Submodules
    msl.equipment.resources.thorlabs.kinesis.filter_flipper
    msl.equipment.resources.thorlabs.kinesis.integrated_stepper_motors
    msl.equipment.resources.thorlabs.kinesis.kcube_solenoid
+   msl.equipment.resources.thorlabs.kinesis.kcube_stepper_motor
    msl.equipment.resources.thorlabs.kinesis.messages
    msl.equipment.resources.thorlabs.kinesis.motion_control
    msl.equipment.resources.thorlabs.kinesis.structs

@@ -15,8 +15,8 @@ from .structs import (
     MOT_JogParameters,
     MOT_LimitSwitchParameters,
     MOT_PowerParameters,
-    KMOT_MMIParams,
     MOT_PIDLoopEncoderParams,
+    KMOT_MMIParams,
     KMOT_TriggerConfig,
     KMOT_TriggerParams,
 )
@@ -92,11 +92,11 @@ class KCubeStepperMotor(MotionControl):
 
     def clear_message_queue(self):
         """Clears the device message queue."""
-        return self.sdk.SCC_ClearMessageQueue(self._serial)
+        self.sdk.SCC_ClearMessageQueue(self._serial)
 
     def close(self):
         """Disconnect and close the device."""
-        return self.sdk.SCC_Close(self._serial)
+        self.sdk.SCC_Close(self._serial)
 
     def disable_channel(self):
         """Disable the channel so that motor can be moved by hand.
@@ -108,7 +108,7 @@ class KCubeStepperMotor(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        return self.sdk.SCC_DisableChannel(self._serial)
+        self.sdk.SCC_DisableChannel(self._serial)
 
     def enable_channel(self):
         """Enable channel for computer control.
@@ -120,7 +120,7 @@ class KCubeStepperMotor(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        return self.sdk.SCC_EnableChannel(self._serial)
+        self.sdk.SCC_EnableChannel(self._serial)
 
     def enable_last_msg_timer(self, enable, last_msg_timeout):
         """Enables the last message monitoring timer.
@@ -135,7 +135,7 @@ class KCubeStepperMotor(MotionControl):
         last_msg_timeout : :obj:`int`
             The last message error timeout in ms. Set to 0 to disable.
         """
-        return self.sdk.SCC_EnableLastMsgTimer(self._serial, enable, last_msg_timeout)
+        self.sdk.SCC_EnableLastMsgTimer(self._serial, enable, last_msg_timeout)
 
     def get_backlash(self):
         """Get the backlash distance setting (used to control hysteresis).
@@ -491,16 +491,16 @@ class KCubeStepperMotor(MotionControl):
         """
         mode = KMOT_JoyStickMode()
         vmax = c_int32()
-        amax = c_int32()
+        acc = c_int32()
         sense = KMOT_JoystickDirectionSense()
         preset1 = c_int32()
         preset2 = c_int32()
         intensity = c_int16()
         timeout = c_int16()
         dim_intensity = c_int16()
-        self.sdk.SCC_GetMMIParamsExt(self._serial, byref(mode), byref(vmax), byref(amax), byref(sense), byref(preset1),
+        self.sdk.SCC_GetMMIParamsExt(self._serial, byref(mode), byref(vmax), byref(acc), byref(sense), byref(preset1),
                                      byref(preset2), byref(intensity), byref(timeout), byref(dim_intensity))
-        return (KMOT_JoyStickMode(mode.value), vmax.value, amax.value, KMOT_JoystickDirectionSense(sense.value),
+        return (KMOT_JoyStickMode(mode.value), vmax.value, acc.value, KMOT_JoystickDirectionSense(sense.value),
                 preset1.value, preset2.value, intensity.value, timeout.value, dim_intensity.value)
 
     def get_motor_params(self):
@@ -1080,7 +1080,7 @@ class KCubeStepperMotor(MotionControl):
             If not successful.
         """
         direction_ = self.convert_to_enum(direction, MOT_TravelDirection, prefix='MOT_')
-        return self.sdk.SCC_MoveAtVelocity(self._serial, direction_)
+        self.sdk.SCC_MoveAtVelocity(self._serial, direction_)
 
     def move_jog(self, jog_direction):
         """Perform a jog.
@@ -1163,7 +1163,7 @@ class KCubeStepperMotor(MotionControl):
         :obj:`bool`
             Whether the device needs to be homed.
         """
-        return self.sdk.SCC_NeedsHoming(self._serial)
+        return self.can_move_without_homing_first()
 
     def open(self):
         """Open the device for communication.
@@ -1477,14 +1477,14 @@ class KCubeStepperMotor(MotionControl):
     def set_direction(self, reverse):
         """Sets the motor direction sense.
 
-        This function is used because some actuators use have directions of motion
+        This function is used because some actuators have directions of motion
         reversed. This parameter will tell the system to reverse the direction sense
         when moving, jogging etc.
 
         Parameters
         ----------
         reverse : :obj:`bool`
-            If  :obj:`True` then directions will be swapped on these moves.
+            If :obj:`True` then directions will be swapped on these moves.
 
         Raises
         ------
@@ -1666,40 +1666,22 @@ class KCubeStepperMotor(MotionControl):
         sw = self.convert_to_enum(soft_limit_mode, MOT_LimitSwitchSWModes, prefix='MOT_')
         self.sdk.SCC_SetLimitSwitchParams(self._serial, cw_lim_, ccw_lim_, cw_pos, ccw_pos, sw)
 
-    def set_limit_switch_params_block(self, cw_limit, ccw_limit, cw_pos, ccw_pos, mode):
+    def set_limit_switch_params_block(self, params):
         """Set the limit switch parameters.
-
-        See :obj:`get_device_unit_from_real_value` for converting from a
-        ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
-        cw_limit : :class:`.enums.MOT_LimitSwitchModes`
-            The clockwise hardware limit as a :class:`.enums.MOT_LimitSwitchModes` enum
-            value or member name.
-        ccw_limit : :obj:`int`
-            The anticlockwise hardware limit as a :class:`.enums.MOT_LimitSwitchModes` enum
-            value or member name.
-        cw_pos : :obj:`int`
-            The position of clockwise software limit in ``DeviceUnits``.
-        ccw_pos : :obj:`int`
-            The position of anticlockwise software limit in ``DeviceUnits``.
-        mode : :class:`.enums.MOT_LimitSwitchSWModes`
-            Actions to take when software limit is detected as a :class:`.enums.MOT_LimitSwitchSWModes`
-            enum value or member name.
+        params : :class:`.structs.MOT_LimitSwitchParameters`
+            The limit switch parameters.
 
         Raises
         ------
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        params = MOT_LimitSwitchParameters()
-        params.clockwiseHardwareLimit = self.convert_to_enum(cw_limit, MOT_LimitSwitchModes, prefix='MOT_')
-        params.anticlockwiseHardwareLimit = self.convert_to_enum(ccw_limit, MOT_LimitSwitchModes, prefix='MOT_')
-        params.clockwisePosition = cw_pos
-        params.anticlockwisePosition = ccw_pos
-        params.softLimitMode = self.convert_to_enum(mode, MOT_LimitSwitchSWModes, prefix='MOT_')
-        return self.sdk.SCC_SetLimitSwitchParamsBlock(self._serial, byref(params))
+        if not isinstance(params, MOT_LimitSwitchParameters):
+            raise TypeError('The limit switch parameter must be a MOT_LimitSwitchParameters struct')
+        self.sdk.SCC_SetLimitSwitchParamsBlock(self._serial, byref(params))
 
     def set_limits_software_approach_policy(self, policy):
         """Sets the software limits mode.
@@ -1762,7 +1744,7 @@ class KCubeStepperMotor(MotionControl):
         joystick_acceleration : :obj:`int`
             The joystick acceleration in ``DeviceUnits``.
         direction_sense : :obj:`.enums.KMOT_JoystickDirectionSense`
-            The joystick direction sense.
+            The joystick direction sense as a :obj:`.enums.KMOT_JoystickDirectionSense` enum value or member name.
         preset_position1 : :obj:`int`
             The first preset position in ``DeviceUnits``.
         preset_position2 : :obj:`int`
@@ -1782,7 +1764,7 @@ class KCubeStepperMotor(MotionControl):
             If not successful.
         """
         mode = self.convert_to_enum(joystick_mode, KMOT_JoyStickMode, prefix='KMOT_JS_')
-        sense = self.convert_to_enum(joystick_mode, KMOT_JoystickDirectionSense, prefix='KMOT_JS_')
+        sense = self.convert_to_enum(direction_sense, KMOT_JoystickDirectionSense, prefix='KMOT_JS_')
         self.sdk.SCC_SetMMIParamsExt(self._serial, mode, joystick_max_velocity, joystick_acceleration, sense,
                                      preset_position1, preset_position2, display_intensity, display_timeout,
                                      display_dim_intensity)
@@ -1813,7 +1795,7 @@ class KCubeStepperMotor(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        self.sdk.SCC_SetMotorParams(self._serial, steps_per_rev, gear_box_ratio, pitch)
+        self.set_motor_params_ext(steps_per_rev, gear_box_ratio, pitch)
 
     def set_motor_params_ext(self, steps_per_rev, gear_box_ratio, pitch):
         """Sets the motor stage parameters.
@@ -2239,7 +2221,7 @@ class KCubeStepperMotor(MotionControl):
         self.sdk.SCC_SuspendMoveMessages(self._serial)
 
     def time_since_last_msg_received(self):
-        """Gets the time, in milliseconds, since tha last message was received.
+        """Gets the time, in milliseconds, since the last message was received.
 
         This can be used to determine whether communications with the device is
         still good.

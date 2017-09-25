@@ -22,7 +22,7 @@ class Database(object):
 
     def __init__(self, path):
         """Create :class:`.EquipmentRecord`'s and :class:`.ConnectionRecord`'s 
-        from :ref:`Databases <database>` that are specified in a :ref:`configuration`.
+        from :ref:`Databases <database>` that are specified in a :ref:`configuration_file`.
 
         This class should be accessed through the :meth:`~.config.Config.database` method
         after a :class:`~.config.Config` object has been created.
@@ -30,16 +30,16 @@ class Database(object):
         Parameters
         ----------
         path : :obj:`str`
-            The path to a XML :ref:`configuration`.
+            The path to a XML :ref:`configuration_file`.
 
         Raises
         ------
         IOError
-            If `path` does not exist or if the :ref:`configuration` is invalid.
+            If `path` does not exist or if the :ref:`configuration_file` is invalid.
         UnicodeError
             For all errors that are related to encoding problems.
         AttributeError
-            If an ``<equipment>`` XML tag is specified in the :ref:`configuration`
+            If an ``<equipment>`` XML tag is specified in the :ref:`configuration_file`
             and it does not uniquely identify an equipment record in an
             :ref:`equipment_database`.
         ValueError
@@ -243,13 +243,13 @@ class Database(object):
     @property
     def equipment(self):
         """:obj:`dict` of :class:`.EquipmentRecord`: Equipment records that were listed 
-        as ``<equipment>`` XML tags in the :ref:`configuration`.
+        as ``<equipment>`` XML tags in the :ref:`configuration_file`.
         """
         return self._equipment_using
 
     @property
     def path(self):
-        """:obj:`str`: The path to the :ref:`configuration`.
+        """:obj:`str`: The path to the :ref:`configuration_file`.
         """
         return self._config_path
 

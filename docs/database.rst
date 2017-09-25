@@ -21,9 +21,9 @@ project meets the calibration requirements needed to obtain the desired measurem
 that each equipment **record** can only be uniquely found in **ONE** Equipment-Register database. The **records** in a
 database MUST NEVER be copied from one database to another database *(keeping a backup copy of the database is encouraged)*.
 Rather, if you are borrowing equipment from another team you simply specify the path to that teams Equipment-Register
-database in your :ref:`configuration`. The owner of the equipment is responsible for ensuring that the information about
+database in your :ref:`configuration_file`. The owner of the equipment is responsible for ensuring that the information about
 the equipment is up to date in their Equipment-Register database and the user of the equipment defines an
-**<equipment>** XML tag in the :ref:`configuration`. Therefore, an Equipment-Register database is to be considered as a
+**<equipment>** XML tag in the :ref:`configuration_file`. Therefore, an Equipment-Register database is to be considered as a
 **global** database that can be accessed (with read permission only) by anyone via the **MSL-Equipment** package.
 
 Each **record** in an Equipment-Register database is converted into an
@@ -47,7 +47,7 @@ see :ref:`field_names`).
    Not all equipment **records** in the Equipment-Register database need to have the ability to be connected to.
    For example, cables, filters and adaptors can all be important equipment that may be used for a measurement
    and should be included in the Equipment-Register database and specified as **<equipment>** tags in the
-   :ref:`configuration`.
+   :ref:`configuration_file`.
 
 .. _field_names:
 
@@ -169,7 +169,7 @@ The following are examples of an **Address** syntax (see more examples from `Nat
    The text **PythonClassName** that is used in the table below would be replaced with the actual name of the
    Python class that is available in :ref:`resources`. The text **PathToSDK** would be the full path to where
    the SDK file is located or only the filename if the path to where the SDK file is located has been added as
-   a **<PATH>** XML tag in the :ref:`configuration`.
+   a **<PATH>** XML tag in the :ref:`configuration_file`.
 
 +------------------------------------------------+--------------------------------------------------------------+
 | :class:`~msl.equipment.constants.MSLInterface` | Syntax                                                       |

@@ -1,5 +1,5 @@
 """
-Load a XML :ref:`configuration`.
+Load a XML :ref:`configuration_file`.
 """
 import os
 import logging
@@ -21,30 +21,30 @@ class Config(object):
     DEMO_MODE = False
     """:obj:`bool`: Whether to open connections in demo mode. 
     
-    The equipment does not need to be connected to the computer.
+    The equipment does not need to be physically connected to a computer.
     """
 
     PATH = []
     """:obj:`list` of :obj:`str`: Paths that are appended to :obj:`os.environ['PATH'] <os.environ>`."""
 
     def __init__(self, path):
-        """Load a XML :ref:`configuration`.
+        """Load a XML :ref:`configuration_file`.
 
         This function is used to set the configuration constants to use for the Python runtime
         and it allows you to access :class:`.EquipmentRecord`'s from an :ref:`equipment_database`
         and :class:`.ConnectionRecord`'s from a :ref:`connection_database`.
 
-        **MSL-Equipment** constants that can be defined in a :ref:`configuration`:
+        **MSL-Equipment** constants that can be defined in a :ref:`configuration_file`:
 
         +----------------+-----------------------------------+-----------------------------------------+
         |      Name      |           Example Values          |               Description               |
         +================+===================================+=========================================+
-        | PyVISA_LIBRARY | @ni, @py, @sim, /path/to/lib\@ni  | The PyVISA backend_ library to use.     |
+        | PyVISA_library | @ni, @py, @sim, /path/to/lib\@ni  | The PyVISA backend_ library to use.     |
         +----------------+-----------------------------------+-----------------------------------------+
-        |   DEMO_MODE    | true, false                       | Whether to open connections in demo     |
+        |   demo_mode    | true, false                       | Whether to open connections in demo     |
         |                |                                   | mode.                                   |
         +----------------+-----------------------------------+-----------------------------------------+
-        |     PATH       | /path/to/SDKs, D:/images          | A path that contains external resources.|
+        |     path       | /path/to/SDKs, D:/images          | A path that contains external resources.|
         |                |                                   | Accepts a *recursive="true"* attribute. |
         |                |                                   | Appends the path(s) to                  |
         |                |                                   | :obj:`os.environ['PATH'] <os.environ>`  |
@@ -58,12 +58,12 @@ class Config(object):
         Parameters
         ----------
         path : :obj:`str`
-            The path to a XML :ref:`configuration`.
+            The path to a XML :ref:`configuration_file`.
 
         Raises
         ------
         IOError
-            If `path` does not exist or if the :ref:`configuration` is invalid.
+            If `path` does not exist or if the :ref:`configuration_file` is invalid.
         """
         logger.debug('Loading {}'.format(path))
         try:
@@ -78,17 +78,17 @@ class Config(object):
         self._path = path
         self._database = None
 
-        element = self._root.find('PyVISA_LIBRARY')
+        element = self._root.find('PyVISA_library')
         if element is not None:
             Config.PyVISA_LIBRARY = element.text
             logger.debug('update Config.PyVISA_LIBRARY = {}'.format(Config.PyVISA_LIBRARY))
 
-        element = self._root.find('DEMO_MODE')
+        element = self._root.find('demo_mode')
         if element is not None:
             Config.DEMO_MODE = element.text.lower() == 'true'
             logger.debug('update Config.DEMO_MODE = {}'.format(Config.DEMO_MODE))
 
-        for element in self._root.findall('PATH'):
+        for element in self._root.findall('path'):
             if not os.path.isdir(element.text):
                 logger.warning('Not a valid PATH ' + element.text)
                 continue

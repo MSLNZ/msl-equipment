@@ -33,7 +33,7 @@ class ConnectionDemo(Connection):
         Do not instantiate this class directly. Use the
         :obj:`record.connect(True) <.record_types.EquipmentRecord.connect>` method
         to connect to the equipment in demo mode. Or set :obj:`~.config.Config.DEMO_MODE`
-        to be :obj:`True` in the :ref:`configuration` to open all connections in demo mode.
+        to be :obj:`True` in the :ref:`configuration_file` to open all connections in demo mode.
 
         .. _logging level: 
             https://docs.python.org/3/library/logging.html#logging-levels

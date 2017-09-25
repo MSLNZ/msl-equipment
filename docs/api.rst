@@ -4,7 +4,7 @@
 API Documentation
 =================
 
-The main entryway in to **MSL-Equipment** is achieved by loading a :ref:`configuration` and that is achieved by
+The main entryway in to **MSL-Equipment** is achieved by loading a :ref:`configuration_file` and that is achieved by
 creating a :class:`~msl.equipment.config.Config` object.
 
 .. code-block:: python

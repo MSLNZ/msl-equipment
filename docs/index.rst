@@ -13,7 +13,7 @@ query, for example, a ``*IDN?`` command from the equipment.
 Three items are used by **MSL-Equipment** to help organise, share and communicate with equipment that is available
 in the laboratory to perform a measurement
 
-1. :ref:`configuration`
+1. :ref:`configuration_file`
 
 and two different types of :ref:`database`
 
@@ -58,7 +58,7 @@ Connect to the **Keysight 34465A** [#f1]_ Digital Multimeter and query the ``*ID
   >>> dmm.query('*IDN?')
   'Keysight Technologies,34465A,MY54506462,A.02.14-02.40-02.14-00.49-03-01\n'
 
-For more examples of what a :ref:`configuration` or the :ref:`database` can look like or how to use **MSL-Equipment**
+For more examples of what a :ref:`configuration_file` or the :ref:`database` can look like or how to use **MSL-Equipment**
 in your own application see the :ref:`examples`. The :ref:`api` also shows a more detailed example that loads the same
 `configuration file`_.
 

@@ -118,7 +118,7 @@ class EquipmentRecord(object):
 
         The `alias` can be defined in different in 3 ways:
 
-        * in the **<equipment>** XML tag in a :ref:`configuration`
+        * in the **<equipment>** XML tag in a :ref:`configuration_file`
         * in the **Properties** field in a :ref:`connection_database`
         * by redefining the `alias` value after the :class:`EquipmentRecord` has been instantiated
 

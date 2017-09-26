@@ -39,7 +39,7 @@ class Config(object):
         +----------------+-----------------------------------+-----------------------------------------+
         |      Name      |           Example Values          |               Description               |
         +================+===================================+=========================================+
-        | PyVISA_library | @ni, @py, @sim, /path/to/lib\@ni  | The PyVISA backend_ library to use.     |
+        | pyvisa_library | @ni, @py, @sim, /path/to/lib\@ni  | The PyVISA backend_ library to use.     |
         +----------------+-----------------------------------+-----------------------------------------+
         |   demo_mode    | true, false                       | Whether to open connections in demo     |
         |                |                                   | mode.                                   |
@@ -78,7 +78,7 @@ class Config(object):
         self._path = path
         self._database = None
 
-        element = self._root.find('PyVISA_library')
+        element = self._root.find('pyvisa_library')
         if element is not None:
             Config.PyVISA_LIBRARY = element.text
             logger.debug('update Config.PyVISA_LIBRARY = {}'.format(Config.PyVISA_LIBRARY))

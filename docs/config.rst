@@ -21,7 +21,7 @@ The following illustrates an example configuration file.
        <!-- MSL-Equipment has it's own pre-defined variables that you can modify the value of -->
 
        <!-- Use PyVISA-py as the PyVISA backend library -->
-       <PyVISA_library>@py</PyVISA_library>
+       <pyvisa_library>@py</pyvisa_library>
 
        <!-- Open all connections in demo mode -->
        <demo_mode>true</demo_mode>

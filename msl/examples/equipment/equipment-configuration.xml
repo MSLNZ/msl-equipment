@@ -2,7 +2,7 @@
 <msl>
 
     <!-- Add the Thorlabs Kinesis directory to the PATH -->
-    <PATH>C:/Program Files/Thorlabs/Kinesis</PATH>
+    <path>C:/Program Files/Thorlabs/Kinesis</path>
 
     <!-- The equipment that is being used to perform the measurement -->
     <equipment alias="ref" manufacturer="Agilent" model="3458A" serial="G00001"/>

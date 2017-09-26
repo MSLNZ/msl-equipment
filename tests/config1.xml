@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <msl>
 
-    <PyVISA_LIBRARY>@py</PyVISA_LIBRARY>
-    <DEMO_MODE>true</DEMO_MODE>
-    <PATH recursive="true">docs</PATH>
+    <pyvisa_library>@py</pyvisa_library>
+    <demo_mode>true</demo_mode>
+    <path recursive="true">docs</path>
 
-    <SOME_VALUE>1.2345</SOME_VALUE>
+    <some_value>1.2345</some_value>
 
 </msl>

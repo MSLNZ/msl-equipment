@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
     # search for equipment records based on some keywords
     print('All equipment in the database manufactured by Hewlett Packard...')
-    for record in dbase.records(manufacturer='H*P'):
+    for record in dbase.records(manufacturer='Hewlett Packard'):
         print(record)
     print('')
 

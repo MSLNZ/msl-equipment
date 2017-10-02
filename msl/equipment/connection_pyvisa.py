@@ -55,15 +55,27 @@ class ConnectionPyVISA(Connection):
 
         self._resource = rm.open_resource(record.connection.address, **props)
 
-        # expose all of the PyVISA Resource methods to ConnectionPyVISA
-        for method in dir(self._resource):
-            if not method.startswith('_'):
-                try:
-                    setattr(self, method, getattr(self._resource, method))
-                except:
-                    pass
+        # expose all of the PyVISA Resource functions and properties to ConnectionPyVISA
+        # NOTE: the 'setter' function of the @property does NOT get called. If you want
+        # it to be called you would have to deal with it in the same manner as 'timeout'
+        for attr in dir(self._resource):
+            if attr.startswith('_') or attr == 'timeout':
+                continue
+            setattr(self, attr, getattr(self._resource, attr, None))
 
         self.log_debug('Connected to {}'.format(record.connection))
+
+    @property
+    def timeout(self):
+        return self._resource.timeout
+
+    @timeout.setter
+    def timeout(self, value):
+        self._resource.timeout = value
+
+    @timeout.deleter
+    def timeout(self):
+        self._resource.timeout = None
 
     def disconnect(self):
         """Calls :meth:`~pyvisa.resources.Resource.close`."""

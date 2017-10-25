@@ -845,7 +845,7 @@ class KCubeDCServo(MotionControl):
         :obj:`int`
             The trigger interval, reverse, in ``DeviceUnits`` (see manual).
         :obj:`int`
-            Number of trigger pulses., reverse.
+            Number of trigger pulses, reverse.
         :obj:`int`
             Width of the trigger pulse in milliseconds, range 10 (10us) to 650000 (650ms).
         :obj:`int`
@@ -893,7 +893,7 @@ class KCubeDCServo(MotionControl):
     def get_vel_params(self):
         """Gets the move velocity parameters.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Returns
@@ -1041,8 +1041,8 @@ class KCubeDCServo(MotionControl):
     def move_relative(self, displacement):
         """Move the motor by a relative amount.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
-        ``RealValue`` to a ``DeviceUnit``.
+        See :meth:`get_device_unit_from_real_value`:meth:`get_device_unit_from_real_value` for
+        converting from a ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
@@ -1072,7 +1072,7 @@ class KCubeDCServo(MotionControl):
         The motor may need to be set to its :meth:`home` position before a
         position can be set.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1350,7 +1350,7 @@ class KCubeDCServo(MotionControl):
     def set_backlash(self, distance):
         """Sets the backlash distance (used to control hysteresis).
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1467,7 +1467,7 @@ class KCubeDCServo(MotionControl):
     def set_homing_velocity(self, velocity):
         """Sets the homing velocity.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1524,7 +1524,7 @@ class KCubeDCServo(MotionControl):
     def set_jog_step_size(self, step_size):
         """Sets the distance to move on jogging.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1542,7 +1542,7 @@ class KCubeDCServo(MotionControl):
     def set_jog_vel_params(self, max_velocity, acceleration):
         """Sets jog velocity parameters.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1578,7 +1578,7 @@ class KCubeDCServo(MotionControl):
     def set_limit_switch_params(self, cw_lim, ccw_lim, cw_pos, ccw_pos, soft_limit_mode):
         """Sets the limit switch parameters.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1673,7 +1673,7 @@ class KCubeDCServo(MotionControl):
                            display_dim_intensity):
         """Set the MMI Parameters for the KCube Display Interface.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -1719,7 +1719,7 @@ class KCubeDCServo(MotionControl):
         ``RealWorldUnits`` [millimeters or degrees]. The real-world unit
         is defined from ``steps_per_rev * gear_box_ratio / pitch``.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -1745,7 +1745,7 @@ class KCubeDCServo(MotionControl):
         ``RealWorldUnits`` [millimeters or degrees]. The real-world unit
         is defined from ``steps_per_rev * gear_box_ratio / pitch``.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -1769,7 +1769,7 @@ class KCubeDCServo(MotionControl):
 
         These define the range of travel for the stage.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -1806,7 +1806,7 @@ class KCubeDCServo(MotionControl):
     def set_motor_velocity_limits(self, max_velocity, max_acceleration):
         """Sets the motor stage maximum velocity and acceleration.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -1826,7 +1826,7 @@ class KCubeDCServo(MotionControl):
     def set_move_absolute_position(self, position):
         """Sets the move absolute position.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1844,7 +1844,7 @@ class KCubeDCServo(MotionControl):
     def set_move_relative_distance(self, distance):
         """Sets the move relative distance.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1866,7 +1866,7 @@ class KCubeDCServo(MotionControl):
         Setting the position counter will effectively define the home position
         of a motor.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1884,7 +1884,7 @@ class KCubeDCServo(MotionControl):
     def set_stage_axis_limits(self, min_position, max_position):
         """Sets the stage axis position limits.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1954,7 +1954,7 @@ class KCubeDCServo(MotionControl):
                                   trigger_pulse_width, cycle_count):
         """Set the Trigger Parameters parameters.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -2007,7 +2007,7 @@ class KCubeDCServo(MotionControl):
     def set_vel_params(self, max_velocity, acceleration):
         """Sets the move velocity parameters.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters

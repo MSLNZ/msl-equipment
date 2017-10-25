@@ -1,10 +1,61 @@
-import os
 import re
 import sys
+from distutils.cmd import Command
 from setuptools import setup, find_packages
 
-sys.path.insert(0, os.path.join(os.path.abspath(os.path.dirname(__file__)), 'docs'))
-import docs_commands
+
+class ApiDocs(Command):
+    """
+    A custom command that calls sphinx-apidoc
+    see: http://www.sphinx-doc.org/en/latest/man/sphinx-apidoc.html
+    """
+    description = 'builds the api documentation using sphinx-apidoc'
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        from sphinx.apidoc import main
+        main([
+            'sphinx-apidoc',
+            '--force',  # overwrite existing files
+            '--module-first',  # put module documentation before submodule documentation
+            '--separate',  # put documentation for each module on its own page
+            '-o', './docs/_autosummary',  # where to save the output files
+            'msl',
+        ])
+        sys.exit(0)
+
+
+class BuildDocs(Command):
+    """
+    A custom command that calls sphinx-build
+    see: http://www.sphinx-doc.org/en/latest/man/sphinx-build.html
+    """
+    description = 'builds the documentation using sphinx-build'
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        from sphinx import build_main
+        build_main([
+            'sphinx-build',
+            '-b', 'html',  # the builder to use, e.g., create a HTML version of the documentation
+            '-a',  # generate output for all files
+            '-E',  # ignore cached files, forces to re-read all source files from disk
+            'docs',  # the source directory where the documentation files are located
+            './docs/_build/html',  # where to save the output files
+        ])
+        sys.exit(0)
 
 
 def read(filename):
@@ -25,8 +76,6 @@ pytest_runner = ['pytest-runner'] if testing else []
 needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
 sphinx = ['sphinx', 'sphinx_rtd_theme'] if needs_sphinx else []
 
-requirements = [pkg for pkg in read('requirements.txt').splitlines() if not pkg.startswith('http')]
-
 setup(
     name='msl-equipment',
     version=fetch_init('__version__'),
@@ -35,8 +84,8 @@ setup(
     url='https://github.com/MSLNZ/msl-equipment',
     description='Manage and communicate with equipment in the laboratory.',
     long_description=read('README.rst'),
-    license='MIT',
     platforms='any',
+    license='MIT',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
@@ -55,12 +104,16 @@ setup(
     ],
     setup_requires=sphinx + pytest_runner,
     tests_require=['pytest-cov', 'pytest'],
-    install_requires=['msl-loadlib'] + requirements if not testing else [],
-    dependency_links=['https://github.com/MSLNZ/msl-loadlib/tarball/master#egg=msl-loadlib-0'],
-    cmdclass={
-        'docs': docs_commands.BuildDocs,
-        'apidocs': docs_commands.ApiDocs,
-    },
+    install_requires=[
+        'enum34;python_version<"3.4"',
+        'xlrd',
+        'pyvisa>=1.6',
+        'numpy',
+        'msl-loadlib',
+        'pyserial>=3.0',
+        'python-dateutil',
+    ],
+    cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),
     include_package_data=True,
 )

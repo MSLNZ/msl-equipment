@@ -486,10 +486,10 @@ class KCubeDCServo(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        mode = KMOT_JoyStickMode()
+        mode = c_int16()
         vmax = c_int32()
         acc = c_int32()
-        sense = KMOT_JoystickDirectionSense()
+        sense = c_int16()
         preset1 = c_int32()
         preset2 = c_int32()
         intensity = c_int16()

@@ -89,6 +89,6 @@ Index
 .. _example: https://github.com/MSLNZ/msl-equipment/tree/master/msl/examples/equipment/example.xlsx
 
 .. [#f1] Companies that sell equipment that is used for scientific research are identified in this guide in order
-         to illustrate how to adequately use **MSL-Equipment** in you own application. Such identification is not
+         to illustrate how to adequately use **MSL-Equipment** in your own application. Such identification is not
          intended to imply recommendation or endorsement by the Measurement Standards Laboratory of New Zealand,
          nor is it intended to imply that the companies identified are necessarily the best for the purpose.

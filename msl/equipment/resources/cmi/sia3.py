@@ -54,7 +54,8 @@ class SIA3(ConnectionSerial):
                 'write_timeout': 10.0,
                 'xon_xoff': False,
                 'rts_cts': False,
-                'dsr_dtr': False
+                'dsr_dtr': False,
+                'write_termination': None,
             }
         ConnectionSerial.__init__(self, record)
         self.set_exception_handler(CMIError)

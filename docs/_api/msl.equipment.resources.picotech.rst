@@ -11,5 +11,6 @@ Subpackages
 
 .. toctree::
 
+    msl.equipment.resources.picotech.errors
     msl.equipment.resources.picotech.picoscope
 

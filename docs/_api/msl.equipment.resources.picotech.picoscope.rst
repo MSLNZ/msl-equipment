@@ -14,7 +14,6 @@ Submodules
    msl.equipment.resources.picotech.picoscope.callbacks
    msl.equipment.resources.picotech.picoscope.channel
    msl.equipment.resources.picotech.picoscope.enums
-   msl.equipment.resources.picotech.picoscope.errors
    msl.equipment.resources.picotech.picoscope.functions
    msl.equipment.resources.picotech.picoscope.helper
    msl.equipment.resources.picotech.picoscope.picoscope

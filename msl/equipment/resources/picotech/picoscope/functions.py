@@ -1,12 +1,12 @@
 """
 Functions defined in the Pico Technology SDK v10.6.10.24
 """
-from numpy.ctypeslib import ndpointer
 from ctypes import (c_int8, c_int16, c_uint16, c_int32, c_uint32, c_int64,
                     c_uint64, c_float, c_double, c_void_p, POINTER)
+from numpy.ctypeslib import ndpointer
 
-from .picoscope import c_enum
-from .errors import PICO_STATUS, PICO_INFO
+from msl.equipment.resources.picotech import c_enum
+from msl.equipment.resources.picotech.errors import PICO_STATUS, PICO_INFO
 
 from .callbacks import (
     GetOverviewBuffersMaxMin,

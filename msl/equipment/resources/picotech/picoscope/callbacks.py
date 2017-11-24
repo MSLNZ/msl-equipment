@@ -5,7 +5,7 @@ from ctypes import POINTER, c_int16, c_uint32, c_void_p, c_int32
 
 from msl.loadlib import IS_WINDOWS
 
-from .errors import PICO_STATUS
+from msl.equipment.resources.picotech.errors import PICO_STATUS
 
 if IS_WINDOWS:
     from ctypes import WINFUNCTYPE

@@ -3,10 +3,10 @@ Base class for the ps2000 and ps3000 PicoScopes.
 """
 from ctypes import c_int16, c_int32, c_uint32, c_double, byref
 
-from msl.equipment.exceptions import PicoTechError
 from .enums import PS2000Info
 from .picoscope import PicoScope
-from .errors import ERROR_CODES
+from msl.equipment.exceptions import PicoTechError
+from msl.equipment.resources.picotech.errors import ERROR_CODES
 
 
 class PicoScope2k3k(PicoScope):

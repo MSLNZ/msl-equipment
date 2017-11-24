@@ -3,7 +3,7 @@ Exceptions and error codes defined in the Pico Technology SDK v10.6.10.24
 """
 from ctypes import c_uint32
 
-from .enums import PS2000Error
+from msl.equipment.resources.picotech.picoscope.enums import PS2000Error
 
 PICO_MAC_ADDRESS                                 = 0x0000000B
 
@@ -303,6 +303,10 @@ ERROR_CODES_API = {
         'PICO_NULL_PARAMETER',
         'A parameter that was required is NULL.'
     ),
+    PICO_ETS_MODE_SET: (
+        'PICO_ETS_MODE_SET',
+        'Function call failed because ETS mode is being used.'
+    ),
     PICO_DATA_NOT_AVAILABLE: (
         'PICO_DATA_NOT_AVAILABLE',
         'No data is available from a run_block() call.'
@@ -386,6 +390,10 @@ ERROR_CODES_API = {
         'PICO_INVALID_SAMPLE_INTERVAL',
         'The sample interval selected for streaming is out of range.'
     ),
+    PICO_TRIGGER_ERROR: (
+        'PICO_TRIGGER_ERROR',
+        'ETS is set but no trigger has been set. A trigger setting is required for ETS.'
+    ),
     PICO_MEMORY: (
         'PICO_MEMORY',
         'Driver cannot allocate memory.'
@@ -393,6 +401,28 @@ ERROR_CODES_API = {
     PICO_SIG_GEN_PARAM: (
         'PICO_SIG_GEN_PARAM',
         'Incorrect parameter passed to signal generator.'
+    ),
+    PICO_SHOTS_SWEEPS_WARNING: (
+        'PICO_SHOTS_SWEEPS_WARNING',
+        'The signal generator will output the signal required but sweeps and shots will be ignored. '
+        'Only one parameter can be non-zero.'
+    ),
+    PICO_SIGGEN_TRIGGER_SOURCE: (
+        'PICO_SIGGEN_TRIGGER_SOURCE',
+        'A software trigger has been sent but the trigger source is not a software trigger.'
+    ),
+    PICO_AUX_OUTPUT_CONFLICT: (
+        'PICO_AUX_OUTPUT_CONFLICT',
+        '{sdk_filename}SetTrigger has found a conflict between the trigger source and the AUXIO output enable.'
+    ),
+    PICO_AUX_OUTPUT_ETS_CONFLICT: (
+        'PICO_AUX_OUTPUT_ETS_CONFLICT',
+        'ETS mode is being used and AUXIO is set as an input.'
+    ),
+    PICO_WARNING_EXT_THRESHOLD_CONFLICT: (
+        'PICO_WARNING_EXT_THRESHOLD_CONFLICT',
+        'The EXT threshold is being set in both {sdk_filename}SetTrigger function and in the signal '
+        'generator but the threshold values differ. The last value set will be used.'
     ),
     PICO_WARNING_AUX_OUTPUT_CONFLICT: (
         'PICO_WARNING_AUX_OUTPUT_CONFLICT',
@@ -431,6 +461,10 @@ ERROR_CODES_API = {
         'PICO_INVALID_CALL',
         'The wrong GetValues function has been called for the collection mode in use.'
     ),
+    PICO_GET_VALUES_INTERRUPTED: (
+        'PICO_GET_VALUES_INTERRUPTED',
+        'The GetValues function has interrupted.'
+    ),
     PICO_NOT_USED: (
         'PICO_NOT_USED',
         'The function is not available.'
@@ -451,6 +485,10 @@ ERROR_CODES_API = {
         'PICO_DRIVER_FUNCTION',
         'You called a driver function while another driver function was still being processed.'
     ),
+    PICO_RESERVED: (
+        'PICO_RESERVED',
+        'Reserved.'
+    ),
     PICO_INVALID_COUPLING: (
         'PICO_INVALID_COUPLING',
         'An invalid coupling type was specified in {sdk_filename}SetChannel.'
@@ -463,6 +501,10 @@ ERROR_CODES_API = {
         'PICO_RATIO_MODE_NOT_SUPPORTED',
         'The selected down-sampling mode (used for data reduction) is not allowed.'
     ),
+    PICO_RAPID_NOT_SUPPORT_AGGREGATION: (
+        'PICO_RAPID_NOT_SUPPORT_AGGREGATION',
+        'RapidBlock mode does not support aggregation.'
+    ),
     PICO_INVALID_TRIGGER_PROPERTY: (
         'PICO_INVALID_TRIGGER_PROPERTY',
         'An invalid parameter was passed to {sdk_filename}SetTriggerChannelProperties.'
@@ -470,6 +512,14 @@ ERROR_CODES_API = {
     PICO_INTERFACE_NOT_CONNECTED: (
         'PICO_INTERFACE_NOT_CONNECTED',
         'The driver was unable to contact the oscilloscope.'
+    ),
+    PICO_RESISTANCE_AND_PROBE_NOT_ALLOWED: (
+        'PICO_RESISTANCE_AND_PROBE_NOT_ALLOWED',
+        'The resistance and probe are not allowed.'
+    ),
+    PICO_POWER_FAILED: (
+        'PICO_POWER_FAILED',
+        'Power failure.'
     ),
     PICO_SIGGEN_WAVEFORM_SETUP_FAILED: (
         'PICO_SIGGEN_WAVEFORM_SETUP_FAILED',
@@ -604,6 +654,18 @@ ERROR_CODES_API = {
         'PICO_SIG_GEN_WAVETYPE_NOT_SUPPORTED',
         'The wave type requested is not supported by PicoScope<model={model}, serial={serial}>.'
     ),
+    PICO_INVALID_DIGITAL_PORT: (
+        'PICO_INVALID_DIGITAL_PORT',
+        'The digital port number is invalid.'
+    ),
+    PICO_INVALID_DIGITAL_CHANNEL: (
+        'PICO_INVALID_DIGITAL_CHANNEL',
+        'The digital channel is invalid.'
+    ),
+    PICO_INVALID_DIGITAL_TRIGGER_DIRECTION: (
+        'PICO_INVALID_DIGITAL_TRIGGER_DIRECTION',
+        'The digital trigger direction is not a valid trigger direction.'
+    ),
     PICO_SIG_GEN_PRBS_NOT_SUPPORTED: (
         'PICO_SIG_GEN_PRBS_NOT_SUPPORTED',
         'Siggen does not generate pseudo random bit stream.'
@@ -636,6 +698,10 @@ ERROR_CODES_API = {
         'PICO_CAPTURING_DATA',
         'PicoScope<model={model}, serial={serial}> is currently busy capturing data.'
     ),
+    PICO_USB3_0_DEVICE_NON_USB3_0_PORT: (
+        'PICO_USB3_0_DEVICE_NON_USB3_0_PORT',
+        'A USB 3.0 device is connected to a non-USB 3.0 port.'
+    ),
     PICO_NOT_SUPPORTED_BY_THIS_DEVICE: (
         'PICO_NOT_SUPPORTED_BY_THIS_DEVICE',
         'A function has been called that is not supported by PicoScope<model={model}, serial={serial}>.'
@@ -651,5 +717,109 @@ ERROR_CODES_API = {
     PICO_CHANNEL_DISABLED_DUE_TO_USB_POWERED: (
         'PICO_CHANNEL_DISABLED_DUE_TO_USB_POWERED',
         'USB Power not sufficient to power all channels on PicoScope<model={model}, serial={serial}>.'
+    ),
+    PICO_SIGGEN_DC_VOLTAGE_NOT_CONFIGURABLE: (
+        'PICO_SIGGEN_DC_VOLTAGE_NOT_CONFIGURABLE',
+        ''
+    ),
+    PICO_NO_TRIGGER_ENABLED_FOR_TRIGGER_IN_PRE_TRIG: (
+        'PICO_NO_TRIGGER_ENABLED_FOR_TRIGGER_IN_PRE_TRIG',
+        ''
+    ),
+    PICO_TRIGGER_WITHIN_PRE_TRIG_NOT_ARMED: (
+        'PICO_TRIGGER_WITHIN_PRE_TRIG_NOT_ARMED',
+        ''
+    ),
+    PICO_TRIGGER_WITHIN_PRE_NOT_ALLOWED_WITH_DELAY: (
+        'PICO_TRIGGER_WITHIN_PRE_NOT_ALLOWED_WITH_DELAY',
+        ''
+    ),
+    PICO_TRIGGER_INDEX_UNAVAILABLE: (
+        'PICO_TRIGGER_INDEX_UNAVAILABLE',
+        ''
+    ),
+    PICO_AWG_CLOCK_FREQUENCY: (
+        'PICO_AWG_CLOCK_FREQUENCY',
+        ''
+    ),
+    PICO_TOO_MANY_CHANNELS_IN_USE: (
+        'PICO_TOO_MANY_CHANNELS_IN_USE',
+        'There are more than 4 analogue channels with a trigger condition set.'
+    ),
+    PICO_NULL_CONDITIONS: (
+        'PICO_NULL_CONDITIONS',
+        ''
+    ),
+    PICO_DUPLICATE_CONDITION_SOURCE: (
+        'PICO_DUPLICATE_CONDITION_SOURCE',
+        ''
+    ),
+    PICO_INVALID_CONDITION_INFO: (
+        'PICO_INVALID_CONDITION_INFO',
+        ''
+    ),
+    PICO_SETTINGS_READ_FAILED: (
+        'PICO_SETTINGS_READ_FAILED',
+        ''
+    ),
+    PICO_SETTINGS_WRITE_FAILED: (
+        'PICO_SETTINGS_WRITE_FAILED',
+        ''
+    ),
+    PICO_ARGUMENT_OUT_OF_RANGE: (
+        'PICO_ARGUMENT_OUT_OF_RANGE',
+        ''
+    ),
+    PICO_HARDWARE_VERSION_NOT_SUPPORTED: (
+        'PICO_HARDWARE_VERSION_NOT_SUPPORTED',
+        ''
+    ),
+    PICO_DIGITAL_HARDWARE_VERSION_NOT_SUPPORTED: (
+        'PICO_DIGITAL_HARDWARE_VERSION_NOT_SUPPORTED',
+        ''
+    ),
+    PICO_ANALOGUE_HARDWARE_VERSION_NOT_SUPPORTED: (
+        'PICO_ANALOGUE_HARDWARE_VERSION_NOT_SUPPORTED',
+        ''
+    ),
+    PICO_UNABLE_TO_CONVERT_TO_RESISTANCE: (
+        'PICO_ANALOGUE_HARDWARE_VERSION_NOT_SUPPORTED',
+        ''
+    ),
+    PICO_DUPLICATED_CHANNEL: (
+        'PICO_DUPLICATED_CHANNEL',
+        ''
+    ),
+    PICO_INVALID_RESISTANCE_CONVERSION: (
+        'PICO_INVALID_RESISTANCE_CONVERSION',
+        ''
+    ),
+    PICO_INVALID_VALUE_IN_MAX_BUFFER: (
+        'PICO_INVALID_VALUE_IN_MAX_BUFFER',
+        ''
+    ),
+    PICO_INVALID_VALUE_IN_MIN_BUFFER: (
+        'PICO_INVALID_VALUE_IN_MIN_BUFFER',
+        ''
+    ),
+    PICO_SIGGEN_FREQUENCY_OUT_OF_RANGE: (
+        'PICO_SIGGEN_FREQUENCY_OUT_OF_RANGE',
+        ''
+    ),
+    PICO_EEPROM2_CORRUPT: (
+        'PICO_EEPROM2_CORRUPT',
+        ''
+    ),
+    PICO_EEPROM2_FAIL: (
+        'PICO_EEPROM2_FAIL',
+        ''
+    ),
+    PICO_DEVICE_TIME_STAMP_RESET: (
+        'PICO_DEVICE_TIME_STAMP_RESET',
+        ''
+    ),
+    PICO_WATCHDOGTIMER: (
+        'PICO_WATCHDOGTIMER',
+        ''
     ),
 }

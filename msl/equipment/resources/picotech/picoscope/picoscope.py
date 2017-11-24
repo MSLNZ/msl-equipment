@@ -5,7 +5,6 @@ import os
 import re
 import time
 from ctypes import c_int8, c_int16, c_int32, c_uint32, byref, c_void_p, string_at, addressof
-c_enum = c_uint32
 
 from msl.loadlib import IS_WINDOWS, LoadLibrary
 
@@ -15,7 +14,6 @@ from .channel import PicoScopeChannel
 from . import structs
 from . import enums
 from . import callbacks
-
 
 ALLOWED_SDKs = ('ps2000', 'ps2000a', 'ps3000', 'ps3000a', 'ps4000', 'ps4000a', 'ps5000', 'ps5000a', 'ps6000')
 

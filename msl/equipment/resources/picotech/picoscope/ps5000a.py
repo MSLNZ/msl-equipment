@@ -4,10 +4,10 @@ A wrapper around the PicoScope ps5000a SDK.
 import math
 from ctypes import byref
 
-from .picoscope import c_enum
 from .picoscope_api import PicoScopeApi
 from .functions import ps5000aApi_funcptrs
 from .structs import PS5000ATriggerInfo
+from msl.equipment.resources.picotech import c_enum
 
 
 class PicoScope5000A(PicoScopeApi):

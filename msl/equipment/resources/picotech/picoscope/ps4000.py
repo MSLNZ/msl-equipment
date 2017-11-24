@@ -3,9 +3,9 @@ A wrapper around the PicoScope ps4000 SDK.
 """
 from ctypes import c_int8, c_int16, c_uint32, c_int64, byref, string_at, addressof
 
-from .picoscope import c_enum
 from .picoscope_api import PicoScopeApi
 from .functions import ps4000Api_funcptrs
+from msl.equipment.resources.picotech import c_enum
 
 
 class PicoScope4000(PicoScopeApi):

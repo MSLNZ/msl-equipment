@@ -3,14 +3,15 @@ Base class for the PicoScopes that have a header file which ends with \*Api.h.
 
 Namely, ps2000aApi, ps3000aApi, ps4000Api, ps4000aApi, ps5000Api, ps5000aApi and ps6000Api.
 """
-import numpy as np
 from ctypes import (c_int8, c_int16, c_uint16, c_int32, c_uint32, c_int64,
                     c_float, c_void_p, byref, cast, POINTER)
+import numpy as np
 
-from .picoscope import PicoScope, c_enum
 from .enums import PicoScopeInfoApi
-from .errors import (PICO_OK, PICO_BUSY, PICO_POWER_SUPPLY_CONNECTED,
-                     PICO_POWER_SUPPLY_NOT_CONNECTED, ERROR_CODES_API)
+from .picoscope import PicoScope
+from msl.equipment.resources.picotech import c_enum
+from msl.equipment.resources.picotech.errors import (PICO_OK, PICO_BUSY, PICO_POWER_SUPPLY_CONNECTED,
+                                                     PICO_POWER_SUPPLY_NOT_CONNECTED, ERROR_CODES_API)
 
 
 class PicoScopeApi(PicoScope):

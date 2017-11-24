@@ -250,8 +250,8 @@ def create_picoscope_structs_file(header_dict):
 
     fp = open('_picoscope_structs.py', 'w')
     fp.write('from ctypes import Structure, c_int16, c_uint16, c_uint32, c_int64, c_uint64\n\n')
-    fp.write('from .picoscope import c_enum\n')
-    fp.write('from .errors import PICO_STATUS\n\n')
+    fp.write('from msl.equipment.resources.picotech import c_enum\n')
+    fp.write('from msl.equipment.resources.picotech.errors import PICO_STATUS\n\n')
 
     aliases = {}
     for hkey in header_dict:
@@ -316,12 +316,15 @@ def create_callbacks_file(header_dict):
     """Create the _picoscope_callbacks.py file"""
 
     fp = open('_picoscope_callbacks.py', 'w')
-    fp.write('import sys\n')
-    fp.write('from ctypes import WINFUNCTYPE, CFUNCTYPE, POINTER, c_int16, c_uint32, c_void_p, c_int32\n\n')
-    fp.write('from .errors import PICO_STATUS\n\n')
-    fp.write("if sys.platform in ('win32', 'cygwin'):\n")
+    fp.write('from ctypes import POINTER, c_int16, c_uint32, c_void_p, c_int32\n\n')
+
+    fp.write('from msl.loadlib import IS_WINDOWS\n\n')
+    fp.write('from msl.equipment.resources.picotech.errors import PICO_STATUS\n\n')
+    fp.write("if IS_WINDOWS:\n")
+    fp.write('    from ctypes import WINFUNCTYPE\n')
     fp.write('    FUNCTYPE = WINFUNCTYPE\n')
     fp.write('else:\n')
+    fp.write('    from ctypes import CFUNCTYPE\n')
     fp.write('    FUNCTYPE = CFUNCTYPE\n\n')
 
     keys = []
@@ -415,10 +418,11 @@ def create_picoscope_functions_file(header_dict):
 
     fp = open('_picoscope_functions.py', 'w')
 
-    fp.write('from ctypes import (c_int8, c_uint8, c_int16, c_uint16, c_int32, \n')
-    fp.write('                    c_uint32, c_int64, c_uint64, c_float, c_double, c_void_p, POINTER)\n\n')
-    fp.write('from .picoscope import c_enum\n')
-    fp.write('from .errors import PICO_STATUS, PICO_INFO\n\n')
+    fp.write('from ctypes import (c_int8, c_int16, c_uint16, c_int32, c_uint32, c_int64,\n')
+    fp.write('                    c_uint64, c_float, c_double, c_void_p, POINTER)\n')
+    fp.write('from numpy.ctypeslib import ndpointer\n\n')
+    fp.write('from msl.equipment.resources.picotech import c_enum\n')
+    fp.write('from msl.equipment.resources.picotech.errors import PICO_STATUS, PICO_INFO\n\n')
 
     # import all the callbacks
     callbacks_import = 'from .callbacks import (\n'

@@ -1,0 +1,18 @@
+# testing
+pytest
+pytest-cov
+pytest-runner
+
+# docs
+sphinx
+sphinx_rtd_theme
+
+# MSL-Equipment dependencies
+msl-loadlib
+enum34 ; python_version < '3.4'
+xlrd
+pyvisa>=1.6
+pyvisa-py
+numpy
+pyserial>=3.3
+python-dateutil

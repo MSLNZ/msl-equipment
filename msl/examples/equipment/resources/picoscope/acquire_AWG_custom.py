@@ -21,7 +21,7 @@ if __name__ == '__main__':
     # simulate the Lennard-Jones Potential
     x = np.linspace(0.88, 2, 500)
     awg = (1/x)**12 - 2*(1/x)**6
-    scope.set_sig_gen_arbitrary(awg, sample_frequency=1e3, index_mode='quad', pk_to_pk=2.0)
+    scope.set_sig_gen_arbitrary(awg, repetition_rate=1e3, index_mode='quad', pk_to_pk=2.0)
 
     scope.run_block(pre_trigger=2.5)  # start acquisition
     scope.wait_until_ready()  # wait until all requested samples are collected

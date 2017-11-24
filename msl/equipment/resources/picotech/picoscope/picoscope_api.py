@@ -765,13 +765,74 @@ class PicoScopeApi(PicoScope):
         self._allocate_buffer_memory()
         return ret
 
-    def set_sig_gen_arbitrary(self, waveform, sample_frequency=None, offset_voltage=0.0, pk_to_pk=None,
+    def set_sig_gen_arbitrary(self, waveform, repetition_rate=None, offset_voltage=0.0, pk_to_pk=None,
                               start_delta_phase=None, stop_delta_phase=None, delta_phase_increment=0,
                               dwell_count=None, sweep_type='up', operation='off', index_mode='single',
                               shots=None, sweeps=None, trigger_type='rising', trigger_source='None',
                               ext_in_threshold=0):
         """
         This function programs the signal generator to produce an arbitrary waveform.
+
+        Parameters
+        ----------
+        waveform : :class:`numpy.ndarray`
+            The arbitrary waveform, in volts.
+        repetition_rate : :obj:`float`, optional
+            The requested repetition rate (frequency) of the entire arbitrary waveform. The actual
+            repetition rate that is used may be different based on the specifications of the AWG.
+            If specified then the :meth:`sig_gen_frequency_to_phase` method is called to determine
+            the value of `start_delta_phase`.
+        offset_voltage : :obj:`float`, optional
+            The voltage offset, in volts, to be applied to the waveform.
+        pk_to_pk : :obj:`float`, optional
+            The peak-to-peak voltage, in volts, of the waveform signal. If :obj:`None` then uses
+            the maximum value of the waveform to determine the peak-to-peak voltage.
+        start_delta_phase : :obj:`int`, optional
+            The initial value added to the phase accumulator as the generator begins
+            to step through the waveform buffer.
+        stop_delta_phase : :obj:`int`, optional
+            The final value added to the phase accumulator before the generator restarts or reverses
+            the sweep. When frequency sweeping is not required, set equal to `start_delta_phase`.
+        delta_phase_increment : :obj:`int`, optional
+            The amount added to the delta phase value every time the `dwell_count` period expires.
+            This determines the amount by which the generator sweeps the output frequency in each
+            dwell period. When frequency sweeping is not required, set to zero.
+        dwell_count : :obj:`int`, optional
+            The time, in units of ``dacPeriod``, between successive additions of `delta_phase_increment`
+            to the delta phase accumulator. This determines the rate at which the generator sweeps the
+            output frequency.
+        sweep_type : :class:`enum.IntEnum`, optional
+            Whether the frequency will sweep from `start_frequency` to `stop_frequency`, or
+            in the opposite direction, or repeatedly reverse direction. One of:  ``UP``, ``DOWN``,
+            ``UPDOWN``, ``DOWNUP``
+        operation : :class:`enum.IntEnum`, optional
+            The type of waveform to be produced, specified by one of the following enumerated
+            types (B models only): ``OFF``, ``WHITENOISE``, ``PRBS``
+        index_mode : :class:`enum.IntEnum`, optional
+            Specifies how the signal will be formed from the arbitrary waveform data. Possible values
+            are ``SINGLE`` or ``DUAL``.
+        shots : :obj:`int`, optional
+            If :obj:`None` then start and run continuously after trigger occurs.
+        sweeps : :obj:`int`, optional
+            If :obj:`None` then start a sweep and continue after trigger occurs.
+        trigger_type : :class:`enum.IntEnum`, optional
+            The type of trigger that will be applied to the signal generator.
+            One of: ``RISING``, ``FALLING``, ``GATE_HIGH``, ``GATE_LOW``.
+        trigger_source : :class:`enum.IntEnum`, optional
+            The source that will trigger the signal generator. If :obj:`None` then run
+            without waiting for trigger.
+        ext_in_threshold : :obj:`int`, optional
+            Used to set trigger level for external trigger.
+
+        Returns
+        -------
+        :class:`numpy.ndarray`
+            The arbitrary waveform, in ADU.
+
+        Raises
+        ------
+        :exc:`msl.equipment.exceptions.PicoTechError`
+            If the value of an input parameter is invalid.
         """
         min_value, max_value, min_size, max_size = self.sig_gen_arbitrary_min_max_values()
         if waveform.size < min_size:
@@ -785,10 +846,10 @@ class PicoScopeApi(PicoScope):
         trig_typ = self.convert_to_enum(trigger_type, self.enSigGenTrigType, to_upper=True)
         trig_source = self.convert_to_enum(trigger_source, self.enSigGenTrigSource, to_upper=True)
 
-        if start_delta_phase is None and sample_frequency is None:
-            self.raise_exception('Must specify either "start_delta_phase" or "sample_frequency"')
+        if start_delta_phase is None and repetition_rate is None:
+            self.raise_exception('Must specify either "start_delta_phase" or "repetition_rate"')
         if start_delta_phase is None:
-            start_delta_phase = self.sig_gen_frequency_to_phase(sample_frequency, mode, waveform.size)
+            start_delta_phase = self.sig_gen_frequency_to_phase(repetition_rate, mode, waveform.size)
         if stop_delta_phase is None:
             stop_delta_phase = start_delta_phase
         if dwell_count is None:
@@ -824,7 +885,8 @@ class PicoScopeApi(PicoScope):
         """
         This function sets up the signal generator to produce a signal from a list of built-in
         waveforms. If different start and stop frequencies are specified, the device will sweep
-        either up, down or up and down.
+        either up, down or up and down. Call :meth:`set_sig_gen_built_in_v2` instead, which uses
+        double-precision arguments.
         """
         return self.SetSigGenBuiltIn(self._handle, offset_voltage, pk_to_pk, wave_type, start_frequency,
                                      stop_frequency, increment, dwell_time, sweep_type, operation, shots, sweeps,
@@ -842,37 +904,38 @@ class PicoScopeApi(PicoScope):
         
         Parameters
         ----------
-        offset_voltage : :obj:`float`
-            The voltage offset, in **volts**, to be applied to the waveform.
-        pk_to_pk : :obj:`float`
-            The peak-to-peak voltage, in **volts**, of the waveform signal.
-        wave_type : :class:`enum.IntEnum`
+        offset_voltage : :obj:`float`, optional
+            The voltage offset, in volts, to be applied to the waveform.
+        pk_to_pk : :obj:`float`, optional
+            The peak-to-peak voltage, in volts, of the waveform signal.
+        wave_type : :class:`enum.IntEnum`, optional
             The type of waveform to be generated. A ``WaveType`` enum.
-        start_frequency : :obj:`float`
+        start_frequency : :obj:`float`, optional
             The frequency that the signal generator will initially produce.
-        stop_frequency : :obj:`float`
+        stop_frequency : :obj:`float`, optional
             The frequency at which the sweep reverses direction or returns to the initial frequency.
-        increment : :obj:`float`
+        increment : :obj:`float`, optional
             The amount of frequency increase or decrease in sweep mode.
-        dwell_time : :obj:`float`
+        dwell_time : :obj:`float`, optional
             The time, in seconds, for which the sweep stays at each frequency.
-        sweep_type : :class:`enum.IntEnum`
+        sweep_type : :class:`enum.IntEnum`, optional
             Whether the frequency will sweep from `start_frequency` to `stop_frequency`, or 
-            in the opposite direction, or repeatedly reverse direction. One of:  UP, DOWN, UPDOWN, DOWNUP
-        operation : :class:`enum.IntEnum`
+            in the opposite direction, or repeatedly reverse direction. One of:  ``UP``, ``DOWN``,
+            ``UPDOWN``, ``DOWNUP``
+        operation : :class:`enum.IntEnum`, optional
             The type of waveform to be produced, specified by one of the following enumerated 
-            types (B models only): OFF, WHITENOISE, PRBS
-        shots : :obj:`int` of :obj:`None`
+            types (B models only): ``OFF``, ``WHITENOISE``, ``PRBS``
+        shots : :obj:`int`, optional
             If :obj:`None` then start and run continuously after trigger occurs.
-        sweeps : :obj:`int` of :obj:`None`
+        sweeps : :obj:`int`, optional
             If :obj:`None` then start a sweep and continue after trigger occurs.
         trigger_type : :class:`enum.IntEnum` 
             The type of trigger that will be applied to the signal generator.
-            One of: RISING, FALLING, GATE_HIGH, GATE_LOW.
-        trigger_source : :class:`enum.IntEnum` or :obj:`None`
+            One of: ``RISING``, ``FALLING``, ``GATE_HIGH``, ``GATE_LOW``.
+        trigger_source : :class:`enum.IntEnum`, optional
             The source that will trigger the signal generator. If :obj:`None` then run 
             without waiting for trigger.
-        ext_in_threshold : :obj:`int`
+        ext_in_threshold : :obj:`int`, optional
             Used to set trigger level for external trigger.
         """
         offset = int(round(offset_voltage*1e6))
@@ -983,7 +1046,7 @@ class PicoScopeApi(PicoScope):
                                          byref(min_size), byref(max_size))
         return min_value.value, max_value.value, min_size.value, max_size.value
 
-    def sig_gen_frequency_to_phase(self, frequency, index_mode, buffer_length):
+    def sig_gen_frequency_to_phase(self, repetition_rate, index_mode, buffer_length):
         """
         This function converts a frequency to a phase count for use with the arbitrary
         waveform generator (AWG). The value returned depends on the length of the buffer,
@@ -992,8 +1055,8 @@ class PicoScopeApi(PicoScope):
         
         Parameters
         ----------
-        frequency : :obj:`float`
-            The AWG sample frequency.
+        repetition_rate : :obj:`float`
+            The requested repetition rate (frequency) of the entire arbitrary waveform.
         index_mode : :class:`enum.IntEnum`
             An ``IndexMode`` enum value or member name.
         buffer_length : :obj:`int`
@@ -1003,11 +1066,18 @@ class PicoScopeApi(PicoScope):
         -------
         :obj:`int`
             The phase count.
+
+        Raises
+        ------
+        :exc:`msl.equipment.exceptions.PicoTechError`
+            If the value of an input parameter is invalid.
         """
         mode = self.convert_to_enum(index_mode, self.enIndexMode, to_upper=True)
 
         phase = c_uint32()
-        self.SigGenFrequencyToPhase(self._handle, frequency, mode, buffer_length, byref(phase))
+        self.SigGenFrequencyToPhase(self._handle, repetition_rate, mode, buffer_length, byref(phase))
+        if phase.value < 1:
+            self.raise_exception('The delta phase value is < 1. Increase the repetition rate value.')
         return phase.value
 
     def sig_gen_software_control(self, state):

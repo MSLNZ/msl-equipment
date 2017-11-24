@@ -3,7 +3,7 @@ Exceptions and error codes defined in the Pico Technology SDK v10.6.10.24
 """
 from ctypes import c_uint32
 
-from msl.equipment.resources.picotech.picoscope.enums import PS2000Error
+from enum import IntEnum
 
 PICO_MAC_ADDRESS                                 = 0x0000000B
 
@@ -162,6 +162,30 @@ PICO_DEVICE_TIME_STAMP_RESET                     = 0x01000000
 PICO_WATCHDOGTIMER                               = 0x10000000
 
 PICO_STATUS                                      = c_uint32
+
+
+class PS2000Error(IntEnum):
+    OK               = 0
+    MAX_UNITS_OPENED = 1
+    MEM_FAIL         = 2
+    NOT_FOUND        = 3
+    FW_FAIL          = 4
+    NOT_RESPONDING   = 5
+    CONFIG_FAIL      = 6
+    OS_NOT_SUPPORTED = 7
+    PICOPP_TOO_OLD   = 8
+
+
+class PS3000Error(IntEnum):
+    OK               = 0
+    MAX_UNITS_OPENED = 1
+    MEM_FAIL         = 2
+    NOT_FOUND        = 3
+    FW_FAIL          = 4
+    NOT_RESPONDING   = 5
+    CONFIG_FAIL      = 6
+    OS_NOT_SUPPORTED = 7
+    PICOPP_TOO_OLD   = 8
 
 
 # For ps2000 and ps3000

@@ -61,18 +61,6 @@ class PS2000TimeUnits(IntEnum):
     MAX = 6
 
 
-class PS2000Error(IntEnum):
-    OK               = 0
-    MAX_UNITS_OPENED = 1
-    MEM_FAIL         = 2
-    NOT_FOUND        = 3
-    FW_FAIL          = 4
-    NOT_RESPONDING   = 5
-    CONFIG_FAIL      = 6
-    OS_NOT_SUPPORTED = 7
-    PICOPP_TOO_OLD   = 8
-
-
 class PS2000Info(IntEnum):
     DRIVER_VERSION        = 0
     USB_VERSION           = 1
@@ -441,18 +429,6 @@ class PS3000TimeUnits(IntEnum):
     MS  = 4
     S   = 5
     MAX = 6
-
-
-class PS3000Error(IntEnum):
-    OK               = 0
-    MAX_UNITS_OPENED = 1
-    MEM_FAIL         = 2
-    NOT_FOUND        = 3
-    FW_FAIL          = 4
-    NOT_RESPONDING   = 5
-    CONFIG_FAIL      = 6
-    OS_NOT_SUPPORTED = 7
-    PICOPP_TOO_OLD   = 8
 
 
 class PS3000Info(IntEnum):

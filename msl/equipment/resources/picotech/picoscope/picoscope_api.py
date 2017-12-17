@@ -879,25 +879,25 @@ class PicoScopeApi(PicoScope):
                                 ext_in_threshold)
         return waveform
 
-    def set_sig_gen_built_in(self, offset_voltage, pk_to_pk, wave_type, start_frequency, stop_frequency, increment,
+    def set_sig_gen_builtin(self, offset_voltage, pk_to_pk, wave_type, start_frequency, stop_frequency, increment,
                              dwell_time, sweep_type, operation, shots, sweeps, trigger_type, trigger_source,
                              ext_in_threshold):
         """
         This function sets up the signal generator to produce a signal from a list of built-in
         waveforms. If different start and stop frequencies are specified, the device will sweep
-        either up, down or up and down. Call :meth:`set_sig_gen_built_in_v2` instead, which uses
+        either up, down or up and down. Call :meth:`set_sig_gen_builtin_v2` instead, which uses
         double-precision arguments.
         """
         return self.SetSigGenBuiltIn(self._handle, offset_voltage, pk_to_pk, wave_type, start_frequency,
                                      stop_frequency, increment, dwell_time, sweep_type, operation, shots, sweeps,
                                      trigger_type, trigger_source, ext_in_threshold)
 
-    def set_sig_gen_built_in_v2(self, offset_voltage=0.0, pk_to_pk=1.0, wave_type='sine',
+    def set_sig_gen_builtin_v2(self, offset_voltage=0.0, pk_to_pk=1.0, wave_type='sine',
                                 start_frequency=1.0, stop_frequency=None, increment=0.1, dwell_time=1.0,
                                 sweep_type='up', operation='off', shots=None, sweeps=None,
                                 trigger_type='rising', trigger_source='None', ext_in_threshold=0):
         """
-        This function is an upgraded version of :meth:`set_sig_gen_built_in` with double-precision
+        This function is an upgraded version of :meth:`set_sig_gen_builtin` with double-precision
         frequency arguments for more precise control at low frequencies.
         
         This function is invalid for ps4000 and ps4000a.
@@ -929,7 +929,7 @@ class PicoScopeApi(PicoScope):
             If :obj:`None` then start and run continuously after trigger occurs.
         sweeps : :obj:`int`, optional
             If :obj:`None` then start a sweep and continue after trigger occurs.
-        trigger_type : :class:`enum.IntEnum` 
+        trigger_type : :class:`enum.IntEnum`, optional
             The type of trigger that will be applied to the signal generator.
             One of: ``RISING``, ``FALLING``, ``GATE_HIGH``, ``GATE_LOW``.
         trigger_source : :class:`enum.IntEnum`, optional
@@ -980,7 +980,7 @@ class PicoScopeApi(PicoScope):
                                                      dwell_count, sweep_type, shots, sweeps, trigger_type,
                                                      trigger_source, ext_in_threshold)
 
-    def set_sig_gen_properties_built_in(self, start_frequency, stop_frequency, increment, dwell_time,
+    def set_sig_gen_properties_builtin(self, start_frequency, stop_frequency, increment, dwell_time,
                                         sweep_type, shots, sweeps, trigger_type, trigger_source,
                                         ext_in_threshold, offset_voltage=0, pk_to_pk=-1):
         """

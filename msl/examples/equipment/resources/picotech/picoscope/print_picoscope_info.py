@@ -5,7 +5,7 @@ This example prints the information available about a PicoScope.
 # this "if" statement is used so that Sphinx does not execute this script when the docs are being built
 if __name__ == '__main__':
 
-    from msl.examples.equipment.resources.picoscope import record
+    from msl.examples.equipment.resources.picotech.picoscope import record
 
     scope = record.connect()
     print('Summary for {}'.format(record))

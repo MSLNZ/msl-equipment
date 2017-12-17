@@ -6,7 +6,7 @@ Acquire PicoScope data in Streaming Mode.
 if __name__ == '__main__':
 
     from msl.equipment.resources.picotech.picoscope import callbacks
-    from msl.examples.equipment.resources.picoscope import record  # import the PicoScope EquipmentRecord
+    from msl.examples.equipment.resources.picotech.picoscope import record  # import the PicoScope EquipmentRecord
 
     streaming_done = False
 

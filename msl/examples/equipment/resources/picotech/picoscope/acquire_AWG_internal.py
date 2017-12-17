@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     import numpy as np
 
-    from msl.examples.equipment.resources.picoscope import record  # import the PicoScope EquipmentRecord
+    from msl.examples.equipment.resources.picotech.picoscope import record  # import the PicoScope EquipmentRecord
 
     print('Example :: Acquire AWG internal waveform')
 
@@ -17,7 +17,7 @@ if __name__ == '__main__':
     scope.set_channel('A', scale='10V')  # enable Channel A and set the voltage range to be +/-10V
     dt, num_samples = scope.set_timebase(1e-6, 100e-6)  # sample the voltage on Channel A every 1 us, for 100 us
     scope.set_trigger('A', 1.0, timeout=-1)  # use Channel A as the trigger source at 1V, wait forever for a trigger event
-    scope.set_sig_gen_built_in_v2(start_frequency=10e3, pk_to_pk=2.0, offset_voltage=0.4)  # create a sine wave
+    scope.set_sig_gen_builtin_v2(start_frequency=10e3, pk_to_pk=2.0, offset_voltage=0.4)  # create a sine wave
     scope.run_block()  # start acquisition
     scope.wait_until_ready()  # wait until all requested samples are collected
     scope.set_data_buffer('A')  # set the data buffer for Channel A

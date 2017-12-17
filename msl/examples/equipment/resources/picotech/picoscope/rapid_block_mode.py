@@ -5,7 +5,7 @@ Acquire PicoScope data in Rapid-Block Mode.
 # this "if" statement is used so that Sphinx does not execute this script when the docs are being built
 if __name__ == '__main__':
 
-    from msl.examples.equipment.resources.picoscope import record  # import the PicoScope EquipmentRecord
+    from msl.examples.equipment.resources.picotech.picoscope import record  # import the PicoScope EquipmentRecord
 
     print('Example :: Rapid-Block Mode')
 

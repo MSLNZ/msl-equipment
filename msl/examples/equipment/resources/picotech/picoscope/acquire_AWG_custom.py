@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     import numpy as np
 
-    from msl.examples.equipment.resources.picoscope import record  # import the PicoScope EquipmentRecord
+    from msl.examples.equipment.resources.picotech.picoscope import record  # import the PicoScope EquipmentRecord
 
     print('Example :: Acquire AWG custom waveform')
 

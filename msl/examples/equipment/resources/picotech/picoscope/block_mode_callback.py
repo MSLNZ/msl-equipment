@@ -9,7 +9,7 @@ if __name__ == '__main__':
     import time
 
     from msl.equipment.resources.picotech.picoscope import callbacks
-    from msl.examples.equipment.resources.picoscope import record  # import the PicoScope EquipmentRecord
+    from msl.examples.equipment.resources.picotech.picoscope import record  # import the PicoScope EquipmentRecord
 
     print('Example :: Block Mode with BlockReady callback')
 

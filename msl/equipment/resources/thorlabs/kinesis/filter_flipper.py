@@ -142,14 +142,14 @@ class FilterFlipper(MotionControl):
         """
         self.sdk.FF_Home(self._serial)
 
-    def move_to_position(self, position, wait=False):
+    def move_to_position(self, position, wait=True):
         """Move the device to the specified position (index).
         
         Parameters
         ----------
         position : :obj:`int`
             The required position. Must be 1 or 2. 
-        wait : :obj:`bool`
+        wait : :obj:`bool`, optional
             Whether to wait until the movement is complete before returning to 
             the calling program.
         
@@ -160,10 +160,16 @@ class FilterFlipper(MotionControl):
         """
         self.sdk.FF_MoveToPosition(self._serial, position)
         if wait:
+            # without polling the wait_for_message() call will block forever
+            if self.polling_duration() == 0:
+                self.start_polling(200)
+
             self.clear_message_queue()
+
             msg_type, msg_id, msg_data = self.wait_for_message()
             while msg_type != 2 or msg_id != 1:
                 msg_type, msg_id, msg_data = self.wait_for_message()
+
             assert self.get_position() == position, 'Wait until move finished is not working'
 
     def get_position(self):
@@ -211,19 +217,19 @@ class FilterFlipper(MotionControl):
         
         Parameters
         ----------
-        transit_time : :obj:`int`
+        transit_time : :obj:`int`, optional
             Time taken to get from one position to other in milliseconds.
-        oper1 : :class:`~.enums.FF_IOModes`
+        oper1 : :class:`~.enums.FF_IOModes`, optional
             I/O 1 Operating Mode.
-        sig1 : :class:`~.enums.FF_SignalModes`
+        sig1 : :class:`~.enums.FF_SignalModes`, optional
             I/O 1 Signal Mode.
-        pw1 : :obj:`int`
+        pw1 : :obj:`int`, optional
             Digital I/O 1 pulse width in milliseconds. 
-        oper2 : :class:`~.enums.FF_IOModes`
+        oper2 : :class:`~.enums.FF_IOModes`, optional
             I/O 2 Operating Mode.
-        sig2 : :class:`~.enums.FF_SignalModes`
+        sig2 : :class:`~.enums.FF_SignalModes`, optional
             I/O 2 Signal Mode.
-        pw2 : :obj:`int`
+        pw2 : :obj:`int`, optional
             Digital I/O 2 pulse width in milliseconds. 
 
         Raises

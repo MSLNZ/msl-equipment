@@ -8,6 +8,7 @@ if __name__ == '__main__':
     import time
 
     from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
+    from msl.equipment.resources.thorlabs.kinesis.enums import UnitType
 
     # you must update the following values
     kinesis_path = 'C:/Program Files/Thorlabs/Kinesis'
@@ -30,24 +31,43 @@ if __name__ == '__main__':
     stage = record.connect()
     print(stage)
 
+    # start the device polling at 200-ms intervals
     stage.start_polling(200)
-    time.sleep(1)
 
     info = stage.get_hardware_info()
     print('Found device: {}'.format(info.notes))
 
-    print('Current position = {}'.format(stage.get_position()))
+    vmax, acc = stage.get_vel_params()
+    vmax_real = stage.get_real_value_from_device_unit(vmax, UnitType.VELOCITY)
+    acc_real = stage.get_real_value_from_device_unit(acc, UnitType.ACCELERATION)
+    print('Max Velocity [device units]= {}'.format(vmax))
+    print('Max Velocity [real-world units]= {} mm/s'.format(vmax_real))
+    print('Acceleration [device units]= {}'.format(acc))
+    print('Acceleration [real-world units]= {} mm/s^2'.format(acc_real))
 
-    print('Go home...')
+    pos = stage.get_position()
+    print('Current position [device units]= {}'.format(pos))
+    print('Current position [mm]= {}'.format(stage.get_real_value_from_device_unit(pos, UnitType.DISTANCE)))
+
+    # home the device and wait for the move to finish
     stage.home()
+    while stage.get_position() != 0:
+        time.sleep(stage.polling_duration()*1e-3)
+        print('Going home... at position index {}'.format(stage.get_position()))
 
-    current_position = stage.get_position()
-    print('Current position = {}'.format(current_position))
-    print('Max Velocity, Acceleration = {}, {}'.format(*stage.get_vel_params()))
+    time.sleep(1)
 
-    new_position = current_position + 1000000
-    print('Move to {}'.format(new_position))
+    # move to 30 mm and wait for the move to finish
+    new_position = stage.get_device_unit_from_real_value(30.0, UnitType.DISTANCE)
     stage.move_to_position(new_position)
-    print('Current position = {}'.format(stage.get_position()))
+    while stage.get_position() != new_position:
+        time.sleep(stage.polling_duration()*1e-3)
+        print('Move to 30 mm [device units={}]... at position index {}'.format(new_position, stage.get_position()))
 
+    pos = stage.get_position()
+    print('Position [device units]= {}'.format(pos))
+    print('Position [real-world units]= {}'.format(stage.get_real_value_from_device_unit(pos, UnitType.DISTANCE)))
+
+    # close the connection
     stage.stop_polling()
+    stage.close()

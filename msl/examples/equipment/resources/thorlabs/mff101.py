@@ -22,6 +22,9 @@ if __name__ == '__main__':
 
     print(flipper)
 
+    # start the device polling at 200-ms intervals
+    flipper.start_polling(200)
+
     # make the LED flash on the Filter Flipper
     flipper.identify()
     time.sleep(3)
@@ -52,13 +55,9 @@ if __name__ == '__main__':
     print('get_transit_time............: {}'.format(flipper.get_transit_time()))
     print('request_settings............: {}'.format(flipper.request_settings()))
 
-    flipper.home()
-
     print('time_since_last_msg_received: {}'.format(flipper.time_since_last_msg_received()))
     print('has_last_msg_timer_overrun..: {}'.format(flipper.has_last_msg_timer_overrun()))
 
-    # start the device polling at 200-ms intervals
-    flipper.start_polling(200)
     print('polling_duration............: {}'.format(flipper.polling_duration()))
     print('message_queue_size..........: {}'.format(flipper.message_queue_size()))
     print('get_next_message............: {}'.format(flipper.convert_message(*flipper.get_next_message())))
@@ -66,9 +65,14 @@ if __name__ == '__main__':
     position = flipper.get_position()
     print('get_position:...............: {}'.format(position))
 
-    # use event messages to wait for the flipper to finish moving
+    # move the flipper to the next position and wait for the move to finish
     move_to = 1 if position == 2 else 2
-    flipper.move_to_position(move_to, wait=True)
+    print('Move the flipper to position {}'.format(move_to))
+    flipper.move_to_position(move_to)
+    while flipper.get_position() != move_to:
+        time.sleep(flipper.polling_duration()*1e-3)
     print('get_position:...............: {}'.format(flipper.get_position()))
 
+    # close the connection
     flipper.stop_polling()
+    flipper.close()

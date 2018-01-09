@@ -163,13 +163,7 @@ class FilterFlipper(MotionControl):
             # without polling the wait_for_message() call will block forever
             if self.polling_duration() == 0:
                 self.start_polling(200)
-
-            self.clear_message_queue()
-
-            msg_type, msg_id, msg_data = self.wait_for_message()
-            while msg_type != 2 or msg_id != 1:
-                msg_type, msg_id, msg_data = self.wait_for_message()
-
+            self._wait(1)
             assert self.get_position() == position, 'Wait until move finished is not working'
 
     def get_position(self):

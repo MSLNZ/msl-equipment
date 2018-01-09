@@ -903,6 +903,7 @@ class IntegratedStepperMotors(MotionControl):
         self.sdk.ISC_Home(self._serial)
         if wait:
             self._wait(0)
+            assert self.get_position() == 0, 'Wait until homed is not working'
 
     def identify(self):
         """Sends a command to the device to make it identify itself."""
@@ -1039,6 +1040,7 @@ class IntegratedStepperMotors(MotionControl):
         self.sdk.ISC_MoveToPosition(self._serial, index)
         if wait:
             self._wait(1)
+            assert self.get_position() == index, 'Wait until move finished is not working'
 
     def needs_homing(self):
         """Does the device need to be :obj:`home`\'d before a move can be performed?

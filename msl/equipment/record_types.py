@@ -379,8 +379,15 @@ class EquipmentRecord(object):
             root.append(element)
         return root
 
-    def to_readable_string(self):
-        """Convert this :class:`EquipmentRecord` to an easily-readable string.
+    def to_yaml(self, indent=2):
+        """Convert this :class:`EquipmentRecord` to a YAML_ string.
+
+        .. _YAML: https://en.wikipedia.org/wiki/YAML
+
+        Parameters
+        ----------
+        indent : :obj:`int`
+            The amount of indentation added for each recursive level.
 
         Returns
         -------
@@ -391,13 +398,13 @@ class EquipmentRecord(object):
         for element in self.to_xml():
             if element.text is not None:
                 if element.text:
-                    out += u'{} = {}\n'.format(element.tag, element.text)
+                    out += u'{}: {}\n'.format(element.tag, element.text)
                 else:
-                    out += u'{} = ""\n'.format(element.tag)
+                    out += u"{}: ''\n".format(element.tag)
             else:  # the connection values
                 out += u'connection:\n'
-                for line in self.connection.to_readable_string().splitlines():
-                    out += u'    {}\n'.format(line)
+                for line in self.connection.to_yaml(indent=indent).splitlines():
+                    out += u' ' * indent + line + u'\n'
         return out[:-1]
 
 
@@ -592,8 +599,15 @@ class ConnectionRecord(object):
             root.append(element)
         return root
 
-    def to_readable_string(self):
-        """Convert this :class:`ConnectionRecord` to an easily-readable string.
+    def to_yaml(self, indent=2):
+        """Convert this :class:`ConnectionRecord` to a YAML_ string.
+
+        .. _YAML: https://en.wikipedia.org/wiki/YAML
+
+        Parameters
+        ----------
+        indent : :obj:`int`
+            The amount of indentation added for each recursive level.
 
         Returns
         -------
@@ -603,15 +617,15 @@ class ConnectionRecord(object):
         out = u''
         for element in self.to_xml():
             if element.text:
-                out += u'{} = {}\n'.format(element.tag, element.text)
+                out += u'{}: {}\n'.format(element.tag, element.text)
             else:
                 out += u'{}'.format(element.tag)
                 if not element:
-                    out += u' = ""\n'
+                    out += u": ''\n"
                 else:
                     out += u':\n'
                     for prop in element:
-                        out += u'    {} = {}\n'.format(prop.tag, prop.text)
+                        out += u' ' * indent + u'{}: {}\n'.format(prop.tag, prop.text)
         return out[:-1]
 
     def _get_interface_name_from_address(self):

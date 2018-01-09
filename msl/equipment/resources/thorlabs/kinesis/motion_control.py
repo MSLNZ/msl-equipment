@@ -92,7 +92,7 @@ class MotionControl(ConnectionSDK):
         """
         self._is_open = False
         ConnectionSDK.__init__(self, record, 'cdll')
-        self.set_exception_handler(ThorlabsError)
+        self.set_exception_class(ThorlabsError)
 
         for item in api_function:
             func = getattr(self.sdk, item[0])

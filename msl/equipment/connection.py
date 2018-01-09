@@ -203,8 +203,8 @@ class Connection(object):
         """
         logger.critical(msg, *args, **kwargs)
 
-    def set_exception_handler(self, handler):
-        """Set the exception handler for this connection.
+    def set_exception_class(self, handler):
+        """Set the exception-handler class for this connection.
 
         Parameters
         ----------

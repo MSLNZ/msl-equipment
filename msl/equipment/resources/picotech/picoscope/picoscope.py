@@ -77,7 +77,7 @@ class PicoScope(ConnectionSDK):
         self._handle = None
         libtype = 'windll' if IS_WINDOWS else 'cdll'
         ConnectionSDK.__init__(self, record, libtype)
-        self.set_exception_handler(PicoTechError)
+        self.set_exception_class(PicoTechError)
 
         # check that the Python class matches the SDK
         self.SDK_FILENAME = os.path.splitext(os.path.basename(record.connection.address.split('::')[2]))[0]

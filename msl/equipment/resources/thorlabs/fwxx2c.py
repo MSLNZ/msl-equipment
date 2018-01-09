@@ -78,7 +78,7 @@ class FilterWheelXX2C(ConnectionSDK):
         """
         self._handle = None
         ConnectionSDK.__init__(self, record, 'cdll')
-        self.set_exception_handler(ThorlabsError)
+        self.set_exception_class(ThorlabsError)
 
         self.sdk.GetPorts.restype = c_int
         self.sdk.GetPorts.argtypes = [c_char_p]

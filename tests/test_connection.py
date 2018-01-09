@@ -70,13 +70,13 @@ def test_exception_handler():
 
     # not a class error
     with pytest.raises(TypeError) as err:
-        c.set_exception_handler(None)
+        c.set_exception_class(None)
     assert 'issubclass()' in str(err.value)
 
     # not a subclass of MSLConnectionError
     with pytest.raises(TypeError) as err:
-        c.set_exception_handler(IOError)
+        c.set_exception_class(IOError)
     assert 'MSLConnectionError' in str(err.value)
 
-    c.set_exception_handler(exceptions.ThorlabsError)
+    c.set_exception_class(exceptions.ThorlabsError)
     assert c._exception_handler == exceptions.ThorlabsError

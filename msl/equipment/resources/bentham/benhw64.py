@@ -40,7 +40,7 @@ class Bentham(Connection, Client64):
             A record from an :ref:`equipment_database`.
         """
         Connection.__init__(self, record)
-        self.set_exception_handler(BenthamError)
+        self.set_exception_class(BenthamError)
 
         path = record.connection.address.split('::')[2]
         head, tail = os.path.split(path)

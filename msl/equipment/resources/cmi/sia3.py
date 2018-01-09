@@ -58,7 +58,7 @@ class SIA3(ConnectionSerial):
                 'write_termination': None,
             }
         ConnectionSerial.__init__(self, record)
-        self.set_exception_handler(CMIError)
+        self.set_exception_class(CMIError)
 
     def set_integration_time(self, time):
         """Set the integration time (i.e., the gain).

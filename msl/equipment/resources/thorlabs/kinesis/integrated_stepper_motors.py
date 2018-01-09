@@ -883,17 +883,11 @@ class IntegratedStepperMotors(MotionControl):
         """
         return self.sdk.ISC_HasLastMsgTimerOverrun(self._serial)
 
-    def home(self, wait=True):
+    def home(self):
         """Home the device.
 
         Homing the device will set the device to a known state and determine
         the home position.
-
-        Parameters
-        ----------
-        wait : :obj:`bool`
-            Wait until the device has been homed before returning to the
-            calling program.
 
         Raises
         ------
@@ -901,9 +895,6 @@ class IntegratedStepperMotors(MotionControl):
             If not successful.
         """
         self.sdk.ISC_Home(self._serial)
-        if wait:
-            self._wait(0)
-            assert self.get_position() == 0, 'Wait until homed is not working'
 
     def identify(self):
         """Sends a command to the device to make it identify itself."""
@@ -1015,7 +1006,7 @@ class IntegratedStepperMotors(MotionControl):
         """
         self.sdk.ISC_MoveRelativeDistance(self._serial)
 
-    def move_to_position(self, index, wait=True):
+    def move_to_position(self, index):
         """Move the device to the specified position (index).
 
         The motor may need to be set to its :meth:`home` position before a
@@ -1028,9 +1019,6 @@ class IntegratedStepperMotors(MotionControl):
         ----------
         index : :obj:`int`
             The position in ``DeviceUnits`` (see manual).
-        wait : :obj:`bool`
-            Wait until the device has finished moving before returning to the
-            calling program.
 
         Raises
         ------
@@ -1038,9 +1026,6 @@ class IntegratedStepperMotors(MotionControl):
             If not successful.
         """
         self.sdk.ISC_MoveToPosition(self._serial, index)
-        if wait:
-            self._wait(1)
-            assert self.get_position() == index, 'Wait until move finished is not working'
 
     def needs_homing(self):
         """Does the device need to be :obj:`home`\'d before a move can be performed?

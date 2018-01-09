@@ -142,29 +142,20 @@ class FilterFlipper(MotionControl):
         """
         self.sdk.FF_Home(self._serial)
 
-    def move_to_position(self, position, wait=True):
+    def move_to_position(self, position):
         """Move the device to the specified position (index).
-        
+
         Parameters
         ----------
         position : :obj:`int`
             The required position. Must be 1 or 2. 
-        wait : :obj:`bool`, optional
-            Whether to wait until the movement is complete before returning to 
-            the calling program.
-        
+
         Raises
         ------
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         self.sdk.FF_MoveToPosition(self._serial, position)
-        if wait:
-            # without polling the wait_for_message() call will block forever
-            if self.polling_duration() == 0:
-                self.start_polling(200)
-            self._wait(1)
-            assert self.get_position() == position, 'Wait until move finished is not working'
 
     def get_position(self):
         """Get the current position (index).

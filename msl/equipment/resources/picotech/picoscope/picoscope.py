@@ -440,6 +440,13 @@ class PicoScope(ConnectionSDK):
         oversample : :obj:`int`
             The amount of over-sample required.
 
+        Returns
+        -------
+        :obj:`int`
+            The sampling interval, i.e. dt.
+        :obj:`int`
+            The number of samples that will be acquired.
+
         Raises
         ------
         :exc:`.PicoTechError`

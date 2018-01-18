@@ -442,7 +442,7 @@ class PicoScope(ConnectionSDK):
 
         Returns
         -------
-        :obj:`int`
+        :obj:`float`
             The sampling interval, i.e. dt.
         :obj:`int`
             The number of samples that will be acquired.

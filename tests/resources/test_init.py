@@ -55,6 +55,11 @@ def test_recursive_find_resource_class():
     assert r('FilterWheelXX2C') == resources.thorlabs.fwxx2c.FilterWheelXX2C
     assert r('FilterFlipper') == resources.thorlabs.kinesis.filter_flipper.FilterFlipper
     assert r('SIA3') == resources.cmi.sia3.SIA3
+    assert r('IntegratedStepperMotors') == resources.thorlabs.kinesis.integrated_stepper_motors.IntegratedStepperMotors
+    assert r('KCubeDCServo') == resources.thorlabs.kinesis.kcube_dc_servo.KCubeDCServo
+    assert r('KCubeSolenoid') == resources.thorlabs.kinesis.kcube_solenoid.KCubeSolenoid
+    assert r('KCubeStepperMotor') == resources.thorlabs.kinesis.kcube_stepper_motor.KCubeStepperMotor
+    assert r('BenchtopStepperMotor') == resources.thorlabs.kinesis.benchtop_stepper_motor.BenchtopStepperMotor
 
 
 def test_check_manufacture_model_resource_name():

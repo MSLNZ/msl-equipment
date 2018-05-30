@@ -10,7 +10,7 @@ from .api_functions import KCube_Solenoid_FCNS
 from .structs import (
     SC_CycleParameters,
     TLI_HardwareInformation,
-    # KSC_MMIParams,
+    KSC_MMIParams,
     KSC_TriggerConfig,
 )
 from .enums import (
@@ -199,22 +199,25 @@ class KCubeSolenoid(MotionControl):
         """
         return self.get_mmi_params_ext()
 
-    # def get_mmi_params_block(self):
-    #     """Gets the MMI parameters for the device.
-    #
-    #     Returns
-    #     -------
-    #     :class:`.structs.KSC_MMIParams`
-    #         Options for controlling the mmi.
-    #
-    #     Raises
-    #     ------
-    #     :exc:`~msl.equipment.exceptions.ThorlabsError`
-    #         If not successful.
-    #     """
-    #     mmi_params = KSC_MMIParams()
-    #     self.sdk.SC_GetMMIParamsBlock(self._serial, byref(mmi_params))
-    #     return mmi_params
+    def get_mmi_params_block(self):
+        """Gets the MMI parameters for the device.
+
+        .. warning::
+           This function is currently not in the DLL, as of v1.11.2, but it is in the header file.
+
+        Returns
+        -------
+        :class:`.structs.KSC_MMIParams`
+            Options for controlling the MMI.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
+        mmi_params = KSC_MMIParams()
+        self.sdk.SC_GetMMIParamsBlock(self._serial, byref(mmi_params))
+        return mmi_params
 
     def get_mmi_params_ext(self):
         """Get the MMI Parameters for the KCube Display Interface.
@@ -584,8 +587,6 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ValueError
-            If any of the input parameters are out of range.
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
@@ -657,32 +658,33 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ValueError
-            If the value of `display_intensity` is out of range.
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
         if display_intensity > 100 or display_intensity < 0:
-            m = 'Invalid display_intensity value of {}. Must be 0 <= display_intensity <= 100'.format(display_intensity)
-            self.raise_exception(m)
+            self.raise_exception('Invalid display_intensity value of {}. '
+                                 'Must be 0 <= display_intensity <= 100'.format(display_intensity))
         self.sdk.SC_SetMMIParams(self._serial, display_intensity)
 
-    # def set_mmi_params_block(self, mmi_params):
-    #     """Sets the MMI parameters for the device.
-    #
-    #     Parameters
-    #     ----------
-    #     mmi_params : :class:`.structs.KSC_MMIParams`
-    #         Options for controlling the mmi.
-    #
-    #     Raises
-    #     ------
-    #     :exc:`~msl.equipment.exceptions.ThorlabsError`
-    #         If not successful.
-    #     """
-    #     if not isinstance(mmi_params, KSC_MMIParams):
-    #         self.raise_exception('Must pass in a KSC_MMIParams structure')
-    #     self.sdk.SC_SetMMIParamsBlock(self._serial, byref(mmi_params))
+    def set_mmi_params_block(self, mmi_params):
+        """Sets the MMI parameters for the device.
+
+        .. warning::
+           This function is currently not in the DLL, as of v1.11.2, but it is in the header file.
+
+        Parameters
+        ----------
+        mmi_params : :class:`.structs.KSC_MMIParams`
+            Options for controlling the MMI.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
+        if not isinstance(mmi_params, KSC_MMIParams):
+            self.raise_exception('Must pass in a KSC_MMIParams structure')
+        self.sdk.SC_SetMMIParamsBlock(self._serial, byref(mmi_params))
 
     def set_mmi_params_ext(self, intensity, timeout, dim_intensity):
         """Set the MMI Parameters for the KCube Display Interface.
@@ -700,8 +702,6 @@ class KCubeSolenoid(MotionControl):
 
         Raises
         ------
-        ValueError
-            If any of the input parameters are out of range.
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """

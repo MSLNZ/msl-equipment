@@ -95,12 +95,16 @@ class MotionControl(ConnectionSDK):
         self.set_exception_class(ThorlabsError)
 
         for item in api_function:
-            func = getattr(self.sdk, item[0])
-            func.restype = item[1]
-            func.errcheck = getattr(self, item[2])
-            func.argtypes = [v[0] for v in item[3]]
+            try:
+                func = getattr(self.sdk, item[0])
+            except AttributeError as e:
+                self.log_debug('{0} {1}'.format(self, e))
+            else:
+                func.restype = item[1]
+                func.errcheck = getattr(self, item[2])
+                func.argtypes = [v[0] for v in item[3]]
 
-        self._serial = record.serial.encode()
+        self._serial = record.serial.encode('utf-8')
         self.build_device_list()
         self.open()
         self._is_open = True
@@ -261,12 +265,17 @@ class MotionControl(ConnectionSDK):
         _id = MessageID[_type][msg_id]
         return 'Type:{}; ID:{}; Data:{}'.format(_type, _id, msg_data)
 
-    def _get_hardware_info(self, sdk_function):
+    def _get_hardware_info(self, sdk_function, channel=None):
         """Gets the hardware information from the device.
         
-        The SDK function signature must be
+        The SDK function signature must be:
                 
         sdk_function(char const * serialNo, char * modelNo, DWORD sizeOfModelNo, WORD * type, WORD * numChannels, 
+        char * notes, DWORD sizeOfNotes, DWORD * firmwareVersion, WORD * hardwareVersion, WORD * modificationState);
+
+        or
+
+        sdk_function(char const * serialNo, short channel, char * modelNo, DWORD sizeOfModelNo, WORD * type, WORD * numChannels,
         char * notes, DWORD sizeOfNotes, DWORD * firmwareVersion, WORD * hardwareVersion, WORD * modificationState);
 
         Returns
@@ -289,9 +298,14 @@ class MotionControl(ConnectionSDK):
         notes_size = TLI_HardwareInformation.notes.size
         notes = create_string_buffer(notes_size)
 
-        sdk_function(self._serial, model, model_size, byref(typ), byref(num_channels),
-                     notes, notes_size, byref(firmware_version), byref(hardware_version),
-                     byref(modification_state))
+        if channel is None:
+            sdk_function(self._serial, model, model_size, byref(typ), byref(num_channels),
+                         notes, notes_size, byref(firmware_version), byref(hardware_version),
+                         byref(modification_state))
+        else:
+            sdk_function(self._serial, channel, model, model_size, byref(typ), byref(num_channels),
+                         notes, notes_size, byref(firmware_version), byref(hardware_version),
+                         byref(modification_state))
 
         info = TLI_HardwareInformation()
         info.serialNumber = int(self._serial)

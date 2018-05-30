@@ -54,6 +54,7 @@ resource class, which is a wrapper around the ``benhw32_cdecl.dll`` SDK that is 
     * :class:`~msl.equipment.resources.thorlabs.kinesis.kcube_solenoid.KCubeSolenoid` - KSC101
     * :class:`~msl.equipment.resources.thorlabs.kinesis.kcube_stepper_motor.KCubeStepperMotor` - KST101
     * :class:`~msl.equipment.resources.thorlabs.kinesis.kcube_dc_servo.KCubeDCServo` - KDC101
+    * :class:`~msl.equipment.resources.thorlabs.kinesis.benchtop_stepper_motor.BenchtopStepperMotor` - BSC101, BSC102, BSC103, BSC201, BSC202, BSC203
 
   * :class:`~msl.equipment.resources.thorlabs.fwxx2c.FilterWheelXX2C` - FW102C, FW212C
 

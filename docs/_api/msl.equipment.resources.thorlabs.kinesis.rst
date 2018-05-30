@@ -12,6 +12,7 @@ Submodules
 .. toctree::
 
    msl.equipment.resources.thorlabs.kinesis.api_functions
+   msl.equipment.resources.thorlabs.kinesis.benchtop_stepper_motor
    msl.equipment.resources.thorlabs.kinesis.callbacks
    msl.equipment.resources.thorlabs.kinesis.enums
    msl.equipment.resources.thorlabs.kinesis.errors
@@ -23,4 +24,3 @@ Submodules
    msl.equipment.resources.thorlabs.kinesis.messages
    msl.equipment.resources.thorlabs.kinesis.motion_control
    msl.equipment.resources.thorlabs.kinesis.structs
-

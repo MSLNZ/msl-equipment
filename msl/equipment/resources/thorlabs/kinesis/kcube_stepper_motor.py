@@ -319,7 +319,7 @@ class KCubeStepperMotor(MotionControl):
         mode = c_short()
         stop_mode = c_short()
         self.sdk.SCC_GetJogMode(self._serial, byref(mode), byref(stop_mode))
-        return MOT_JogModes(mode.value), MOT_StopModes(mode.value)
+        return MOT_JogModes(mode.value), MOT_StopModes(stop_mode.value)
 
     def get_jog_params_block(self):
         """Get the jog parameters.
@@ -2217,10 +2217,12 @@ class KCubeStepperMotor(MotionControl):
         -------
         :obj:`int`
             The time, in milliseconds, since the last message was received.
+        :obj:`bool`
+            :obj:`True` if monitoring is enabled otherwise :obj:`False`.
         """
         ms = c_int64()
-        self.sdk.SCC_TimeSinceLastMsgReceived(self._serial, byref(ms))
-        return ms.value
+        ret = self.sdk.SCC_TimeSinceLastMsgReceived(self._serial, byref(ms))
+        return ms.value, ret
 
     def uses_pid_loop_encoding(self):
         """Determines if we can uses PID loop encoding.

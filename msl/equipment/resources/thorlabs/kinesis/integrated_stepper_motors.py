@@ -344,7 +344,7 @@ class IntegratedStepperMotors(MotionControl):
         mode = c_short()
         stop_mode = c_short()
         self.sdk.ISC_GetJogMode(self._serial, byref(mode), byref(stop_mode))
-        return MOT_JogModes(mode.value), MOT_StopModes(mode.value)
+        return MOT_JogModes(mode.value), MOT_StopModes(stop_mode.value)
 
     def get_jog_params_block(self):
         """Get the jog parameters.
@@ -476,24 +476,6 @@ class IntegratedStepperMotors(MotionControl):
         """Gets the motor stage parameters.
 
         Deprecated: calls :meth:`get_motor_params_ext`
-
-        These parameters, when combined define the stage motion in terms of
-        ``RealWorldUnits`` [millimeters or degrees]. The real-world unit
-        is defined from ``steps_per_rev * gear_box_ratio / pitch``.
-
-        Returns
-        ----------
-        :obj:`float`
-            The steps per revolution.
-        :obj:`float`
-            The gear box ratio.
-        :obj:`float`
-            The pitch.
-
-        Raises
-        ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
-            If not successful.
         """
         return self.get_motor_params_ext()
 
@@ -505,7 +487,7 @@ class IntegratedStepperMotors(MotionControl):
         is defined from ``steps_per_rev * gear_box_ratio / pitch``.
 
         Returns
-        ----------
+        -------
         :obj:`float`
             The steps per revolution.
         :obj:`float`
@@ -807,7 +789,7 @@ class IntegratedStepperMotors(MotionControl):
 
         This returns the latest status bits received from the device.
         To get new status bits, use :meth:`request_status_bits` or use
-        :meth:`request_status` or use the polling functions, :meth:`start_polling`.
+        :meth:`request_status` or use the polling function, :meth:`start_polling`.
 
         Returns
         -------
@@ -877,9 +859,8 @@ class IntegratedStepperMotors(MotionControl):
         Returns
         -------
         :obj:`bool`
-            :obj:`True` if last message timer has elapsed or
-            :obj:`False` if monitoring is not enabled or if time of last message
-            received is less than ``lastMsgTimeout``.
+            :obj:`True` if last message timer has elapsed, :obj:`False` if monitoring is
+            not enabled or if time of last message received is less than ``lastMsgTimeout``.
         """
         return self.sdk.ISC_HasLastMsgTimerOverrun(self._serial)
 
@@ -897,7 +878,13 @@ class IntegratedStepperMotors(MotionControl):
         self.sdk.ISC_Home(self._serial)
 
     def identify(self):
-        """Sends a command to the device to make it identify itself."""
+        """Sends a command to the device to make it identify itself.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
         self.sdk.ISC_Identify(self._serial)
 
     def is_calibration_active(self):
@@ -959,7 +946,7 @@ class IntegratedStepperMotors(MotionControl):
             If not successful.
         """
         direction_ = self.convert_to_enum(direction, MOT_TravelDirection, prefix='MOT_')
-        return self.sdk.ISC_MoveAtVelocity(self._serial, direction_)
+        self.sdk.ISC_MoveAtVelocity(self._serial, direction_)
 
     def move_jog(self, jog_direction):
         """Perform a jog.
@@ -1077,6 +1064,11 @@ class IntegratedStepperMotors(MotionControl):
         ----------
         callback : :obj:`.callbacks.MotionControlCallback`
             A function to be called whenever messages are received.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
         """
         self.sdk.ISC_RegisterMessageCallback(self._serial, callback)
 
@@ -1163,7 +1155,7 @@ class IntegratedStepperMotors(MotionControl):
     def request_position(self):
         """Requests the current position.
 
-        This needs to be called to get the device to send it's current position.
+        This needs to be called to get the device to send its current position.
         Note, this is called automatically if ``Polling`` is enabled for the device
         using :meth:`start_polling`.
 
@@ -1197,8 +1189,7 @@ class IntegratedStepperMotors(MotionControl):
     def request_settings(self):
         """Requests that all settings are downloaded from the device.
 
-        This function requests that the device upload all it's settings to the
-        DLL.
+        This function requests that the device upload all its settings to the DLL.
 
         Raises
         ------
@@ -1224,7 +1215,7 @@ class IntegratedStepperMotors(MotionControl):
     def request_status_bits(self):
         """Request the status bits which identify the current motor state.
 
-        This needs to be called to get the device to send it's current status bits.
+        This needs to be called to get the device to send its current status bits.
         Note, this is called automatically if ``Polling`` is enabled for the device
         using :meth:`start_polling`.
 
@@ -1366,7 +1357,7 @@ class IntegratedStepperMotors(MotionControl):
         """
         if not os.path.isfile(path):
             raise IOError('Cannot find {}'.format(path))
-        self.sdk.ISC_SetCalibrationFile(self._serial, path.encode(), enabled)
+        self.sdk.ISC_SetCalibrationFile(self._serial, path.encode('utf-8'), enabled)
 
     def set_direction(self, reverse):
         """Sets the motor direction sense.
@@ -1378,7 +1369,7 @@ class IntegratedStepperMotors(MotionControl):
         Parameters
         ----------
         reverse : :obj:`bool`
-            If  :obj:`True` then directions will be swapped on these moves.
+            If :obj:`True` then directions will be swapped on these moves.
 
         Raises
         ------
@@ -1440,7 +1431,6 @@ class IntegratedStepperMotors(MotionControl):
         ----------
         mode : :class:`.enums.MOT_JogModes`
             The jog mode, as a :class:`.enums.MOT_JogModes` enum value or member name.
-
         stop_mode : :class:`.enums.MOT_StopModes`
             The stop mode, as a :class:`.enums.MOT_StopModes` enum value or member name.
 
@@ -1558,43 +1548,27 @@ class IntegratedStepperMotors(MotionControl):
         sw = self.convert_to_enum(soft_limit_mode, MOT_LimitSwitchSWModes, prefix='MOT_')
         self.sdk.ISC_SetLimitSwitchParams(self._serial, cw_lim_, ccw_lim_, cw_pos, ccw_pos, sw)
 
-    def set_limit_switch_params_block(self, cw_limit, ccw_limit, cw_pos, ccw_pos, mode):
+    def set_limit_switch_params_block(self, params):
         """Set the limit switch parameters.
-
-        See :obj:`get_device_unit_from_real_value` for converting from a
-        ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
-        cw_limit : :class:`.enums.MOT_LimitSwitchModes`
-            The clockwise hardware limit as a :class:`.enums.MOT_LimitSwitchModes` enum
-            value or member name.
-        ccw_limit : :obj:`int`
-            The anticlockwise hardware limit as a :class:`.enums.MOT_LimitSwitchModes` enum
-            value or member name.
-        cw_pos : :obj:`int`
-            The position of clockwise software limit in ``DeviceUnits``.
-        ccw_pos : :obj:`int`
-            The position of anticlockwise software limit in ``DeviceUnits``.
-        mode : :class:`.enums.MOT_LimitSwitchSWModes`
-            Actions to take when software limit is detected as a :class:`.enums.MOT_LimitSwitchSWModes`
-            enum value or member name.
+        params : :class:`.structs.MOT_LimitSwitchParameters`
+            The new limit switch parameters.
 
         Raises
         ------
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
+        TypeError
+            If the data type of `joystick_params` is not :class:`.structs.MOT_JoystickParameters`
         """
-        params = MOT_LimitSwitchParameters()
-        params.clockwiseHardwareLimit = self.convert_to_enum(cw_limit, MOT_LimitSwitchModes, prefix='MOT_')
-        params.anticlockwiseHardwareLimit = self.convert_to_enum(ccw_limit, MOT_LimitSwitchModes, prefix='MOT_')
-        params.clockwisePosition = cw_pos
-        params.anticlockwisePosition = ccw_pos
-        params.softLimitMode = self.convert_to_enum(mode, MOT_LimitSwitchSWModes, prefix='MOT_')
-        return self.sdk.ISC_SetLimitSwitchParamsBlock(self._serial, byref(params))
+        if not isinstance(params, MOT_LimitSwitchParameters):
+            raise TypeError('The limit switch parameter must be a MOT_LimitSwitchParameters struct')
+        self.sdk.ISC_SetLimitSwitchParamsBlock(self._serial, byref(params))
 
     def set_limits_software_approach_policy(self, policy):
-        """Sets the software limits mode.
+        """Sets the software limits policy.
 
         Parameters
         ----------
@@ -1716,7 +1690,7 @@ class IntegratedStepperMotors(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        return self.sdk.ISC_SetMotorVelocityLimits(self._serial, max_velocity, max_acceleration)
+        self.sdk.ISC_SetMotorVelocityLimits(self._serial, max_velocity, max_acceleration)
 
     def set_move_absolute_position(self, position):
         """Sets the move absolute position.
@@ -1795,12 +1769,10 @@ class IntegratedStepperMotors(MotionControl):
         ------
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
-        ValueError
-            If the value of `threshold` is out of range.
         """
         if threshold < 0 or threshold > 127:
-            msg = 'Invalid potentiometer threshold value of {}. Must be 0 <= threshold <= 127'.format(threshold)
-            raise ValueError(msg)
+            self.raise_exception('Invalid potentiometer threshold value of {}. '
+                                 'Must be 0 <= threshold <= 127'.format(threshold))
         self.sdk.ISC_SetPotentiometerParams(self._serial, index, threshold, velocity)
 
     def set_potentiometer_params_block(self, params):
@@ -1836,12 +1808,12 @@ class IntegratedStepperMotors(MotionControl):
             If not successful.
         """
         if rest < 0 or rest > 100:
-            raise ValueError('The rest power parameter is {}. Must be 0 <= rest <=100'.format(rest))
+            self.raise_exception('The rest power parameter is {}. Must be 0 <= rest <=100'.format(rest))
         if move < 0 or move > 100:
-            raise ValueError('The move power parameter is {}. Must be 0 <= move <=100'.format(move))
+            self.raise_exception('The move power parameter is {}. Must be 0 <= move <=100'.format(move))
         params = MOT_PowerParameters()
-        params.restPercentage = rest
-        params.movePercentage = move
+        params.restPercentage = int(rest)
+        params.movePercentage = int(move)
         self.sdk.ISC_SetPowerParams(self._serial, byref(params))
 
     def set_stage_axis_limits(self, min_position, max_position):
@@ -1903,14 +1875,17 @@ class IntegratedStepperMotors(MotionControl):
     def set_vel_params_block(self, min_velocity, max_velocity, acceleration):
         """Set the move velocity parameters.
 
+        See :obj:`get_device_unit_from_real_value` for converting from a
+        ``RealValue`` to a ``DeviceUnit``.
+
         Parameters
         ----------
         min_velocity : :obj:`int`
-            The minimum velocity.
+            The minimum velocity in ``DeviceUnits`` (see manual)..
         max_velocity : :obj:`int`
-            The maximum velocity.
+            The maximum velocity in ``DeviceUnits`` (see manual)..
         acceleration : :obj:`int`
-            The acceleration.
+            The acceleration in ``DeviceUnits`` (see manual)..
 
         Raises
         ------
@@ -1965,7 +1940,7 @@ class IntegratedStepperMotors(MotionControl):
         self.sdk.ISC_StopProfiled(self._serial)
 
     def time_since_last_msg_received(self):
-        """Gets the time, in milliseconds, since tha last message was received.
+        """Gets the time, in milliseconds, since the last message was received.
 
         This can be used to determine whether communications with the device is
         still good.
@@ -1974,10 +1949,12 @@ class IntegratedStepperMotors(MotionControl):
         -------
         :obj:`int`
             The time, in milliseconds, since the last message was received.
+        :obj:`bool`
+            :obj:`True` if monitoring is enabled otherwise :obj:`False`.
         """
         ms = c_int64()
-        self.sdk.ISC_TimeSinceLastMsgReceived(self._serial, byref(ms))
-        return ms.value
+        ret = self.sdk.ISC_TimeSinceLastMsgReceived(self._serial, byref(ms))
+        return ms.value, ret
 
     def wait_for_message(self):
         """Wait for next Message Queue item. See :mod:`.messages`.

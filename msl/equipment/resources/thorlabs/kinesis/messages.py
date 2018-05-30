@@ -10,6 +10,7 @@ These messages are temporarily stored in the DLL and can be accessed using the
 appropriate message functions.
 """
 
+#: MessageTypes
 MessageTypes = {
     0: 'GenericDevice',
     1: 'GenericPiezo',
@@ -25,6 +26,7 @@ MessageTypes = {
     11: 'Solenoid',
 }
 
+#: GenericDevice
 GenericDevice = {
     0: 'settingsInitialized',
     1: 'settingsUpdated',
@@ -32,6 +34,7 @@ GenericDevice = {
     3: 'close',
 }
 
+#: GenericPiezo
 GenericPiezo = {
     0: 'maxVoltageChanged',
     1: 'controlModeChanged',
@@ -41,6 +44,7 @@ GenericPiezo = {
     5: 'TSG_DisplayModeChanged',
 }
 
+#: GenericMotor
 GenericMotor = {
     0: 'Homed',
     1: 'Moved',
@@ -48,44 +52,54 @@ GenericMotor = {
     3: 'LimitUpdated',
 }
 
+#: GenericDCMotor
 GenericDCMotor = {
     0: 'error',
     1: 'status',
 }
 
+#: GenericSimpleMotor
 GenericSimpleMotor = {}
 
+#: RackDevice
 RackDevice = {
     0: 'RackCountEstablished',
     1: 'RackBayState',
 }
 
+#: Laser
 Laser = {
     0: 'statusChanged',
     1: 'controlSourceChanged',
     2: 'displayModeChanged',
 }
 
+#: TECCtlr
 TECCtlr = {
     0: 'statusChanged',
     2: 'displaySettingsChanged',
     3: 'feedbackParamsChanged',
 }
 
+#: Quad
 Quad = {
     0: 'statusChanged',
 }
 
+#: NanoTrak
 NanoTrak = {
     0: 'statusChanged',
 }
 
+#: Specialized
 Specialized = {}
 
+#: Solenoid
 Solenoid = {
     0: 'statusChanged',
 }
 
+#: MessageID
 MessageID = {
     'GenericDevice': GenericDevice,
     'GenericPiezo': GenericPiezo,

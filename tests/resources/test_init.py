@@ -143,7 +143,7 @@ def test_find_serial_class():
         resources.find_serial_class(record)  # the interface is not an ASRL-type interface
     assert 'interface' in str(err.value)
 
-    record = ConnectionRecord(backend=Backend.MSL, address='GPIB::02')
+    record = ConnectionRecord(backend=Backend.MSL, address='SDK::Whatever::SomeLibrary.dll')
     with pytest.raises(ValueError) as err:
         resources.find_serial_class(record)  # the interface is not an ASRL-type interface
     assert 'interface' in str(err.value)

@@ -126,7 +126,7 @@ def test_conn_record():
     # create a new ConnectionRecord
     record = ConnectionRecord(
         address='GPIB::15',
-        backend=constants.Backend.MSL,
+        backend=constants.Backend.PyVISA,
         manufacturer='ABC def',
         model='ZZZ',
         serial='DY135/055',
@@ -136,8 +136,8 @@ def test_conn_record():
         },
     )
     assert record.address == 'GPIB::15'
-    assert record.backend == constants.Backend.MSL
-    assert record.interface == constants.MSLInterface.GPIB
+    assert record.backend == constants.Backend.PyVISA
+    assert record.interface == constants.MSLInterface.NONE
     assert record.manufacturer == 'ABC def'
     assert record.model == 'ZZZ'
     assert record.serial == 'DY135/055'
@@ -177,15 +177,16 @@ def test_conn_record():
     record = ConnectionRecord(address='TCPIP::192.168.1.21', backend=constants.Backend.MSL)
     assert record.interface == constants.MSLInterface.TCPIP
 
-    record = ConnectionRecord(address='ENET+COM::192.168.1.21+3', backend=constants.Backend.MSL)
-    assert record.address == 'ENET+COM::192.168.1.21+3'
-    assert record.backend == constants.Backend.MSL
-    assert record.interface == constants.MSLInterface.TCPIP_ASRL
+    # TODO enable these tests once we create the TCPIP_ASRL and TCPIP_GPIB IntEnum constants in MSLInterface
+    # record = ConnectionRecord(address='ENET+COM::192.168.1.21+3', backend=constants.Backend.MSL)
+    # assert record.address == 'ENET+COM::192.168.1.21+3'
+    # assert record.backend == constants.Backend.MSL
+    # assert record.interface == constants.MSLInterface.TCPIP_ASRL
 
-    record = ConnectionRecord(address='LAN+GPIB::192.168.1.21+7', backend=constants.Backend.MSL)
-    assert record.address == 'LAN+GPIB::192.168.1.21+7'
-    assert record.backend == constants.Backend.MSL
-    assert record.interface == constants.MSLInterface.TCPIP_GPIB
+    # record = ConnectionRecord(address='LAN+GPIB::192.168.1.21+7', backend=constants.Backend.MSL)
+    # assert record.address == 'LAN+GPIB::192.168.1.21+7'
+    # assert record.backend == constants.Backend.MSL
+    # assert record.interface == constants.MSLInterface.TCPIP_GPIB
 
     # unknown address value
     c = ConnectionRecord(address='XXXXXX')
@@ -193,7 +194,7 @@ def test_conn_record():
 
     # setting the interface, bad
     with pytest.raises(ValueError) as err:
-        ConnectionRecord(address='COM1', backend=constants.Backend.MSL, interface=constants.MSLInterface.GPIB)
+        ConnectionRecord(address='COM1', backend=constants.Backend.MSL, interface=constants.MSLInterface.SDK)
     assert 'interface' in str(err.value) and 'address' in str(err.value)
 
     # setting the interface, bad

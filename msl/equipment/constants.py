@@ -30,14 +30,14 @@ class MSLInterface(enum.IntEnum):
     NONE = 0
     SDK = 1
     ASRL = 2
-    USB = 3
-    TCPIP = 4
-    GPIB = 5
-    PXI = 6
-    VXI = 7
-    TCPIP_ASRL = 8
-    TCPIP_GPIB = 9
-    USB_GPIB = 10
+    TCPIP = 3
+    # USB = 4
+    # GPIB = 5
+    # PXI = 6
+    # VXI = 7
+    # TCPIP_ASRL = 8
+    # TCPIP_GPIB = 9
+    # USB_GPIB = 10
     # PROLOGIX_ENET = 11
     # PROLOGIX_USB = 12
 

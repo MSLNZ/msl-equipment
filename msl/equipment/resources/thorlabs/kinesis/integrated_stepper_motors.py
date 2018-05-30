@@ -1062,13 +1062,8 @@ class IntegratedStepperMotors(MotionControl):
 
         Parameters
         ----------
-        callback : :obj:`.callbacks.MotionControlCallback`
+        callback : :class:`~msl.equipment.resources.thorlabs.kinesis.callbacks.MotionControlCallback`
             A function to be called whenever messages are received.
-
-        Raises
-        ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
-            If not successful.
         """
         self.sdk.ISC_RegisterMessageCallback(self._serial, callback)
 

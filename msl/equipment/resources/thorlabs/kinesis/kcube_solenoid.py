@@ -445,10 +445,10 @@ class KCubeSolenoid(MotionControl):
 
         Parameters
         ----------
-        callback : :obj:`.callbacks.MotionControlCallback`
+        callback : :class:`~msl.equipment.resources.thorlabs.kinesis.callbacks.MotionControlCallback`
             A function to be called whenever messages are received.
         """
-        return self.sdk.SC_RegisterMessageCallback(self._serial, callback)
+        self.sdk.SC_RegisterMessageCallback(self._serial, callback)
 
     def request_cycle_params(self):
         """Requests the cycle parameters.

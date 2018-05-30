@@ -402,7 +402,7 @@ class FilterFlipper(MotionControl):
         
         Parameters
         ----------
-        callback : :obj:`.callbacks.MotionControlCallback`
+        callback : :class:`~msl.equipment.resources.thorlabs.kinesis.callbacks.MotionControlCallback`
             A function to be called whenever messages are received.
         """
         self.sdk.FF_RegisterMessageCallback(self._serial, callback)

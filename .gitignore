@@ -43,5 +43,5 @@ coverage.xml
 *Pipe_inOut
 *Pipe_inOutFifo
 
-# temporary files
-junk.py
+# ignore all junk files
+junk*.py

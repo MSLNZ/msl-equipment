@@ -20,7 +20,7 @@ class ConnectionSerial(ConnectionMessageBased):
 
             'read_termination': str or None (e.g., "\\r\\n")
             'write_termination': str or None (e.g., "\\n")
-            'read_size': int (the number of bytes to be read, must be > 0)
+            'max_read_size': int (the maximum number of bytes to be read, must be > 0)
             'encoding': str (e.g., 'ascii')
             'baud_rate': int (e.g., 9600, 115200)
             'data_bits': int (e.g., 5, 6, 7, 8)
@@ -62,7 +62,7 @@ class ConnectionSerial(ConnectionMessageBased):
 
         self.read_termination = props.get('read_termination', self.read_termination)
         self.write_termination = props.get('write_termination', self.write_termination)
-        self.max_read_size = props.get('read_size', self.max_read_size)
+        self.max_read_size = props.get('max_read_size', self.max_read_size)
         self.encoding = props.get('encoding', self.encoding)
         self.timeout = props.get('timeout', None)
 

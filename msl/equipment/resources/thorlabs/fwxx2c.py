@@ -7,7 +7,7 @@ from ctypes import c_char_p, c_int, POINTER, byref, create_string_buffer
 from enum import IntEnum
 
 from msl.equipment.exceptions import ThorlabsError
-from msl.equipment.connection_msl import ConnectionSDK
+from msl.equipment.connection_sdk import ConnectionSDK
 
 ERROR_CODES = {
     0x00: ('SUCCESS', 'Function call successful.'),

@@ -7,7 +7,7 @@ from msl.loadlib import LoadLibrary
 
 from msl.equipment.exceptions import ThorlabsError
 from msl.equipment.resources.utils import WORD, DWORD
-from msl.equipment.connection_msl import ConnectionSDK
+from msl.equipment.connection_sdk import ConnectionSDK
 from .errors import ERROR_CODES, FT_OK
 from .structs import TLI_DeviceInfo, TLI_HardwareInformation
 from .messages import MessageTypes, MessageID

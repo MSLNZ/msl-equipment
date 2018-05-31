@@ -8,7 +8,7 @@ from ctypes import c_int8, c_int16, c_int32, c_uint32, byref, c_void_p, string_a
 
 from msl.loadlib import IS_WINDOWS, LoadLibrary
 
-from msl.equipment.connection_msl import ConnectionSDK
+from msl.equipment.connection_sdk import ConnectionSDK
 from msl.equipment.exceptions import PicoTechError
 from .channel import PicoScopeChannel
 from . import structs

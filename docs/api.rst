@@ -81,7 +81,7 @@ The following :class:`~msl.equipment.connection.Connection` classes are availabl
 +---------------------------------------------------------------+--------------------------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_msl.ConnectionMessageBased` | Base class for equipment that use message based communication.                             |
 +---------------------------------------------------------------+--------------------------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_msl.ConnectionSDK`          | Base class for equipment that use the SDK provided by the manufacturer for the connection. |
+| :class:`~msl.equipment.connection_sdk.ConnectionSDK`          | Base class for equipment that use the SDK provided by the manufacturer for the connection. |
 +---------------------------------------------------------------+--------------------------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_msl.ConnectionSerial`       | Base class for equipment that is connected through a Serial port.                          |
 +---------------------------------------------------------------+--------------------------------------------------------------------------------------------+
@@ -104,6 +104,7 @@ Package Structure
    msl.equipment.connection_demo <_api/msl.equipment.connection_demo>
    msl.equipment.connection_msl <_api/msl.equipment.connection_msl>
    msl.equipment.connection_pyvisa <_api/msl.equipment.connection_pyvisa>
+   msl.equipment.connection_sdk <_api/msl.equipment.connection_sdk>
    msl.equipment.constants <_api/msl.equipment.constants>
    msl.equipment.database <_api/msl.equipment.database>
    msl.equipment.exceptions <_api/msl.equipment.exceptions>

@@ -7,7 +7,7 @@ import sys
 import fnmatch
 import importlib
 
-from msl.equipment import connection_msl
+from msl.equipment import connection_sdk, connection_msl
 from msl.equipment.constants import MSLInterface
 from msl.equipment.resources import dmm
 
@@ -146,9 +146,9 @@ def find_sdk_class(record):
             msg += 'Cannot automatically find the MSL Resource class.\n'
             msg += 'For a SDK interface, the address should be of the form SDK::PythonClassName::PathToLibrary'
             raise ValueError(msg)
-        if not issubclass(cls, connection_msl.ConnectionSDK):
+        if not issubclass(cls, connection_sdk.ConnectionSDK):
             msg = 'The address received is {}\n'.format(record.address)
-            msg += '{} is not a subclass of {}\n'.format(cls, connection_msl.ConnectionSDK)
+            msg += '{} is not a subclass of {}\n'.format(cls, connection_sdk.ConnectionSDK)
             msg += 'For a SDK interface, the address should be of the form SDK::PythonClassName::PathToLibrary'
             raise ValueError(msg)
         return cls

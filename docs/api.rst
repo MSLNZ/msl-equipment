@@ -76,15 +76,15 @@ Connection Classes
 The following :class:`~msl.equipment.connection.Connection` classes are available which allow for communicating with the
 :obj:`~msl.equipment.database.Database.equipment` *(although you should never need to instantiate these classes directly):*
 
-+---------------------------------------------------------------+--------------------------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_demo.ConnectionDemo`        | Simulate a connection to the equipment.                                                    |
-+---------------------------------------------------------------+--------------------------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_msl.ConnectionMessageBased` | Base class for equipment that use message based communication.                             |
-+---------------------------------------------------------------+--------------------------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_sdk.ConnectionSDK`          | Base class for equipment that use the SDK provided by the manufacturer for the connection. |
-+---------------------------------------------------------------+--------------------------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_serial.ConnectionSerial`    | Base class for equipment that is connected through a Serial port.                          |
-+---------------------------------------------------------------+--------------------------------------------------------------------------------------------+
++-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------+
+| :class:`~msl.equipment.connection_demo.ConnectionDemo`                  | Simulate a connection to the equipment.                                                    |
++-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------+
+| :class:`~msl.equipment.connection_message_based.ConnectionMessageBased` | Base class for equipment that use message based communication.                             |
++-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------+
+| :class:`~msl.equipment.connection_sdk.ConnectionSDK`                    | Base class for equipment that use the SDK provided by the manufacturer for the connection. |
++-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------+
+| :class:`~msl.equipment.connection_serial.ConnectionSerial`              | Base class for equipment that is connected through a Serial port.                          |
++-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------+
 
 and the :class:`~msl.equipment.connection.Connection` classes that are available from external Python libraries are:
 
@@ -102,7 +102,7 @@ Package Structure
    msl.equipment.config <_api/msl.equipment.config>
    msl.equipment.connection <_api/msl.equipment.connection>
    msl.equipment.connection_demo <_api/msl.equipment.connection_demo>
-   msl.equipment.connection_msl <_api/msl.equipment.connection_msl>
+   msl.equipment.connection_message_based <_api/msl.equipment.connection_message_based>
    msl.equipment.connection_pyvisa <_api/msl.equipment.connection_pyvisa>
    msl.equipment.connection_sdk <_api/msl.equipment.connection_sdk>
    msl.equipment.connection_serial <_api/msl.equipment.connection_serial>

@@ -1,5 +1,5 @@
 """
-Use :ref:`resources` to establish a connection to the equipment.
+Base class for equipment that use message-based communication.
 """
 import time
 
@@ -10,10 +10,10 @@ from msl.equipment.exceptions import MSLTimeoutError
 class ConnectionMessageBased(Connection):
 
     CR = '\r'
-    """:obj:`str`: The carriage-return character."""
+    """:class:`str`: The carriage-return character."""
 
     LF = '\n'
-    """:obj:`str`: The line-feed character."""
+    """:class:`str`: The line-feed character."""
 
     def __init__(self, record):
         """Base class for equipment that use message-based communication.
@@ -44,7 +44,7 @@ class ConnectionMessageBased(Connection):
     @property
     def encoding(self):
         """
-        :obj:`str`: The encoding that is used for :meth:`read` and :meth:`write` operations.
+        :class:`str`: The encoding that is used for :meth:`read` and :meth:`write` operations.
         """
         return self._encoding
 
@@ -56,7 +56,7 @@ class ConnectionMessageBased(Connection):
 
     @property
     def read_termination(self):
-        """:obj:`str` or :obj:`None`: The termination character sequence 
+        """:class:`str` or :obj:`None`: The termination character sequence
         that is used for the :meth:`read` method.
         
         Reading stops when the equipment stops sending data (e.g., by setting appropriate 
@@ -71,7 +71,7 @@ class ConnectionMessageBased(Connection):
 
     @property
     def write_termination(self):
-        """:obj:`str`: The termination character sequence that is appended to
+        """:class:`str`: The termination character sequence that is appended to
         :meth:`write` messages.
         """
         return self._write_termination
@@ -83,7 +83,7 @@ class ConnectionMessageBased(Connection):
 
     @property
     def max_read_size(self):
-        """:obj:`int`: The maximum number of bytes that can be :meth:`read`."""
+        """:class:`int`: The maximum number of bytes that can be :meth:`read`."""
         return self._max_read_size
 
     @max_read_size.setter
@@ -95,7 +95,7 @@ class ConnectionMessageBased(Connection):
 
     @property
     def timeout(self):
-        """:obj:`int`, :obj:`float` or :obj:`None`: The timeout, in seconds, for I/O operations."""
+        """:class:`int`, :class:`float` or :obj:`None`: The timeout, in seconds, for I/O operations."""
         return self._timeout
 
     @timeout.setter
@@ -111,7 +111,7 @@ class ConnectionMessageBased(Connection):
 
         Parameters
         ----------
-        append_msg: :obj:`str`, optional
+        append_msg: :class:`str`, optional
             A message to append to the generic timeout message.
         """
         msg = 'Timeout occurred after {} seconds'.format(self.timeout)
@@ -128,12 +128,12 @@ class ConnectionMessageBased(Connection):
 
         Parameters
         ----------
-        size : :obj:`int`, optional
+        size : :class:`int`, optional
             The number of bytes to read.
 
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The response from the equipment.
         """
         raise NotImplementedError
@@ -146,12 +146,12 @@ class ConnectionMessageBased(Connection):
 
         Parameters
         ----------
-        message : :obj:`str`
+        message : :class:`str`
             The message to write to the equipment.
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The number of bytes written.
         """
         raise NotImplementedError
@@ -161,15 +161,15 @@ class ConnectionMessageBased(Connection):
 
         Parameters
         ----------
-        message : :obj:`str`
+        message : :class:`str`
             The message to write to the equipment.
-        delay : :obj:`float`
+        delay : :class:`float`
             The time delay, in seconds, to wait between :meth:`write` and 
             :meth:`read` operations.
 
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The response from the equipment.
         """
         self.write(message)

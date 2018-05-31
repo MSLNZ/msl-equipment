@@ -1,5 +1,5 @@
 from msl.equipment import ConnectionRecord, EquipmentRecord
-from msl.equipment.connection_msl import ConnectionMessageBased
+from msl.equipment.connection_message_based import ConnectionMessageBased
 from msl.equipment.resources.dmm import dmm_factory
 
 

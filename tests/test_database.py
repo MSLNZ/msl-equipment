@@ -5,7 +5,7 @@ import pytest
 
 from msl.equipment.config import Config
 from msl.equipment import constants
-from msl.equipment.connection_msl import ConnectionMessageBased
+from msl.equipment.connection_message_based import ConnectionMessageBased
 
 
 def test_database_io_errors():

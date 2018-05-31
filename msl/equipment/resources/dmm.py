@@ -32,7 +32,7 @@ def dmm_factory(connection_record, connection_class):
     ----------
     connection_record : :class:`~msl.equipment.record_types.ConnectionRecord`
         A connection record from a :ref:`connection_database`.
-    connection_class : :class:`~msl.equipment.connection_msl.ConnectionMessageBased` or :class:`~pyvisa.resources.MessageBasedResource`
+    connection_class : :class:`~msl.equipment.connection_message_based.ConnectionMessageBased` or :class:`~pyvisa.resources.MessageBasedResource`
         A connection subclass that communicates with the equipment through `read` and `write` commands.
 
     Returns

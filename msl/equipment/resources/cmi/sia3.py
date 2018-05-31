@@ -7,7 +7,7 @@ Establishes a connection to the Switched Integrator Amplifier
 from enum import IntEnum
 
 from msl.equipment import constants
-from msl.equipment.connection_msl import ConnectionSerial
+from msl.equipment.connection_serial import ConnectionSerial
 from msl.equipment.exceptions import CMIError
 
 

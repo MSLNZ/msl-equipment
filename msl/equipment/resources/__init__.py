@@ -1,5 +1,8 @@
 """
 MSL resources for connecting to equipment.
+
+.. note::
+   These functions are designed as private functions for internal package use.
 """
 import os
 import re
@@ -7,7 +10,8 @@ import sys
 import fnmatch
 import importlib
 
-from msl.equipment import connection_sdk, connection_msl
+from msl.equipment.connection_sdk import ConnectionSDK
+from msl.equipment.connection_serial import ConnectionSerial
 from msl.equipment.constants import MSLInterface
 from msl.equipment.resources import dmm
 
@@ -15,11 +19,9 @@ from msl.equipment.resources import dmm
 def recursive_find_resource_class(class_name):
     """Find the :ref:`resources` class.
 
-    This function is not meant to be called directly.
-
     Parameters
     ----------
-    class_name : :obj:`str`
+    class_name : :class:`str`
         The name of a :ref:`resources` class.
 
     Returns
@@ -52,13 +54,11 @@ def recursive_find_resource_class(class_name):
 def get_class(module_name, class_name):
     """Returns the specified :class:`~msl.equipment.connection.Connection` subclass.
 
-    This function is not meant to be called directly.
-
     Parameters
     ----------
-    module_name : :obj:`str`
+    module_name : :class:`str`
         The name of a Python module.
-    class_name : :obj:`str`
+    class_name : :class:`str`
         The name of a Python class.
 
     Returns
@@ -82,19 +82,17 @@ def get_class(module_name, class_name):
 
 
 def check_manufacture_model_resource_name(record):
-    """Check if there is a :ref:`resources` class with a name equal to
-    ``record.model`` in the
+    """Check if there is a :ref:`resources` class with a name equal to the value of the
+    :attr:`model <msl.equipment.record_types.ConnectionRecord.model>` attribute in the
     ``msl.equipment.resources. + record.manufacturer.lower() + . + record.model.lower()``
     module.
 
     For example, if the `record` is a laser from ``Company`` with model number ``ABc123``
     then check if a ``msl.equipment.resources.company.abc123.ABc123`` resource class exists.
 
-    This function is not meant to be called directly.
-
     Parameters
     ----------
-    record : :obj:`~msl.equipment.record_types.ConnectionRecord`
+    record : :class:`~msl.equipment.record_types.ConnectionRecord`
         A connection record from a :ref:`connection_database`.
 
     Returns
@@ -110,24 +108,22 @@ def check_manufacture_model_resource_name(record):
 
 
 def find_sdk_class(record):
-    """Find the :class:`~msl.equipment.connection_msl.ConnectionSDK` subclass that is a
+    """Find the :class:`~msl.equipment.connection_sdk.ConnectionSDK` subclass that is a
     wrapper around the manufacturer's SDK.
-
-    This function is not meant to be called directly.
 
     Parameters
     ----------
-    record : :obj:`~msl.equipment.record_types.ConnectionRecord`
+    record : :class:`~msl.equipment.record_types.ConnectionRecord`
         A connection record from a :ref:`connection_database`.
 
     Returns
     -------
-    A :class:`~msl.equipment.connection_msl.ConnectionSDK` subclass.
+    A :class:`~msl.equipment.connection_sdk.ConnectionSDK` subclass.
 
     Raises
     ------
     ValueError
-        If the :obj:`~msl.equipment.record_types.ConnectionRecord` has an invalid
+        If the :class:`~msl.equipment.record_types.ConnectionRecord` has an invalid
         `interface` or `address` value.
     IOError
         If the SDK class cannot be found.
@@ -146,9 +142,9 @@ def find_sdk_class(record):
             msg += 'Cannot automatically find the MSL Resource class.\n'
             msg += 'For a SDK interface, the address should be of the form SDK::PythonClassName::PathToLibrary'
             raise ValueError(msg)
-        if not issubclass(cls, connection_sdk.ConnectionSDK):
+        if not issubclass(cls, ConnectionSDK):
             msg = 'The address received is {}\n'.format(record.address)
-            msg += '{} is not a subclass of {}\n'.format(cls, connection_sdk.ConnectionSDK)
+            msg += '{} is not a subclass of {}\n'.format(cls, ConnectionSDK)
             msg += 'For a SDK interface, the address should be of the form SDK::PythonClassName::PathToLibrary'
             raise ValueError(msg)
         return cls
@@ -156,25 +152,23 @@ def find_sdk_class(record):
 
 
 def find_serial_class(record):
-    """Find the :class:`~msl.equipment.connection_msl.ConnectionSerial` class.
-
-    This function is not meant to be called directly.
+    """Find the :class:`~msl.equipment.connection_serial.ConnectionSerial` class.
 
     Parameters
     ----------
-    record : :obj:`~msl.equipment.record_types.ConnectionRecord`
+    record : :class:`~msl.equipment.record_types.ConnectionRecord`
         A connection record from a :ref:`connection_database`.
 
     Returns
     -------
-    A :class:`~msl.equipment.connection_msl.ConnectionSerial` class.
+    A :class:`~msl.equipment.connection_serial.ConnectionSerial` class.
 
     Raises
     ------
     ValueError
-        If the :obj:`~msl.equipment.record_types.ConnectionRecord` has an invalid `interface`.
+        If the :class:`~msl.equipment.record_types.ConnectionRecord` has an invalid `interface`.
     IOError
-        If the :obj:`~msl.equipment.record_types.ConnectionRecord.address` specifies
+        If the :attr:`~msl.equipment.record_types.ConnectionRecord.address` specifies
         a **PythonClassName** to use for the connection and the class cannot be found.
     """
     if 'ASRL' not in record.interface.name:
@@ -184,6 +178,6 @@ def find_serial_class(record):
     if (len(address_split) == 1) or (len(address_split) == 2 and address_split[1].upper() == 'INSTR'):
         cls = check_manufacture_model_resource_name(record)
         if cls is None:
-            return connection_msl.ConnectionSerial
+            return ConnectionSerial
         return cls
     return recursive_find_resource_class(address_split[1])

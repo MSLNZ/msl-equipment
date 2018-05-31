@@ -9,7 +9,7 @@ from msl.equipment import resources
 from msl.equipment.connection import Connection
 from msl.equipment.record_types import ConnectionRecord
 from msl.equipment.constants import Backend
-from msl.equipment import connection_msl
+from msl.equipment.connection_serial import ConnectionSerial
 
 
 def test_unique_resource_class_name():
@@ -149,10 +149,10 @@ def test_find_serial_class():
     assert 'interface' in str(err.value)
 
     record = ConnectionRecord(backend=Backend.MSL, address='COM1')
-    assert resources.find_serial_class(record) == connection_msl.ConnectionSerial
+    assert resources.find_serial_class(record) == ConnectionSerial
 
     record = ConnectionRecord(backend=Backend.MSL, address='COM1::instr')
-    assert resources.find_serial_class(record) == connection_msl.ConnectionSerial
+    assert resources.find_serial_class(record) == ConnectionSerial
 
     record = ConnectionRecord(backend=Backend.MSL, address='COM1', manufacturer='CMI', model='SIA3')
     assert resources.find_serial_class(record) == resources.cmi.sia3.SIA3

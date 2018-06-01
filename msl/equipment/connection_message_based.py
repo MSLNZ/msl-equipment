@@ -95,16 +95,16 @@ class ConnectionMessageBased(Connection):
 
     @property
     def timeout(self):
-        """:class:`int`, :class:`float` or :obj:`None`: The timeout, in seconds, for I/O operations."""
+        """:class:`float` or :obj:`None`: The timeout, in seconds, for I/O operations."""
         return self._timeout
 
-    @timeout.setter
-    def timeout(self, seconds):
-        """Set the timeout, in seconds, for I/O operations."""
-        if seconds is not None:
-            if not isinstance(seconds, (int, float)) or seconds < 0:
-                raise ValueError('Not a valid timeout value: {}'.format(seconds))
-        self._timeout = float(seconds)
+    def _set_timeout_value(self, value):
+        if value is not None:
+            self._timeout = float(value)
+            if self._timeout == 0.0:
+                self._timeout = None
+            elif self._timeout < 0:
+                raise ValueError('Not a valid timeout value: {}'.format(value))
 
     def raise_timeout(self, append_msg=''):
         """Raise a :exc:`~.exceptions.MSLTimeoutError`.
@@ -156,16 +156,18 @@ class ConnectionMessageBased(Connection):
         """
         raise NotImplementedError
 
-    def query(self, message, delay=0.0):
+    def query(self, message, delay=0.0, size=None):
         """Convenience method for performing a :meth:`write` followed by a :meth:`read`.
 
         Parameters
         ----------
         message : :class:`str`
             The message to write to the equipment.
-        delay : :class:`float`
+        delay : :class:`float`, optional
             The time delay, in seconds, to wait between :meth:`write` and 
             :meth:`read` operations.
+        size : :class:`int`, optional
+            The number of bytes to read.
 
         Returns
         -------
@@ -175,4 +177,4 @@ class ConnectionMessageBased(Connection):
         self.write(message)
         if delay > 0.0:
             time.sleep(delay)
-        return self.read()
+        return self.read(size)

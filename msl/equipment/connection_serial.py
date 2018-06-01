@@ -134,8 +134,8 @@ class ConnectionSerial(ConnectionMessageBased):
 
     @ConnectionMessageBased.timeout.setter
     def timeout(self, seconds):
-        self._serial.timeout = seconds
-        self._timeout = self._serial.timeout
+        self._set_timeout_value(seconds)
+        self._serial.timeout = self._timeout
 
     def disconnect(self):
         """Close the Serial port."""
@@ -143,6 +143,7 @@ class ConnectionSerial(ConnectionMessageBased):
             # if the subclass raised an error in the constructor before
             # the this class is initialized then self._serial won't exist
             self._serial.close()
+            self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
         except AttributeError:
             pass
 
@@ -162,7 +163,7 @@ class ConnectionSerial(ConnectionMessageBased):
         if self.write_termination is not None and not message.endswith(self.write_termination):
             message += self.write_termination
         data = message.encode(self.encoding)
-        self.log_debug('{}.write({})'.format(self.__class__.__name__, data))
+        self.log_debug('{}.write({!r})'.format(self, data))
         return self._serial.write(data)
 
     def read(self, size=None):
@@ -201,11 +202,10 @@ class ConnectionSerial(ConnectionMessageBased):
             if not out.endswith(serial.LF):
                 self.raise_timeout('did not read a {!r} character'.format(serial.LF))
         else:
-            out = bytes()
+            out = bytearray()
             start = time.time()
             while True:
-                b = self._serial.read(1)
-                out += b
+                out.extend(self._serial.read(1))
                 if term is not None and out.endswith(term):
                     break
                 if len(out) == self.max_read_size:
@@ -214,5 +214,6 @@ class ConnectionSerial(ConnectionMessageBased):
                     break
                 if self.timeout is not None and time.time() - start >= self.timeout:
                     self.raise_timeout()
-        self.log_debug('{!r}.read({}) -> {}'.format(self, size, out))
+
+        self.log_debug('{}.read({!r}) -> {}'.format(self, size, out))
         return out.decode(self.encoding).rstrip()

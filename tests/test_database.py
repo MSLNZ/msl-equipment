@@ -122,9 +122,9 @@ def test_connection_properties():
     assert isinstance(props['f'], bool) and not props['f']
     assert props['g'] is None
     assert props['h'] == ''
-    assert props['i'] == ConnectionMessageBased.LF
-    assert props['j'] == ConnectionMessageBased.CR
-    assert props['k'] == ConnectionMessageBased.CR + ConnectionMessageBased.LF
+    assert props['i'].encode() == ConnectionMessageBased.LF
+    assert props['j'].encode() == ConnectionMessageBased.CR
+    assert props['k'].encode() == ConnectionMessageBased.CR + ConnectionMessageBased.LF
     assert props['l'] == 'some text'
     assert props['m'] == 'D:\\Data\\'
 

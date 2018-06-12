@@ -12,6 +12,7 @@ This module provides all the functionality required to control a
 import os
 from ctypes import c_short, c_int, c_uint, c_int64, c_double, byref, create_string_buffer
 
+from msl.equipment.resources import register
 from msl.equipment.exceptions import ThorlabsError
 from msl.equipment.resources.utils import WORD, DWORD
 from .motion_control import MotionControl
@@ -40,6 +41,7 @@ from .enums import (
 )
 
 
+@register(manufacturer='Thorlabs', model='BSC(101|102|103|201|202|203)')
 class BenchtopStepperMotor(MotionControl):
 
     def __init__(self, record):

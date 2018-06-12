@@ -61,7 +61,15 @@ def test_exceptions():
 
     # the SDK library does not exist
     with pytest.raises(IOError) as err:
-        connect(EquipmentRecord(connection=ConnectionRecord(address='SDK::FilterWheelXX2C::invalid.dll', backend=Backend.MSL)))
+        connect(EquipmentRecord(
+            manufacturer='thorlabs',
+            model='fw212c',
+            connection=ConnectionRecord(
+                manufacturer='thorlabs',
+                model='fw212c',
+                address='SDK::invalid.dll', backend=Backend.MSL
+            )
+        ))
     assert 'loadlib' in str(err)
 
 

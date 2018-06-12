@@ -4,12 +4,14 @@ A wrapper around the PicoScope ps5000a SDK.
 import math
 from ctypes import byref
 
+from msl.equipment.resources import register
 from .picoscope_api import PicoScopeApi
 from .functions import ps5000aApi_funcptrs
 from .structs import PS5000ATriggerInfo
-from msl.equipment.resources.picotech import c_enum
+from .. import c_enum
 
 
+@register(manufacturer='Pico\s*Tech', model='5\d{3}[AB]')
 class PicoScope5000A(PicoScopeApi):
 
     MAX_VALUE_8BIT = 32512

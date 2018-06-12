@@ -6,6 +6,7 @@ Thorlabs FW102C Series and FW212C Series Motorized Filter Wheels.
 from ctypes import c_char_p, c_int, POINTER, byref, create_string_buffer
 from enum import IntEnum
 
+from msl.equipment.resources import register
 from msl.equipment.exceptions import ThorlabsError
 from msl.equipment.connection_sdk import ConnectionSDK
 
@@ -42,6 +43,7 @@ class TriggerMode(IntEnum):
     OUTPUT = 1  #: Generate an active-high pulse when the position changes
 
 
+@register(manufacturer='Thorlabs', model='FW(10|21)2C')
 class FilterWheelXX2C(ConnectionSDK):
 
     def __init__(self, record):

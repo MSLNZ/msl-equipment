@@ -4,6 +4,7 @@ KCube Solenoid (KSC101).
 """
 from ctypes import c_int16, c_uint, c_int64, byref
 
+from msl.equipment.resources import register
 from msl.equipment.resources.utils import WORD, DWORD
 from .motion_control import MotionControl
 from .api_functions import KCube_Solenoid_FCNS
@@ -22,6 +23,7 @@ from .enums import (
 )
 
 
+@register(manufacturer='Thorlabs', model='KSC101')
 class KCubeSolenoid(MotionControl):
 
     def __init__(self, record):

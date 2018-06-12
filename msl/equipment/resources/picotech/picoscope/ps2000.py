@@ -3,10 +3,12 @@ A wrapper around the PicoScope ps2000 SDK.
 """
 from ctypes import c_uint8, byref
 
+from msl.equipment.resources import register
 from .picoscope_2k3k import PicoScope2k3k
 from .functions import ps2000_funcptrs
 
 
+@register(manufacturer='Pico\s*Tech', model='2(104|105|202|203|204|205|204A|205A)(?<!MSO)$')
 class PicoScope2000(PicoScope2k3k):
 
     FIRST_USB = 1

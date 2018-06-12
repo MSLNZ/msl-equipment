@@ -57,3 +57,9 @@ def test_config_constants_reloaded():
     assert 'docs' in Config.PATH
 
     assert len(c.database().records()) == 7
+
+    # reset the default Config values so that other tests can assume the default values
+    Config.PyVISA_LIBRARY = '@ni'
+    Config.DEMO_MODE = False
+    assert Config.PyVISA_LIBRARY == '@ni'
+    assert not Config.DEMO_MODE

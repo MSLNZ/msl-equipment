@@ -66,12 +66,12 @@ class ConnectionSerial(ConnectionMessageBased):
         self.encoding = props.get('encoding', self.encoding)
         self.timeout = props.get('timeout', None)
 
-        # PyVISA and PyVISA-py accept various resource names: 'ASRL', 'COM', 'LPT', 'ASRLCOM'
-        # but Serial seems to only be happy with 'COM'
-        number = re.search('\d+', record.connection.address)  # get the port number from the address
-        if number is None:
-            self.raise_exception('No port number was specified -- address={}'.format(record.connection.address))
-        self._serial.port = 'COM{}'.format(number.group(0))
+        if record.connection.address.startswith('ASRL::'):
+            # for addresses like -> ASRL::/dev/pts/12
+            self._serial.port = record.connection.address.split('::')[-1]
+        else:
+            # for addresses like -> ASRL1, ASRL1::INSTR
+            self._serial.port = record.connection.address
 
         self._serial.parity = props.get('parity', constants.Parity.NONE).value
         self._serial.write_timeout = props.get('write_timeout', None)
@@ -81,26 +81,36 @@ class ConnectionSerial(ConnectionMessageBased):
         self._serial.rtscts = props.get('rts_cts', False)
         self._serial.dsrdtr = props.get('dsr_dtr', False)
 
-        if 'baud_rate' in props:
+        try:
             self._serial.baudrate = props['baud_rate']
-        else:
+        except KeyError:
             self._serial.baudrate = props.get('baudrate', 9600)
 
-        if 'data_bits' in props:
+        try:
             self._serial.bytesize = props['data_bits']
-        else:
+        except KeyError:
             self._serial.bytesize = props.get('bytesize', constants.DataBits.EIGHT).value
 
-        if 'stop_bits' in props:
+        try:
             self._serial.stopbits = props['stop_bits'].value
-        else:
+        except KeyError:
             self._serial.stopbits = props.get('stopbits', constants.StopBits.ONE).value
 
+        error_msg = ''
         try:
-            error_msg = ''
             self._serial.open()
-        except serial.serialutil.SerialException as e:
-            error_msg = str(e)
+        except serial.serialutil.SerialException:
+            # PyVISA and PyVISA-py accept various resource names: 'ASRL#', 'COM#', 'LPT#', 'ASRLCOM#'
+            # but Serial seems to only be happy with 'COM#'
+            number = re.search('\d+', record.connection.address)  # get the port number from the address
+            if number is None:
+                self.raise_exception('A port number was not specified -- address={}'.format(record.connection.address))
+            self._serial.port = 'COM{}'.format(number.group(0))
+
+            try:
+                self._serial.open()
+            except serial.serialutil.SerialException as e:
+                error_msg = str(e)
 
         if error_msg:
             self.raise_exception(error_msg)
@@ -157,63 +167,61 @@ class ConnectionSerial(ConnectionMessageBased):
 
         Returns
         -------
-        :class:`int`:
-            The number of bytes written to the Serial port.
+        :class:`int`
+            The number of bytes sent to the Serial port.
         """
-        if self.write_termination is not None and not message.endswith(self.write_termination):
-            message += self.write_termination
-        data = message.encode(self.encoding)
-        self.log_debug('{}.write({!r})'.format(self, data))
+        data = self._prepare_write(message)
         return self._serial.write(data)
 
     def read(self, size=None):
-        """Read `size` bytes from the Serial port.
-
-        Trailing whitespace is stripped from the response.
+        """Read bytes from the Serial port.
 
         Parameters
         ----------
-        size : :class:`int`
+        size : :class:`int` or :obj:`None`, optional
             The number of bytes to read. If `size` is :obj:`None` then read until:
 
-            1. the :obj:`.read_termination` characters are read (only if the termination value is not :obj:`None`)
-            2. :obj:`.max_read_size` bytes have been read
-            3. a :obj:`timeout` occurs (if a :obj:`timeout` value has been set)
+            1. the :attr:`.read_termination` characters are read
+               (only if the termination value is not :obj:`None`)
+            2. :attr:`.max_read_size` bytes have been read
+               (if occurs, raises :exc:`~msl.equipment.exceptions.MSLConnectionError`)
+            3. a :exc:`~msl.equipment.exceptions.MSLTimeoutError` occurs
+               (only if a :attr:`.timeout` value has been set)
 
             This method will block until at least one of the above conditions is fulfilled.
 
         Returns
         -------
-        :class:`str`:
+        :class:`str`
             The response from the equipment.
-
-        Raises
-        ------
-        :exc:`~msl.equipment.exceptions.MSLTimeoutError`
-            If a timeout occurs.
         """
-        term = None if self.read_termination is None else self.read_termination.encode(self.encoding)
-        if size is not None:
+        if size:
+            if size > self.max_read_size:
+                self.raise_exception('max_read_size is {} bytes, requesting {} bytes'.format(
+                    self.max_read_size, size)
+                )
+
             out = self._serial.read(size)
             if len(out) != size:
-                self.raise_timeout('received {} bytes, requested {} bytes'.format(len(out), size))
-        elif term is not None and term.endswith(serial.LF):
-            out = self._serial.readline()
-            if not out.endswith(serial.LF):
-                self.raise_timeout('did not read a {!r} character'.format(serial.LF))
+                self.raise_exception('received {} bytes, requested {} bytes'.format(len(out), size))
+
         else:
+            t0 = time.time()
             out = bytearray()
-            start = time.time()
             while True:
                 out.extend(self._serial.read(1))
-                if term is not None and out.endswith(term):
+
+                if self.read_termination and out.endswith(self.read_termination):
+                    out = out[:-len(self.read_termination)]
                     break
-                if len(out) == self.max_read_size:
-                    msg = '{!r}.read() maximum number of bytes read [{}], {} bytes are in the buffer'
-                    self.log_warning(msg.format(self, len(out), self._serial.in_waiting))
-                    break
-                if self.timeout is not None and time.time() - start >= self.timeout:
+
+                if len(out) > self.max_read_size:
+                    self.raise_exception('len(bytes_read) [{}] > max_read_size [{}]'.format(
+                        len(out), self.max_read_size)
+                    )
+
+                if self.timeout and time.time() - t0 >= self.timeout:
                     self.raise_timeout()
 
-        self.log_debug('{}.read({!r}) -> {}'.format(self, size, out))
-        return out.decode(self.encoding).rstrip()
+        self.log_debug('{}.read({!r}) -> {!r}'.format(self, size, out))
+        return out.decode(self.encoding)

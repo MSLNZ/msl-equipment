@@ -3,10 +3,12 @@ A wrapper around the PicoScope ps6000 SDK.
 """
 from ctypes import c_int16, c_uint32, byref
 
+from msl.equipment.resources import register
 from .picoscope_api import PicoScopeApi
 from .functions import ps6000Api_funcptrs
 
 
+@register(manufacturer='Pico\s*Tech', model='6\d{3}')
 class PicoScope6000(PicoScopeApi):
 
     MAX_OVERSAMPLE_8BIT = 256

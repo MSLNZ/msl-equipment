@@ -6,6 +6,8 @@ from collections import namedtuple
 from msl.equipment.config import Config
 from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
 from msl.equipment.constants import Backend
+from msl.equipment.exceptions import MSLConnectionError, MSLTimeoutError
+from msl.equipment import resources
 
 __author__ = 'Joseph Borbely'
 __copyright__ = '\xa9 2017 - 2018, ' + __author__

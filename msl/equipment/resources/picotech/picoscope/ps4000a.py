@@ -3,10 +3,12 @@ A wrapper around the PicoScope ps4000a SDK.
 """
 from ctypes import c_int8, c_int16, c_uint16, c_int32, byref
 
+from msl.equipment.resources import register
 from .picoscope_api import PicoScopeApi
 from .functions import ps4000aApi_funcptrs
 
 
+@register(manufacturer='Pico\s*Tech', model='4(44|82)4')
 class PicoScope4000A(PicoScopeApi):
 
     MAX_VALUE = 32767

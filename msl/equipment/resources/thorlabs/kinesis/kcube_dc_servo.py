@@ -4,10 +4,11 @@ KCube DC Servo (KDC101).
 """
 from ctypes import c_int16, c_short, c_int, c_uint, c_int32, c_int64, c_double, byref
 
+from msl.equipment.resources import register
 from msl.equipment.resources.utils import WORD, DWORD
-from msl.equipment.resources.thorlabs.kinesis.motion_control import MotionControl
-from msl.equipment.resources.thorlabs.kinesis.api_functions import KCube_DCServo_FCNS
-from msl.equipment.resources.thorlabs.kinesis.structs import (
+from .motion_control import MotionControl
+from .api_functions import KCube_DCServo_FCNS
+from .structs import (
     TLI_HardwareInformation,
     MOT_VelocityParameters,
     MOT_HomingParameters,
@@ -18,7 +19,7 @@ from msl.equipment.resources.thorlabs.kinesis.structs import (
     KMOT_TriggerConfig,
     KMOT_TriggerParams,
 )
-from msl.equipment.resources.thorlabs.kinesis.enums import (
+from .enums import (
     MOT_JogModes,
     MOT_StopModes,
     MOT_TravelDirection,
@@ -35,6 +36,7 @@ from msl.equipment.resources.thorlabs.kinesis.enums import (
 )
 
 
+@register(manufacturer='Thorlabs', model='KDC101')
 class KCubeDCServo(MotionControl):
 
     def __init__(self, record):

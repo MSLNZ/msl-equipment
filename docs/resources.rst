@@ -31,6 +31,10 @@ resource class, which is a wrapper around the ``benhw32_cdecl.dll`` SDK that is 
 
   * :class:`~msl.equipment.resources.cmi.sia3.SIA3` - Switched Integrator Amplifier
 
+* OMEGA_
+
+  * :class:`~msl.equipment.resources.omega.ithx.iTHX` - iTHX-W3, iTHX-D3, iTHX-SD, iTHX-M, iTHX-W, iTHX-2
+
 * `Pico Technology`_
 
   * PicoScope_ - Requires the `Pico Technology SDK`_
@@ -50,7 +54,7 @@ resource class, which is a wrapper around the ``benhw32_cdecl.dll`` SDK that is 
   * Kinesis_ - Wrapper package around the ``Thorlabs.MotionControl.C_API`` SDK.
 
     * :class:`~msl.equipment.resources.thorlabs.kinesis.filter_flipper.FilterFlipper` - MFF101, MFF102
-    * :class:`~msl.equipment.resources.thorlabs.kinesis.integrated_stepper_motors.IntegratedStepperMotors` - LTS150, LTS300, MLJ050, K10CR1
+    * :class:`~msl.equipment.resources.thorlabs.kinesis.integrated_stepper_motors.IntegratedStepperMotors` - LTS150, LTS300, MLJ050, MLJ150, K10CR1
     * :class:`~msl.equipment.resources.thorlabs.kinesis.kcube_solenoid.KCubeSolenoid` - KSC101
     * :class:`~msl.equipment.resources.thorlabs.kinesis.kcube_stepper_motor.KCubeStepperMotor` - KST101
     * :class:`~msl.equipment.resources.thorlabs.kinesis.kcube_dc_servo.KCubeDCServo` - KDC101
@@ -115,3 +119,4 @@ When adding a new MSL Resource class the following steps should be performed. Pl
 .. _Kinesis: https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=Motion_Control
 .. _Pico Technology SDK: https://www.picotech.com/downloads
 .. _PicoScope: https://www.picotech.com/products/oscilloscope
+.. _OMEGA: https://www.omega.com/

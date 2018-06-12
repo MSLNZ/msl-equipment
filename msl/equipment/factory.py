@@ -5,10 +5,14 @@ import logging
 
 from msl.equipment.config import Config
 from msl.equipment.constants import Backend, MSLInterface
+from msl.equipment.exceptions import ResourceClassNotFound
 from msl.equipment.record_types import EquipmentRecord
+from msl.equipment.resources import find_resource_class
+from msl.equipment.resources.dmm import dmm_factory
 from msl.equipment.connection_demo import ConnectionDemo
 from msl.equipment.connection_pyvisa import ConnectionPyVISA
-from msl.equipment import resources
+from msl.equipment.connection_serial import ConnectionSerial
+from msl.equipment.connection_tcpip import ConnectionTCPIPSocket
 
 logger = logging.getLogger(__name__)
 
@@ -69,12 +73,21 @@ def connect(record, demo=None):
         if conn.backend == Backend.MSL:
             if conn.interface == MSLInterface.NONE:
                 _raise('interface')
-            elif conn.interface == MSLInterface.SDK:
-                cls = resources.find_sdk_class(conn)
-            elif conn.interface == MSLInterface.ASRL:
-                cls = resources.find_serial_class(conn)
-            else:
-                raise NotImplementedError('The {} interface has not be written yet'.format(conn.interface))
+
+            address_split = conn.address.split('::')
+            cls = find_resource_class(conn)
+            if cls is None:
+                if conn.interface == MSLInterface.SDK:
+                    raise ResourceClassNotFound(record)
+                elif conn.interface == MSLInterface.ASRL:
+                    cls = ConnectionSerial
+                elif conn.interface == MSLInterface.TCPIP:
+                    if address_split[-1].upper() == 'SOCKET':
+                        cls = ConnectionTCPIPSocket
+                    else:
+                        raise NotImplementedError('Only TCP/IP for type SOCKET has been implemented.')
+                else:
+                    raise NotImplementedError('The {} interface has not be written yet'.format(conn.interface.name))
         elif conn.backend == Backend.PyVISA:
             if demo:
                 cls = ConnectionPyVISA.resource_class(conn)
@@ -84,7 +97,7 @@ def connect(record, demo=None):
         assert cls is not None, 'The Connection class is None'
 
         if _record.category == 'DMM':
-            cls = resources.dmm.dmm_factory(conn, cls)
+           cls = dmm_factory(conn, cls)
 
         logger.debug('Connecting to {} using {}'.format(conn, conn.backend.name))
         if demo:

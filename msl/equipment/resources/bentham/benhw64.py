@@ -8,10 +8,12 @@ from msl.loadlib import Client64
 
 from msl.equipment.connection import Connection
 from msl.equipment.exceptions import BenthamError
+from msl.equipment.resources import register
 from .errors import BI_OK, ERROR_CODES
 from .tokens import MonochromatorCurrentWL, BenMono
 
 
+@register(manufacturer='Bentham', model='[D]*TMc300')
 class Bentham(Connection, Client64):
 
     def __init__(self, record):

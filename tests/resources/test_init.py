@@ -1,161 +1,108 @@
-import os
-import re
-import fnmatch
-import importlib
-
-import pytest
-
-from msl.equipment import resources
-from msl.equipment.connection import Connection
-from msl.equipment.record_types import ConnectionRecord
-from msl.equipment.constants import Backend
-from msl.equipment.connection_serial import ConnectionSerial
+from msl.equipment import resources, Backend, ConnectionRecord
 
 
-def test_unique_resource_class_name():
-    # This tests to make sure that every MSL Resource class name is unique.
-    # There is no need to add additional tests to this test function because it
-    # automatically walks through the msl.equipment.resources package to find and test all modules
-    names = {}
-    class_regex = re.compile(r'^class\s+(\w+)\(', re.MULTILINE)
+def test_find_resource_class():
 
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'msl', 'equipment', 'resources'))
-    for root, dirs, files in os.walk(path):
-        if root.endswith('__pycache__'):
-            continue
-
-        root_pkg = 'msl.equipment.resources' + root.replace(os.path.sep, '.').split('msl.equipment.resources')[1]
-
-        for filename in fnmatch.filter(files, '*.py'):
-
-            if filename.startswith('__init__'):
-                continue
-
-            with open(os.path.join(root, filename), 'r') as fp:
-                lines = fp.read()
-
-            candidates = [item for item in re.findall(class_regex, lines)]
-
-            mod = importlib.import_module('{}.{}'.format(root_pkg, filename[:-3]))
-            for item in candidates:
-                obj = getattr(mod, item)
-                if issubclass(obj, Connection):
-                    if obj.__name__ in names:
-                        name = obj.__name__
-                        raise NameError('Class name is not unique: {}\n{}\n{}'.format(name, obj, names[name]))
-                    names[obj.__name__] = obj
-
-
-def test_recursive_find_resource_class():
-    r = resources.recursive_find_resource_class
-
-    assert r('Bentham') == resources.bentham.benhw64.Bentham
-    assert r('PicoScope2000') == resources.picotech.picoscope.ps2000.PicoScope2000
-    assert r('PicoScope5000A') == resources.picotech.picoscope.ps5000a.PicoScope5000A
-    assert r('FilterWheelXX2C') == resources.thorlabs.fwxx2c.FilterWheelXX2C
-    assert r('FilterFlipper') == resources.thorlabs.kinesis.filter_flipper.FilterFlipper
-    assert r('SIA3') == resources.cmi.sia3.SIA3
-    assert r('IntegratedStepperMotors') == resources.thorlabs.kinesis.integrated_stepper_motors.IntegratedStepperMotors
-    assert r('KCubeDCServo') == resources.thorlabs.kinesis.kcube_dc_servo.KCubeDCServo
-    assert r('KCubeSolenoid') == resources.thorlabs.kinesis.kcube_solenoid.KCubeSolenoid
-    assert r('KCubeStepperMotor') == resources.thorlabs.kinesis.kcube_stepper_motor.KCubeStepperMotor
-    assert r('BenchtopStepperMotor') == resources.thorlabs.kinesis.benchtop_stepper_motor.BenchtopStepperMotor
-
-
-def test_check_manufacture_model_resource_name():
-
-    record = ConnectionRecord(manufacturer='unknown', model='unknown')
-    cls = resources.check_manufacture_model_resource_name(record)
+    record = ConnectionRecord(manufacturer='XXX', model='yyy', backend=Backend.MSL)
+    cls = resources.find_resource_class(record)
     assert cls is None
 
-    record = ConnectionRecord(manufacturer='CMI', model='SIA3')
-    cls = resources.check_manufacture_model_resource_name(record)
-    assert cls == resources.cmi.sia3.SIA3
+    for man in ('Bentham', 'Bentham Instruments Limited', 'Bentham Instruments Ltd.'):
+        for mod in ('TMc300', 'dtmc300'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.bentham.benhw64.Bentham
 
+    for man in ('CMI', 'Czech Metrology Institute',):
+        record = ConnectionRecord(manufacturer=man, model='sia3', backend=Backend.MSL)
+        cls = resources.find_resource_class(record)
+        assert cls == resources.cmi.sia3.SIA3
 
-def test_find_sdk_class():
+    for man in ('OMEGA', 'omega'):
+        for suffix in ('w3', 'd3', 'sd', 'm', 'w', '2'):
+            record = ConnectionRecord(manufacturer=man, model='ithx-'+suffix, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.omega.ithx.iTHX
 
-    record = ConnectionRecord()
-    with pytest.raises(ValueError) as err:
-        resources.find_sdk_class(record)  # the interface is not MSLInterface.SDK
-    assert 'interface' in str(err.value)
+    for man in ('picotech', 'Pico Tech', 'Pico Technologies', 'Pico Technology'):
+        for mod in ('PicoScope 2104', '2104', '2105', '2202', '2203', '2204', '2205', '2204A', '2205A'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.picotech.picoscope.ps2000.PicoScope2000, mod
+        for mod in ('PicoScope 2205A MSO', '2205A MSO', '2205 MSO',
+                    '2206', '2206A', '2206B', '2206B MSO',
+                    '2207', '2207A', '2207B', '2207B MSO',
+                    '2208', '2208A', '2208B', '2208B MSO',
+                    '2405A', '2406B', '2407B', '2408B'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.picotech.picoscope.ps2000a.PicoScope2000A, mod
+        for mod in ('PicoScope 3204', '3204', '3205', '3206', '3224', '3424', '3425'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.picotech.picoscope.ps3000.PicoScope3000, mod
+        for mod in ('PicoScope 3203D', '3203D', '3204D', '3205D', '3206D',
+                    '3403D', '3404D', '3405D', '3406D',
+                    '3203D MSO', '3204D MSO', '3205D MSO', '3206D MSO',
+                    '3403D MSO', '3404D MSO', '3405D MSO', '3406D MSO',
+                    '3204A', '3205A', '3206A', '3207A',
+                    '3204B', '3205B', '3206B', '3207B',
+                    '3204 MSO', '3205 MSO', '3206 MSO',
+                    '3404A', '3405A', '3406A',
+                    '3404B', '3405B', '3406B',):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.picotech.picoscope.ps3000a.PicoScope3000A, mod
+        for mod in ('PicoScope 4224', '4224', '4224 IEPE', '4262', '4424'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.picotech.picoscope.ps4000.PicoScope4000, mod
+        for mod in ('PicoScope 4444', '4444', '4824'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.picotech.picoscope.ps4000a.PicoScope4000A, mod
+        for mod in ('PicoScope 5000', '5000'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.picotech.picoscope.ps5000.PicoScope5000, mod
+        for mod in ('PicoScope 5242A', '5242A', '5243A', '5244A', '5442A', '5443A', '5444A',
+                    '5242B', '5243B', '5244B', '5442B', '5443B', '5444B'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.picotech.picoscope.ps5000a.PicoScope5000A, mod
+        for mod in ('PicoScope 6407', '6407', '6402C', '6402D', '6403C', '6403D', '6404C', '6404D'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.picotech.picoscope.ps6000.PicoScope6000, mod
 
-    record = ConnectionRecord(backend=Backend.PyVISA)
-    with pytest.raises(ValueError) as err:
-        resources.find_sdk_class(record)  # the interface is not MSLInterface.SDK
-    assert 'interface' in str(err.value)
-
-    record = ConnectionRecord(backend=Backend.MSL, address='COM3')
-    with pytest.raises(ValueError) as err:
-        resources.find_sdk_class(record)  # the interface is not MSLInterface.SDK
-    assert 'interface' in str(err.value)
-
-    record = ConnectionRecord(backend=Backend.MSL, address='SDK')
-    with pytest.raises(ValueError) as err:
-        resources.find_sdk_class(record)  # the address is not SDK::PythonClassName::PathToLibrary
-    assert str(err.value).startswith('For a SDK interface')
-
-    record = ConnectionRecord(backend=Backend.MSL, address='SDK::ClassName')
-    with pytest.raises(ValueError) as err:
-        resources.find_sdk_class(record)  # the address does not include PathToLibrary
-    assert 'address' in str(err.value)
-
-    record = ConnectionRecord(backend=Backend.MSL, address='SDK::PythonClassName::PathToLibrary')
-    with pytest.raises(IOError):
-        resources.find_sdk_class(record)  # invalid class name
-
-    record = ConnectionRecord(backend=Backend.MSL, address='SDK::PicoScope5000A::PathToLibrary')
-    cls = resources.find_sdk_class(record)  # valid class name
-    assert cls == resources.picotech.picoscope.ps5000a.PicoScope5000A
-
-    # do not include the PythonClassName (only the PathToLibrary) but use an invalid model number
-    record = ConnectionRecord(backend=Backend.MSL, manufacturer='Thorlabs', model='FW102', address='SDK::FilterWheel102.dll')
-    with pytest.raises(ValueError) as err:
-        resources.find_sdk_class(record)
-    assert 'automatically' in str(err.value)
-
-    # do not include the PythonClassName (only the PathToLibrary) but use a record that does not use an SDK
-    record = ConnectionRecord(backend=Backend.MSL, manufacturer='CMI', model='SIA3', address='SDK::FilterWheel102.dll')
-    with pytest.raises(ValueError) as err:
-        resources.find_sdk_class(record)
-    assert 'subclass' in str(err.value)
-
-    # include the PythonClassName
-    record = ConnectionRecord(backend=Backend.MSL, manufacturer='Thorlabs', model='FW102C', address='SDK::FilterWheelXX2C::FilterWheel102.dll')
-    cls = resources.find_sdk_class(record)
-    assert cls == resources.thorlabs.fwxx2c.FilterWheelXX2C
-
-
-def test_find_serial_class():
-
-    record = ConnectionRecord()
-    with pytest.raises(ValueError) as err:
-        resources.find_serial_class(record)  # the interface is not an ASRL-type interface
-    assert 'interface' in str(err.value)
-
-    record = ConnectionRecord(backend=Backend.PyVISA)
-    with pytest.raises(ValueError) as err:
-        resources.find_serial_class(record)  # the interface is not an ASRL-type interface
-    assert 'interface' in str(err.value)
-
-    record = ConnectionRecord(backend=Backend.MSL)
-    with pytest.raises(ValueError) as err:
-        resources.find_serial_class(record)  # the interface is not an ASRL-type interface
-    assert 'interface' in str(err.value)
-
-    record = ConnectionRecord(backend=Backend.MSL, address='SDK::Whatever::SomeLibrary.dll')
-    with pytest.raises(ValueError) as err:
-        resources.find_serial_class(record)  # the interface is not an ASRL-type interface
-    assert 'interface' in str(err.value)
-
-    record = ConnectionRecord(backend=Backend.MSL, address='COM1')
-    assert resources.find_serial_class(record) == ConnectionSerial
-
-    record = ConnectionRecord(backend=Backend.MSL, address='COM1::instr')
-    assert resources.find_serial_class(record) == ConnectionSerial
-
-    record = ConnectionRecord(backend=Backend.MSL, address='COM1', manufacturer='CMI', model='SIA3')
-    assert resources.find_serial_class(record) == resources.cmi.sia3.SIA3
-
-    record = ConnectionRecord(backend=Backend.MSL, address='COM1::INSTR', manufacturer='CMI', model='SIA3')
-    assert resources.find_serial_class(record) == resources.cmi.sia3.SIA3
+    for man in ('Thorlabs', 'Thorlabs Inc.'):
+        for mod in ('FW102C', 'FW102CNEB', 'FW212C', 'FW212CNEB'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.thorlabs.fwxx2c.FilterWheelXX2C
+        for mod in ('BSC101', 'BSC102', 'BSC103', 'BSC201', 'BSC202', 'BSC203'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.thorlabs.kinesis.benchtop_stepper_motor.BenchtopStepperMotor
+        for mod in ('MFF101', 'MFF102', 'MFF101/M', 'MFF102/M'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.thorlabs.kinesis.filter_flipper.FilterFlipper
+        for mod in ('LTS150', 'LTS150/M', 'LTS300', 'LTS300/M',
+                    'MLJ050/M', 'MLJ150', 'MLJ150', 'MLJ150/M'
+                    'K10CR1', 'K10CR1/M'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.thorlabs.kinesis.integrated_stepper_motors.IntegratedStepperMotors
+        for mod in ('KDC101', ):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.thorlabs.kinesis.kcube_dc_servo.KCubeDCServo
+        for mod in ('KSC101', ):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.thorlabs.kinesis.kcube_solenoid.KCubeSolenoid
+        for mod in ('KST101', ):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.thorlabs.kinesis.kcube_stepper_motor.KCubeStepperMotor

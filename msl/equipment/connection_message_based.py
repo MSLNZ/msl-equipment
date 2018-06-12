@@ -9,11 +9,11 @@ from msl.equipment.exceptions import MSLTimeoutError
 
 class ConnectionMessageBased(Connection):
 
-    CR = '\r'
-    """:class:`str`: The carriage-return character."""
+    CR = b'\r'
+    """:class:`bytes`: The carriage-return character."""
 
-    LF = '\n'
-    """:class:`str`: The line-feed character."""
+    LF = b'\n'
+    """:class:`bytes`: The line-feed character."""
 
     def __init__(self, record):
         """Base class for equipment that use message-based communication.
@@ -25,7 +25,7 @@ class ConnectionMessageBased(Connection):
         to be ``MSL``.
 
         Do not instantiate this class directly. Use the
-        :obj:`record.connect() <.record_types.EquipmentRecord.connect>` method
+        :meth:`~msl.equipment.record_types.EquipmentRecord.connect` method
         to connect to the equipment.
 
         Parameters
@@ -35,9 +35,9 @@ class ConnectionMessageBased(Connection):
         """
         Connection.__init__(self, record)
 
+        self._encoding = 'utf-8'
         self._read_termination = ConnectionMessageBased.LF
         self._write_termination = ConnectionMessageBased.CR + ConnectionMessageBased.LF
-        self._encoding = 'utf-8'
         self._max_read_size = 2 ** 16
         self._timeout = None
 
@@ -52,34 +52,55 @@ class ConnectionMessageBased(Connection):
     def encoding(self, encoding):
         """Set the encoding to use for :meth:`read` and :meth:`write` operations."""
         _ = 'test encoding'.encode(encoding).decode(encoding)
+
+        # re-encoding the read/write termination values ensure that the termination
+        # sequence can be encoded using the new encoding
+        if self._read_termination is not None:
+            read_term = self._read_termination.decode(self._encoding)
+        if self._write_termination is not None:
+            write_term = self._write_termination.decode(self._encoding)
+
         self._encoding = encoding
+
+        if self._read_termination is not None:
+            self.read_termination = read_term
+        if self._write_termination is not None:
+            self.write_termination = write_term
 
     @property
     def read_termination(self):
-        """:class:`str` or :obj:`None`: The termination character sequence
+        """:class:`bytes` or :obj:`None`: The termination character sequence
         that is used for the :meth:`read` method.
         
-        Reading stops when the equipment stops sending data (e.g., by setting appropriate 
-        bus lines) or the `read_termination` character sequence is detected.
+        Reading stops when the equipment stops sending data or the `read_termination`
+        character sequence is detected. If you set the `read_termination` to be equal
+        to a variable of type :class:`str` it will automatically be encoded.
         """
         return self._read_termination
 
     @read_termination.setter
     def read_termination(self, termination):
-        """The termination character sequence to use for the :meth:`read` method."""
-        self._read_termination = None if termination is None else str(termination)
+        self._read_termination = self._set_termination_encoding(termination)
 
     @property
     def write_termination(self):
-        """:class:`str`: The termination character sequence that is appended to
-        :meth:`write` messages.
+        """:class:`bytes` or :obj:`None`: The termination character sequence that
+        is appended to :meth:`write` messages.
+
+        If you set the `write_termination` to be equal to a variable of type
+        :class:`str` it will automatically be encoded.
         """
         return self._write_termination
 
     @write_termination.setter
     def write_termination(self, termination):
-        """The termination character sequence to append to :meth:`write` messages."""
-        self._write_termination = None if termination is None else str(termination)
+        self._write_termination = self._set_termination_encoding(termination)
+
+    def _set_termination_encoding(self, termination):
+        try:
+            return termination.encode(self._encoding)
+        except AttributeError:
+            return termination
 
     @property
     def max_read_size(self):
@@ -89,9 +110,10 @@ class ConnectionMessageBased(Connection):
     @max_read_size.setter
     def max_read_size(self, size):
         """The maximum number of bytes that can be :meth:`read`."""
-        if not isinstance(size, int) or size < 1:
-            raise ValueError('The number of bytes to read must be >0 and an integer, got {}'.format(size))
-        self._max_read_size = int(size)
+        max_size = int(size)
+        if max_size < 1:
+            raise ValueError('The maximum number of bytes to read must be > 0, got {}'.format(size))
+        self._max_read_size = max_size
 
     @property
     def timeout(self):
@@ -155,6 +177,16 @@ class ConnectionMessageBased(Connection):
             The number of bytes written.
         """
         raise NotImplementedError
+
+    def _prepare_write(self, message):
+        if isinstance(message, bytes):
+            data = message
+        else:
+            data = message.encode(self._encoding)
+        if self._write_termination is not None and not data.endswith(self._write_termination):
+            data += self._write_termination
+        self.log_debug('{}.write({!r})'.format(self, data))
+        return data
 
     def query(self, message, delay=0.0, size=None):
         """Convenience method for performing a :meth:`write` followed by a :meth:`read`.

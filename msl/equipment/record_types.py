@@ -48,7 +48,7 @@ class EquipmentRecord(object):
         ...             serial='DY135/055',
         ...             connection=ConnectionRecord(
         ...                 backend=Backend.MSL,
-        ...                 address='SDK::PicoScope5000A::ps5000a',
+        ...                 address='SDK::ps5000a.dll',
         ...                 properties={
         ...                     'resolution': '14bit',  # `resolution` is only used for ps5000a series PicoScope's
         ...                     'auto_select_power': True,  # some PicoScopes can be powered by an AC adaptor or by USB
@@ -438,7 +438,7 @@ class ConnectionRecord(object):
         ...              model='5244B',
         ...              serial='DY135/055',
         ...              backend=Backend.MSL,
-        ...              address='SDK::PicoScope5000A::ps5000a',
+        ...              address='SDK::ps5000a.dll',
         ...              properties={
         ...                  'resolution': '14bit',  # `resolution` is only used for ps5000a series PicoScope's
         ...                  'auto_select_power': True,  # some PicoScopes can be powered by an AC adaptor or by USB

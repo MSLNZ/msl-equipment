@@ -1,10 +1,12 @@
 """
 A wrapper around the PicoScope ps5000 SDK.
 """
+from msl.equipment.resources import register
 from .picoscope_api import PicoScopeApi
 from .functions import ps5000Api_funcptrs
 
 
+@register(manufacturer='Pico\s*Tech', model='5\d{3}(?<!A|B)$')
 class PicoScope5000(PicoScopeApi):
 
     MAX_OVERSAMPLE_8BIT = 256

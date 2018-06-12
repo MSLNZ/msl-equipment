@@ -3,13 +3,14 @@ This module provides all the functionality required to control a number
 of **Integrated Stepper Motors** including:
 
 * Long Travel Stages (LTS150 and LTS300)
-* Lab Jack (MLJ050) 
+* Lab Jack (MLJ050, MLJ150)
 * Cage Rotator (K10CR1)
 
 """
 import os
 from ctypes import c_short, c_int, c_uint, c_int64, c_double, byref, create_string_buffer
 
+from msl.equipment.resources import register
 from msl.equipment.resources.utils import WORD, DWORD
 from .motion_control import MotionControl
 from .api_functions import IntegratedStepperMotors_FCNS
@@ -37,6 +38,7 @@ from .enums import (
 )
 
 
+@register(manufacturer='Thorlabs', model='(LTS(150|300)|MLJ(050|150)|K10CR1)')
 class IntegratedStepperMotors(MotionControl):
 
     def __init__(self, record):

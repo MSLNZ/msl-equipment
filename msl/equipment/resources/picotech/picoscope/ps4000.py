@@ -3,11 +3,13 @@ A wrapper around the PicoScope ps4000 SDK.
 """
 from ctypes import c_int8, c_int16, c_uint32, c_int64, byref, string_at, addressof
 
+from msl.equipment.resources import register
 from .picoscope_api import PicoScopeApi
 from .functions import ps4000Api_funcptrs
-from msl.equipment.resources.picotech import c_enum
+from .. import c_enum
 
 
+@register(manufacturer='Pico\s*Tech', model='4[24][26][24]')
 class PicoScope4000(PicoScopeApi):
 
     MAX_OVERSAMPLE_12BIT = 16

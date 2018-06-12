@@ -9,6 +9,7 @@ from enum import IntEnum
 from msl.equipment import constants
 from msl.equipment.connection_serial import ConnectionSerial
 from msl.equipment.exceptions import CMIError
+from msl.equipment.resources import register
 
 
 class IntegrationTime(IntEnum):
@@ -25,6 +26,7 @@ class IntegrationTime(IntEnum):
     TIME_2 = 14
 
 
+@register(manufacturer='C[zech]*\s*M[etrology]*\s*I[nstitute]*', model='SIA3')
 class SIA3(ConnectionSerial):
 
     GAIN = IntegrationTime  #: The gain (i.e., the integration time)

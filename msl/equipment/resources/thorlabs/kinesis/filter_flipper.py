@@ -1,16 +1,18 @@
 """
 This module provides all the functionality required to control a 
-Filter Flipper (MFF101).
+Filter Flipper (MFF101, MFF102).
 """
 from ctypes import byref, c_int64
 
+from msl.equipment.resources import register
+from msl.equipment.resources.utils import WORD, DWORD
 from .motion_control import MotionControl
 from .api_functions import FilterFlipper_FCNS
 from .structs import FF_IOSettings
 from .enums import FF_IOModes, FF_SignalModes
-from msl.equipment.resources.utils import WORD, DWORD
 
 
+@register(manufacturer='Thorlabs', model='MFF10[1|2]')
 class FilterFlipper(MotionControl):
 
     MIN_TRANSIT_TIME = 300

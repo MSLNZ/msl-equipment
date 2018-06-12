@@ -5,9 +5,10 @@ KCube Stepper Motor (KST101).
 import os
 from ctypes import c_short, c_int16, c_int, c_uint, c_int32, c_int64, c_double, byref, create_string_buffer
 
+from msl.equipment.resources import register
 from msl.equipment.resources.utils import WORD, DWORD
-from msl.equipment.resources.thorlabs.kinesis.motion_control import MotionControl
-from msl.equipment.resources.thorlabs.kinesis.api_functions import KCube_StepperMotor_FCNS
+from .motion_control import MotionControl
+from .api_functions import KCube_StepperMotor_FCNS
 from .structs import (
     TLI_HardwareInformation,
     MOT_VelocityParameters,
@@ -37,6 +38,7 @@ from .enums import (
 )
 
 
+@register(manufacturer='Thorlabs', model='KST101')
 class KCubeStepperMotor(MotionControl):
 
     def __init__(self, record):

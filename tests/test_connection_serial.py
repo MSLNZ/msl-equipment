@@ -1,4 +1,5 @@
 import os
+import time
 import threading
 
 try:
@@ -8,7 +9,7 @@ except ImportError:
 
 import pytest
 
-from msl.equipment import EquipmentRecord, ConnectionRecord, Backend, MSLTimeoutError, MSLConnectionError
+from msl.equipment import EquipmentRecord, ConnectionRecord, Backend, MSLConnectionError
 
 
 @pytest.mark.skipif(pty is None, reason='pty is not available')
@@ -34,6 +35,8 @@ def test_connection_serial_read():
     thread = threading.Thread(target=echo_server, args=(master,))
     thread.start()
 
+    time.sleep(0.1)  # allow some time for the echo server to start
+
     record = EquipmentRecord(
         connection=ConnectionRecord(
             address='ASRL::' + os.ttyname(slave),
@@ -41,7 +44,7 @@ def test_connection_serial_read():
             properties={
                 'read_termination': term,
                 'write_termination': term,
-                'timeout': 1,
+                'timeout': 5,
             },
         )
     )
@@ -61,14 +64,15 @@ def test_connection_serial_read():
     assert dev.read() == 'x'*4096
 
     n = dev.write('123.456')
-    with pytest.raises(MSLTimeoutError):
+    with pytest.raises(MSLConnectionError):
         dev.read(n+1)
 
     with pytest.raises(MSLConnectionError):
         dev.read(dev.max_read_size+1)  # requesting more bytes than are maximally allowed
 
-    dev.write('a' * dev.max_read_size)
-    assert dev.read() == 'a' * dev.max_read_size
+    msg = 'a' * (dev.max_read_size - len(term))
+    dev.write(msg)
+    assert dev.read() == msg
 
     dev.write(b'021.3' + term + b',054.2')
     assert dev.read() == '021.3'  # read until first `term`

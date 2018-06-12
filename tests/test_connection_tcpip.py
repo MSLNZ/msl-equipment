@@ -1,8 +1,6 @@
+import time
 import socket
-try:
-    import thread
-except ImportError:
-    import _thread as thread
+import threading
 
 import pytest
 
@@ -37,6 +35,11 @@ def test_tcpip_socket_read():
         conn.close()
         s.close()
 
+    t = threading.Thread(target=echo_server)
+    t.start()
+
+    time.sleep(0.1)  # allow some time for the echo server to start
+
     record = EquipmentRecord(
         connection=ConnectionRecord(
             address='TCPIP::{}::{}::SOCKET'.format(address, port),
@@ -48,8 +51,6 @@ def test_tcpip_socket_read():
             ),
         )
     )
-
-    thread.start_new_thread(echo_server, ())
 
     dev = record.connect()
 

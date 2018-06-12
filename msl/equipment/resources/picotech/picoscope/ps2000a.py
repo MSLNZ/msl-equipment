@@ -8,7 +8,7 @@ from .picoscope_api import PicoScopeApi
 from .functions import ps2000aApi_funcptrs
 
 
-@register(manufacturer='Pico\s*Tech', model='2[24]0(5A|5A MSO|5 MSO|6\w|6|7\w|7|8\w|8)')
+@register(manufacturer='Pico\s*Tech', model='240[5678][AB]|220(5A MSO|5 MSO|6|7|8)')
 class PicoScope2000A(PicoScopeApi):
 
     PS2208_MAX_ETS_CYCLES = 500

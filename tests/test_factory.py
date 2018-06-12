@@ -79,9 +79,6 @@ def test_demo_mode():
     c = connect(EquipmentRecord(connection=ConnectionRecord(address='COM1', backend=Backend.MSL)), True)
     assert isinstance(c, ConnectionDemo)
 
-    c = connect(EquipmentRecord(connection=ConnectionRecord(address='COM1', backend=Backend.PyVISA)), True)
-    assert isinstance(c, ConnectionDemo)
-
     c = connect(EquipmentRecord(connection=ConnectionRecord(address='COM1', backend=Backend.MSL)))
     assert isinstance(c, ConnectionDemo)
 

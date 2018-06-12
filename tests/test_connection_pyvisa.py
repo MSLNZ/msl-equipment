@@ -1,21 +1,29 @@
+import pytest
 import pyvisa
+
+from msl.loadlib import IS_WINDOWS
 
 from msl.equipment.config import Config
 from msl.equipment.connection_pyvisa import ConnectionPyVISA
 from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
 
 
+pyvisa_skipif = pytest.mark.skipif(not IS_WINDOWS, reason='pyvisa tests are for Windows only')
+
+
+@pyvisa_skipif
 def test_resource_manager():
     assert isinstance(ConnectionPyVISA.resource_manager(), pyvisa.ResourceManager)
 
 
+@pyvisa_skipif
 def test_pyclass():
 
     for backend in ('@ni', '@py'):
 
         Config.PyVISA_LIBRARY = backend
 
-        for item in ('ASRL::1.2.3.4::2::INSTR', 'ASRL1::INSTR', 'COM1', 'LPT1'):
+        for item in ('ASRL1', 'ASRL1::INSTR', 'COM1', 'LPT1', 'ASRL::/dev/prt/1', 'ASRLCOM1'):
             record = EquipmentRecord(connection=ConnectionRecord(address=item))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.SerialInstrument
 

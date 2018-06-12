@@ -21,8 +21,8 @@ def test_tcpip_socket_read():
         s.listen(1)
         conn, _ = s.accept()
 
-        data = bytearray()
         while True:
+            data = bytearray()
             while not data.endswith(term):
                 data.extend(conn.recv(4096))
 
@@ -30,7 +30,6 @@ def test_tcpip_socket_read():
                 break
 
             conn.sendall(data)
-            data.clear()
 
         conn.close()
         s.close()

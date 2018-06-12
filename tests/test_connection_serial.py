@@ -18,8 +18,8 @@ def test_connection_serial_read():
     term = b'\r\n'
 
     def echo_server(port):
-        data = bytearray()
         while True:
+            data = bytearray()
             while not data.endswith(term):
                 data.extend(os.read(port, 1))
 
@@ -27,7 +27,6 @@ def test_connection_serial_read():
                 break
 
             os.write(port, data)
-            data.clear()
 
     # simulate a Serial port
     master, slave = pty.openpty()

@@ -400,8 +400,8 @@ class Database(object):
             if len(names) > 1:
                 msg = 'Cannot read the equipment register.\n' \
                       'More than one Sheet is available in {dbase}\n' \
-                      'You must create a sheet element in {config}\n' \
-                      'The text between the <sheet> </sheet> tag must be one of: {sheets}\n' \
+                      'You must create a <sheet></sheet> element in {config}\n' \
+                      'The text between the "sheet" tag must be one of: {sheets}\n' \
                       'For example,\n\t<path>{dbase}</path>\n\t<sheet>{first}</sheet>' \
                     .format(dbase=path, config=self._config_path, sheets=', '.join(names), first=names[0])
                 raise IOError(msg)

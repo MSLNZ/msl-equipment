@@ -4,7 +4,7 @@ Base classes for equipment that is connected through TCP/IP.
 import time
 import socket
 
-from msl.equipment.connection_message_based import ConnectionMessageBased
+from .connection_message_based import ConnectionMessageBased
 
 
 class ConnectionTCPIPSocket(ConnectionMessageBased):
@@ -47,6 +47,7 @@ class ConnectionTCPIPSocket(ConnectionMessageBased):
         """
         ConnectionMessageBased.__init__(self, record)
 
+        self._socket = None
         self._byte_buffer = bytearray()
 
         # TODO consider using the `select` module for asynchronous I/O behaviour
@@ -61,25 +62,44 @@ class ConnectionTCPIPSocket(ConnectionMessageBased):
 
         self._family = getattr(socket, props.get('family', 'AF_INET'))
         self._type = getattr(socket, props.get('type', 'SOCK_STREAM'))
-        self._socket = socket.socket(family=self._family, type=self._type)
-
-        self.timeout = props.get('timeout', None)
 
         items = record.connection.address.split('::')
         assert (len(items) == 4) and (items[3].upper() == 'SOCKET'), 'Invalid address ' + record.connection.addres
-
-        self._address = items[1]
+        self._ip_address = items[1]
         self._port = int(items[2])
-        ret = self._socket.connect_ex((self._address, self._port))
-        if ret != 0:
-            self.raise_exception('Cannot connect to {}'.format(record))
 
-        self.log_debug('Connected to {} '.format(record.connection))
+        self._connect()
+        self.log_debug('Connected to {} '.format(self.equipment_record.connection))
+
+    def _connect(self):
+        # it is useful to make this method because some subclasses needed to a "reconnect"
+        # because, perhaps, the equipment closed the socket (e.g., OMEGA iTHX)
+        if self._socket is not None:
+            self._socket.close()
+
+        self._socket = socket.socket(family=self._family, type=self._type)
+        # in general it is recommended to call settimeout() before calling connect()
+        self.timeout = self.equipment_record.connection.properties.get('timeout', None)
+
+        err_msg = None
+
+        try:
+            self._socket.connect((self._ip_address, self._port))
+        except socket.timeout:
+            pass
+        except socket.error as e:
+            err_msg = e.__class__.__name__ + ': ' + str(e)
+        else:
+            return
+
+        if err_msg is None:
+            self.raise_timeout()
+        self.raise_exception('Cannot connect to {}\n{}'.format(self.equipment_record, err_msg))
 
     @property
     def address(self):
         """:class:`str`: The IP address."""
-        return self._address
+        return self._ip_address
 
     @property
     def byte_buffer(self):
@@ -103,13 +123,10 @@ class ConnectionTCPIPSocket(ConnectionMessageBased):
 
     def disconnect(self):
         """Close the socket."""
-        try:
-            # if the subclass raised an error in the constructor before
-            # the this class is initialized then self._socket won't exist
+        if self._socket is not None:
             self._socket.close()
             self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
-        except AttributeError:
-            pass
+            self._socket = None
 
     def write(self, message):
         """Write the given message over the socket.
@@ -125,7 +142,16 @@ class ConnectionTCPIPSocket(ConnectionMessageBased):
             The number of bytes sent over the socket.
         """
         data = self._prepare_write(message)
-        self._socket.sendall(data)
+
+        timeout_error = False
+        try:
+            self._socket.sendall(data)
+        except socket.timeout:
+            timeout_error = True  # want to raise MSLTimeoutError not socket.timeout
+
+        if timeout_error:
+            self.raise_timeout()
+
         return len(data)
 
     def read(self, size=None):
@@ -176,7 +202,7 @@ class ConnectionTCPIPSocket(ConnectionMessageBased):
             try:
                 self._byte_buffer.extend(self._socket.recv(self._buffer_size))
             except socket.timeout:
-                timeout_error = True
+                timeout_error = True  # want to raise MSLTimeoutError not socket.timeout
 
             if len(self._byte_buffer) > self.max_read_size:
                 self.raise_exception('len(byte_buffer) [{}] > max_read_size [{}]'.format(

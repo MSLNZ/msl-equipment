@@ -3,8 +3,8 @@ Base class for equipment that use message-based communication.
 """
 import time
 
-from msl.equipment.connection import Connection
-from msl.equipment.exceptions import MSLTimeoutError
+from .connection import Connection
+from .exceptions import MSLTimeoutError
 
 
 class ConnectionMessageBased(Connection):
@@ -128,7 +128,7 @@ class ConnectionMessageBased(Connection):
             elif self._timeout < 0:
                 raise ValueError('Not a valid timeout value: {}'.format(value))
 
-    def raise_timeout(self, append_msg=''):
+    def raise_timeout(self, append_msg=None):
         """Raise a :exc:`~.exceptions.MSLTimeoutError`.
 
         Parameters
@@ -138,7 +138,7 @@ class ConnectionMessageBased(Connection):
         """
         msg = 'Timeout occurred after {} seconds'.format(self.timeout)
         if append_msg:
-            msg += ' -- ' + append_msg
+            msg += str(append_msg)
         self.log_error('{!r} {}'.format(self, msg))
         raise MSLTimeoutError('{!r}\n{}'.format(self, msg))
 

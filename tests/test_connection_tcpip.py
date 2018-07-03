@@ -9,32 +9,33 @@ from msl.loadlib.utils import get_available_port
 from msl.equipment import EquipmentRecord, ConnectionRecord, Backend, MSLTimeoutError, MSLConnectionError
 
 
+def echo_server(address, port, term):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind((address, port))
+    s.listen(1)
+    conn, _ = s.accept()
+
+    while True:
+        data = bytearray()
+        while not data.endswith(term):
+            data.extend(conn.recv(4096))
+
+        if data.startswith(b'SHUTDOWN'):
+            break
+
+        conn.sendall(data)
+
+    conn.close()
+    s.close()
+
+
 def test_tcpip_socket_read():
 
     address = '127.0.0.1'
     port = get_available_port()
     term = b'\r\n'
 
-    def echo_server():
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind((address, port))
-        s.listen(1)
-        conn, _ = s.accept()
-
-        while True:
-            data = bytearray()
-            while not data.endswith(term):
-                data.extend(conn.recv(4096))
-
-            if data.startswith(b'SHUTDOWN'):
-                break
-
-            conn.sendall(data)
-
-        conn.close()
-        s.close()
-
-    t = threading.Thread(target=echo_server)
+    t = threading.Thread(target=echo_server, args=(address, port, term))
     t.start()
 
     time.sleep(0.1)  # allow some time for the echo server to start
@@ -91,5 +92,42 @@ def test_tcpip_socket_read():
     dev.max_read_size = 2000
     with pytest.raises(MSLConnectionError):
         dev.read(2048)  # requesting more bytes than are maximally allowed
+
+    dev.write('SHUTDOWN')
+
+
+def test_tcpip_socket_timeout():
+
+    address = '127.0.0.1'
+    port = get_available_port()
+    write_termination = b'\n'
+
+    t = threading.Thread(target=echo_server, args=(address, port, write_termination))
+    t.start()
+
+    time.sleep(0.1)  # allow some time for the echo server to start
+
+    record = EquipmentRecord(
+        connection=ConnectionRecord(
+            address='TCPIP::{}::{}::SOCKET'.format(address, port),
+            backend=Backend.MSL,
+            properties=dict(
+                write_termination=write_termination,
+                timeout=7
+            ),
+        )
+    )
+
+    dev = record.connect()
+    assert dev.timeout == 7
+    assert dev.socket.gettimeout() == 7
+
+    dev.timeout = None
+    assert dev.timeout is None
+    assert dev.socket.gettimeout() is None
+
+    dev.timeout = 1
+    assert dev.timeout == 1
+    assert dev.socket.gettimeout() == 1
 
     dev.write('SHUTDOWN')

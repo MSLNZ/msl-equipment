@@ -60,6 +60,8 @@ class ConnectionTCPIPSocket(ConnectionMessageBased):
         self.encoding = props.get('encoding', self.encoding)
         self._buffer_size = props.get('buffer_size', 4096)
 
+        self._set_timeout_value(props.get('timeout', None))
+
         self._family = getattr(socket, props.get('family', 'AF_INET'))
         self._type = getattr(socket, props.get('type', 'SOCK_STREAM'))
 
@@ -69,7 +71,7 @@ class ConnectionTCPIPSocket(ConnectionMessageBased):
         self._port = int(items[2])
 
         self._connect()
-        self.log_debug('Connected to {} '.format(self.equipment_record.connection))
+        self.log_debug('Connected to {} '.format(record.connection))
 
     def _connect(self):
         # it is useful to make this method because some subclasses needed to a "reconnect"
@@ -79,7 +81,7 @@ class ConnectionTCPIPSocket(ConnectionMessageBased):
 
         self._socket = socket.socket(family=self._family, type=self._type)
         # in general it is recommended to call settimeout() before calling connect()
-        self.timeout = self.equipment_record.connection.properties.get('timeout', None)
+        self.timeout = self._timeout
 
         err_msg = None
 

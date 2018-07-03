@@ -127,6 +127,8 @@ class ConnectionMessageBased(Connection):
                 self._timeout = None
             elif self._timeout < 0:
                 raise ValueError('Not a valid timeout value: {}'.format(value))
+        else:
+            self._timeout = None
 
     def raise_timeout(self, append_msg=None):
         """Raise a :exc:`~.exceptions.MSLTimeoutError`.

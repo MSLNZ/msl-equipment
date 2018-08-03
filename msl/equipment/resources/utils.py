@@ -326,7 +326,7 @@ class CHeader(object):
                 data_type = data_type.replace(':', '').strip()
                 data_type = CTYPES_MAP[data_type]
             else:
-                data_type = None
+                data_type = 'c_int'
 
             # get all the text between { }
             text, i = CHeader.get_text_between_brackets(self._lines, i, '{', '}')
@@ -344,6 +344,8 @@ class CHeader(object):
             for item in text.split(','):
                 item_split = item.split('=')
                 name = item_split[0].strip()
+                if name == 'None':
+                    name = 'NONE'
                 if len(item_split) == 1:  # then no value
                     if is_hex:
                         value = str(hex(auto_increment))

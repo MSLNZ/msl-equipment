@@ -12,9 +12,9 @@ from ctypes import c_short, c_int, c_uint, c_int64, c_double, byref, create_stri
 
 from msl.equipment.resources import register
 from msl.equipment.resources.utils import WORD, DWORD
-from .motion_control import MotionControl
-from .api_functions import IntegratedStepperMotors_FCNS
-from .structs import (
+from msl.equipment.resources.thorlabs.kinesis.motion_control import MotionControl
+from msl.equipment.resources.thorlabs.kinesis.api_functions import IntegratedStepperMotors_FCNS
+from msl.equipment.resources.thorlabs.kinesis.structs import (
     TLI_HardwareInformation,
     MOT_VelocityParameters,
     MOT_HomingParameters,
@@ -24,7 +24,7 @@ from .structs import (
     MOT_PotentiometerSteps,
     MOT_PowerParameters,
 )
-from .enums import (
+from msl.equipment.resources.thorlabs.kinesis.enums import (
     MOT_JogModes,
     MOT_StopModes,
     MOT_TravelDirection,
@@ -35,6 +35,8 @@ from .enums import (
     MOT_HomeLimitSwitchDirection,
     MOT_TravelModes,
     UnitType,
+    MOT_MovementModes,
+    MOT_MovementDirections,
 )
 
 
@@ -48,7 +50,8 @@ class IntegratedStepperMotors(MotionControl):
         for an IntegratedStepperMotors connection supports the following key-value pairs in the
         :ref:`connection_database`::
 
-            'load_settings': bool,  # optional, default is True (load the settings when the connection is created)
+            'load_settings': bool, call load_settings() after the connection is created [default: False]
+            'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.
@@ -59,7 +62,8 @@ class IntegratedStepperMotors(MotionControl):
             A record from an :ref:`equipment_database`.
         """
         MotionControl.__init__(self, record, IntegratedStepperMotors_FCNS)
-        if record.connection.properties.get('load_settings', True):
+
+        if record.connection.properties.get('load_settings', False):
             self.load_settings()
 
     def can_home(self):
@@ -224,8 +228,7 @@ class IntegratedStepperMotors(MotionControl):
         """
         size = 256
         filename = create_string_buffer(size)
-        if not self.sdk.ISC_GetCalibrationFile(self._serial, filename, size):
-            self.raise_exception('Error getting calibration file.')
+        self.sdk.ISC_GetCalibrationFile(self._serial, filename, size)
         return filename.raw.decode('utf-8').rstrip('\x00')
 
     def get_device_unit_from_real_value(self, real_value, unit_type):
@@ -910,8 +913,24 @@ class IntegratedStepperMotors(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        if not self.sdk.ISC_LoadSettings(self._serial):
-            self.raise_exception('Error loading the stored settings.')
+        self.sdk.ISC_LoadSettings(self._serial)
+
+    def load_named_settings(self, settings_name):
+        """Update device with named settings.
+
+        Parameters
+        ----------
+        settings_name : :class:`str`
+            The name of the device to load the settings for. Examples for the value
+            of `setting_name` can be found in `ThorlabsDefaultSettings.xml``, which
+            gets created when the Kinesis software is installed.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
+        self.sdk.ISC_LoadNamedSettings(self._serial, settings_name)
 
     def message_queue_size(self):
         """Gets the size of the message queue.
@@ -1046,8 +1065,7 @@ class IntegratedStepperMotors(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        if not self.sdk.ISC_PersistSettings(self._serial):
-            self.raise_exception('Error to persist the current settings.')
+        self.sdk.ISC_PersistSettings(self._serial)
 
     def polling_duration(self):
         """Gets the polling loop duration.
@@ -1243,6 +1261,16 @@ class IntegratedStepperMotors(MotionControl):
         """
         self.sdk.ISC_RequestVelParams(self._serial)
 
+    def reset_rotation_modes(self):
+        """Reset the rotation modes for a rotational device.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
+        self.sdk.ISC_ResetRotationModes(self._serial)
+
     def reset_stage_to_defaults(self):
         """Reset the stage settings to defaults.
 
@@ -1251,8 +1279,7 @@ class IntegratedStepperMotors(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        if not self.sdk.ISC_ResetStageToDefaults(self._serial):
-            self.raise_exception('Error resetting stage to default settings.')
+        self.sdk.ISC_ResetStageToDefaults(self._serial)
 
     def set_backlash(self, distance):
         """Sets the backlash distance (used to control hysteresis).
@@ -1813,6 +1840,27 @@ class IntegratedStepperMotors(MotionControl):
         params.movePercentage = int(move)
         self.sdk.ISC_SetPowerParams(self._serial, byref(params))
 
+    def set_rotation_modes(self, mode, direction):
+        """Set the rotation modes for a rotational device.
+
+        Parameters
+        ----------
+        mode : :class:`.enums.MOT_MovementModes`
+            The travel mode as a :class:`.enums.MOT_MovementModes` enum value or
+            member name.
+        direction : :class:`.enums.MOT_MovementDirections`
+            The travel mode as a :class:`.enums.MOT_MovementDirections` enum value or
+            member name.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
+        mode = self.convert_to_enum(mode, MOT_MovementModes)
+        direction = self.convert_to_enum(direction, MOT_MovementDirections)
+        self.sdk.ISC_SetRotationModes(self._serial, mode, direction)
+
     def set_stage_axis_limits(self, min_position, max_position):
         """Sets the stage axis position limits.
 
@@ -1978,26 +2026,5 @@ class IntegratedStepperMotors(MotionControl):
 
 
 if __name__ == '__main__':
-    # from msl.equipment.resources.thorlabs.kinesis.api_functions import IntegratedStepperMotors_FCNS
-    from msl.equipment.resources.utils import camelcase_to_underscore as convert
-
-    for item in IntegratedStepperMotors_FCNS:
-        method_name = convert(item[0].split('_')[1])
-        args_p = ''
-        args_c = ''
-        for i, arg in enumerate(item[3]):
-            if i == 0 and 'c_char_p' in str(arg[0]):
-                args_c += 'self._serial, '
-            elif 'PyCPointerType' in str(type(arg[0])):
-                args_c += 'byref({}), '.format(convert(arg[1]))
-            else:
-                a = convert(arg[1])
-                args_p += '{}, '.format(a)
-                args_c += '{}, '.format(a)
-
-        args_p = args_p[:-2]
-        if args_p:
-            print('    def {}(self, {}):'.format(method_name, args_p))
-        else:
-            print('    def {}(self):'.format(method_name))
-        print('        return self.sdk.{}({})\n'.format(item[0], args_c[:-2]))
+    from msl.equipment.resources.thorlabs.kinesis import _print
+    _print(IntegratedStepperMotors, IntegratedStepperMotors_FCNS, 'Thorlabs.MotionControl.IntegratedStepperMotors.h')

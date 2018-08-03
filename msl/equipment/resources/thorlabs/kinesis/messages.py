@@ -1,5 +1,5 @@
 """
-Device Message Queue defined in Thorlabs.MotionControl.C_API.
+Device Message Queue defined in Thorlabs Kinesis v1.14.9
 
 The device message queue allows the internal events raised by the device to be 
 monitored by the DLLs owner. 
@@ -8,6 +8,13 @@ The device raises many different events, usually associated with a change of sta
 
 These messages are temporarily stored in the DLL and can be accessed using the 
 appropriate message functions.
+
+The message consists of 3 components, a messageType, a messageID and messageData::
+
+   WORD messageType
+   WORD messageID
+   WORD messageData
+
 """
 
 #: MessageTypes
@@ -34,16 +41,6 @@ GenericDevice = {
     3: 'close',
 }
 
-#: GenericPiezo
-GenericPiezo = {
-    0: 'maxVoltageChanged',
-    1: 'controlModeChanged',
-    2: 'statusChanged',
-    3: 'maxTravelChanged',
-    4: 'TSG_Status',
-    5: 'TSG_DisplayModeChanged',
-}
-
 #: GenericMotor
 GenericMotor = {
     0: 'Homed',
@@ -58,8 +55,15 @@ GenericDCMotor = {
     1: 'status',
 }
 
-#: GenericSimpleMotor
-GenericSimpleMotor = {}
+#: GenericPiezo
+GenericPiezo = {
+    0: 'maxVoltageChanged',
+    1: 'controlModeChanged',
+    2: 'statusChanged',
+    3: 'maxTravelChanged',
+    4: 'TSG_Status',
+    5: 'TSG_DisplayModeChanged',
+}
 
 #: RackDevice
 RackDevice = {
@@ -67,11 +71,9 @@ RackDevice = {
     1: 'RackBayState',
 }
 
-#: Laser
-Laser = {
+#: Quad
+Quad = {
     0: 'statusChanged',
-    1: 'controlSourceChanged',
-    2: 'displayModeChanged',
 }
 
 #: TECCtlr
@@ -81,8 +83,15 @@ TECCtlr = {
     3: 'feedbackParamsChanged',
 }
 
-#: Quad
-Quad = {
+#: Laser
+Laser = {
+    0: 'statusChanged',
+    1: 'controlSourceChanged',
+    2: 'displayModeChanged',
+}
+
+#: Solenoid
+Solenoid = {
     0: 'statusChanged',
 }
 
@@ -94,10 +103,8 @@ NanoTrak = {
 #: Specialized
 Specialized = {}
 
-#: Solenoid
-Solenoid = {
-    0: 'statusChanged',
-}
+#: GenericSimpleMotor
+GenericSimpleMotor = {}
 
 #: MessageID
 MessageID = {

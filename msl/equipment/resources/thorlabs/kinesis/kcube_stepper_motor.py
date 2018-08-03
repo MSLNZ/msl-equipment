@@ -7,9 +7,9 @@ from ctypes import c_short, c_int16, c_int, c_uint, c_int32, c_int64, c_double, 
 
 from msl.equipment.resources import register
 from msl.equipment.resources.utils import WORD, DWORD
-from .motion_control import MotionControl
-from .api_functions import KCube_StepperMotor_FCNS
-from .structs import (
+from msl.equipment.resources.thorlabs.kinesis.motion_control import MotionControl
+from msl.equipment.resources.thorlabs.kinesis.api_functions import KCube_StepperMotor_FCNS
+from msl.equipment.resources.thorlabs.kinesis.structs import (
     TLI_HardwareInformation,
     MOT_VelocityParameters,
     MOT_HomingParameters,
@@ -21,7 +21,7 @@ from .structs import (
     KMOT_TriggerConfig,
     KMOT_TriggerParams,
 )
-from .enums import (
+from msl.equipment.resources.thorlabs.kinesis.enums import (
     MOT_JogModes,
     MOT_StopModes,
     MOT_TravelDirection,
@@ -31,10 +31,12 @@ from .enums import (
     MOT_HomeLimitSwitchDirection,
     MOT_TravelModes,
     UnitType,
-    KMOT_JoyStickMode,
-    KMOT_JoystickDirectionSense,
+    KMOT_WheelMode,
+    KMOT_WheelDirectionSense,
     KMOT_TriggerPortMode,
     KMOT_TriggerPortPolarity,
+    MOT_MovementModes,
+    MOT_MovementDirections,
 )
 
 
@@ -48,7 +50,8 @@ class KCubeStepperMotor(MotionControl):
         for a KCubeStepperMotor connection supports the following key-value pairs in the
         :ref:`connection_database`::
 
-            'load_settings': bool,  # optional, default is True (load the settings when the connection is created)
+            'load_settings': bool, call load_settings() after the connection is created [default: False]
+            'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.
@@ -59,8 +62,19 @@ class KCubeStepperMotor(MotionControl):
             A record from an :ref:`equipment_database`.
         """
         MotionControl.__init__(self, record, KCube_StepperMotor_FCNS)
-        if record.connection.properties.get('load_settings', True):
+
+        if record.connection.properties.get('load_settings', False):
             self.load_settings()
+
+    def can_device_lock_front_panel(self):
+        """Determine if the device front panel can be locked.
+
+        Returns
+        -------
+        :class:`bool`
+            :data:`True` if the front panel of the device can be locked, :data:`False` if not.
+        """
+        return self.sdk.SCC_CanDeviceLockFrontPanel(self._serial)
 
     def can_home(self):
         """Can the device perform a :meth:`home`?
@@ -177,8 +191,7 @@ class KCubeStepperMotor(MotionControl):
         """
         size = 256
         filename = create_string_buffer(size)
-        if not self.sdk.SCC_GetCalibrationFile(self._serial, filename, size):
-            self.raise_exception('Error getting calibration file.')
+        self.sdk.SCC_GetCalibrationFile(self._serial, filename, size)
         return filename.raw.decode('utf-8').rstrip('\x00')
 
     def get_device_unit_from_real_value(self, real_value, unit_type):
@@ -230,6 +243,16 @@ class KCubeStepperMotor(MotionControl):
             The encoder count in encoder units.
         """
         return self.sdk.SCC_GetEncoderCounter(self._serial)
+
+    def get_front_panel_locked(self):
+        """Query if the device front panel locked.
+
+        Returns
+        -------
+        :class:`bool`
+            :data:`True` if the device front panel is locked, :data:`False` if not.
+        """
+        return self.sdk.SCC_GetFrontPanelLocked(self._serial)
 
     def get_hardware_info(self):
         """Gets the hardware information from the device.
@@ -465,13 +488,13 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`.enums.KMOT_JoyStickMode`
+        :obj:`.enums.KMOT_WheelMode`
             The device joystick mode.
         :obj:`int`
             The joystick maximum velocity in ``DeviceUnits``.
         :obj:`int`
             The joystick acceleration in ``DeviceUnits``.
-        :obj:`.enums.KMOT_JoystickDirectionSense`
+        :obj:`.enums.KMOT_WheelDirectionSense`
             The joystick direction sense.
         :obj:`int`
             The first preset position in ``DeviceUnits``.
@@ -502,7 +525,7 @@ class KCubeStepperMotor(MotionControl):
         dim_intensity = c_int16()
         self.sdk.SCC_GetMMIParamsExt(self._serial, byref(mode), byref(vmax), byref(acc), byref(sense), byref(preset1),
                                      byref(preset2), byref(intensity), byref(timeout), byref(dim_intensity))
-        return (KMOT_JoyStickMode(mode.value), vmax.value, acc.value, KMOT_JoystickDirectionSense(sense.value),
+        return (KMOT_WheelMode(mode.value), vmax.value, acc.value, KMOT_WheelDirectionSense(sense.value),
                 preset1.value, preset2.value, intensity.value, timeout.value, dim_intensity.value)
 
     def get_motor_params(self):
@@ -1036,8 +1059,24 @@ class KCubeStepperMotor(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        if not self.sdk.SCC_LoadSettings(self._serial):
-            self.raise_exception('Error loading the stored settings.')
+        self.sdk.SCC_LoadSettings(self._serial)
+
+    def load_named_settings(self, settings_name):
+        """Update device with named settings.
+
+        Parameters
+        ----------
+        settings_name : :class:`str`
+            The name of the device to load the settings for. Examples for the value
+            of `setting_name` can be found in `ThorlabsDefaultSettings.xml``, which
+            gets created when the Kinesis software is installed.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
+        self.sdk.SCC_LoadNamedSettings(self._serial, settings_name)
 
     def message_queue_size(self):
         """Gets the size of the message queue.
@@ -1172,8 +1211,7 @@ class KCubeStepperMotor(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        if not self.sdk.SCC_PersistSettings(self._serial):
-            self.raise_exception('Error to persist the current settings.')
+        self.sdk.SCC_PersistSettings(self._serial)
 
     def polling_duration(self):
         """Gets the polling loop duration.
@@ -1234,6 +1272,16 @@ class KCubeStepperMotor(MotionControl):
             If not successful.
         """
         self.sdk.SCC_RequestEncoderCounter(self._serial)
+
+    def request_front_panel_locked(self):
+        """Ask the device if its front panel is locked.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
+        self.sdk.SCC_RequestFrontPanelLocked(self._serial)
 
     def request_homing_params(self):
         """Requests the homing parameters.
@@ -1386,6 +1434,16 @@ class KCubeStepperMotor(MotionControl):
         """
         self.sdk.SCC_RequestVelParams(self._serial)
 
+    def reset_rotation_modes(self):
+        """Reset the rotation modes for a rotational device.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
+        self.sdk.SCC_ResetRotationModes(self._serial)
+
     def resume_move_messages(self):
         """Resume suspended move messages.
 
@@ -1499,6 +1557,21 @@ class KCubeStepperMotor(MotionControl):
             If not successful.
         """
         self.sdk.SCC_SetEncoderCounter(self._serial, count)
+
+    def set_front_panel_lock(self, locked):
+        """Sets the device front panel lock state.
+
+        Parameters
+        ----------
+        locked : :class:`bool`
+            :data:`True` to lock the device, :data:`False` to unlock
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
+        self.sdk.SCC_SetFrontPanelLock(self._serial, locked)
 
     def set_homing_params_block(self, direction, limit, velocity, offset):
         """Set the homing parameters.
@@ -1726,14 +1799,14 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        joystick_mode : :obj:`.enums.KMOT_JoyStickMode`
-            The device joystick mode as a :obj:`.enums.KMOT_JoyStickMode` enum value or member name.
+        joystick_mode : :obj:`.enums.KMOT_WheelMode`
+            The device joystick mode as a :obj:`.enums.KMOT_WheelMode` enum value or member name.
         joystick_max_velocity : :obj:`int`
             The joystick maximum velocity in ``DeviceUnits``.
         joystick_acceleration : :obj:`int`
             The joystick acceleration in ``DeviceUnits``.
-        direction_sense : :obj:`.enums.KMOT_JoystickDirectionSense`
-            The joystick direction sense as a :obj:`.enums.KMOT_JoystickDirectionSense` enum value or member name.
+        direction_sense : :obj:`.enums.KMOT_WheelDirectionSense`
+            The joystick direction sense as a :obj:`.enums.KMOT_WheelDirectionSense` enum value or member name.
         preset_position1 : :obj:`int`
             The first preset position in ``DeviceUnits``.
         preset_position2 : :obj:`int`
@@ -1752,8 +1825,8 @@ class KCubeStepperMotor(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        mode = self.convert_to_enum(joystick_mode, KMOT_JoyStickMode, prefix='KMOT_JS_')
-        sense = self.convert_to_enum(direction_sense, KMOT_JoystickDirectionSense, prefix='KMOT_JS_')
+        mode = self.convert_to_enum(joystick_mode, KMOT_WheelMode, prefix='KMOT_JS_')
+        sense = self.convert_to_enum(direction_sense, KMOT_WheelDirectionSense, prefix='KMOT_JS_')
         self.sdk.SCC_SetMMIParamsExt(self._serial, mode, joystick_max_velocity, joystick_acceleration, sense,
                                      preset_position1, preset_position2, display_intensity, display_timeout,
                                      display_dim_intensity)
@@ -1989,6 +2062,27 @@ class KCubeStepperMotor(MotionControl):
         params.restPercentage = rest
         params.movePercentage = move
         self.sdk.SCC_SetPowerParams(self._serial, byref(params))
+
+    def set_rotation_modes(self, mode, direction):
+        """Set the rotation modes for a rotational device.
+
+        Parameters
+        ----------
+        mode : :class:`.enums.MOT_MovementModes`
+            The travel mode as a :class:`.enums.MOT_MovementModes` enum value or
+            member name.
+        direction : :class:`.enums.MOT_MovementDirections`
+            The travel mode as a :class:`.enums.MOT_MovementDirections` enum value or
+            member name.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
+        mode = self.convert_to_enum(mode, MOT_MovementModes)
+        direction = self.convert_to_enum(direction, MOT_MovementDirections)
+        self.sdk.SCC_SetRotationModes(self._serial, mode, direction)
 
     def set_stage_axis_limits(self, min_position, max_position):
         """Sets the stage axis position limits.
@@ -2264,27 +2358,5 @@ class KCubeStepperMotor(MotionControl):
 
 
 if __name__ == '__main__':
-    from msl.equipment.resources.utils import camelcase_to_underscore as convert
-
-    for item in sorted(KCube_StepperMotor_FCNS):
-        method_name = convert(item[0].split('_')[1])
-        args_p = ''
-        args_c = ''
-        for i, arg in enumerate(item[3]):
-            if i == 0 and 'c_char_p' in str(arg[0]):
-                args_c += 'self._serial, '
-            elif 'PyCPointerType' in str(type(arg[0])):
-                args_c += 'byref({}), '.format(convert(arg[1]))
-            else:
-                a = convert(arg[1])
-                args_p += '{}, '.format(a)
-                args_c += '{}, '.format(a)
-
-        args_p = args_p[:-2]
-        if args_p:
-            print('    def {}(self, {}):'.format(method_name, args_p))
-        else:
-            print('    def {}(self):'.format(method_name))
-        print('        return self.sdk.{}({})\n'.format(item[0], args_c[:-2]))
-
-
+    from msl.equipment.resources.thorlabs.kinesis import _print
+    _print(KCubeStepperMotor, KCube_StepperMotor_FCNS, 'Thorlabs.MotionControl.KCube.StepperMotor.h')

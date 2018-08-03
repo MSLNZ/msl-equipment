@@ -1,5 +1,5 @@
 """
-Device and Low Level Error Codes defined in the Thorlabs Kinesis software v1.11.0
+Device and Low Level Error Codes defined in Thorlabs Kinesis v1.14.9
 """
 
 FT_OK                         = 0x00
@@ -11,6 +11,13 @@ FT_InsufficientResources      = 0x05
 FT_InvalidParameter           = 0x06
 FT_DeviceNotPresent           = 0x07
 FT_IncorrectDevice            = 0x08
+
+FT_NoDLLLoaded                = 0x10
+FT_NoFunctionsAvailable       = 0x11
+FT_FunctionNotAvailable       = 0x12
+FT_BadFunctionPointer         = 0x13
+FT_GenericFunctionFail        = 0x14
+FT_SpecificFunctionFail       = 0x15
 
 TL_ALREADY_OPEN               = 0x20
 TL_NO_RESPONSE                = 0x21
@@ -27,6 +34,8 @@ TL_INVALID_POSITION           = 0x26
 TL_INVALID_VELOCITY_PARAMETER = 0x27
 TL_CANNOT_HOME_DEVICE         = 0x2C
 TL_JOG_CONTINOUS_MODE         = 0x2D
+TL_NO_MOTOR_INFO              = 0x2E
+TL_CMD_TEMP_UNAVAILABLE       = 0x2F
 
 ERROR_CODES = {
     FT_OK: (
@@ -67,6 +76,30 @@ ERROR_CODES = {
     FT_IncorrectDevice: (
         'FT_IncorrectDevice',
         'The device detected does not match that expected'
+    ),
+    FT_NoDLLLoaded: (
+        'FT_NoDLLLoaded',
+        'The library for this device could not be found'
+    ),
+    FT_NoFunctionsAvailable: (
+        'FT_NoFunctionsAvailable',
+        'No functions available for this device'
+    ),
+    FT_FunctionNotAvailable: (
+        'FT_FunctionNotAvailable',
+        'The function is not available for this device'
+    ),
+    FT_BadFunctionPointer: (
+        'FT_BadFunctionPointer',
+        'Bad function pointer detected'
+    ),
+    FT_GenericFunctionFail: (
+        'FT_GenericFunctionFail',
+        'The function failed to complete succesfully'
+    ),
+    FT_SpecificFunctionFail: (
+        'FT_SpecificFunctionFail',
+        'The function failed to complete succesfully'
     ),
     TL_ALREADY_OPEN: (
         'TL_ALREADY_OPEN',
@@ -124,4 +157,12 @@ ERROR_CODES = {
         'TL_JOG_CONTINOUS_MODE',
         'An invalid jog mode was supplied for the jog function'
     ),
+    TL_NO_MOTOR_INFO: (
+        'TL_NO_MOTOR_INFO',
+        'There is no Motor Parameters available to convert Real World Units'
+    ),
+    TL_CMD_TEMP_UNAVAILABLE: (
+        'TL_CMD_TEMP_UNAVAILABLE',
+        'Command temporarily unavailable, Device may be busy'
+    )
 }

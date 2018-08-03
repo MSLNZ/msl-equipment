@@ -1,6 +1,8 @@
 """
 Base ``Thorlabs.MotionControl`` class.
 """
+import os
+from xml.etree import cElementTree as ET
 from ctypes import c_int, byref, create_string_buffer
 
 from msl.loadlib import LoadLibrary
@@ -44,7 +46,9 @@ class MotionControl(ConnectionSDK):
     Filter_Wheel = 47  #: Filter Wheel device ID
     KCube_Brushless_Motor = 28  #: KCube Brushless Motor device ID
     KCube_DC_Servo = 27  #: KCube DC Servo device ID
+    KCube_Inertial_Motor = 97 #: KCube Inertial Motor device ID
     KCube_LaserSource = 56  #: KCube Laser Source device ID
+    KCube_NanoTrak = 57 #: KCube NanoTrak device ID
     KCube_Piezo = 29  #: KCube Piezo device ID
     KCube_Solenoid = 68  #: KCube Solenoid device ID
     KCube_Stepper_Motor = 26  #: KCube Stepper Motor device ID
@@ -66,6 +70,7 @@ class MotionControl(ConnectionSDK):
     TCube_Stepper_Motor = 80  #: TCube Stepper_Motor device ID
     TCube_Strain_Gauge = 84  #: TCube Strain Gauge device ID
     TCube_TEC = 87  #: TCube TEC device ID
+    Vertical_Stage = 24 #: Vertical Stage device ID
 
     # a serial number is 8 characters, 1 for null terminated, 1 for the comma, allow for up to 50 devices
     SERIAL_NUMBER_BUFFER_SIZE = (8 + 1 + 1) * 50
@@ -105,9 +110,12 @@ class MotionControl(ConnectionSDK):
                 func.argtypes = [v[0] for v in item[3]]
 
         self._serial = record.serial.encode('utf-8')
-        self.build_device_list()
+
         self.open()
         self._is_open = True
+
+        self._settings = dict()
+        self._load_xml_settings(record.connection.properties.get('device_name', None))
 
     def errcheck_api(self, result, func, args):
         """The API function returns OK if the function call was successful."""
@@ -117,7 +125,7 @@ class MotionControl(ConnectionSDK):
         return result
 
     def errcheck_true(self, result, func, args):
-        """The API function returns :py:data:`True` if the function call was successful."""
+        """The API function returns :data:`True` if the function call was successful."""
         self.log_errcheck(result, func, args)
         if not result:
             msg = '{}.{}{} -> {}'.format(self.__class__.__name__, func.__name__, args, result)
@@ -129,6 +137,16 @@ class MotionControl(ConnectionSDK):
         if self._is_open:
             self.close()
             self._is_open = False
+
+    @property
+    def settings(self):
+        """:class:`dict`: The device settings specified in ``ThorlabsDefaultSettings.xml``
+
+        If this is an empty :class:`dict` then you can specify the ``device_name`` in the
+        properties field in the :ref:`connection_database`, or run the Kinesis software and
+        configure the actuator that is connected to the motor controller.
+        """
+        return self._settings
 
     @staticmethod
     def build_device_list():
@@ -319,15 +337,84 @@ class MotionControl(ConnectionSDK):
         return info
 
     def _wait(self, msg_id_not_equal_to_value):
-        """Wait for the move to complete
-
-        Parameters
-        ----------
-        msg_id_not_equal_to_value : :obj:`int`
-            while(messageType != 2 || messageId != `msg_id_not_equal_to_value`)
-        """
+        # wait for the move to complete
         self.clear_message_queue()
         _msg_type, _msg_id, _msg_data = self.wait_for_message()
         while _msg_type != 2 or _msg_id != msg_id_not_equal_to_value:
             _msg_type, _msg_id, _msg_data = self.wait_for_message()
-        self.log_debug('{} has finished moving'.format(self.__class__.__name__))
+        self.log_debug(self.__class__.__name__ + ' has finished moving')
+
+    def _load_xml_settings(self, name):
+        # populates the self._settings dict from the information in:
+        #   - ThorlabsDeviceConfiguration.xml
+        #   - ThorlabsDefaultSettings.xml
+
+        if name is None:
+            # then get the SettingsName value from the following XML file
+            # this assumes that the Kinesis software has been used to define the
+            # stage that is connected to the controller
+            cfg = r'C:\ProgramData\Thorlabs\MotionControl\ThorlabsDeviceConfiguration.xml'
+            if not os.path.isfile(cfg):
+                self.log_warning('Cannot find ThorlabsDeviceConfiguration.xml')
+                return
+            root = ET.parse(cfg).getroot()
+            element = root.find('.//Device[@Name="{}"]'.format(self.equipment_record.serial))
+            if element is None:
+                self.log_warning('Cannot find <Device Name="{}"> in '
+                                 'ThorlabsDeviceConfiguration.xml'.format(self.equipment_record.serial))
+                return
+            name = element.find('SettingsName').text
+
+        # find the ThorlabsDefaultSettings.xml file
+        path = r'C:\Program Files\Thorlabs\Kinesis\ThorlabsDefaultSettings.xml'
+        if not os.path.isfile(path):
+            found_it = False
+            for item in os.environ['PATH'].split(os.pathsep):
+                test = os.path.join(item, 'ThorlabsDefaultSettings.xml')
+                if os.path.isfile(test):
+                    path = test
+                    found_it = True
+                    break
+
+            if not found_it:
+                self.log_warning('Cannot find ThorlabsDefaultSettings.xml')
+                return
+
+        # get the XML element that refers to this device name
+        root = ET.parse(path).getroot()
+        element = root.find('.//DeviceSettingsType[@Name="{}"]'.format(name))
+        if element is None:
+            self.log_warning('Cannot find <DeviceSettingsType Name="{}"> in '
+                             'ThorlabsDefaultSettings.xml'.format(name))
+            return
+
+        # check if the device name refers to another device name
+        try:
+            name = element.attrib['Settings']
+        except KeyError:
+            name = element.attrib['Name']
+
+        # read the settings from the XML file
+        element = root.find('.//DeviceSettingsDefinition[@Name="{}"]'.format(name))
+        if element is None:
+            self.log_warning('Cannot find <DeviceSettingsDefinition Name="{}"> in '
+                             'ThorlabsDefaultSettings.xml'.format(name))
+            return
+
+        # populate the settings dict
+        for item in element.iter():
+            text = item.text.strip()
+            if not text:
+                continue
+
+            if text == 'true':
+                value = True
+            elif text == 'false':
+                value = False
+            else:
+                try:
+                    value = int(text)
+                except ValueError:
+                    value = float(text)
+
+            self._settings[item.tag] = value

@@ -13,11 +13,10 @@ import os
 from ctypes import c_short, c_int, c_uint, c_int64, c_double, byref, create_string_buffer
 
 from msl.equipment.resources import register
-from msl.equipment.exceptions import ThorlabsError
 from msl.equipment.resources.utils import WORD, DWORD
-from .motion_control import MotionControl
-from .api_functions import Benchtop_StepperMotor_FCNS
-from .structs import (
+from msl.equipment.resources.thorlabs.kinesis.motion_control import MotionControl
+from msl.equipment.resources.thorlabs.kinesis.api_functions import Benchtop_StepperMotor_FCNS
+from msl.equipment.resources.thorlabs.kinesis.structs import (
     TLI_HardwareInformation,
     MOT_HomingParameters,
     MOT_JogParameters,
@@ -27,7 +26,7 @@ from .structs import (
     MOT_PowerParameters,
     MOT_VelocityParameters,
 )
-from .enums import (
+from msl.equipment.resources.thorlabs.kinesis.enums import (
     UnitType,
     MOT_JogModes,
     MOT_StopModes,
@@ -38,6 +37,8 @@ from .enums import (
     MOT_TravelDirection,
     MOT_HomeLimitSwitchDirection,
     MOT_PID_LoopMode,
+    MOT_MovementModes,
+    MOT_MovementDirections,
 )
 
 
@@ -51,7 +52,8 @@ class BenchtopStepperMotor(MotionControl):
         for a BenchtopStepperMotor connection supports the following key-value pairs in the
         :ref:`connection_database`::
 
-            'load_settings': bool  # optional, default is True (load the settings when the connection is created)
+            'load_settings': bool, call load_settings() after the connection is created [default: False]
+            'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.
@@ -65,16 +67,9 @@ class BenchtopStepperMotor(MotionControl):
 
         self._num_channels = self.get_num_channels()
 
-        if record.connection.properties.get('load_settings', True):
+        if record.connection.properties.get('load_settings', False):
             for ch in range(self._num_channels):
-                try:
-                    self.load_settings(ch+1)
-                except ThorlabsError as e:
-                    err_msg = str(e)
-                else:
-                    continue
-
-                self.raise_exception(err_msg + '\nYou may need to run the Kinesis software to specify the actuator')
+                self.load_settings(ch+1)
 
     def can_home(self, channel):
         """Can the device perform a :meth:`home`?
@@ -245,8 +240,7 @@ class BenchtopStepperMotor(MotionControl):
         """
         size = 256
         filename = create_string_buffer(size)
-        if not self.sdk.SBC_GetCalibrationFile(self._serial, self._ch(channel), filename, size):
-            self.raise_exception('Error getting calibration file.')
+        self.sdk.SBC_GetCalibrationFile(self._serial, self._ch(channel), filename, size)
         return filename.raw.decode('utf-8').rstrip('\x00')
 
     def get_device_unit_from_real_value(self, channel, real_value, unit_type):
@@ -901,6 +895,16 @@ class BenchtopStepperMotor(MotionControl):
         """
         return self.sdk.SBC_GetRackDigitalOutputs(self._serial)
 
+    def get_rack_status_bits(self):
+        """Gets the Rack status bits.
+
+        Returns
+        -------
+        :class:`int`
+            The status bits including 4 with one per electronic input pin.
+        """
+        return self.sdk.SBC_GetRackStatusBits(self._serial)
+
     def get_real_value_from_device_unit(self, channel, device_value, unit_type):
         """Converts a device value to a real-world value.
 
@@ -1185,8 +1189,26 @@ class BenchtopStepperMotor(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        if not self.sdk.SBC_LoadSettings(self._serial, self._ch(channel)):
-            self.raise_exception('Error loading the stored settings.')
+        self.sdk.SBC_LoadSettings(self._serial, self._ch(channel))
+
+    def load_named_settings(self, channel, settings_name):
+        """Update device with named settings.
+
+        Parameters
+        ----------
+        channel : :class:`int`
+            The channel number (1 to n).
+        settings_name : :class:`str`
+            The name of the device to load the settings for. Examples for the value
+            of `setting_name` can be found in `ThorlabsDefaultSettings.xml``, which
+            gets created when the Kinesis software is installed.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
+        self.sdk.SBC_LoadNamedSettings(self._serial, self._ch(channel), settings_name)
 
     def max_channel_count(self):
         """Gets the number of channels available to this device.
@@ -1347,6 +1369,16 @@ class BenchtopStepperMotor(MotionControl):
             If not successful.
         """
         self.sdk.SBC_Open(self._serial)
+
+    def persist_settings(self, channel):
+        """Persist device settings to device.
+
+        Parameters
+        ----------
+        channel : :class:`int`
+            The channel number (1 to n).
+        """
+        self.sdk.SBC_PersistSettings(self._serial, self._ch(channel))
 
     def polling_duration(self, channel):
         """Gets the polling loop duration.
@@ -1606,6 +1638,16 @@ class BenchtopStepperMotor(MotionControl):
         """
         self.sdk.SBC_RequestRackDigitalOutputs(self._serial)
 
+    def request_rack_status_bits(self):
+        """Requests the Rack status bits be downloaded.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
+        self.sdk.SBC_RequestRackStatusBits(self._serial)
+
     def request_settings(self, channel):
         """Requests that all settings are downloaded from the device.
 
@@ -1674,6 +1716,21 @@ class BenchtopStepperMotor(MotionControl):
             If not successful.
         """
         self.sdk.SBC_RequestVelParams(self._serial, self._ch(channel))
+
+    def reset_rotation_modes(self, channel):
+        """Reset the rotation modes for a rotational device.
+
+        Parameters
+        ----------
+        channel : :class:`int`
+            The channel number (1 to n).
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
+        self.sdk.SBC_ResetRotationModes(self._serial, self._ch(channel))
 
     def resume_move_messages(self, channel):
         """Resume suspended move messages.
@@ -2281,6 +2338,29 @@ class BenchtopStepperMotor(MotionControl):
         """
         self.sdk.SBC_SetRackDigitalOutputs(self._serial, outputs_bits)
 
+    def set_rotation_modes(self, channel, mode, direction):
+        """Set the rotation modes for a rotational device.
+
+        Parameters
+        ----------
+        channel : :class:`int`
+            The channel number (1 to n).
+        mode : :class:`.enums.MOT_MovementModes`
+            The travel mode as a :class:`.enums.MOT_MovementModes` enum value or
+            member name.
+        direction : :class:`.enums.MOT_MovementDirections`
+            The travel mode as a :class:`.enums.MOT_MovementDirections` enum value or
+            member name.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
+        mode = self.convert_to_enum(mode, MOT_MovementModes)
+        direction = self.convert_to_enum(direction, MOT_MovementDirections)
+        self.sdk.SBC_SetRotationModes(self._serial, self._ch(channel), mode, direction)
+
     def set_stage_axis_limits(self, channel, min_position, max_position):
         """Sets the stage axis position limits.
 
@@ -2531,26 +2611,5 @@ class BenchtopStepperMotor(MotionControl):
 
 
 if __name__ == '__main__':
-    #from msl.equipment.resources.thorlabs.kinesis.api_functions import Benchtop_StepperMotor_FCNS
-    from msl.equipment.resources.utils import camelcase_to_underscore as convert
-
-    for item in sorted(Benchtop_StepperMotor_FCNS):
-        method_name = convert(item[0].split('_')[1])
-        args_p = ''
-        args_c = ''
-        for i, arg in enumerate(item[3]):
-            if i == 0 and 'c_char_p' in str(arg[0]):
-                args_c += 'self._serial, '
-            elif 'PyCPointerType' in str(type(arg[0])):
-                args_c += 'byref({}), '.format(convert(arg[1]))
-            else:
-                a = convert(arg[1])
-                args_p += '{}, '.format(a)
-                args_c += '{}, '.format(a)
-
-        args_p = args_p[:-2]
-        if args_p:
-            print('    def {}(self, {}):'.format(method_name, args_p))
-        else:
-            print('    def {}(self):'.format(method_name))
-        print('        return self.sdk.{}({})\n'.format(item[0], args_c[:-2]))
+    from msl.equipment.resources.thorlabs.kinesis import _print
+    _print(BenchtopStepperMotor, Benchtop_StepperMotor_FCNS, 'Thorlabs.MotionControl.Benchtop.StepperMotor.h')

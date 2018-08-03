@@ -1,7 +1,7 @@
 """
-Structs defined in the Thorlabs Kinesis software v1.11.0
+Structs defined in Thorlabs Kinesis v1.14.9
 """
-from ctypes import c_bool, c_char, c_ushort, c_uint16, c_short, \
+from ctypes import c_byte, c_bool, c_char, c_ushort, c_uint16, c_short, \
     c_int16, c_uint, c_int, c_int32, c_uint32, c_float, Structure
 
 from msl.equipment.resources.utils import BYTE, WORD, DWORD
@@ -30,12 +30,12 @@ class TLI_HardwareInformation(Structure):
         ('serialNumber', DWORD),
         ('modelNumber', c_char * 8),
         ('type', WORD),
-        ('numChannels', c_short),
-        ('notes', c_char * 48),
         ('firmwareVersion', DWORD),
-        ('hardwareVersion', WORD),
+        ('notes', c_char * 48),
         ('deviceDependantData', BYTE * 12),
+        ('hardwareVersion', WORD),
         ('modificationState', WORD),
+        ('numChannels', c_short),
     ]
 
 
@@ -369,10 +369,10 @@ class MOT_PotentiometerSteps(Structure):
 
 class KMOT_MMIParams(Structure):
     _fields_ = [
-        ('JoystickMode', c_int16),
-        ('JoystickMaxVelocity', c_int32),
-        ('JoystickAcceleration', c_int32),
-        ('JoystickDirectionSense', c_short),
+        ('WheelMode', c_int16),
+        ('WheelMaxVelocity', c_int32),
+        ('WheelAcceleration', c_int32),
+        ('WheelDirectionSense', c_short),
         ('PresetPos1', c_int32),
         ('PresetPos2', c_int32),
         ('DisplayIntensity', c_int16),
@@ -405,6 +405,116 @@ class KMOT_TriggerParams(Structure):
     ]
 
 
+class KIM_DriveOPParameters(Structure):
+    _fields_ = [
+        ('_maxVoltage', c_int16),
+        ('_stepRate', c_int32),
+        ('_stepAcceleration', c_int32),
+    ]
+
+
+class KIM_JogParameters(Structure):
+    _fields_ = [
+        ('_jogMode', c_uint16),
+        ('_jogStepSizeFwd', c_int32),
+        ('_jogStepSizeRev', c_int32),
+        ('_jogStepRate', c_int32),
+        ('_jogStepAcceleration', c_int32),
+    ]
+
+
+class KIM_LimitSwitchParameters(Structure):
+    _fields_ = [
+        ('_forwardLimit', c_int16),
+        ('_reverseLimit', c_int16),
+        ('_stageID', c_int16),
+    ]
+
+
+class KIM_HomeParameters(Structure):
+    _fields_ = [
+        ('_homeDirection', c_byte),
+        ('_homeLimitSwitch', c_byte),
+        ('_homeStepRate', c_int32),
+        ('_homeOffset', c_int32),
+    ]
+
+
+class KIM_MMIParameters(Structure):
+    _fields_ = [
+        ('_joystickMode', c_int16),
+        ('_maxStepRate', c_int32),
+        ('_directionSense', c_int16),
+        ('_displayIntensity', c_int16),
+    ]
+
+
+class KIM_MMIChannelParameters(Structure):
+    _fields_ = [
+        ('_presetPos1', c_int32),
+        ('_presetPos2', c_int32),
+    ]
+
+
+class KIM_TrigIOConfig(Structure):
+    _fields_ = [
+        ('_trigChannel1', c_uint16),
+        ('_trigChannel2', c_uint16),
+        ('_trig1Mode', c_int16),
+        ('_trig1Polarity', c_int16),
+        ('_trig2Mode', c_int16),
+        ('_trig2Polarity', c_int16),
+    ]
+
+
+class KIM_TrigParamsParameters(Structure):
+    _fields_ = [
+        ('_startPosFwd', c_int32),
+        ('_intervalFwd', c_int32),
+        ('_numberOfPulsesFwd', c_int32),
+        ('_startPosRev', c_int32),
+        ('_intervalRev', c_int32),
+        ('_numberOfPulsesRev', c_int32),
+        ('_pulseWidth', c_int32),
+        ('_numberOfCycles', c_int32),
+        ('_reserved', c_int16 * 6),
+    ]
+
+
+class KIM_FeedbackSigParams(Structure):
+    _fields_ = [
+        ('_feedbackSignalMode', c_int16),
+        ('_encoderConst', c_int32),
+        ('_reserved', c_int16 * 4),
+    ]
+
+
+class KIM_Status(Structure):
+    _fields_ = [
+        ('_position', c_int32),
+        ('_encoderCount', c_int32),
+        ('_statusBits', c_uint32),
+    ]
+
+
+class KLD_MMIParams(Structure):
+    _fields_ = [
+        ('displayIntensity', c_int16),
+        ('reserved', c_int16 * 3),
+    ]
+
+
+class KLD_TrigIOParams(Structure):
+    _fields_ = [
+        ('mode1', c_ushort),
+        ('polarity1', c_ushort),
+        ('reserved1', c_int16),
+        ('mode2', c_ushort),
+        ('polarity2', c_ushort),
+        ('reserved2', c_int16),
+    ]
+
+
 class KLS_MMIParams(Structure):
     _fields_ = [
         ('displayIntensity', c_int16),
@@ -416,10 +526,66 @@ class KLS_TrigIOParams(Structure):
     _fields_ = [
         ('mode1', c_ushort),
         ('polarity1', c_ushort),
-        ('power1', c_int16),
+        ('reserved1', c_int16),
         ('mode2', c_ushort),
         ('polarity2', c_ushort),
-        ('power2', c_int16),
+        ('reserved2', c_int16),
+    ]
+
+
+class KNA_TIARangeParameters(Structure):
+    _fields_ = [
+        ('mode', WORD),
+        ('upLimit', WORD),
+        ('downLimit', WORD),
+        ('settleSamples', c_short),
+        ('changeToOddOrEven', WORD),
+        ('newRange', WORD),
+    ]
+
+
+class KNA_TIAReading(Structure):
+    _fields_ = [
+        ('absoluteReading', c_float),
+        ('relativeReading', WORD),
+        ('selectedRange', WORD),
+        ('underOrOverRead', WORD),
+    ]
+
+
+class KNA_IOSettings(Structure):
+    _fields_ = [
+        ('lowVoltageOutRange', WORD),
+        ('lowVoltageOutputRoute', WORD),
+        ('highVoltageOutRange', WORD),
+        ('highVoltageOutputRoute', WORD),
+    ]
+
+
+class KNA_MMIParams(Structure):
+    _fields_ = [
+        ('WheelAdjustRate', c_int16),
+        ('DisplayIntensity', c_int16),
+        ('reserved', c_int16 * 6),
+    ]
+
+
+class KNA_TriggerConfig(Structure):
+    _fields_ = [
+        ('Trigger1Mode', c_int16),
+        ('Trigger1Polarity', c_int16),
+        ('unused1', c_int16),
+        ('Trigger2Mode', c_int16),
+        ('Trigger2Polarity', c_int16),
+        ('unused2', c_int16),
+        ('reserved', c_int16 * 4),
+    ]
+
+
+class KNA_FeedbackLoopConstants(Structure):
+    _fields_ = [
+        ('proportionalTerm', c_short),
+        ('integralTerm', c_short),
     ]
 
 
@@ -625,11 +791,29 @@ class TC_LoopParameters(Structure):
 STRUCT_LIST = [
     'BNT_IO_Settings',
     'FF_IOSettings',
+    'KIM_DriveOPParameters',
+    'KIM_FeedbackSigParams',
+    'KIM_HomeParameters',
+    'KIM_JogParameters',
+    'KIM_LimitSwitchParameters',
+    'KIM_MMIChannelParameters',
+    'KIM_MMIParameters',
+    'KIM_Status',
+    'KIM_TrigIOConfig',
+    'KIM_TrigParamsParameters',
+    'KLD_MMIParams',
+    'KLD_TrigIOParams',
     'KLS_MMIParams',
     'KLS_TrigIOParams',
     'KMOT_MMIParams',
     'KMOT_TriggerConfig',
     'KMOT_TriggerParams',
+    'KNA_FeedbackLoopConstants',
+    'KNA_IOSettings',
+    'KNA_MMIParams',
+    'KNA_TIARangeParameters',
+    'KNA_TIAReading',
+    'KNA_TriggerConfig',
     'KPZ_MMIParams',
     'KPZ_TriggerConfig',
     'KSC_MMIParams',

@@ -1,5 +1,5 @@
 """
-Enums defined in the Thorlabs Kinesis software v1.11.0
+Enums defined in Thorlabs Kinesis v1.14.9
 """
 from enum import IntEnum
 from ctypes import c_byte, c_ushort, c_short, c_int16, c_uint16, c_int
@@ -108,6 +108,18 @@ class MOT_CurrentLoopPhases(IntEnum):
     MOT_PhaseA = 0x0
     MOT_PhaseB = 0x1
     MOT_PhaseAB = 0x2
+
+
+class MOT_MovementModes(IntEnum):
+    LinearRange = 0x00
+    RotationalUnlimited = 0x01
+    RotationalWrapping = 0x02
+
+
+class MOT_MovementDirections(IntEnum):
+    Quickest = 0x00
+    Forwards = 0x01
+    Reverse = 0x02
 
 
 class MOT_PID_LoopMode(IntEnum):
@@ -346,15 +358,15 @@ class FF_SignalModes(IntEnum):
     FF_OutputSwap = 0x40
 
 
-class KMOT_JoystickDirectionSense(IntEnum):
-    KMOT_JS_Positive = 0x01
-    KMOT_JS_Negative = 0x02
+class KMOT_WheelDirectionSense(IntEnum):
+    KMOT_WM_Positive = 0x01
+    KMOT_WM_Negative = 0x02
 
 
-class KMOT_JoyStickMode(IntEnum):
-    KMOT_JS_Velocity = 0x01
-    KMOT_JS_Jog = 0x02
-    KMOT_JS_MoveAbsolute = 0x03
+class KMOT_WheelMode(IntEnum):
+    KMOT_WM_Velocity = 0x01
+    KMOT_WM_Jog = 0x02
+    KMOT_WM_MoveAbsolute = 0x03
 
 
 class KMOT_TriggerPortMode(IntEnum):
@@ -375,16 +387,125 @@ class KMOT_TriggerPortPolarity(IntEnum):
     KMOT_TrigPolarityLow = 0x02
 
 
+class KIM_Channels(IntEnum):
+    Channel1 = 1
+    Channel2 = 2
+    Channel3 = 3
+    Channel4 = 4
+
+
+class KIM_JogMode(IntEnum):
+    JogContinuous = 0x01
+    JogStep = 0x02
+
+
+class KIM_TravelDirection(IntEnum):
+    Forward = 0x01
+    Reverse = 0x02
+
+
+class KIM_FBSignalMode(IntEnum):
+    FB_LimitSwitch = 0x01
+    FB_Encoder = 0x02
+
+
+class KIM_LimitSwitchModes(IntEnum):
+    Ignore = 0x01
+    SwitchMakes = 0x02
+    SwitchBreaks = 0x03
+    SwitchMakes_HomeOnly = 0x04
+    SwitchBreaks_HomeOnly = 0x05
+
+
+class KIM_DirectionSense(IntEnum):
+    Dir_Disabled = 0x0
+    Dir_Forward = 0x01
+    Dir_Reverse = 0x02
+
+
+class KIM_TrigModes(IntEnum):
+    Trig_Disabled = 0x00
+    Trig_In_GPI = 0x01
+    Trig_InRelativeMove = 0x02
+    Trig_InAbsoluteMove = 0x03
+    Trig_InResetCount = 0x04
+    Trig_Out_GP0 = 0x0A
+    Trig_Out_InMotion = 0x0B
+    Trig_Out_AtMaxVelocity = 0x0C
+    Trig_Out_PosStepFwd = 0x0D
+    Trig_Out_PosStepRev = 0x0E
+    Trig_Out_PosStepBoth = 0x0F
+    Trig_Out_AtFwdLimit = 0x10
+    Trig_Out_AtRevLimit = 0x11
+    Trig_Out_AtEitherLimit = 0x12
+
+
+class KIM_TrigPolarities(IntEnum):
+    Trig_High = 0x01
+    Trig_Low = 0x02
+
+
+class KIM_JoysticModes(IntEnum):
+    JS_Velocity = 0x01
+    JS_Jog = 0x02
+    JS_GotoPosition = 0x03
+
+
+class ChannelEnableModes(IntEnum):
+    NONE = 0x00
+    Channel1Only = 0x01
+    Channel2Only = 0x02
+    Channel3Only = 0x03
+    Channel4Only = 0x04
+    Channels1and2 = 0x05
+    Channels3and4 = 0x06
+
+
+class LD_InputSourceFlags(IntEnum):
+    LD_SoftwareOnly = 0x01
+    LD_ExternalSignal = 0x02
+    LD_Potentiometer = 0x04
+
+
+class LD_DisplayUnits(IntEnum):
+    LD_ILim = 0x01
+    LD_ILD = 0x02
+    LD_IPD = 0x03
+    LD_PLD = 0x04
+
+
+class LD_TIA_RANGES(IntEnum):
+    LD_TIA_10uA = 1
+    LD_TIA_100uA = 2
+    LD_TIA_1mA = 4
+    LD_TIA_10mA = 8
+
+
+class LD_POLARITY(IntEnum):
+    LD_CathodeGrounded = 1
+    LD_AnodeGrounded = 2
+
+
+class KLD_TriggerMode(IntEnum):
+    KLD_Disabled = 0
+    KLD_Input = 1
+    KLD_Output = 0x0a
+    KLD_LaserOn = 0x0b
+    KLD_InterlockEnabled = 0x0c
+    KLD_SetPointChange = 0x0d
+    KLD_HighStability = 0x0e
+    KLD_LowStability = 0x0f
+
+
+class KLD_TrigPolarity(IntEnum):
+    KLD_TrigPol_High = 0x01
+    KLD_TrigPol_Low = 0x02
+
+
 class LS_InputSourceFlags(IntEnum):
     LS_SoftwareOnly = 0
     LS_ExternalSignal = 0x01
     LS_Potentiometer = 0x04
-
-
-class LS_DisplayUnits(IntEnum):
-    LS_mAmps = 0x01
-    LS_mWatts = 0x02
-    LS_mDb = 0x03
 
 
 class KLS_OpMode(IntEnum):
@@ -395,8 +516,6 @@ class KLS_OpMode(IntEnum):
 class KLS_TriggerMode(IntEnum):
     KLS_Disabled = 0
     KLS_Input = 1
-    KLS_ModulationTrigger = 2
-    KLS_SetPower = 3
     KLS_Output = 0x0a
     KLS_LaserOn = 0x0b
     KLS_InterlockEnabled = 0x0c
@@ -410,21 +529,107 @@ class KLS_TrigPolarity(IntEnum):
     KLS_TrigPol_Low = 0x02
 
 
-class KPZ_JoystickDirectionSense(IntEnum):
-    KPZ_JS_Positive = 0x01
-    KPZ_JS_Negative = 0x02
+class KNA_FeedbackSource(IntEnum):
+    NT_FeedbackSourceUndefined = 0x00
+    NT_TIA = 0x01
+    NT_IO1_5v = 0x04
 
 
-class KPZ_JoyStickMode(IntEnum):
-    KPZ_JS_MoveAtVoltage = 0x01
-    KPZ_JS_JogVoltage = 0x02
-    KPZ_JS_SetVoltage = 0x03
+class KNA_TIARange(IntEnum):
+    KNA_TIARange1_5nA = 0x0003
+    KNA_TIARange2_16_6nA = 0x0004
+    KNA_TIARange3_50nA = 0x0005
+    KNA_TIARange4_166nA = 0x0006
+    KNA_TIARange5_500nA = 0x0007
+    KNA_TIARange6_1_66uA = 0x0008
+    KNA_TIARange7_5uA = 0x0009
+    KNA_TIARange8_16_6uA = 0x000A
+    KNA_TIARange9_50uA = 0x000B
+    KNA_TIARange10_166uA = 0x000C
+    KNA_TIARange11_500uA = 0x000D
+    KNA_TIARange12_1_66mA = 0x000E
+    KNA_TIARange13_5mA = 0x000F
 
 
-class KPZ_JoyStickChangeRate(IntEnum):
-    KPZ_JS_High = 0x01
-    KPZ_JS_Medium = 0x02
-    KPZ_JS_Low = 0x03
+class KNA_LowVoltageRange(IntEnum):
+    KNA_VoltageRange_10v = 0x0002
+
+
+class KNA_LowOutputVoltageRoute(IntEnum):
+    KNA_IO1Only = 0x0001
+
+
+class KNA_HighVoltageRange(IntEnum):
+    KNA_Default_Range = 0x00
+    KNA_VoltageRange_CH1_75v = 0x00
+    KNA_VoltageRange_CH1_150v = 0x01
+    KNA_VoltageRange_CH2_75v = 0x00
+    KNA_VoltageRange_CH2_150v = 0x10
+
+
+class KNA_HighOutputVoltageRoute(IntEnum):
+    KNA_Default_Route = 0x0000
+    KNA_ExtIn_PIN = 0x0000
+    KNA_ExtIn_IO1 = 0x0001
+    KNA_ExtOut_Dis = 0x0000
+    KNA_ExtOut_IO2 = 0x0010
+    KNA_EnableInputBoost = 0x0100
+
+
+class NT_IO1_Units(IntEnum):
+    NT_Voltage = 0
+    NT_FullRange = 1
+    NT_UserDefined = 2
+
+
+class KNA_WheelAdjustRate(IntEnum):
+    KNA_WM_Low = 0x00
+    KNA_WM_Medium = 0x01
+    KNA_WM_High = 0x02
+
+
+class KNA_TriggerPortMode(IntEnum):
+    KNA_TrigDisabled = 0x00
+    KNA_TrigIn_GPI = 0x01
+    KNA_TrigIn_VoltageStepUp = 0x02
+    KNA_TrigIn_VoltageStepDown = 0x03
+    KNA_TrigOut_GPO = 0x0A
+
+
+class KNA_TriggerPortPolarity(IntEnum):
+    KNA_TrigPolarityHigh = 0x01
+    KNA_TrigPolarityLow = 0x02
+
+
+class KNA_Channels(IntEnum):
+    KNA_ChannelUndefined = 0x00
+    KNA_Channel1 = 0x01
+    KNA_Channel2 = 0x02
+
+
+class KNA_FeedbackModeTypes(IntEnum):
+    PZ_ControlModeUndefined = 0
+    PZ_OpenLoop = 1
+    PZ_CloseLoop = 2
+    PZ_OpenLoopSmooth = 3
+    PZ_CloseLoopSmooth = 4
+
+
+class KPZ_WheelDirectionSense(IntEnum):
+    KPZ_WM_Positive = 0x01
+    KPZ_WM_Negative = 0x02
+
+
+class KPZ_WheelMode(IntEnum):
+    KPZ_WM_MoveAtVoltage = 0x01
+    KPZ_WM_JogVoltage = 0x02
+    KPZ_WM_SetVoltage = 0x03
+
+
+class KPZ_WheelChangeRate(IntEnum):
+    KPZ_WM_High = 0x01
+    KPZ_WM_Medium = 0x02
+    KPZ_WM_Low = 0x03
 
 
 class KPZ_TriggerPortMode(IntEnum):
@@ -536,29 +741,37 @@ class TIM_Direction(IntEnum):
     Reverse = 0x02
 
 
-class LD_InputSourceFlags(IntEnum):
-    LD_SoftwareOnly = 0x01
-    LD_ExternalSignal = 0x02
-    LD_Potentiometer = 0x04
+class LS_DisplayUnits(IntEnum):
+    LS_mAmps = 0x01
+    LS_mWatts = 0x02
+    LS_mDb = 0x03
 
 
-class LD_DisplayUnits(IntEnum):
-    LD_ILim = 0x01
-    LD_ILD = 0x02
-    LD_IPD = 0x03
-    LD_PLD = 0x04
-
-
-class LD_TIA_RANGES(IntEnum):
-    LD_TIA_10uA = 1
-    LD_TIA_100uA = 2
-    LD_TIA_1mA = 4
-    LD_TIA_10mA = 8
-
-
-class LD_POLARITY(IntEnum):
-    LD_CathodeGrounded = 1
-    LD_AnodeGrounded = 2
+class TST_Stages(IntEnum):
+    ZST6 = 0x20
+    ZST13 = 0x21
+    ZST25 = 0x22
+    ZST206 = 0x30
+    ZST213 = 0x31
+    ZST225 = 0x32
+    ZFS206 = 0x40
+    ZFS213 = 0x41
+    ZFS225 = 0x42
+    TBD1 = 0x60
+    TBD2 = 0x61
+    TBD3 = 0x62
+    TBD4 = 0x63
+    NR360 = 0x70
+    MVS025 = 0x71
+    PLS_X25MM = 0x72
+    PLS_X25MM_HiRes = 0x73
+    FW103 = 0x75
+    NEWZFS06 = 10006
+    NEWZFS13 = 10013
+    NEWZFS25 = 10025
+    NEWZST06 = 11006
+    NEWZST13 = 11013
+    NEWZST25 = 12025
 
 
 class TSG_Hub_Analogue_Modes(IntEnum):
@@ -597,29 +810,52 @@ ENUM_CTYPE = {
     'BNT_CurrentLimit': WORD,
     'BNT_FeedbackSignalSelection': WORD,
     'BNT_OutputLowPassFilter': WORD,
+    'ChannelEnableModes': c_int16,
     'FF_IOModes': WORD,
     'FF_Positions': c_int,
     'FF_SignalModes': WORD,
     'FT_Status': c_short,
     'HubAnalogueModes': c_short,
+    'KIM_Channels': c_uint16,
+    'KIM_DirectionSense': c_int16,
+    'KIM_FBSignalMode': c_int16,
+    'KIM_JogMode': c_uint16,
+    'KIM_JoysticModes': c_int16,
+    'KIM_LimitSwitchModes': c_int16,
+    'KIM_TravelDirection': c_byte,
+    'KIM_TrigModes': c_int16,
+    'KIM_TrigPolarities': c_int16,
+    'KLD_TrigPolarity': c_ushort,
+    'KLD_TriggerMode': c_ushort,
     'KLS_OpMode': c_ushort,
     'KLS_TrigPolarity': c_ushort,
     'KLS_TriggerMode': c_ushort,
-    'KMOT_JoyStickMode': c_int16,
-    'KMOT_JoystickDirectionSense': c_int16,
     'KMOT_TriggerPortMode': c_int16,
     'KMOT_TriggerPortPolarity': c_int16,
-    'KPZ_JoyStickChangeRate': c_int16,
-    'KPZ_JoyStickMode': c_int16,
-    'KPZ_JoystickDirectionSense': c_int16,
+    'KMOT_WheelDirectionSense': c_int16,
+    'KMOT_WheelMode': c_int16,
+    'KNA_Channels': WORD,
+    'KNA_FeedbackModeTypes': c_short,
+    'KNA_FeedbackSource': WORD,
+    'KNA_HighOutputVoltageRoute': WORD,
+    'KNA_HighVoltageRange': WORD,
+    'KNA_LowOutputVoltageRoute': WORD,
+    'KNA_LowVoltageRange': WORD,
+    'KNA_TIARange': WORD,
+    'KNA_TriggerPortMode': c_int16,
+    'KNA_TriggerPortPolarity': c_int16,
+    'KNA_WheelAdjustRate': c_int16,
     'KPZ_TriggerPortMode': c_int16,
     'KPZ_TriggerPortPolarity': c_int16,
+    'KPZ_WheelChangeRate': c_int16,
+    'KPZ_WheelDirectionSense': c_int16,
+    'KPZ_WheelMode': c_int16,
     'KSC_TriggerPortMode': c_int16,
     'KSC_TriggerPortPolarity': c_int16,
     'LD_DisplayUnits': c_ushort,
     'LD_InputSourceFlags': c_ushort,
-    'LD_POLARITY': None,
-    'LD_TIA_RANGES': None,
+    'LD_POLARITY': c_int,
+    'LD_TIA_RANGES': c_int,
     'LS_DisplayUnits': c_ushort,
     'LS_InputSourceFlags': c_ushort,
     'MOT_ButtonModes': WORD,
@@ -630,7 +866,9 @@ ENUM_CTYPE = {
     'MOT_LimitSwitchModes': WORD,
     'MOT_LimitSwitchSWModes': WORD,
     'MOT_LimitsSoftwareApproachPolicy': c_short,
-    'MOT_MotorTypes': None,
+    'MOT_MotorTypes': c_int,
+    'MOT_MovementDirections': c_int,
+    'MOT_MovementModes': c_int,
     'MOT_PID_LoopMode': WORD,
     'MOT_StopModes': c_short,
     'MOT_TravelDirection': c_short,
@@ -640,13 +878,14 @@ ENUM_CTYPE = {
     'NT_CircleDiameterMode': WORD,
     'NT_ControlMode': WORD,
     'NT_FeedbackSource': WORD,
+    'NT_IO1_Units': WORD,
     'NT_LowPassFrequency': WORD,
     'NT_Mode': WORD,
     'NT_OddOrEven': WORD,
     'NT_OutputVoltageRoute': WORD,
     'NT_PowerInputUnits': WORD,
     'NT_SMA_Units': WORD,
-    'NT_SignalState': None,
+    'NT_SignalState': c_int,
     'NT_TIARange': WORD,
     'NT_TIARangeMode': WORD,
     'NT_UnderOrOver': WORD,
@@ -679,6 +918,7 @@ ENUM_CTYPE = {
     'TIM_JogMode': c_uint16,
     'TSG_Display_Modes': c_short,
     'TSG_Hub_Analogue_Modes': c_short,
+    'TST_Stages': c_short,
     'UnitType': c_short,
 }
 
@@ -689,7 +929,7 @@ if __name__ == '__main__':
     from msl.equipment.resources.utils import CHeader
 
     enums = {}  # dict of all enums
-    enum_ctypes = {}  # dict of enum data types
+    enum_ctypes = {'UnitType': 'c_short'}  # dict of enum data types
 
     root = r'C:\Program Files\Thorlabs\Kinesis'
     for f in os.listdir(root):
@@ -707,6 +947,12 @@ if __name__ == '__main__':
             print('    {} = {}'.format(name, value))
         print('\n')
 
+    print('class UnitType(IntEnum):')
+    print('    DISTANCE = 0')
+    print('    VELOCITY = 1')
+    print('    ACCELERATION = 2')
+
+    print('\n')
     print('ENUM_CTYPE = {')
     for e in sorted(enum_ctypes):
         print("    '{}': {},".format(e, enum_ctypes[e]))

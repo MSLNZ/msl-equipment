@@ -6,10 +6,10 @@ from ctypes import byref, c_int64
 
 from msl.equipment.resources import register
 from msl.equipment.resources.utils import WORD, DWORD
-from .motion_control import MotionControl
-from .api_functions import FilterFlipper_FCNS
-from .structs import FF_IOSettings
-from .enums import FF_IOModes, FF_SignalModes
+from msl.equipment.resources.thorlabs.kinesis.motion_control import MotionControl
+from msl.equipment.resources.thorlabs.kinesis.api_functions import FilterFlipper_FCNS
+from msl.equipment.resources.thorlabs.kinesis.structs import FF_IOSettings
+from msl.equipment.resources.thorlabs.kinesis.enums import FF_IOModes, FF_SignalModes
 
 
 @register(manufacturer='Thorlabs', model='MFF10[1|2]')
@@ -23,6 +23,13 @@ class FilterFlipper(MotionControl):
     def __init__(self, record):
         """A wrapper around ``Thorlabs.MotionControl.FilterFlipper.dll``.
 
+        The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
+        for a FilterFlipper connection supports the following key-value pairs in the
+        :ref:`connection_database`::
+
+            'load_settings': bool, call load_settings() after the connection is created [default: False]
+            'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
+
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.
 
@@ -32,6 +39,9 @@ class FilterFlipper(MotionControl):
             A record from an :ref:`equipment_database`.
         """
         MotionControl.__init__(self, record, FilterFlipper_FCNS)
+
+        if record.connection.properties.get('load_settings', False):
+            self.load_settings()
 
     def open(self):
         """Open the device for communication.
@@ -107,8 +117,24 @@ class FilterFlipper(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        if not self.sdk.FF_LoadSettings(self._serial):
-            self.raise_exception('Error loading the stored settings.')
+        self.sdk.FF_LoadSettings(self._serial)
+
+    def load_named_settings(self, settings_name):
+        """Update device with named settings.
+
+        Parameters
+        ----------
+        settings_name : :class:`str`
+            The name of the device to load the settings for. Examples for the value
+            of `setting_name` can be found in `ThorlabsDefaultSettings.xml``, which
+            gets created when the Kinesis software is installed.
+
+        Raises
+        ------
+        :exc:`~msl.equipment.exceptions.ThorlabsError`
+            If not successful.
+        """
+        self.sdk.FF_LoadNamedSettings(self._serial, settings_name)
 
     def persist_settings(self):
         """Persist the devices current settings.
@@ -118,8 +144,7 @@ class FilterFlipper(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        if not self.sdk.FF_PersistSettings(self._serial):
-            self.raise_exception('Error to persist the current settings.')
+        self.sdk.FF_PersistSettings(self._serial)
 
     def get_number_positions(self):
         """Get number of positions available from the device.
@@ -467,25 +492,5 @@ class FilterFlipper(MotionControl):
 
 
 if __name__ == '__main__':
-    from msl.equipment.resources.utils import camelcase_to_underscore as convert
-
-    for item in FilterFlipper_FCNS:
-        method_name = convert(item[0].split('_')[1])
-        args_p = ''
-        args_c = ''
-        for i, arg in enumerate(item[3]):
-            if i == 0 and 'c_char_p' in str(arg[0]):
-                args_c += 'self._serial, '
-            elif 'PyCPointerType' in str(type(arg[0])):
-                args_c += 'byref({}), '.format(convert(arg[1]))
-            else:
-                a = convert(arg[1])
-                args_p += '{}, '.format(a)
-                args_c += '{}, '.format(a)
-
-        args_p = args_p[:-2]
-        if args_p:
-            print('    def {}(self, {}):'.format(method_name, args_p))
-        else:
-            print('    def {}(self):'.format(method_name))
-        print('        return self.sdk.{}({})\n'.format(item[0], args_c[:-2]))
+    from msl.equipment.resources.thorlabs.kinesis import _print
+    _print(FilterFlipper, FilterFlipper_FCNS, 'Thorlabs.MotionControl.FilterFlipper.h')

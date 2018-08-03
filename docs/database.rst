@@ -30,7 +30,7 @@ Each **record** in an Equipment-Register database is converted into an
 :class:`~msl.equipment.record_types.EquipmentRecord`.
 
 The following is an example of an Equipment-Register database (additional **fields** can also be added to a database,
-see :ref:`field_names`).
+see :ref:`register_field_names`).
 
 +-----------------+---------+--------+--------------+---------------+---------------------------------------+
 | Manufacturer    | Model   | Serial | Date         | Calibration   | Description                           |
@@ -49,7 +49,7 @@ see :ref:`field_names`).
    and should be included in the Equipment-Register database and specified as **<equipment>** tags in the
    :ref:`configuration_file`.
 
-.. _field_names:
+.. _register_field_names:
 
 Field Names
 +++++++++++
@@ -117,6 +117,10 @@ Connection Database
 -------------------
 A Connection database is used to store the information that is required to establish communication with the equipment.
 
+.. _connections_field_names:
+
+Field Names
++++++++++++
 The supported **fields** for a Connection database are:
 
 * **Address** -- The address to use for the connection (see :ref:`address_syntax`).
@@ -124,11 +128,11 @@ The supported **fields** for a Connection database are:
 * **Manufacturer** -- The name of the manufacturer of the equipment
 * **Model** -- The model number of the equipment
 * **Properties** -- Additional properties that may be required to establish a connection to the equipment as key-value
-  pairs separated by a semi-colon. For example, for a :class:`~msl.equipment.connection_msl.ConnectionSerial` connection
-  the baud rate and parity might need to be defined -- ``baud_rate=11920; parity=even``. The value (as in a key-*value*
-  pair) gets cast to the appropriate data type (e.g., :obj:`int`, :obj:`float`, :obj:`str`) so the baud rate
-  value would be ``11920`` as an :obj:`int` and the parity value would be
-  :obj:`Parity.EVEN <msl.equipment.constants.Parity.EVEN>`.
+  pairs separated by a semi-colon. For example, for a :class:`~msl.equipment.connection_serial.ConnectionSerial`
+  connection the baud rate and parity might need to be defined -- ``baud_rate=11920; parity=even``. The value (as in a
+  key-*value* pair) gets cast to the appropriate data type (e.g., :class:`int`, :class:`float`, :class:`str`) so the
+  baud rate value would be ``11920`` as an :class:`int` and the parity value would be
+  :data:`Parity.EVEN <msl.equipment.constants.Parity.EVEN>`.
 * **Serial** -- The serial number, or engraved unique ID, of the equipment
 
 A **record** in a Connection database gets matched with the appropriate **record** in an `Equipment-Register Database`_
@@ -136,14 +140,14 @@ by the unique combination of the ``Manufacturer + Model + Serial`` values, which
 in each database.
 
 The following is an example of a Connection database (the header of each **field** also follows the same
-:ref:`field_names` format used in an `Equipment-Register Database`_ and so *Model #* would also be an acceptable
-header)
+:ref:`register_field_names` format used in an `Equipment-Register Database`_ and so *Model #* would also be
+an acceptable header)
 
 +-----------------+--------+--------+---------+-----------------------------+-------------------------------+
 | Manufacturer    | Model  | Serial | Backend | Address                     | Properties                    |
 |                 | Number | Number |         |                             |                               |
 +=================+========+========+=========+=============================+===============================+
-| Keysight        | 34465A | MY5450 | MSL     | USB::0x2A8D::0x0101::MY5450 |                               |
+| Keysight        | 34465A | MY5450 | MSL     | USB::0x2A8D::0x0101::MY5450 | termination="\\n"             |
 +-----------------+--------+--------+---------+-----------------------------+-------------------------------+
 | Hewlett Packard | 3468A  | BCD024 | PyVISA  | GPIB::7                     | alias=dmm                     |
 +-----------------+--------+--------+---------+-----------------------------+-------------------------------+
@@ -164,27 +168,29 @@ Address Syntax
 ++++++++++++++
 The following are examples of an **Address** syntax (see more examples from `National Instruments`_).
 
-.. note::
-
-   The text **PythonClassName** that is used in the table below would be replaced with the actual name of the
-   Python class that is available in :ref:`resources`. The text **PathToSDK** would be the full path to where
-   the SDK file is located or only the filename if the path to where the SDK file is located has been added as
-   a **<PATH>** XML tag in the :ref:`configuration_file`.
-
-+------------------------------------------------+--------------------------------------------------------------+
-| :class:`~msl.equipment.constants.MSLInterface` | Syntax                                                       |
-+================================================+==============================================================+
-| ASRL                                           | COM2                                                         |
-+------------------------------------------------+--------------------------------------------------------------+
-| ASRL                                           | COM4::INSTR                                                  |
-+------------------------------------------------+--------------------------------------------------------------+
-| ASRL                                           | COM7::**PythonClassName**                                    |
-+------------------------------------------------+--------------------------------------------------------------+
-| SDK                                            | SDK::**PythonClassName**::**PathToSDK**                      |
-+------------------------------------------------+--------------------------------------------------------------+
-| SDK                                            | SDK::Bentham::C:/Program Files/Bentham/lib/benhw32_cdecl.dll |
-+------------------------------------------------+--------------------------------------------------------------+
-| SDK                                            | SDK::FilterFlipper::Thorlabs.MotionControl.FilterFlipper.dll |
-+------------------------------------------------+--------------------------------------------------------------+
++------------------------------------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+| :class:`~msl.equipment.constants.MSLInterface` | Syntax Example                                      |  Notes                                                                                                                                     |
++================================================+=====================================================+============================================================================================================================================+
+| SERIAL                                         | COM2                                                |                                                                                                                                            |
++------------------------------------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+| SERIAL                                         | ASRL7::INSTR                                        | Compatible with `National Instruments`_ syntax                                                                                             |
++------------------------------------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+| SERIAL                                         | ASRLCOM4                                            | Compatible with PyVISA-py_ syntax                                                                                                          |
++------------------------------------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+| SERIAL                                         | SERIAL::/dev/pts/12                                 |                                                                                                                                            |
++------------------------------------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+| SDK                                            | SDK::C:/Program Files/Manufacturer/bin/filename.dll | Specify the full path to the SDK                                                                                                           |
++------------------------------------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+| SDK                                            | SDK::filename.dll                                   | Specify only the filename if the path to where the SDK file is located has been added as a **<PATH>** tag in the :ref:`configuration_file` |
++------------------------------------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+| SOCKET                                         | \TCP::192.168.1.100::5000                           | Creates the connection as a :data:`socket.SOCK_STREAM` to host=192.168.1.100, port=5000                                                    |
++------------------------------------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+| SOCKET                                         | UDP::192.168.1.100::5000                            | Creates the connection as a :data:`socket.SOCK_DGRAM`                                                                                      |
++------------------------------------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+| SOCKET                                         | TCPIP::192.168.1.100::5000::SOCKET                  | Compatible with `National Instruments`_ syntax                                                                                             |
++------------------------------------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------+
+| SOCKET                                         | SOCKET::192.168.1.100::5000                         | Generic socket type. You can specify the type in the **Properties** field (i.e., type=RAW)                                                 |
++------------------------------------------------+-----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------+
 
 .. _National Instruments: http://zone.ni.com/reference/en-XX/help/370131S-01/ni-visa/visaresourcesyntaxandexamples/
+.. _PyVISA-py: https://pyvisa-py.readthedocs.io/en/latest/

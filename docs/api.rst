@@ -7,7 +7,7 @@ API Documentation
 The main entryway in to **MSL-Equipment** is achieved by loading a :ref:`configuration_file` and that is achieved by
 creating a :class:`~msl.equipment.config.Config` object.
 
-.. code-block:: python
+.. code-block:: pycon
 
   >>> from msl.equipment import Config
   >>> cfg = Config('msl/examples/equipment/example.xml')
@@ -19,7 +19,7 @@ that are contained within the :ref:`Databases <database>` as well as all of the
 :meth:`~msl.equipment.config.Config.database` method to create an instance of the
 :class:`~msl.equipment.database.Database`.
 
-.. code-block:: python
+.. code-block:: pycon
 
   >>> db = cfg.database()
   >>> for r in db.records():
@@ -58,7 +58,7 @@ Establishing a connection to the :obj:`~msl.equipment.database.Database.equipmen
 :class:`~msl.equipment.connection.Connection` subclass that contains the necessary properties and methods for
 communicating with the :obj:`~msl.equipment.database.Database.equipment`.
 
-.. code-block:: python
+.. code-block:: pycon
 
   >>> dmm = db.equipment['dmm'].connect()
   >>> dmm.query('*IDN?')
@@ -73,24 +73,26 @@ application.
 
 Connection Classes
 ------------------
-The following :class:`~msl.equipment.connection.Connection` classes are available which allow for communicating with the
-:obj:`~msl.equipment.database.Database.equipment` *(although you should never need to instantiate these classes directly):*
+The following :class:`~msl.equipment.connection.Connection` classes are available to communicate
+with the equipment *(although you should never need to instantiate these classes directly):*
 
-+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_demo.ConnectionDemo`                  | Simulate a connection to the equipment.                                                    |
-+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_message_based.ConnectionMessageBased` | Base class for equipment that use message based communication.                             |
-+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_sdk.ConnectionSDK`                    | Base class for equipment that use the SDK provided by the manufacturer for the connection. |
-+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_serial.ConnectionSerial`              | Base class for equipment that is connected through a Serial port.                          |
-+-------------------------------------------------------------------------+--------------------------------------------------------------------------------------------+
++-------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :class:`~msl.equipment.connection_demo.ConnectionDemo`                  | Simulate a connection to the equipment                                   |
++-------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :class:`~msl.equipment.connection_sdk.ConnectionSDK`                    | Equipment that use the SDK provided by a manufacturer for the connection |
++-------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :class:`~msl.equipment.connection_serial.ConnectionSerial`              | Equipment that is connected through a Serial port                        |
++-------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :class:`~msl.equipment.connection_tcpip.ConnectionSocket`               | Equipment that is connected through a Socket                             |
++-------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :class:`~msl.equipment.connection_message_based.ConnectionMessageBased` | Equipment that use message based communication                           |
++-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 
 and the :class:`~msl.equipment.connection.Connection` classes that are available from external Python libraries are:
 
-+---------------------------------------------------------------+--------------------------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_pyvisa.ConnectionPyVISA`    | Uses PyVISA_ to establish a connection to the equipment.                                   |
-+---------------------------------------------------------------+--------------------------------------------------------------------------------------------+
++---------------------------------------------------------------+---------------------------------------------------------+
+| :class:`~msl.equipment.connection_pyvisa.ConnectionPyVISA`    | Uses PyVISA_ to establish a connection to the equipment |
++---------------------------------------------------------------+---------------------------------------------------------+
 
 Package Structure
 -----------------
@@ -106,6 +108,7 @@ Package Structure
    msl.equipment.connection_pyvisa <_api/msl.equipment.connection_pyvisa>
    msl.equipment.connection_sdk <_api/msl.equipment.connection_sdk>
    msl.equipment.connection_serial <_api/msl.equipment.connection_serial>
+   msl.equipment.connection_socket <_api/msl.equipment.connection_socket>
    msl.equipment.constants <_api/msl.equipment.constants>
    msl.equipment.database <_api/msl.equipment.database>
    msl.equipment.exceptions <_api/msl.equipment.exceptions>

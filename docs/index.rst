@@ -26,15 +26,15 @@ which of the Digital Multimeter's they are using as an **<equipment>** XML tag i
 configuration file using the :obj:`~msl.equipment.config.Config` class, which is the main entryway in to the
 **MSL-Equipment** package.
 
-The `configuration file`_ that specifies the example_ database to load and the Digital Multimeter to use for the voltage
-measurement is as follows:
+The `configuration file`_ that specifies the example_ database to load and the Digital Multimeter to use for the
+voltage measurement is as follows:
 
 .. literalinclude:: ../msl/examples/equipment/example.xml
    :language: xml
 
 Load the example_ database from the `configuration file`_:
 
-.. code-block:: python
+.. code-block:: pycon
 
   >>> from msl.equipment import Config
   >>> cfg = Config('msl/examples/equipment/example.xml')
@@ -45,22 +45,22 @@ the :ref:`equipment_database` and in the :ref:`connection_database`. To access t
 :class:`~msl.equipment.record_types.EquipmentRecord` in the example_ database (which is known by the ``dmm`` alias that
 is specified in the `configuration file`_) use:
 
-.. code-block:: python
+.. code-block:: pycon
 
   >>> db.equipment['dmm']
   EquipmentRecord<Keysight|34465A|MY54506462>
 
 Connect to the **Keysight 34465A** [#f1]_ Digital Multimeter and query the ``*IDN?`` command:
 
-.. code-block:: python
+.. code-block:: pycon
 
   >>> dmm = db.equipment['dmm'].connect()
   >>> dmm.query('*IDN?')
   'Keysight Technologies,34465A,MY54506462,A.02.14-02.40-02.14-00.49-03-01\n'
 
-For more examples of what a :ref:`configuration_file` or the :ref:`database` can look like or how to use **MSL-Equipment**
-in your own application see the :ref:`examples`. The :ref:`api` also shows a more detailed example that loads the same
-`configuration file`_.
+For more examples of what a :ref:`configuration_file` or the :ref:`database` can look like or how to use
+**MSL-Equipment** in your own application see the :ref:`examples`. The :ref:`api` also shows a more detailed
+example that loads the same `configuration file`_.
 
 ========
 Contents
@@ -72,9 +72,9 @@ Contents
    Configuration File <config>
    Database Formats <database>
    Install <install>
-   Examples <examples>
    MSL Resources <resources>
    API Documentation <api>
+   Examples <examples>
    License <license>
    Authors <authors>
    Release Notes <changelog>

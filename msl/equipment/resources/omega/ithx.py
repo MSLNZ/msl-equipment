@@ -22,12 +22,12 @@ except NameError:
     ConnectionResetError = socket.error  # for Python 2.7
 
 from msl.equipment.exceptions import OmegaError, MSLTimeoutError
-from msl.equipment.connection_tcpip import ConnectionTCPIPSocket
+from msl.equipment.connection_socket import ConnectionSocket
 from msl.equipment.resources import register
 
 
 @register(manufacturer='OMEGA', model='iTHX-[2DMSW][3D]*')
-class iTHX(ConnectionTCPIPSocket):
+class iTHX(ConnectionSocket):
 
     def __init__(self, record):
         """OMEGA iTHX Series Temperature and Humidity Chart Recorder.
@@ -40,7 +40,7 @@ class iTHX(ConnectionTCPIPSocket):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        ConnectionTCPIPSocket.__init__(self, record)
+        ConnectionSocket.__init__(self, record)
         self.set_exception_class(OmegaError)
 
     def temperature(self, probe=1, celsius=True):
@@ -240,7 +240,7 @@ class iTHX(ConnectionTCPIPSocket):
         self.log_info('stopped logging to {}'.format(path))
 
     @staticmethod
-    def data(path, date1=None, date2=None, as_datetime=True):
+    def data(path, date1=None, date2=None, as_datetime=True, select='*'):
         """Fetch all the log records between two dates.
 
         Parameters
@@ -257,11 +257,14 @@ class iTHX(ConnectionTCPIPSocket):
             Whether to fetch the timestamps from the database as :class:`datetime.datetime` objects.
             If :data:`False` then the timestamps will be of type :class:`str` and this function
             will return much faster if requesting data over a large date range.
+        select : :class:`str` or :class:`list` of :class:`str`, optional
+            The column(s) in the database to use with the ``SELECT`` SQL command.
 
         Returns
         -------
         :class:`list` of :class:`tuple`
-            A list of (timestamp, temperature, humidity, dewpoint) log records.
+            A list of (timestamp, temperature, humidity, dewpoint) log records,
+            depending on the value of `select`.
         """
         if not os.path.isfile(path):
             raise IOError('Cannot find {}'.format(path))
@@ -270,14 +273,19 @@ class iTHX(ConnectionTCPIPSocket):
         db = sqlite3.connect(path, timeout=10.0, detect_types=detect_types)
         cursor = db.cursor()
 
+        if select != '*':
+            if isinstance(select, (list, tuple, set)):
+                select = ','.join(select)
+        base = 'SELECT {} FROM data'.format(select)
+
         if date1 is None and date2 is None:
-            cursor.execute('SELECT * FROM data;')
+            cursor.execute(base + ';')
         elif date1 is not None and date2 is None:
-            cursor.execute('SELECT * FROM data WHERE timestamp > ?;', (date1,))
+            cursor.execute(base + ' WHERE timestamp > ?;', (date1,))
         elif date1 is None and date2 is not None:
-            cursor.execute('SELECT * FROM data WHERE timestamp < ?;', (date2,))
+            cursor.execute(base + ' WHERE timestamp < ?;', (date2,))
         else:
-            cursor.execute('SELECT * FROM data WHERE timestamp BETWEEN ? AND ?;', (date1, date2))
+            cursor.execute(base + ' WHERE timestamp BETWEEN ? AND ?;', (date1, date2))
 
         data = cursor.fetchall()
         cursor.close()

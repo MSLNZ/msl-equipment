@@ -2,12 +2,13 @@
 MSL-Equipment constants.
 """
 import enum
+
 import serial
 
 
 MSL_INTERFACE_ALIASES = {
-    'ASRL': ('ASRLCOM', 'COM', 'LPT', ),
-    'TCPIP': ('ENET', 'ETHERNET', 'LAN', ),
+    'SERIAL': ('ASRLCOM', 'ASRL', 'COM', 'LPT'),
+    'SOCKET': ('ENET', 'ETHERNET', 'LAN', 'TCP', 'UDP'),
 }
 
 
@@ -29,8 +30,8 @@ class MSLInterface(enum.IntEnum):
     """
     NONE = 0
     SDK = 1
-    ASRL = 2
-    TCPIP = 3
+    SERIAL = 2
+    SOCKET = 3
     # USB = 4
     # GPIB = 5
     # PXI = 6

@@ -12,7 +12,7 @@ from msl.equipment.resources.dmm import dmm_factory
 from msl.equipment.connection_demo import ConnectionDemo
 from msl.equipment.connection_pyvisa import ConnectionPyVISA
 from msl.equipment.connection_serial import ConnectionSerial
-from msl.equipment.connection_tcpip import ConnectionTCPIPSocket
+from msl.equipment.connection_socket import ConnectionSocket
 
 logger = logging.getLogger(__name__)
 
@@ -79,13 +79,10 @@ def connect(record, demo=None):
             if cls is None:
                 if conn.interface == MSLInterface.SDK:
                     raise ResourceClassNotFound(record)
-                elif conn.interface == MSLInterface.ASRL:
+                elif conn.interface == MSLInterface.SERIAL:
                     cls = ConnectionSerial
-                elif conn.interface == MSLInterface.TCPIP:
-                    if address_split[-1].upper() == 'SOCKET':
-                        cls = ConnectionTCPIPSocket
-                    else:
-                        raise NotImplementedError('Only TCP/IP for type SOCKET has been implemented.')
+                elif conn.interface == MSLInterface.SOCKET:
+                    cls = ConnectionSocket
                 else:
                     raise NotImplementedError('The {} interface has not be written yet'.format(conn.interface.name))
         elif conn.backend == Backend.PyVISA:

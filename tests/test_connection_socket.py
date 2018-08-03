@@ -42,11 +42,10 @@ def test_tcpip_socket_read():
 
     record = EquipmentRecord(
         connection=ConnectionRecord(
-            address='TCPIP::{}::{}::SOCKET'.format(address, port),
+            address='SOCKET::{}::{}'.format(address, port),
             backend=Backend.MSL,
             properties=dict(
-                read_termination=term,
-                write_termination=term,
+                termination=term,  # sets both read_termination and write_termination
                 timeout=5
             ),
         )
@@ -109,7 +108,7 @@ def test_tcpip_socket_timeout():
 
     record = EquipmentRecord(
         connection=ConnectionRecord(
-            address='TCPIP::{}::{}::SOCKET'.format(address, port),
+            address='TCPIP::{}::{}::SOCKET'.format(address, port),  # use PyVISA's address convention
             backend=Backend.MSL,
             properties=dict(
                 write_termination=write_termination,

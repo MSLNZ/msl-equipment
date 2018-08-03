@@ -1,38 +1,39 @@
 """
-Base class for equipment that is connected through a Serial port.
+Base class for equipment that is connected through a serial port.
 """
 import re
 import time
+
 import serial
 
-from msl.equipment import constants
-from msl.equipment.connection_message_based import ConnectionMessageBased
+from . import constants
+from .connection_message_based import ConnectionMessageBased
 
 
 class ConnectionSerial(ConnectionMessageBased):
 
     def __init__(self, record):
-        """Base class for equipment that is connected through a Serial port.
+        """Base class for equipment that is connected through a serial port.
 
         The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
-        for a Serial connection supports the following key-value pairs in the
+        for a serial connection supports the following key-value pairs in the
         :ref:`connection_database` (see also :class:`serial.Serial` for more details about each parameter)::
 
-            'read_termination': str or None (e.g., "\\r\\n")
-            'write_termination': str or None (e.g., "\\n")
-            'max_read_size': int (the maximum number of bytes to be read, must be > 0)
-            'encoding': str (e.g., 'ascii')
-            'baud_rate': int (e.g., 9600, 115200)
-            'data_bits': int (e.g., 5, 6, 7, 8)
-            'stop_bits': int or float (e.g., 1, 1.5, 2)
-            'parity': str (e.g., none, even, odd, mark, space)
-            'timeout': float or None (the read timeout value)
-            'write_timeout': float or None (the write timeout value)
-            'inter_byte_timeout': float or None (the inter-character timeout)
-            'exclusive': bool (enable exclusive access mode, for POSIX only)
-            'xon_xoff': bool (enable software flow control)
-            'rts_cts': bool (enable hardware (RTS/CTS) flow control)
-            'dsr_dtr': bool (enable hardware (DSR/DTR) flow control)
+            'read_termination': str or None, read until this termination sequence is found [default: '\\n']
+            'write_termination': str or None, termination sequence appended to write messages [default: '\\r\\n']
+            'termination': shortcut for setting both 'read_termination' and 'write_termination' to this value
+            'max_read_size': int, the maximum number of bytes that can be read [default: 2**16]
+            'encoding': str, the encoding to use [default: 'utf-8']
+            'encoding_errors': str, encoding error handling scheme, e.g. 'strict', 'ignore' [default: 'strict']
+            'timeout': float or None, the timeout (in seconds) for read and write operations [default: None]
+            'baud_rate': int, the baud rate [default: 9600]
+            'parity': str or None, parity checking, e.g. 'even', 'odd' [default: None]
+            'data_bits': int, the number of data bits, e.g. 5, 6, 7, 8 [default: 8]
+            'stop_bits': int or float, the number of stop bits, e.g. 1, 1.5, 2 [default: 1]
+            'inter_byte_timeout': float or None, the inter-character timeout [default: None]
+            'dsr_dtr': bool, enable hardware (DSR/DTR) flow control [default: False]
+            'rts_cts': bool, enable hardware (RTS/CTS) flow control [default: False]
+            'xon_xoff': bool, enable software flow control [default: False]
 
         The :data:`record.connection.backend <msl.equipment.record_types.ConnectionRecord.backend>`
         value must be equal to :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>`
@@ -52,34 +53,36 @@ class ConnectionSerial(ConnectionMessageBased):
         Raises
         ------
         :exc:`~.exceptions.MSLConnectionError`
-            If the Serial port cannot be opened.
+            If the serial port cannot be opened.
         """
         ConnectionMessageBased.__init__(self, record)
 
-        props = record.connection.properties
-
         self._serial = serial.Serial()
 
-        self.read_termination = props.get('read_termination', self.read_termination)
-        self.write_termination = props.get('write_termination', self.write_termination)
-        self.max_read_size = props.get('max_read_size', self.max_read_size)
-        self.encoding = props.get('encoding', self.encoding)
+        props = record.connection.properties
+
+        try:
+            termination = props['termination']
+        except KeyError:
+            self.read_termination = props.get('read_termination', self._read_termination)
+            self.write_termination = props.get('write_termination', self._write_termination)
+        else:
+            self.read_termination = termination
+            self.write_termination = termination
+
+        self.encoding = props.get('encoding', self._encoding)
+        self._encoding_errors = props.get('encoding_errors', self._encoding_errors)
+        self.max_read_size = props.get('max_read_size', self._max_read_size)
         self.timeout = props.get('timeout', None)
 
-        if record.connection.address.startswith('ASRL::'):
-            # for addresses like -> ASRL::/dev/pts/12
+        if record.connection.address.startswith('SERIAL::'):
+            # for addresses like -> SERIAL::/dev/pts/12
             self._serial.port = record.connection.address.split('::')[-1]
         else:
-            # for addresses like -> ASRL1, ASRL1::INSTR
             self._serial.port = record.connection.address
 
         self._serial.parity = props.get('parity', constants.Parity.NONE).value
-        self._serial.write_timeout = props.get('write_timeout', None)
         self._serial.inter_byte_timeout = props.get('inter_byte_timeout', None)
-        self._serial.exclusive = props.get('exclusive', None)
-        self._serial.xonxoff = props.get('xon_xoff', False)
-        self._serial.rtscts = props.get('rts_cts', False)
-        self._serial.dsrdtr = props.get('dsr_dtr', False)
 
         try:
             self._serial.baudrate = props['baud_rate']
@@ -95,6 +98,21 @@ class ConnectionSerial(ConnectionMessageBased):
             self._serial.stopbits = props['stop_bits'].value
         except KeyError:
             self._serial.stopbits = props.get('stopbits', constants.StopBits.ONE).value
+
+        try:
+            self._serial.xonxoff = props['xon_xoff']
+        except KeyError:
+            self._serial.xonxoff = props.get('xonxoff', False)
+
+        try:
+            self._serial.rtscts = props['rts_cts']
+        except KeyError:
+            self._serial.rtscts = props.get('rtscts', False)
+
+        try:
+            self._serial.dsrdtr = props['dsr_dtr']
+        except KeyError:
+            self._serial.dsrdtr = props.get('dsrdtr', False)
 
         error_msg = ''
         try:
@@ -119,7 +137,7 @@ class ConnectionSerial(ConnectionMessageBased):
 
     @property
     def serial(self):
-        """:class:`serial.Serial`: The reference to the Serial object."""
+        """:class:`serial.Serial`: The reference to the serial object."""
         return self._serial
 
     @property
@@ -146,9 +164,10 @@ class ConnectionSerial(ConnectionMessageBased):
     def timeout(self, seconds):
         self._set_timeout_value(seconds)
         self._serial.timeout = self._timeout
+        self._serial.write_timeout = self._timeout
 
     def disconnect(self):
-        """Close the Serial port."""
+        """Close the serial port."""
         try:
             # if the subclass raised an error in the constructor before
             # the this class is initialized then self._serial won't exist
@@ -158,7 +177,7 @@ class ConnectionSerial(ConnectionMessageBased):
             pass
 
     def write(self, message):
-        """Write the given message over the Serial port.
+        """Write a message over the serial port.
 
         Parameters
         ----------
@@ -168,37 +187,37 @@ class ConnectionSerial(ConnectionMessageBased):
         Returns
         -------
         :class:`int`
-            The number of bytes sent to the Serial port.
+            The number of bytes sent over the serial port.
         """
-        data = self._prepare_write(message)
+        data = self._encode(message)
         return self._serial.write(data)
 
     def read(self, size=None):
-        """Read bytes from the Serial port.
+        """Read a message from the serial port.
 
         Parameters
         ----------
         size : :class:`int` or :obj:`None`, optional
             The number of bytes to read. If `size` is :obj:`None` then read until:
 
-            1. the :attr:`.read_termination` characters are read
-               (only if the termination value is not :obj:`None`)
+            1. :attr:`.read_termination` characters are read
+               (only if :attr:`.read_termination` is not :obj:`None`)
             2. :attr:`.max_read_size` bytes have been read
-               (if occurs, raises :exc:`~msl.equipment.exceptions.MSLConnectionError`)
-            3. a :exc:`~msl.equipment.exceptions.MSLTimeoutError` occurs
-               (only if a :attr:`.timeout` value has been set)
+               (raises :exc:`~msl.equipment.exceptions.MSLConnectionError` if occurs)
+            3. :exc:`~msl.equipment.exceptions.MSLTimeoutError` occurs
+               (only if :attr:`.timeout` is not :obj:`None`)
 
             This method will block until at least one of the above conditions is fulfilled.
 
         Returns
         -------
         :class:`str`
-            The response from the equipment.
+            The message from the serial port.
         """
         if size:
-            if size > self.max_read_size:
+            if size > self._max_read_size:
                 self.raise_exception('max_read_size is {} bytes, requesting {} bytes'.format(
-                    self.max_read_size, size)
+                    self._max_read_size, size)
                 )
 
             out = self._serial.read(size)
@@ -211,17 +230,16 @@ class ConnectionSerial(ConnectionMessageBased):
             while True:
                 out.extend(self._serial.read(1))
 
-                if self.read_termination and out.endswith(self.read_termination):
-                    out = out[:-len(self.read_termination)]
+                if self._read_termination and out.endswith(self._read_termination):
+                    out = out[:-len(self._read_termination)]
                     break
 
-                if len(out) > self.max_read_size:
+                if len(out) > self._max_read_size:
                     self.raise_exception('len(bytes_read) [{}] > max_read_size [{}]'.format(
-                        len(out), self.max_read_size)
+                        len(out), self._max_read_size)
                     )
 
-                if self.timeout and time.time() - t0 >= self.timeout:
+                if self._timeout and time.time() - t0 >= self._timeout:
                     self.raise_timeout()
 
-        self.log_debug('{}.read({!r}) -> {!r}'.format(self, size, out))
-        return out.decode(self.encoding)
+        return self._decode(size, out)

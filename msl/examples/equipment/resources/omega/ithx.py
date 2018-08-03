@@ -15,11 +15,10 @@ if __name__ == '__main__':
         manufacturer='OMEGA',
         model=model,
         connection=ConnectionRecord(
-            address='TCPIP::{}::{}::SOCKET'.format(address, port),
+            address='TCP::{}::{}'.format(address, port),
             backend=Backend.MSL,
             properties=dict(
-                read_termination='\r',
-                write_termination='\r',
+                termination='\r',
                 timeout=2
             ),
         )
@@ -28,6 +27,6 @@ if __name__ == '__main__':
     omega = record.connect()
     print('T {} deg C'.format(omega.temperature()))
     print('H {}%'.format(omega.humidity()))
-    print('DP {} deg C'.format(omega.dew_point()))
-    print('T {} deg F, H {}%'.format(*omega.temperature_humidity(celsius=False)))
-    print('T {} deg C, H {}%, DP {} deg C'.format(*omega.temperature_humidity_dew_point()))
+    print('DP {} deg F'.format(omega.dewpoint(celsius=False)))
+    print('T {} deg C, H {}%'.format(*omega.temperature_humidity()))
+    print('T {} deg C, H {}%, DP {} deg C'.format(*omega.temperature_humidity_dewpoint()))

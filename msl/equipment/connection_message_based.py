@@ -36,6 +36,7 @@ class ConnectionMessageBased(Connection):
         Connection.__init__(self, record)
 
         self._encoding = 'utf-8'
+        self._encoding_errors = 'strict'
         self._read_termination = ConnectionMessageBased.LF
         self._write_termination = ConnectionMessageBased.CR + ConnectionMessageBased.LF
         self._max_read_size = 2 ** 16
@@ -96,12 +97,6 @@ class ConnectionMessageBased(Connection):
     def write_termination(self, termination):
         self._write_termination = self._set_termination_encoding(termination)
 
-    def _set_termination_encoding(self, termination):
-        try:
-            return termination.encode(self._encoding)
-        except AttributeError:
-            return termination
-
     @property
     def max_read_size(self):
         """:class:`int`: The maximum number of bytes that can be :meth:`read`."""
@@ -119,16 +114,6 @@ class ConnectionMessageBased(Connection):
     def timeout(self):
         """:class:`float` or :obj:`None`: The timeout, in seconds, for I/O operations."""
         return self._timeout
-
-    def _set_timeout_value(self, value):
-        if value is not None:
-            self._timeout = float(value)
-            if self._timeout == 0.0:
-                self._timeout = None
-            elif self._timeout < 0:
-                raise ValueError('Not a valid timeout value: {}'.format(value))
-        else:
-            self._timeout = None
 
     def raise_timeout(self, append_msg=None):
         """Raise a :exc:`~.exceptions.MSLTimeoutError`.
@@ -180,16 +165,6 @@ class ConnectionMessageBased(Connection):
         """
         raise NotImplementedError
 
-    def _prepare_write(self, message):
-        if isinstance(message, bytes):
-            data = message
-        else:
-            data = message.encode(self._encoding)
-        if self._write_termination is not None and not data.endswith(self._write_termination):
-            data += self._write_termination
-        self.log_debug('{}.write({!r})'.format(self, data))
-        return data
-
     def query(self, message, delay=0.0, size=None):
         """Convenience method for performing a :meth:`write` followed by a :meth:`read`.
 
@@ -212,3 +187,40 @@ class ConnectionMessageBased(Connection):
         if delay > 0.0:
             time.sleep(delay)
         return self.read(size)
+
+    def _set_timeout_value(self, value):
+        # convenience method for setting the timeout value
+        if value is not None:
+            self._timeout = float(value)
+            if self._timeout == 0:
+                self._timeout = None
+            elif self._timeout < 0:
+                raise ValueError('Not a valid timeout value: {}'.format(value))
+        else:
+            self._timeout = None
+
+    def _set_termination_encoding(self, termination):
+        # convenience method for setting the termination encoding
+        try:
+            return termination.encode(self._encoding)
+        except AttributeError:
+            return termination  # `termination` is already encoded
+
+    def _encode(self, message):
+        # convenience method for preparing the message for a write operation
+        if isinstance(message, bytes):
+            data = message
+        else:
+            data = message.encode(encoding=self._encoding, errors=self._encoding_errors)
+        if self._write_termination is not None and not data.endswith(self._write_termination):
+            data += self._write_termination
+        self.log_debug('{}.write({!r})'.format(self, data))
+        return data
+
+    def _decode(self, size, message):
+        # convenience method for processing the message from a read operation
+        if size is None:
+            self.log_debug('{}.read() -> {!r}'.format(self, message))
+        else:
+            self.log_debug('{}.read({}) -> {!r}'.format(self, size, message))
+        return message.decode(encoding=self._encoding, errors=self._encoding_errors)

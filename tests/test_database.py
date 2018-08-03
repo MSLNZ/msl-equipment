@@ -94,10 +94,10 @@ def test_database():
     assert len(dbase.connections(model='DTMc300V_sub')) == 1
     assert len(dbase.connections(manufacturer='Agilent', serial='G00001')) == 1
     assert len(dbase.connections(manufacturer='Agilent|Fluke|Thorlabs')) == 6
-    assert len(dbase.connections(interface='ASRL')) == 2  # != 3 since "Coherent Scientific" uses PyVISA
+    assert len(dbase.connections(interface='SERIAL')) == 2  # != 3 since "Coherent Scientific" uses PyVISA
     assert len(dbase.connections(interface=constants.MSLInterface.SDK)) == 2
-    assert len(dbase.connections(interface='ASRL|SDK')) == 4
-    assert len(dbase.connections(interface=constants.MSLInterface.ASRL)) == 2  # != 3 since "Coherent Scientific" uses PyVISA
+    assert len(dbase.connections(interface='SERIAL|SDK')) == 4
+    assert len(dbase.connections(interface=constants.MSLInterface.SERIAL)) == 2  # != 3 since "Coherent Scientific" uses PyVISA
     assert len(dbase.connections(interface='XXXXXX')) == 0
 
     dbase.connections(flags=1)  # a flags argument name is ok even though it not a ConnectionRecord property name

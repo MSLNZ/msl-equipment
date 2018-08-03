@@ -8,7 +8,7 @@ from msl.equipment import EquipmentRecord, ConnectionRecord, constants
 from msl.equipment.connection_message_based import ConnectionMessageBased
 
 
-def test_equip_record():
+def test_equipment_record():
 
     a = EquipmentRecord().to_dict()
     assert len(a) == 14
@@ -101,7 +101,7 @@ def test_equip_record():
     assert record.connection.serial == 'XYZ'
 
 
-def test_conn_record():
+def test_connection_record():
 
     a = ConnectionRecord().to_dict()
     assert len(a) == 7
@@ -144,38 +144,49 @@ def test_conn_record():
     assert record.properties['resolution'] == '14bit'
     assert record.properties['data'] == 77
 
-    record = ConnectionRecord(address='COM4', backend=constants.Backend.MSL)
-    assert record.address == 'COM4'
-    assert record.backend == constants.Backend.MSL
-    assert record.interface == constants.MSLInterface.ASRL  # COM is an alias for ASRL
-
-    record = ConnectionRecord(address='ASRLCOM4', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.ASRL   # ASRLCOM is an alias for ASRL, used by PyVISA
-
-    record = ConnectionRecord(address='LPT5', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.ASRL   # LPT is an alias for ASRL
-
-    record = ConnectionRecord(address='ASRL4', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.ASRL
-
-    record = ConnectionRecord(address='SDK', backend=constants.Backend.MSL)
-    assert record.address == 'SDK'
-    assert record.backend == constants.Backend.MSL
+    # MSLInterface.SDK
+    record = ConnectionRecord(address='SDK::whatever.dll', backend=constants.Backend.MSL)
     assert record.interface == constants.MSLInterface.SDK
 
-    record = ConnectionRecord(address='ENET::192.168.1.21', backend=constants.Backend.MSL)
-    assert record.address == 'ENET::192.168.1.21'
-    assert record.backend == constants.Backend.MSL
-    assert record.interface == constants.MSLInterface.TCPIP  # ENET is an alias for TCPIP
+    record = ConnectionRecord(address='SDK::/path/to/whatever.dll', backend=constants.Backend.MSL)
+    assert record.interface == constants.MSLInterface.SDK
 
-    record = ConnectionRecord(address='ETHERNET::192.168.1.21', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.TCPIP  # ETHERNET is an alias for TCPIP
+    # MSLInterface.SERIAL
+    record = ConnectionRecord(address='COM4', backend=constants.Backend.MSL)
+    assert record.interface == constants.MSLInterface.SERIAL  # COM is an alias
 
-    record = ConnectionRecord(address='LAN::192.168.1.21', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.TCPIP  # LAN is an alias for TCPIP
+    record = ConnectionRecord(address='ASRLCOM4', backend=constants.Backend.MSL)
+    assert record.interface == constants.MSLInterface.SERIAL   # ASRLCOM is used by PyVISA
 
-    record = ConnectionRecord(address='TCPIP::192.168.1.21', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.TCPIP
+    record = ConnectionRecord(address='LPT5', backend=constants.Backend.MSL)
+    assert record.interface == constants.MSLInterface.SERIAL   # LPT is an alias
+
+    record = ConnectionRecord(address='ASRL4', backend=constants.Backend.MSL)
+    assert record.interface == constants.MSLInterface.SERIAL  # ASRL is an alias
+
+    # MSLInterface.SOCKET
+    record = ConnectionRecord(address='SOCKET::127.0.0.1::1234', backend=constants.Backend.MSL)
+    assert record.interface == constants.MSLInterface.SOCKET
+
+    record = ConnectionRecord(address='ENET::127.0.0.1::1234', backend=constants.Backend.MSL)
+    assert record.interface == constants.MSLInterface.SOCKET  # ENET is an alias for SOCKET
+
+    record = ConnectionRecord(address='ETHERNET::127.0.0.1::1234', backend=constants.Backend.MSL)
+    assert record.interface == constants.MSLInterface.SOCKET  # ETHERNET is an alias for SOCKET
+
+    record = ConnectionRecord(address='LAN::127.0.0.1::1234', backend=constants.Backend.MSL)
+    assert record.interface == constants.MSLInterface.SOCKET  # LAN is an alias for SOCKET
+
+    record = ConnectionRecord(address='TCPIP::127.0.0.1::1234::SOCKET', backend=constants.Backend.MSL)
+    assert record.interface == constants.MSLInterface.SOCKET  # PyVISA naming scheme
+
+    record = ConnectionRecord(address='TCP::127.0.0.1::1234', backend=constants.Backend.MSL)
+    assert record.interface == constants.MSLInterface.SOCKET  # TCP is an alias for SOCKET
+
+    record = ConnectionRecord(address='UDP::127.0.0.1::1234', backend=constants.Backend.MSL, properties=dict(x=1))
+    assert record.interface == constants.MSLInterface.SOCKET  # UDP is an alias for SOCKET
+    assert record.properties['type'] == 'SOCK_DGRAM'  # gets set automatically
+    assert record.properties['x'] == 1  # does not get overwritten
 
     # TODO enable these tests once we create the TCPIP_ASRL and TCPIP_GPIB IntEnum constants in MSLInterface
     # record = ConnectionRecord(address='ENET+COM::192.168.1.21+3', backend=constants.Backend.MSL)
@@ -203,7 +214,7 @@ def test_conn_record():
     assert 'interface' in str(err.value) and 'enum' in str(err.value)
 
     # setting the interface, good
-    ConnectionRecord(address='COM1', backend=constants.Backend.MSL, interface=constants.MSLInterface.ASRL)
+    ConnectionRecord(address='COM1', backend=constants.Backend.MSL, interface=constants.MSLInterface.SERIAL)
 
     # the backend must be a Backend enum
     with pytest.raises(ValueError) as err:
@@ -261,7 +272,7 @@ def test_dbase():
     assert eq2.connection.serial == 'A00024'
     assert eq2.connection.address == 'ASRL1::INSTR'
     assert eq2.connection.backend == constants.Backend.MSL
-    assert eq2.connection.interface == constants.MSLInterface.ASRL
+    assert eq2.connection.interface == constants.MSLInterface.SERIAL
     assert eq2.connection.properties['baud_rate'] == 9600
     assert eq2.connection.properties['read_termination'].encode() == ConnectionMessageBased.CR + ConnectionMessageBased.LF
     assert eq2.connection.properties['write_termination'].encode() == ConnectionMessageBased.LF

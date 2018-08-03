@@ -1,6 +1,10 @@
 """
 Example showing how to log the temperature, humidity and dew point of an OMEGA iTHX Series
-Temperature and Humidity Chart Recorder to a file every second.
+Temperature and Humidity Chart Recorder to a CSV file every second.
+
+.. note::
+   There is a :meth:`~msl.equipment.resources.omega.ithx.iTHX.start_logging` method for
+   logging to a SQLite database.
 """
 
 # this "if" statement is used so that Sphinx does not execute this script when the docs are being built
@@ -20,11 +24,10 @@ if __name__ == '__main__':
         manufacturer='OMEGA',
         model=model,
         connection=ConnectionRecord(
-            address='TCPIP::{}::{}::SOCKET'.format(address, port),
+            address='TCP::{}::{}'.format(address, port),
             backend=Backend.MSL,
             properties=dict(
-                read_termination='\r',
-                write_termination='\r',
+                termination='\r',
                 timeout=2
             ),
         )
@@ -37,7 +40,7 @@ if __name__ == '__main__':
     with open(path, 'wt') as fp:
         while True:
             now = datetime.now()
-            values = omega.temperature_humidity_dew_point()
+            values = omega.temperature_humidity_dewpoint()
 
             print('{} -- {} {} {} -- Press CTRL+C to stop'.format(now, *values))
             fp.write('{},{},{},{}\n'.format(now, *values))

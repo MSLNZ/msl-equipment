@@ -210,5 +210,5 @@ intersphinx_mapping = {
     'numpy': ('https://docs.scipy.org/doc/numpy/', None),
     'msl.loadlib': ('https://msl-loadlib.readthedocs.io/en/stable/', None),
     'pyvisa': ('https://pyvisa.readthedocs.io/en/stable/', None),
-    'pyserial': ('http://pyserial.readthedocs.io/en/stable/', None),
+    'pyserial': ('https://pyserial.readthedocs.io/en/stable/', None),
 }

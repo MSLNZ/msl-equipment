@@ -83,7 +83,7 @@ with the equipment *(although you should never need to instantiate these classes
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_serial.ConnectionSerial`              | Equipment that is connected through a Serial port                        |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_tcpip.ConnectionSocket`               | Equipment that is connected through a Socket                             |
+| :class:`~msl.equipment.connection_socket.ConnectionSocket`              | Equipment that is connected through a Socket                             |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_message_based.ConnectionMessageBased` | Equipment that use message based communication                           |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+

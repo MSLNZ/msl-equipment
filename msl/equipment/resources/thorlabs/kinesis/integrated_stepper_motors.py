@@ -50,7 +50,6 @@ class IntegratedStepperMotors(MotionControl):
         for an IntegratedStepperMotors connection supports the following key-value pairs in the
         :ref:`connection_database`::
 
-            'load_settings': bool, call load_settings() after the connection is created [default: False]
             'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
@@ -61,10 +60,8 @@ class IntegratedStepperMotors(MotionControl):
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
+        MotionControl.build_device_list()
         MotionControl.__init__(self, record, IntegratedStepperMotors_FCNS)
-
-        if record.connection.properties.get('load_settings', False):
-            self.load_settings()
 
     def can_home(self):
         """Can the device perform a :meth:`home`?

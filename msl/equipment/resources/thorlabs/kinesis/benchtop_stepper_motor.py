@@ -52,7 +52,6 @@ class BenchtopStepperMotor(MotionControl):
         for a BenchtopStepperMotor connection supports the following key-value pairs in the
         :ref:`connection_database`::
 
-            'load_settings': bool, call load_settings() after the connection is created [default: False]
             'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
@@ -66,10 +65,6 @@ class BenchtopStepperMotor(MotionControl):
         MotionControl.__init__(self, record, Benchtop_StepperMotor_FCNS)
 
         self._num_channels = self.get_num_channels()
-
-        if record.connection.properties.get('load_settings', False):
-            for ch in range(self._num_channels):
-                self.load_settings(ch+1)
 
     def can_home(self, channel):
         """Can the device perform a :meth:`home`?

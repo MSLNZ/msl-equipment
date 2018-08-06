@@ -33,7 +33,6 @@ class KCubeSolenoid(MotionControl):
         for a KCubeSolenoid connection supports the following key-value pairs in the
         :ref:`connection_database`::
 
-            'load_settings': bool, call load_settings() after the connection is created [default: False]
             'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
@@ -45,9 +44,6 @@ class KCubeSolenoid(MotionControl):
             A record from an :ref:`equipment_database`.
         """
         MotionControl.__init__(self, record, KCube_Solenoid_FCNS)
-
-        if record.connection.properties.get('load_settings', False):
-            self.load_settings()
 
     def check_connection(self):
         """Check connection.

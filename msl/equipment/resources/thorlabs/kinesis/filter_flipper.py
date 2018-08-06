@@ -27,7 +27,6 @@ class FilterFlipper(MotionControl):
         for a FilterFlipper connection supports the following key-value pairs in the
         :ref:`connection_database`::
 
-            'load_settings': bool, call load_settings() after the connection is created [default: False]
             'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
@@ -38,10 +37,11 @@ class FilterFlipper(MotionControl):
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        MotionControl.__init__(self, record, FilterFlipper_FCNS)
+        name = record.connection.properties.get('device_name')
+        if name is None:
+            record.connection.properties['device_name'] = 'MFF Filter Flipper'
 
-        if record.connection.properties.get('load_settings', False):
-            self.load_settings()
+        MotionControl.__init__(self, record, FilterFlipper_FCNS)
 
     def open(self):
         """Open the device for communication.

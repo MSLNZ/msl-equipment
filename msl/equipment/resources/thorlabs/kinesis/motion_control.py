@@ -143,8 +143,13 @@ class MotionControl(ConnectionSDK):
         """:class:`dict`: The device settings specified in ``ThorlabsDefaultSettings.xml``
 
         If this is an empty :class:`dict` then you can specify the ``device_name`` in the
-        properties field in the :ref:`connection_database`, or run the Kinesis software and
-        configure the actuator that is connected to the motor controller.
+        properties field in the :ref:`connection_database` or you can run the Kinesis
+        software and allow Kinesis to configure the actuator that is connected to the motor
+        controller.
+
+        The possible values for ``device_name`` can be found in the ``ThorlabsDefaultSettings.xml``
+        file (located in the Kinesis installation folder, e.g., C:\Program Files\Thorlabs\Kinesis).
+        as the ``Name`` value in one of the ``<DeviceSettingsType>`` tags.
         """
         return self._settings
 
@@ -336,24 +341,17 @@ class MotionControl(ConnectionSDK):
         info.modificationState = modification_state.value
         return info
 
-    def _wait(self, msg_id_not_equal_to_value):
-        # wait for the move to complete
-        self.clear_message_queue()
-        _msg_type, _msg_id, _msg_data = self.wait_for_message()
-        while _msg_type != 2 or _msg_id != msg_id_not_equal_to_value:
-            _msg_type, _msg_id, _msg_data = self.wait_for_message()
-        self.log_debug(self.__class__.__name__ + ' has finished moving')
-
     def _load_xml_settings(self, name):
         # populates the self._settings dict from the information in:
         #   - ThorlabsDeviceConfiguration.xml
         #   - ThorlabsDefaultSettings.xml
+        #   - ThorlabsCustomSettings.xml
 
         if name is None:
             # then get the SettingsName value from the following XML file
             # this assumes that the Kinesis software has been used to define the
             # stage that is connected to the controller
-            cfg = r'C:\ProgramData\Thorlabs\MotionControl\ThorlabsDeviceConfiguration.xml'
+            cfg = 'C:/ProgramData/Thorlabs/MotionControl/ThorlabsDeviceConfiguration.xml'
             if not os.path.isfile(cfg):
                 self.log_warning('Cannot find ThorlabsDeviceConfiguration.xml')
                 return
@@ -366,7 +364,7 @@ class MotionControl(ConnectionSDK):
             name = element.find('SettingsName').text
 
         # find the ThorlabsDefaultSettings.xml file
-        path = r'C:\Program Files\Thorlabs\Kinesis\ThorlabsDefaultSettings.xml'
+        path = 'C:/ProgramData/Thorlabs/MotionControl/ThorlabsDefaultSettings.xml'
         if not os.path.isfile(path):
             found_it = False
             for item in os.environ['PATH'].split(os.pathsep):
@@ -383,22 +381,28 @@ class MotionControl(ConnectionSDK):
         # get the XML element that refers to this device name
         root = ET.parse(path).getroot()
         element = root.find('.//DeviceSettingsType[@Name="{}"]'.format(name))
-        if element is None:
-            self.log_warning('Cannot find <DeviceSettingsType Name="{}"> in '
-                             'ThorlabsDefaultSettings.xml'.format(name))
-            return
-
-        # check if the device name refers to another device name
-        try:
-            name = element.attrib['Settings']
-        except KeyError:
-            name = element.attrib['Name']
+        if element is not None:
+            # check if the device name refers to another device name
+            try:
+                name = element.attrib['Settings']
+            except KeyError:
+                name = element.attrib['Name']
+        else:
+            # some device, such as the MFF Filter Flipper, do not have a
+            # <DeviceSettingsType> tag so we just assume that the Name is correct
+            pass
 
         # read the settings from the XML file
         element = root.find('.//DeviceSettingsDefinition[@Name="{}"]'.format(name))
         if element is None:
-            self.log_warning('Cannot find <DeviceSettingsDefinition Name="{}"> in '
-                             'ThorlabsDefaultSettings.xml'.format(name))
+            # some devices are specified in ThorlabsCustomSettings.xml
+            cfg = 'C:/ProgramData/Thorlabs/MotionControl/ThorlabsCustomSettings.xml'
+            if os.path.isfile(cfg):
+                root = ET.parse(cfg).getroot()
+                element = root.find('.//DeviceSettingsDefinition[@Name="{}"]'.format(name))
+
+        if element is None:
+            self.log_warning('Cannot find <DeviceSettingsDefinition Name="{}"> '.format(name))
             return
 
         # populate the settings dict

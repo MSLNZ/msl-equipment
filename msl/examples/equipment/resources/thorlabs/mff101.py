@@ -1,10 +1,5 @@
 """
-This example communicates with a Thorlabs Filter Flipper (MFF101).
-
-Since the Thorlabs MotionControl API requires a serial number to communicate with a device, 
-the serial number that is specified in the "equipment-connections-database.xlsx" database, 
-i.e., 37871232, would need to be changed to the serial number of the device that is connected 
-to the computer.
+This example communicates with a Thorlabs Filter Flipper (MFF101 or MFF102).
 """
 
 # this "if" statement is used so that Sphinx does not execute this script when the docs are being built
@@ -12,67 +7,40 @@ if __name__ == '__main__':
     import os
     import time
 
-    from msl.equipment import Config
-    from msl.examples.equipment import EXAMPLES_DIR
+    from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
 
-    # you will have to update the value of the serial number for the FilterFlipper
-    # in the "equipment-connections-database.xlsx" database
-    db = Config(os.path.join(EXAMPLES_DIR, 'equipment-configuration.xml')).database()
-    flipper = db.equipment['filter_flipper'].connect()
+    # ensure that the Kinesis folder is available on PATH
+    os.environ['PATH'] += os.pathsep + 'C:/Program Files/Thorlabs/Kinesis'
 
-    print(flipper)
+    # rather than reading the EquipmentRecord from a database we can create it manually
+    record = EquipmentRecord(
+        manufacturer='Thorlabs',
+        model='MFF101/M',  # specify MFF102 if you have the 2" version
+        serial='37871232',  # update the serial number for your MFF
+        connection=ConnectionRecord(
+            backend=Backend.MSL,
+            address='SDK::Thorlabs.MotionControl.FilterFlipper.dll',
+        ),
+    )
 
-    # start the device polling at 200-ms intervals
+    # connect to the Filter Flipper
+    flipper = record.connect()
+    print('Connected to {}'.format(flipper))
+
+    # start polling at 200 ms
     flipper.start_polling(200)
 
-    # make the LED flash on the Filter Flipper
-    flipper.identify()
-    time.sleep(3)
-
-    hw_info = flipper.get_hardware_info()
-    print('serialNumber................: {}'.format(hw_info.serialNumber))
-    print('modelNumber.................: {}'.format(hw_info.modelNumber))
-    print('type........................: {}'.format(hw_info.type))
-    print('numChannels.................: {}'.format(hw_info.numChannels))
-    print('notes.......................: {}'.format(hw_info.notes))
-    print('firmwareVersion.............: {}'.format(flipper.to_version(hw_info.firmwareVersion)))
-    print('hardwareVersion.............: {}'.format(hw_info.hardwareVersion))
-    print('modificationState...........: {}'.format(hw_info.modificationState))
-
-    io_settings = flipper.get_io_settings()
-    print('transitTime.................: {}'.format(io_settings.transitTime))
-    print('ADCspeedValue...............: {}'.format(io_settings.ADCspeedValue))
-    print('digIO1OperMode..............: {}'.format(io_settings.digIO1OperMode))
-    print('digIO1SignalMode............: {}'.format(io_settings.digIO1SignalMode))
-    print('digIO1PulseWidth............: {}'.format(io_settings.digIO1PulseWidth))
-    print('digIO2OperMode..............: {}'.format(io_settings.digIO2OperMode))
-    print('digIO2SignalMode............: {}'.format(io_settings.digIO2SignalMode))
-    print('digIO2PulseWidth............: {}'.format(io_settings.digIO2PulseWidth))
-
-    print('get_firmware_version........: {}'.format(flipper.get_firmware_version()))
-    print('get_software_version........: {}'.format(flipper.get_software_version()))
-    print('get_number_positions........: {}'.format(flipper.get_number_positions()))
-    print('get_transit_time............: {}'.format(flipper.get_transit_time()))
-    print('request_settings............: {}'.format(flipper.request_settings()))
-
-    print('time_since_last_msg_received: {}'.format(flipper.time_since_last_msg_received()))
-    print('has_last_msg_timer_overrun..: {}'.format(flipper.has_last_msg_timer_overrun()))
-
-    print('polling_duration............: {}'.format(flipper.polling_duration()))
-    print('message_queue_size..........: {}'.format(flipper.message_queue_size()))
-    print('get_next_message............: {}'.format(flipper.convert_message(*flipper.get_next_message())))
-
     position = flipper.get_position()
-    print('get_position:...............: {}'.format(position))
+    print('Flipper is at position {}'.format(position))
 
-    # move the flipper to the next position and wait for the move to finish
-    move_to = 1 if position == 2 else 2
-    print('Move the flipper to position {}'.format(move_to))
-    flipper.move_to_position(move_to)
-    while flipper.get_position() != move_to:
-        time.sleep(flipper.polling_duration()*1e-3)
-    print('get_position:...............: {}'.format(flipper.get_position()))
+    # move the flipper to the other position and wait for the move to finish
+    position = 1 if position == 2 else 2
+    print('Moving the flipper to position {}'.format(position))
+    flipper.move_to_position(position)
+    while flipper.get_position() != position:
+        time.sleep(0.1)
+    print('Move done. Flipper is now at position {}'.format(flipper.get_position()))
 
-    # close the connection
+    # stop polling and close the connection
     flipper.stop_polling()
-    flipper.close()
+    flipper.disconnect()

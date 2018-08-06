@@ -1,6 +1,6 @@
 """
-This example shows how to get information about devices found on USB ports, 
-that are not currently ``open()`` using the Thorlabs Kinesis SDK.
+This example shows how to get information about Kinesis devices found on USB ports
+(that are not already connected to).
 """
 
 # this if statement is used so that Sphinx does not execute this script when the docs are being built
@@ -10,7 +10,7 @@ if __name__ == '__main__':
 
     from msl.equipment.resources.thorlabs import MotionControl
 
-    # add the Kinesis folder to the PATH
+    # ensure that the Kinesis folder is available on PATH
     os.environ['PATH'] += os.pathsep + 'C:/Program Files/Thorlabs/Kinesis'
 
     print('Building the device list...')
@@ -42,4 +42,4 @@ if __name__ == '__main__':
     for item in dir(info):
         if item.startswith('_'):
             continue
-        print('\t{}: {}'.format(item, getattr(info, item)))
+        print('  {}: {}'.format(item, getattr(info, item)))

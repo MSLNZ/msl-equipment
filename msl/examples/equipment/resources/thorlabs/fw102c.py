@@ -1,39 +1,35 @@
 """
-This example shows how to communicate with Thorlabs FW102C Series and 
+This example shows how to communicate with Thorlabs FW102C Series or
 FW212C Series Motorized Filter Wheels.
 """
 
 # this "if" statement is used so that Sphinx does not execute this script when the docs are being built
 if __name__ == '__main__':
-    import os
-    from logging.config import fileConfig
-
-    from msl.examples.equipment import EXAMPLES_DIR
     from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
 
-    log_config = os.path.join(EXAMPLES_DIR, 'logging-config.ini')
-    fileConfig(log_config, disable_existing_loggers=False)
-
-    # you must update the following values
-    dll_path = r'C:\Program Files\Thorlabs\FilterWheel102_win64.dll'
-    serial_number = 'TP01418262-6535'
-    port = 'COM4'
-
+    # rather than reading the EquipmentRecord from a database we can create it manually
     record = EquipmentRecord(
         manufacturer='Thorlabs',
-        model='FW212CNEB',
-        serial=serial_number,
+        model='FW212C',  # specify FW102C is you are using the 6-position filter wheel (can also include the NEB suffix)
         connection=ConnectionRecord(
             backend=Backend.MSL,
-            address='SDK::FilterWheel102C::{}'.format(dll_path),
-            properties={'port': port},
+            address='SDK::C:/Program Files/Thorlabs/FilterWheel102_win64.dll',  # update the location of the DLL
+            properties={'port': 'COM4'},  # update the port number
         ),
     )
 
+    # connect to the Filter Wheel
     wheel = record.connect()
 
-    print(wheel)
     position = wheel.get_position()
-    print('The current position is: {}'.format(position))
+    print('The initial filter position was {}'.format(position))
+
+    # make the Filter Wheel return to the start position if it is at the last position
+    if position == wheel.get_position_count():
+        position = 0
+
     wheel.set_position(position+1)
-    print('The current position is: {}'.format(wheel.get_position()))
+    print('The current filter position is now {}'.format(wheel.get_position()))
+
+    # disconnect from the Filter Wheel
+    wheel.disconnect()

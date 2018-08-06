@@ -1,73 +1,77 @@
 """
 This example shows how to communicate with Thorlabs LTS150, 150-mm Translation Stage with Stepper Motor.
+
+By changing the value of the `model` number (see below), this script can be used to control:
+
+* Long Travel Stages (LTS150 and LTS300)
+* Lab Jack (MLJ050, MLJ150)
+* Cage Rotator (K10CR1)
 """
 
 # this "if" statement is used so that Sphinx does not execute this script when the docs are being built
 if __name__ == '__main__':
     import os
-    import time
+    from pprint import pprint
 
     from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
-    from msl.equipment.resources.thorlabs.kinesis.enums import UnitType
 
-    # you must update the following values
-    kinesis_path = 'C:/Program Files/Thorlabs/Kinesis'
-    serial_number = '45870601'
+    # ensure that the Kinesis folder is available on PATH
+    os.environ['PATH'] += os.pathsep + 'C:/Program Files/Thorlabs/Kinesis'
 
-    # the Thorlabs.MotionControl.IntegratedStepperMotors.dll depends on other DLLs from Thorlabs
-    # make sure to add the Kinesis folder to the environment PATH
-    os.environ['PATH'] += os.pathsep + kinesis_path
-
+    # rather than reading the EquipmentRecord from a database we can create it manually
     record = EquipmentRecord(
         manufacturer='Thorlabs',
-        model='LTS150/M',
-        serial=serial_number,
+        model='LTS150/M',  # update the model number for your Integrated Stepper Motor
+        serial='45870601',  # update the serial number for your Integrated Stepper Motor
         connection=ConnectionRecord(
             backend=Backend.MSL,
-            address='SDK::IntegratedStepperMotors::Thorlabs.MotionControl.IntegratedStepperMotors.dll',
+            address='SDK::Thorlabs.MotionControl.IntegratedStepperMotors.dll',
         ),
     )
 
-    stage = record.connect()
-    print(stage)
+    def wait(value):
+        motor.clear_message_queue()
+        message_type, message_id, _ = motor.wait_for_message()
+        while message_type != 2 or message_id != value:
+            position = motor.get_position()
+            print('  at position {} [device units]'.format(position))
+            message_type, message_id, _ = motor.wait_for_message()
 
-    # start the device polling at 200-ms intervals
-    stage.start_polling(200)
+    # connect to the Integrated Stepper Motor
+    motor = record.connect()
+    print('Connected to {}'.format(motor))
 
-    info = stage.get_hardware_info()
-    print('Found device: {}'.format(info.notes))
+    # start polling at 200 ms
+    motor.start_polling(200)
 
-    vmax, acc = stage.get_vel_params()
-    vmax_real = stage.get_real_value_from_device_unit(vmax, UnitType.VELOCITY)
-    acc_real = stage.get_real_value_from_device_unit(acc, UnitType.ACCELERATION)
-    print('Max Velocity [device units]= {}'.format(vmax))
-    print('Max Velocity [real-world units]= {} mm/s'.format(vmax_real))
-    print('Acceleration [device units]= {}'.format(acc))
-    print('Acceleration [real-world units]= {} mm/s^2'.format(acc_real))
+    # home the device
+    print('Homing...')
+    motor.home()
+    wait(0)
+    print('Homing done. At position {} [device units]'.format(motor.get_position()))
 
-    pos = stage.get_position()
-    print('Current position [device units]= {}'.format(pos))
-    print('Current position [mm]= {}'.format(stage.get_real_value_from_device_unit(pos, UnitType.DISTANCE)))
+    # move to position 100000
+    print('Moving to 100000...')
+    motor.move_to_position(100000)
+    wait(1)
+    print('Moving done. At position {} [device units]'.format(motor.get_position()))
 
-    # home the device and wait for the move to finish
-    stage.home()
-    while stage.get_position() != 0:
-        time.sleep(stage.polling_duration()*1e-3)
-        print('Going home... at position index {}'.format(stage.get_position()))
+    # move by a relative amount of -5000
+    print('Moving by -5000...')
+    motor.move_relative(-5000)
+    wait(1)
+    print('Moving done. At position {} [device units]'.format(motor.get_position()))
 
-    time.sleep(1)
+    # jog forwards
+    print('Jogging forwards by {} [device units]'.format(motor.get_jog_step_size()))
+    motor.move_jog('Forwards')
+    wait(1)
+    print('Jogging done. At position {} [device units]'.format(motor.get_position()))
 
-    # move to 30 mm and wait for the move to finish
-    new_position = stage.get_device_unit_from_real_value(30.0, UnitType.DISTANCE)
-    stage.move_to_position(new_position)
-    while stage.get_position() != new_position:
-        time.sleep(stage.polling_duration()*1e-3)
-        print('Move to 30 mm [device units={}]... at position index {}'.format(new_position, stage.get_position()))
+    # stop polling and close the connection
+    motor.stop_polling()
+    motor.disconnect()
 
-    pos = stage.get_position()
-    print('Position [device units]= {}'.format(pos))
-    print('Position [real-world units]= {}'.format(stage.get_real_value_from_device_unit(pos, UnitType.DISTANCE)))
-
-    # close the connection
-    stage.stop_polling()
-    stage.close()
+    # you can access the default settings for the motor to pass to the set_*() methods
+    print('\nThe default motor settings are:')
+    pprint(motor.settings)

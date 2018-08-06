@@ -5,69 +5,67 @@ This example shows how to communicate with Thorlabs KST101, KCube Stepper Motor.
 # this "if" statement is used so that Sphinx does not execute this script when the docs are being built
 if __name__ == '__main__':
     import os
-    import time
+    from pprint import pprint
 
     from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
-    from msl.equipment.resources.thorlabs.kinesis.enums import UnitType
 
-    # you must update the following values
-    kinesis_path = 'C:/Program Files/Thorlabs/Kinesis'
-    serial_number = '26000908'
+    # ensure that the Kinesis folder is available on PATH
+    os.environ['PATH'] += os.pathsep + 'C:/Program Files/Thorlabs/Kinesis'
 
-    # the Thorlabs.MotionControl.KCube.StepperMotor.dll depends on other DLLs from Thorlabs
-    # make sure to add the Kinesis folder to the environment PATH
-    os.environ['PATH'] += os.pathsep + kinesis_path
-
+    # rather than reading the EquipmentRecord from a database we can create it manually
     record = EquipmentRecord(
         manufacturer='Thorlabs',
         model='KST101',
-        serial=serial_number,
+        serial='26000908',  # update the serial number for your KST101
         connection=ConnectionRecord(
             backend=Backend.MSL,
-            address='SDK::KCubeStepperMotor::Thorlabs.MotionControl.KCube.StepperMotor.dll',
+            address='SDK::Thorlabs.MotionControl.KCube.StepperMotor.dll',
         ),
     )
 
-    motor = record.connect()
-    print(motor)
+    def wait(value):
+        motor.clear_message_queue()
+        message_type, message_id, _ = motor.wait_for_message()
+        while message_type != 2 or message_id != value:
+            position = motor.get_position()
+            print('  at position {} [device units]'.format(position))
+            message_type, message_id, _ = motor.wait_for_message()
 
-    # start the device polling at 200-ms intervals
+    # connect to the KCube Stepper Motor
+    motor = record.connect()
+    print('Connected to {}'.format(motor))
+
+    # start polling at 200 ms
     motor.start_polling(200)
 
-    info = motor.get_hardware_info()
-    print('Found device: {}'.format(info.notes))
-
-    vmax, acc = motor.get_vel_params()
-    vmax_real = motor.get_real_value_from_device_unit(vmax, UnitType.VELOCITY)
-    acc_real = motor.get_real_value_from_device_unit(acc, UnitType.ACCELERATION)
-    print('Max Velocity [device units]= {}'.format(vmax))
-    print('Max Velocity [real-world units]= {} mm/s'.format(vmax_real))
-    print('Acceleration [device units]= {}'.format(acc))
-    print('Acceleration [real-world units]= {} mm/s^2'.format(acc_real))
-
-    pos = motor.get_position()
-    print('Current position [device units]= {}'.format(pos))
-    print('Current position [mm]= {}'.format(motor.get_real_value_from_device_unit(pos, UnitType.DISTANCE)))
-
-    # home the device and wait for the move to finish
+    # home the device
+    print('Homing...')
     motor.home()
-    while motor.get_position() != 0:
-        time.sleep(motor.polling_duration()*1e-3)
-        print('Going home... at position index {}'.format(motor.get_position()))
+    wait(0)
+    print('Homing done. At position {} [device units]'.format(motor.get_position()))
 
-    time.sleep(1)
+    # move to position 100000
+    print('Moving to 100000...')
+    motor.move_to_position(100000)
+    wait(1)
+    print('Moving done. At position {} [device units]'.format(motor.get_position()))
 
-    # move to 1 mm and wait for the move to finish
-    new_position = motor.get_device_unit_from_real_value(1.0, UnitType.DISTANCE)
-    motor.move_to_position(new_position)
-    while motor.get_position() != new_position:
-        time.sleep(motor.polling_duration()*1e-3)
-        print('Move to 1 mm [device units={}]... at position index {}'.format(new_position, motor.get_position()))
+    # move by a relative amount of -5000
+    print('Moving by -5000...')
+    motor.move_relative(-5000)
+    wait(1)
+    print('Moving done. At position {} [device units]'.format(motor.get_position()))
 
-    pos = motor.get_position()
-    print('Position [device units]= {}'.format(pos))
-    print('Position [real-world units]= {}'.format(motor.get_real_value_from_device_unit(pos, UnitType.DISTANCE)))
+    # jog forwards
+    print('Jogging forwards by {} [device units]'.format(motor.get_jog_step_size()))
+    motor.move_jog('Forwards')
+    wait(1)
+    print('Jogging done. At position {} [device units]'.format(motor.get_position()))
 
-    # close the connection
+    # stop polling and close the connection
     motor.stop_polling()
-    motor.close()
+    motor.disconnect()
+
+    # you can access the default settings for the motor to pass to the set_*() methods
+    print('\nThe default motor settings are:')
+    pprint(motor.settings)

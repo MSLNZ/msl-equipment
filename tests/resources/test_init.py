@@ -106,3 +106,8 @@ def test_find_resource_class():
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)
             assert cls == resources.thorlabs.kinesis.kcube_stepper_motor.KCubeStepperMotor
+
+    for man in ('OptoSigma', 'Opto Sigma', 'SigmaKoki', 'SigmaKoki', 'Sigma Koki Co. LTD'):
+        record = ConnectionRecord(manufacturer=man, model='SHOT-702', backend=Backend.MSL)
+        cls = resources.find_resource_class(record)
+        assert cls == resources.optosigma.shot702.SHOT702

@@ -35,6 +35,10 @@ resource class, which is a wrapper around the ``benhw32_cdecl.dll`` SDK that is 
 
   * :class:`~msl.equipment.resources.omega.ithx.iTHX` - iTHX-W3, iTHX-D3, iTHX-SD, iTHX-M, iTHX-W, iTHX-2
 
+* OptoSigma_
+
+  * :class:`~msl.equipment.resources.optosigma.shot702.Shot702` - Two-axis Stage Controller
+
 * `Pico Technology`_
 
   * PicoScope_ - Requires the `Pico Technology SDK`_
@@ -120,3 +124,4 @@ When adding a new MSL Resource class the following steps should be performed. Pl
 .. _Pico Technology SDK: https://www.picotech.com/downloads
 .. _PicoScope: https://www.picotech.com/products/oscilloscope
 .. _OMEGA: https://www.omega.com/
+.. _OptoSigma: https://www.global-optosigma.com/en_jp/

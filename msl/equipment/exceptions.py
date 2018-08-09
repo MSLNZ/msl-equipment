@@ -7,6 +7,17 @@ class MSLConnectionError(IOError):
     """Base class for all MSL :class:`~.connection.Connection` exceptions."""
 
 
+class ResourceClassNotFound(MSLConnectionError):
+    """Exception if a resource class cannot be found to connect to the equipment."""
+
+    def __init__(self, record):
+        msg = 'Cannot find a resource class for {}\n' \
+              'If you know that a resource class exists then define a ' \
+              '"resource_class_name" property\nin the Connection Database ' \
+              'with the name of the resource class as the property value '.format(record)
+        super(ResourceClassNotFound, self).__init__(msg)
+
+
 class MSLTimeoutError(MSLConnectionError):
     """A timeout exception for I/O operations."""
 
@@ -31,11 +42,5 @@ class OmegaError(MSLConnectionError):
     """Exception for equipment from OMEGA."""
 
 
-class ResourceClassNotFound(MSLConnectionError):
-    """Exception for if a resource class cannot be found to connect to the equipment."""
-
-    def __init__(self, record):
-        msg = 'Cannot find a resource class for {}\n' \
-              'If you know that a resource class exists then define a "resource_class_name" property\n' \
-              'in the Connection Database with the name of the resource class as the property value '.format(record)
-        super(ResourceClassNotFound, self).__init__(msg)
+class OptoSigmaError(MSLConnectionError):
+    """Exception for equipment from OptoSigma."""

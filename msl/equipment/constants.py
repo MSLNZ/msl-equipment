@@ -19,6 +19,7 @@ class Backend(enum.IntEnum):
     UNKNOWN = 0
     MSL = 1
     PyVISA = 2
+    NIDAQ = 3
 
 
 class MSLInterface(enum.IntEnum):

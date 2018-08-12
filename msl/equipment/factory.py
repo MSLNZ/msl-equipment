@@ -13,6 +13,7 @@ from msl.equipment.connection_demo import ConnectionDemo
 from msl.equipment.connection_pyvisa import ConnectionPyVISA
 from msl.equipment.connection_serial import ConnectionSerial
 from msl.equipment.connection_socket import ConnectionSocket
+from msl.equipment.connection_nidaq import ConnectionNIDAQ
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +65,7 @@ def connect(record, demo=None):
 
         if conn is None:
             _raise('object')
-        if not conn.address:
+        if not conn.address and conn.backend != Backend.NIDAQ:
             _raise('address')
         if conn.backend == Backend.UNKNOWN:
             _raise('backend')
@@ -73,8 +74,6 @@ def connect(record, demo=None):
         if conn.backend == Backend.MSL:
             if conn.interface == MSLInterface.NONE:
                 _raise('interface')
-
-            address_split = conn.address.split('::')
             cls = find_resource_class(conn)
             if cls is None:
                 if conn.interface == MSLInterface.SDK:
@@ -90,6 +89,11 @@ def connect(record, demo=None):
                 cls = ConnectionPyVISA.resource_class(conn)
             else:
                 cls = ConnectionPyVISA
+        elif conn.backend == Backend.NIDAQ:
+            if demo:
+                raise NotImplementedError('NIDAQ cannot be run in demo mode...')
+            else:
+                cls = ConnectionNIDAQ
 
         assert cls is not None, 'The Connection class is None'
 

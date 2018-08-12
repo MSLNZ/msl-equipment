@@ -93,6 +93,8 @@ and the :class:`~msl.equipment.connection.Connection` classes that are available
 +---------------------------------------------------------------+---------------------------------------------------------+
 | :class:`~msl.equipment.connection_pyvisa.ConnectionPyVISA`    | Uses PyVISA_ to establish a connection to the equipment |
 +---------------------------------------------------------------+---------------------------------------------------------+
+| :class:`~msl.equipment.connection_nidaq.ConnectionNIDAQ`      | Uses NI-DAQ_ to establish a connection to the equipment |
++---------------------------------------------------------------+---------------------------------------------------------+
 
 Package Structure
 -----------------
@@ -105,6 +107,7 @@ Package Structure
    msl.equipment.connection <_api/msl.equipment.connection>
    msl.equipment.connection_demo <_api/msl.equipment.connection_demo>
    msl.equipment.connection_message_based <_api/msl.equipment.connection_message_based>
+   msl.equipment.connection_nidaq <_api/msl.equipment.connection_nidaq>
    msl.equipment.connection_pyvisa <_api/msl.equipment.connection_pyvisa>
    msl.equipment.connection_sdk <_api/msl.equipment.connection_sdk>
    msl.equipment.connection_serial <_api/msl.equipment.connection_serial>
@@ -117,3 +120,4 @@ Package Structure
    msl.equipment.resources <_api/msl.equipment.resources>
 
 .. _PyVISA: http://pyvisa.readthedocs.io/en/stable/index.html
+.. _NI-DAQ: http://nidaqmx-python.readthedocs.io/en/latest/index.html

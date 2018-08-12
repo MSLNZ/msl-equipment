@@ -16,3 +16,4 @@ pyvisa-py
 numpy
 pyserial>=3.3
 python-dateutil
+nidaqmx

@@ -211,4 +211,5 @@ intersphinx_mapping = {
     'msl.loadlib': ('https://msl-loadlib.readthedocs.io/en/stable/', None),
     'pyvisa': ('https://pyvisa.readthedocs.io/en/stable/', None),
     'pyserial': ('https://pyserial.readthedocs.io/en/stable/', None),
+    'nidaqmx': ('https://nidaqmx-python.readthedocs.io/en/stable/', None),
 }

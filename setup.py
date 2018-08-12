@@ -120,7 +120,7 @@ setup(
         'Topic :: Scientific/Engineering :: Physics',
     ],
     setup_requires=sphinx + pytest_runner,
-    tests_require=['pytest-cov', 'pytest'],
+    tests_require=['pytest-cov', 'pytest', 'nidaqmx'],
     install_requires=[
         'enum34;python_version<"3.4"',
         'xlrd',

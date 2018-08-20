@@ -36,21 +36,25 @@ if __name__ == '__main__':
     # set the operating mode to SC_OperatingModes.SC_Manual
     shutter.set_operating_mode('Manual')
 
-    # set the operating state to SC_OperatingStates.SC_Active
-    print('Opening the shutter...')
-    shutter.set_operating_state('Active')
-    while not is_open():
-        time.sleep(0.05)
-    print('  Is the shutter open? {}'.format(is_open()))
+    for i in range(5):
 
-    time.sleep(1)
+        # set the operating state to SC_OperatingStates.SC_Active
+        print('Opening the shutter...')
+        shutter.set_operating_state('Active')
+        while not is_open():
+            time.sleep(0.05)
+        print('  Is the shutter open? {}'.format(is_open()))
 
-    # set the operating state to SC_OperatingStates.SC_Inactive
-    print('Closing the shutter...')
-    shutter.set_operating_state('Inactive')
-    while is_open():
-        time.sleep(0.05)
-    print('  Is the shutter open? {}'.format(is_open()))
+        time.sleep(1)
+
+        # set the operating state to SC_OperatingStates.SC_Inactive
+        print('Closing the shutter...')
+        shutter.set_operating_state('Inactive')
+        while is_open():
+            time.sleep(0.05)
+        print('  Is the shutter open? {}'.format(is_open()))
+
+        time.sleep(1)
 
     # stop polling and close the connection
     shutter.stop_polling()

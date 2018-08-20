@@ -52,7 +52,7 @@ class PicoScope6000(PicoScopeApi):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        PicoScopeApi.__init__(self, record, ps6000Api_funcptrs)
+        super(PicoScope6000, self).__init__(record, ps6000Api_funcptrs)
 
     def get_values_bulk_asyc(self, start_index, down_sample_ratio, down_sample_ratio_mode, from_segment_index,
                              to_segment_index):

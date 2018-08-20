@@ -48,7 +48,7 @@ class PicoScope4000(PicoScopeApi):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        PicoScopeApi.__init__(self, record, ps4000Api_funcptrs)
+        super(PicoScope4000, self).__init__(record, ps4000Api_funcptrs)
 
     def get_probe(self):
         """

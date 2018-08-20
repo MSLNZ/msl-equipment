@@ -8,15 +8,19 @@ def test_find_resource_class():
     assert cls is None
 
     for man in ('Bentham', 'Bentham Instruments Limited', 'Bentham Instruments Ltd.'):
-        for mod in ('TMc300', 'dtmc300'):
+        for mod in ('TMc300', 'DTMc300'):
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)
             assert cls == resources.bentham.benhw64.Bentham
 
     for man in ('CMI', 'Czech Metrology Institute',):
-        record = ConnectionRecord(manufacturer=man, model='sia3', backend=Backend.MSL)
+        record = ConnectionRecord(manufacturer=man, model='SIA3', backend=Backend.MSL)
         cls = resources.find_resource_class(record)
         assert cls == resources.cmi.sia3.SIA3
+    for man in ('cmi', 'come in',):
+        record = ConnectionRecord(manufacturer=man, model='SIA3', backend=Backend.MSL)
+        cls = resources.find_resource_class(record)
+        assert cls is None
 
     for man in ('OMEGA', 'omega'):
         for suffix in ('w3', 'd3', 'sd', 'm', 'w', '2'):
@@ -24,7 +28,7 @@ def test_find_resource_class():
             cls = resources.find_resource_class(record)
             assert cls == resources.omega.ithx.iTHX
 
-    for man in ('picotech', 'Pico Tech', 'Pico Technologies', 'Pico Technology'):
+    for man in ('Pico Tech', 'Pico Technologies', 'Pico Technology'):
         for mod in ('PicoScope 2104', '2104', '2105', '2202', '2203', '2204', '2205', '2204A', '2205A'):
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)

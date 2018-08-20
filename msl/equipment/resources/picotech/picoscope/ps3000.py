@@ -56,7 +56,7 @@ class PicoScope3000(PicoScope2k3k):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        PicoScope2k3k.__init__(self, record, ps3000_funcptrs)
+        super(PicoScope3000, self).__init__(record, ps3000_funcptrs)
 
     def release_stream_buffer(self):
         """Not found in the manual, but it is in the header file."""

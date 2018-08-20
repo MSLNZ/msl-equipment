@@ -29,12 +29,11 @@ if __name__ == '__main__':
     for i, v in enumerate(scope.channel['A'].volts):
         print('{0:.2e}, {1:f}'.format(i*scope.dt, v))
 
-    # if pyqtgraph is available then plot the AWG recorded by Channel A
+    # if matplotlib is available then plot the results
     try:
-        import sys
-        import pyqtgraph as pg
-        app = pg.mkQApp()
-        pg.plot(x=t, y=scope.channel['A'].volts, symbol='o')
-        sys.exit(app.exec_())
+        import matplotlib.pyplot as plt
     except ImportError:
         pass
+    else:
+        plt.plot(t, scope.channel['A'].volts, 'bo')
+        plt.show()

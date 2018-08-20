@@ -3,37 +3,40 @@ Uses PyVISA_ as the backend to communicate with the equipment.
 
 .. _PyVISA: http://pyvisa.readthedocs.io/en/stable/index.html
 """
-from msl.equipment.config import Config
-from msl.equipment.connection import Connection
-from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
+try:
+    import pyvisa
+except IOError:
+    pyvisa = None
+
+from .config import Config
+from .connection import Connection
+from .record_types import EquipmentRecord, ConnectionRecord
 
 
 class ConnectionPyVISA(Connection):
 
-    _constants = None
     _resource_classes = {}
 
     def __init__(self, record):
         """Uses PyVISA_ to establish a connection to the equipment.
 
-        The :data:`record.connection.backend <msl.equipment.record_types.ConnectionRecord.backend>`
-        value must be equal to :data:`Backend.PyVISA <msl.equipment.constants.Backend.PyVISA>`
+        The :data:`~msl.equipment.record_types.ConnectionRecord.backend`
+        value must be equal to :data:`~msl.equipment.constants.Backend.PyVISA`
         to use this class for the communication system. This is achieved by setting the
-        value in the **Backend** field for a connection record in the :ref:`connection_database`
+        value in the **Backend** field for a connection record in the :ref:`connections_database`
         to be ``PyVISA``.
 
         Do not instantiate this class directly. Use the
-        :obj:`record.connect() <.record_types.EquipmentRecord.connect>` method
-        to connect to the equipment.
+        :meth:`~.EquipmentRecord.connect` method to connect to the equipment.
 
         .. _PyVISA: http://pyvisa.readthedocs.io/en/stable/index.html
 
         Parameters
         ----------
-        record : :class:`~.record_types.EquipmentRecord`
+        record : :class:`.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        Connection.__init__(self, record)
+        super(ConnectionPyVISA, self).__init__(record)
 
         self._resource = None
 
@@ -43,15 +46,17 @@ class ConnectionPyVISA(Connection):
 
         try:
             val = props['parity'].name.lower()
-            props['parity'] = self.convert_to_enum(val, ConnectionPyVISA.constants.Parity)
         except KeyError:
             pass
+        else:
+            props['parity'] = self.convert_to_enum(val, pyvisa.constants.Parity)
 
         try:
             val = int(props['stop_bits'].value*10)
-            props['stop_bits'] = self.convert_to_enum(val, ConnectionPyVISA.constants.StopBits)
         except KeyError:
             pass
+        else:
+            props['stop_bits'] = self.convert_to_enum(val, pyvisa.constants.StopBits)
 
         self._resource = rm.open_resource(record.connection.address, **props)
 
@@ -67,6 +72,7 @@ class ConnectionPyVISA(Connection):
 
     @property
     def timeout(self):
+        """Calls :attr:`~pyvisa.resources.Resource.timeout`."""
         return self._resource.timeout
 
     @timeout.setter
@@ -75,7 +81,7 @@ class ConnectionPyVISA(Connection):
 
     @timeout.deleter
     def timeout(self):
-        self._resource.timeout = None
+        del self._resource.timeout
 
     def disconnect(self):
         """Calls :meth:`~pyvisa.resources.Resource.close`."""
@@ -90,7 +96,7 @@ class ConnectionPyVISA(Connection):
 
         Parameters
         ----------
-        visa_library : :class:`~pyvisa.highlevel.VisaLibraryBase`, :obj:`str` or :obj:`None`
+        visa_library : :class:`~pyvisa.highlevel.VisaLibraryBase` or :class:`str`, optional
             The library to use for PyVISA. For example:
     
                 * ``@ni`` to use `NI-VISA <https://www.ni.com/visa/>`_
@@ -98,7 +104,7 @@ class ConnectionPyVISA(Connection):
                 * ``@sim`` to use `PyVISA-sim <https://pyvisa-sim.readthedocs.io/en/latest/>`_
     
             If :data:`None` then `visa_library` is read from the
-            :obj:`~.config.Config.PyVISA_LIBRARY` variable.
+            :attr:`~.config.Config.PyVISA_LIBRARY` variable.
 
         Returns
         -------
@@ -112,11 +118,10 @@ class ConnectionPyVISA(Connection):
         OSError
             If the VISA library cannot be found.
         """
-        import pyvisa
+        if pyvisa is None:
+            raise ImportError('pyvisa is not installed. Run: pip install pyvisa')
 
-        if ConnectionPyVISA._constants is None:
-            ConnectionPyVISA._constants = pyvisa.constants
-
+        if not ConnectionPyVISA._resource_classes:
             for item in dir(pyvisa.resources):
                 if item.endswith('Instrument'):
                     key = item[:-len('Instrument')]
@@ -133,11 +138,12 @@ class ConnectionPyVISA(Connection):
                     ConnectionPyVISA._resource_classes['USB_RAW'] = pyvisa.resources.USBRaw
                 elif item == 'PXIMemory':
                     ConnectionPyVISA._resource_classes['PXI_MEMACC'] = getattr(pyvisa.resources, item)
-            for item in ('COM', 'ASRL', 'LPT1'):
+            for item in ('COM', 'ASRL', 'LPT1', 'ASRLCOM'):
                 ConnectionPyVISA._resource_classes[item] = pyvisa.resources.SerialInstrument
 
         if visa_library is None:
             visa_library = Config.PyVISA_LIBRARY
+
         return pyvisa.ResourceManager(visa_library)
 
     @staticmethod
@@ -154,7 +160,7 @@ class ConnectionPyVISA(Connection):
         Returns
         -------
         A :class:`~pyvisa.resources.Resource` subclass
-            The specific_ PyVISA Resource class that can open the `record`.
+            The PyVISA Resource class that can open the `record`.
         """
         if isinstance(record, EquipmentRecord):
             if record.connection is None:
@@ -170,8 +176,8 @@ class ConnectionPyVISA(Connection):
         if not address:
             raise ValueError('The connection address for {} has not been set'.format(record))
 
+        rm = ConnectionPyVISA.resource_manager()
         try:
-            rm = ConnectionPyVISA.resource_manager()
             info = rm.resource_info(address, extended=True)
             return rm._resource_classes[(info.interface_type, info.resource_class)]
         except:
@@ -201,4 +207,3 @@ class ConnectionPyVISA(Connection):
                     return value
 
             raise ValueError('Cannot find PyVISA resource class for {}'.format(address))
-

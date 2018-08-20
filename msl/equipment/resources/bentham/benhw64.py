@@ -14,7 +14,7 @@ from .tokens import MonochromatorCurrentWL, BenMono
 
 
 @register(manufacturer='Bentham', model='[D]*TMc300')
-class Bentham(Connection, Client64):
+class Bentham(Connection):
 
     def __init__(self, record):
         """A wrapper around the :class:`~.benhw32.Bentham32` class.
@@ -22,14 +22,14 @@ class Bentham(Connection, Client64):
         This class can be used with either a 32- or 64-bit Python interpreter
         to call the 32-bit functions in ``benhw32_cdecl.dll``.
 
-        The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
+        The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a Bentham connection supports the following key-value pairs in the
-        :ref:`connection_database`::
+        :ref:`connections_database`::
 
-            'model': 'C:\\path\\to\\System.cfg',  # default is '' 
-            'setup': 'C:\\path\\to\\System.atr',  # default is ''
+            'cfg': str, the path to the System.cfg file [default: None]
+            'atr': str, the path to the System.atr file [default: None]
         
-        If the ``model`` and ``setup`` values are not defined in the :ref:`connection_database`
+        If the ``cfg`` and ``atr`` values are not defined in the :ref:`connections_database`
         then you will have to call :meth:`build_system_model`, :meth:`load_setup`
         and :meth:`initialise` (in that order) to configure the SDK.
 
@@ -41,10 +41,12 @@ class Bentham(Connection, Client64):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        Connection.__init__(self, record)
+        self._is_connected = False
+
+        super(Bentham, self).__init__(record)
         self.set_exception_class(BenthamError)
 
-        path = record.connection.address.split('::')[2]
+        path = record.connection.address[5:]
         head, tail = os.path.split(path)
         self._tail = tail
         self.log_debug('Starting 32-bit server for {}'.format(tail))
@@ -52,20 +54,26 @@ class Bentham(Connection, Client64):
         # the IEEE_32M.dll library must be available on PATH
         env_path = [head, os.path.join(head, 'IEEE', 'Dummy')]
 
-        Client64.__init__(self, 'benhw32', append_sys_path=os.path.dirname(__file__),
-                          append_environ_path=env_path, lib_path=path)
+        self._client = Client64(
+            'benhw32',
+            append_sys_path=os.path.dirname(__file__),
+            append_environ_path=env_path,
+            lib_path=path
+        )
 
         self._hw_id = None
 
-        cfg_path = record.connection.properties.get('model', '')
-        atr_path = record.connection.properties.get('setup', '')
+        cfg_path = record.connection.properties.get('cfg')
+        atr_path = record.connection.properties.get('atr')
         if cfg_path and atr_path:
             self.build_system_model(cfg_path)
             self.load_setup(atr_path)
             self.initialise()
 
+        self._is_connected = True
+
     def auto_measure(self):
-        ret, reading = self.request32('auto_measure')
+        ret, reading = self._client.request32('auto_measure')
         self.errcheck(ret)
         return reading
 
@@ -74,20 +82,22 @@ class Bentham(Connection, Client64):
 
         Parameters
         ----------
-        path : :obj:`str`
+        path : :class:`str`
             The path to the ``System.cfg`` file.
         """
         if not os.path.isfile(path):
             raise IOError('Cannot find {}'.format(path))
-        ret, error_report = self.request32('build_system_model', path)
+        ret, error_report = self._client.request32('build_system_model', path)
         self.errcheck(ret, path, append_msg=error_report)
         return ret
 
     def disconnect(self):
         """Disconnect from the SDK and from the 32-bit server."""
-        self.errcheck(self.request32('close'))
-        self.log_debug('Stopping 32-bit server for {}'.format(self._tail))
-        self.shutdown_server32()
+        if self._is_connected:
+            self.errcheck(self._client.request32('close'))
+            self.log_debug('Stopping 32-bit server for {}'.format(self._tail))
+            self.shutdown_server32()
+            self._is_connected = False
 
     def errcheck(self, result, *args, **kwargs):
         """Checks whether a function call to the SDK was successful."""
@@ -103,22 +113,22 @@ class Bentham(Connection, Client64):
         return result
 
     def get(self, hw_id, token, index):
-        ret, value = self.request32('get', hw_id, token, index)
+        ret, value = self._client.request32('get', hw_id, token, index)
         self.errcheck(ret, hw_id, token, index)
         return value
 
     def get_component_list(self):
-        ret, components = self.request32('get_component_list')
+        ret, components = self._client.request32('get_component_list')
         self.errcheck(ret)
         return components
 
     def get_hardware_type(self, hw_id):
-        ret, hardware_type = self.request32('get_hardware_type', hw_id)
+        ret, hardware_type = self._client.request32('get_hardware_type', hw_id)
         self.errcheck(ret, hw_id)
         return hardware_type
 
     def get_mono_items(self, hw_id):
-        ret, items = self.request32('get_mono_items', hw_id)
+        ret, items = self._client.request32('get_mono_items', hw_id)
         self.errcheck(ret, hw_id)
         return items
 
@@ -139,38 +149,38 @@ class Bentham(Connection, Client64):
 
     def initialise(self):
         """Initialize the connection."""
-        return self.errcheck(self.request32('initialise'))
+        return self.errcheck(self._client.request32('initialise'))
 
     def load_setup(self, path):
         """Load the setup file.
 
         Parameters
         ----------
-        path : :obj:`str`
+        path : :class:`str`
             The path to the ``System.atr`` file.
         """
         if not os.path.isfile(path):
             raise IOError('Cannot find {}'.format(path))
-        return self.errcheck(self.request32('load_setup', path), path)
+        return self.errcheck(self._client.request32('load_setup', path), path)
 
     def park(self):
-        return self.errcheck(self.request32('park'))
+        return self.errcheck(self._client.request32('park'))
 
     def select_wavelength(self, wavelength):
-        ret, recommended_delay_ms = self.request32('select_wavelength', wavelength)
+        ret, recommended_delay_ms = self._client.request32('select_wavelength', wavelength)
         self.errcheck(ret, wavelength)
         return recommended_delay_ms
 
     def set(self, hw_id, token, index, value):
-        ret = self.request32('set', hw_id, token, index, value)
+        ret = self._client.request32('set', hw_id, token, index, value)
         return self.errcheck(ret, hw_id, token, index, value)
 
     def version(self):
-        """:obj:`str`: The version number of the SDK."""
-        version = self.request32('get_version')
+        """:class:`str`: The version number of the SDK."""
+        version = self._client.request32('get_version')
         self.log_debug('{}.version() -> {}'.format(self.__class__.__name__, version))
         return version
 
     def zero_calibration(self, start_wavelength, stop_wavelength):
-        ret = self.request32('zero_calibration', start_wavelength, stop_wavelength)
+        ret = self._client.request32('zero_calibration', start_wavelength, stop_wavelength)
         return self.errcheck(ret, start_wavelength, stop_wavelength)

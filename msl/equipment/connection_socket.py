@@ -12,9 +12,9 @@ class ConnectionSocket(ConnectionMessageBased):
     def __init__(self, record):
         """Base class for equipment that is connected through a socket.
 
-        The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
+        The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a socket connection supports the following key-value pairs in the
-        :ref:`connection_database` (see also :func:`socket.socket` for more details)::
+        :ref:`connections_database` (see also :func:`socket.socket` for more details)::
 
             'read_termination': str or None, read until this termination sequence is found [default: '\\n']
             'write_termination': str or None, termination sequence appended to write messages [default: '\\r\\n']
@@ -28,15 +28,14 @@ class ConnectionSocket(ConnectionMessageBased):
             'proto': int, the socket protocol number [default: 0]
             'buffer_size': int, the number of bytes to read at a time [default: 4096]
 
-        The :data:`record.connection.backend <msl.equipment.record_types.ConnectionRecord.backend>`
-        value must be equal to :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>`
-        to use this class for the communication system. This is achieved by setting the
-        value in the **Backend** field for a connection record in the :ref:`connection_database`
-        to be ``MSL``.
+        The :data:`~msl.equipment.record_types.ConnectionRecord.backend`
+        value must be equal to :data:`~msl.equipment.constants.Backend.MSL`
+        to use this class for the communication system. This is achieved by
+        setting the value in the **Backend** field for a connection record
+        in the :ref:`connections_database` to be ``MSL``.
 
         Do not instantiate this class directly. Use the
-        :obj:`record.connect() <.record_types.EquipmentRecord.connect>` method
-        to connect to the equipment.
+        :meth:`~.EquipmentRecord.connect` method to connect to the equipment.
 
         Parameters
         ----------
@@ -48,7 +47,7 @@ class ConnectionSocket(ConnectionMessageBased):
         :exc:`~.exceptions.MSLConnectionError`
             If the socket cannot be opened.
         """
-        ConnectionMessageBased.__init__(self, record)
+        super(ConnectionSocket, self).__init__(record)
 
         self._socket = None
         self._byte_buffer = bytearray()
@@ -147,7 +146,7 @@ class ConnectionSocket(ConnectionMessageBased):
 
     @property
     def socket(self):
-        """:class:`socket.socket`: The reference to the socket."""
+        """:func:`socket.socket`: The reference to the socket."""
         return self._socket
 
     @ConnectionMessageBased.timeout.setter
@@ -162,12 +161,12 @@ class ConnectionSocket(ConnectionMessageBased):
             self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
             self._socket = None
 
-    def write(self, message):
+    def write(self, msg):
         """Write the given message over the socket.
 
         Parameters
         ----------
-        message : :class:`str`
+        msg : :class:`str`
             The message to write.
 
         Returns
@@ -175,7 +174,7 @@ class ConnectionSocket(ConnectionMessageBased):
         :class:`int`
             The number of bytes sent over the socket.
         """
-        data = self._encode(message)
+        data = self._encode(msg)
 
         timeout_error = False
         try:
@@ -196,15 +195,15 @@ class ConnectionSocket(ConnectionMessageBased):
 
         Parameters
         ----------
-        size : :class:`int` or :obj:`None`, optional
-            The number of bytes to read. If `size` is :obj:`None` then read until:
+        size : :class:`int`, optional
+            The number of bytes to read. If `size` is :data:`None` then read until:
 
             1. :attr:`.read_termination` characters are read
-               (only if :attr:`.read_termination` is not :obj:`None`)
+               (only if :attr:`.read_termination` is not :data:`None`)
             2. :attr:`.max_read_size` bytes have been read
                (raises :exc:`~msl.equipment.exceptions.MSLConnectionError` if occurs)
             3. :exc:`~msl.equipment.exceptions.MSLTimeoutError` occurs
-               (only if :attr:`.timeout` is not :obj:`None`)
+               (only if :attr:`.timeout` is not :data:`None`)
 
             This method will block until at least one of the above conditions is fulfilled.
 

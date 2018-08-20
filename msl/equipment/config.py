@@ -1,11 +1,11 @@
 """
-Load a XML :ref:`configuration_file`.
+Load an XML :ref:`configuration_file`.
 """
 import os
 import logging
 from xml.etree import cElementTree as ET
 
-from msl.equipment.database import Database
+from .database import Database
 
 logger = logging.getLogger(__name__)
 
@@ -13,26 +13,26 @@ logger = logging.getLogger(__name__)
 class Config(object):
 
     PyVISA_LIBRARY = '@ni'
-    """:obj:`str`: The PyVISA backend_ library to use.
+    """:class:`str`: The PyVISA backend_ library to use.
     
     .. _backend: http://pyvisa.readthedocs.io/en/stable/backends.html
     """
 
     DEMO_MODE = False
-    """:obj:`bool`: Whether to open connections in demo mode. 
+    """:class:`bool`: Whether to open connections in demo mode. 
     
     The equipment does not need to be physically connected to a computer.
     """
 
     PATH = []
-    """:obj:`list` of :obj:`str`: Paths that are appended to :obj:`os.environ['PATH'] <os.environ>`."""
+    """:class:`list` of :class:`str`: Paths are also appended to :data:`os.environ['PATH'] <os.environ>`."""
 
     def __init__(self, path):
-        """Load a XML :ref:`configuration_file`.
+        """Load an XML :ref:`configuration_file`.
 
         This function is used to set the configuration constants to use for the Python runtime
         and it allows you to access :class:`.EquipmentRecord`'s from an :ref:`equipment_database`
-        and :class:`.ConnectionRecord`'s from a :ref:`connection_database`.
+        and :class:`.ConnectionRecord`'s from a :ref:`connections_database`.
 
         **MSL-Equipment** constants that can be defined in a :ref:`configuration_file`:
 
@@ -47,7 +47,8 @@ class Config(object):
         |     path       | /path/to/SDKs, D:/images          | A path that contains external resources.|
         |                |                                   | Accepts a *recursive="true"* attribute. |
         |                |                                   | Appends the path(s) to                  |
-        |                |                                   | :obj:`os.environ['PATH'] <os.environ>`  |
+        |                |                                   | :data:`os.environ['PATH'] <os.environ>` |
+        |                |                                   | and to :attr:`.PATH`                    |
         +----------------+-----------------------------------+-----------------------------------------+
 
         Also, the user is encouraged to define their own application-specific constants within the
@@ -57,8 +58,8 @@ class Config(object):
 
         Parameters
         ----------
-        path : :obj:`str`
-            The path to a XML :ref:`configuration_file`.
+        path : :class:`str`
+            The path to an XML :ref:`configuration_file`.
 
         Raises
         ------
@@ -103,7 +104,7 @@ class Config(object):
 
     @property
     def path(self):
-        """:obj:`str`: The path to the configuration file."""
+        """:class:`str`: The path to the configuration file."""
         return self._path
 
     @property
@@ -112,7 +113,7 @@ class Config(object):
 
         Returns
         -------
-        :obj:`~xml.etree.ElementTree.Element`
+        :class:`~xml.etree.ElementTree.Element`
             The root element.
         """
         return self._root
@@ -134,13 +135,13 @@ class Config(object):
 
         Parameters
         ----------
-        tag : :obj:`str`
+        tag : :class:`str`
             The name of a XML tag in the configuration file.
 
         Returns
         -------
-        :obj:`str` or :obj:`None`
-            The value associated with the `tag` or :obj:`None` if the tag cannot be found.
+        :class:`str` or :data:`None`
+            The value associated with the `tag` or :data:`None` if the tag cannot be found.
         """
         element = self._root.find(tag)
         if element is not None:

@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <msl>
 
-    <equipment_registers>
+    <registers>
         <register encoding="cp1252">
             <path>db_files/db_encoding_cp1252_register.txt</path>
         </register>
-    </equipment_registers>
+    </registers>
 
-    <equipment_connections encoding="cp1252">
-        <path>db_files/db_encoding_cp1252_connection.txt</path>
-    </equipment_connections>
+    <connections>
+        <connection encoding="cp1252">
+            <path>db_files/db_encoding_cp1252_connection.txt</path>
+        </connection>
+    </connections>
 
 </msl>

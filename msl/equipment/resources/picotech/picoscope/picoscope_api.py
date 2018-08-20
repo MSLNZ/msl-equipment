@@ -7,11 +7,16 @@ from ctypes import (c_int8, c_int16, c_uint16, c_int32, c_uint32, c_int64,
                     c_float, c_void_p, byref, cast, POINTER)
 import numpy as np
 
+from msl.equipment.resources.picotech import c_enum
 from .enums import PicoScopeInfoApi
 from .picoscope import PicoScope
-from msl.equipment.resources.picotech import c_enum
-from msl.equipment.resources.picotech.errors import (PICO_OK, PICO_BUSY, PICO_POWER_SUPPLY_CONNECTED,
-                                                     PICO_POWER_SUPPLY_NOT_CONNECTED, ERROR_CODES_API)
+from ..errors import (
+    PICO_OK,
+    PICO_BUSY,
+    PICO_POWER_SUPPLY_CONNECTED,
+    PICO_POWER_SUPPLY_NOT_CONNECTED,
+    ERROR_CODES_API
+)
 
 
 class PicoScopeApi(PicoScope):
@@ -32,7 +37,7 @@ class PicoScopeApi(PicoScope):
         func_ptrs : :mod:`.functions`
             The appropriate function-pointer list for the SDK. 
         """
-        PicoScope.__init__(self, record, func_ptrs)
+        super(PicoScopeApi, self).__init__(record, func_ptrs)
         self.enPicoScopeInfo = PicoScopeInfoApi
 
         self._buffer_size = None
@@ -42,8 +47,8 @@ class PicoScopeApi(PicoScope):
 
         self._auto_select_power = properties.get('auto_select_power', True)
         resolution = properties.get('resolution', '8BIT')
-        open_unit = properties.get('open_unit', True)
-        open_unit_async = properties.get('open_unit_async', None)
+        open_unit = properties.get('open', True)
+        open_unit_async = properties.get('open_async', None)
 
         if open_unit and open_unit_async is None:
             self.open_unit(self._auto_select_power, resolution)
@@ -130,7 +135,7 @@ class PicoScopeApi(PicoScope):
         ----------            
         channel : :class:`enum.IntEnum`
             0=ChannelA, 1=ChannelB, ...
-        info : :class:`enum.IntEnum`
+        info : :class:`enum.IntEnum`, optional
             A ``ChannelInfo`` enum value or enum member name.
         """
         ch = self.convert_to_enum(channel, self.enChannel, to_upper=True)
@@ -146,7 +151,7 @@ class PicoScopeApi(PicoScope):
         """
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             This function returns the maximum down-sampling ratio that can be used for a given
             number of samples in a given down-sampling mode.
         """
@@ -161,7 +166,7 @@ class PicoScopeApi(PicoScope):
         
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             This function returns the maximum number of segments allowed for the opened
             device. This number is the maximum value of ``nsegments`` that can be passed to
             :meth:`memory_segments`.
@@ -211,7 +216,7 @@ class PicoScopeApi(PicoScope):
 
     def get_timebase(self, timebase, num_samples=0, segment_index=0, oversample=0):
         """
-        Since Python supports the :obj:`float` data type, this function returns 
+        Since Python supports the :class:`float` data type, this function returns
         :meth:`get_timebase2`. The timebase that is returned is in **seconds** (not ns).
         
         This function calculates the sampling rate and maximum number of samples for a
@@ -225,7 +230,7 @@ class PicoScopeApi(PicoScope):
     def get_timebase2(self, timebase, num_samples=0, segment_index=0, oversample=0):
         """
         This function is an upgraded version of :meth:`get_timebase`, and returns the time
-        interval as a :obj:`float` rather than an :obj:`int`. This allows it to return 
+        interval as a :class:`float` rather than an :class:`int`. This allows it to return
         sub-nanosecond time intervals. See :meth:`get_timebase` for a full description.
         
         The timebase that is returned is in **seconds** (not ns).
@@ -276,17 +281,17 @@ class PicoScopeApi(PicoScope):
         
         Parameters
         ----------
-        num_samples : :obj:`int` or :obj:`None`
-            The number of samples required. If :obj:`None` then automatically determine the 
+        num_samples : :class:`int` or :data:`None`, optional
+            The number of samples required. If :data:`None` then automatically determine the
             number of samples to retrieve.
-        start_index : :obj:`int`
+        start_index : :class:`int`, optional
             A zero-based index that indicates the start point for data collection. 
             It is measured in sample intervals from the start of the buffer.
-        factor : :obj:`int`
+        factor : :class:`int`, optional
             The down-sampling factor that will be applied to the raw data.
-        ratio_mode : :class:`enum.IntEnum`
+        ratio_mode : :class:`enum.IntEnum`, optional
             Which down-sampling mode to use. A ``RatioMode`` enum.
-        segment_index : :obj:`int`
+        segment_index : :class:`int`, optional
             The zero-based number of the memory segment where the data is stored.
         """
         overflow = c_int16()
@@ -308,17 +313,17 @@ class PicoScopeApi(PicoScope):
         ----------
         lp_data_ready : :mod:`callback <msl.equipment.resources.picotech.picoscope.callbacks>`
             A :mod:`DataReady callback <msl.equipment.resources.picotech.picoscope.callbacks>` function.
-        num_samples : :obj:`int` or :obj:`None`
-            The number of samples required. If :obj:`None` then automatically determine the 
+        num_samples : :class:`int`, optional
+            The number of samples required. If :data:`None` then automatically determine the
             number of samples to retrieve.
-        start_index : :obj:`int`
+        start_index : :class:`int`, optional
             A zero-based index that indicates the start point for data collection. 
             It is measured in sample intervals from the start of the buffer.
-        factor : :obj:`int`
+        factor : :class:`int`, optional
             The downsampling factor that will be applied to the raw data.
-        ratio_mode : :class:`enum.IntEnum`
+        ratio_mode : :class:`enum.IntEnum`, optional
             Which down-sampling mode to use. A ``RatioMode`` enum.
-        segment_index : :obj:`int`
+        segment_index : :class:`int`, optional
             The zero-based number of the memory segment where the data is stored.
         """
         p_parameter = c_void_p()
@@ -507,13 +512,12 @@ class PicoScopeApi(PicoScope):
         
         Parameters
         ----------
-        auto_select_power : :obj:`bool`, optional
+        auto_select_power : :class:`bool`, optional
             PicoScopes that can be powered by either DC power 
             or by USB power may raise ``PICO_POWER_SUPPLY_NOT_CONNECTED`` if the DC power 
-            supply is not connected. Passing in :obj:`True` will automatically switch to 
+            supply is not connected. Passing in :data:`True` will automatically switch to
             the USB power source.
-                
-        resolution : :obj:`str`, optional
+        resolution : :class:`str`, optional
             The ADC resolution: 8, 12, 14, 15 or 16Bit. Only used by the PS5000A Series 
             and it is ignored for all other PicoScope Series.  
         """
@@ -547,13 +551,12 @@ class PicoScopeApi(PicoScope):
 
         Parameters
         ----------
-        auto_select_power : :obj:`bool`, optional
+        auto_select_power : :class:`bool`, optional
             PicoScopes that can be powered by either DC power 
             or by USB power may raise ``PICO_POWER_SUPPLY_NOT_CONNECTED`` if the DC power 
-            supply is not connected. Passing in :obj:`True` will automatically switch to 
+            supply is not connected. Passing in :data:`True` will automatically switch to
             the USB power source.
-                
-        resolution : :obj:`str`, optional
+        resolution : :class:`str`, optional
             The ADC resolution: 8, 12, 14, 15 or 16Bit. Only used by the PS5000A Series 
             and it is ignored for all other PicoScope Series.  
         """
@@ -637,11 +640,11 @@ class PicoScopeApi(PicoScope):
         ----------
         channel : :class:`enum.IntEnum`
             An enum value or member name from ``Channel``. 
-        buffer : :class:`numpy.ndarray` or :obj:`None`
-            A int16, numpy array. If :obj:`None` then use a pre-allocated array.
-        mode : :class:`enum.IntEnum`
+        buffer : :class:`numpy.ndarray`, optional
+            A int16, numpy array. If :data:`None` then use a pre-allocated array.
+        mode : :class:`enum.IntEnum`, optional
             An enum value or member name from ``RatioMode``.
-        segment_index : :obj:`int`
+        segment_index : :class:`int`, optional
             The zero-based number of the memory segment where the data is stored.
         """
         ch = self.convert_to_enum(channel, self.enChannel, to_upper=True)
@@ -728,9 +731,9 @@ class PicoScopeApi(PicoScope):
         
         Parameters
         ----------
-        buffer : ctypes array of c_int64
-            An array of 64-bit words, each representing the time in picoseconds at which 
-            the sample was captured.
+        buffer : :class:`ctypes.c_longlong`
+            An array of 64-bit words (:class:`ctypes.c_int64`), each representing the time,
+            in picoseconds, at which the sample was captured.
         """
         return self.SetEtsTimeBuffer(self._handle, byref(buffer), len(buffer))
 
@@ -777,27 +780,27 @@ class PicoScopeApi(PicoScope):
         ----------
         waveform : :class:`numpy.ndarray`
             The arbitrary waveform, in volts.
-        repetition_rate : :obj:`float`, optional
+        repetition_rate : :class:`float`, optional
             The requested repetition rate (frequency) of the entire arbitrary waveform. The actual
             repetition rate that is used may be different based on the specifications of the AWG.
             If specified then the :meth:`sig_gen_frequency_to_phase` method is called to determine
             the value of `start_delta_phase`.
-        offset_voltage : :obj:`float`, optional
+        offset_voltage : :class:`float`, optional
             The voltage offset, in volts, to be applied to the waveform.
-        pk_to_pk : :obj:`float`, optional
-            The peak-to-peak voltage, in volts, of the waveform signal. If :obj:`None` then uses
+        pk_to_pk : :class:`float`, optional
+            The peak-to-peak voltage, in volts, of the waveform signal. If :data:`None` then uses
             the maximum value of the waveform to determine the peak-to-peak voltage.
-        start_delta_phase : :obj:`int`, optional
+        start_delta_phase : :class:`int`, optional
             The initial value added to the phase accumulator as the generator begins
             to step through the waveform buffer.
-        stop_delta_phase : :obj:`int`, optional
+        stop_delta_phase : :class:`int`, optional
             The final value added to the phase accumulator before the generator restarts or reverses
             the sweep. When frequency sweeping is not required, set equal to `start_delta_phase`.
-        delta_phase_increment : :obj:`int`, optional
+        delta_phase_increment : :class:`int`, optional
             The amount added to the delta phase value every time the `dwell_count` period expires.
             This determines the amount by which the generator sweeps the output frequency in each
             dwell period. When frequency sweeping is not required, set to zero.
-        dwell_count : :obj:`int`, optional
+        dwell_count : :class:`int`, optional
             The time, in units of ``dacPeriod``, between successive additions of `delta_phase_increment`
             to the delta phase accumulator. This determines the rate at which the generator sweeps the
             output frequency.
@@ -811,17 +814,17 @@ class PicoScopeApi(PicoScope):
         index_mode : :class:`enum.IntEnum`, optional
             Specifies how the signal will be formed from the arbitrary waveform data. Possible values
             are ``SINGLE`` or ``DUAL``.
-        shots : :obj:`int`, optional
-            If :obj:`None` then start and run continuously after trigger occurs.
-        sweeps : :obj:`int`, optional
-            If :obj:`None` then start a sweep and continue after trigger occurs.
+        shots : :class:`int`, optional
+            If :data:`None` then start and run continuously after trigger occurs.
+        sweeps : :class:`int`, optional
+            If :data:`None` then start a sweep and continue after trigger occurs.
         trigger_type : :class:`enum.IntEnum`, optional
             The type of trigger that will be applied to the signal generator.
             One of: ``RISING``, ``FALLING``, ``GATE_HIGH``, ``GATE_LOW``.
         trigger_source : :class:`enum.IntEnum`, optional
-            The source that will trigger the signal generator. If :obj:`None` then run
+            The source that will trigger the signal generator. If :data:`None` then run
             without waiting for trigger.
-        ext_in_threshold : :obj:`int`, optional
+        ext_in_threshold : :class:`int`, optional
             Used to set trigger level for external trigger.
 
         Returns
@@ -831,7 +834,7 @@ class PicoScopeApi(PicoScope):
 
         Raises
         ------
-        :exc:`msl.equipment.exceptions.PicoTechError`
+        :exc:`~msl.equipment.exceptions.PicoTechError`
             If the value of an input parameter is invalid.
         """
         min_value, max_value, min_size, max_size = self.sig_gen_arbitrary_min_max_values()
@@ -904,19 +907,19 @@ class PicoScopeApi(PicoScope):
         
         Parameters
         ----------
-        offset_voltage : :obj:`float`, optional
+        offset_voltage : :class:`float`, optional
             The voltage offset, in volts, to be applied to the waveform.
-        pk_to_pk : :obj:`float`, optional
+        pk_to_pk : :class:`float`, optional
             The peak-to-peak voltage, in volts, of the waveform signal.
         wave_type : :class:`enum.IntEnum`, optional
             The type of waveform to be generated. A ``WaveType`` enum.
-        start_frequency : :obj:`float`, optional
+        start_frequency : :class:`float`, optional
             The frequency that the signal generator will initially produce.
-        stop_frequency : :obj:`float`, optional
+        stop_frequency : :class:`float`, optional
             The frequency at which the sweep reverses direction or returns to the initial frequency.
-        increment : :obj:`float`, optional
+        increment : :class:`float`, optional
             The amount of frequency increase or decrease in sweep mode.
-        dwell_time : :obj:`float`, optional
+        dwell_time : :class:`float`, optional
             The time, in seconds, for which the sweep stays at each frequency.
         sweep_type : :class:`enum.IntEnum`, optional
             Whether the frequency will sweep from `start_frequency` to `stop_frequency`, or 
@@ -925,17 +928,17 @@ class PicoScopeApi(PicoScope):
         operation : :class:`enum.IntEnum`, optional
             The type of waveform to be produced, specified by one of the following enumerated 
             types (B models only): ``OFF``, ``WHITENOISE``, ``PRBS``
-        shots : :obj:`int`, optional
-            If :obj:`None` then start and run continuously after trigger occurs.
-        sweeps : :obj:`int`, optional
-            If :obj:`None` then start a sweep and continue after trigger occurs.
+        shots : :class:`int`, optional
+            If :data:`None` then start and run continuously after trigger occurs.
+        sweeps : :class:`int`, optional
+            If :data:`None` then start a sweep and continue after trigger occurs.
         trigger_type : :class:`enum.IntEnum`, optional
             The type of trigger that will be applied to the signal generator.
             One of: ``RISING``, ``FALLING``, ``GATE_HIGH``, ``GATE_LOW``.
         trigger_source : :class:`enum.IntEnum`, optional
-            The source that will trigger the signal generator. If :obj:`None` then run 
+            The source that will trigger the signal generator. If :data:`None` then run
             without waiting for trigger.
-        ext_in_threshold : :obj:`int`, optional
+        ext_in_threshold : :class:`int`, optional
             Used to set trigger level for external trigger.
         """
         offset = int(round(offset_voltage*1e6))
@@ -1055,21 +1058,21 @@ class PicoScopeApi(PicoScope):
         
         Parameters
         ----------
-        repetition_rate : :obj:`float`
+        repetition_rate : :class:`float`
             The requested repetition rate (frequency) of the entire arbitrary waveform.
         index_mode : :class:`enum.IntEnum`
             An ``IndexMode`` enum value or member name.
-        buffer_length : :obj:`int`
+        buffer_length : :class:`int`
             The size (number of samples) of the waveform.
         
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The phase count.
 
         Raises
         ------
-        :exc:`msl.equipment.exceptions.PicoTechError`
+        :exc:`~msl.equipment.exceptions.PicoTechError`
             If the value of an input parameter is invalid.
         """
         mode = self.convert_to_enum(index_mode, self.enIndexMode, to_upper=True)
@@ -1120,13 +1123,13 @@ class PicoScopeApi(PicoScope):
 
         Parameters
         ----------
-        channel_properties : :obj:`list` of ``TriggerChannelProperties`` :mod:`~msl.equipment.resources.picotech.picoscope.structs`
+        channel_properties : :class:`list` of ``TriggerChannelProperties`` :mod:`~msl.equipment.resources.picotech.picoscope.structs`
             A list of ``TriggerChannelProperties`` structures describing the requested properties.
-        timeout : :obj:`float`
+        timeout : :class:`float`, optional
             The time, in seconds, for which the scope device will wait before collecting data 
             if no trigger event occurs. If this is set to zero, the scope device will wait 
             indefinitely for a trigger.
-        aux_output_enable : :obj:`int`
+        aux_output_enable : :class:`int`, optional
             Zero configures the AUXIO connector as a trigger input. Any other value configures 
             it as a trigger output. Only used by ps5000.
         """

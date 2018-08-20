@@ -206,10 +206,19 @@ epub_exclude_files = ['search.html']
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/{}'.format(sys.version_info[0]), None),
+    'python': ('https://docs.python.org/{}'.format(sys.version_info.major), None),
     'numpy': ('https://docs.scipy.org/doc/numpy/', None),
     'msl.loadlib': ('https://msl-loadlib.readthedocs.io/en/stable/', None),
     'pyvisa': ('https://pyvisa.readthedocs.io/en/stable/', None),
     'pyserial': ('https://pyserial.readthedocs.io/en/stable/', None),
     'nidaqmx': ('https://nidaqmx-python.readthedocs.io/en/stable/', None),
 }
+
+# warn about all broken links
+nitpicky = True
+# known bad links
+nitpick_ignore = [
+    ('py:class', '_ctypes.Structure'),
+    ('py:class', 'ctypes.WINFUNCTYPE.<locals>.WinFunctionType'),
+    ('py:mod', 'nidaqmx.system'),
+]

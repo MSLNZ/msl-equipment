@@ -7,6 +7,10 @@ class MSLConnectionError(IOError):
     """Base class for all MSL :class:`~.connection.Connection` exceptions."""
 
 
+class MSLTimeoutError(MSLConnectionError):
+    """A timeout exception for I/O operations."""
+
+
 class ResourceClassNotFound(MSLConnectionError):
     """Exception if a resource class cannot be found to connect to the equipment."""
 
@@ -18,10 +22,6 @@ class ResourceClassNotFound(MSLConnectionError):
         super(ResourceClassNotFound, self).__init__(msg)
 
 
-class MSLTimeoutError(MSLConnectionError):
-    """A timeout exception for I/O operations."""
-
-
 class BenthamError(MSLConnectionError):
     """Exception for equipment from Bentham."""
 
@@ -30,17 +30,17 @@ class CMIError(MSLConnectionError):
     """Exception for equipment from the Czech Metrology Institute."""
 
 
-class PicoTechError(MSLConnectionError):
-    """Exception for equipment from Pico Technology."""
-
-
-class ThorlabsError(MSLConnectionError):
-    """Exception for equipment from Thorlabs."""
-
-
 class OmegaError(MSLConnectionError):
     """Exception for equipment from OMEGA."""
 
 
 class OptoSigmaError(MSLConnectionError):
     """Exception for equipment from OptoSigma."""
+
+
+class PicoTechError(MSLConnectionError):
+    """Exception for equipment from Pico Technology."""
+
+
+class ThorlabsError(MSLConnectionError):
+    """Exception for equipment from Thorlabs."""

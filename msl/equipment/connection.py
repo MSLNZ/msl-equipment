@@ -4,8 +4,8 @@ Base class for establishing a connection to the equipment.
 import logging
 from enum import Enum
 
-from msl.equipment.record_types import EquipmentRecord
-from msl.equipment.exceptions import MSLConnectionError
+from .record_types import EquipmentRecord
+from .exceptions import MSLConnectionError
 
 logger = logging.getLogger(__name__)
 
@@ -16,12 +16,11 @@ class Connection(object):
         """Base class for establishing a connection to the equipment.
 
         Do not instantiate this class directly. Use the
-        :obj:`record.connect() <.record_types.EquipmentRecord.connect>` method
-        to connect to the equipment.
+        :meth:`~.EquipmentRecord.connect` method to connect to the equipment.
 
         Parameters
         ----------
-        record : :class:`~.record_types.EquipmentRecord`
+        record : :class:`.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
         if not isinstance(record, EquipmentRecord):
@@ -31,15 +30,15 @@ class Connection(object):
 
     @property
     def equipment_record(self):
-        """:class:`~.record_types.EquipmentRecord`: The record that is being used for the connection.
+        """:class:`.EquipmentRecord`: The information about the equipment.
         """
         return self._record
 
     def disconnect(self):
         """Disconnect from the equipment.
         
-        This method should be overridden in the subclass if the subclass must implement tasks
-        that need to be performed in order to safely disconnect from the equipment.
+        This method should be overridden in the subclass if the subclass must implement
+        tasks that need to be performed in order to safely disconnect from the equipment.
         
         For example:
 
@@ -49,7 +48,8 @@ class Connection(object):
         
         Note
         ----
-        This method gets called automatically when the :class:`.Connection` object gets destroyed.
+        This method gets called automatically when the :class:`.Connection` object
+        gets garbage collected, which happens when the reference count is 0.
         """
         pass
 
@@ -74,11 +74,11 @@ class Connection(object):
         self.disconnect()
 
     def raise_exception(self, msg):
-        """Raise a :exc:`~.exceptions.MSLConnectionError`.
+        """Raise a :exc:`~.MSLConnectionError`.
         
         Parameters
         ----------
-        msg : :obj:`str`
+        msg : :class:`str`
             The message to display when the exception is raised.
         """
         self.log_error('{!r} {}'.format(self, msg))
@@ -90,24 +90,21 @@ class Connection(object):
         
         Parameters
         ----------
-        item : :obj:`int`, :obj:`float` or :obj:`str`
-            If :obj:`str` then the **name** of an `enum` member.
-            If :obj:`int` or :obj:`float` then the **value** of an `enum` member.
-            
-        enum : :obj:`~enum.Enum`
+        item : :class:`int`, :class:`float` or :class:`str`
+            If :class:`str` then the **name** of an `enum` member.
+            If :class:`int` or :class:`float` then the **value** of an `enum` member.
+        enum : :class:`~enum.Enum`
             An enum object to cast the `item` to.
-        
-        prefix : :obj:`str`, optional
-            If `item` is a :obj:`str`, then `prefix` is included at the 
-            beginning of `item` before converting `item` to an `enum` value.
-            
-        to_upper : :obj:`bool`, optional
-            If `item` is a :obj:`str`, then whether to change `item` to 
+        prefix : :class:`str`, optional
+            If `item` is a :class:`str`, then ensures that `prefix` is included at
+            the beginning of `item` before converting `item` to an `enum` value.
+        to_upper : :class:`bool`, optional
+            If `item` is a :class:`str`, then whether to change `item` to
             be upper case before converting `item` to an `enum` value.
 
         Returns
         -------
-        :obj:`~enum.Enum`
+        :class:`~enum.Enum`
             The `enum` value.
         
         Raises
@@ -115,7 +112,7 @@ class Connection(object):
         ValueError
             If `item` is not in `enum`.
         TypeError
-            If `item` is not an :obj:`int`, :obj:`float` or :obj:`str`.
+            If `item` is not an :class:`int`, :class:`float` or :class:`str`.
         """
         if isinstance(item, Enum):
             return item
@@ -154,71 +151,56 @@ class Connection(object):
 
     @staticmethod
     def log_debug(msg, *args, **kwargs):
-        """Log a :obj:`~logging.Logger.debug` message.
-        
-        Parameters
-        ----------
-        msg : :obj:`str`
-            The debug message to log.        
+        """Log a debug message.
+
+        All input parameters are passed to :meth:`~logging.Logger.debug`.
         """
         logger.debug(msg, *args, **kwargs)
 
     @staticmethod
     def log_info(msg, *args, **kwargs):
-        """Log an :obj:`~logging.Logger.info` message.
+        """Log an info message.
 
-        Parameters
-        ----------
-        msg : :obj:`str`
-            The info message to log.
+        All input parameters are passed to :meth:`~logging.Logger.info`.
         """
         logger.info(msg, *args, **kwargs)
 
     @staticmethod
     def log_warning(msg, *args, **kwargs):
-        """Log a :obj:`~logging.Logger.warning` message.
+        """Log a warning message.
 
-        Parameters
-        ----------
-        msg : :obj:`str`
-            The warning message to log.
+        All input parameters are passed to :meth:`~logging.Logger.warning`.
         """
         logger.warning(msg, *args, **kwargs)
 
     @staticmethod
     def log_error(msg, *args, **kwargs):
-        """Log an :obj:`~logging.Logger.error` message.
+        """Log an error message.
 
-        Parameters
-        ----------
-        msg : :obj:`str`
-            The error message to log.
+        All input parameters are passed to :meth:`~logging.Logger.error`.
         """
         logger.error(msg, *args, **kwargs)
 
     @staticmethod
     def log_critical(msg, *args, **kwargs):
-        """Log a :obj:`~logging.Logger.critical` message.
+        """Log a critical message.
 
-        Parameters
-        ----------
-        msg : :obj:`str`
-            The critical message to log.
+        All input parameters are passed to :meth:`~logging.Logger.critical`.
         """
         logger.critical(msg, *args, **kwargs)
 
     def set_exception_class(self, handler):
-        """Set the exception-handler class for this connection.
+        """Set the exception-handler class for this :class:`Connection`.
 
         Parameters
         ----------
-        handler : :class:`~.exceptions.MSLConnectionError`
-            A subclass of :class:`~.exceptions.MSLConnectionError`
+        handler : :class:`~.MSLConnectionError`
+            A subclass of :class:`~.MSLConnectionError`
 
         Raises
         ------
-        TypeError:
-            If the `handler` is not a subclass of :class:`~.exceptions.MSLConnectionError`
+        TypeError
+            If the `handler` is not a subclass of :class:`~.MSLConnectionError`
         """
         if issubclass(handler, MSLConnectionError):
             self._exception_handler = handler

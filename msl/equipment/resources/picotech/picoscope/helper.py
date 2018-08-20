@@ -24,14 +24,17 @@ import re
 
 
 def parse_pico_scope_api_header(path):
-    """
-    Parse a PicoScope header file.
+    """Parse a PicoScope header file.
 
-    Args:
-        path (str): The path to a PicoScope header file  
+    Parameters
+    ----------
+    path : :class:`str`
+        The path to a PicoScope header file.
 
-    Returns:
-        :py:class:`dict`: {'enums': {}, 'defines': {}, 'functions': {}, 'structs': {}, 'functypes': {}}
+    Returns
+    -------
+    :class:`dict`
+        {'enums': {}, 'defines': {}, 'functions': {}, 'structs': {}, 'functypes': {}}
     """
     def process_line(string):
         split = string.split()

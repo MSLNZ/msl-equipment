@@ -7,7 +7,7 @@ import random
 import logging
 import importlib
 
-from msl.equipment.connection import Connection
+from .connection import Connection
 
 _backtick_regex = re.compile(r'`(.+?)`')
 
@@ -20,37 +20,34 @@ class ConnectionDemo(Connection):
         Establishing a connection in demo mode is useful when developing a 
         program and the equipment is not physically connected to a computer.
 
-        A custom `logging level`_ is used for logging messages with a connection 
-        in demo mode. The ``logging.DEMO`` `logging level`_ is set to be between 
-        ``logging.INFO`` and ``logging.WARNING``.
+        A custom :ref:`logging level <levels>` is used for logging messages with a
+        connection in demo mode. The ``logging.DEMO`` :ref:`logging level <levels>`
+        is set to be between ``logging.INFO`` and ``logging.WARNING``.
         
-        The returned data type is determined from the docstring of the called function.
-        For example, if ``:rtype: int`` then an :obj:`int` is returned or if
-        ``:rtype: int, float`` then an :obj:`int` and a :obj:`float` are returned. Although
-        the expected data type is returned the value(s) of the returned object is randomly
-        generated. The docstring must be in either the reStructuredText_ or NumPy_ format.
+        The returned data type is determined from the docstring of the called method.
+        For example, if ``:rtype: int`` then an :class:`int` is returned or if
+        ``:rtype: int, float`` then an :class:`int` and a :class:`float` are returned.
+        Although the expected data type is returned the value(s) of the returned object
+        is randomly generated. The docstring must be in either the reStructuredText_ or
+        NumPy_ format.
 
         Do not instantiate this class directly. Use the
-        :obj:`record.connect(True) <.record_types.EquipmentRecord.connect>` method
-        to connect to the equipment in demo mode. Or set :obj:`~.config.Config.DEMO_MODE`
-        to be :obj:`True` in the :ref:`configuration_file` to open all connections in demo mode.
+        :meth:`record.connect(demo=True) <.record_types.EquipmentRecord.connect>` method
+        to connect to the equipment in demo mode or set :attr:`~.config.Config.DEMO_MODE`
+        to be :data:`True` in the :ref:`configuration_file` to open all connections
+        in demo mode.
 
-        .. _logging level: 
-            https://docs.python.org/3/library/logging.html#logging-levels
-        .. _reStructuredText: 
-            https://www.python.org/dev/peps/pep-0287/
-        .. _Numpy: 
-            https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt
+        .. _reStructuredText: https://www.python.org/dev/peps/pep-0287/
+        .. _Numpy: https://numpydoc.readthedocs.io/en/latest/
 
         Parameters
         ----------
         record : :class:`~.record_types.EquipmentRecord`
             A record from an :ref:`equipment_database`.
-
         cls : :class:`.Connection`
             A :class:`.Connection` subclass (that has **NOT** been instantiated).
         """
-        Connection.__init__(self, record)
+        super(ConnectionDemo, self).__init__(record)
         self._connection_class = cls
         logger.demo('Connected to {} in DEMO mode'.format(record.connection))
 
@@ -190,6 +187,7 @@ def _demo_logger(self, msg, *args, **kwargs):
     """A custom logger for :class:`ConnectionDemo` objects."""
     if self.isEnabledFor(logging.DEMO):
         self._log(logging.DEMO, msg, args, **kwargs)
+
 
 # create a demo logger level between INFO and WARNING
 logger = logging.getLogger(__name__)

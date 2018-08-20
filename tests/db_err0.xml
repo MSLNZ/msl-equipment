@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <msl>
 
-    <equipment_registers>
+    <registers>
         <register>
         </register>
-    </equipment_registers>
+    </registers>
 
 </msl>

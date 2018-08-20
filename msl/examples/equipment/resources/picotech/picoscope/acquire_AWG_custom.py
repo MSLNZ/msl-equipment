@@ -6,7 +6,6 @@ The output of the AWG must be connected to Channel A.
 
 # this "if" statement is used so that Sphinx does not execute this script when the docs are being built
 if __name__ == '__main__':
-
     import numpy as np
 
     from msl.examples.equipment.resources.picotech.picoscope import record  # import the PicoScope EquipmentRecord
@@ -34,15 +33,11 @@ if __name__ == '__main__':
     for i in range(num_samples):
         print('{0:f}, {1:f}'.format(t[i], scope.channel['A'].volts[i]))
 
-    # if pyqtgraph is available then plot the Lennard-Jones Potential (the AWG signal) and Channel A
+    # if matplotlib is available then plot the results
     try:
-        import sys
-        import pyqtgraph as pg
-        app = pg.mkQApp()
-        w = pg.PlotWidget()
-        w.addItem(pg.PlotCurveItem(x=x-0.9, y=awg, pen='r'))
-        w.addItem(pg.ScatterPlotItem(x=t, y=scope.channel['A'].volts, symbol='o'))
-        w.show()
-        sys.exit(app.exec_())
+        import matplotlib.pyplot as plt
     except ImportError:
         pass
+    else:
+        plt.plot(t, scope.channel['A'].volts, 'bo')
+        plt.show()

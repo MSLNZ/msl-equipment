@@ -48,9 +48,9 @@ class BenchtopStepperMotor(MotionControl):
     def __init__(self, record):
         """A wrapper around ``Thorlabs.MotionControl.Benchtop.StepperMotor.dll``.
 
-        The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
+        The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a BenchtopStepperMotor connection supports the following key-value pairs in the
-        :ref:`connection_database`::
+        :ref:`connections_database`::
 
             'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
@@ -62,7 +62,7 @@ class BenchtopStepperMotor(MotionControl):
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        MotionControl.__init__(self, record, Benchtop_StepperMotor_FCNS)
+        super(BenchtopStepperMotor, self).__init__(record, Benchtop_StepperMotor_FCNS)
 
         self._num_channels = self.get_num_channels()
 
@@ -77,7 +77,7 @@ class BenchtopStepperMotor(MotionControl):
         Returns
         -------
         :class:`bool`
-            :obj:`True` if the device can perform a home.
+            :data:`True` if the device can perform a home.
         """
         return self.sdk.SBC_CanHome(self._serial, self._ch(channel))
 
@@ -92,7 +92,7 @@ class BenchtopStepperMotor(MotionControl):
         Returns
         -------
         :class:`bool`
-            :obj:`True` if the device does not need to be :meth:`home`\'d before a move can be commanded.
+            :data:`True` if the device does not need to be :meth:`home`\'d before a move can be commanded.
         """
         return self.sdk.SBC_CanMoveWithoutHomingFirst(self._serial, self._ch(channel))
 
@@ -102,7 +102,7 @@ class BenchtopStepperMotor(MotionControl):
         Returns
         -------
         :class:`bool`
-            :obj:`True` if the USB is listed by the FTDI controller.
+            :data:`True` if the USB is listed by the FTDI controller.
         """
         return self.sdk.SBC_CheckConnection(self._serial)
 
@@ -176,7 +176,7 @@ class BenchtopStepperMotor(MotionControl):
         channel : :class:`int`
             The channel number (1 to n).
         enable : :class:`bool`
-            :obj:`True` to enable monitoring otherwise :obj:`False` to disable.
+            :data:`True` to enable monitoring otherwise :data:`False` to disable.
         last_msg_timeout : :class:`int`
             The last message error timeout in ms. Set to 0 to disable.
         """
@@ -185,7 +185,7 @@ class BenchtopStepperMotor(MotionControl):
     def get_backlash(self, channel):
         """Get the backlash distance setting (used to control hysteresis).
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -241,8 +241,8 @@ class BenchtopStepperMotor(MotionControl):
     def get_device_unit_from_real_value(self, channel, real_value, unit_type):
         """Converts a real-world value to a device value.
 
-        Either :meth:`load_settings` or :meth:`set_motor_params_ext` must be called before
-        calling this function, otherwise the returned value will always be 0.
+        Either :meth:`load_settings`, :meth:`load_named_settings` or :meth:`set_motor_params_ext`
+        must be called before calling this function, otherwise the returned value will always be 0.
 
         Parameters
         ----------
@@ -377,7 +377,7 @@ class BenchtopStepperMotor(MotionControl):
     def get_homing_velocity(self, channel):
         """Gets the homing velocity.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -457,7 +457,7 @@ class BenchtopStepperMotor(MotionControl):
     def get_jog_step_size(self, channel):
         """Gets the distance to move when jogging.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -475,7 +475,7 @@ class BenchtopStepperMotor(MotionControl):
     def get_jog_vel_params(self, channel):
         """Gets the jog velocity parameters.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -688,7 +688,7 @@ class BenchtopStepperMotor(MotionControl):
     def get_move_absolute_position(self, channel):
         """Gets the move absolute position.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -706,7 +706,7 @@ class BenchtopStepperMotor(MotionControl):
     def get_move_relative_distance(self, channel):
         """Gets the move relative distance.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -819,9 +819,9 @@ class BenchtopStepperMotor(MotionControl):
         """Get the current position.
 
         The current position is the last recorded position. The current position is updated either by the
-        polling mechanism or by calling :obj:`request_position`.
+        polling mechanism or by calling :meth:`request_position`.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -841,9 +841,9 @@ class BenchtopStepperMotor(MotionControl):
 
         The position counter is identical to the position parameter.
         The position counter is set to zero when homing is complete.
-        The position counter can also be set using :obj:`set_position_counter` if homing is not to be performed.
+        The position counter can also be set using :meth:`set_position_counter` if homing is not to be performed.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -903,8 +903,8 @@ class BenchtopStepperMotor(MotionControl):
     def get_real_value_from_device_unit(self, channel, device_value, unit_type):
         """Converts a device value to a real-world value.
 
-        Either :meth:`load_settings` or :meth:`set_motor_params_ext` must be called before
-        calling this function, otherwise the returned value will always be 0.0.
+        Either :meth:`load_settings`, :meth:`load_named_settings` or :meth:`set_motor_params_ext`
+        must be called before calling this function, otherwise the returned value will always be 0.0.
 
         Parameters
         ----------
@@ -958,7 +958,7 @@ class BenchtopStepperMotor(MotionControl):
     def get_stage_axis_max_pos(self, channel):
         """Gets the Stepper Motor maximum stage position.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -976,7 +976,7 @@ class BenchtopStepperMotor(MotionControl):
     def get_stage_axis_min_pos(self, channel):
         """Gets the Stepper Motor minimum stage position.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -1038,7 +1038,7 @@ class BenchtopStepperMotor(MotionControl):
     def get_vel_params(self, channel):
         """Gets the move velocity parameters.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -1100,7 +1100,7 @@ class BenchtopStepperMotor(MotionControl):
         Returns
         -------
         :class:`bool`
-            :obj:`True` if last message timer has elapsed, :obj:`False` if monitoring is
+            :data:`True` if last message timer has elapsed, :data:`False` if monitoring is
             not enabled or if time of last message received is less than ``lastMsgTimeout``.
         """
         return self.sdk.SBC_HasLastMsgTimerOverrun(self._serial, self._ch(channel))
@@ -1288,7 +1288,7 @@ class BenchtopStepperMotor(MotionControl):
     def move_relative(self, channel, displacement):
         """Move the motor by a relative amount.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1326,7 +1326,7 @@ class BenchtopStepperMotor(MotionControl):
         The motor may need to be set to its :meth:`home` position before a
         position can be set.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1344,7 +1344,7 @@ class BenchtopStepperMotor(MotionControl):
         self.sdk.SBC_MoveToPosition(self._serial, self._ch(channel), index)
 
     def needs_homing(self, channel):
-        """Does the device need to be :obj:`home`\'d before a move can be performed?
+        """Does the device need to be :meth:`home`\'d before a move can be performed?
 
         Deprecated: calls :meth:`can_move_without_homing_first` instead.
 
@@ -1745,7 +1745,7 @@ class BenchtopStepperMotor(MotionControl):
     def set_backlash(self, channel, distance):
         """Sets the backlash distance (used to control hysteresis).
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1789,7 +1789,7 @@ class BenchtopStepperMotor(MotionControl):
         path : :class:`str`
             The path to a calibration file to load.
         enabled : :class:`bool`
-            :obj:`True` to enable, :obj:`False` to disable.
+            :data:`True` to enable, :data:`False` to disable.
 
         Raises
         ------
@@ -1829,7 +1829,7 @@ class BenchtopStepperMotor(MotionControl):
         channel : :class:`int`
             The channel number (1 to n).
         reverse : :class:`bool`
-            If :obj:`True` then directions will be swapped on these moves.
+            If :data:`True` then directions will be swapped on these moves.
 
         Raises
         ------
@@ -1891,7 +1891,7 @@ class BenchtopStepperMotor(MotionControl):
     def set_homing_velocity(self, channel, velocity):
         """Sets the homing velocity.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1951,7 +1951,7 @@ class BenchtopStepperMotor(MotionControl):
     def set_jog_step_size(self, channel, step_size):
         """Sets the distance to move on jogging.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1971,7 +1971,7 @@ class BenchtopStepperMotor(MotionControl):
     def set_jog_vel_params(self, channel, max_velocity, acceleration):
         """Sets jog velocity parameters.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -2012,7 +2012,7 @@ class BenchtopStepperMotor(MotionControl):
     def set_limit_switch_params(self, channel, cw_lim, ccw_lim, cw_pos, ccw_pos, soft_limit_mode):
         """Sets the limit switch parameters.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -2090,7 +2090,7 @@ class BenchtopStepperMotor(MotionControl):
         ``RealWorldUnits`` [millimeters or degrees]. The real-world unit
         is defined from ``steps_per_rev * gear_box_ratio / pitch``.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -2116,7 +2116,7 @@ class BenchtopStepperMotor(MotionControl):
 
         These define the range of travel for the stage.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -2157,7 +2157,7 @@ class BenchtopStepperMotor(MotionControl):
     def set_motor_velocity_limits(self, channel, max_velocity, max_acceleration):
         """Sets the motor stage maximum velocity and acceleration.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
@@ -2179,7 +2179,7 @@ class BenchtopStepperMotor(MotionControl):
     def set_move_absolute_position(self, channel, position):
         """Sets the move absolute position.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -2199,7 +2199,7 @@ class BenchtopStepperMotor(MotionControl):
     def set_move_relative_distance(self, channel, distance):
         """Sets the move relative distance.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -2275,7 +2275,7 @@ class BenchtopStepperMotor(MotionControl):
         Setting the position counter will effectively define the home position
         of a motor.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -2359,7 +2359,7 @@ class BenchtopStepperMotor(MotionControl):
     def set_stage_axis_limits(self, channel, min_position, max_position):
         """Sets the stage axis position limits.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -2407,7 +2407,7 @@ class BenchtopStepperMotor(MotionControl):
     def set_vel_params(self, channel, max_velocity, acceleration):
         """Sets the move velocity parameters.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -2429,7 +2429,7 @@ class BenchtopStepperMotor(MotionControl):
     def set_vel_params_block(self, channel, min_velocity, max_velocity, acceleration):
         """Set the move velocity parameters.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -2546,7 +2546,7 @@ class BenchtopStepperMotor(MotionControl):
         :class:`int`
             The time, in milliseconds, since the last message was received.
         :class:`bool`
-            :obj:`True` if monitoring is enabled otherwise :obj:`False`.
+            :data:`True` if monitoring is enabled otherwise :data:`False`.
         """
         ms = c_int64()
         ret = self.sdk.SBC_TimeSinceLastMsgReceived(self._serial, self._ch(channel), byref(ms))
@@ -2555,8 +2555,8 @@ class BenchtopStepperMotor(MotionControl):
     def uses_pid_loop_encoding(self, channel):
         """Determines if we can uses PID loop encoding.
 
-        This is true if the stage supports PID Loop Encoding. Requires :obj:`get_pid_loop_encoder_coeff`
-        to have a positive non-zero coefficient, see also :obj:`set_pid_loop_encoder_coeff`.
+        This is true if the stage supports PID Loop Encoding. Requires :meth:`get_pid_loop_encoder_coeff`
+        to have a positive non-zero coefficient, see also :meth:`set_pid_loop_encoder_coeff`.
 
         Parameters
         ----------

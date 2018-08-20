@@ -18,22 +18,21 @@ class ConnectionMessageBased(Connection):
     def __init__(self, record):
         """Base class for equipment that use message-based communication.
 
-        The :data:`record.connection.backend <msl.equipment.record_types.ConnectionRecord.backend>`
-        value must be equal to :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>` 
-        to use this class for the communication system. This is achieved by setting the 
-        value in the **Backend** field for a connection record in the :ref:`connection_database`
-        to be ``MSL``.
+        The :data:`~msl.equipment.record_types.ConnectionRecord.backend`
+        value must be equal to :data:`~msl.equipment.constants.Backend.MSL`
+        to use this class for the communication system. This is achieved by
+        setting the value in the **Backend** field for a connection record
+        in the :ref:`connections_database` to be ``MSL``.
 
         Do not instantiate this class directly. Use the
-        :meth:`~msl.equipment.record_types.EquipmentRecord.connect` method
-        to connect to the equipment.
+        :meth:`~.EquipmentRecord.connect` method to connect to the equipment.
 
         Parameters
         ----------
-        record : :class:`~.record_types.EquipmentRecord`
+        record : :class:`.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        Connection.__init__(self, record)
+        super(ConnectionMessageBased, self).__init__(record)
 
         self._encoding = 'utf-8'
         self._encoding_errors = 'strict'
@@ -44,9 +43,7 @@ class ConnectionMessageBased(Connection):
 
     @property
     def encoding(self):
-        """
-        :class:`str`: The encoding that is used for :meth:`read` and :meth:`write` operations.
-        """
+        """:class:`str`: The encoding that is used for :meth:`read` and :meth:`write` operations."""
         return self._encoding
 
     @encoding.setter
@@ -70,7 +67,7 @@ class ConnectionMessageBased(Connection):
 
     @property
     def read_termination(self):
-        """:class:`bytes` or :obj:`None`: The termination character sequence
+        """:class:`bytes` or :data:`None`: The termination character sequence
         that is used for the :meth:`read` method.
         
         Reading stops when the equipment stops sending data or the `read_termination`
@@ -85,7 +82,7 @@ class ConnectionMessageBased(Connection):
 
     @property
     def write_termination(self):
-        """:class:`bytes` or :obj:`None`: The termination character sequence that
+        """:class:`bytes` or :data:`None`: The termination character sequence that
         is appended to :meth:`write` messages.
 
         If you set the `write_termination` to be equal to a variable of type
@@ -112,15 +109,15 @@ class ConnectionMessageBased(Connection):
 
     @property
     def timeout(self):
-        """:class:`float` or :obj:`None`: The timeout, in seconds, for I/O operations."""
+        """:class:`float` or :data:`None`: The timeout, in seconds, for :meth:`read` and :meth:`write` operations."""
         return self._timeout
 
-    def raise_timeout(self, append_msg=None):
+    def raise_timeout(self, append_msg=''):
         """Raise a :exc:`~.exceptions.MSLTimeoutError`.
 
         Parameters
         ----------
-        append_msg: :class:`str`, optional
+        append_msg : :class:`str`, optional
             A message to append to the generic timeout message.
         """
         msg = 'Timeout occurred after {} seconds'.format(self.timeout)
@@ -147,7 +144,7 @@ class ConnectionMessageBased(Connection):
         """
         raise NotImplementedError
 
-    def write(self, message):
+    def write(self, msg):
         """Write a message to the equipment.
 
         .. attention::
@@ -155,7 +152,7 @@ class ConnectionMessageBased(Connection):
 
         Parameters
         ----------
-        message : :class:`str`
+        msg : :class:`str`
             The message to write to the equipment.
 
         Returns
@@ -165,12 +162,12 @@ class ConnectionMessageBased(Connection):
         """
         raise NotImplementedError
 
-    def query(self, message, delay=0.0, size=None):
+    def query(self, msg, delay=0.0, size=None):
         """Convenience method for performing a :meth:`write` followed by a :meth:`read`.
 
         Parameters
         ----------
-        message : :class:`str`
+        msg : :class:`str`
             The message to write to the equipment.
         delay : :class:`float`, optional
             The time delay, in seconds, to wait between :meth:`write` and 
@@ -183,7 +180,7 @@ class ConnectionMessageBased(Connection):
         :class:`str`
             The response from the equipment.
         """
-        self.write(message)
+        self.write(msg)
         if delay > 0.0:
             time.sleep(delay)
         return self.read(size)

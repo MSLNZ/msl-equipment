@@ -4,13 +4,11 @@ Example showing how to interact with equipment and connection databases.
 
 # this "if" statement is used so that Sphinx does not execute this script when the docs are being built
 if __name__ == '__main__':
-    import os
-
     from msl.equipment import Config
+    from msl.examples.equipment import EXAMPLES_DIR
 
     # load the database
-    path = os.path.join(os.path.dirname(__file__), 'equipment-configuration.xml')
-    dbase = Config(path).database()
+    dbase = Config(EXAMPLES_DIR + '/example2.xml').database()
 
     # access the equipment record for each <equipment> XML element by the alias that we assigned to it
     print('Access equipment records from the alias that was assigned to the equipment...')
@@ -24,7 +22,7 @@ if __name__ == '__main__':
 
     # search for equipment records based on some keywords
     print('All equipment in the database manufactured by Hewlett Packard...')
-    for record in dbase.records(manufacturer='Hewlett Packard'):
+    for record in dbase.records(manufacturer='H.*P'):
         print(record)
     print('')
 
@@ -36,8 +34,8 @@ if __name__ == '__main__':
 
     # get a specific equipment record (a DMM from Agilent) from the database and
     # then connect to this DMM in demo mode
-    print('Connect to the DMM from Agilent with the serial number G00001...')
-    dmm_record = dbase.records(manufacturer='Agilent', serial='G00001')
+    print('Connect to the DMM from Agilent with the serial number 537179...')
+    dmm_record = dbase.records(manufacturer='Agilent', serial='537179')[0]
     dmm_ref = dmm_record.connect(demo=True)
     print(dmm_ref.query('*IDN?'))
     print('')
@@ -54,5 +52,5 @@ if __name__ == '__main__':
     print(conns)
     print('')
 
-    print("Ask the 'ref' DMM for its identity...")
-    print(conns['ref'].ask('*IDN?'))  # 'ask' is an alias for the 'query' method
+    print("Query the 'ref' DMM for its identity...")
+    print(conns['ref'].query('*IDN?'))

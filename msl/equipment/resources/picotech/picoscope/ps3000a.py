@@ -67,7 +67,7 @@ class PicoScope3000A(PicoScopeApi):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        PicoScopeApi.__init__(self, record, ps3000aApi_funcptrs)
+        super(PicoScope3000A, self).__init__(record, ps3000aApi_funcptrs)
 
     def get_max_ets_values(self):
         """

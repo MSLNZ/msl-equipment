@@ -15,19 +15,19 @@ class PicoScopeChannel(object):
         
         Parameters
         ----------
-        channel : :obj:`enum.IntEnum`
+        channel : :class:`enum.IntEnum`
             The ``PSX000xChannel`` enum.
-        enabled : :obj:`bool`
+        enabled : :class:`bool`
             Whether the channel is enabled.
-        coupling : :obj:`enum.IntEnum`
+        coupling : :class:`enum.IntEnum`
             The ``PSX000xCoupling`` enum, e.g. AC or DC.
-        voltage_range : :obj:`float`
+        voltage_range : :class:`float`
             The voltage range, in Volts.
-        voltage_offset : :obj:`float`
+        voltage_offset : :class:`float`
             The voltage offset, in Volts.
-        bandwidth : :obj:`enum.IntEnum` or :obj:`None`
+        bandwidth : :class:`enum.IntEnum` or :data:`None`
             The ``PSX000xBandwidthLimiter`` enum.
-        max_adu_value : :obj:`int`
+        max_adu_value : :class:`int`
             The maximum analog-to-digital unit.
         """
         self._channel = channel
@@ -45,59 +45,59 @@ class PicoScopeChannel(object):
 
     @property
     def channel(self):
-        """:obj:`enum.IntEnum`: The ``PSX000xChannel`` enum."""
+        """:class:`enum.IntEnum`: The ``PSX000xChannel`` enum."""
         return self._channel
 
     @property
     def enabled(self):
-        """:obj:`bool`: Whether the channel is enabled."""
+        """:class:`bool`: Whether the channel is enabled."""
         return self._enabled
 
     @property
     def coupling(self):
-        """:obj:`enum.IntEnum`: The ``PSX000xCoupling`` enum, e.g. AC or DC."""
+        """:class:`enum.IntEnum`: The ``PSX000xCoupling`` enum, e.g. AC or DC."""
         return self._coupling
 
     @property
     def voltage_range(self):
-        """:obj:`float`: The voltage range, in Volts."""
+        """:class:`float`: The voltage range, in Volts."""
         return self._voltage_range
 
     @property
     def voltage_offset(self):
-        """:obj:`float`: The voltage offset, in Volts."""
+        """:class:`float`: The voltage offset, in Volts."""
         return self._voltage_offset
 
     @property
     def bandwidth(self):
-        """ :obj:`enum.IntEnum` or :obj:`None`: The ``PSX000xBandwidthLimiter`` enum."""
+        """ :class:`enum.IntEnum` or :data:`None`: The ``PSX000xBandwidthLimiter`` enum."""
         return self._bandwidth
 
     @property
     def volts_per_adu(self):
-        """:obj:`float`: The conversion factor to convert ADU to volts"""
+        """:class:`float`: The conversion factor to convert ADU to volts"""
         return self._volts_per_adu
 
     @property
     def raw(self):
-        """:obj:`numpy.ndarray`: The raw data, in ADU"""
+        """:class:`numpy.ndarray`: The raw data, in ADU"""
         return self._adu_values
 
     @property
     def buffer(self):
-        """:obj:`numpy.ndarray`: The raw data, in ADU"""
+        """:class:`numpy.ndarray`: The raw data, in ADU"""
         return self._adu_values
 
     @property
     def volts(self):
-        """:obj:`numpy.ndarray`: The data, in volts"""
+        """:class:`numpy.ndarray`: The data, in volts"""
         # From the manual, the voltage offset gets added to the input channel before digitization.
         # Must convert the ADU values to volts and then subtract the offset.
         return self._adu_values * self._volts_per_adu - self._voltage_offset
 
     @property
     def num_samples(self):
-        """:obj:`int`: The size of the data array."""
+        """:class:`int`: The size of the data array."""
         return self._adu_values.size
 
     def allocate(self, num_captures, num_samples):
@@ -105,9 +105,9 @@ class PicoScopeChannel(object):
         
         Parameters
         ----------
-        num_captures : :obj:`int`
+        num_captures : :class:`int`
             The number of captures
-        num_samples : :obj:`int`
+        num_samples : :class:`int`
             The number of samples
         """
         if self._adu_values.size != num_captures*num_samples:

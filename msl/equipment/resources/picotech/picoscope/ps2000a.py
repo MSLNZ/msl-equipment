@@ -58,7 +58,7 @@ class PicoScope2000A(PicoScopeApi):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        PicoScopeApi.__init__(self, record, ps2000aApi_funcptrs)
+        super(PicoScope2000A, self).__init__(record, ps2000aApi_funcptrs)
 
     def set_digital_analog_trigger_operand(self, operand):
         """

@@ -3,10 +3,10 @@ Base class for the ps2000 and ps3000 PicoScopes.
 """
 from ctypes import c_int16, c_int32, c_uint32, c_double, byref
 
+from msl.equipment.exceptions import PicoTechError
 from .enums import PS2000Info
 from .picoscope import PicoScope
-from msl.equipment.exceptions import PicoTechError
-from msl.equipment.resources.picotech.errors import ERROR_CODES
+from ..errors import ERROR_CODES
 
 
 class PicoScope2k3k(PicoScope):
@@ -24,14 +24,14 @@ class PicoScope2k3k(PicoScope):
         func_ptrs : :mod:`.functions`
             The appropriate function-pointer list for the SDK. 
         """
-        PicoScope.__init__(self, record, func_ptrs)
+        super(PicoScope2k3k, self).__init__(record, func_ptrs)
         self.enPicoScopeInfo = PS2000Info  # PS2000Info enum == PS3000Info enum
 
         # check the equipment_record.connection.properties dictionary to see how to initialize the PicoScope
         properties = self.equipment_record.connection.properties
 
-        open_unit = properties.get('open_unit', True)
-        open_unit_async = properties.get('open_unit_async', None)
+        open_unit = properties.get('open', True)
+        open_unit_async = properties.get('open_async', None)
 
         if open_unit and open_unit_async is None:
             self.open_unit()
@@ -75,9 +75,9 @@ class PicoScope2k3k(PicoScope):
         
         Parameters
         ----------
-        msg : :obj:`str`, optional
+        msg : :class:`str`, optional
             The error message.
-        error_code : :obj:`int`, optional
+        error_code : :class:`int`, optional
             A number from 0 to 7 (see the programmers manual).
         """
         conn = self.equipment_record.connection

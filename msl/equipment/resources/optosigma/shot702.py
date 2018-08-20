@@ -410,7 +410,7 @@ class SHOT702(ConnectionSerial):
         pos2 : :class:`int`
             The current position of stage 2.
         stopped : :class:`str`
-            The stopped state of the stage (one of ``'L'``,``'M'``, ``'W'``, ``'K'``) --
+            The stopped state of the stage (one of ``'L'``, ``'M'``, ``'W'``, ``'K'``) --
             see the manual for more details.
         is_moving : :class:`bool`
             Whether a stage is busy moving.

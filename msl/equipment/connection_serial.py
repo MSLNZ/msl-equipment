@@ -15,9 +15,10 @@ class ConnectionSerial(ConnectionMessageBased):
     def __init__(self, record):
         """Base class for equipment that is connected through a serial port.
 
-        The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
+        The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a serial connection supports the following key-value pairs in the
-        :ref:`connection_database` (see also :class:`serial.Serial` for more details about each parameter)::
+        :ref:`connections_database` (see also :class:`serial.Serial` for more
+        details about each parameter)::
 
             'read_termination': str or None, read until this termination sequence is found [default: '\\n']
             'write_termination': str or None, termination sequence appended to write messages [default: '\\r\\n']
@@ -35,19 +36,18 @@ class ConnectionSerial(ConnectionMessageBased):
             'rts_cts': bool, enable hardware (RTS/CTS) flow control [default: False]
             'xon_xoff': bool, enable software flow control [default: False]
 
-        The :data:`record.connection.backend <msl.equipment.record_types.ConnectionRecord.backend>`
-        value must be equal to :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>`
-        to use this class for the communication system. This is achieved by setting the
-        value in the **Backend** field for a connection record in the :ref:`connection_database`
-        to be ``MSL``.
+        The :data:`~msl.equipment.record_types.ConnectionRecord.backend`
+        value must be equal to :data:`~msl.equipment.constants.Backend.MSL`
+        to use this class for the communication system. This is achieved by
+        setting the value in the **Backend** field for a connection record
+        in the :ref:`connections_database` to be ``MSL``.
 
         Do not instantiate this class directly. Use the
-        :obj:`record.connect() <.record_types.EquipmentRecord.connect>` method
-        to connect to the equipment.
+        :meth:`~.EquipmentRecord.connect` method to connect to the equipment.
 
         Parameters
         ----------
-        record : :class:`~.record_types.EquipmentRecord`
+        record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
 
         Raises
@@ -55,7 +55,7 @@ class ConnectionSerial(ConnectionMessageBased):
         :exc:`~.exceptions.MSLConnectionError`
             If the serial port cannot be opened.
         """
-        ConnectionMessageBased.__init__(self, record)
+        super(ConnectionSerial, self).__init__(record)
 
         self._serial = serial.Serial()
 
@@ -172,16 +172,17 @@ class ConnectionSerial(ConnectionMessageBased):
             # if the subclass raised an error in the constructor before
             # the this class is initialized then self._serial won't exist
             self._serial.close()
-            self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
         except AttributeError:
             pass
+        else:
+            self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
 
-    def write(self, message):
+    def write(self, msg):
         """Write a message over the serial port.
 
         Parameters
         ----------
-        message : :class:`str`
+        msg : :class:`str`
             The message to write.
 
         Returns
@@ -189,7 +190,7 @@ class ConnectionSerial(ConnectionMessageBased):
         :class:`int`
             The number of bytes sent over the serial port.
         """
-        data = self._encode(message)
+        data = self._encode(msg)
         return self._serial.write(data)
 
     def read(self, size=None):
@@ -197,15 +198,15 @@ class ConnectionSerial(ConnectionMessageBased):
 
         Parameters
         ----------
-        size : :class:`int` or :obj:`None`, optional
-            The number of bytes to read. If `size` is :obj:`None` then read until:
+        size : :class:`int`, optional
+            The number of bytes to read. If `size` is :data:`None` then read until:
 
             1. :attr:`.read_termination` characters are read
-               (only if :attr:`.read_termination` is not :obj:`None`)
+               (only if :attr:`.read_termination` is not :data:`None`)
             2. :attr:`.max_read_size` bytes have been read
                (raises :exc:`~msl.equipment.exceptions.MSLConnectionError` if occurs)
             3. :exc:`~msl.equipment.exceptions.MSLTimeoutError` occurs
-               (only if :attr:`.timeout` is not :obj:`None`)
+               (only if :attr:`.timeout` is not :data:`None`)
 
             This method will block until at least one of the above conditions is fulfilled.
 

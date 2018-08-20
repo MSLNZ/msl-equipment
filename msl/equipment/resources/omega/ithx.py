@@ -26,7 +26,7 @@ from msl.equipment.connection_socket import ConnectionSocket
 from msl.equipment.resources import register
 
 
-@register(manufacturer='OMEGA', model='iTHX-[2DMSW][3D]*')
+@register(manufacturer='OMEGA', model='iTHX-[2DMSW][3D]*', flags=re.IGNORECASE)
 class iTHX(ConnectionSocket):
 
     def __init__(self, record):
@@ -40,7 +40,7 @@ class iTHX(ConnectionSocket):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        ConnectionSocket.__init__(self, record)
+        super(iTHX, self).__init__(record)
         self.set_exception_class(OmegaError)
 
     def temperature(self, probe=1, celsius=True):
@@ -83,7 +83,7 @@ class iTHX(ConnectionSocket):
         ----------
         probe : :class:`int`, optional
             The probe number to read the dew point of (for iTHX's that contain multiple probes).
-        celsius : class:`bool`, optional
+        celsius : :class:`bool`, optional
             :data:`True` to return the dew point in celsius, :data:`False` for fahrenheit.
 
         Returns
@@ -101,7 +101,7 @@ class iTHX(ConnectionSocket):
         ----------
         probe : :class:`int`, optional
             The probe number to read the temperature and humidity of (for iTHX's that contain multiple probes).
-        celsius : class:`bool`, optional
+        celsius : :class:`bool`, optional
             :data:`True` to return the temperature in celsius, :data:`False` for fahrenheit.
 
         Returns
@@ -125,7 +125,7 @@ class iTHX(ConnectionSocket):
         probe : :class:`int`, optional
             The probe number to read the temperature, humidity and dew point of
             (for iTHX's that contain multiple probes).
-        celsius : class:`bool`, optional
+        celsius : :class:`bool`, optional
             :data:`True` to return the temperature and dew point in celsius, :data:`False` for fahrenheit.
 
         Returns
@@ -263,7 +263,7 @@ class iTHX(ConnectionSocket):
         Returns
         -------
         :class:`list` of :class:`tuple`
-            A list of (timestamp, temperature, humidity, dewpoint) log records,
+            A list of ``(timestamp, temperature, humidity, dewpoint)`` log records,
             depending on the value of `select`.
         """
         if not os.path.isfile(path):

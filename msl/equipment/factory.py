@@ -1,19 +1,19 @@
 """
-Establish a connection to the equipment to send and receive messages.
+Establish a connection to the equipment.
 """
 import logging
 
-from msl.equipment.config import Config
-from msl.equipment.constants import Backend, MSLInterface
-from msl.equipment.exceptions import ResourceClassNotFound
-from msl.equipment.record_types import EquipmentRecord
-from msl.equipment.resources import find_resource_class
-from msl.equipment.resources.dmm import dmm_factory
-from msl.equipment.connection_demo import ConnectionDemo
-from msl.equipment.connection_pyvisa import ConnectionPyVISA
-from msl.equipment.connection_serial import ConnectionSerial
-from msl.equipment.connection_socket import ConnectionSocket
-from msl.equipment.connection_nidaq import ConnectionNIDAQ
+from .config import Config
+from .constants import Backend, MSLInterface
+from .exceptions import ResourceClassNotFound
+from .record_types import EquipmentRecord
+from .resources import find_resource_class
+from .resources.dmm import dmm_factory
+from .connection_demo import ConnectionDemo
+from .connection_pyvisa import ConnectionPyVISA
+from .connection_serial import ConnectionSerial
+from .connection_socket import ConnectionSocket
+from .connection_nidaq import ConnectionNIDAQ
 
 logger = logging.getLogger(__name__)
 
@@ -21,36 +21,22 @@ logger = logging.getLogger(__name__)
 def connect(record, demo=None):
     """Factory function to establish a connection to the equipment.
 
-    This function should not be called directly. Use the
-    :obj:`record.connect() <.record_types.EquipmentRecord.connect>` method
-    to connect to the equipment after a :class:`~.config.Config` object has
-    been created.
-
     Parameters
     ----------
     record : :class:`~.record_types.EquipmentRecord`
         A record from an :ref:`equipment_database`.
 
-    demo : :obj:`bool` or :obj:`None`
+    demo : :class:`bool`, optional
         Whether to simulate a connection to the equipment by opening
-        a connection in demo mode. This allows you run your code if the 
-        equipment is not physically connected to a computer.
+        a connection in demo mode. This allows you to test your code
+        if the equipment is not physically connected to a computer.
         
         If :data:`None` then the `demo` value is determined from the
-        :obj:`~.config.Config.DEMO_MODE` variable.
+        :attr:`~.config.Config.DEMO_MODE` attribute.
 
     Returns
     -------
     A :class:`~.connection.Connection` subclass.
-
-    Raises
-    ------
-    ValueError
-        If any of the property values in
-        :obj:`record.connection.properties <.record_types.ConnectionRecord.properties>`
-        are invalid.
-    TypeError
-        If the `record` is not an :class:`~.record_types.EquipmentRecord`.
     """
     def _connect(_record):
         """Processes a single EquipmentRecord object"""

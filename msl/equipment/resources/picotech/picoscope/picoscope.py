@@ -4,7 +4,7 @@ Base class for a PicoScope from Pico Technology.
 import os
 import re
 import time
-from ctypes import c_int8, c_int16, c_int32, c_uint32, byref, c_void_p, string_at, addressof
+from ctypes import c_int8, c_int16, c_int32, byref, c_void_p, string_at, addressof
 
 from msl.loadlib import IS_WINDOWS, LoadLibrary
 
@@ -26,12 +26,11 @@ def enumerate_units():
 
     Note
     ----
-    It seems as though you cannot call this function after you have 
-    opened a connection to a PicoScope.
+    You cannot call this function after you have opened a connection to a PicoScope.
     
     Returns
     -------
-    :obj:`list` of :obj:`str`
+    :class:`list` of :class:`str`
         A list of serial numbers of the PicoScopes that were found.
     """
     count = c_int16()
@@ -52,14 +51,14 @@ class PicoScope(ConnectionSDK):
     def __init__(self, record, func_ptrs):
         """Use the PicoScope SDK to communicate with the oscilloscope.
 
-        The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
+        The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a PicoScope connection supports the following key-value pairs in the
-        :ref:`connection_database`::
+        :ref:`connections_database`::
 
-            'open_unit': bool,  # default is True 
-            'open_unit_async': bool,  # default is False
-            'auto_select_power': bool  # for PicoScopes that can be powered by an AC adaptor or a USB cable, default is True
-            'resolution': '14bit',  # only valid for ps5000a, default is '8bit'
+            'open': bool, Whether to open the connection synchronously [default: True]
+            'open_async': bool, Whether to open the connection asynchronously [default: False]
+            'auto_select_power': bool, For devices that can be powered by an AC adaptor or a USB cable [default: True]
+            'resolution': str, Only valid for ps5000a [default: '8bit']
         
         The SDK version that was initially used to create this base class and the PicoScope
         subclasses was *Pico Technology SDK 64-bit v10.6.10.24*
@@ -76,11 +75,11 @@ class PicoScope(ConnectionSDK):
         """
         self._handle = None
         libtype = 'windll' if IS_WINDOWS else 'cdll'
-        ConnectionSDK.__init__(self, record, libtype)
+        super(PicoScope, self).__init__(record, libtype)
         self.set_exception_class(PicoTechError)
 
         # check that the Python class matches the SDK
-        self.SDK_FILENAME = os.path.splitext(os.path.basename(record.connection.address.split('::')[2]))[0]
+        self.SDK_FILENAME = os.path.splitext(os.path.basename(record.connection.address[5:]))[0]
         if self.SDK_FILENAME != self.__class__.__name__.replace('PicoScope', 'ps').lower():
             msg = 'Using the wrong PicoScope SDK file {} for {}.'.format(self.SDK_FILENAME, self.__class__.__name__)
             self.raise_exception(msg)
@@ -163,23 +162,22 @@ class PicoScope(ConnectionSDK):
 
     @property
     def handle(self):
-        """Returns the handle to the SDK library."""
+        """:class:`int`: Returns the handle to the SDK library."""
         return self._handle
 
     @property
     def channel(self):
-        """:obj:`dict` of :class:`~.channel.PicoScopeChannel`: The information about each channel
-        """
+        """:class:`dict` of :class:`~.channel.PicoScopeChannel`: The information about each channel."""
         return self._channels_dict
 
     @property
     def dt(self):
-        """:obj:`float`: The time between voltage samples (i.e., delta t)."""
+        """:class:`float`: The time between voltage samples (i.e., delta t)."""
         return self._sampling_interval
 
     @property
     def pre_trigger(self):
-        """:obj:`float`: The number of seconds that data was acquired for before the trigger event."""
+        """:class:`float`: The number of seconds that data was acquired for before the trigger event."""
         return self._pre_trigger
 
     def _allocate_buffer_memory(self):
@@ -190,15 +188,14 @@ class PicoScope(ConnectionSDK):
 
     def close_unit(self):
         """Disconnect from the PicoScope."""
-        return self.disconnect()
+        self.disconnect()
 
     def disconnect(self):
         """Disconnect from the PicoScope."""
         if self._handle is not None:
-            ret = self.CloseUnit(self._handle)
+            self.CloseUnit(self._handle)
             self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
             self._handle = None
-            return ret
 
     def get_unit_info(self, info=None, include_name=True):
         """Retrieves information about the PicoScope.
@@ -209,15 +206,15 @@ class PicoScope(ConnectionSDK):
         Parameters
         ----------
         info : :class:`~.enums.PicoScopeInfoApi`, :class:`~.enums.PS2000Info` or :class:`~.enums.PS3000Info`, optional
-            An enum value, or if :obj:`None` then request all information from the PicoScope.
+            An enum value, or if :data:`None` then request all information from the PicoScope.
             The enum depends on the model number of the PicoScope that you are connected to.
-        include_name : :obj:`bool`, optional
-            If :obj:`True` then includes the enum member name as a prefix.
-            For example, return ``CAL_DATE: 09Aug16`` if :obj:`True` else ``09Aug16``.
+        include_name : :class:`bool`, optional
+            If :data:`True` then includes the enum member name as a prefix.
+            For example, return ``CAL_DATE: 09Aug16`` if :data:`True` else ``09Aug16``.
 
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The requested information from the PicoScope.
         """
         if info is None:
@@ -242,19 +239,19 @@ class PicoScope(ConnectionSDK):
         """Has the PicoScope collecting the requested number of samples?
         
         This function may be used instead of a callback function to receive data from
-        :meth:`run_block`. To use this method, pass :obj:`None` as the callback parameter
+        :meth:`run_block`. To use this method, pass :data:`None` as the callback parameter
         in :meth:`run_block`. You must then poll the driver to see if it has finished
         collecting the requested samples.
         
         Returns
         -------
-        :obj:`bool`
+        :class:`bool`
             Whether the PicoScope has collected the requested number of samples.
         """
         return self._is_ready()
 
     def maximum_value(self):
-        """:obj:`int`: This function returns the maximum ADC count."""
+        """:class:`int`: This function returns the maximum ADC count."""
         try:
             max_value = c_int16()
             self.MaximumValue(self._handle, byref(max_value))
@@ -263,7 +260,7 @@ class PicoScope(ConnectionSDK):
             return self.MAX_VALUE
 
     def minimum_value(self):
-        """:obj:`int`: This function returns the minimum ADC count."""
+        """:class:`int`: This function returns the minimum ADC count."""
         try:
             min_value = c_int16()
             self.MinimumValue(self._handle, byref(min_value))
@@ -286,11 +283,11 @@ class PicoScope(ConnectionSDK):
         
         Parameters
         ----------
-        pre_trigger : :obj:`float`
+        pre_trigger : :class:`float`, optional
             The number of seconds before the trigger event to start acquiring data.
-        segment_index : :obj:`int`
+        segment_index : :class:`int`, optional
             Specifies which memory segment to save the data to (see manual).
-        callback : :obj:`.callbacks.BlockReady`
+        callback : :class:`~msl.equipment.resources.picotech.picoscope.callbacks.BlockReady`, optional
             A BlockReady callback function.
         """
         if len(self._channels_dict) == 0:
@@ -326,8 +323,8 @@ class PicoScope(ConnectionSDK):
         
         This function tells the oscilloscope to start collecting data in streaming mode. When
         data has been collected from the device it is down sampled if necessary and then
-        delivered to the application. Call :meth:`get_streaming_latest_values` to retrieve the
-        data.
+        delivered to the application. Call :meth:`~.picoscope_api.PicoScopeApi.get_streaming_latest_values`
+        to retrieve the data.
 
         When a trigger is set, the total number of samples stored in the driver is the sum of
         `max_pre_trigger_samples` and `max_post_trigger_samples`. If `auto_stop` is false then
@@ -337,14 +334,14 @@ class PicoScope(ConnectionSDK):
         
         Parameters
         ----------
-        pre_trigger : :obj:`float`
+        pre_trigger : :class:`float`, optional
             The number of seconds before the trigger event to start acquiring data.
-        auto_stop : :obj:`bool`
+        auto_stop : :class:`bool`, optional
             A flag that specifies if the streaming should stop when all of 
             samples have been captured.
-        factor : :obj:`int`
+        factor : :class:`int`, optional
             The down-sampling factor that will be applied to the raw data.        
-        ratio_mode : :class:`enum.IntEnum`
+        ratio_mode : :class:`enum.IntEnum`, optional
             Which down-sampling mode to use.            
         """
         if len(self._channels_dict) == 0:
@@ -384,17 +381,17 @@ class PicoScope(ConnectionSDK):
         ----------
         channel : :class:`enum.IntEnum`
             The channel to be configured
-        coupling : :class:`enum.IntEnum`
+        coupling : :class:`enum.IntEnum`, optional
             The impedance and coupling type.
-        scale : :class:`enum.IntEnum`
+        scale : :class:`enum.IntEnum`, optional
             The input voltage range.
-        offset : :obj:`float`
+        offset : :class:`float`, optional
             A voltage to add to the input channel before digitization. The allowable range of 
             offsets depends on the input range selected for the channel, as obtained from
             :meth:`.get_analogue_offset`.
-        bandwidth : :class:`enum.IntEnum`
+        bandwidth : :class:`enum.IntEnum`, optional
             The bandwidth limiter to use.
-        enabled : :obj:`bool`
+        enabled : :class:`bool`, optional
             Whether to enable the channel.
         """
         channel = self.convert_to_enum(channel, self.enChannel, to_upper=True)
@@ -431,20 +428,20 @@ class PicoScope(ConnectionSDK):
         
         Parameters
         ----------
-        dt : :obj:`float`
+        dt : :class:`float`
             The sampling interval, in seconds. 
-        duration : :obj:`float`
+        duration : :class:`float`
             The number of seconds to acquire data for.  
-        segment_index : :obj:`int`
+        segment_index : :class:`int`, optional
             Which memory segment to save the data to.
-        oversample : :obj:`int`
+        oversample : :class:`int`, optional
             The amount of over-sample required.
 
         Returns
         -------
-        :obj:`float`
+        :class:`float`
             The sampling interval, i.e. dt.
-        :obj:`int`
+        :class:`int`
             The number of samples that will be acquired.
 
         Raises
@@ -491,18 +488,18 @@ class PicoScope(ConnectionSDK):
         ----------
         channel : :class:`enum.IntEnum`
             The trigger channel.
-        threshold : :obj:`float`
+        threshold : :class:`float`
             The threshold voltage to signal a trigger event.
-        delay : :obj:`float`
+        delay : :class:`float`, optional
             The time, in seconds, between the trigger occurring and the first sample.
-        direction : :class:`enum.IntEnum`
+        direction : :class:`enum.IntEnum`, optional
             The direction in which the signal must move to cause a trigger. 
-        timeout : :obj:`float`
+        timeout : :class:`float`, optional
             The time, in seconds, to wait to automatically create a trigger event if no 
             trigger event occurs. If `timeout` <= 0 then wait indefinitely for a trigger. 
             Only accurate to the nearest millisecond. 
-        enable : :obj:`bool`
-            Set to :obj:`False` to disable the trigger for this channel.
+        enable : :class:`bool`, optional
+            Set to :data:`False` to disable the trigger for this channel.
             Not used for ps2000 or ps3000.
         """
         ch = self.convert_to_enum(channel, self.enChannel, to_upper=True)

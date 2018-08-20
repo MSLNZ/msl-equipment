@@ -30,14 +30,14 @@ def dmm_factory(connection_record, connection_class):
 
     Parameters
     ----------
-    connection_record : :class:`~msl.equipment.record_types.ConnectionRecord`
-        A connection record from a :ref:`connection_database`.
-    connection_class : :class:`~msl.equipment.connection_message_based.ConnectionMessageBased` or :class:`~pyvisa.resources.MessageBasedResource`
+    connection_record : :class:`~.record_types.ConnectionRecord`
+        A connection record from a :ref:`connections_database`.
+    connection_class : :class:`~.connection_message_based.ConnectionMessageBased` or :class:`~pyvisa.resources.MessageBasedResource`
         A connection subclass that communicates with the equipment through `read` and `write` commands.
 
     Returns
     -------
-    :class:`~msl.equipment.connection.Connection`
+    :class:`~.connection.Connection`
         The `connection_class` that was passed in with additional methods for communicating with the DMM, provided
         that the model number of the DMM is one of the DMM's that is supported. Otherwise returns the original,
         unmodified `connection_class` object.
@@ -59,14 +59,14 @@ def dmm_factory(connection_record, connection_class):
 
             Parameters
             ----------
-            key : :obj:`str`
+            key : :class:`str`
                 A key in the `commands` dictionary.
             kwargs
                 The keyword arguments to do a "find and replace" in the formatted command string.
 
             Returns
             -------
-            :obj:`str`
+            :class:`str`
                 The command message to send to the equipment.
             """
             cmd = ''

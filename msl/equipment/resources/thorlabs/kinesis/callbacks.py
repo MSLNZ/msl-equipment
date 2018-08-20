@@ -12,10 +12,10 @@ message queue.
    def msg_callback():
        print('MotionControlCallback: ', flipper.convert_message(*flipper.get_next_message()))
 
-   # The "equipment-configuration.xml" configuration file contains the following element:
+   # The "example2.xml" configuration file contains the following element:
    # <equipment alias="filter_flipper" manufacturer="Thorlabs" model="MFF101/M" serial="37871232"/>
 
-   db = Config(os.path.join(EXAMPLES_DIR, 'equipment-configuration.xml')).database()
+   db = Config(os.path.join(EXAMPLES_DIR, 'example2.xml')).database()
 
    flipper = db.equipment['filter_flipper'].connect()
    flipper.register_message_callback(msg_callback)

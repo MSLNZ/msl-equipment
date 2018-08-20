@@ -5,7 +5,7 @@ Configuration File
 ==================
 A configuration file is used by **MSL-Equipment** to:
 
-1. Specify which :ref:`Databases <database>` to use, which contain equipment and connection records
+1. Specify which :ref:`Databases <database>` to use
 2. Specify the equipment that is being used to perform a measurement
 3. Specify constants to use in your Python program
 
@@ -15,25 +15,27 @@ The following illustrates an example configuration file.
 
 .. code-block:: xml
 
-   <?xml version="1.0" encoding="UTF-8"?>
+   <?xml version="1.0" encoding="utf-8"?>
      <msl>
-
-       <!-- MSL-Equipment has it's own pre-defined variables that you can modify the value of -->
-
-       <!-- Use PyVISA-py as the PyVISA backend library -->
+       <!--
+         Use PyVISA-py as the PyVISA backend library.
+         Allowed values are: @ni, @py, @sim, /path/to/lib\@ni
+       -->
        <pyvisa_library>@py</pyvisa_library>
 
-       <!-- Open all connections in demo mode -->
+       <!-- Open all connections in demo mode. -->
        <demo_mode>true</demo_mode>
 
-       <!-- Add a single path to where external resource files are located -->
+       <!--
+         Add a single path to where external resource files are located.
+         The paths get appended to Config.PATH and os.environ['PATH'].
+       -->
        <path>I:\Photometry\SDKs</path>
        <path recursive="false">D:\code\resources\lib</path>
-
-       <!-- Recursively add all subfolders starting from a root path (includes the root path) -->
+       <!-- Recursively add all subfolders starting from a root path (includes the root path). -->
        <path recursive="true">C:\Program Files\Thorlabs</path>
 
-       <!-- Also, the user can define their own constants -->
+       <!-- Also, the user can define their own constants. -->
        <max_temperature units="C">60</max_temperature>
 
        <!--
@@ -41,37 +43,36 @@ The following illustrates an example configuration file.
          "alias" that you want to use to associate for each equipment. You only need to
          specify enough XML attributes to uniquely identify the equipment record in an
          Equipment-Registry database. For example, if there is only 1 equipment record in
-         the Equipment-Registry databases that you specify (see the <equipment_registers>
-         tag below) that is from "Company XYZ" then specifying manufacturer="Company XYZ"
-         is enough information to uniquely identify the equipment record in the
-         configuration file. If in the future another equipment record is added to an
-         Equipment-Registry database for "Company XYZ" then an exception will be raised
-         telling you to specify more information in the configuration file to uniquely
-         identify a single equipment record.
+         the Equipment-Registry databases (see the <registers> tag below) that is from
+         "Company XYZ" then specifying manufacturer="Company XYZ" is enough information to
+         uniquely identify the equipment record in the configuration file. If in the future
+         another equipment record is added to an Equipment-Registry database for "Company XYZ"
+         then an exception will be raised telling you to specify more information in the
+         configuration file to uniquely identify a single equipment record.
        -->
-       <equipment alias="ref" manufacturer="Keysight" model="34465A"/>
+       <equipment alias="dmm" manufacturer="Keysight" model="34465A"/>
        <equipment alias="scope" manufacturer="Pico Technologies"/>
        <equipment alias="flipper" manufacturer="Thorlabs" model="MFF101/M" serial="37871232"/>
 
-       <!-- Specify the Equipment-Register databases to load equipment records from -->
-       <equipment_registers>
+       <!-- Specify the Equipment-Register Databases to load equipment records from. -->
+       <registers>
          <!--
            The "team" attribute is used to specify which research team the Equipment-Register
-           database belongs to
+           database belongs to.
          -->
          <register team="P&amp;R">
              <path>Z:\QUAL\Equipment\Equipment Register.xls</path>
              <!--
                If there are multiple Sheets in the Excel database then you must specify the
                name of the Sheet that contains the equipment records. This Excel database
-               also contains connection records (see the <equipment_connections> tag below)
-               and so the <sheet> tag must be specified
+               also contains connection records (see the <connections> tag below) and so
+               the <sheet> tag must be specified.
              -->
              <sheet>Equipment</sheet>
          </register>
          <register team="Electrical">
            <path>H:\Quality\Registers\Equipment.xlsx</path>
-           <!-- No need to specify the Sheet name if there is only 1 Sheet in the Excel database -->
+           <!-- No need to specify the Sheet name if there is only 1 Sheet in the Excel database. -->
          </register>
          <!--
            For a text-based database (e.g., CSV, TXT files) you can specify how the dates are
@@ -85,32 +86,32 @@ The following illustrates an example configuration file.
          <register team="Mass" date_format="%Y-%m-%d">
            <!--
              You can also specify the database path to be a path that is relative to the
-             location of the configuration file. For example, the "equip-reg.txt" file is
+             location of the configuration file. For example, this "equip-reg.txt" file is
              located in the same directory as the configuration file.
            -->
            <path>equip-reg.txt</path>
          </register>
-       </equipment_registers>
+       </registers>
 
-       <!--
-         Specify the databases that contain the information required to connect to the
-         equipment. You can create as many <equipment_connections> tags as you want
-       -->
-       <equipment_connections>
-         <path>Z:\QUAL\Equipment\Equipment Register.xls</path>
-         <!-- Must also specify which Sheet in this Excel database contains the connection records -->
-         <sheet>Connections</sheet>
-       </equipment_connections>
-       <!--
-         You can also set the encoding that is used for a text-based database. The "my_connections.txt"
-         file is located in the "resources" subfolder (relative to the path of the configuration file)
-         and it is encoded with UTF-16.
-       -->
-       <equipment_connections encoding="utf-16">
-         <path>resources/my_connections.txt</path>
-       </equipment_connections>
+       <!-- Specify the Connections Databases to load connection records from. -->
+       <connections>
+         <connection>
+           <path>Z:\QUAL\Equipment\Equipment Register.xls</path>
+           <!--
+             Must also specify which Sheet in this Excel database contains the connection records.
+             This "Equipment Register.xls" file also contains an "Equipment" Sheet, see the
+             <register team="P&amp;R"> element above.
+           -->
+           <sheet>Connections</sheet>
+         </connection>
+         <!-- You can set the encoding that is used for a text-based database. -->
+         <connection encoding="utf-16">
+           <!-- Specify a relative path (relative to the location of the configuration file). -->
+           <path>data/my_connections.txt</path>
+         </connection>
+       </connections>
 
-   </msl>
+     </msl>
 
 The :class:`~msl.equipment.config.Config` class is used to load a configuration file and it is the main entryway
 in to the **MSL-Equipment** package. For example:
@@ -118,6 +119,6 @@ in to the **MSL-Equipment** package. For example:
 .. code-block:: python
 
   >>> from msl.equipment import Config
-  >>> cfg = Config('/path/to/my/configuration_file.xml')
+  >>> cfg = Config('/path/to/my/configuration/file.xml')
 
 .. _XML: https://www.w3schools.com/Xml/

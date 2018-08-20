@@ -1,5 +1,5 @@
 """
-Records from :ref:`equipment_database`\'s or a :ref:`connection_database`\'s.
+Records from :ref:`equipment_database`\'s or :ref:`connections_database`\'s.
 """
 import re
 import enum
@@ -18,44 +18,11 @@ class EquipmentRecord(object):
 
     def __init__(self, **kwargs):
         """Contains the information about an equipment record in an :ref:`equipment_database`.
-        
+
         Parameters
         ----------
         **kwargs
             The argument names can be any of the :class:`EquipmentRecord` property names.
-
-        Raises
-        ------
-        TypeError
-            If an argument name is `connection` or `date_calibrated` and the data type of
-            the value is invalid.
-        ValueError
-            If an argument name is `calibration_cycle` and the value cannot be converted
-            to a :class:`float`.
-        AttributeError
-            If an argument name is not a valid :class:`EquipmentRecord` attribute name.
-        
-        Examples
-        --------
-        Equipment records **SHOULD** be defined in an :ref:`equipment_database` and accessed
-        via the :meth:`~msl.equipment.config.Config.database` method; however, you can still
-        manually create an :class:`EquipmentRecord` and store your records in a Python module.
-        
-        >>> from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
-        >>> scope = EquipmentRecord(
-        ...             manufacturer='Pico Technology',
-        ...             model='5244B',
-        ...             serial='DY135/055',
-        ...             connection=ConnectionRecord(
-        ...                 backend=Backend.MSL,
-        ...                 address='SDK::ps5000a.dll',
-        ...                 properties={
-        ...                     'resolution': '14bit',  # `resolution` is only used for ps5000a series PicoScope's
-        ...                     'auto_select_power': True,  # some PicoScopes can be powered by an AC adaptor or by USB
-        ...                 },
-        ...             )
-        ...         )
-        
         """
 
         # these properties are NOT defined as fields in the equipment-register database
@@ -64,7 +31,6 @@ class EquipmentRecord(object):
         self._team = u''
 
         # these properties can be defined as fields in the equipment-register database
-        self._asset_number = u''
         self._calibration_cycle = 0.0
         self._category = u''
         self._date_calibrated = datetime.date(datetime.MINYEAR, 1, 1)
@@ -73,7 +39,6 @@ class EquipmentRecord(object):
         self._location = u''
         self._manufacturer = u''
         self._model = u''
-        self._register = u''
         self._serial = u''
         # IMPORTANT: when a new property is added remember to include it in docs/database#register_field_names
 
@@ -119,7 +84,7 @@ class EquipmentRecord(object):
         The `alias` can be defined in different in 3 ways:
 
         * in the **<equipment>** XML tag in a :ref:`configuration_file`
-        * in the **Properties** field in a :ref:`connection_database`
+        * in the **Properties** field in a :ref:`connections_database`
         * by redefining the `alias` value after the :class:`EquipmentRecord` has been instantiated
 
         """
@@ -128,11 +93,6 @@ class EquipmentRecord(object):
     @alias.setter
     def alias(self, text):
         self._alias = u'{}'.format(text)
-
-    @property
-    def asset_number(self):
-        """:class:`str`: The IRL/CI asset number of the equipment."""
-        return self._asset_number
 
     @property
     def calibration_cycle(self):
@@ -213,12 +173,6 @@ class EquipmentRecord(object):
         return self._model
 
     @property
-    def register(self):
-        """:class:`str`: The value assigned, as in MSL Policy and Procedures, for any equipment
-        that requires calibration or maintenance for projects."""
-        return self._register
-
-    @property
     def serial(self):
         """:class:`str`: The serial number, or engraved unique ID, of the equipment."""
         return self._serial
@@ -231,26 +185,21 @@ class EquipmentRecord(object):
     def connect(self, demo=None):
         """Establish a connection to the equipment.
 
+        Calls the :func:`~msl.equipment.factory.connect` function.
+
         Parameters
         ----------
-        demo : :class:`bool` or :data:`None`
+        demo : :class:`bool`, optional
             Whether to simulate a connection to the equipment by opening
-            a connection in demo mode. This allows you run your code if the 
-            equipment is not physically connected to a computer.
+            a connection in demo mode. This allows you to test your code
+            if the equipment is not physically connected to a computer.
             
             If :data:`None` then the `demo` value is determined from the
-            :obj:`~.config.Config.DEMO_MODE` variable.
+            :attr:`~.config.Config.DEMO_MODE` attribute.
 
         Returns
         -------
         A :class:`~msl.equipment.connection.Connection` subclass.
-
-        Raises
-        ------
-        ValueError
-            If any of the property values in
-            :obj:`record.connection.properties <.ConnectionRecord.properties>`
-            are invalid.
         """
         from msl.equipment import factory  # import here to avoid circular imports
         return factory.connect(self, demo)
@@ -282,7 +231,7 @@ class EquipmentRecord(object):
 
         Returns
         -------
-        :func:`datetime.date`
+        :class:`datetime.date`
             The next calibration date."""
         years = int(self.calibration_cycle)
         months = int(round(12 * (self.calibration_cycle - years)))
@@ -305,55 +254,14 @@ class EquipmentRecord(object):
         return d
 
     def to_xml(self):
-        """Convert this :class:`EquipmentRecord` to a XML :class:`~xml.etree.ElementTree.Element`.
+        """Convert this :class:`EquipmentRecord` to an XML :class:`~xml.etree.ElementTree.Element`.
 
-        Note
-        ----
-        All values of the :class:`EquipmentRecord` are converted to a :class:`str`
-        so that the returned result could be easily written to a XML file.
-
-        Example
-        -------
-        If you wanted to dump the information about all the equipment that you
-        used for a measurement, as well as the data that you acquired, to a XML
-        file then the following script shows how you could use the :meth:`to_xml`
-        method to achieve that result:
-
-        .. code-block:: python
-
-            import codecs
-            from xml.dom import minidom
-            from xml.etree import cElementTree as ET
-
-            from msl.equipment import Config
-
-            # load the database from a configuration file
-            db = Config('config.xml').database()
-
-            # append the information about the equipment that you are using to a root Element
-            root = ET.Element('msl')
-            for record in db.equipment.values():
-                root.append(record.to_xml())
-
-            #
-            # ... append your data as XML Element's to the root Element
-            #
-
-            # make the XML output more human readable
-            encoding = 'utf-8'
-            output = minidom.parseString(ET.tostring(root)).toprettyxml(encoding=encoding).decode(encoding)
-
-            # print the information to stdout
-            print(output)
-
-            # write the information to a file
-            with codecs.open('output.xml', 'w', encoding=encoding) as fp:
-                fp.write(output)
+        All values of the :class:`EquipmentRecord` are converted to a :class:`str`.
 
         Returns
         -------
         :class:`~xml.etree.ElementTree.Element`
-            The :class:`EquipmentRecord` as a XML element.
+            The :class:`EquipmentRecord` as an XML element.
         """
         root = Element('equipment')
         for name in self._valid_names():
@@ -411,40 +319,12 @@ class EquipmentRecord(object):
 class ConnectionRecord(object):
 
     def __init__(self, **kwargs):
-        """Contains the information about a connection record in a :ref:`connection_database`.
+        """Contains the information about a connection record in a :ref:`connections_database`.
 
         Parameters
         ----------
         **kwargs
             The argument names can be any of the :class:`ConnectionRecord` property names.
-        
-        Raises
-        ------
-        ValueError
-            If an argument name is `backend`, `interface` or `properties` and the 
-            value is invalid.
-        AttributeError
-            If an argument name is not a valid :class:`ConnectionRecord` attribute name.
-        
-        Examples
-        --------
-        Connection records **SHOULD** be defined in a :ref:`connection_database` and accessed
-        via the :meth:`~msl.equipment.config.Config.database` method; however, you can still
-        manually create a :class:`ConnectionRecord` and store your records in a Python module.
-
-        >>> from msl.equipment import ConnectionRecord, Backend
-        >>> record = ConnectionRecord(
-        ...              manufacturer='Pico Technology',
-        ...              model='5244B',
-        ...              serial='DY135/055',
-        ...              backend=Backend.MSL,
-        ...              address='SDK::ps5000a.dll',
-        ...              properties={
-        ...                  'resolution': '14bit',  # `resolution` is only used for ps5000a series PicoScope's
-        ...                  'auto_select_power': True,  # some PicoScopes can be powered by an AC adaptor or by USB
-        ...              }
-        ...          )
-        
         """
 
         # these properties are NOT defined as fields in the connection database
@@ -457,7 +337,7 @@ class ConnectionRecord(object):
         self._model = u''
         self._properties = dict()
         self._serial = u''
-        # IMPORTANT: when a new property is added remember to include it in table in docs/database#connection_database
+        # IMPORTANT: when a new property is added remember to include it in table in docs/database#connections_database
 
         valid_names = self._valid_names()
         for name in kwargs:
@@ -503,11 +383,7 @@ class ConnectionRecord(object):
 
     @property
     def address(self):
-        """:class:`str`: The address to use for the connection (see `National Instruments <NI_>`_
-        and :ref:`address_syntax` for examples).
-
-        .. _NI: http://zone.ni.com/reference/en-XX/help/370131S-01/ni-visa/visaresourcesyntaxandexamples/
-        """
+        """:class:`str`: The address to use for the connection (see :ref:`address_syntax` for examples)."""
         return self._address
 
     @property
@@ -517,10 +393,9 @@ class ConnectionRecord(object):
 
     @property
     def interface(self):
-        """:class:`~.constants.MSLInterface`: The interface to use for the communication 
-        system that transfers data between a computer and the equipment
-        (only used if the :obj:`.backend` is equal to
-        :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>`).
+        """:class:`~.constants.MSLInterface`: The interface that is used for the
+        communication system that transfers data between a computer and the equipment
+        (only used if the :attr:`.backend` is equal to :attr:`~.constants.Backend.MSL`).
         """
         return self._interface
 
@@ -537,13 +412,13 @@ class ConnectionRecord(object):
     @property
     def properties(self):
         """
-        :class:`dict`: Additional properties that may be required to establish
-        a connection to the equipment, e.g., for :class:`~.connection_msl.ConnectionSerial`
-        communication you may require that::
+        :class:`dict`: Additional properties that may be required to connect to the equipment.
 
-            {'baud_rate': 19200}
+        For example, communicating via RS-232 may require::
 
-        See the :ref:`connection_database` for examples on how to set the `properties`.
+            {'baud_rate': 19200, 'parity': 'even'}
+
+        See the :ref:`connections_database` for examples on how to set the `properties`.
         """
         return self._properties
 
@@ -551,7 +426,7 @@ class ConnectionRecord(object):
     def properties(self, props):
         if not isinstance(props, dict):
             raise TypeError('The properties must be a dictionary')
-        self._properties = props
+        self._properties = props.copy()
 
     @property
     def serial(self):
@@ -559,7 +434,7 @@ class ConnectionRecord(object):
         return self._serial
 
     def to_dict(self):
-        """Convert the :class:`ConnectionRecord` to a dictionary.
+        """Convert this :class:`ConnectionRecord` to a dictionary.
 
         Returns
         -------
@@ -569,12 +444,9 @@ class ConnectionRecord(object):
         return {n: getattr(self, n) for n in self._valid_names()}
 
     def to_xml(self):
-        """Convert this :class:`ConnectionRecord` to a XML :class:`~xml.etree.ElementTree.Element`.
+        """Convert this :class:`ConnectionRecord` to an XML :class:`~xml.etree.ElementTree.Element`.
 
-        Note
-        ----
-        All values of the :class:`ConnectionRecord` are converted to a :class:`str` so that the
-        returned result could be easily written to a XML file.
+        All values of the :class:`ConnectionRecord` are converted to a :class:`str`.
 
         Returns
         -------
@@ -598,7 +470,8 @@ class ConnectionRecord(object):
                             prop.text = u'{}'.format(value)
                         element.append(prop)
             elif name == 'backend' or name == 'interface':
-                element.text = u'{}'.format(getattr(self, name).name)  # want to get the enum name not the enum value
+                # want to get the enum name not the enum value
+                element.text = u'{}'.format(getattr(self, name).name)
             else:
                 element.text = u'{}'.format(getattr(self, name))
             root.append(element)

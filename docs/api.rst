@@ -5,69 +5,70 @@ API Documentation
 =================
 
 The main entryway in to **MSL-Equipment** is achieved by loading a :ref:`configuration_file` and that is achieved by
-creating a :class:`~msl.equipment.config.Config` object.
+creating a :class:`~msl.equipment.config.Config` object. This example loads the `example.xml`_ file.
 
 .. code-block:: pycon
 
-  >>> from msl.equipment import Config
-  >>> cfg = Config('msl/examples/equipment/example.xml')
+    >>> from msl.equipment import Config
+    >>> from msl.examples.equipment import EXAMPLES_DIR
+    >>> cfg = Config(EXAMPLES_DIR + '/example.xml')
 
 Once a :class:`~msl.equipment.config.Config` object exists you can access of all the
 :class:`~msl.equipment.record_types.EquipmentRecord`\'s and :class:`~msl.equipment.record_types.ConnectionRecord`\'s
 that are contained within the :ref:`Databases <database>` as well as all of the
-:obj:`~msl.equipment.database.Database.equipment` that is being used to perform the measurement by calling the
+:attr:`~msl.equipment.database.Database.equipment` that is being used to perform the measurement by calling the
 :meth:`~msl.equipment.config.Config.database` method to create an instance of the
 :class:`~msl.equipment.database.Database`.
 
 .. code-block:: pycon
 
-  >>> db = cfg.database()
-  >>> for r in db.records():
-  ...     print(r)
-  EquipmentRecord<Agilent|34420A|D7D59860>
-  EquipmentRecord<Keysight|34465A|MY54506462>
-  EquipmentRecord<Hewlett Packard|3468A|8BB438A7>
-  EquipmentRecord<BK Precision|5492BGPIB|51957DB9>
-  EquipmentRecord<Keithley|2002|2CAD4BC6>
-  EquipmentRecord<Keysight|3458A|MY24339283>
-  >>> for r in db.records(manufacturer='Keysight'):
-  ...     print(r)
-  EquipmentRecord<Keysight|34465A|MY54506462>
-  EquipmentRecord<Keysight|3458A|MY24339283>
-  >>> for c in db.connections():
-  ...     print(c)
-  ConnectionRecord<Agilent|34420A|D7D59860>
-  ConnectionRecord<Keysight|34465A|MY54506462>
-  ConnectionRecord<Hewlett Packard|3468A|8BB438A7>
-  ConnectionRecord<BK Precision|5492BGPIB|51957DB9>
-  ConnectionRecord<Keithley|2002|2CAD4BC6>
-  ConnectionRecord<Keysight|3458A|MY24339283>
-  >>> for c in db.connections(address='USB*'):
-  ...     print(c)
-  ConnectionRecord<Agilent|34420A|D7D59860>
-  ConnectionRecord<Keysight|34465A|MY54506462>
-  ConnectionRecord<Keysight|3458A|MY24339283>
-  >>> db.equipment
-  {'dmm': EquipmentRecord<Keysight|34465A|MY54506462>}
-  >>> db.equipment['dmm'].connection
-  ConnectionRecord<Keysight|34465A|MY54506462>
+    >>> db = cfg.database()
+    >>> for record in db.records():
+    ...    print(record)
+    ...
+    EquipmentRecord<Fluke|8506A|A10008>
+    EquipmentRecord<Oriel|66087|B10009>
+    EquipmentRecord<Kepco|JQE|C10010>
+    EquipmentRecord<Hewlett Packard|34401A|D10011>
+    EquipmentRecord<Arlunya|Milli Gauss|E10012>
+    EquipmentRecord<Toledo|1000|F10013>
+    EquipmentRecord<Stanford Research Systems|SR850 DSP|G10014>
+    EquipmentRecord<Hewlett Packard|3478A|D10015>
+    >>> for record in db.records(manufacturer='H.*P'):
+    ...    print(record)
+    ...
+    EquipmentRecord<Hewlett Packard|34401A|D10011>
+    EquipmentRecord<Hewlett Packard|3478A|D10015>
+    >>> for conn in db.connections():
+    ...    print(conn)
+    ...
+    ConnectionRecord<Fluke|8506A|A10008>
+    ConnectionRecord<Hewlett Packard|34401A|D10011>
+    ConnectionRecord<Stanford Research Systems|SR850 DSP|G10014>
+    ConnectionRecord<Hewlett Packard|3478A|D10011>
+    >>> for conn in db.connections(address='GPIB'):
+    ...     print(conn)
+    ...
+    ConnectionRecord<Fluke|8506A|A10008>
+    ConnectionRecord<Hewlett Packard|3478A|D10011>
+    >>> db.equipment
+    {'dmm': EquipmentRecord<Hewlett Packard|34401A|D10011>}
+    >>> db.equipment['dmm'].connection
+    ConnectionRecord<Hewlett Packard|34401A|D10011>
 
-Establishing a connection to the :obj:`~msl.equipment.database.Database.equipment` is achieved by calling the
+Establishing a connection to the equipment is achieved by calling the
 :meth:`~msl.equipment.record_types.EquipmentRecord.connect` method of an
 :class:`~msl.equipment.record_types.EquipmentRecord`. This call will return a specific
 :class:`~msl.equipment.connection.Connection` subclass that contains the necessary properties and methods for
-communicating with the :obj:`~msl.equipment.database.Database.equipment`.
+communicating with the equipment.
 
 .. code-block:: pycon
 
-  >>> dmm = db.equipment['dmm'].connect()
-  >>> dmm.query('*IDN?')
-  'Keysight Technologies,34465A,MY54506462,A.02.14-02.40-02.14-00.49-03-01\n'
+    >>> dmm = db.equipment['dmm'].connect()
+    >>> dmm.query('*IDN?')
+    'Hewlett Packard,34401A,D10011,A.02.14-02.40-02.14-00.49-03-01'
 
 In addition, the :mod:`~msl.equipment.constants` module contains the package constants.
-
-That pretty much summarizes all of the classes and modules that a typical user will need to access in their
-application.
 
 .. _connection_classes:
 
@@ -121,3 +122,4 @@ Package Structure
 
 .. _PyVISA: http://pyvisa.readthedocs.io/en/stable/index.html
 .. _NI-DAQ: http://nidaqmx-python.readthedocs.io/en/latest/index.html
+.. _example.xml: https://github.com/MSLNZ/msl-equipment/blob/master/msl/examples/equipment/example.xml

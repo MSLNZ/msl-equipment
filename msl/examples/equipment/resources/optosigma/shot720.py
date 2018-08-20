@@ -35,15 +35,15 @@ if __name__ == '__main__':
     shot.wait(show_status)
 
     # move stage 1 to a position
-    print('Move to 100000...')
-    shot.move_absolute(1, 100000)
+    print('Move to 10000...')
+    shot.move_absolute(1, 10000)
 
     # wait for the stage to finish moving while printing the status to stdout
     shot.wait(show_status)
 
-    # move stage 1 by -10000
-    print('Move by -10000...')
-    shot.move_relative(1, -10000)
+    # move stage 1 by -1000
+    print('Move by -1000...')
+    shot.move_relative(1, -1000)
 
     # wait for the stage to finish moving while printing the status to stdout
     shot.wait(show_status)
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     print('position1={}, position2={}, stopped={}, is_moving={}'.format(*status))
 
     # start moving stage 1 at the minimum speed in the + direction for 5 seconds
-    print('Start moving stage 1...')
+    print('Start moving stage 1 for 5 seconds...')
     shot.move(1, '+')
     time.sleep(5)
 

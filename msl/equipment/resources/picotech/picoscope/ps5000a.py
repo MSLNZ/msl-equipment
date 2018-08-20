@@ -66,7 +66,7 @@ class PicoScope5000A(PicoScopeApi):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        PicoScopeApi.__init__(self, record, ps5000aApi_funcptrs)
+        super(PicoScope5000A, self).__init__(record, ps5000aApi_funcptrs)
 
     def get_device_resolution(self):
         """

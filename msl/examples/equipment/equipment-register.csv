@@ -1,8 +1,9 @@
-Manufacturer,Model,Asset number,Serial,Date calibrated,Register number,Category,Location,Description
-Fluke,8506A,00003,A10008,2010-11-01,MSLE.X.YYY,DMM,Calibration Lab,Digital Multimeter
-Oriel,66087,,B10009,,MSLE.X.YYY,,Calibration Lab,Ozone Eater
-Kepco,JQE,00004,C10010,2004-04-08,MSLE.X.YYY,,Calibration Lab,Lamp Power Supply (10A-100V)
-Hewlett Packard,34401A,00009,D10011,2014-03-02,MSLE.X.YYY,DMM,General,Digital Multimeter
-Arlunya,Milli Gauss,,E10012,,MSLE.X.YYY,,General,Gauss meter
-Toledo,1000,,F10013,2003-11-06,MSLE.X.YYY,,General,1 metre rule
-Stanford Research Systems,SR850 DSP,00005,G10014,,MSLE.X.YYY,,General,Lock-In Amplifier
+Manufacturer,Model,Serial,Date calibrated,Category,Location,Description
+Fluke,8506A,A10008,1/11/2010,DMM,Calibration Lab,Digital Multimeter
+Oriel,66087,B10009,,,Calibration Lab,Ozone Eater
+Kepco,JQE,C10010,8/04/2004,,Calibration Lab,Lamp Power Supply (10A-100V)
+Hewlett Packard,34401A,D10011,2/03/2014,DMM,General,Digital Multimeter
+Arlunya,Milli Gauss,E10012,,,General,Gauss meter
+Toledo,1000,F10013,6/11/2003,,General,1 metre rule
+Stanford Research Systems,SR850 DSP,G10014,,,General,Lock-In Amplifier
+Hewlett Packard,3478A,D10015,23/10/2016,DMM,General,Digital Multimeter

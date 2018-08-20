@@ -54,13 +54,13 @@ class FilterWheelXX2C(ConnectionSDK):
         A 64-bit version of the library can be download from here_ and it is 
         located in **AppNotes_FW102C/LabVIEW/Thorlabs_FW102C/Library/FilterWheel102_win64.dll**.
 
-        The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
+        The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a FilterWheelXX2C connection supports the following key-value pairs in the
-        :ref:`connection_database`::
+        :ref:`connections_database`::
 
-            'port': str,  # mandatory, example 'COM3'
-            'baud_rate': int,  # optional, default is 115200 
-            'timeout': int,  # optional, default is 10
+            'port': str, the serial port number, e.g., 'COM3'
+            'baud_rate': int, the baud rate for the serial connection [default: 115200]
+            'timeout': int, the timeout in seconds [default: 10]
         
         .. _here:
             https://www.thorlabs.com/software_pages/viewsoftwarepage.cfm?code=FW102C&viewtab=2
@@ -79,7 +79,7 @@ class FilterWheelXX2C(ConnectionSDK):
             If a connection to the filter wheel cannot be established.
         """
         self._handle = None
-        ConnectionSDK.__init__(self, record, 'cdll')
+        super(FilterWheelXX2C, self).__init__(record, 'cdll')
         self.set_exception_class(ThorlabsError)
 
         self.sdk.GetPorts.restype = c_int
@@ -206,7 +206,7 @@ class FilterWheelXX2C(ConnectionSDK):
         """
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The current acceleration value of the filter wheel.
         """
         acceleration = c_int()
@@ -217,7 +217,7 @@ class FilterWheelXX2C(ConnectionSDK):
         """        
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The id of the filter wheel.
         """
         identity = create_string_buffer(256)
@@ -228,7 +228,7 @@ class FilterWheelXX2C(ConnectionSDK):
         """
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The current maximum velocity value of the filter wheel.
         """
         velocity = c_int()
@@ -239,7 +239,7 @@ class FilterWheelXX2C(ConnectionSDK):
         """
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The current minimum velocity value of the filter wheel.
         """
         velocity = c_int()
@@ -251,7 +251,7 @@ class FilterWheelXX2C(ConnectionSDK):
         
         Returns
         -------
-        :obj:`dict` of :obj:`str`
+        :class:`dict`
             A dictionary where the keys are the port numbers, e.g. COM1, COM3,
             and the values are a description about each device connected to the 
             port.
@@ -268,7 +268,7 @@ class FilterWheelXX2C(ConnectionSDK):
         """        
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The current position of the filter wheel.
         """
         pos = c_int()
@@ -312,7 +312,7 @@ class FilterWheelXX2C(ConnectionSDK):
         """
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The time from last position to current position.
         """
         time = c_int()
@@ -335,13 +335,13 @@ class FilterWheelXX2C(ConnectionSDK):
 
         Parameters
         ----------
-        port : :obj:`str`
+        port : :class:`str`
             The port to be checked, e.g. ``COM3``.
 
         Returns
         -------
-        :obj:`bool`
-            :obj:`True` if the port is opened; :obj:`False` if the port is closed.
+        :class:`bool`
+            :data:`True` if the port is opened; :data:`False` if the port is closed.
         """
         return bool(self.sdk.IsOpen(port.encode()))
 
@@ -350,12 +350,12 @@ class FilterWheelXX2C(ConnectionSDK):
         
         Parameters
         ----------
-        port : :obj:`str`
+        port : :class:`str`
             The port to be opened, use the :meth:`get_ports` 
             function to get a list of available ports.
-        baud_rate : :obj:`int`
+        baud_rate : :class:`int`
             The number of bits per second to use for the communication protocol.        
-        timeout : :obj:`int`
+        timeout : :class:`int`
             Set the timeout value, in seconds. 
         """
         if self._handle is None:
@@ -370,7 +370,7 @@ class FilterWheelXX2C(ConnectionSDK):
 
         Parameters
         ----------
-        acceleration : :obj:`int`
+        acceleration : :class:`int`
             The filter wheel's acceleration value.
         """
         self.sdk.SetAcceleration(self._handle, acceleration)
@@ -380,7 +380,7 @@ class FilterWheelXX2C(ConnectionSDK):
 
         Parameters
         ----------
-        maximum : :obj:`int`
+        maximum : :class:`int`
             The filter wheel's maximum velocity value.
         """
         self.sdk.SetMaxVelocity(self._handle, maximum)
@@ -390,7 +390,7 @@ class FilterWheelXX2C(ConnectionSDK):
 
         Parameters
         ----------
-        minimum : :obj:`int`
+        minimum : :class:`int`
             The filter wheel's minimum velocity value.
         """
         self.sdk.SetMinVelocity(self._handle, minimum)
@@ -400,7 +400,7 @@ class FilterWheelXX2C(ConnectionSDK):
         
         Parameters
         ----------
-        position : :obj:`int`
+        position : :class:`int`
            The position number to set the filter wheel to.
 
         Raises
@@ -489,7 +489,7 @@ class FilterWheelXX2C(ConnectionSDK):
     #
     #     Parameters
     #     ----------
-    #     timeout : :obj:`int`
+    #     timeout : :class:`int`
     #         The timeout value, in seconds.
     #     """
     #     self.sdk.SetTimeout(self._handle, timeout)

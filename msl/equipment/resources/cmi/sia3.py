@@ -6,7 +6,6 @@ Establishes a connection to the Switched Integrator Amplifier
 """
 from enum import IntEnum
 
-from msl.equipment import constants
 from msl.equipment.connection_serial import ConnectionSerial
 from msl.equipment.exceptions import CMIError
 from msl.equipment.resources import register
@@ -26,7 +25,7 @@ class IntegrationTime(IntEnum):
     TIME_2 = 14
 
 
-@register(manufacturer='C[zech]*\s*M[etrology]*\s*I[nstitute]*', model='SIA3')
+@register(manufacturer='C.*M.*I', model='SIA3')
 class SIA3(ConnectionSerial):
 
     GAIN = IntegrationTime  #: The gain (i.e., the integration time)
@@ -46,20 +45,14 @@ class SIA3(ConnectionSerial):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        if len(record.connection.properties) == 0:
+        if not record.connection.properties:
             # then use the default connection properties
             record.connection.properties = {
                 'baud_rate': 14400,
-                'data_bits': constants.DataBits.EIGHT,
-                'parity': constants.Parity.NONE,
-                'stop_bits': constants.StopBits.ONE,
-                'write_timeout': 10.0,
-                'xon_xoff': False,
-                'rts_cts': False,
-                'dsr_dtr': False,
-                'write_termination': None,
+                'termination': None,
+                'timeout': 10.0,
             }
-        ConnectionSerial.__init__(self, record)
+        super(SIA3, self).__init__(record)
         self.set_exception_class(CMIError)
 
     def set_integration_time(self, time):
@@ -68,7 +61,9 @@ class SIA3(ConnectionSerial):
         Parameters
         ----------
         time : :class:`.IntegrationTime`
-            The integration time as a :class:`.IntegrationTime` enum value or member name.
+            The integration time as a :class:`.IntegrationTime` enum value or member name,
+            e.g., ``sia.set_integration_time('10m')``, ``sia.set_integration_time(sia.GAIN.TIME_10m)``
+            and ``sia.set_integration_time(8)`` are all equivalent statements.
         """
         self._send_byte(7)
         self._send_byte(self.convert_to_enum(time, IntegrationTime, prefix='TIME_'))
@@ -78,12 +73,12 @@ class SIA3(ConnectionSerial):
 
         Parameters
         ----------
-        ps : int
+        ps : :class:`int`
             The PS to use. The value must be in the range [0, 7].
 
         Raises
         ------
-        ValueError:
+        ValueError
             If the value of `ps` is invalid.
         """
         _ps = int(ps)

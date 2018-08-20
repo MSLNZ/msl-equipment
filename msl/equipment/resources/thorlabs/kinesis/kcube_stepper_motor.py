@@ -46,9 +46,9 @@ class KCubeStepperMotor(MotionControl):
     def __init__(self, record):
         """A wrapper around ``Thorlabs.MotionControl.KCube.StepperMotor.dll``.
 
-        The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
+        The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a KCubeStepperMotor connection supports the following key-value pairs in the
-        :ref:`connection_database`::
+        :ref:`connections_database`::
 
             'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
@@ -60,7 +60,7 @@ class KCubeStepperMotor(MotionControl):
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        MotionControl.__init__(self, record, KCube_StepperMotor_FCNS)
+        super(KCubeStepperMotor, self).__init__(record, KCube_StepperMotor_FCNS)
 
     def can_device_lock_front_panel(self):
         """Determine if the device front panel can be locked.
@@ -77,17 +77,17 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`bool`
+        :class:`bool`
             Whether the device can be homed.
         """
         return self.sdk.SCC_CanHome(self._serial)
 
     def can_move_without_homing_first(self):
-        """Does the device need to be :obj:`home`\'d before a move can be performed?
+        """Does the device need to be :meth:`home`\'d before a move can be performed?
 
         Returns
         -------
-        :obj:`bool`
+        :class:`bool`
             Whether the device needs to be homed.
         """
         return self.sdk.SCC_CanMoveWithoutHomingFirst(self._serial)
@@ -97,7 +97,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`bool`
+        :class:`bool`
             Whether the USB is listed by the FTDI controller.
         """
         return self.sdk.SCC_CheckConnection(self._serial)
@@ -142,9 +142,9 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        enable : :obj:`bool`
-            :obj:`True` to enable monitoring otherwise :obj:`False` to disable.
-        last_msg_timeout : :obj:`int`
+        enable : :class:`bool`
+            :data:`True` to enable monitoring otherwise :data:`False` to disable.
+        last_msg_timeout : :class:`int`
             The last message error timeout in ms. Set to 0 to disable.
         """
         self.sdk.SCC_EnableLastMsgTimer(self._serial, enable, last_msg_timeout)
@@ -157,7 +157,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The backlash distance in ``DeviceUnits`` (see manual).
         """
         return self.sdk.SCC_GetBacklash(self._serial)
@@ -167,7 +167,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The bow index.
         """
         return self.sdk.SCC_GetBowIndex(self._serial)
@@ -177,7 +177,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The filename of the calibration file.
 
         Raises
@@ -193,19 +193,19 @@ class KCubeStepperMotor(MotionControl):
     def get_device_unit_from_real_value(self, real_value, unit_type):
         """Converts a real-world value to a device value.
 
-        Either :meth:`load_settings` or :meth:`set_motor_params_ext` must be called before
-        calling this function, otherwise the returned value will always be 0.
+        Either :meth:`load_settings`, :meth:`load_named_settings` or :meth:`set_motor_params_ext`
+        must be called before calling this function, otherwise the returned value will always be 0.
 
         Parameters
         ----------
-        real_value : :obj:`float`
+        real_value : :class:`float`
             The real-world value.
         unit_type : :class:`.enums.UnitType`
             The unit of the real-world value.
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The device value.
 
         Raises
@@ -223,7 +223,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`bytes`
+        :class:`bytes`
             Bit mask of states of the 4 digital output pins.
         """
         return self.sdk.SCC_GetDigitalOutputs(self._serial)
@@ -235,7 +235,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The encoder count in encoder units.
         """
         return self.sdk.SCC_GetEncoderCounter(self._serial)
@@ -307,7 +307,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The homing velocity in ``DeviceUnits`` (see manual).
         """
         return self.sdk.SCC_GetHomingVelocity(self._serial)
@@ -317,7 +317,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`bytes`
+        :class:`bytes`
             The number, 0x00 if unknown or 0xff if not on a hub.
         """
         return self.sdk.SCC_GetHubBay(self._serial)
@@ -367,7 +367,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The step size in ``DeviceUnits`` (see manual).
         """
         return self.sdk.SCC_GetJogStepSize(self._serial)
@@ -380,9 +380,9 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The maximum velocity in ``DeviceUnits`` (see manual).
-        :obj:`int`
+        :class:`int`
             The acceleration in ``DeviceUnits`` (see manual).
 
         Raises
@@ -407,9 +407,9 @@ class KCubeStepperMotor(MotionControl):
             The clockwise hardware limit mode.
         :class:`.enums.MOT_LimitSwitchModes`
             The anticlockwise hardware limit mode.
-        :obj:`int`
+        :class:`int`
             The position of the clockwise software limit in ``DeviceUnits`` (see manual).
-        :obj:`int`
+        :class:`int`
             The position of the anticlockwise software limit in ``DeviceUnits`` (see manual).
         :class:`.enums.MOT_LimitSwitchSWModes`
             The soft limit mode.
@@ -469,7 +469,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`.structs.KMOT_MMIParams`
+        :class:`.structs.KMOT_MMIParams`
             The MMI parameters for the device.
         """
         mmi_params = KMOT_MMIParams()
@@ -484,24 +484,24 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`.enums.KMOT_WheelMode`
+        :class:`.enums.KMOT_WheelMode`
             The device joystick mode.
-        :obj:`int`
+        :class:`int`
             The joystick maximum velocity in ``DeviceUnits``.
-        :obj:`int`
+        :class:`int`
             The joystick acceleration in ``DeviceUnits``.
-        :obj:`.enums.KMOT_WheelDirectionSense`
+        :class:`.enums.KMOT_WheelDirectionSense`
             The joystick direction sense.
-        :obj:`int`
+        :class:`int`
             The first preset position in ``DeviceUnits``.
-        :obj:`int`
+        :class:`int`
             The second preset position in ``DeviceUnits``.
-        :obj:`int`
+        :class:`int`
             The display intensity, range 0 to 100%.
-        :obj:`int`
+        :class:`int`
             The display timeout, range 0 to 480 in minutes (0 is off, otherwise
             the inactivity period before dimming the display).
-        :obj:`int`
+        :class:`int`
             The display dimmed intensity, range 0 to 10 (after the timeout
             period the device display will dim).
 
@@ -535,11 +535,11 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         ----------
-        :obj:`float`
+        :class:`float`
             The steps per revolution.
-        :obj:`float`
+        :class:`float`
             The gear box ratio.
-        :obj:`float`
+        :class:`float`
             The pitch.
 
         Raises
@@ -558,11 +558,11 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         ----------
-        :obj:`float`
+        :class:`float`
             The steps per revolution.
-        :obj:`float`
+        :class:`float`
             The gear box ratio.
-        :obj:`float`
+        :class:`float`
             The pitch.
 
         Raises
@@ -581,9 +581,9 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`float`
+        :class:`float`
             The minimum position in ``RealWorldUnits`` [millimeters or degrees].
-        :obj:`float`
+        :class:`float`
             The maximum position in ``RealWorldUnits`` [millimeters or degrees].
 
         Raises
@@ -611,9 +611,9 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`float`
+        :class:`float`
             The maximum velocity in ``RealWorldUnits`` [millimeters or degrees].
-        :obj:`float`
+        :class:`float`
             The maximum acceleration in ``RealWorldUnits`` [millimeters or degrees].
 
         Raises
@@ -634,7 +634,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The move absolute position in ``DeviceUnits`` (see manual).
         """
         return self.sdk.SCC_GetMoveAbsolutePosition(self._serial)
@@ -647,7 +647,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The move relative position in ``DeviceUnits`` (see manual).
         """
         return self.sdk.SCC_GetMoveRelativeDistance(self._serial)
@@ -657,11 +657,11 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The message type.
-        :obj:`int`
+        :class:`int`
             The message ID.
-        :obj:`int`
+        :class:`int`
             The message data.
 
         Raises
@@ -684,7 +684,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The number of positions.
         """
         return self.sdk.SCC_GetNumberPositions(self._serial)
@@ -697,7 +697,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`float`
+        :class:`float`
             The encoder PID loop coefficient.
         """
         return self.sdk.SCC_GetPIDLoopEncoderCoeff(self._serial)
@@ -707,7 +707,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`.structs.MOT_PIDLoopEncoderParams`
+        :class:`.structs.MOT_PIDLoopEncoderParams`
             The Encoder PID loop parameters.
 
         Raises
@@ -727,7 +727,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        index : :obj:`int`
+        index : :class:`int`
             The position in ``DeviceUnits`` (see manual).
         """
         return self.sdk.SCC_GetPosition(self._serial)
@@ -743,7 +743,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The position counter in ``DeviceUnits`` (see manual).
         """
         return self.sdk.SCC_GetPositionCounter(self._serial)
@@ -768,19 +768,19 @@ class KCubeStepperMotor(MotionControl):
     def get_real_value_from_device_unit(self, device_value, unit_type):
         """Converts a device value to a real-world value.
 
-        Either :meth:`load_settings` or :meth:`set_motor_params_ext` must be called before
-        calling this function, otherwise the returned value will always be 0.0.
+        Either :meth:`load_settings`, :meth:`load_named_settings` or :meth:`set_motor_params_ext`
+        must be called before calling this function, otherwise the returned value will always be 0.
 
         Parameters
         ----------
-        device_value : :obj:`int`
+        device_value : :class:`int`
             The device value.
         unit_type : :class:`.enums.UnitType`
             The unit of the device value.
 
         Returns
         -------
-        :obj:`float`
+        :class:`float`
             The real-world value.
 
         Raises
@@ -808,7 +808,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The device software version.
         """
         return self.to_version(self.sdk.SCC_GetSoftwareVersion(self._serial))
@@ -821,7 +821,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The maximum position in ``DeviceUnits`` (see manual).
         """
         return self.sdk.SCC_GetStageAxisMaxPos(self._serial)
@@ -834,7 +834,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The minimum position in ``DeviceUnits`` (see manual).
         """
         return self.sdk.SCC_GetStageAxisMinPos(self._serial)
@@ -848,7 +848,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The status bits from the device.
         """
         return self.sdk.SCC_GetStatusBits(self._serial)
@@ -905,21 +905,21 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The trigger start position, forward, in ``DeviceUnits`` (see manual).
-        :obj:`int`
+        :class:`int`
             The trigger interval, forward, in ``DeviceUnits`` (see manual).
-        :obj:`int`
+        :class:`int`
             Number of trigger pulses, forward.
-        :obj:`int`
+        :class:`int`
             The trigger start position, reverse, in ``DeviceUnits`` (see manual).
-        :obj:`int`
+        :class:`int`
             The trigger interval, reverse, in ``DeviceUnits`` (see manual).
-        :obj:`int`
+        :class:`int`
             Number of trigger pulses., reverse.
-        :obj:`int`
+        :class:`int`
             Width of the trigger pulse in milliseconds, range 10 (10us) to 650000 (650ms).
-        :obj:`int`
+        :class:`int`
             Number of cycles to perform triggering.
 
         Raises
@@ -949,7 +949,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`.structs.KMOT_TriggerParams`
+        :class:`.structs.KMOT_TriggerParams`
             Options for controlling the trigger.
 
         Raises
@@ -969,9 +969,9 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        max_velocity : :obj:`int`
+        max_velocity : :class:`int`
             The maximum velocity in ``DeviceUnits`` (see manual).
-        acceleration : :obj:`int`
+        acceleration : :class:`int`
             The acceleration in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1010,9 +1010,9 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`bool`
-            :obj:`True` if last message timer has elapsed or
-            :obj:`False` if monitoring is not enabled or if time of last message
+        :class:`bool`
+            :data:`True` if last message timer has elapsed or
+            :data:`False` if monitoring is not enabled or if time of last message
             received is less than ``lastMsgTimeout``.
         """
         return self.sdk.SCC_HasLastMsgTimerOverrun(self._serial)
@@ -1039,7 +1039,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`bool`
+        :class:`bool`
             Whether a calibration file is active.
         """
         return self.sdk.SCC_IsCalibrationActive(self._serial)
@@ -1079,7 +1079,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The number of messages in the queue.
         """
         return self.sdk.SCC_MessageQueueSize(self._serial)
@@ -1136,7 +1136,7 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        displacement : :obj:`int`
+        displacement : :class:`int`
             Signed displacement in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1167,7 +1167,7 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        index : :obj:`int`
+        index : :class:`int`
             The position in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1178,13 +1178,13 @@ class KCubeStepperMotor(MotionControl):
         self.sdk.SCC_MoveToPosition(self._serial, index)
 
     def needs_homing(self):
-        """Does the device need to be :obj:`home`\'d before a move can be performed?
+        """Does the device need to be :meth:`home`\'d before a move can be performed?
 
         Deprecated: calls :meth:`can_move_without_homing_first` instead.
 
         Returns
         -------
-        :obj:`bool`
+        :class:`bool`
             Whether the device needs to be homed.
         """
         return self.can_move_without_homing_first()
@@ -1214,7 +1214,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The time between polls in milliseconds or 0 if polling is not active.
         """
         return self.sdk.SCC_PollingDuration(self._serial)
@@ -1458,7 +1458,7 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        distance : :obj:`int`
+        distance : :class:`int`
             The backlash distance in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1473,7 +1473,7 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        bow_index : :obj:`int`
+        bow_index : :class:`int`
             The bow index.
 
         Raises
@@ -1488,10 +1488,10 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        path : :obj:`str`
+        path : :class:`str`
             The path to a calibration file to load.
-        enabled : :obj:`bool`
-            :obj:`True` to enable, :obj:`False` to disable.
+        enabled : :class:`bool`
+            :data:`True` to enable, :data:`False` to disable.
 
         Raises
         ------
@@ -1507,7 +1507,7 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        outputs_bits : :obj:`int`
+        outputs_bits : :class:`int`
             Bit mask to set the states of the 4 digital output pins.
 
         Raises
@@ -1526,8 +1526,8 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        reverse : :obj:`bool`
-            If :obj:`True` then directions will be swapped on these moves.
+        reverse : :class:`bool`
+            If :data:`True` then directions will be swapped on these moves.
 
         Raises
         ------
@@ -1544,7 +1544,7 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        count : :obj:`int`
+        count : :class:`int`
             The encoder count in encoder units.
 
         Raises
@@ -1580,9 +1580,9 @@ class KCubeStepperMotor(MotionControl):
         limit : :class:`.enums.MOT_HomeLimitSwitchDirection`
             The limit switch direction as a :class:`.enums.MOT_HomeLimitSwitchDirection`
             enum value or member name.
-        velocity : :obj:`int`
+        velocity : :class:`int`
             The velocity in small indivisible units.
-        offset : :obj:`int`
+        offset : :class:`int`
             Distance of home from limit in small indivisible units.
 
         Raises
@@ -1605,7 +1605,7 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        velocity : :obj:`int`
+        velocity : :class:`int`
             The homing velocity in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1662,7 +1662,7 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        step_size : :obj:`int`
+        step_size : :class:`int`
             The step size in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1680,9 +1680,9 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        max_velocity : :obj:`int`
+        max_velocity : :class:`int`
             The maximum velocity in ``DeviceUnits`` (see manual).
-        acceleration : :obj:`int`
+        acceleration : :class:`int`
             The acceleration in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1706,9 +1706,9 @@ class KCubeStepperMotor(MotionControl):
         ccw_lim : :class:`.enums.MOT_LimitSwitchModes`
             The anticlockwise hardware limit mode as a :class:`.enums.MOT_LimitSwitchModes`
             enum value or member name.
-        cw_pos : :obj:`int`
+        cw_pos : :class:`int`
             The position of the clockwise software limit in ``DeviceUnits`` (see manual).
-        ccw_pos : :obj:`int`
+        ccw_pos : :class:`int`
             The position of the anticlockwise software limit in ``DeviceUnits`` (see manual).
         soft_limit_mode : :class:`.enums.MOT_LimitSwitchSWModes`
             The soft limit mode as a :class:`.enums.MOT_LimitSwitchSWModes` enum
@@ -1795,24 +1795,24 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        joystick_mode : :obj:`.enums.KMOT_WheelMode`
-            The device joystick mode as a :obj:`.enums.KMOT_WheelMode` enum value or member name.
-        joystick_max_velocity : :obj:`int`
+        joystick_mode : :class:`.enums.KMOT_WheelMode`
+            The device joystick mode as a :class:`.enums.KMOT_WheelMode` enum value or member name.
+        joystick_max_velocity : :class:`int`
             The joystick maximum velocity in ``DeviceUnits``.
-        joystick_acceleration : :obj:`int`
+        joystick_acceleration : :class:`int`
             The joystick acceleration in ``DeviceUnits``.
-        direction_sense : :obj:`.enums.KMOT_WheelDirectionSense`
-            The joystick direction sense as a :obj:`.enums.KMOT_WheelDirectionSense` enum value or member name.
-        preset_position1 : :obj:`int`
+        direction_sense : :class:`.enums.KMOT_WheelDirectionSense`
+            The joystick direction sense as a :class:`.enums.KMOT_WheelDirectionSense` enum value or member name.
+        preset_position1 : :class:`int`
             The first preset position in ``DeviceUnits``.
-        preset_position2 : :obj:`int`
+        preset_position2 : :class:`int`
             The second preset position in ``DeviceUnits``.
-        display_intensity : :obj:`int`
+        display_intensity : :class:`int`
             The display intensity, range 0 to 100%.
-        display_timeout : :obj:`int`
+        display_timeout : :class:`int`
             The display timeout, range 0 to 480 in minutes (0 is off, otherwise
             the inactivity period before dimming the display).
-        display_dim_intensity : :obj:`int`
+        display_dim_intensity : :class:`int`
             The display dimmed intensity, range 0 to 10 (after the timeout
             period the device display will dim).
 
@@ -1841,11 +1841,11 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        steps_per_rev : :obj:`float`
+        steps_per_rev : :class:`float`
             The steps per revolution.
-        gear_box_ratio : :obj:`float`
+        gear_box_ratio : :class:`float`
             The gear box ratio.
-        pitch : :obj:`float`
+        pitch : :class:`float`
             The pitch.
 
         Raises
@@ -1867,11 +1867,11 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        steps_per_rev : :obj:`float`
+        steps_per_rev : :class:`float`
             The steps per revolution.
-        gear_box_ratio : :obj:`float`
+        gear_box_ratio : :class:`float`
             The gear box ratio.
-        pitch : :obj:`float`
+        pitch : :class:`float`
             The pitch.
 
         Raises
@@ -1891,9 +1891,9 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        min_position : :obj:`float`
+        min_position : :class:`float`
             The minimum position in ``RealWorldUnits`` [millimeters or degrees].
-        max_position : :obj:`float`
+        max_position : :class:`float`
             The maximum position in ``RealWorldUnits`` [millimeters or degrees].
 
         Raises
@@ -1928,9 +1928,9 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        max_velocity : :obj:`float`
+        max_velocity : :class:`float`
             The maximum velocity in ``RealWorldUnits`` [millimeters or degrees].
-        max_acceleration : :obj:`float`
+        max_acceleration : :class:`float`
             The maximum acceleration in ``RealWorldUnits`` [millimeters or degrees].
 
         Raises
@@ -1948,7 +1948,7 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        position : :obj:`int`
+        position : :class:`int`
             The absolute position in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1966,7 +1966,7 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        distance : :obj:`int`
+        distance : :class:`int`
             The relative position in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1984,7 +1984,7 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        coeff : :obj:`float`
+        coeff : :class:`float`
              The encoder PID loop coefficient.
 
         Raises
@@ -2025,7 +2025,7 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        count : :obj:`int`
+        count : :class:`int`
             The position counter in ``DeviceUnits`` (see manual).
 
         Raises
@@ -2040,9 +2040,9 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        rest : :obj:`int`
+        rest : :class:`int`
             Percentage of full power to give while not moving (0 - 100).
-        move : :obj:`int`
+        move : :class:`int`
             Percentage of full power to give while moving (0 - 100).
 
         Raises
@@ -2088,9 +2088,9 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        min_position : :obj:`int`
+        min_position : :class:`int`
             The minimum position in ``DeviceUnits`` (see manual).
-        max_position : :obj:`int`
+        max_position : :class:`int`
             The maximum position in ``DeviceUnits`` (see manual).
 
         Raises
@@ -2158,21 +2158,21 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        trigger_start_position_fwd : :obj:`int`
+        trigger_start_position_fwd : :class:`int`
             The trigger start position, forward, in ``DeviceUnits`` (see manual).
-        trigger_interval_fwd : :obj:`int`
+        trigger_interval_fwd : :class:`int`
             The trigger interval, forward, in ``DeviceUnits`` (see manual).
-        trigger_pulse_count_fwd : :obj:`int`
+        trigger_pulse_count_fwd : :class:`int`
             Number of trigger pulses, forward.
-        trigger_start_position_rev : :obj:`int`
+        trigger_start_position_rev : :class:`int`
             The trigger start position, reverse, in ``DeviceUnits`` (see manual).
-        trigger_interval_rev : :obj:`int`
+        trigger_interval_rev : :class:`int`
             The trigger interval, reverse, in ``DeviceUnits`` (see manual).
-        trigger_pulse_count_rev : :obj:`int`
+        trigger_pulse_count_rev : :class:`int`
             Number of trigger pulses, reverse.
-        trigger_pulse_width : :obj:`int`
+        trigger_pulse_width : :class:`int`
             Width of the trigger pulse in milliseconds, range 10 (10us) to 650000 (650ms).
-        cycle_count : :obj:`int`
+        cycle_count : :class:`int`
             Number of cycles to perform triggering.
 
         Raises
@@ -2211,9 +2211,9 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        max_velocity : :obj:`int`
+        max_velocity : :class:`int`
             The maximum velocity in ``DeviceUnits`` (see manual).
-        acceleration : :obj:`int`
+        acceleration : :class:`int`
             The acceleration in ``DeviceUnits`` (see manual).
 
         Raises
@@ -2228,11 +2228,11 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        min_velocity : :obj:`int`
+        min_velocity : :class:`int`
             The minimum velocity.
-        max_velocity : :obj:`int`
+        max_velocity : :class:`int`
             The maximum velocity.
-        acceleration : :obj:`int`
+        acceleration : :class:`int`
             The acceleration.
 
         Raises
@@ -2253,7 +2253,7 @@ class KCubeStepperMotor(MotionControl):
 
         Parameters
         ----------
-        milliseconds : :obj:`int`
+        milliseconds : :class:`int`
             The polling rate, in milliseconds.
 
         Raises
@@ -2307,10 +2307,10 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The time, in milliseconds, since the last message was received.
-        :obj:`bool`
-            :obj:`True` if monitoring is enabled otherwise :obj:`False`.
+        :class:`bool`
+            :data:`True` if monitoring is enabled otherwise :data:`False`.
         """
         ms = c_int64()
         ret = self.sdk.SCC_TimeSinceLastMsgReceived(self._serial, byref(ms))
@@ -2324,7 +2324,7 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`bool`
+        :class:`bool`
             Whether PID loop encoding is supported.
         """
         return self.sdk.SCC_UsesPIDLoopEncoding(self._serial)
@@ -2334,11 +2334,11 @@ class KCubeStepperMotor(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The message type.
-        :obj:`int`
+        :class:`int`
             The message ID.
-        :obj:`int`
+        :class:`int`
             The message data.
 
         Raises

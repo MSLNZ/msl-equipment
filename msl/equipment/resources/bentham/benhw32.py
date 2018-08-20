@@ -4,6 +4,7 @@ A wrapper around the 32-bit Bentham ``benhw32_cdecl`` SDK.
 from ctypes import c_char_p, c_short, c_int, c_long, c_double, POINTER, create_string_buffer
 
 from msl.loadlib import Server32
+
 from msl.equipment.resources.utils import HINSTANCE
 
 
@@ -20,7 +21,7 @@ class Bentham32(Server32):
         interpreter in order to access the functions in the SDK from a 64-bit
         process.
         """
-        Server32.__init__(self, kwargs['lib_path'], 'cdll', host, port, quiet)
+        super(Bentham32, self).__init__(kwargs['lib_path'], 'cdll', host, port, quiet)
 
         self.lib.BI_automeasure.restype = c_int
         self.lib.BI_automeasure.argtypes = [POINTER(c_double)]

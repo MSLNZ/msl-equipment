@@ -62,11 +62,9 @@ def test_exceptions():
     # the SDK library does not exist
     with pytest.raises(IOError) as err:
         connect(EquipmentRecord(
-            manufacturer='thorlabs',
-            model='fw212c',
+            manufacturer='Thorlabs',
+            model='FW212C',
             connection=ConnectionRecord(
-                manufacturer='thorlabs',
-                model='fw212c',
                 address='SDK::invalid.dll', backend=Backend.MSL
             )
         ))

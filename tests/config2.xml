@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <msl>
 
-    <equipment_registers>
+    <registers>
         <register team="P&amp;R" date_format="%Y-%m-%d">
             <path>db_files/db.csv</path>
         </register>
-    </equipment_registers>
+    </registers>
 
 </msl>

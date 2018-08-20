@@ -21,7 +21,7 @@ def device_manager():
     """Returns a reference to the DeviceManager library.
     
     The ``Thorlabs.MotionControl.DeviceManager.dll`` library must be available on
-    :obj:`os.environ['PATH'] <os.environ>`.
+    :data:`os.environ['PATH'] <os.environ>`.
 
     Returns
     -------
@@ -96,7 +96,7 @@ class MotionControl(ConnectionSDK):
             If a connection to the device cannot be established.
         """
         self._is_open = False
-        ConnectionSDK.__init__(self, record, 'cdll')
+        super(MotionControl, self).__init__(record, 'cdll')
         self.set_exception_class(ThorlabsError)
 
         for item in api_function:
@@ -143,7 +143,7 @@ class MotionControl(ConnectionSDK):
         """:class:`dict`: The device settings specified in ``ThorlabsDefaultSettings.xml``
 
         If this is an empty :class:`dict` then you can specify the ``device_name`` in the
-        properties field in the :ref:`connection_database` or you can run the Kinesis
+        properties field in the :ref:`connections_database` or you can run the Kinesis
         software and allow Kinesis to configure the actuator that is connected to the motor
         controller.
 
@@ -177,7 +177,7 @@ class MotionControl(ConnectionSDK):
 
     @staticmethod
     def get_device_list_size():
-        """:obj:`int`: The number of devices in the device list."""
+        """:class:`int`: The number of devices in the device list."""
         return device_manager().TLI_GetDeviceListSize()
 
     @staticmethod
@@ -186,12 +186,12 @@ class MotionControl(ConnectionSDK):
     
         Parameters
         ----------
-        device_ids : :obj:`int`
+        device_ids : :class:`int`
             A sequence of device ID's.
     
         Returns
         -------
-        :obj:`list` of :obj:`str`
+        :class:`list` of :class:`str`
             A list of device serial numbers for the specified device ID(s).
 
         Raises
@@ -218,7 +218,7 @@ class MotionControl(ConnectionSDK):
     
         Parameters
         ----------
-        serial_number : :obj:`str`
+        serial_number : :class:`str`
             The serial number of the device.
     
         Returns
@@ -248,12 +248,12 @@ class MotionControl(ConnectionSDK):
         
         Parameters
         ----------
-        dword : :obj:`int`
+        dword : :class:`int`
             The firmware or software number.
 
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The string representation of the version number.
         """
         first = (dword >> 24) & 0xff
@@ -271,16 +271,16 @@ class MotionControl(ConnectionSDK):
         
         Parameters
         ----------
-        msg_type : :obj:`int`
+        msg_type : :class:`int`
             The message type defines the device type which raised the message.
-        msg_id : :obj:`int`
+        msg_id : :class:`int`
             The message ID for the `msg_type`. 
-        msg_data : :obj:`int`
+        msg_data : :class:`int`
             The message data.
 
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The message as a string, with the type, id and data separated 
             by a semicolon.
         """

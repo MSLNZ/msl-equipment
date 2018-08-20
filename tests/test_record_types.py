@@ -11,9 +11,8 @@ from msl.equipment.connection_message_based import ConnectionMessageBased
 def test_equipment_record():
 
     a = EquipmentRecord().to_dict()
-    assert len(a) == 14
+    assert len(a) == 12
     assert 'alias' in a
-    assert 'asset_number' in a
     assert 'calibration_cycle' in a
     assert 'category' in a
     assert 'connection' in a
@@ -23,14 +22,12 @@ def test_equipment_record():
     assert 'location' in a
     assert 'manufacturer' in a
     assert 'model' in a
-    assert 'register' in a
     assert 'serial' in a
     assert 'team' in a
 
     # the default values
     record = EquipmentRecord()
     assert record.alias == ''
-    assert record.asset_number == ''
     assert record.calibration_cycle == 0.0
     assert record.category == ''
     assert record.connection is None
@@ -40,7 +37,6 @@ def test_equipment_record():
     assert record.location == ''
     assert record.manufacturer == ''
     assert record.model == ''
-    assert record.register == ''
     assert record.serial == ''
     assert record.team == ''
 
@@ -240,12 +236,10 @@ def test_dbase():
     eq1 = dbase.equipment['712ae']
     assert eq1.manufacturer == 'F D080'
     assert eq1.model == '712ae'
-    assert eq1.asset_number == 'f39a4f'
     assert eq1.serial == '49e39f1'
     assert eq1.date_calibrated.year == 2010
     assert eq1.date_calibrated.month == 11
     assert eq1.date_calibrated.day == 1
-    assert eq1.register == 'MSLA.X.Y.Z'
     assert eq1.category == 'DMM'
     assert eq1.location == 'General'
     assert eq1.description == 'Digital Multimeter'
@@ -253,7 +247,6 @@ def test_dbase():
 
     eq2 = dbase.equipment['dvm']
     assert eq2.alias == 'dvm'
-    assert eq2.asset_number == '00011'
     assert eq2.calibration_cycle == 5
     assert eq2.category == 'DVM'
     assert eq2.date_calibrated.year == 2009
@@ -263,7 +256,6 @@ def test_dbase():
     assert eq2.location == 'Watt Lab'
     assert eq2.manufacturer == 'Agilent'
     assert eq2.model == '34420A'
-    assert eq2.register == 'MSLE.X.YYY'
     assert eq2.team == 'Any'
     assert eq2.serial == 'A00024'
 

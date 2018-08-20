@@ -1,3 +1,5 @@
+.. _msl-equipment-welcome:
+
 =============
 MSL-Equipment
 =============
@@ -18,47 +20,42 @@ in the laboratory to perform a measurement
 and two different types of :ref:`database`
 
 2. :ref:`equipment_database`
-3. :ref:`connection_database`
+3. :ref:`connections_database`
 
-The following example illustrates a configuration file that specifies a database containing 6 Digital Multimeter's
-that are available in a lab which can be used to measure a voltage. The person performing the measurement specifies
-which of the Digital Multimeter's they are using as an **<equipment>** XML tag in the configuration file. They load the
-configuration file using the :obj:`~msl.equipment.config.Config` class, which is the main entryway in to the
-**MSL-Equipment** package.
+The following example uses a `configuration file`_ that specifies a `registry database`_ containing
+3 digital multimeters that are available in a lab which can be used to measure a voltage. The information
+about how to connect to the equipment is found in a `connections database`_.
 
-The `configuration file`_ that specifies the example_ database to load and the Digital Multimeter to use for the
-voltage measurement is as follows:
+You specify which of the digital multimeters you are using as an ``<equipment>`` element in the `configuration file`_.
 
-.. literalinclude:: ../msl/examples/equipment/example.xml
-   :language: xml
-
-Load the example_ database from the `configuration file`_:
+Loading the `configuration file`_ using the :class:`~msl.equipment.config.Config` class is the main entryway
+in to the **MSL-Equipment** package:
 
 .. code-block:: pycon
 
   >>> from msl.equipment import Config
-  >>> cfg = Config('msl/examples/equipment/example.xml')
+  >>> cfg = Config('/path/to/config.xml')
   >>> db = cfg.database()
 
-Once you have a reference to the :obj:`~msl.equipment.config.Config.database` you have access to all the records in
-the :ref:`equipment_database` and in the :ref:`connection_database`. To access the **Keysight 34465A** [#f1]_
-:class:`~msl.equipment.record_types.EquipmentRecord` in the example_ database (which is known by the ``dmm`` alias that
-is specified in the `configuration file`_) use:
+Once you have a reference to the :meth:`~msl.equipment.config.Config.database` you have access to all the records in
+the :ref:`equipment_database` and in the :ref:`connections_database`. To access the **Hewlett Packard 34401A** [#f1]_
+:class:`~msl.equipment.record_types.EquipmentRecord` in the `registry database`_ (which is known by the ``dmm``
+alias that is specified in the `configuration file`_) use:
 
 .. code-block:: pycon
 
   >>> db.equipment['dmm']
-  EquipmentRecord<Keysight|34465A|MY54506462>
+  EquipmentRecord<Hewlett Packard|34401A|D10011>
 
-Connect to the **Keysight 34465A** [#f1]_ Digital Multimeter and query the ``*IDN?`` command:
+Connect to the **Hewlett Packard 34401A** [#f1]_ digital multimeter and query the ``*IDN?`` command:
 
 .. code-block:: pycon
 
   >>> dmm = db.equipment['dmm'].connect()
   >>> dmm.query('*IDN?')
-  'Keysight Technologies,34465A,MY54506462,A.02.14-02.40-02.14-00.49-03-01\n'
+  'Hewlett Packard,34401A,D10011,A.02.14-02.40-02.14-00.49-03-01'
 
-For more examples of what a :ref:`configuration_file` or the :ref:`database` can look like or how to use
+For more examples of what a :ref:`configuration_file` or a :ref:`database` can look like or how to use
 **MSL-Equipment** in your own application see the :ref:`examples`. The :ref:`api` also shows a more detailed
 example that loads the same `configuration file`_.
 
@@ -86,7 +83,9 @@ Index
 * :ref:`modindex`
 
 .. _configuration file: https://github.com/MSLNZ/msl-equipment/tree/master/msl/examples/equipment/example.xml
-.. _example: https://github.com/MSLNZ/msl-equipment/tree/master/msl/examples/equipment/example.xlsx
+.. _registry database: https://github.com/MSLNZ/msl-equipment/tree/master/msl/examples/equipment/equipment-register.csv
+.. _connections database: https://github.com/MSLNZ/msl-equipment/tree/master/msl/examples/equipment/connections.csv
+
 
 .. [#f1] Companies that sell equipment that is used for scientific research are identified in this guide in order
          to illustrate how to adequately use **MSL-Equipment** in your own application. Such identification is not

@@ -46,9 +46,9 @@ class IntegratedStepperMotors(MotionControl):
     def __init__(self, record):
         """A wrapper around ``Thorlabs.MotionControl.IntegratedStepperMotors.dll``.
 
-        The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
+        The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for an IntegratedStepperMotors connection supports the following key-value pairs in the
-        :ref:`connection_database`::
+        :ref:`connections_database`::
 
             'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
@@ -60,25 +60,25 @@ class IntegratedStepperMotors(MotionControl):
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        MotionControl.build_device_list()
-        MotionControl.__init__(self, record, IntegratedStepperMotors_FCNS)
+        MotionControl.build_device_list()  # otherwise cannot connect
+        super(IntegratedStepperMotors, self).__init__(record, IntegratedStepperMotors_FCNS)
 
     def can_home(self):
         """Can the device perform a :meth:`home`?
 
         Returns
         -------
-        :obj:`bool`
+        :class:`bool`
             Whether the device can be homed.
         """
         return self.sdk.ISC_CanHome(self._serial)
 
     def can_move_without_homing_first(self):
-        """Does the device need to be :obj:`home`\'d before a move can be performed?
+        """Does the device need to be :meth:`home`\'d before a move can be performed?
 
         Returns
         -------
-        :obj:`bool`
+        :class:`bool`
             Whether the device needs to be homed.
         """
         return self.sdk.ISC_CanMoveWithoutHomingFirst(self._serial)
@@ -88,7 +88,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`bool`
+        :class:`bool`
             Whether the USB is listed by the FTDI controller.
         """
         return self.sdk.ISC_CheckConnection(self._serial)
@@ -133,9 +133,9 @@ class IntegratedStepperMotors(MotionControl):
 
         Parameters
         ----------
-        enable : :obj:`bool`
-            :obj:`True` to enable monitoring otherwise :obj:`False` to disable.
-        last_msg_timeout : :obj:`int`
+        enable : :class:`bool`
+            :data:`True` to enable monitoring otherwise :data:`False` to disable.
+        last_msg_timeout : :class:`int`
             The last message error timeout in ms. Set to 0 to disable.
         """
         return self.sdk.ISC_EnableLastMsgTimer(self._serial, enable, last_msg_timeout)
@@ -143,12 +143,12 @@ class IntegratedStepperMotors(MotionControl):
     def get_backlash(self):
         """Get the backlash distance setting (used to control hysteresis).
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The backlash distance in ``DeviceUnits`` (see manual).
         """
         return self.sdk.ISC_GetBacklash(self._serial)
@@ -158,7 +158,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The bow index.
         """
         return self.sdk.ISC_GetBowIndex(self._serial)
@@ -166,18 +166,18 @@ class IntegratedStepperMotors(MotionControl):
     def get_button_params(self):
         """Gets the LTS button parameters.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Returns
         -------
         :class:`.enums.MOT_ButtonModes`
             The button mode.
-        :obj:`int`
+        :class:`int`
             The Preset position in ``DeviceUnits`` for the left button (when in preset mode).
-        :obj:`int`
+        :class:`int`
             The Preset position in ``DeviceUnits`` for the right button (when in preset mode).
-        :obj:`int`
+        :class:`int`
             The time that buttons need to be pressed in order to go home or to record a
             preset buttons defined position.
 
@@ -215,7 +215,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The filename of the calibration file.
 
         Raises
@@ -231,19 +231,19 @@ class IntegratedStepperMotors(MotionControl):
     def get_device_unit_from_real_value(self, real_value, unit_type):
         """Converts a real-world value to a device value.
 
-        Either :meth:`load_settings` or :meth:`set_motor_params_ext` must be called before
-        calling this function, otherwise the returned value will always be 0.
+        Either :meth:`load_settings`, :meth:`load_named_settings` or :meth:`set_motor_params_ext`
+        must be called before calling this function, otherwise the returned value will always be 0.
 
         Parameters
         ----------
-        real_value : :obj:`float`
+        real_value : :class:`float`
             The real-world value.
         unit_type : :class:`.enums.UnitType`
             The unit of the real-world value.
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The device value.
 
         Raises
@@ -261,7 +261,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The firmware version.
         """
         return self.to_version(self.sdk.ISC_GetFirmwareVersion(self._serial))
@@ -318,12 +318,12 @@ class IntegratedStepperMotors(MotionControl):
     def get_homing_velocity(self):
         """Gets the homing velocity.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The homing velocity in ``DeviceUnits`` (see manual).
         """
         return self.sdk.ISC_GetHomingVelocity(self._serial)
@@ -368,12 +368,12 @@ class IntegratedStepperMotors(MotionControl):
     def get_jog_step_size(self):
         """Gets the distance to move when jogging.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The step size in ``DeviceUnits`` (see manual).
         """
         return self.sdk.ISC_GetJogStepSize(self._serial)
@@ -381,14 +381,14 @@ class IntegratedStepperMotors(MotionControl):
     def get_jog_vel_params(self):
         """Gets the jog velocity parameters.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The maximum velocity in ``DeviceUnits`` (see manual).
-        :obj:`int`
+        :class:`int`
             The acceleration in ``DeviceUnits`` (see manual).
 
         Raises
@@ -406,7 +406,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             Sum of: 8 to indicate moving 2 to indicate end of track and 1 to
             flash on identify command.
         """
@@ -415,7 +415,7 @@ class IntegratedStepperMotors(MotionControl):
     def get_limit_switch_params(self):
         """ Gets the limit switch parameters.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Returns
@@ -424,9 +424,9 @@ class IntegratedStepperMotors(MotionControl):
             The clockwise hardware limit mode.
         :class:`.enums.MOT_LimitSwitchModes`
             The anticlockwise hardware limit mode.
-        :obj:`int`
+        :class:`int`
             The position of the clockwise software limit in ``DeviceUnits`` (see manual).
-        :obj:`int`
+        :class:`int`
             The position of the anticlockwise software limit in ``DeviceUnits`` (see manual).
         :class:`.enums.MOT_LimitSwitchSWModes`
             The soft limit mode.
@@ -490,11 +490,11 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`float`
+        class`float`
             The steps per revolution.
-        :obj:`float`
+        :class:`float`
             The gear box ratio.
-        :obj:`float`
+        :class:`float`
             The pitch.
 
         Raises
@@ -513,9 +513,9 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`float`
+        :class:`float`
             The minimum position in ``RealWorldUnits`` [millimeters or degrees].
-        :obj:`float`
+        :class:`float`
             The maximum position in ``RealWorldUnits`` [millimeters or degrees].
 
         Raises
@@ -543,9 +543,9 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`float`
+        :class:`float`
             The maximum velocity in ``RealWorldUnits`` [millimeters or degrees].
-        :obj:`float`
+        :class:`float`
             The maximum acceleration in ``RealWorldUnits`` [millimeters or degrees].
 
         Raises
@@ -561,12 +561,12 @@ class IntegratedStepperMotors(MotionControl):
     def get_move_absolute_position(self):
         """Gets the move absolute position.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The move absolute position in ``DeviceUnits`` (see manual).
         """
         return self.sdk.ISC_GetMoveAbsolutePosition(self._serial)
@@ -574,12 +574,12 @@ class IntegratedStepperMotors(MotionControl):
     def get_move_relative_distance(self):
         """Gets the move relative distance.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The move relative position in ``DeviceUnits`` (see manual).
         """
         return self.sdk.ISC_GetMoveRelativeDistance(self._serial)
@@ -589,11 +589,11 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The message type.
-        :obj:`int`
+        :class:`int`
             The message ID.
-        :obj:`int`
+        :class:`int`
             The message data.
 
         Raises
@@ -616,7 +616,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The number of positions.
         """
         return self.sdk.ISC_GetNumberPositions(self._serial)
@@ -624,12 +624,12 @@ class IntegratedStepperMotors(MotionControl):
     def get_position(self):
         """Get the current position.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Returns
         -------
-        index : :obj:`int`
+        index : :class:`int`
             The position in ``DeviceUnits`` (see manual).
         """
         return self.sdk.ISC_GetPosition(self._serial)
@@ -640,12 +640,12 @@ class IntegratedStepperMotors(MotionControl):
         The position counter is identical to the position parameter.
         The position counter is set to zero when homing is complete.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The position counter in ``DeviceUnits`` (see manual).
         """
         return self.sdk.ISC_GetPositionCounter(self._serial)
@@ -653,19 +653,19 @@ class IntegratedStepperMotors(MotionControl):
     def get_potentiometer_params(self, index):
         """Gets the potentiometer parameters for the LTS.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
         ----------
-        index : :obj:`int`
+        index : :class:`int`
             The potentiometer index to be read.
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The potentiometer threshold, range 0 to 127.
-        :obj:`int`
+        :class:`int`
             The velocity in ``DeviceUnits`` for the current potentiometer threshold.
 
         Raises
@@ -715,19 +715,19 @@ class IntegratedStepperMotors(MotionControl):
     def get_real_value_from_device_unit(self, device_value, unit_type):
         """Converts a device value to a real-world value.
 
-        Either :meth:`load_settings` or :meth:`set_motor_params_ext` must be called before
-        calling this function, otherwise the returned value will always be 0.0.
+        Either :meth:`load_settings`, :meth:`load_named_settings` or :meth:`set_motor_params_ext`
+        must be called before calling this function, otherwise the returned value will always be 0.
 
         Parameters
         ----------
-        device_value : :obj:`int`
+        device_value : :class:`int`
             The device value.
         unit_type : :class:`.enums.UnitType`
             The unit of the device value.
 
         Returns
         -------
-        :obj:`float`
+        :class:`float`
             The real-world value.
 
         Raises
@@ -755,7 +755,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The device software version.
         """
         return self.to_version(self.sdk.ISC_GetSoftwareVersion(self._serial))
@@ -763,12 +763,12 @@ class IntegratedStepperMotors(MotionControl):
     def get_stage_axis_max_pos(self):
         """Gets the LTS Motor maximum stage position.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The maximum position in ``DeviceUnits`` (see manual).
         """
         return self.sdk.ISC_GetStageAxisMaxPos(self._serial)
@@ -776,12 +776,12 @@ class IntegratedStepperMotors(MotionControl):
     def get_stage_axis_min_pos(self):
         """Gets the LTS Motor minimum stage position.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The minimum position in ``DeviceUnits`` (see manual).
         """
         return self.sdk.ISC_GetStageAxisMinPos(self._serial)
@@ -795,7 +795,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The status bits from the device.
         """
         return self.sdk.ISC_GetStatusBits(self._serial)
@@ -805,7 +805,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             8 bits indicating action on trigger input and events to trigger
             electronic output.
         """
@@ -814,14 +814,14 @@ class IntegratedStepperMotors(MotionControl):
     def get_vel_params(self):
         """Gets the move velocity parameters.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Returns
         -------
-        max_velocity : :obj:`int`
+        max_velocity : :class:`int`
             The maximum velocity in ``DeviceUnits`` (see manual).
-        acceleration : :obj:`int`
+        acceleration : :class:`int`
             The acceleration in ``DeviceUnits`` (see manual).
 
         Raises
@@ -860,8 +860,8 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`bool`
-            :obj:`True` if last message timer has elapsed, :obj:`False` if monitoring is
+        :class:`bool`
+            :data:`True` if last message timer has elapsed, :data:`False` if monitoring is
             not enabled or if time of last message received is less than ``lastMsgTimeout``.
         """
         return self.sdk.ISC_HasLastMsgTimerOverrun(self._serial)
@@ -894,7 +894,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`bool`
+        :class:`bool`
             Whether a calibration file is active.
         """
         return self.sdk.ISC_IsCalibrationActive(self._serial)
@@ -934,7 +934,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The number of messages in the queue.
         """
         return self.sdk.ISC_MessageQueueSize(self._serial)
@@ -986,12 +986,12 @@ class IntegratedStepperMotors(MotionControl):
     def move_relative(self, displacement):
         """Move the motor by a relative amount.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
-        displacement : :obj:`int`
+        displacement : :class:`int`
             Signed displacement in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1017,12 +1017,12 @@ class IntegratedStepperMotors(MotionControl):
         The motor may need to be set to its :meth:`home` position before a
         position can be set.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
-        index : :obj:`int`
+        index : :class:`int`
             The position in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1033,13 +1033,13 @@ class IntegratedStepperMotors(MotionControl):
         self.sdk.ISC_MoveToPosition(self._serial, index)
 
     def needs_homing(self):
-        """Does the device need to be :obj:`home`\'d before a move can be performed?
+        """Does the device need to be :meth:`home`\'d before a move can be performed?
 
         Deprecated: calls :meth:`can_move_without_homing_first` instead.
 
         Returns
         -------
-        :obj:`bool`
+        :class:`bool`
             Whether the device needs to be homed.
         """
         return self.can_move_without_homing_first()
@@ -1069,7 +1069,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The time between polls in milliseconds or 0 if polling is not active.
         """
         return self.sdk.ISC_PollingDuration(self._serial)
@@ -1281,12 +1281,12 @@ class IntegratedStepperMotors(MotionControl):
     def set_backlash(self, distance):
         """Sets the backlash distance (used to control hysteresis).
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
-        distance : :obj:`int`
+        distance : :class:`int`
             The backlash distance in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1301,7 +1301,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Parameters
         ----------
-        bow_index : :obj:`int`
+        bow_index : :class:`int`
             The bow index.
 
         Raises
@@ -1314,16 +1314,16 @@ class IntegratedStepperMotors(MotionControl):
     def set_button_params(self, button_mode, left_button_position, right_button_position):
         """Sets the LTS button parameters.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
         button_mode : :class:`.enums.MOT_ButtonModes`
             The button mode as a :class:`.enums.MOT_ButtonModes` enum value or member name.
-        left_button_position : :obj:`int`
+        left_button_position : :class:`int`
             The Preset position in ``DeviceUnits`` for the left button (when in preset mode).
-        right_button_position : :obj:`int`
+        right_button_position : :class:`int`
             The Preset position in ``DeviceUnits`` for the right button (when in preset mode).
 
         Raises
@@ -1341,11 +1341,11 @@ class IntegratedStepperMotors(MotionControl):
         mode : :class:`.enums.MOT_ButtonModes`
             The mode of operation of the device buttons as a :class:`.enums.MOT_ButtonModes`
             enum value or member name.
-        left_button : :obj:`int`
+        left_button : :class:`int`
             Position in encoder counts to go to when left button is pressed.
-        right_button : :obj:`int`
+        right_button : :class:`int`
             Position in encoder counts to go to when right button is pressed.
-        timeout : :obj:`int`
+        timeout : :class:`int`
             The Time a button needs to be held down for to record the position as a preset.
 
         Raises
@@ -1366,10 +1366,10 @@ class IntegratedStepperMotors(MotionControl):
 
         Parameters
         ----------
-        path : :obj:`str`
+        path : :class:`str`
             The path to a calibration file to load.
-        enabled : :obj:`bool`
-            :obj:`True` to enable, :obj:`False` to disable.
+        enabled : :class:`bool`
+            :data:`True` to enable, :data:`False` to disable.
 
         Raises
         ------
@@ -1389,8 +1389,8 @@ class IntegratedStepperMotors(MotionControl):
 
         Parameters
         ----------
-        reverse : :obj:`bool`
-            If :obj:`True` then directions will be swapped on these moves.
+        reverse : :class:`bool`
+            If :data:`True` then directions will be swapped on these moves.
 
         Raises
         ------
@@ -1410,9 +1410,9 @@ class IntegratedStepperMotors(MotionControl):
         limit : :class:`.enums.MOT_HomeLimitSwitchDirection`
             The limit switch direction as a :class:`.enums.MOT_HomeLimitSwitchDirection`
             enum value or member name.
-        velocity : :obj:`int`
+        velocity : :class:`int`
             The velocity in small indivisible units.
-        offset : :obj:`int`
+        offset : :class:`int`
             Distance of home from limit in small indivisible units.
 
         Raises
@@ -1430,12 +1430,12 @@ class IntegratedStepperMotors(MotionControl):
     def set_homing_velocity(self, velocity):
         """Sets the homing velocity.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
-        velocity : :obj:`int`
+        velocity : :class:`int`
             The homing velocity in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1486,12 +1486,12 @@ class IntegratedStepperMotors(MotionControl):
     def set_jog_step_size(self, step_size):
         """Sets the distance to move on jogging.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
-        step_size : :obj:`int`
+        step_size : :class:`int`
             The step size in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1504,14 +1504,14 @@ class IntegratedStepperMotors(MotionControl):
     def set_jog_vel_params(self, max_velocity, acceleration):
         """Sets jog velocity parameters.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
-        max_velocity : :obj:`int`
+        max_velocity : :class:`int`
             The maximum velocity in ``DeviceUnits`` (see manual).
-        acceleration : :obj:`int`
+        acceleration : :class:`int`
             The acceleration in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1526,7 +1526,7 @@ class IntegratedStepperMotors(MotionControl):
         
         Parameters
         ----------
-        led_switches : :obj:`int`
+        led_switches : :class:`int`
             Sum of: 8 to indicate moving 2 to indicate end of track and 1 to 
             flash on identify command.            
 
@@ -1540,7 +1540,7 @@ class IntegratedStepperMotors(MotionControl):
     def set_limit_switch_params(self, cw_lim, ccw_lim, cw_pos, ccw_pos, soft_limit_mode):
         """Sets the limit switch parameters.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
@@ -1551,9 +1551,9 @@ class IntegratedStepperMotors(MotionControl):
         ccw_lim : :class:`.enums.MOT_LimitSwitchModes`
             The anticlockwise hardware limit mode as a :class:`.enums.MOT_LimitSwitchModes`
             enum value or member name.
-        cw_pos : :obj:`int`
+        cw_pos : :class:`int`
             The position of the clockwise software limit in ``DeviceUnits`` (see manual).
-        ccw_pos : :obj:`int`
+        ccw_pos : :class:`int`
             The position of the anticlockwise software limit in ``DeviceUnits`` (see manual).
         soft_limit_mode : :class:`.enums.MOT_LimitSwitchSWModes`
             The soft limit mode as a :class:`.enums.MOT_LimitSwitchSWModes` enum
@@ -1609,16 +1609,16 @@ class IntegratedStepperMotors(MotionControl):
         ``RealWorldUnits`` [millimeters or degrees]. The real-world unit
         is defined from ``steps_per_rev * gear_box_ratio / pitch``.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
         ----------
-        steps_per_rev : :obj:`float`
+        steps_per_rev : :class:`float`
             The steps per revolution.
-        gear_box_ratio : :obj:`float`
+        gear_box_ratio : :class:`float`
             The gear box ratio.
-        pitch : :obj:`float`
+        pitch : :class:`float`
             The pitch.
 
         Raises
@@ -1635,16 +1635,16 @@ class IntegratedStepperMotors(MotionControl):
         ``RealWorldUnits`` [millimeters or degrees]. The real-world unit
         is defined from ``steps_per_rev * gear_box_ratio / pitch``.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
         ----------
-        steps_per_rev : :obj:`float`
+        steps_per_rev : :class:`float`
             The steps per revolution.
-        gear_box_ratio : :obj:`float`
+        gear_box_ratio : :class:`float`
             The gear box ratio.
-        pitch : :obj:`float`
+        pitch : :class:`float`
             The pitch.
 
         Raises
@@ -1659,14 +1659,14 @@ class IntegratedStepperMotors(MotionControl):
 
         These define the range of travel for the stage.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
         ----------
-        min_position : :obj:`float`
+        min_position : :class:`float`
             The minimum position in ``RealWorldUnits`` [millimeters or degrees].
-        max_position : :obj:`float`
+        max_position : :class:`float`
             The maximum position in ``RealWorldUnits`` [millimeters or degrees].
 
         Raises
@@ -1696,14 +1696,14 @@ class IntegratedStepperMotors(MotionControl):
     def set_motor_velocity_limits(self, max_velocity, max_acceleration):
         """Sets the motor stage maximum velocity and acceleration.
 
-        See :obj:`get_real_value_from_device_unit` for converting from a
+        See :meth:`get_real_value_from_device_unit` for converting from a
         ``DeviceUnit`` to a ``RealValue``.
 
         Parameters
         ----------
-        max_velocity : :obj:`float`
+        max_velocity : :class:`float`
             The maximum velocity in ``RealWorldUnits`` [millimeters or degrees].
-        max_acceleration : :obj:`float`
+        max_acceleration : :class:`float`
             The maximum acceleration in ``RealWorldUnits`` [millimeters or degrees].
 
         Raises
@@ -1716,12 +1716,12 @@ class IntegratedStepperMotors(MotionControl):
     def set_move_absolute_position(self, position):
         """Sets the move absolute position.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
-        position : :obj:`int`
+        position : :class:`int`
             The absolute position in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1734,12 +1734,12 @@ class IntegratedStepperMotors(MotionControl):
     def set_move_relative_distance(self, distance):
         """Sets the move relative distance.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
-        distance : :obj:`int`
+        distance : :class:`int`
             The relative position in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1756,12 +1756,12 @@ class IntegratedStepperMotors(MotionControl):
         Setting the position counter will effectively define the home position
         of a motor.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
-        count : :obj:`int`
+        count : :class:`int`
             The position counter in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1774,16 +1774,16 @@ class IntegratedStepperMotors(MotionControl):
     def set_potentiometer_params(self, index, threshold, velocity):
         """Sets the potentiometer parameters for the LTS.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
-        index : :obj:`int`
+        index : :class:`int`
             The potentiometer index to be stored.
-        threshold : :obj:`int`
+        threshold : :class:`int`
             The potentiometer threshold, range 0 to 127.
-        velocity : :obj:`int`
+        velocity : :class:`int`
             The velocity in ``DeviceUnits`` for the current potentiometer threshold.
 
         Raises
@@ -1818,9 +1818,9 @@ class IntegratedStepperMotors(MotionControl):
 
         Parameters
         ----------
-        rest : :obj:`int`
+        rest : :class:`int`
             Percentage of full power to give while not moving (0 - 100).
-        move : :obj:`int`
+        move : :class:`int`
             Percentage of full power to give while moving (0 - 100).
 
         Raises
@@ -1861,14 +1861,14 @@ class IntegratedStepperMotors(MotionControl):
     def set_stage_axis_limits(self, min_position, max_position):
         """Sets the stage axis position limits.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
-        min_position : :obj:`int`
+        min_position : :class:`int`
             The minimum position in ``DeviceUnits`` (see manual).
-        max_position : :obj:`int`
+        max_position : :class:`int`
             The maximum position in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1883,7 +1883,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Parameters
         ----------
-        indicator_bits : :obj:`int`
+        indicator_bits : :class:`int`
             Sets the 8 bits indicating action on trigger input and events
             to trigger electronic output.
 
@@ -1897,14 +1897,14 @@ class IntegratedStepperMotors(MotionControl):
     def set_vel_params(self, max_velocity, acceleration):
         """Sets the move velocity parameters.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
-        max_velocity : :obj:`int`
+        max_velocity : :class:`int`
             The maximum velocity in ``DeviceUnits`` (see manual).
-        acceleration : :obj:`int`
+        acceleration : :class:`int`
             The acceleration in ``DeviceUnits`` (see manual).
 
         Raises
@@ -1917,16 +1917,16 @@ class IntegratedStepperMotors(MotionControl):
     def set_vel_params_block(self, min_velocity, max_velocity, acceleration):
         """Set the move velocity parameters.
 
-        See :obj:`get_device_unit_from_real_value` for converting from a
+        See :meth:`get_device_unit_from_real_value` for converting from a
         ``RealValue`` to a ``DeviceUnit``.
 
         Parameters
         ----------
-        min_velocity : :obj:`int`
+        min_velocity : :class:`int`
             The minimum velocity in ``DeviceUnits`` (see manual)..
-        max_velocity : :obj:`int`
+        max_velocity : :class:`int`
             The maximum velocity in ``DeviceUnits`` (see manual)..
-        acceleration : :obj:`int`
+        acceleration : :class:`int`
             The acceleration in ``DeviceUnits`` (see manual)..
 
         Raises
@@ -1947,7 +1947,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Parameters
         ----------
-        milliseconds : :obj:`int`
+        milliseconds : :class:`int`
             The polling rate, in milliseconds.
 
         Raises
@@ -1989,10 +1989,10 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The time, in milliseconds, since the last message was received.
-        :obj:`bool`
-            :obj:`True` if monitoring is enabled otherwise :obj:`False`.
+        :class:`bool`
+            :data:`True` if monitoring is enabled otherwise :data:`False`.
         """
         ms = c_int64()
         ret = self.sdk.ISC_TimeSinceLastMsgReceived(self._serial, byref(ms))
@@ -2003,11 +2003,11 @@ class IntegratedStepperMotors(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The message type.
-        :obj:`int`
+        :class:`int`
             The message ID.
-        :obj:`int`
+        :class:`int`
             The message data.
 
         Raises

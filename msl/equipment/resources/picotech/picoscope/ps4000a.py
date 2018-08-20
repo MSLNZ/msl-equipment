@@ -52,7 +52,7 @@ class PicoScope4000A(PicoScopeApi):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        PicoScopeApi.__init__(self, record, ps4000aApi_funcptrs)
+        super(PicoScope4000A, self).__init__(record, ps4000aApi_funcptrs)
 
     def apply_resistance_scaling(self, channel, range_, buffer_length):
         """

@@ -23,9 +23,9 @@ class FilterFlipper(MotionControl):
     def __init__(self, record):
         """A wrapper around ``Thorlabs.MotionControl.FilterFlipper.dll``.
 
-        The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
+        The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a FilterFlipper connection supports the following key-value pairs in the
-        :ref:`connection_database`::
+        :ref:`connections_database`::
 
             'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
@@ -41,7 +41,7 @@ class FilterFlipper(MotionControl):
         if name is None:
             record.connection.properties['device_name'] = 'MFF Filter Flipper'
 
-        MotionControl.__init__(self, record, FilterFlipper_FCNS)
+        super(FilterFlipper, self).__init__(record, FilterFlipper_FCNS)
 
     def open(self):
         """Open the device for communication.
@@ -62,7 +62,7 @@ class FilterFlipper(MotionControl):
 
         Returns
         -------
-        :obj:`bool`
+        :class:`bool`
             Whether the USB is listed by the FTDI controller.
         """
         return self.sdk.FF_CheckConnection(self._serial)
@@ -91,7 +91,7 @@ class FilterFlipper(MotionControl):
 
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The firmware version.
         """
         return self.to_version(self.sdk.FF_GetFirmwareVersion(self._serial))
@@ -101,7 +101,7 @@ class FilterFlipper(MotionControl):
 
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The device software version.
         """
         return self.to_version(self.sdk.FF_GetSoftwareVersion(self._serial))
@@ -151,7 +151,7 @@ class FilterFlipper(MotionControl):
         
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The number of positions.
         """
         return self.sdk.FF_GetNumberPositions(self._serial)
@@ -174,7 +174,7 @@ class FilterFlipper(MotionControl):
 
         Parameters
         ----------
-        position : :obj:`int`
+        position : :class:`int`
             The required position. Must be 1 or 2. 
 
         Raises
@@ -189,7 +189,7 @@ class FilterFlipper(MotionControl):
         
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The current position, 1 or 2.
         """
         return self.sdk.FF_GetPosition(self._serial)
@@ -229,19 +229,19 @@ class FilterFlipper(MotionControl):
         
         Parameters
         ----------
-        transit_time : :obj:`int`, optional
+        transit_time : :class:`int`, optional
             Time taken to get from one position to other in milliseconds.
         oper1 : :class:`~.enums.FF_IOModes`, optional
             I/O 1 Operating Mode.
         sig1 : :class:`~.enums.FF_SignalModes`, optional
             I/O 1 Signal Mode.
-        pw1 : :obj:`int`, optional
+        pw1 : :class:`int`, optional
             Digital I/O 1 pulse width in milliseconds. 
         oper2 : :class:`~.enums.FF_IOModes`, optional
             I/O 2 Operating Mode.
         sig2 : :class:`~.enums.FF_SignalModes`, optional
             I/O 2 Signal Mode.
-        pw2 : :obj:`int`, optional
+        pw2 : :class:`int`, optional
             Digital I/O 2 pulse width in milliseconds. 
 
         Raises
@@ -277,7 +277,7 @@ class FilterFlipper(MotionControl):
         
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The transit time in milliseconds.
         """
         return self.sdk.FF_GetTransitTime(self._serial)
@@ -287,7 +287,7 @@ class FilterFlipper(MotionControl):
         
         Parameters
         ----------
-        transit_time : :obj:`int`
+        transit_time : :class:`int`
             The transit time in milliseconds.
 
         Raises
@@ -325,7 +325,7 @@ class FilterFlipper(MotionControl):
         
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The status bits from the device.
         """
         return self.sdk.FF_GetStatusBits(self._serial)
@@ -337,7 +337,7 @@ class FilterFlipper(MotionControl):
         
         Parameters
         ----------
-        milliseconds : :obj:`int`
+        milliseconds : :class:`int`
             The polling rate, in milliseconds.
 
         Raises
@@ -352,7 +352,7 @@ class FilterFlipper(MotionControl):
         
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The time between polls in milliseconds or 0 if polling is not active.
         """
         return self.sdk.FF_PollingDuration(self._serial)
@@ -369,7 +369,7 @@ class FilterFlipper(MotionControl):
         
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The time, in milliseconds, since the last message was received.
         """
         ms = c_int64()
@@ -384,9 +384,9 @@ class FilterFlipper(MotionControl):
         
         Parameters
         ----------
-        enable : :obj:`bool`
-            :obj:`True` to enable monitoring otherwise :obj:`False` to disable.
-        msg_timeout : :obj:`int`
+        enable : :class:`bool`
+            :data:`True` to enable monitoring otherwise :data:`False` to disable.
+        msg_timeout : :class:`int`, optional
             The last message error timeout in ms. Set to 0 to disable.
         """
         self.sdk.FF_EnableLastMsgTimer(self._serial, enable, msg_timeout)
@@ -400,9 +400,9 @@ class FilterFlipper(MotionControl):
         
         Returns
         -------
-        :obj:`bool`
-            :obj:`True` if last message timer has elapsed or 
-            :obj:`False` if monitoring is not enabled or if time of last message 
+        :class:`bool`
+            :data:`True` if last message timer has elapsed or
+            :data:`False` if monitoring is not enabled or if time of last message
             received is less than ``msg_timeout``.
         """
         return self.sdk.FF_HasLastMsgTimerOverrun(self._serial)
@@ -439,7 +439,7 @@ class FilterFlipper(MotionControl):
         
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The number of messages in the queue.        
         """
         return self.sdk.FF_MessageQueueSize(self._serial)
@@ -449,11 +449,11 @@ class FilterFlipper(MotionControl):
         
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The message type.
-        :obj:`int`
+        :class:`int`
             The message ID.
-        :obj:`int`
+        :class:`int`
             The message data.        
 
         Raises
@@ -472,11 +472,11 @@ class FilterFlipper(MotionControl):
         
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The message type.
-        :obj:`int`
+        :class:`int`
             The message ID.
-        :obj:`int`
+        :class:`int`
             The message data.
 
         Raises

@@ -14,8 +14,8 @@ if __name__ == '__main__':
         serial='DY135/055',
         connection=ConnectionRecord(
             backend=Backend.MSL,
-            address='SDK::PicoScope5000A::ps5000a',
-            properties={'open_unit_async': True},  # telling the PicoScope to open in async mode is done in the properties
+            address='SDK::ps5000a',
+            properties={'open_async': True},  # opening in async mode is done in the properties
         )
     )
 

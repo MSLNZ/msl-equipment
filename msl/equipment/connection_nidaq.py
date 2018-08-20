@@ -12,7 +12,7 @@ except ImportError:
     stream_readers = None
     stream_writers = None
 
-from msl.equipment.connection import Connection
+from .connection import Connection
 
 
 class ConnectionNIDAQ(Connection):
@@ -22,7 +22,7 @@ class ConnectionNIDAQ(Connection):
 
         See the `nidaqmx examples`_ for how to use NI-DAQ_.
 
-        The returned object from the :obj:`record.connect() <.record_types.EquipmentRecord.connect>` method
+        The returned object from the :meth:`~.EquipmentRecord.connect` method
         is equivalent to importing the NI-DAQ_ package in your code. For example, this:
 
         .. code-block:: pycon
@@ -45,24 +45,23 @@ class ConnectionNIDAQ(Connection):
            ...
            -0.07476920729381246
 
-        The :data:`record.connection.backend <msl.equipment.record_types.ConnectionRecord.backend>`
-        value must be equal to :data:`Backend.NIDAQ <msl.equipment.constants.Backend.NIDAQ>`
+        The :data:`~msl.equipment.record_types.ConnectionRecord.backend`
+        value must be equal to :data:`~msl.equipment.constants.Backend.NIDAQ`
         to use this class for the communication system. This is achieved by setting the
-        value in the **Backend** field for a connection record in the :ref:`connection_database`
+        value in the **Backend** field for a connection record in the :ref:`connections_database`
         to be ``NIDAQ``.
 
         Do not instantiate this class directly. Use the
-        :obj:`record.connect() <.record_types.EquipmentRecord.connect>` method
-        to connect to the equipment.
+        :meth:`~.EquipmentRecord.connect` method to connect to the equipment.
 
         .. _nidaqmx examples: https://github.com/ni/nidaqmx-python/tree/master/nidaqmx_examples
 
         Parameters
         ----------
-        record : :class:`~.record_types.EquipmentRecord`
+        record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        Connection.__init__(self, record)
+        super(ConnectionNIDAQ, self).__init__(record)
 
         if nidaqmx is None:
             self.raise_exception('nidaqmx is not installed. Run: pip install nidaqmx')

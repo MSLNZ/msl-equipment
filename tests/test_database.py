@@ -62,8 +62,8 @@ def test_database():
     assert len(dbase.records(manufacturer='^Ag')) == 10  # all records from Agilent
     assert len(dbase.records(manufacturer='^Ag', connection=True)) == 3  # all records from Agilent with a ConnectionRecord
     assert len(dbase.records(manufacturer='Agilent', model='83640L')) == 1
-    assert len(dbase.records(manufacturer=r'\bH.*\bP')) == 2  # all records from Hewlett Packard
-    assert len(dbase.records(manufacturer=r'\bH.*\bP|^Ag')) == 12  # all records from Hewlett Packard or Agilent
+    assert len(dbase.records(manufacturer=r'H.*P')) == 2  # all records from Hewlett Packard
+    assert len(dbase.records(manufacturer=r'H.*P|^Ag')) == 12  # all records from Hewlett Packard or Agilent
     assert len(dbase.records(manufacturer='Bd6d850614')) == 1
     assert len(dbase.records(location='General')) == 3
     assert len(dbase.records(location='RF Lab')) == 9
@@ -157,5 +157,5 @@ def test_encoding():
             r.to_dict()
             r.to_xml()
 
-        assert db.records(manufacturer='Kepco*')[0].manufacturer == u'Kepco and \u201cTMK\u201d shunt'
+        assert db.records(manufacturer='Kepco')[0].manufacturer == u'Kepco and \u201cTMK\u201d shunt'
         assert db.records(model='MFF101/M')[0].description == u'Motorized Filter Flip Mount for \xd825mm Optics'

@@ -6,8 +6,7 @@ from enum import IntEnum
 
 class PicoScopeInfoApi(IntEnum):
     """
-    Constants that can be passed to the 
-    :meth:`~.picoscope_api.PicoscopeApi.get_unit_info` method.
+    Constants that can be passed to the :meth:`~.picoscope.PicoScope.get_unit_info` method.
     """
     DRIVER_VERSION            = 0x00000000
     USB_VERSION               = 0x00000001

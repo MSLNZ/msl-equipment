@@ -29,9 +29,9 @@ class KCubeSolenoid(MotionControl):
     def __init__(self, record):
         """A wrapper around ``Thorlabs.MotionControl.KCube.Solenoid.dll``.
 
-        The :obj:`~msl.equipment.record_types.ConnectionRecord.properties`
+        The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a KCubeSolenoid connection supports the following key-value pairs in the
-        :ref:`connection_database`::
+        :ref:`connections_database`::
 
             'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
@@ -43,14 +43,14 @@ class KCubeSolenoid(MotionControl):
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        MotionControl.__init__(self, record, KCube_Solenoid_FCNS)
+        super(KCubeSolenoid, self).__init__(record, KCube_Solenoid_FCNS)
 
     def check_connection(self):
         """Check connection.
 
         Returns
         -------
-        :obj:`bool`
+        :class:`bool`
             Whether the USB is listed by the FTDI controller.
         """
         return self.sdk.SC_CheckConnection(self._serial)
@@ -71,9 +71,9 @@ class KCubeSolenoid(MotionControl):
 
         Parameters
         ----------
-        enable : :obj:`bool`
-            :obj:`True` to enable monitoring otherwise :obj:`False` to disable.
-        msg_timeout : :obj:`int`
+        enable : :class:`bool`
+            :data:`True` to enable monitoring otherwise :data:`False` to disable.
+        msg_timeout : :class:`int`
             The last message error timeout in ms. Set to 0 to disable.
         """
         self.sdk.SC_EnableLastMsgTimer(self._serial, enable, msg_timeout)
@@ -83,13 +83,13 @@ class KCubeSolenoid(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The *On Time* parameter. Range 250 to 100,000,000 in steps of 1
             milliseconds (0.250s to 10,000s).
-        :obj:`int`
+        :class:`int`
             The *Off Time* parameter. Range 250 to 100,000,000 in steps of 1
             milliseconds (0.250s to 10,000s).
-        :obj:`int`
+        :class:`int`
             The *Number of Cycles* parameter. Range 0 to 1000,000 where 0
             represents unlimited.
 
@@ -126,7 +126,7 @@ class KCubeSolenoid(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             Bit mask of states of the 4 digital output pins.
         """
         return self.sdk.SC_GetDigitalOutputs(self._serial)
@@ -168,7 +168,7 @@ class KCubeSolenoid(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             Either the number, or 0x00 if unknown, or 0xff if not on a hub.
         """
         return self.sdk.SC_GetHubBay(self._serial)
@@ -178,7 +178,7 @@ class KCubeSolenoid(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             Sum of: 8 to indicate moving 2 to indicate end of track and 1
             to flash on identify command.
         """
@@ -191,12 +191,12 @@ class KCubeSolenoid(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The display intensity, range 0 to 100%.
-        :obj:`int`
+        :class:`int`
             The display timeout, range 0 to 480 in minutes (0 is off, otherwise
             the inactivity period before dimming the display).
-        :obj:`int`
+        :class:`int`
             The display dimmed intensity, range 0 to 10 (after the timeout
             period the device display will dim).
 
@@ -232,12 +232,12 @@ class KCubeSolenoid(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The display intensity, range 0 to 100%.
-        :obj:`int`
+        :class:`int`
             The display timeout, range 0 to 480 in minutes (0 is off, otherwise
             the inactivity period before dimming the display).
-        :obj:`int`
+        :class:`int`
             The display dimmed intensity, range 0 to 10 (after the timeout
             period the device display will dim).
 
@@ -257,11 +257,11 @@ class KCubeSolenoid(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The message type.
-        :obj:`int`
+        :class:`int`
             The message ID.
-        :obj:`int`
+        :class:`int`
             The message data.
 
         Raises
@@ -300,7 +300,7 @@ class KCubeSolenoid(MotionControl):
 
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The device software version.
         """
         return self.to_version(self.sdk.SC_GetSoftwareVersion(self._serial))
@@ -324,7 +324,7 @@ class KCubeSolenoid(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The status bits from the device.
         """
         return self.sdk.SC_GetStatusBits(self._serial)
@@ -382,9 +382,9 @@ class KCubeSolenoid(MotionControl):
 
         Returns
         -------
-        :obj:`bool`
-            :obj:`True` if last message timer has elapsed or
-            :obj:`False` if monitoring is not enabled or if time of last message
+        :class:`bool`
+            :data:`True` if last message timer has elapsed or
+            :data:`False` if monitoring is not enabled or if time of last message
             received is less than ``lastMsgTimeout``.
         """
         return self.sdk.SC_HasLastMsgTimerOverrun(self._serial)
@@ -428,7 +428,7 @@ class KCubeSolenoid(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The number of messages in the queue.
         """
         return self.sdk.SC_MessageQueueSize(self._serial)
@@ -458,7 +458,7 @@ class KCubeSolenoid(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The time between polls in milliseconds or 0 if polling is not active.
         """
         return self.sdk.SC_PollingDuration(self._serial)
@@ -598,13 +598,13 @@ class KCubeSolenoid(MotionControl):
 
         Parameters
         ----------
-        on_time : :obj:`int`
+        on_time : :class:`int`
             The On Time parameter. Range 250 to 100,000,000 in steps of
             1 milliseconds (0.250s to 10,000s).
-        off_time : :obj:`int`
+        off_time : :class:`int`
             The Off Time parameter. Range 250 to 100,000,000 in steps of
             1 milliseconds (0.250s to 10,000s).
-        num_cycles : :obj:`int`
+        num_cycles : :class:`int`
             The Number of Cycles parameter Range 0 to 1,000,000 where
             0 represent unlimited.
 
@@ -643,7 +643,7 @@ class KCubeSolenoid(MotionControl):
 
         Parameters
         ----------
-        outputs_bits : :obj:`int`
+        outputs_bits : :class:`int`
             Bit mask to set the states of the 4 digital output pins.
 
         Raises
@@ -658,7 +658,7 @@ class KCubeSolenoid(MotionControl):
 
         Parameters
         ----------
-        led_switches : :obj:`int`
+        led_switches : :class:`int`
             Sum of: 8 to indicate moving 2 to indicate end of track and
             1 to flash on identify command.
 
@@ -676,7 +676,7 @@ class KCubeSolenoid(MotionControl):
 
         Parameters
         ----------
-        display_intensity : :obj:`int`
+        display_intensity : :class:`int`
             The display intensity, range 0 to 100%.
 
         Raises
@@ -714,12 +714,12 @@ class KCubeSolenoid(MotionControl):
 
         Parameters
         ----------
-        intensity : :obj:`int`
+        intensity : :class:`int`
             The display intensity, range 0 to 100%.
-        timeout : :obj:`int`
+        timeout : :class:`int`
             The display timeout, range 0 to 480 in minutes (0 is off, otherwise the
             inactivity period before dimming the display).
-        dim_intensity : :obj:`int`
+        dim_intensity : :class:`int`
             The display dimmed intensity, range 0 to 10 (after the timeout period
             the device display will dim).
 
@@ -823,7 +823,7 @@ class KCubeSolenoid(MotionControl):
 
         Parameters
         ----------
-        milliseconds : :obj:`int`
+        milliseconds : :class:`int`
             The polling rate, in milliseconds.
 
         Raises
@@ -845,7 +845,7 @@ class KCubeSolenoid(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The time, in milliseconds, since the last message was received.
         """
         ms = c_int64()
@@ -857,11 +857,11 @@ class KCubeSolenoid(MotionControl):
 
         Returns
         -------
-        :obj:`int`
+        :class:`int`
             The message type.
-        :obj:`int`
+        :class:`int`
             The message ID.
-        :obj:`int`
+        :class:`int`
             The message data.
 
         Raises

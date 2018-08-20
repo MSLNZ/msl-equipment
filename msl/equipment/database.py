@@ -1,7 +1,6 @@
 """
 Load equipment and connection records from :ref:`Databases <database>`.
 """
-from __future__ import unicode_literals
 import os
 import re
 import ast
@@ -12,8 +11,8 @@ from xml.etree import cElementTree as ET
 
 import xlrd
 
-from msl.equipment import constants
-from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
+from . import constants
+from .record_types import EquipmentRecord, ConnectionRecord
 
 logger = logging.getLogger(__name__)
 
@@ -29,8 +28,8 @@ class Database(object):
 
         Parameters
         ----------
-        path : :obj:`str`
-            The path to a XML :ref:`configuration_file`.
+        path : :class:`str`
+            The path to an XML :ref:`configuration_file`.
 
         Raises
         ------
@@ -43,16 +42,17 @@ class Database(object):
             and it does not uniquely identify an equipment record in an
             :ref:`equipment_database`.
         ValueError
-            If multiple :obj:`~.record_types.EquipmentRecord.alias`\es are specified
-            for the same :obj:`~.record_types.EquipmentRecord`.
+            If multiple :attr:`~.EquipmentRecord.alias`\es are specified
+            for the same :class:`~.EquipmentRecord`.
         """
         logger.debug('Loading databases from {}'.format(path))
 
         try:
             root = ET.parse(path).getroot()
-            parse_err = ''
         except ET.ParseError as err:
-            parse_err = str(err)
+            parse_err = str(err)  # want to raise IOError not ParseError
+        else:
+            parse_err = None
 
         if parse_err:
             raise IOError(parse_err)
@@ -62,85 +62,86 @@ class Database(object):
         self._connection_property_names = [k for k in ConnectionRecord().to_dict()]
 
         # create a dictionary of ConnectionRecord objects
-        self._connection_records = {}
-        for element in root.findall('equipment_connections'):
+        self._connection_records = dict()
+        for connections in root.findall('connections'):
+            for element in connections.findall('connection'):
 
-            header, rows = self._read(element)
-            self._make_index_map(header, self._connection_property_names)
+                header, rows = self._read(element)
+                self._make_index_map(header, self._connection_property_names)
 
-            for row in rows:
-                if not self._is_row_length_okay(row, header):
-                    continue
-
-                key = self._make_key(row)
-                if not self._is_key_unique(key, self._connection_records, element):
-                    continue
-
-                conn_record = ConnectionRecord()
-
-                # auto set the attributes that are string data types
-                for name in ('address', 'manufacturer', 'model', 'serial'):
-                    setattr(conn_record, '_'+name, row[self._index_map[name]])
-
-                # set the backend to use to communicate with the equipment
-                backend = row[self._index_map['backend']]
-                try:
-                    conn_record._backend = constants.Backend[backend]
-                except ValueError:
-                    msg = '{} -> Unknown Backend "{}" in "{}"'
-                    logger.error(msg.format(key, backend, element.findtext('path')))
-
-                # set the MSL connection interface to use for the MSL backend
-                if conn_record.backend == constants.Backend.MSL:
-                    try:
-                        interface_name = conn_record._get_interface_name_from_address()
-                        conn_record._interface = constants.MSLInterface[interface_name]
-                    except KeyError:
-                        msg = '{} -> Unknown MSL Interface for address="{}" in "{}"'
-                        logger.error(msg.format(key, conn_record._address, element.findtext('path')))
-
-                # create the property dictionary
-                conn_record._properties = {}
-                for item in row[self._index_map['properties']].split(';'):
-                    item_split = item.split('=')
-                    if len(item_split) < 2:
+                for row in rows:
+                    if not self._is_row_length_okay(row, header):
                         continue
 
-                    k, v = item_split[0].strip(), str(item_split[1].strip())
+                    key = self._make_key(row)
+                    if not self._is_key_unique(key, self._connection_records, element):
+                        continue
 
-                    if 'ASRL' in conn_record.interface.name or conn_record.address.startswith('COM'):
-                        k_lower = k.lower()
+                    conn_record = ConnectionRecord()
+
+                    # auto set the attributes that are string data types
+                    for name in ('address', 'manufacturer', 'model', 'serial'):
+                        setattr(conn_record, '_'+name, row[self._index_map[name]])
+
+                    # set the backend to use to communicate with the equipment
+                    backend = row[self._index_map['backend']]
+                    try:
+                        conn_record._backend = constants.Backend[backend]
+                    except ValueError:
+                        msg = '{} -> Unknown Backend "{}" in "{}"'
+                        logger.error(msg.format(key, backend, element.findtext('path')))
+
+                    # set the MSL connection interface to use for the MSL backend
+                    if conn_record.backend == constants.Backend.MSL:
                         try:
-                            if k_lower.startswith('parity'):
-                                v = self._to_enum(key, v, constants.Parity)
-                            elif k_lower.startswith('stop'):
-                                v = self._to_enum(key, float(v), constants.StopBits)
-                            elif k_lower.startswith('data'):
-                                v = self._to_enum(key, int(v), constants.DataBits)
-                        except ValueError:
-                            msg = '{} -> Invalid "{}" value of "{}" in "{}"'
-                            logger.error(msg.format(key, k, v, element.findtext('path')))
+                            interface_name = conn_record._get_interface_name_from_address()
+                            conn_record._interface = constants.MSLInterface[interface_name]
+                        except KeyError:
+                            msg = '{} -> Unknown MSL Interface for address="{}" in "{}"'
+                            logger.error(msg.format(key, conn_record._address, element.findtext('path')))
+
+                    # create the property dictionary
+                    conn_record._properties = {}
+                    for item in row[self._index_map['properties']].split(';'):
+                        item_split = item.split('=')
+                        if len(item_split) < 2:
                             continue
 
-                    if isinstance(v, str):
-                        # try to convert 'v' to a Python bool, int or float
-                        if v.upper() == 'TRUE':
-                            v = True
-                        elif v.upper() == 'FALSE':
-                            v = False
-                        else:
+                        k, v = item_split[0].strip(), str(item_split[1].strip())
+
+                        if 'SERIAL' in conn_record.interface.name or conn_record.address.startswith('COM'):
+                            k_lower = k.lower()
                             try:
-                                v = ast.literal_eval(v)
-                            except:
-                                pass  # keep the value as a string
+                                if k_lower.startswith('parity'):
+                                    v = self._to_enum(key, v, constants.Parity)
+                                elif k_lower.startswith('stop'):
+                                    v = self._to_enum(key, float(v), constants.StopBits)
+                                elif k_lower.startswith('data'):
+                                    v = self._to_enum(key, int(v), constants.DataBits)
+                            except ValueError:
+                                msg = '{} -> Invalid "{}" value of "{}" in "{}"'
+                                logger.error(msg.format(key, k, v, element.findtext('path')))
+                                continue
 
-                    conn_record._properties[k] = v
+                        if isinstance(v, str):
+                            # try to convert 'v' to a Python bool, int or float
+                            if v.upper() == 'TRUE':
+                                v = True
+                            elif v.upper() == 'FALSE':
+                                v = False
+                            else:
+                                try:
+                                    v = ast.literal_eval(v)
+                                except:
+                                    pass  # keep the value as a string
 
-                self._connection_records[key] = conn_record
+                        conn_record._properties[k] = v
+
+                    self._connection_records[key] = conn_record
 
         # create a dictionary of all the EquipmentRecord objects that are found in the Equipment Registers
-        self._equipment_records = {}
-        for registers in root.findall('equipment_registers'):
+        self._equipment_records = dict()
+        for registers in root.findall('registers'):
             for register in registers.findall('register'):
 
                 # the MSL team (e.g., Electrical) that this Equipment Register belongs to
@@ -242,29 +243,29 @@ class Database(object):
 
     @property
     def equipment(self):
-        """:obj:`dict` of :class:`.EquipmentRecord`: Equipment records that were listed 
-        as ``<equipment>`` XML tags in the :ref:`configuration_file`.
+        """:class:`dict`: :class:`.EquipmentRecord`\'s that were listed as ``<equipment>`` XML tags in
+        the :ref:`configuration_file`.
         """
         return self._equipment_using
 
     @property
     def path(self):
-        """:obj:`str`: The path to the :ref:`configuration_file`.
+        """:class:`str`: The path to the :ref:`configuration_file`.
         """
         return self._config_path
 
     def connections(self, **kwargs):
-        """Search the :ref:`connection_database` to find all :class:`.ConnectionRecord`\'s that
+        """Search the :ref:`connections_database` to find all :class:`.ConnectionRecord`\'s that
         match the specified criteria.
 
         Parameters
         ----------
         **kwargs
             The argument names can be any of the :class:`.ConnectionRecord` property names or
-            a ``flags`` argument of type :obj:`int`, see :obj:`re.search`, for performing the search.
+            a ``flags`` argument of type :class:`int` for performing the search, see :func:`re.search`.
             For testing regex expressions online you can use `this <https://pythex.org/>`_ website.
 
-            If a `kwarg` is ``properties`` then the value must be a :obj:`dict`. See the examples below.
+            If a `kwarg` is ``properties`` then the value must be a :class:`dict`. See the examples below.
 
         Examples
         --------
@@ -274,12 +275,12 @@ class Database(object):
         a list of all ConnectionRecords that have Keysight as the manufacturer
         >>> records(manufacturer='Agilent|Keysight')  # doctest: +SKIP
         a list of all ConnectionRecords that are from Agilent OR Keysight
-        >>> connections(manufacturer=r'\bH.*\bP')  # doctest: +SKIP
-        a list of all ConnectionRecords that have Hewlett Packard as the manufacturer
-        >>> connections(manufacturer='^Ag', model='34*')  # doctest: +SKIP
+        >>> connections(manufacturer=r'H.*P')  # doctest: +SKIP
+        a list of all ConnectionRecords that have Hewlett Packard (or HP) as the manufacturer
+        >>> connections(manufacturer='Agilent', model='^34')  # doctest: +SKIP
         a list of all ConnectionRecords that have Agilent as the manufacturer AND a model number beginning with '34'
-        >>> connections(interface=MSLInterface.GPIB)  # doctest: +SKIP
-        a list of all ConnectionRecords that use GPIB for the connection bus
+        >>> connections(interface=MSLInterface.SERIAL)  # doctest: +SKIP
+        a list of all ConnectionRecords that use SERIAL for the connection bus
         >>> connections(interface='USB')  # doctest: +SKIP
         a list of all ConnectionRecords that use USB for the connection bus
         >>> connections(backend=Backend.PyVISA)  # doctest: +SKIP
@@ -291,7 +292,7 @@ class Database(object):
 
         Returns
         -------
-        :obj:`list` of :class:`.ConnectionRecord`
+        :class:`list` of :class:`.ConnectionRecord`
             The connection records that match the search criteria.
 
         Raises
@@ -314,16 +315,16 @@ class Database(object):
         ----------
         **kwargs
             The argument names can be any of the :class:`.EquipmentRecord` property names or
-            a ``flags`` argument of type :obj:`int`, see :obj:`re.search`, for performing the search.
+            a ``flags`` argument of type :class:`int` for performing the search, see :func:`re.search`.
             For testing regex expressions online you can use `this <https://pythex.org/>`_ website.
 
             If a `kwarg` is ``connection`` then the value will be used to test which
-            :class:`.EquipmentRecord`\'s have a :obj:`~.EquipmentRecord.connection` value that
-            is either :obj:`None` or :class:`.ConnectionRecord`. See the examples below.
+            :class:`.EquipmentRecord`\'s have a :attr:`~.EquipmentRecord.connection` value that
+            is either :data:`None` or :class:`.ConnectionRecord`. See the examples below.
 
             If a `kwarg` is ``date_calibrated`` then the value must be a callable function that
-            takes 1 input argument (a :obj:`datetime.date` object) and the function must return
-            a :obj:`bool`. See the examples below.
+            takes 1 input argument (a :class:`datetime.date` object) and the function must return
+            a :class:`bool`. See the examples below.
 
         Examples
         --------
@@ -337,8 +338,8 @@ class Database(object):
         a list of all EquipmentRecords that are from Agilent AND that have the model number 3458A
         >>> records(manufacturer='Agilent', model='3458A', serial='MY45046470')  # doctest: +SKIP
         a list of only one EquipmentRecord (if the equipment record exists, otherwise an empty list)
-        >>> records(manufacturer=r'\bH.*\bP')  # doctest: +SKIP
-        a list of all EquipmentRecords that have Hewlett Packard as the manufacturer
+        >>> records(manufacturer=r'H.*P')  # doctest: +SKIP
+        a list of all EquipmentRecords that have Hewlett Packard (or HP) as the manufacturer
         >>> records(description='I-V Converter')  # doctest: +SKIP
         a list of all EquipmentRecords that contain 'I-V Converter' in the description field
         >>> records(connection=True)  # doctest: +SKIP
@@ -352,7 +353,7 @@ class Database(object):
 
         Returns
         -------
-        :obj:`list` of :class:`.EquipmentRecord`
+        :class:`list` of :class:`.EquipmentRecord`
             The equipment records that match the search criteria.
 
         Raises
@@ -385,7 +386,7 @@ class Database(object):
             header, rows = self._read_excel(path, element.findtext('sheet'), element.attrib.get('encoding', None))
         elif ext in ('.csv', '.txt'):
             delimiter = ',' if ext == '.csv' else '\t'
-            header, rows = self._read_text_based(path, delimiter, element.attrib.get('encoding', 'utf8'))
+            header, rows = self._read_text_based(path, delimiter, element.attrib.get('encoding', 'utf-8'))
         else:
             raise IOError('Unsupported equipment-registry database format ' + path)
 
@@ -457,9 +458,9 @@ class Database(object):
 
     def _make_key(self, row):
         """Make a new Manufacturer|Model|Serial key for a dictionary"""
-        return '{}|{}|{}'.format(row[self._index_map['manufacturer']],
-                                 row[self._index_map['model']],
-                                 row[self._index_map['serial']])
+        return u'{}|{}|{}'.format(row[self._index_map['manufacturer']],
+                                  row[self._index_map['model']],
+                                  row[self._index_map['serial']])
 
     def _is_key_unique(self, key, dictionary, element):
         """Returns whether the dictionary key is unique"""

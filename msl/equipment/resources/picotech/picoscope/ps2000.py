@@ -50,7 +50,7 @@ class PicoScope2000(PicoScope2k3k):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        PicoScope2k3k.__init__(self, record, ps2000_funcptrs)
+        super(PicoScope2000, self).__init__(record, ps2000_funcptrs)
 
     def last_button_press(self):
         """

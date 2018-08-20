@@ -43,4 +43,4 @@ class PicoScope5000(PicoScopeApi):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        PicoScopeApi.__init__(self, record, ps5000Api_funcptrs)
+        super(PicoScope5000, self).__init__(record, ps5000Api_funcptrs)

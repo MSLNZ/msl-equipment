@@ -63,41 +63,41 @@ def camelcase_to_underscore(text):
     
     Parameters
     ----------
-    text : :obj:`str`
+    text : :class:`str`
         The camel-case text to be converted.
 
     Returns
     -------
-    :obj:`str`
+    :class:`str`
         The `text` converted to lowercase and separated by underscores.        
     """
     s1 = re.sub(r'(.)([A-Z][a-z]+)', r'\1_\2', text)
     return re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
 
-def get_lines(header_path, remove_comments=True):
+def get_lines(path, remove_comments=True):
     """Returns the lines in a C/C++ header file that are not empty.
      
     Also strips the whitespace from each line and can optionally remove 
-    the all comments from the header file.
+    the comments.
 
     Parameters
     ----------
-    header_path : :obj:`str`
+    path : :class:`str`
         The path to a C/C++ header file.
-    remove_comments : :obj:`bool`
-        Whether to remove the comments from each line.
+    remove_comments : :class:`bool`, optional
+        Whether to remove the comments.
 
     Returns
     -------
-    :obj:`list` of :obj:`str`
+    :class:`list` of :class:`str`
         The list of lines in the header file.
     """
     lines = []
-    with open(header_path, 'r') as fp:
+    with open(path, 'r') as fp:
         for line in fp.readlines():
             line_strip = line.strip()
-            if len(line_strip) == 0:
+            if not line_strip:
                 continue
             if remove_comments:
                 if line_strip.startswith('/') or line_strip.startswith('*'):
@@ -115,36 +115,36 @@ class CHeader(object):
     _struct_regex = re.compile(r'^(typedef\s+)?struct\s+(\w+)')
     _callback_regex = re.compile(r'typedef\s+void\s*\(\s*(\w+)?\s*\*(\w+)\s*\)')
 
-    def __init__(self, header_path, remove_comments=True):
+    def __init__(self, path, remove_comments=True):
         """Parses a C/C++ header file to determine the constants, enums, structs, callbacks
         and the function signatures.
         
         Parameters
         ----------
-        header_path : :obj:`str`
+        path : :class:`str`
             The path to the header file. 
-        remove_comments : :obj:`bool`
-            Whether to remove the comments from the header file. 
+        remove_comments : :class:`bool`, optional
+            Whether to remove the comments.
         """
         self._struct_imports = []  # the structs that must be imported for the C functions
 
-        self._lines = get_lines(header_path, remove_comments)
+        self._lines = get_lines(path, remove_comments)
         self._get_enums()
         self._get_structs()
         self._get_callbacks()
 
     def constants(self, ignore_ifdef=True):
-        """Finds the ``#define`` statements that in a C/C++ header file.
+        """Finds the ``#define`` statements that are in the C/C++ header file.
 
         Parameters
         ----------
-        ignore_ifdef : :obj:`bool`, optional
+        ignore_ifdef : :class:`bool`, optional
             Whether to ignore the ``#define`` statements in between the ``#ifdef`` 
             and ``#endif`` statements.
         
         Returns
         -------
-        :obj:`dict` of :obj:`str`
+        :class:`dict`
             A dictionary of all the ``#define`` constants (as strings).
         """
         _constants = {}
@@ -171,11 +171,10 @@ class CHeader(object):
         """
         Returns
         -------
-        :obj:`dict`
+        :class:`dict`
             The ``enums`` that are defined in the C/C++ header file. 
             The value for each dictionary key is a tuple of 
-            *(the naming convention, the enum data type that is defined, 
-            a dict of name-value pairs)*.
+            ``(the enum name, the enum data type, a dict of name-value pairs)``.
         """
         return self._enums
 
@@ -183,7 +182,7 @@ class CHeader(object):
         """
         Returns
         -------
-        :obj:`dict`
+        :class:`dict`
             The ``structs`` that are defined in the C/C++ header file.
         """
         return self._structs
@@ -192,7 +191,7 @@ class CHeader(object):
         """
         Returns
         -------
-        :obj:`dict`
+        :class:`dict`
             The ``callbacks`` that are defined in the C/C++ header file.
         """
         return self._callbacks
@@ -202,9 +201,9 @@ class CHeader(object):
 
         Parameters
         ----------
-        regex : :obj:`str`
-            The regex must create 2 groups, *(return type, function name)*, and it must
-            match the function declaration up until, but excluding, the '(' which begins the
+        regex : :class:`str`
+            The regex must contain 2 groups, ``(return type)(function name)``, and it must
+            match the function declaration up until, but excluding, the ``(`` which begins the
             argument declarations.
             
             For example,
@@ -221,12 +220,12 @@ class CHeader(object):
 
         Returns
         -------
-        :obj:`dict`
+        :class:`dict`
             The function signature. The key is the function name and the value is a list of 
-            [return type, [(argument data type, argument name), ... ] ].        
+            ``[return type, [(argument data type, argument name), ... ] ]``.
         """
         _fcn_regex = re.compile(regex)
-        lines = list(self._lines)  # create a copy, since it will bne modified
+        lines = list(self._lines)  # create a copy, since it will be modified
         self._struct_imports = []
         fcns = {}
         i, n = 0, len(lines)
@@ -249,7 +248,7 @@ class CHeader(object):
         """
         Returns
         -------
-        :obj:`list` of :obj:`str`
+        :class:`list` of :class:`str`
             The lines in the C/C++ header file.
         """
         return self._lines
@@ -258,7 +257,7 @@ class CHeader(object):
         """
         Returns
         -------
-        :obj:`list` of :obj:`str`
+        :class:`list` of :class:`str`
             The list of ``structs`` that must be imported for the C/C++ functions. 
         
         Note
@@ -273,20 +272,20 @@ class CHeader(object):
 
         Parameters
         ----------
-        lines : :obj:`list` of :obj:`str`
-            A list of lines. Comes from :meth:`.get_lines`.
-        index : :obj:`int`
+        lines : :class:`list` of :class:`str`
+            A list of lines, see :meth:`.get_lines`.
+        index : :class:`int`
             The current index in `lines`.
-        bracket1 : :obj:`str`
+        bracket1 : :class:`str`
             One of ``{``, ``(``, or ``[`` 
-        bracket2 : :obj:`str`
+        bracket2 : :class:`str`
             One of ``}``, ``)`` or ``]``
 
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The text between `bracket1` and `bracket2`.
-        :obj:`int`
+        :class:`int`
             The current index in `lines`. 
         """
         assert bracket1 in ('(', '{', '['), 'Invalid bracket1 "{}"'.format(bracket1)
@@ -400,14 +399,14 @@ class CHeader(object):
         
         Parameters
         ----------
-        text : :obj:`str`
+        text : :class:`str`
             The text from :meth:`.get_text_between_brackets`.
-        delimiter : :obj:`str`
+        delimiter : :class:`str`
             The delimiter to use to split the data type and argument name.
     
         Returns
         -------
-        :obj:`list` of :obj:`tup`
+        :class:`list` of :class:`tup`
             A list of tuples [(argument data type, argument name), ... ].   
         """
         if text.endswith(delimiter):
@@ -452,12 +451,12 @@ class CHeader(object):
 
         Parameters
         ----------
-        c_type : :obj:`str`
+        c_type : :class:`str`
             The C/C++ data type. 
 
         Returns
         -------
-        :obj:`str`
+        :class:`str`
             The appropriate Python representation of the data type.
         """
         def _get_enum_dtype(tup):

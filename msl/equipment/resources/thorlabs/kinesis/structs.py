@@ -1,5 +1,5 @@
 """
-Structs defined in Thorlabs Kinesis v1.14.9
+Structs defined in Thorlabs Kinesis v1.14.10
 """
 from ctypes import c_byte, c_bool, c_char, c_ushort, c_uint16, c_short, \
     c_int16, c_uint, c_int, c_int32, c_uint32, c_float, Structure
@@ -736,6 +736,38 @@ class KSC_TriggerConfig(Structure):
     ]
 
 
+class TSG_IOSettings(Structure):
+    _fields_ = [
+        ('hubAnalogOutput', c_short),
+        ('displayMode', c_short),
+        ('forceCalibration', c_uint),
+        ('notYetInUse', WORD),
+        ('futureUse', WORD),
+    ]
+
+
+class KSG_MMIParams(Structure):
+    _fields_ = [
+        ('DisplayIntensity', c_int16),
+        ('DisplayTimeout', c_int16),
+        ('DisplayDimIntensity', c_int16),
+        ('reserved', c_int16 * 4),
+    ]
+
+
+class KSG_TriggerConfig(Structure):
+    _fields_ = [
+        ('Trigger1Mode', c_int16),
+        ('Trigger1Polarity', c_int16),
+        ('Trigger2Mode', c_int16),
+        ('Trigger2Polarity', c_int16),
+        ('LowerLimit', c_int32),
+        ('UpperLimit', c_int32),
+        ('SmoothingSamples', c_int16),
+        ('reserved', c_int16 * 6),
+    ]
+
+
 class TIM_DriveOPParameters(Structure):
     _fields_ = [
         ('_maxVoltage', c_int16),
@@ -767,16 +799,6 @@ class TIM_Status(Structure):
         ('_position', c_int32),
         ('_encoderCount', c_int32),
         ('_statusBits', c_uint32),
-    ]
-
-
-class TSG_IOSettings(Structure):
-    _fields_ = [
-        ('hubAnalogOutput', c_short),
-        ('displayMode', c_short),
-        ('forceCalibration', c_uint),
-        ('notYetInUse', WORD),
-        ('futureUse', WORD),
     ]
 
 
@@ -818,6 +840,8 @@ STRUCT_LIST = [
     'KPZ_TriggerConfig',
     'KSC_MMIParams',
     'KSC_TriggerConfig',
+    'KSG_MMIParams',
+    'KSG_TriggerConfig',
     'MOT_BrushlessCurrentLoopParameters',
     'MOT_BrushlessElectricOutputParameters',
     'MOT_BrushlessPositionLoopParameters',

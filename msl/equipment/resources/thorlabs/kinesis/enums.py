@@ -1,5 +1,5 @@
 """
-Enums defined in Thorlabs Kinesis v1.14.9
+Enums defined in Thorlabs Kinesis v1.14.10
 """
 from enum import IntEnum
 from ctypes import c_byte, c_ushort, c_short, c_int16, c_uint16, c_int
@@ -719,6 +719,53 @@ class KSC_TriggerPortPolarity(IntEnum):
     KSC_TrigPolarityLow = 0x02
 
 
+class KST_Stages(IntEnum):
+    ZST6 = 0x20
+    ZST13 = 0x21
+    ZST25 = 0x22
+    ZST206 = 0x30
+    ZST213 = 0x31
+    ZST225 = 0x32
+    ZFS206 = 0x40
+    ZFS213 = 0x41
+    ZFS225 = 0x42
+    DRV013_25MM = 0x50
+    DRV014_50MM = 0x51
+    NR360 = 0x70
+    PLS_X25MM = 0x72
+    PLS_X25MM_HiRes = 0x73
+    FW103 = 0x75
+
+
+class TSG_Hub_Analogue_Modes(IntEnum):
+    TSG_HubChannel1 = 1
+    TSG_HubChannel2 = 2
+
+
+class TSG_Display_Modes(IntEnum):
+    TSG_Undefined = 0
+    TSG_Position = 1
+    TSG_Voltage = 2
+    TSG_Force = 3
+
+
+class KSG_TriggerPortMode(IntEnum):
+    KSG_TrigDisabled = 0x00
+    KSG_TrigIn_GPI = 0x01
+    KSG_TrigOut_GPO = 0x0A
+    KSG_TrigOut_LessThanLowerLimit = 0x0B
+    KSG_TrigOut_MoreThanLowerLimit = 0x0C
+    KSG_TrigOut_LessThanUpperLimit = 0x0D
+    KSG_TrigOut_MoreThanUpperLimit = 0x0E
+    KSG_TrigOut_BetweenLimits = 0x0F
+    KSG_TrigOut_OutsideLimits = 0x10
+
+
+class KSG_TriggerPortPolarity(IntEnum):
+    KSG_TrigPolarityHigh = 0x01
+    KSG_TrigPolarityLow = 0x02
+
+
 class TIM_Channels(IntEnum):
     Channel1 = 1
     Channel2 = 2
@@ -772,18 +819,6 @@ class TST_Stages(IntEnum):
     NEWZST06 = 11006
     NEWZST13 = 11013
     NEWZST25 = 12025
-
-
-class TSG_Hub_Analogue_Modes(IntEnum):
-    TSG_HubChannel1 = 1
-    TSG_HubChannel2 = 2
-
-
-class TSG_Display_Modes(IntEnum):
-    TSG_Undefined = 0
-    TSG_Position = 1
-    TSG_Voltage = 2
-    TSG_Force = 3
 
 
 class TC_SensorTypes(IntEnum):
@@ -852,6 +887,9 @@ ENUM_CTYPE = {
     'KPZ_WheelMode': c_int16,
     'KSC_TriggerPortMode': c_int16,
     'KSC_TriggerPortPolarity': c_int16,
+    'KSG_TriggerPortMode': c_int16,
+    'KSG_TriggerPortPolarity': c_int16,
+    'KST_Stages': c_short,
     'LD_DisplayUnits': c_ushort,
     'LD_InputSourceFlags': c_ushort,
     'LD_POLARITY': c_int,

@@ -1,5 +1,5 @@
 """
-Device and Low Level Error Codes defined in Thorlabs Kinesis v1.14.9
+Device and Low Level Error Codes defined in Thorlabs Kinesis v1.14.10
 """
 
 FT_OK                         = 0x00

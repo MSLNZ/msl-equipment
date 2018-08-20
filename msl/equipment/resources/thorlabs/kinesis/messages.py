@@ -1,5 +1,5 @@
 """
-Device Message Queue defined in Thorlabs Kinesis v1.14.9
+Device Message Queue defined in Thorlabs Kinesis v1.14.10
 
 The device message queue allows the internal events raised by the device to be 
 monitored by the DLLs owner. 

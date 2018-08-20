@@ -28,12 +28,16 @@ if __name__ == '__main__':
         message_type, message_id, _ = motor.wait_for_message()
         while message_type != 2 or message_id != value:
             position = motor.get_position()
-            print('  at position {} [device units]'.format(position))
+            real = motor.get_real_value_from_device_unit(position, 'DISTANCE')
+            print('  at position {} [device units] {} [real-world units]'.format(position, real))
             message_type, message_id, _ = motor.wait_for_message()
 
     # connect to the KCube DC Servo
     motor = record.connect()
     print('Connected to {}'.format(motor))
+
+    # load the configuration settings (so that we can use the get_real_value_from_device_unit() method)
+    motor.load_settings()
 
     # start polling at 200 ms
     motor.start_polling(200)

@@ -46,9 +46,9 @@ class MotionControl(ConnectionSDK):
     Filter_Wheel = 47  #: Filter Wheel device ID
     KCube_Brushless_Motor = 28  #: KCube Brushless Motor device ID
     KCube_DC_Servo = 27  #: KCube DC Servo device ID
-    KCube_Inertial_Motor = 97 #: KCube Inertial Motor device ID
+    KCube_Inertial_Motor = 97  #: KCube Inertial Motor device ID
     KCube_LaserSource = 56  #: KCube Laser Source device ID
-    KCube_NanoTrak = 57 #: KCube NanoTrak device ID
+    KCube_NanoTrak = 57  #: KCube NanoTrak device ID
     KCube_Piezo = 29  #: KCube Piezo device ID
     KCube_Solenoid = 68  #: KCube Solenoid device ID
     KCube_Stepper_Motor = 26  #: KCube Stepper Motor device ID
@@ -70,7 +70,7 @@ class MotionControl(ConnectionSDK):
     TCube_Stepper_Motor = 80  #: TCube Stepper_Motor device ID
     TCube_Strain_Gauge = 84  #: TCube Strain Gauge device ID
     TCube_TEC = 87  #: TCube TEC device ID
-    Vertical_Stage = 24 #: Vertical Stage device ID
+    Vertical_Stage = 24  #: Vertical Stage device ID
 
     # a serial number is 8 characters, 1 for null terminated, 1 for the comma, allow for up to 50 devices
     SERIAL_NUMBER_BUFFER_SIZE = (8 + 1 + 1) * 50

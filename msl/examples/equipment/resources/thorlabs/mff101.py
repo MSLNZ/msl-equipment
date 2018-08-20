@@ -27,6 +27,9 @@ if __name__ == '__main__':
     flipper = record.connect()
     print('Connected to {}'.format(flipper))
 
+    # wait a little bit for the Thorlabs SDK to open the serial port
+    time.sleep(1)
+
     # start polling at 200 ms
     flipper.start_polling(200)
 
@@ -38,6 +41,7 @@ if __name__ == '__main__':
     print('Moving the flipper to position {}'.format(position))
     flipper.move_to_position(position)
     while flipper.get_position() != position:
+        print('  waiting...')
         time.sleep(0.1)
     print('Move done. Flipper is now at position {}'.format(flipper.get_position()))
 

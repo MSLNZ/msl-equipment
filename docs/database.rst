@@ -245,6 +245,6 @@ The following are examples of an **Address** syntax (see more examples from `Nat
 | SOCKET                                         | SOCKET::192.168.1.100::5000                         | Generic socket type. You can specify the connection type in the **Properties** *field* (i.e., type=RAW)                                        |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
 
-.. _National Instruments: http://zone.ni.com/reference/en-XX/help/370131S-01/ni-visa/visaresourcesyntaxandexamples/
+.. _National Instruments: https://zone.ni.com/reference/en-XX/help/370131S-01/ni-visa/visaresourcesyntaxandexamples/
 .. _PyVISA-py: https://pyvisa-py.readthedocs.io/en/latest/
 .. _ISO/IEC 17025: https://www.iso.org/standard/66912.html

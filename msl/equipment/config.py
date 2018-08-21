@@ -15,7 +15,7 @@ class Config(object):
     PyVISA_LIBRARY = '@ni'
     """:class:`str`: The PyVISA backend_ library to use.
     
-    .. _backend: http://pyvisa.readthedocs.io/en/stable/backends.html
+    .. _backend: https://pyvisa.readthedocs.io/en/stable/backends.html
     """
 
     DEMO_MODE = False
@@ -54,7 +54,7 @@ class Config(object):
         Also, the user is encouraged to define their own application-specific constants within the
         configuration file.
 
-        .. _backend: http://pyvisa.readthedocs.io/en/stable/backends.html
+        .. _backend: https://pyvisa.readthedocs.io/en/stable/backends.html
 
         Parameters
         ----------

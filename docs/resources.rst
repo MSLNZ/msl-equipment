@@ -125,7 +125,7 @@ Please follow the `style guide`_.
     are located in the root directory of the **MSL-Equipment** package.
 12. If running the tests pass and building the docs show no errors/warnings then create a `pull request`_.
 
-.. _style guide: http://msl-package-manager.readthedocs.io/en/latest/developers_guide.html#edit-the-source-code-using-the-style-guide
+.. _style guide: https://msl-package-manager.readthedocs.io/en/latest/developers_guide.html#edit-the-source-code-using-the-style-guide
 .. _fork: https://help.github.com/articles/fork-a-repo/
 .. _repository: https://github.com/MSLNZ/msl-equipment
 .. _msl/equipment/resources: https://github.com/MSLNZ/msl-equipment/tree/master/msl/equipment/resources
@@ -138,7 +138,7 @@ Please follow the `style guide`_.
 .. _pull request: https://help.github.com/articles/creating-a-pull-request-from-a-fork/
 
 .. _Bentham Instruments Ltd: https://www.bentham.co.uk/
-.. _benhw32: http://support.bentham.co.uk/support/solutions/articles/5000615653-sdk-manual
+.. _benhw32: https://support.bentham.co.uk/support/solutions/articles/5000615653-sdk-manual
 .. _CMI: https://www.cmi.cz/?language=en
 .. _Pico Technology: https://www.picotech.com/
 .. _Thorlabs: https://www.thorlabs.com/

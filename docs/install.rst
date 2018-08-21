@@ -32,11 +32,11 @@ Some of the :ref:`msl-resources` might not work in your application because the 
 dependency (e.g., the SDK provided by a manufacturer) and this external dependency might not be available for
 your operating system.
 
-.. _MSL Package Manager: http://msl-package-manager.readthedocs.io/en/latest/
+.. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/latest/
 .. _PyVISA: https://pyvisa.readthedocs.io/en/latest/
 .. _PyVISA-py: https://pyvisa-py.readthedocs.io/en/latest/
 .. _NI-DAQmx: https://nidaqmx-python.readthedocs.io/en/latest/
-.. _numpy: http://www.numpy.org/
+.. _numpy: https://www.numpy.org/
 .. _msl-loadlib: https://msl-loadlib.readthedocs.io/en/latest/
 .. _pyserial: https://pythonhosted.org/pyserial/
 .. _python-dateutil: https://dateutil.readthedocs.io/en/latest/

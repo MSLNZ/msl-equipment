@@ -39,12 +39,12 @@ and this external dependency might not be available for your operating system.
 Documentation
 -------------
 The documentation for **MSL-Equipment** can be found
-`here <http://msl-equipment.readthedocs.io/en/latest/index.html>`_.
+`here <https://msl-equipment.readthedocs.io/en/latest/index.html>`_.
 
 .. |docs| image:: https://readthedocs.org/projects/msl-equipment/badge/?version=latest
-   :target: http://msl-equipment.readthedocs.io/en/latest/?badge=latest
+   :target: https://msl-equipment.readthedocs.io/en/latest/
    :alt: Documentation Status
    :scale: 100%
 
-.. _MSL Package Manager: http://msl-package-manager.readthedocs.io/en/latest/?badge=latest
-.. _resources: http://msl-equipment.readthedocs.io/en/latest/resources.html
+.. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/latest/
+.. _resources: https://msl-equipment.readthedocs.io/en/latest/resources.html

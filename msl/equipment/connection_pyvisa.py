@@ -1,7 +1,7 @@
 """
 Uses PyVISA_ as the backend to communicate with the equipment.
 
-.. _PyVISA: http://pyvisa.readthedocs.io/en/stable/index.html
+.. _PyVISA: https://pyvisa.readthedocs.io/en/stable/index.html
 """
 try:
     import pyvisa
@@ -29,7 +29,7 @@ class ConnectionPyVISA(Connection):
         Do not instantiate this class directly. Use the
         :meth:`~.EquipmentRecord.connect` method to connect to the equipment.
 
-        .. _PyVISA: http://pyvisa.readthedocs.io/en/stable/index.html
+        .. _PyVISA: https://pyvisa.readthedocs.io/en/stable/index.html
 
         Parameters
         ----------
@@ -100,7 +100,7 @@ class ConnectionPyVISA(Connection):
             The library to use for PyVISA. For example:
     
                 * ``@ni`` to use `NI-VISA <https://www.ni.com/visa/>`_
-                * ``@py`` to use `PyVISA-py <http://pyvisa-py.readthedocs.io/en/latest/>`_
+                * ``@py`` to use `PyVISA-py <https://pyvisa-py.readthedocs.io/en/latest/>`_
                 * ``@sim`` to use `PyVISA-sim <https://pyvisa-sim.readthedocs.io/en/latest/>`_
     
             If :data:`None` then `visa_library` is read from the
@@ -150,7 +150,7 @@ class ConnectionPyVISA(Connection):
     def resource_class(record):
         """Find the specific_ PyVISA Resource class that can open the `record`.
 
-        .. _specific: http://pyvisa.readthedocs.io/en/stable/api/resources.html
+        .. _specific: https://pyvisa.readthedocs.io/en/stable/api/resources.html
          
         Parameters
         ----------

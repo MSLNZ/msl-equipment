@@ -120,6 +120,6 @@ Package Structure
    msl.equipment.record_types <_api/msl.equipment.record_types>
    msl.equipment.resources <_api/msl.equipment.resources>
 
-.. _PyVISA: http://pyvisa.readthedocs.io/en/stable/index.html
-.. _NI-DAQ: http://nidaqmx-python.readthedocs.io/en/latest/index.html
+.. _PyVISA: https://pyvisa.readthedocs.io/en/stable/index.html
+.. _NI-DAQ: https://nidaqmx-python.readthedocs.io/en/latest/index.html
 .. _example.xml: https://github.com/MSLNZ/msl-equipment/blob/master/msl/examples/equipment/example.xml

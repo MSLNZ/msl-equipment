@@ -1,7 +1,7 @@
 """
 Uses NI-DAQ_ as the backend to communicate with the equipment.
 
-.. _NI-DAQ: http://nidaqmx-python.readthedocs.io/en/latest/index.html
+.. _NI-DAQ: https://nidaqmx-python.readthedocs.io/en/latest/index.html
 """
 try:
     import nidaqmx
@@ -71,7 +71,7 @@ class ConnectionNIDAQ(Connection):
         except OSError:
             self.raise_exception(
                 'nidaqmx requires NI-DAQmx or NI-DAQmx Runtime.\n'
-                'Visit http://www.ni.com/downloads/ to download the latest version of NI-DAQmx.'
+                'Visit https://www.ni.com/downloads/ to download the latest version of NI-DAQmx.'
             )
 
     @property

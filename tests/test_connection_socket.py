@@ -9,7 +9,7 @@ from msl.loadlib.utils import get_available_port
 from msl.equipment import EquipmentRecord, ConnectionRecord, Backend, MSLTimeoutError, MSLConnectionError
 
 
-def echo_server(address, port, term):
+def echo_server_tcp(address, port, term):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((address, port))
     s.listen(1)
@@ -29,13 +29,31 @@ def echo_server(address, port, term):
     s.close()
 
 
-def test_tcpip_socket_read():
+def echo_server_udp(address, port, term):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.bind((address, port))
+
+    while True:
+        data = bytearray()
+        while not data.endswith(term):
+            msg, addr = s.recvfrom(4096)
+            data.extend(msg)
+
+        if data.startswith(b'SHUTDOWN'):
+            break
+
+        s.sendto(data, addr)
+
+    s.close()
+
+
+def test_tcp_socket_read():
 
     address = '127.0.0.1'
     port = get_available_port()
     term = b'\r\n'
 
-    t = threading.Thread(target=echo_server, args=(address, port, term))
+    t = threading.Thread(target=echo_server_tcp, args=(address, port, term))
     t.start()
 
     time.sleep(0.1)  # allow some time for the echo server to start
@@ -95,13 +113,13 @@ def test_tcpip_socket_read():
     dev.write('SHUTDOWN')
 
 
-def test_tcpip_socket_timeout():
+def test_tcp_socket_timeout():
 
     address = '127.0.0.1'
     port = get_available_port()
     write_termination = b'\n'
 
-    t = threading.Thread(target=echo_server, args=(address, port, write_termination))
+    t = threading.Thread(target=echo_server_tcp, args=(address, port, write_termination))
     t.start()
 
     time.sleep(0.1)  # allow some time for the echo server to start
@@ -129,4 +147,98 @@ def test_tcpip_socket_timeout():
     assert dev.timeout == 1
     assert dev.socket.gettimeout() == 1
 
+    dev.write('SHUTDOWN')
+
+
+def test_udp_socket_read():
+
+    address = '127.0.0.1'
+    port = get_available_port()
+    term = b'\r\n'
+
+    t = threading.Thread(target=echo_server_udp, args=(address, port, term))
+    t.start()
+
+    time.sleep(0.1)  # allow some time for the echo server to start
+
+    record = EquipmentRecord(
+        connection=ConnectionRecord(
+            address='UDP::{}::{}'.format(address, port),
+            backend=Backend.MSL,
+            properties=dict(
+                termination=term,  # sets both read_termination and write_termination
+                timeout=5
+            ),
+        )
+    )
+
+    dev = record.connect()
+
+    assert dev.read_termination == term
+    assert dev.write_termination == term
+
+    dev.write('hello')
+    assert dev.read() == 'hello'
+
+    n = dev.write('hello')
+    assert dev.read(n) == 'hello' + term.decode()  # specified `size` so `term` is not removed
+
+    n = dev.write(b'021.3' + term + b',054.2')
+    assert dev.read(n) == '021.3' + term.decode() + ',054.2' + term.decode()  # `term` is not removed
+
+    dev.write(b'021.3' + term + b',054.2')
+    assert dev.read(3) == '021'
+    assert dev.read(5) == '.3' + term.decode() + ','
+    assert dev.read() == '054.2'  # read the rest -- removes the `term` at the end
+
+    dev.write(b'021.3' + term + b',054.2')
+    assert dev.read() == '021.3'  # read until first `term`
+    assert dev.read() == ',054.2'  # read until second `term`
+
+    n = dev.write('12345')
+    assert n == 7
+    with pytest.raises(MSLTimeoutError):
+        dev.read(n+1)  # read more bytes than are available
+    assert dev.read(n) == '12345' + term.decode()
+    assert len(dev.byte_buffer) == 0
+
+    dev.write('SHUTDOWN')
+
+
+def test_wrong_socket_type():
+
+    address = '127.0.0.1'
+    port = get_available_port()
+    term = b'\r\n'
+
+    t = threading.Thread(target=echo_server_udp, args=(address, port, term))
+    t.start()
+
+    time.sleep(0.1)  # allow some time for the echo server to start
+
+    with pytest.raises(MSLConnectionError):
+        EquipmentRecord(
+            connection=ConnectionRecord(
+                address='TCP::{}::{}'.format(address, port),  # trying TCP for a UDP server
+                backend=Backend.MSL,
+                properties=dict(
+                    termination=term,
+                    timeout=5
+                ),
+            )
+        ).connect()
+
+    record = EquipmentRecord(
+        connection=ConnectionRecord(
+            address='UDP::{}::{}'.format(address, port),
+            backend=Backend.MSL,
+            properties=dict(
+                termination=term,
+                timeout=5
+            ),
+        )
+    )
+
+    # use the correct socket type to shutdown the server
+    dev = record.connect()
     dev.write('SHUTDOWN')

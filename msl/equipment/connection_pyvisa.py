@@ -5,7 +5,7 @@ Uses PyVISA_ as the backend to communicate with the equipment.
 """
 try:
     import pyvisa
-except IOError:
+except ImportError:
     pyvisa = None
 
 from .config import Config

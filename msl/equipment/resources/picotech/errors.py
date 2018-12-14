@@ -193,7 +193,7 @@ class PS3000Error(IntEnum):
 ERROR_CODES = {
     PS2000Error.OK: (
         'PICO_OK',
-        'PicoScope<model={model}, serial={serial}> is functioning correctly.'
+        'PicoTech<model={model}, serial={serial}> is functioning correctly.'
     ),
     PS2000Error.MAX_UNITS_OPENED: (
         'PICO_MAX_UNITS_OPENED',
@@ -205,7 +205,7 @@ ERROR_CODES = {
     ),
     PS2000Error.NOT_FOUND: (
         'PICO_NOT_FOUND',
-        'The PicoScope<model={model}, serial={serial}> could not be found.'
+        'The PicoTech<model={model}, serial={serial}> could not be found.'
     ),
     PS2000Error.FW_FAIL: (
         'PICO_FW_FAIL',
@@ -213,11 +213,11 @@ ERROR_CODES = {
     ),
     PS2000Error.NOT_RESPONDING: (
         'PICO_NOT_RESPONDING',
-        'The PicoScope<model={model}, serial={serial}> is not responding to commands from the PC.'
+        'The PicoTech<model={model}, serial={serial}> is not responding to commands from the PC.'
     ),
     PS2000Error.CONFIG_FAIL: (
         'PICO_CONFIG_FAIL',
-        'The configuration information in the PicoScope<model={model}, serial={serial}> '
+        'The configuration information in the PicoTech<model={model}, serial={serial}> '
         'has become corrupt or is missing.'
     ),
     PS2000Error.OS_NOT_SUPPORTED: (
@@ -235,7 +235,7 @@ ERROR_CODES = {
 ERROR_CODES_API = {
     PICO_OK: (
         'PICO_OK',
-        'PicoScope<model={model}, serial={serial}> is functioning correctly.'
+        'PicoTech<model={model}, serial={serial}> is functioning correctly.'
     ),
     PICO_MAX_UNITS_OPENED: (
         'PICO_MAX_UNITS_OPENED',
@@ -247,7 +247,7 @@ ERROR_CODES_API = {
     ),
     PICO_NOT_FOUND: (
         'PICO_NOT_FOUND',
-        'The PicoScope<model={model}, serial={serial}> could not be found.'
+        'The PicoTech<model={model}, serial={serial}> could not be found.'
     ),
     PICO_FW_FAIL: (
         'PICO_FW_FAIL',
@@ -255,19 +255,19 @@ ERROR_CODES_API = {
     ),
     PICO_OPEN_OPERATION_IN_PROGRESS: (
         'PICO_OPEN_OPERATION_IN_PROGRESS',
-        'The "open_unit" operation is already in progress for PicoScope<model={model}, serial={serial}>.'
+        'The "open_unit" operation is already in progress for PicoTech<model={model}, serial={serial}>.'
     ),
     PICO_OPERATION_FAILED: (
         'PICO_OPERATION_FAILED',
-        'The PicoScope<model={model}, serial={serial}> operation failed.'
+        'The PicoTech<model={model}, serial={serial}> operation failed.'
     ),
     PICO_NOT_RESPONDING: (
         'PICO_NOT_RESPONDING',
-        'The PicoScope<model={model}, serial={serial}> is not responding to commands from the PC.'
+        'The PicoTech<model={model}, serial={serial}> is not responding to commands from the PC.'
     ),
     PICO_CONFIG_FAIL: (
         'PICO_CONFIG_FAIL',
-        'The configuration information in the PicoScope<model={model}, serial={serial}> has '
+        'The configuration information in the PicoTech<model={model}, serial={serial}> has '
         'become corrupt or is missing.'
     ),
     PICO_KERNEL_DRIVER_TOO_OLD: (
@@ -276,7 +276,7 @@ ERROR_CODES_API = {
     ),
     PICO_EEPROM_CORRUPT: (
         'PICO_EEPROM_CORRUPT',
-        'The EEPROM has become corrupt for PicoScope<model={model}, serial={serial}>, so '
+        'The EEPROM has become corrupt for PicoTech<model={model}, serial={serial}>, so '
         'the device will use a default setting.'
     ),
     PICO_OS_NOT_SUPPORTED: (
@@ -293,27 +293,27 @@ ERROR_CODES_API = {
     ),
     PICO_INVALID_TIMEBASE: (
         'PICO_INVALID_TIMEBASE',
-        'The timebase for PicoScope<model={model}, serial={serial}> is not supported or is invalid.'
+        'The timebase for PicoTech<model={model}, serial={serial}> is not supported or is invalid.'
     ),
     PICO_INVALID_VOLTAGE_RANGE: (
         'PICO_INVALID_VOLTAGE_RANGE',
-        'The voltage range for PicoScope<model={model}, serial={serial}> is not supported or is invalid.'
+        'The voltage range for PicoTech<model={model}, serial={serial}> is not supported or is invalid.'
     ),
     PICO_INVALID_CHANNEL: (
         'PICO_INVALID_CHANNEL',
-        'The channel number is not valid on PicoScope<model={model}, serial={serial}> or no channels have been set.'
+        'The channel number is not valid on PicoTech<model={model}, serial={serial}> or no channels have been set.'
     ),
     PICO_INVALID_TRIGGER_CHANNEL: (
         'PICO_INVALID_TRIGGER_CHANNEL',
-        'The channel set for a trigger is not available on PicoScope<model={model}, serial={serial}>.'
+        'The channel set for a trigger is not available on PicoTech<model={model}, serial={serial}>.'
     ),
     PICO_INVALID_CONDITION_CHANNEL: (
         'PICO_INVALID_CONDITION_CHANNEL',
-        'The channel set for a condition is not available on PicoScope<model={model}, serial={serial}>.'
+        'The channel set for a condition is not available on PicoTech<model={model}, serial={serial}>.'
     ),
     PICO_NO_SIGNAL_GENERATOR: (
         'PICO_NO_SIGNAL_GENERATOR',
-        'PicoScope<model={model}, serial={serial}> does not have a signal generator.'
+        'PicoTech<model={model}, serial={serial}> does not have a signal generator.'
     ),
     PICO_STREAMING_FAILED: (
         'PICO_STREAMING_FAILED',
@@ -499,7 +499,7 @@ ERROR_CODES_API = {
     ),
     PICO_INVALID_STATE: (
         'PICO_INVALID_STATE',
-        'PicoScope<model={model}, serial={serial}> is in an invalid state.'
+        'PicoTech<model={model}, serial={serial}> is in an invalid state.'
     ),
     PICO_NOT_ENOUGH_SEGMENTS: (
         'PICO_NOT_ENOUGH_SEGMENTS',
@@ -563,7 +563,7 @@ ERROR_CODES_API = {
     ),
     PICO_PLL_LOCK_FAILED: (
         'PICO_PLL_LOCK_FAILED',
-        'Unable to configure the PicoScope<model={model}, serial={serial}>.'
+        'Unable to configure the PicoTech<model={model}, serial={serial}>.'
     ),
     PICO_ANALOG_BOARD: (
         'PICO_ANALOG_BOARD',
@@ -619,7 +619,7 @@ ERROR_CODES_API = {
     ),
     PICO_IP_NETWORKED: (
         'PICO_IP_NETWORKED',
-        'PicoScope<model={model}, serial={serial}> is currently connected via the IP '
+        'PicoTech<model={model}, serial={serial}> is currently connected via the IP '
         'Network socket and thus the call made is not supported.'
     ),
     PICO_INVALID_IP_ADDRESS: (
@@ -656,7 +656,7 @@ ERROR_CODES_API = {
     ),
     PICO_BANDWIDTH_NOT_SUPPORTED: (
         'PICO_BANDWIDTH_NOT_SUPPORTED',
-        'Bandwidth limit is not supported on PicoScope<model={model}, serial={serial}>.'
+        'Bandwidth limit is not supported on PicoTech<model={model}, serial={serial}>.'
     ),
     PICO_INVALID_BANDWIDTH: (
         'PICO_INVALID_BANDWIDTH',
@@ -664,7 +664,7 @@ ERROR_CODES_API = {
     ),
     PICO_AWG_NOT_SUPPORTED: (
         'PICO_AWG_NOT_SUPPORTED',
-        'PicoScope<model={model}, serial={serial}> does not have an arbitrary waveform generator.'
+        'PicoTech<model={model}, serial={serial}> does not have an arbitrary waveform generator.'
     ),
     PICO_ETS_NOT_RUNNING: (
         'PICO_ETS_NOT_RUNNING',
@@ -672,11 +672,11 @@ ERROR_CODES_API = {
     ),
     PICO_SIG_GEN_WHITENOISE_NOT_SUPPORTED: (
         'PICO_SIG_GEN_WHITENOISE_NOT_SUPPORTED',
-        'White noise is not supported on PicoScope<model={model}, serial={serial}>.'
+        'White noise is not supported on PicoTech<model={model}, serial={serial}>.'
     ),
     PICO_SIG_GEN_WAVETYPE_NOT_SUPPORTED: (
         'PICO_SIG_GEN_WAVETYPE_NOT_SUPPORTED',
-        'The wave type requested is not supported by PicoScope<model={model}, serial={serial}>.'
+        'The wave type requested is not supported by PicoTech<model={model}, serial={serial}>.'
     ),
     PICO_INVALID_DIGITAL_PORT: (
         'PICO_INVALID_DIGITAL_PORT',
@@ -700,15 +700,15 @@ ERROR_CODES_API = {
     ),
     PICO_WARNING_REPEAT_VALUE: (
         'PICO_WARNING_REPEAT_VALUE',
-        'Not applicable to PicoScope<model={model}, serial={serial}>.'
+        'Not applicable to PicoTech<model={model}, serial={serial}>.'
     ),
     PICO_POWER_SUPPLY_CONNECTED: (
         'PICO_POWER_SUPPLY_CONNECTED',
-        'The DC power supply is connected for PicoScope<model={model}, serial={serial}>.'
+        'The DC power supply is connected for PicoTech<model={model}, serial={serial}>.'
     ),
     PICO_POWER_SUPPLY_NOT_CONNECTED: (
         'PICO_POWER_SUPPLY_NOT_CONNECTED',
-        "The DC power supply isn't connected for PicoScope<model={model}, serial={serial}>."
+        "The DC power supply isn't connected for PicoTech<model={model}, serial={serial}>."
     ),
     PICO_POWER_SUPPLY_REQUEST_INVALID: (
         'PICO_POWER_SUPPLY_REQUEST_INVALID',
@@ -716,11 +716,11 @@ ERROR_CODES_API = {
     ),
     PICO_POWER_SUPPLY_UNDERVOLTAGE: (
         'PICO_POWER_SUPPLY_UNDERVOLTAGE',
-        'The supply voltage from the USB source is too low for PicoScope<model={model}, serial={serial}>.'
+        'The supply voltage from the USB source is too low for PicoTech<model={model}, serial={serial}>.'
     ),
     PICO_CAPTURING_DATA: (
         'PICO_CAPTURING_DATA',
-        'PicoScope<model={model}, serial={serial}> is currently busy capturing data.'
+        'PicoTech<model={model}, serial={serial}> is currently busy capturing data.'
     ),
     PICO_USB3_0_DEVICE_NON_USB3_0_PORT: (
         'PICO_USB3_0_DEVICE_NON_USB3_0_PORT',
@@ -728,11 +728,11 @@ ERROR_CODES_API = {
     ),
     PICO_NOT_SUPPORTED_BY_THIS_DEVICE: (
         'PICO_NOT_SUPPORTED_BY_THIS_DEVICE',
-        'A function has been called that is not supported by PicoScope<model={model}, serial={serial}>.'
+        'A function has been called that is not supported by PicoTech<model={model}, serial={serial}>.'
     ),
     PICO_INVALID_DEVICE_RESOLUTION: (
         'PICO_INVALID_DEVICE_RESOLUTION',
-        'The resolution for PicoScope<model={model}, serial={serial}> is invalid (out of range).'
+        'The resolution for PicoTech<model={model}, serial={serial}> is invalid (out of range).'
     ),
     PICO_INVALID_NUMBER_CHANNELS_FOR_RESOLUTION: (
         'PICO_INVALID_NUMBER_CHANNELS_FOR_RESOLUTION',
@@ -740,7 +740,7 @@ ERROR_CODES_API = {
     ),
     PICO_CHANNEL_DISABLED_DUE_TO_USB_POWERED: (
         'PICO_CHANNEL_DISABLED_DUE_TO_USB_POWERED',
-        'USB Power not sufficient to power all channels on PicoScope<model={model}, serial={serial}>.'
+        'USB Power not sufficient to power all channels on PicoTech<model={model}, serial={serial}>.'
     ),
     PICO_SIGGEN_DC_VOLTAGE_NOT_CONFIGURABLE: (
         'PICO_SIGGEN_DC_VOLTAGE_NOT_CONFIGURABLE',

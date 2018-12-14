@@ -22,9 +22,9 @@ that are contained within the :ref:`Databases <database>` as well as all of the
 
 .. code-block:: pycon
 
-    >>> db = cfg.database()
+    >>> db = cfg.database() # doctest: +SKIP
     >>> for record in db.records():
-    ...    print(record)
+    ...    print(record) # doctest: +SKIP
     ...
     EquipmentRecord<Fluke|8506A|A10008>
     EquipmentRecord<Oriel|66087|B10009>
@@ -35,25 +35,25 @@ that are contained within the :ref:`Databases <database>` as well as all of the
     EquipmentRecord<Stanford Research Systems|SR850 DSP|G10014>
     EquipmentRecord<Hewlett Packard|3478A|D10015>
     >>> for record in db.records(manufacturer='H.*P'):
-    ...    print(record)
+    ...    print(record) # doctest: +SKIP
     ...
     EquipmentRecord<Hewlett Packard|34401A|D10011>
     EquipmentRecord<Hewlett Packard|3478A|D10015>
     >>> for conn in db.connections():
-    ...    print(conn)
+    ...    print(conn) # doctest: +SKIP
     ...
     ConnectionRecord<Fluke|8506A|A10008>
     ConnectionRecord<Hewlett Packard|34401A|D10011>
     ConnectionRecord<Stanford Research Systems|SR850 DSP|G10014>
     ConnectionRecord<Hewlett Packard|3478A|D10011>
     >>> for conn in db.connections(address='GPIB'):
-    ...     print(conn)
+    ...     print(conn) # doctest: +SKIP
     ...
     ConnectionRecord<Fluke|8506A|A10008>
     ConnectionRecord<Hewlett Packard|3478A|D10011>
-    >>> db.equipment
+    >>> db.equipment # doctest: +SKIP
     {'dmm': EquipmentRecord<Hewlett Packard|34401A|D10011>}
-    >>> db.equipment['dmm'].connection
+    >>> db.equipment['dmm'].connection # doctest: +SKIP
     ConnectionRecord<Hewlett Packard|34401A|D10011>
 
 Establishing a connection to the equipment is achieved by calling the
@@ -64,8 +64,8 @@ communicating with the equipment.
 
 .. code-block:: pycon
 
-    >>> dmm = db.equipment['dmm'].connect()
-    >>> dmm.query('*IDN?')
+    >>> dmm = db.equipment['dmm'].connect() # doctest: +SKIP
+    >>> dmm.query('*IDN?') # doctest: +SKIP
     'Hewlett Packard,34401A,D10011,A.02.14-02.40-02.14-00.49-03-01'
 
 In addition, the :mod:`~msl.equipment.constants` module contains the package constants.

@@ -34,8 +34,8 @@ in to the **MSL-Equipment** package:
 .. code-block:: pycon
 
   >>> from msl.equipment import Config
-  >>> cfg = Config('/path/to/config.xml')
-  >>> db = cfg.database()
+  >>> cfg = Config('/path/to/config.xml') # doctest: +SKIP
+  >>> db = cfg.database() # doctest: +SKIP
 
 Once you have a reference to the :meth:`~msl.equipment.config.Config.database` you have access to all the records in
 the :ref:`equipment_database` and in the :ref:`connections_database`. To access the **Hewlett Packard 34401A** [#f1]_
@@ -44,15 +44,15 @@ alias that is specified in the `configuration file`_) use:
 
 .. code-block:: pycon
 
-  >>> db.equipment['dmm']
+  >>> db.equipment['dmm'] # doctest: +SKIP
   EquipmentRecord<Hewlett Packard|34401A|D10011>
 
 Connect to the **Hewlett Packard 34401A** [#f1]_ digital multimeter and query the ``*IDN?`` command:
 
 .. code-block:: pycon
 
-  >>> dmm = db.equipment['dmm'].connect()
-  >>> dmm.query('*IDN?')
+  >>> dmm = db.equipment['dmm'].connect() # doctest: +SKIP
+  >>> dmm.query('*IDN?') # doctest: +SKIP
   'Hewlett Packard,34401A,D10011,A.02.14-02.40-02.14-00.49-03-01'
 
 For more examples of what a :ref:`configuration_file` or a :ref:`database` can look like or how to use

@@ -21,9 +21,9 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
   * :class:`~msl.equipment.resources.optosigma.shot702.SHOT702` - Two-axis Stage Controller
 
-* `Pico Technology`_
+* `Pico Technology`_ - Requires the `Pico Technology SDK`_
 
-  * PicoScope_ - Requires the `Pico Technology SDK`_
+  * PicoScope_
 
     * :class:`~msl.equipment.resources.picotech.picoscope.ps2000.PicoScope2000` - PicoScope 2000 Series
     * :class:`~msl.equipment.resources.picotech.picoscope.ps2000a.PicoScope2000A` - PicoScope 2000 Series A
@@ -34,6 +34,10 @@ MSL Resources are specific classes that are used to communicate with the equipme
     * :class:`~msl.equipment.resources.picotech.picoscope.ps5000.PicoScope5000` - PicoScope 5000 Series
     * :class:`~msl.equipment.resources.picotech.picoscope.ps5000a.PicoScope5000A` - PicoScope 5000 Series A
     * :class:`~msl.equipment.resources.picotech.picoscope.ps6000.PicoScope6000` - PicoScope 6000 Series
+
+  * `PT-104 Platinum Resistance Data Logger`_
+
+    * :class:`~msl.equipment.resources.picotech.pt104.PT104` - PT-104
 
 * Thorlabs_
 
@@ -106,19 +110,20 @@ Please follow the `style guide`_.
    communicating with the equipment works). The very minimal test to create is to add a test case to the
    `def test_find_resource_class()`_ function for ensuring that your class is returned for various values of
    *manufacturer* and *model*. Run the tests using ``python setup.py test`` (ideally you would run the tests
-   for all :ref:`currently-supported versions <equip-dependencies>` of Python, see also `test_envs.py`_).
-8. Add ``*.rst`` documentation files for the new MSL Resource to the `docs/_api`_ folder. You can either run
-   ``python setup.py apidoc`` to automatically generate the ``*.rst`` documentation files or you can create the
-   necessary ``*.rst`` files manually. Running ``python setup.py apidoc`` will generate ``*.rst`` files for *all*
-   modules in **MSL-Equipment** in the ``docs/_autosummary`` folder. Only copy the ``*.rst`` files that are associated
+   for all :ref:`currently-supported versions <equip-dependencies>` of Python, see also `condatests.py`_).
+8. Add ``.rst`` documentation files for the new MSL Resource to the `docs/_api`_ folder. You can either run
+   ``python setup.py apidoc`` to automatically generate the ``.rst`` documentation files or you can create the
+   necessary ``.rst`` files manually. Running ``python setup.py apidoc`` will generate ``.rst`` files for *all*
+   modules in **MSL-Equipment** in the ``docs/_autosummary`` folder. Only copy the ``.rst`` files that are associated
    with your new MSL Resource to the `docs/_api`_ folder. After copying the files you can delete the
    ``docs/_autosummary`` folder before running ``python setup.py docs`` to build the documentation, otherwise you will
-   get numerous warnings. If you want to manually create the ``*.rst`` files then look in the `docs/_api`_ folder for
+   get numerous warnings. If you want to manually create the ``.rst`` files then look in the `docs/_api`_ folder for
    examples from other MSL Resources.
 9. If you created a new package in Step 2 then you need to add the new package to the ``toctree`` of the
    ``Subpackages`` section in `docs/_api/msl.equipment.resources.rst`_. Insert the name of the new MSL Resource
    package in the file alphabetically. If you forget to do this step then a warning will appear when building
-   the documentation to help remind you to do it.
+   the documentation to help remind you to do it. If you did not create a new package in Step 2 then add the
+   ``.rst`` file from Step 8 to the ``Subpackages`` section in the appropriate ``msl.equipment.resources.*.rst`` file.
 10. Add the new MSL Resource class, alphabetically, to the list of MSL Resources in `docs/resources.rst`_. Follow the
     template that is used for the other MSL Resources listed in this file.
 11. Add yourself to ``AUTHORS.rst`` and add a note in ``CHANGES.rst`` that you created this new Resource. These files
@@ -131,7 +136,7 @@ Please follow the `style guide`_.
 .. _msl/equipment/resources: https://github.com/MSLNZ/msl-equipment/tree/master/msl/equipment/resources
 .. _msl/examples/equipment/resources: https://github.com/MSLNZ/msl-equipment/tree/master/msl/examples/equipment/resources
 .. _def test_find_resource_class(): https://github.com/MSLNZ/msl-equipment/blob/master/tests/resources/test_init.py
-.. _test_envs.py: https://msl-package-manager.readthedocs.io/en/latest/new_package_readme.html#test-envs-py-commands
+.. _condatests.py: https://msl-package-manager.readthedocs.io/en/latest/new_package_readme.html#create-readme-condatests
 .. _docs/_api: https://github.com/MSLNZ/msl-equipment/tree/master/docs/_api
 .. _docs/_api/msl.equipment.resources.rst: https://github.com/MSLNZ/msl-equipment/blob/master/docs/_api/msl.equipment.resources.rst
 .. _docs/resources.rst: https://github.com/MSLNZ/msl-equipment/blob/master/docs/resources.rst
@@ -147,3 +152,4 @@ Please follow the `style guide`_.
 .. _PicoScope: https://www.picotech.com/products/oscilloscope
 .. _OMEGA: https://www.omega.com/
 .. _OptoSigma: https://www.global-optosigma.com/en_jp/
+.. _PT-104 Platinum Resistance Data Logger: https://www.picotech.com/data-logger/pt-104/high-accuracy-temperature-daq

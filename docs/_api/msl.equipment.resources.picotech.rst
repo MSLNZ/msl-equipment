@@ -13,4 +13,4 @@ Subpackages
 
     msl.equipment.resources.picotech.errors
     msl.equipment.resources.picotech.picoscope
-
+    msl.equipment.resources.picotech.pt104

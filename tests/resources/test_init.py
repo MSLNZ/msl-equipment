@@ -78,6 +78,10 @@ def test_find_resource_class():
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)
             assert cls == resources.picotech.picoscope.ps6000.PicoScope6000, mod
+        for mod in ('PT-104', 'PT104'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.picotech.pt104.PT104, mod
 
     for man in ('Thorlabs', 'Thorlabs Inc.'):
         for mod in ('FW102C', 'FW102CNEB', 'FW212C', 'FW212CNEB'):

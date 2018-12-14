@@ -210,7 +210,7 @@ class PicoScope(ConnectionSDK):
             The enum depends on the model number of the PicoScope that you are connected to.
         include_name : :class:`bool`, optional
             If :data:`True` then includes the enum member name as a prefix.
-            For example, return ``CAL_DATE: 09Aug16`` if :data:`True` else ``09Aug16``.
+            For example, returns ``'CAL_DATE: 09Aug16'`` if `include_name` is :data:`True` else ``'09Aug16'``.
 
         Returns
         -------

@@ -21,6 +21,7 @@ Subpackages
 
     msl.equipment.resources.bentham
     msl.equipment.resources.cmi
+    msl.equipment.resources.electron_dynamics
     msl.equipment.resources.omega
     msl.equipment.resources.optosigma
     msl.equipment.resources.picotech

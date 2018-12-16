@@ -119,3 +119,9 @@ def test_find_resource_class():
         record = ConnectionRecord(manufacturer=man, model='SHOT-702', backend=Backend.MSL)
         cls = resources.find_resource_class(record)
         assert cls == resources.optosigma.shot702.SHOT702
+
+    for man in ('Electron Dynamics', 'Electron Dynamics LTD', 'Electron Dynamics Ltd.'):
+        for mod in ('TC LV', 'TCLV', 'TC M', 'TCM', 'TC M PCB', 'TC M Unit', 'TC Lite', 'TClite'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.electron_dynamics.tc_series.TCSeries

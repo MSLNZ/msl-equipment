@@ -13,6 +13,10 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
   * :class:`~msl.equipment.resources.cmi.sia3.SIA3` - Switched Integrator Amplifier
 
+* `Electron Dynamics Ltd`_
+
+  * :class:`~msl.equipment.resources.electron_dynamics.tc_series.TCSeries` - Temperature Controller (TC LV, TC M, TC Lite)
+
 * OMEGA_
 
   * :class:`~msl.equipment.resources.omega.ithx.iTHX` - iTHX-W3, iTHX-D3, iTHX-SD, iTHX-M, iTHX-W, iTHX-2
@@ -153,3 +157,4 @@ Please follow the `style guide`_.
 .. _OMEGA: https://www.omega.com/
 .. _OptoSigma: https://www.global-optosigma.com/en_jp/
 .. _PT-104 Platinum Resistance Data Logger: https://www.picotech.com/data-logger/pt-104/high-accuracy-temperature-daq
+.. _Electron Dynamics Ltd: http://www.electrondynamics.co.uk/wp/

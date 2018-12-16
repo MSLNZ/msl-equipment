@@ -40,6 +40,7 @@ htmlcov/
 .coverage
 junit.xml
 coverage.xml
+condatests.ini
 
 # created by the PicoScope SDK
 *Pipe_inOut

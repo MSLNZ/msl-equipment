@@ -102,8 +102,8 @@ class PT104(ConnectionSDK):
         """
         self._handle = None
         libtype = 'windll' if IS_WINDOWS else 'cdll'
-        self.set_exception_class(PicoTechError)
         super(PT104, self).__init__(record, libtype)
+        self.set_exception_class(PicoTechError)
 
         self.sdk.UsbPt104OpenUnit.argtypes = [POINTER(c_int16), POINTER(c_int8)]
         self.sdk.UsbPt104OpenUnit.errcheck = self._check

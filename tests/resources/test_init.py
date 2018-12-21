@@ -125,3 +125,7 @@ def test_find_resource_class():
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)
             assert cls == resources.electron_dynamics.tc_series.TCSeries
+
+    record = ConnectionRecord(manufacturer='Avantes', model='does not matter!', backend=Backend.MSL)
+    cls = resources.find_resource_class(record)
+    assert cls == resources.avantes.avaspec.AvaSpec

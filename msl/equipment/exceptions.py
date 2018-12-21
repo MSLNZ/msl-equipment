@@ -22,6 +22,10 @@ class ResourceClassNotFound(MSLConnectionError):
         super(ResourceClassNotFound, self).__init__(msg)
 
 
+class AvantesError(MSLConnectionError):
+    """Exception for equipment from Avantes."""
+
+
 class BenthamError(MSLConnectionError):
     """Exception for equipment from Bentham."""
 

@@ -5,6 +5,10 @@ MSL Resources
 =============
 MSL Resources are specific classes that are used to communicate with the equipment.
 
+* Avantes_
+
+  * :class:`~msl.equipment.resources.avantes.avaspec.AvaSpec` - The ``avaspecxXX.dll`` library
+
 * `Bentham Instruments Ltd`_
 
   * :class:`~msl.equipment.resources.bentham.benhw64.Bentham` - The benhw32_ library
@@ -158,3 +162,4 @@ Please follow the `style guide`_.
 .. _OptoSigma: https://www.global-optosigma.com/en_jp/
 .. _PT-104 Platinum Resistance Data Logger: https://www.picotech.com/data-logger/pt-104/high-accuracy-temperature-daq
 .. _Electron Dynamics Ltd: http://www.electrondynamics.co.uk/wp/
+.. _Avantes: https://www.avantes.com/

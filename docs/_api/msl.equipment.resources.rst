@@ -19,6 +19,7 @@ Subpackages
 
 .. toctree::
 
+    msl.equipment.resources.avantes
     msl.equipment.resources.bentham
     msl.equipment.resources.cmi
     msl.equipment.resources.electron_dynamics

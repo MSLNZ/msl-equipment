@@ -103,9 +103,9 @@ class AvaSpec(ConnectionSDK):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
+        self._handle = None
         super(AvaSpec, self).__init__(record, 'windll')
         self.set_exception_class(AvantesError)
-        self._handle = None
 
         self.MeasConfigType = MeasConfigType  #: :class:`MeasConfigType`
         self.OemDataType = OemDataType  #: :class:`OemDataType`

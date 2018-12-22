@@ -8,7 +8,7 @@ from .connection import Connection
 
 class ConnectionSDK(Connection):
 
-    def __init__(self, record, libtype):
+    def __init__(self, record, libtype, path=None):
         """Base class for equipment that use the SDK provided by the manufacturer
         for the connection.
 
@@ -25,10 +25,12 @@ class ConnectionSDK(Connection):
         ----------
         record : :class:`.EquipmentRecord`
             A record from an :ref:`equipment_database`.
-
         libtype : :class:`str`
             The library type. See :class:`~msl.loadlib.load_library.LoadLibrary`
             for more information.
+        path : :class:`str`, optional
+            The path to the SDK (if `record.connection.address` does not contain
+            this information).
 
         Raises
         ------
@@ -39,8 +41,10 @@ class ConnectionSDK(Connection):
         """
         super(ConnectionSDK, self).__init__(record)
 
-        # the address starts with 'SDK::'
-        self._lib = LoadLibrary(record.connection.address[5:], libtype)
+        if path is None:
+            path = record.connection.address[5:]  # the address starts with 'SDK::'
+
+        self._lib = LoadLibrary(path, libtype)
         self._path = self._lib.path
         self._sdk = self._lib.lib
         self._assembly = self._lib.assembly

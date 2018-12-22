@@ -26,16 +26,8 @@ if __name__ == '__main__':
         if info.contents.value == 0:  # equals 0 if everything is okay (see manual)
             print('  callback data:', ava.get_data())
 
-    # initializes the Avantes SDK
+    # initializes the Avantes SDK and establishes the connection to the spectrometer
     ava = record.connect()
-
-    # get the information about all connected devices
-    print('Devices found:')
-    for i, device in enumerate(ava.get_list()):
-        print('  Device %d' % i)
-        print('    SerialNumber: %s' % device.SerialNumber)
-        print('    UserFriendlyName: %s' % device.UserFriendlyName)
-        print('    Status: %s' % device.Status)
 
     # print (some of) the device information about the spectrometer
     print('DeviceConfigType parameters:')

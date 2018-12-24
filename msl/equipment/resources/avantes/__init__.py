@@ -1,4 +1,4 @@
 """
-Wrapper around the ``avaspecxXX.dll`` SDK from Avantes.
+Wrapper around the ``avaspec*.dll`` SDK from Avantes.
 """
 from .avaspec import MeasureCallback

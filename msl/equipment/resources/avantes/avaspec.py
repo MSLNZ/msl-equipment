@@ -1,5 +1,5 @@
 """
-Wrapper around the ``avaspecxXX.dll`` SDK from Avantes.
+Wrapper around the ``avaspec*.dll`` SDK from Avantes.
 
 The wrapper was written using v9.7 of the SDK.
 """
@@ -27,66 +27,8 @@ def avantes_callback(handle, info):
 @register(manufacturer='Avantes', model='.')
 class AvaSpec(ConnectionSDK):
 
-    WM_MEAS_READY = 0x8001
-    SETTINGS_RESERVED_LEN = 9720
-    INVALID_AVS_HANDLE_VALUE = 1000
-    USER_ID_LEN = 64
-    AVS_SERIAL_LEN = 10
-    MAX_TEMP_SENSORS = 3
-    ROOT_NAME_LEN = 6
-    VERSION_LEN = 16
-    AVASPEC_ERROR_MSG_LEN = 8
-    AVASPEC_MIN_MSG_LEN = 6
-    OEM_DATA_LEN = 4096
-    NR_WAVELEN_POL_COEF = 5
-    NR_NONLIN_POL_COEF = 8
-    MAX_VIDEO_CHANNELS = 2
-    NR_DEFECTIVE_PIXELS = 30
-    MAX_NR_PIXELS = 4096
-    NR_TEMP_POL_COEF = 5
-    NR_DAC_POL_COEF = 2
-    SAT_PEAK_INVERSION = 2
-    SW_TRIGGER_MODE = 0
-    HW_TRIGGER_MODE = 1
-    SS_TRIGGER_MODE = 2
-    EXTERNAL_TRIGGER = 0
-    SYNC_TRIGGER = 1
-    EDGE_TRIGGER_SOURCE = 0
-    LEVEL_TRIGGER_SOURCE = 1
-    ILX_FIRST_USED_DARK_PIXEL = 2
-    ILX_USED_DARK_PIXELS = 14
-    ILX_TOTAL_DARK_PIXELS = 18
-    TCD_FIRST_USED_DARK_PIXEL = 0
-    TCD_USED_DARK_PIXELS = 12
-    TCD_TOTAL_DARK_PIXELS = 13
-    HAMS9840_FIRST_USED_DARK_PIXEL = 0
-    HAMS9840_USED_DARK_PIXELS = 8
-    HAMS9840_TOTAL_DARK_PIXELS = 8
-    HAMS10420_FIRST_USED_DARK_PIXEL = 0
-    HAMS10420_USED_DARK_PIXELS = 4
-    HAMS10420_TOTAL_DARK_PIXELS = 4
-    HAMS11071_FIRST_USED_DARK_PIXEL = 0
-    HAMS11071_USED_DARK_PIXELS = 4
-    HAMS11071_TOTAL_DARK_PIXELS = 4
-    HAMS7031_FIRST_USED_DARK_PIXEL = 0
-    HAMS7031_USED_DARK_PIXELS = 4
-    HAMS7031_TOTAL_DARK_PIXELS = 4
-    HAMS11155_TOTAL_DARK_PIXELS = 20
-    MIN_ILX_INTTIME = 1.1
-    MILLI_TO_MICRO = 1000
-    NR_DIGITAL_OUTPUTS = 13
-    NR_DIGITAL_INPUTS = 13
-    NTC1_ID = 0
-    NTC2_ID = 1
-    TEC_ID = 2
-    NR_ANALOG_OUTPUTS = 2
-    ETH_CONN_STATUS_CONNECTING = 0
-    ETH_CONN_STATUS_CONNECTED = 1
-    ETH_CONN_STATUS_CONNECTED_NOMON = 2
-    ETH_CONN_STATUS_NOCONNECTION = 3
-
     def __init__(self, record):
-        """Wrapper around the ``avaspecxXX.dll`` SDK from Avantes.
+        """Wrapper around the ``avaspec*.dll`` SDK from Avantes.
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for an Avantes connection supports the following key-value pairs in the
@@ -368,7 +310,7 @@ class AvaSpec(ConnectionSDK):
         :class:`~msl.equipment.exceptions.AvantesError`
             If there was an error.
         """
-        values = np.zeros(AvaSpec.MAX_NR_PIXELS, dtype=np.double)
+        values = np.zeros(MAX_NR_PIXELS, dtype=np.double)
         self.sdk.AVS_GetLambda(self._handle, values.ctypes.data_as(POINTER(c_double)))
         return values[values > 0]
 
@@ -452,7 +394,7 @@ class AvaSpec(ConnectionSDK):
         :class:`~msl.equipment.exceptions.AvantesError`
             If there was an error.
         """
-        values = np.ones(AvaSpec.MAX_NR_PIXELS, dtype=np.uint8) * 9
+        values = np.ones(MAX_NR_PIXELS, dtype=np.uint8) * 9
         self.sdk.AVS_GetSaturatedPixels(self._handle, values.ctypes.data_as(POINTER(c_uint8)))
         return values[values < 9]
 
@@ -496,7 +438,7 @@ class AvaSpec(ConnectionSDK):
             If there was an error.
         """
         ticks = c_uint32()
-        values = np.ones(AvaSpec.MAX_NR_PIXELS, dtype=np.double) * -1.0
+        values = np.ones(MAX_NR_PIXELS, dtype=np.double) * -1.0
         self.sdk.AVS_GetScopeData(self._handle, ticks, values.ctypes.data_as(POINTER(c_double)))
         return ticks.value, values[values > -1.0]
 
@@ -606,6 +548,19 @@ class AvaSpec(ConnectionSDK):
             scan is available, or the number of scans that were saved in RAM (if `m_StoreToRAM`
             parameter > 0, see :class:`ControlSettingsType`), or `INVALID_MEAS_DATA` (``-8``).
             Set this value to :data:`None` if a callback is not needed.
+
+        Examples
+        --------
+        from msl.equipment.resources.avantes import MeasureCallback
+
+        @MeasureCallback
+        def avantes_callback(handle, info):
+            print('The DLL handle is:', handle.contents.value)
+            if info.contents.value == 0:  # equals 0 if everything is okay
+                print('  callback data:', ava.get_data())
+
+        # here "ava" is a reference to the AvaSpec class
+        ava.measure_callback(-1, avantes_callback)
 
         Raises
         ------
@@ -923,8 +878,8 @@ class AvaSpec(ConnectionSDK):
             If there was an error.
         """
         x = -9e99
-        src = np.ones(AvaSpec.MAX_NR_PIXELS, dtype=np.double) * x
-        dest = np.ones(AvaSpec.MAX_NR_PIXELS, dtype=np.double) * x
+        src = np.ones(MAX_NR_PIXELS, dtype=np.double) * x
+        dest = np.ones(MAX_NR_PIXELS, dtype=np.double) * x
         self.sdk.AVS_SuppressStrayLight(
             self._handle,
             factor,
@@ -993,6 +948,64 @@ class AvaSpec(ConnectionSDK):
         """
         self.sdk.AVS_UseHighResAdc(self._handle, bool(enable))
 
+
+WM_MEAS_READY = 0x8001
+SETTINGS_RESERVED_LEN = 9720
+INVALID_AVS_HANDLE_VALUE = 1000
+USER_ID_LEN = 64
+AVS_SERIAL_LEN = 10
+MAX_TEMP_SENSORS = 3
+ROOT_NAME_LEN = 6
+VERSION_LEN = 16
+AVASPEC_ERROR_MSG_LEN = 8
+AVASPEC_MIN_MSG_LEN = 6
+OEM_DATA_LEN = 4096
+NR_WAVELEN_POL_COEF = 5
+NR_NONLIN_POL_COEF = 8
+MAX_VIDEO_CHANNELS = 2
+NR_DEFECTIVE_PIXELS = 30
+MAX_NR_PIXELS = 4096
+NR_TEMP_POL_COEF = 5
+NR_DAC_POL_COEF = 2
+SAT_PEAK_INVERSION = 2
+SW_TRIGGER_MODE = 0
+HW_TRIGGER_MODE = 1
+SS_TRIGGER_MODE = 2
+EXTERNAL_TRIGGER = 0
+SYNC_TRIGGER = 1
+EDGE_TRIGGER_SOURCE = 0
+LEVEL_TRIGGER_SOURCE = 1
+ILX_FIRST_USED_DARK_PIXEL = 2
+ILX_USED_DARK_PIXELS = 14
+ILX_TOTAL_DARK_PIXELS = 18
+TCD_FIRST_USED_DARK_PIXEL = 0
+TCD_USED_DARK_PIXELS = 12
+TCD_TOTAL_DARK_PIXELS = 13
+HAMS9840_FIRST_USED_DARK_PIXEL = 0
+HAMS9840_USED_DARK_PIXELS = 8
+HAMS9840_TOTAL_DARK_PIXELS = 8
+HAMS10420_FIRST_USED_DARK_PIXEL = 0
+HAMS10420_USED_DARK_PIXELS = 4
+HAMS10420_TOTAL_DARK_PIXELS = 4
+HAMS11071_FIRST_USED_DARK_PIXEL = 0
+HAMS11071_USED_DARK_PIXELS = 4
+HAMS11071_TOTAL_DARK_PIXELS = 4
+HAMS7031_FIRST_USED_DARK_PIXEL = 0
+HAMS7031_USED_DARK_PIXELS = 4
+HAMS7031_TOTAL_DARK_PIXELS = 4
+HAMS11155_TOTAL_DARK_PIXELS = 20
+MIN_ILX_INTTIME = 1.1
+MILLI_TO_MICRO = 1000
+NR_DIGITAL_OUTPUTS = 13
+NR_DIGITAL_INPUTS = 13
+NTC1_ID = 0
+NTC2_ID = 1
+TEC_ID = 2
+NR_ANALOG_OUTPUTS = 2
+ETH_CONN_STATUS_CONNECTING = 0
+ETH_CONN_STATUS_CONNECTED = 1
+ETH_CONN_STATUS_CONNECTED_NOMON = 2
+ETH_CONN_STATUS_NOCONNECTION = 3
 
 ERROR_CODES = {
     -1: ('ERR_INVALID_PARAMETER',
@@ -1135,8 +1148,8 @@ class AvsIdentityType(Structure):
     """IdentityType Structure."""
     _pack_ = 1
     _fields_ = [
-        ('SerialNumber', c_char * AvaSpec.AVS_SERIAL_LEN),
-        ('UserFriendlyName', c_char * AvaSpec.USER_ID_LEN),
+        ('SerialNumber', c_char * AVS_SERIAL_LEN),
+        ('UserFriendlyName', c_char * USER_ID_LEN),
         ('Status', c_uint8)
     ]
 
@@ -1146,7 +1159,7 @@ class BroadcastAnswerType(Structure):
     _pack_ = 1
     _fields_ = [
         ('InterfaceType', c_uint8),
-        ('serial', c_uint8 * AvaSpec.AVS_SERIAL_LEN),
+        ('serial', c_uint8 * AVS_SERIAL_LEN),
         ('port', c_uint16),
         ('status', c_uint8),
         ('RemoteHostIp', c_uint32),
@@ -1182,16 +1195,16 @@ class DetectorType(Structure):
     _fields_ = [
         ('m_SensorType', c_uint8),
         ('m_NrPixels', c_uint16),
-        ('m_aFit', c_float * AvaSpec.NR_WAVELEN_POL_COEF),
+        ('m_aFit', c_float * NR_WAVELEN_POL_COEF),
         ('m_NLEnable', c_bool),
-        ('m_aNLCorrect', c_double * AvaSpec.NR_NONLIN_POL_COEF),
+        ('m_aNLCorrect', c_double * NR_NONLIN_POL_COEF),
         ('m_aLowNLCounts', c_double),
         ('m_aHighNLCounts', c_double),
-        ('m_Gain', c_float * AvaSpec.MAX_VIDEO_CHANNELS),
+        ('m_Gain', c_float * MAX_VIDEO_CHANNELS),
         ('m_Reserved', c_float),
-        ('m_Offset', c_float * AvaSpec.MAX_VIDEO_CHANNELS),
+        ('m_Offset', c_float * MAX_VIDEO_CHANNELS),
         ('m_ExtOffset', c_float),
-        ('m_DefectivePixels', c_uint16 * AvaSpec.NR_DEFECTIVE_PIXELS)
+        ('m_DefectivePixels', c_uint16 * NR_DEFECTIVE_PIXELS)
     ]
 
 
@@ -1210,7 +1223,7 @@ class SpectrumCalibrationType(Structure):
     _fields_ = [
         ('m_Smoothing', SmoothingType),
         ('m_CalInttime', c_float),
-        ('m_aCalibConvers', c_float * AvaSpec.MAX_NR_PIXELS),
+        ('m_aCalibConvers', c_float * MAX_NR_PIXELS),
     ]
 
 
@@ -1228,7 +1241,7 @@ class SpectrumCorrectionType(Structure):
     """SpectrumCorrectionType Structure."""
     _pack_ = 1
     _fields_ = [
-        ('m_aSpectrumCorrect', c_float * AvaSpec.MAX_NR_PIXELS),
+        ('m_aSpectrumCorrect', c_float * MAX_NR_PIXELS),
     ]
 
 
@@ -1291,7 +1304,7 @@ class TempSensorType(Structure):
     """TempSensorType Structure."""
     _pack_ = 1
     _fields_ = [
-        ('m_aFit', c_float * AvaSpec.NR_TEMP_POL_COEF),
+        ('m_aFit', c_float * NR_TEMP_POL_COEF),
     ]
 
 
@@ -1301,7 +1314,7 @@ class TecControlType(Structure):
     _fields_ = [
         ('m_Enable', c_bool),
         ('m_Setpoint', c_float),
-        ('m_aFit', c_float * AvaSpec.NR_DAC_POL_COEF),
+        ('m_aFit', c_float * NR_DAC_POL_COEF),
     ]
 
 
@@ -1333,7 +1346,7 @@ class OemDataType(Structure):
     """OemDataType Structure."""
     _pack_ = 1
     _fields_ = [
-        ('m_data', c_uint8 * AvaSpec.OEM_DATA_LEN)
+        ('m_data', c_uint8 * OEM_DATA_LEN)
     ]
 
 
@@ -1352,17 +1365,17 @@ class DeviceConfigType(Structure):
     _fields_ = [
         ('m_Len', c_uint16),
         ('m_ConfigVersion', c_uint16),
-        ('m_aUserFriendlyId', c_char * AvaSpec.USER_ID_LEN),
+        ('m_aUserFriendlyId', c_char * USER_ID_LEN),
         ('m_Detector', DetectorType),
         ('m_Irradiance', IrradianceType),
         ('m_Reflectance', SpectrumCalibrationType),
         ('m_SpectrumCorrect', SpectrumCorrectionType),
         ('m_StandAlone', StandAloneType),
         ('m_DynamicStorage', DynamicStorageType),
-        ('m_aTemperature', TempSensorType * AvaSpec.MAX_TEMP_SENSORS),
+        ('m_aTemperature', TempSensorType * MAX_TEMP_SENSORS),
         ('m_TecControl', TecControlType),
         ('m_ProcessControl', ProcessControlType),
         ('m_EthernetSettings', EthernetSettingsType),
-        ('m_aReserved', c_uint8 * AvaSpec.SETTINGS_RESERVED_LEN),
+        ('m_aReserved', c_uint8 * SETTINGS_RESERVED_LEN),
         ('m_OemData', OemDataType)
     ]

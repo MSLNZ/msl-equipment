@@ -7,6 +7,7 @@ from ctypes import *
 from enum import IntEnum
 
 import numpy as np
+from msl.loadlib import IS_WINDOWS
 
 from msl.equipment.connection_sdk import ConnectionSDK
 from msl.equipment.exceptions import AvantesError
@@ -14,14 +15,13 @@ from msl.equipment.resources import register
 
 HWND = c_void_p
 
-MeasureCallback = WINFUNCTYPE(None, POINTER(c_int), POINTER(c_int))
-""":class:`ctypes.WINFUNCTYPE`: Use as a decorator for a callback function when a scan is available.
+if IS_WINDOWS:
+    FUNCTYPE = WINFUNCTYPE
+else:
+    FUNCTYPE = CFUNCTYPE
 
-@MeasureCallback
-def avantes_callback(handle, info):
-    ticks, data = avaspec.get_data()  # where avaspec is the reference to the AvaSpec class
-
-"""
+MeasureCallback = FUNCTYPE(None, POINTER(c_int), POINTER(c_int))
+"""Used as a decorator for a callback function when a scan is available."""
 
 
 @register(manufacturer='Avantes', model='.')

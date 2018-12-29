@@ -121,7 +121,8 @@ class MotionControl(ConnectionSDK):
         """The API function returns OK if the function call was successful."""
         self.log_errcheck(result, func, args)
         if result != FT_OK:
-            self.raise_exception('{}: {}'.format(*ERROR_CODES[result]))
+            err_name, err_msg = ERROR_CODES.get(result, ('UnhandledError', 'Error code 0x{:x}'.format(result)))
+            self.raise_exception('{}: {}'.format(err_name, err_msg))
         return result
 
     def errcheck_true(self, result, func, args):
@@ -129,7 +130,7 @@ class MotionControl(ConnectionSDK):
         self.log_errcheck(result, func, args)
         if not result:
             msg = '{}.{}{} -> {}'.format(self.__class__.__name__, func.__name__, args, result)
-            self.raise_exception(msg)
+            self.raise_exception('The function did not return True.\n' + msg)
         return result
 
     def disconnect(self):

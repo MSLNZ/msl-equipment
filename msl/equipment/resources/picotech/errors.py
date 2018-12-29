@@ -158,6 +158,35 @@ PICO_INVALID_VALUE_IN_MIN_BUFFER                 = 0x00000137
 PICO_SIGGEN_FREQUENCY_OUT_OF_RANGE               = 0x00000138
 PICO_EEPROM2_CORRUPT                             = 0x00000139
 PICO_EEPROM2_FAIL                                = 0x0000013A
+PICO_SERIAL_BUFFER_TOO_SMALL                     = 0x0000013B
+PICO_SIGGEN_TRIGGER_AND_EXTERNAL_CLOCK_CLASH     = 0x0000013C
+PICO_WARNING_SIGGEN_AUXIO_TRIGGER_DISABLED       = 0x0000013D
+PICO_SIGGEN_GATING_AUXIO_NOT_AVAILABLE           = 0x00000013E
+PICO_SIGGEN_GATING_AUXIO_ENABLED                 = 0x00000013F
+PICO_RESOURCE_ERROR                              = 0x00000140
+PICO_TEMPERATURE_TYPE_INVALID                    = 0x000000141
+PICO_TEMPERATURE_TYPE_NOT_SUPPORTED              = 0x000000142
+PICO_TIMEOUT                                     = 0x00000143
+PICO_DEVICE_NOT_FUNCTIONING                      = 0x00000144
+PICO_INTERNAL_ERROR                              = 0x00000145
+PICO_MULTIPLE_DEVICES_FOUND                      = 0x00000146
+PICO_WARNING_NUMBER_OF_SEGMENTS_REDUCED          = 0x00000147
+PICO_CAL_PINS_STATES                             = 0x00000148
+PICO_CAL_PINS_FREQUENCY                          = 0x00000149
+PICO_CAL_PINS_AMPLITUDE                          = 0x0000014A
+PICO_CAL_PINS_WAVETYPE                           = 0x0000014B
+PICO_CAL_PINS_OFFSET                             = 0x0000014C
+PICO_PROBE_FAULT                                 = 0x0000014D
+PICO_PROBE_IDENTITY_UNKNOWN                      = 0x0000014E
+PICO_PROBE_POWER_DC_POWER_SUPPLY_REQUIRED        = 0x0000014F
+PICO_PROBE_NOT_POWERED_WITH_DC_POWER_SUPPLY      = 0x00000150
+PICO_PROBE_CONFIG_FAILURE                        = 0x00000151
+PICO_PROBE_INTERACTION_CALLBACK                  = 0x00000152
+PICO_UNKNOWN_INTELLIGENT_PROBE                   = 0x00000153
+PICO_INTELLIGENT_PROBE_CORRUPT                   = 0x00000154
+PICO_PROBE_COLLECTION_NOT_STARTED                = 0x00000155
+PICO_PROBE_POWER_CONSUMPTION_EXCEEDED            = 0x00000156
+PICO_WARNING_PROBE_CHANNEL_OUT_OF_SYNC           = 0x00000157
 PICO_DEVICE_TIME_STAMP_RESET                     = 0x01000000
 PICO_WATCHDOGTIMER                               = 0x10000000
 PICO_IPP_NOT_FOUND                               = 0x10000001
@@ -846,6 +875,122 @@ ERROR_CODES_API = {
     PICO_EEPROM2_FAIL: (
         'PICO_EEPROM2_FAIL',
         ''
+    ),
+    PICO_SERIAL_BUFFER_TOO_SMALL: (
+        'PICO_SERIAL_BUFFER_TOO_SMALL',
+        'The serial buffer is too small for the required information.'
+    ),
+    PICO_SIGGEN_TRIGGER_AND_EXTERNAL_CLOCK_CLASH: (
+        'PICO_SIGGEN_TRIGGER_AND_EXTERNAL_CLOCK_CLASH',
+        'The signal generator trigger and the external clock have both been set.'
+    ),
+    PICO_WARNING_SIGGEN_AUXIO_TRIGGER_DISABLED: (
+        'PICO_WARNING_SIGGEN_AUXIO_TRIGGER_DISABLED',
+        'The AUX trigger was enabled and the external clock has been enabled, so the AUX has been automatically disabled.'
+    ),
+    PICO_SIGGEN_GATING_AUXIO_NOT_AVAILABLE: (
+        'PICO_SIGGEN_GATING_AUXIO_NOT_AVAILABLE',
+        'The AUX I/O was set as a scope trigger and is now being set as a signal generator gating trigger.'
+    ),
+    PICO_SIGGEN_GATING_AUXIO_ENABLED: (
+        'PICO_SIGGEN_GATING_AUXIO_ENABLED',
+        'The AUX I/O was set by the signal generator as a gating trigger and is now being set as a scope trigger.'
+    ),
+    PICO_RESOURCE_ERROR: (
+        'PICO_RESOURCE_ERROR',
+        'A resource has failed to initialise.'
+    ),
+    PICO_TEMPERATURE_TYPE_INVALID: (
+        'PICO_TEMPERATURE_TYPE_INVALID',
+        'The temperature type is out of range.'
+    ),
+    PICO_TEMPERATURE_TYPE_NOT_SUPPORTED: (
+        'PICO_TEMPERATURE_TYPE_NOT_SUPPORTED',
+        'A requested temperature type is not supported on this device.'
+    ),
+    PICO_TIMEOUT: (
+        'PICO_TIMEOUT',
+        'A read/write to the device has timed out.'
+    ),
+    PICO_DEVICE_NOT_FUNCTIONING: (
+        'PICO_DEVICE_NOT_FUNCTIONING',
+        'The device cannot be connected correctly.'
+    ),
+    PICO_INTERNAL_ERROR: (
+        'PICO_INTERNAL_ERROR',
+        'The driver has experienced an unknown error and is unable to recover from this error.'
+    ),
+    PICO_MULTIPLE_DEVICES_FOUND: (
+        'PICO_MULTIPLE_DEVICES_FOUND',
+        'Used when opening units via IP and more than multiple units have the same ip address.'
+    ),
+    PICO_WARNING_NUMBER_OF_SEGMENTS_REDUCED: (
+        'PICO_WARNING_NUMBER_OF_SEGMENTS_REDUCED',
+        'The number of segments has been reduced.'
+    ),
+    PICO_CAL_PINS_STATES: (
+        'PICO_CAL_PINS_STATES',
+        'The calibration pin states argument is out of range.'
+    ),
+    PICO_CAL_PINS_FREQUENCY: (
+        'PICO_CAL_PINS_FREQUENCY',
+        'The calibration pin frequency argument is out of range.'
+    ),
+    PICO_CAL_PINS_AMPLITUDE: (
+        'PICO_CAL_PINS_AMPLITUDE',
+        'The calibration pin amplitude argument is out of range.'
+    ),
+    PICO_CAL_PINS_WAVETYPE: (
+        'PICO_CAL_PINS_WAVETYPE',
+        'The calibration pin wavetype argument is out of range.'
+    ),
+    PICO_CAL_PINS_OFFSET: (
+        'PICO_CAL_PINS_OFFSET',
+        'The calibration pin offset argument is out of range.'
+    ),
+    PICO_PROBE_FAULT: (
+        'PICO_PROBE_FAULT',
+        'The probe\'s identity has a problem.'
+    ),
+    PICO_PROBE_IDENTITY_UNKNOWN: (
+        'PICO_PROBE_IDENTITY_UNKNOWN',
+        'The probe has not been identified.'
+    ),
+    PICO_PROBE_POWER_DC_POWER_SUPPLY_REQUIRED: (
+        'PICO_PROBE_POWER_DC_POWER_SUPPLY_REQUIRED',
+        'Enabling the probe would cause the device to exceed the allowable current limit.'
+    ),
+    PICO_PROBE_NOT_POWERED_WITH_DC_POWER_SUPPLY: (
+        'PICO_PROBE_NOT_POWERED_WITH_DC_POWER_SUPPLY',
+        'The DC power supply is connected; enabling the probe would cause the device to exceed the allowable current limit.'
+    ),
+    PICO_PROBE_CONFIG_FAILURE: (
+        'PICO_PROBE_CONFIG_FAILURE',
+        'Failed to complete probe configuration.'
+    ),
+    PICO_PROBE_INTERACTION_CALLBACK: (
+        'PICO_PROBE_INTERACTION_CALLBACK',
+        'Failed to set the callback function, as currently in current callback function.'
+    ),
+    PICO_UNKNOWN_INTELLIGENT_PROBE: (
+        'PICO_UNKNOWN_INTELLIGENT_PROBE',
+        'The probe has been verified but not know on this driver.'
+    ),
+    PICO_INTELLIGENT_PROBE_CORRUPT: (
+        'PICO_INTELLIGENT_PROBE_CORRUPT',
+        'The intelligent probe cannot be verified.'
+    ),
+    PICO_PROBE_COLLECTION_NOT_STARTED: (
+        'PICO_PROBE_COLLECTION_NOT_STARTED',
+        'The callback is null, probe collection will only start when first callback is a none null pointer.'
+    ),
+    PICO_PROBE_POWER_CONSUMPTION_EXCEEDED: (
+        'PICO_PROBE_POWER_CONSUMPTION_EXCEEDED',
+        'The current drawn by the probe(s) has exceeded the allowed limit.'
+    ),
+    PICO_WARNING_PROBE_CHANNEL_OUT_OF_SYNC: (
+        'PICO_WARNING_PROBE_CHANNEL_OUT_OF_SYNC',
+        'The channel range limits have changed due to connecting or disconnecting a probe the channel has been enabled.'
     ),
     PICO_DEVICE_TIME_STAMP_RESET: (
         'PICO_DEVICE_TIME_STAMP_RESET',

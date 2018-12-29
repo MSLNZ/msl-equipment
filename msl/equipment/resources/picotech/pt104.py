@@ -12,7 +12,7 @@ from msl.equipment.exceptions import PicoTechError
 from msl.equipment.resources import register
 
 from . import c_enum
-from .errors import ERROR_CODES_API, PICO_OK, PICO_INFO
+from .errors import ERROR_CODES_API, PICO_OK, PICO_INFO, PICO_NOT_FOUND
 from .picoscope.enums import PicoScopeInfoApi
 
 
@@ -53,7 +53,7 @@ def enumerate_units(comm_type='all'):
     :class:`list` of :class:`str`
         A list of serial numbers of the PT-104 Data Loggers that were found.
     """
-    length = c_uint32(1024)
+    length = c_uint32(1023)
     details = (c_int8 * length.value)()
 
     t = comm_type.lower()
@@ -69,9 +69,12 @@ def enumerate_units(comm_type='all'):
     libtype = 'windll' if IS_WINDOWS else 'cdll'
     sdk = LoadLibrary('usbpt104', libtype)
     result = sdk.lib.UsbPt104Enumerate(byref(details), byref(length), t_val)
-    if result != 0:
-        raise PicoTechError('Cannot enumerate PT-104 Data Loggers')
-
+    if result != PICO_OK:
+        if result == PICO_NOT_FOUND:
+            err_name, err_msg = 'PICO_NOT_FOUND', 'Are you sure that a PT-104 is connected to the computer?'
+        else:
+            err_name, err_msg = ERROR_CODES_API.get(result, ('UnhandledError', 'Error code 0x{:x}'.format(result)))
+        raise PicoTechError('Cannot enumerate units.\n{}: {}'.format(err_name, err_msg))
     return string_at(addressof(details)).decode('utf-8').split(',')
 
 
@@ -133,7 +136,7 @@ class PT104(ConnectionSDK):
         self.log_errcheck(result, func, arguments)
         if result != PICO_OK:
             conn = self.equipment_record.connection
-            error_name, msg = ERROR_CODES_API[result]
+            error_name, msg = ERROR_CODES_API.get(result, ('UnhandledError', 'Error code 0x{:x}'.format(result)))
             error_msg = msg.format(model=conn.model, serial=conn.serial)
             self.raise_exception('{}: {}'.format(error_name, error_msg))
 

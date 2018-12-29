@@ -63,7 +63,7 @@ class PicoScopeApi(PicoScope):
             return result
         if result != PICO_OK:
             conn = self.equipment_record.connection
-            error_name, msg = ERROR_CODES_API[result]
+            error_name, msg = ERROR_CODES_API.get(result, ('UnhandledError', 'Error code 0x{:x}'.format(result)))
             error_msg = msg.format(
                 model=conn.model,
                 serial=conn.serial,

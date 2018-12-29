@@ -1,5 +1,5 @@
 """
-Exceptions and error codes defined in the Pico Technology SDK v10.6.10.24
+Exceptions and error codes defined in the Pico Technology SDK.
 """
 from ctypes import c_uint32
 
@@ -160,6 +160,15 @@ PICO_EEPROM2_CORRUPT                             = 0x00000139
 PICO_EEPROM2_FAIL                                = 0x0000013A
 PICO_DEVICE_TIME_STAMP_RESET                     = 0x01000000
 PICO_WATCHDOGTIMER                               = 0x10000000
+PICO_IPP_NOT_FOUND                               = 0x10000001
+PICO_IPP_NO_FUNCTION                             = 0x10000002
+PICO_IPP_ERROR                                   = 0x10000003
+PICO_SHADOW_CAL_NOT_AVAILABLE                    = 0x10000004
+PICO_SHADOW_CAL_DISABLED                         = 0x10000005
+PICO_SHADOW_CAL_ERROR                            = 0x10000006
+PICO_SHADOW_CAL_CORRUPT                          = 0x10000007
+PICO_DEVICE_MEMORY_OVERFLOW                      = 0x10000008
+PICO_RESERVED_1                                  = 0x11000000
 
 PICO_STATUS                                      = c_uint32
 
@@ -845,5 +854,37 @@ ERROR_CODES_API = {
     PICO_WATCHDOGTIMER: (
         'PICO_WATCHDOGTIMER',
         ''
+    ),
+    PICO_IPP_NOT_FOUND: (
+        'PICO_IPP_NOT_FOUND',
+        'The picoipp.dll has not been found.'
+    ),
+    PICO_IPP_NO_FUNCTION: (
+        'PICO_IPP_NO_FUNCTION',
+        'A function in the picoipp.dll does not exist.'
+    ),
+    PICO_IPP_ERROR: (
+        'PICO_IPP_ERROR',
+        'The Pico IPP call has failed.'
+    ),
+    PICO_SHADOW_CAL_NOT_AVAILABLE: (
+        'PICO_SHADOW_CAL_NOT_AVAILABLE',
+        'Shadow calibration is not available on this device.'
+    ),
+    PICO_SHADOW_CAL_DISABLED: (
+        'PICO_SHADOW_CAL_DISABLED',
+        'Shadow calibration is currently disabled.'
+    ),
+    PICO_SHADOW_CAL_ERROR: (
+        'PICO_SHADOW_CAL_ERROR',
+        'Shadow calibration error has occurred.'
+    ),
+    PICO_SHADOW_CAL_CORRUPT: (
+        'PICO_SHADOW_CAL_CORRUPT',
+        'The shadow calibration is corrupt.'
+    ),
+    PICO_DEVICE_MEMORY_OVERFLOW: (
+        'PICO_DEVICE_MEMORY_OVERFLOW',
+        'The onboard memory the of device has overflowed.'
     ),
 }

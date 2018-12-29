@@ -96,7 +96,7 @@ class PicoScope2k3k(PicoScope):
                 self.raise_exception(msg)
             error_code = int(self.get_unit_info(6))  # passing in line=6 returns one of the error codes
 
-        error_name, message = ERROR_CODES[error_code]
+        error_name, message = ERROR_CODES.get(error_code, ('UnhandledError', 'Error code 0x{:x}'.format(error_code)))
         message = message.format(
             model=conn.model,
             serial=conn.serial,

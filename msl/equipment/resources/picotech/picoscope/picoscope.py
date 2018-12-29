@@ -14,6 +14,7 @@ from .channel import PicoScopeChannel
 from . import structs
 from . import enums
 from . import callbacks
+from ..errors import ERROR_CODES_API, PICO_OK, PICO_NOT_FOUND
 
 ALLOWED_SDKs = ('ps2000', 'ps2000a', 'ps3000', 'ps3000a', 'ps4000', 'ps4000a', 'ps5000', 'ps5000a', 'ps6000')
 
@@ -34,16 +35,18 @@ def enumerate_units():
         A list of serial numbers of the PicoScopes that were found.
     """
     count = c_int16()
-    serials = c_int8()
-    serial_length = c_int16()
+    size = c_int16(1023)
+    serials = (c_int8 * size.value)()
     libtype = 'windll' if IS_WINDOWS else 'cdll'
     sdk = LoadLibrary('ps5000a', libtype)
-    result = sdk.lib.ps5000aEnumerateUnits(byref(count), byref(serials), byref(serial_length))
-    if result != 0:
-        msg = 'Cannot enumerate units. This function does not function properly if ' \
-              'you opened a connection to a PicoScope already'
-        raise PicoTechError(msg)
-    return string_at(addressof(serials)).decode('utf-8').strip().split(',')
+    result = sdk.lib.ps5000aEnumerateUnits(byref(count), byref(serials), byref(size))
+    if result != PICO_OK:
+        if result == PICO_NOT_FOUND:
+            err_name, err_msg = 'PICO_NOT_FOUND', 'Are you sure that a PicoScope is connected to the computer?'
+        else:
+            err_name, err_msg = ERROR_CODES_API.get(result, ('UnhandledError', 'Error code 0x{:x}'.format(result)))
+        raise PicoTechError('Cannot enumerate units.\n{}: {}'.format(err_name, err_msg))
+    return string_at(addressof(serials)).decode('utf-8').split(',')
 
 
 class PicoScope(ConnectionSDK):

@@ -75,8 +75,8 @@ class ConnectionSerial(ConnectionMessageBased):
         self.max_read_size = props.get('max_read_size', self._max_read_size)
         self.timeout = props.get('timeout', None)
 
-        if record.connection.address.startswith('SERIAL::'):
-            # for addresses like -> SERIAL::/dev/pts/12
+        if '/dev/' in record.connection.address:
+            # for addresses like -> SERIAL::/dev/ttyS2
             self._serial.port = record.connection.address.split('::')[-1]
         else:
             self._serial.port = record.connection.address

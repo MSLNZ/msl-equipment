@@ -10,7 +10,7 @@ from msl.equipment.exceptions import MSLConnectionError, MSLTimeoutError
 from msl.equipment import resources
 
 __author__ = 'Joseph Borbely'
-__copyright__ = '\xa9 2017 - 2018, ' + __author__
+__copyright__ = '\xa9 2017 - 2019, ' + __author__
 __version__ = '0.1.0'
 
 version_info = namedtuple('version_info', 'major minor micro')(*map(int, __version__.split('.')[:3]))

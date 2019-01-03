@@ -551,16 +551,18 @@ class AvaSpec(ConnectionSDK):
 
         Examples
         --------
-        from msl.equipment.resources.avantes import MeasureCallback
+        .. code-block:: python
 
-        @MeasureCallback
-        def avantes_callback(handle, info):
-            print('The DLL handle is:', handle.contents.value)
-            if info.contents.value == 0:  # equals 0 if everything is okay
-                print('  callback data:', ava.get_data())
+            from msl.equipment.resources.avantes import MeasureCallback
 
-        # here "ava" is a reference to the AvaSpec class
-        ava.measure_callback(-1, avantes_callback)
+            @MeasureCallback
+            def avantes_callback(handle, info):
+                print('The DLL handle is:', handle.contents.value)
+                if info.contents.value == 0:  # equals 0 if everything is okay
+                    print('  callback data:', ava.get_data())
+
+            # here "ava" is a reference to the AvaSpec class
+            ava.measure_callback(-1, avantes_callback)
 
         Raises
         ------

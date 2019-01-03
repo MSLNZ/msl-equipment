@@ -1,10 +1,13 @@
+import pytest
 import nidaqmx
 from nidaqmx import stream_readers
 from nidaqmx import stream_writers
 
+from msl.loadlib import IS_WINDOWS
 from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
 
 
+@pytest.mark.skipif(not IS_WINDOWS, reason='nidaqmx only runs on Windows')
 def test_equivalent_to_importing_nidaqmx():
     record = EquipmentRecord(
         connection=ConnectionRecord(

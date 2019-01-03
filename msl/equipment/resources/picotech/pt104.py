@@ -78,7 +78,7 @@ def enumerate_units(comm_type='all'):
     return string_at(addressof(details)).decode('utf-8').split(',')
 
 
-@register(manufacturer='Pico\s*Tech', model='PT[-]?104')
+@register(manufacturer=r'Pico\s*Tech', model=r'PT[-]?104')
 class PT104(ConnectionSDK):
 
     MIN_WIRES = 2

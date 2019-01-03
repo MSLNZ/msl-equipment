@@ -44,7 +44,7 @@ def parse_pico_scope_api_header(path):
         elif '*' in string:
             data_type += '*'
         if len(split) > 1:
-            out = [data_type, re.search('[a-zA-Z_]+', split[-1]).group(0)]
+            out = [data_type, re.search(r'[a-zA-Z_]+', split[-1]).group(0)]
         else:
             if data_type == 'GetOverviewBuffersMaxMin':
                 out = [data_type, 'lpGetOverviewBuffersMaxMin']
@@ -66,8 +66,8 @@ def parse_pico_scope_api_header(path):
             if line.startswith('PREF0') or line.startswith('typedef void') or line.startswith('typedef int16_t'):
                 if line.startswith('PREF0'):
                     key = 'functions'
-                    function_name = re.findall('\((.*?)\)', line)[0].strip()
-                    restype = re.findall('PREF1(.*?)PREF2', line)[0].strip()
+                    function_name = re.findall(r'\((.*?)\)', line)[0].strip()
+                    restype = re.findall(r'PREF1(.*?)PREF2', line)[0].strip()
                 else:
                     key = 'functypes'
                     function_name = line.split('*')[1][:-2]

@@ -120,7 +120,7 @@ class ConnectionSerial(ConnectionMessageBased):
         except serial.serialutil.SerialException:
             # PyVISA and PyVISA-py accept various resource names: 'ASRL#', 'COM#', 'LPT#', 'ASRLCOM#'
             # but Serial seems to only be happy with 'COM#'
-            number = re.search('\d+', record.connection.address)  # get the port number from the address
+            number = re.search(r'\d+', record.connection.address)  # get the port number from the address
             if number is None:
                 self.raise_exception('A port number was not specified -- address={}'.format(record.connection.address))
             self._serial.port = 'COM{}'.format(number.group(0))

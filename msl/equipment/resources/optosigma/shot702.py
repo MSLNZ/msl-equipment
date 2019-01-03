@@ -9,7 +9,7 @@ from msl.equipment.connection_serial import ConnectionSerial
 from msl.equipment.resources import register
 
 
-@register(manufacturer='Opto\s*Sigma|Sigma\s*Koki', model='SHOT-702')
+@register(manufacturer=r'Opto\s*Sigma|Sigma\s*Koki', model=r'SHOT-702')
 class SHOT702(ConnectionSerial):
 
     def __init__(self, record):
@@ -25,8 +25,8 @@ class SHOT702(ConnectionSerial):
         """
         super(SHOT702, self).__init__(record)
 
-        self._status_regex = re.compile('-*\s*(\d+),\s*(\d+),([XK]),([LMWK]),([BR])')
-        self._speed_regex = re.compile('S(\d+)F(\d+)R(\d+)S(\d+)F(\d+)R(\d+)')
+        self._status_regex = re.compile(r'-*\s*(\d+),\s*(\d+),([XK]),([LMWK]),([BR])')
+        self._speed_regex = re.compile(r'S(\d+)F(\d+)R(\d+)S(\d+)F(\d+)R(\d+)')
         self.set_exception_class(OptoSigmaError)
 
     def get_input_status(self):

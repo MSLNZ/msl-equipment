@@ -23,7 +23,7 @@ from msl.equipment.resources.thorlabs.kinesis.enums import (
 )
 
 
-@register(manufacturer='Thorlabs', model='KSC101')
+@register(manufacturer=r'Thorlabs', model=r'KSC101')
 class KCubeSolenoid(MotionControl):
 
     def __init__(self, record):

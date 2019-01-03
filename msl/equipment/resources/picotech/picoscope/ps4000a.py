@@ -8,7 +8,7 @@ from .picoscope_api import PicoScopeApi
 from .functions import ps4000aApi_funcptrs
 
 
-@register(manufacturer='Pico\s*Tech', model='4(44|82)4')
+@register(manufacturer=r'Pico\s*Tech', model=r'4(44|82)4')
 class PicoScope4000A(PicoScopeApi):
 
     MAX_VALUE = 32767

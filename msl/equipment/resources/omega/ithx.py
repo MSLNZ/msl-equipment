@@ -26,7 +26,7 @@ from msl.equipment.connection_socket import ConnectionSocket
 from msl.equipment.resources import register
 
 
-@register(manufacturer='OMEGA', model='iTHX-[2DMSW][3D]*', flags=re.IGNORECASE)
+@register(manufacturer=r'OMEGA', model=r'iTHX-[2DMSW][3D]*', flags=re.IGNORECASE)
 class iTHX(ConnectionSocket):
 
     def __init__(self, record):
@@ -310,7 +310,7 @@ class iTHX(ConnectionSocket):
             self._connect()  # reconnect
             return self._get(message, probe, size=size)  # retry
         else:
-            values = tuple(float(v) for v in re.split('[,;]', ret))
+            values = tuple(float(v) for v in re.split(r'[,;]', ret))
             if len(values) == 1:
                 return values[0]
             else:

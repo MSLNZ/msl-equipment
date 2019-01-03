@@ -38,7 +38,7 @@ from msl.equipment.resources.thorlabs.kinesis.enums import (
 )
 
 
-@register(manufacturer='Thorlabs', model='KDC101')
+@register(manufacturer=r'Thorlabs', model=r'KDC101')
 class KCubeDCServo(MotionControl):
 
     def __init__(self, record):

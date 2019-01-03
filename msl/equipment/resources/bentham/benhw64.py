@@ -13,7 +13,7 @@ from .errors import BI_OK, ERROR_CODES
 from .tokens import MonochromatorCurrentWL, BenMono
 
 
-@register(manufacturer='Bentham', model='[D]*TMc300')
+@register(manufacturer=r'Bentham', model=r'[D]*TMc300')
 class Bentham(Connection):
 
     def __init__(self, record):

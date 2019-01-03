@@ -12,7 +12,7 @@ from msl.equipment.resources.thorlabs.kinesis.structs import FF_IOSettings
 from msl.equipment.resources.thorlabs.kinesis.enums import FF_IOModes, FF_SignalModes
 
 
-@register(manufacturer='Thorlabs', model='MFF10[1|2]')
+@register(manufacturer=r'Thorlabs', model=r'MFF10[1|2]')
 class FilterFlipper(MotionControl):
 
     MIN_TRANSIT_TIME = 300

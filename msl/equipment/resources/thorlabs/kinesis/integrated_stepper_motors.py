@@ -40,7 +40,7 @@ from msl.equipment.resources.thorlabs.kinesis.enums import (
 )
 
 
-@register(manufacturer='Thorlabs', model='(LTS(150|300)|MLJ(050|150)|K10CR1)')
+@register(manufacturer=r'Thorlabs', model=r'(LTS(150|300)|MLJ(050|150)|K10CR1)')
 class IntegratedStepperMotors(MotionControl):
 
     def __init__(self, record):

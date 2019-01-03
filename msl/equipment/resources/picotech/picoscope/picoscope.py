@@ -414,7 +414,7 @@ class PicoScope(ConnectionSDK):
             self.SetChannel(self._handle, channel, enabled, coupling, scale, offset)
 
         # get the voltage range as a floating-point number
-        voltage_range = float(re.findall('\d+', scale.name)[0])
+        voltage_range = float(re.findall(r'\d+', scale.name)[0])
         if 'M' in scale.name:
             voltage_range *= 1e-3  # milli volts
 

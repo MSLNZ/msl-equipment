@@ -43,7 +43,7 @@ class TriggerMode(IntEnum):
     OUTPUT = 1  #: Generate an active-high pulse when the position changes
 
 
-@register(manufacturer='Thorlabs', model='FW(10|21)2C')
+@register(manufacturer=r'Thorlabs', model=r'FW(10|21)2C')
 class FilterWheelXX2C(ConnectionSDK):
 
     def __init__(self, record):

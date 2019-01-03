@@ -9,7 +9,7 @@ from .functions import ps4000Api_funcptrs
 from .. import c_enum
 
 
-@register(manufacturer='Pico\s*Tech', model='4[24][26][24]')
+@register(manufacturer=r'Pico\s*Tech', model=r'4[24][26][24]')
 class PicoScope4000(PicoScopeApi):
 
     MAX_OVERSAMPLE_12BIT = 16

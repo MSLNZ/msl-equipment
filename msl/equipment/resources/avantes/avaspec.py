@@ -24,7 +24,7 @@ MeasureCallback = FUNCTYPE(None, POINTER(c_int), POINTER(c_int))
 """Used as a decorator for a callback function when a scan is available."""
 
 
-@register(manufacturer='Avantes', model='.')
+@register(manufacturer=r'Avantes', model=r'.')
 class AvaSpec(ConnectionSDK):
 
     def __init__(self, record):

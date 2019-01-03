@@ -516,7 +516,7 @@ class ConnectionRecord(object):
             return 'SOCKET'
 
         # determine the MSL Interface
-        match = re.match('[+_A-Z]+', address_upper)
+        match = re.match(r'[+_A-Z]+', address_upper)
         interface_name = '' if match is None else match.group(0).replace('+', '_')
 
         # check if aliases are used for the MSL Interface

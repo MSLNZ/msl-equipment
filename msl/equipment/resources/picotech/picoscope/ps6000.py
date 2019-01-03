@@ -8,7 +8,7 @@ from .picoscope_api import PicoScopeApi
 from .functions import ps6000Api_funcptrs
 
 
-@register(manufacturer='Pico\s*Tech', model='6\d{3}')
+@register(manufacturer=r'Pico\s*Tech', model=r'6\d{3}')
 class PicoScope6000(PicoScopeApi):
 
     MAX_OVERSAMPLE_8BIT = 256

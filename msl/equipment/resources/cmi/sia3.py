@@ -25,7 +25,7 @@ class IntegrationTime(IntEnum):
     TIME_2 = 14
 
 
-@register(manufacturer='C.*M.*I', model='SIA3')
+@register(manufacturer=r'C.*M.*I', model=r'SIA3')
 class SIA3(ConnectionSerial):
 
     GAIN = IntegrationTime  #: The gain (i.e., the integration time)

@@ -8,7 +8,7 @@ from .picoscope_2k3k import PicoScope2k3k
 from .functions import ps2000_funcptrs
 
 
-@register(manufacturer='Pico\s*Tech', model='2[12]0[2345]A*(?<!MSO)$')
+@register(manufacturer=r'Pico\s*Tech', model=r'2[12]0[2345]A*(?<!MSO)$')
 class PicoScope2000(PicoScope2k3k):
 
     FIRST_USB = 1

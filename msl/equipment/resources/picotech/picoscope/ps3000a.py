@@ -9,7 +9,7 @@ from .functions import ps3000aApi_funcptrs
 from .structs import PS3000ATriggerInfo
 
 
-@register(manufacturer='Pico\s*Tech', model='3\d{3}[ABD\s]')
+@register(manufacturer=r'Pico\s*Tech', model=r'3\d{3}[ABD\s]')
 class PicoScope3000A(PicoScopeApi):
 
     MAX_OVERSAMPLE = 256

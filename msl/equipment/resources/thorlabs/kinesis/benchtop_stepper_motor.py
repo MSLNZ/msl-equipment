@@ -42,7 +42,7 @@ from msl.equipment.resources.thorlabs.kinesis.enums import (
 )
 
 
-@register(manufacturer='Thorlabs', model='BSC(101|102|103|201|202|203)')
+@register(manufacturer=r'Thorlabs', model=r'BSC(101|102|103|201|202|203)')
 class BenchtopStepperMotor(MotionControl):
 
     def __init__(self, record):

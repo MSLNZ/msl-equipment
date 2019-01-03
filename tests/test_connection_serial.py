@@ -34,7 +34,7 @@ def test_connection_serial_read():
     thread = threading.Thread(target=echo_server, args=(master,))
     thread.start()
 
-    time.sleep(0.1)  # allow some time for the echo server to start
+    time.sleep(0.5)  # allow some time for the echo server to start
 
     record = EquipmentRecord(
         connection=ConnectionRecord(
@@ -43,7 +43,7 @@ def test_connection_serial_read():
             properties={
                 'read_termination': term,
                 'write_termination': term,
-                'timeout': 5,
+                'timeout': 25,
             },
         )
     )

@@ -21,14 +21,15 @@ CTYPES_MAP = {
     'char': 'c_char',
     'char*': 'c_char_p',
     'char const*': 'c_char_p',
-    'const char*': 'c_char_p',
+    'char *': 'c_char_p',
+    'signed char*': 'c_char_p',
+    'unsigned char*': 'POINTER(c_ubyte)',
     'wchar_t': 'c_wchar',
     'wchar_t*': 'c_wchar_p',
     'short': 'c_short',
     'int': 'c_int',
     'long': 'c_long',
     'long long': 'c_longlong',
-    'unsigned long long': 'c_ulonglong',
     'float': 'c_float',
     'double': 'c_double',
     'long double': 'c_longdouble',
@@ -39,6 +40,15 @@ CTYPES_MAP = {
     '__int': 'c_int',
     '__int32': 'c_int32',
     '__int64': 'c_int64',
+    'signed short': 'c_short',
+    'signed int': 'c_int',
+    'signed __int8': 'c_int8',
+    'signed __int16': 'c_int16',
+    'signed __int': 'c_int',
+    'signed __int32': 'c_int32',
+    'signed __int64': 'c_int64',
+    'signed long': 'c_long',
+    'signed long long': 'c_longlong',
     'unsigned char': 'c_ubyte',
     'unsigned short': 'c_ushort',
     'unsigned int': 'c_uint',
@@ -47,6 +57,8 @@ CTYPES_MAP = {
     'unsigned __int': 'c_uint',
     'unsigned __int32': 'c_uint32',
     'unsigned __int64': 'c_uint64',
+    'unsigned long': 'c_ulong',
+    'unsigned long long': 'c_ulonglong',
     'int8_t': 'c_int8',
     'uint8_t': 'c_uint8',
     'int16_t': 'c_int16',
@@ -462,7 +474,7 @@ class CHeader(object):
         def _get_enum_dtype(tup):
             return 'c_int' if tup[1] is None else tup[1]
 
-        dtype = c_type.strip()
+        dtype = c_type.replace('const', '').strip()
 
         ptr = None
         if dtype.endswith('**'):

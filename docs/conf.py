@@ -231,5 +231,6 @@ nitpicky = True
 nitpick_ignore = [
     ('py:class', '_ctypes.Structure'),
     ('py:class', 'ctypes.WINFUNCTYPE.<locals>.WinFunctionType'),
+    ('py:class', 'ctypes.CFUNCTYPE.<locals>.CFunctionType'),
     ('py:mod', 'nidaqmx.system'),
 ]

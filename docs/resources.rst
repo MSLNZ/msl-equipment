@@ -7,11 +7,11 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
 * Avantes_
 
-  * :class:`~msl.equipment.resources.avantes.avaspec.AvaSpec` - The ``avaspecxXX.dll`` library
+  * :class:`~msl.equipment.resources.avantes.avaspec.AvaSpec` - Wrapper around the `Avantes SDK`_
 
 * `Bentham Instruments Ltd`_
 
-  * :class:`~msl.equipment.resources.bentham.benhw64.Bentham` - The benhw32_ library
+  * :class:`~msl.equipment.resources.bentham.benhw64.Bentham` - Wrapper around the `Bentham SDK`_
 
 * CMI_ (Czech Metrology Institute)
 
@@ -21,6 +21,10 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
   * :class:`~msl.equipment.resources.electron_dynamics.tc_series.TCSeries` - Temperature Controller (TC LV, TC M, TC Lite)
 
+* `NKT Photonics`_
+
+  * :class:`~msl.equipment.resources.nkt.nktpdll.NKT` - Wrapper around the `NKT Photonics SDK`_
+
 * OMEGA_
 
   * :class:`~msl.equipment.resources.omega.ithx.iTHX` - iTHX-W3, iTHX-D3, iTHX-SD, iTHX-M, iTHX-W, iTHX-2
@@ -29,7 +33,7 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
   * :class:`~msl.equipment.resources.optosigma.shot702.SHOT702` - Two-axis Stage Controller
 
-* `Pico Technology`_ - Requires the `Pico Technology SDK`_
+* `Pico Technology`_ -  Wrapper around the `Pico Technology SDK`_
 
   * PicoScope_
 
@@ -49,7 +53,7 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
 * Thorlabs_
 
-  * Kinesis_ - Wrapper package around the ``Thorlabs.MotionControl.C_API`` SDK.
+  * Wrapper around the Kinesis_ SDK.
 
     * :class:`~msl.equipment.resources.thorlabs.kinesis.filter_flipper.FilterFlipper` - MFF101, MFF102
     * :class:`~msl.equipment.resources.thorlabs.kinesis.integrated_stepper_motors.IntegratedStepperMotors` - LTS150, LTS300, MLJ050, MLJ150, K10CR1
@@ -151,15 +155,18 @@ Please follow the `style guide`_.
 .. _pull request: https://help.github.com/articles/creating-a-pull-request-from-a-fork/
 
 .. _Bentham Instruments Ltd: https://www.bentham.co.uk/
-.. _benhw32: https://support.bentham.co.uk/support/solutions/articles/5000615653-sdk-manual
+.. _Bentham SDK: https://www.bentham.co.uk/products/components/components-search/software-development-kit-72/
 .. _CMI: https://www.cmi.cz/?language=en
 .. _Pico Technology: https://www.picotech.com/
-.. _Thorlabs: https://www.thorlabs.com/
-.. _Kinesis: https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=Motion_Control
 .. _Pico Technology SDK: https://www.picotech.com/downloads
 .. _PicoScope: https://www.picotech.com/products/oscilloscope
+.. _PT-104 Platinum Resistance Data Logger: https://www.picotech.com/data-logger/pt-104/high-accuracy-temperature-daq
+.. _Thorlabs: https://www.thorlabs.com/
+.. _Kinesis: https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=Motion_Control&viewtab=0
 .. _OMEGA: https://www.omega.com/
 .. _OptoSigma: https://www.global-optosigma.com/en_jp/
-.. _PT-104 Platinum Resistance Data Logger: https://www.picotech.com/data-logger/pt-104/high-accuracy-temperature-daq
 .. _Electron Dynamics Ltd: http://www.electrondynamics.co.uk/wp/
 .. _Avantes: https://www.avantes.com/
+.. _Avantes SDK: ftp://ftp.piacton.com/Public/Software/Official/Acton/
+.. _NKT Photonics: https://www.nktphotonics.com/
+.. _NKT Photonics SDK: https://www.nktphotonics.com/lasers-fibers/support/software-drivers/

@@ -129,3 +129,9 @@ def test_find_resource_class():
     record = ConnectionRecord(manufacturer='Avantes', model='does not matter!', backend=Backend.MSL)
     cls = resources.find_resource_class(record)
     assert cls == resources.avantes.avaspec.AvaSpec
+
+    for man in ('NKT', 'NKT Photonics', 'NKTPhotonics'):
+        for mod in ('Extreme', 'SuperK', 'Koheras BasiK', 'does not matter!'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.nkt.NKT

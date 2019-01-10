@@ -1,34 +1,65 @@
 """
-Wrapper around the ``avaspec*.dll`` SDK from Avantes.
+Wrapper around the ``avaspec.dll`` SDK from Avantes.
 
-The wrapper was written using v9.7 of the SDK.
+The wrapper was written using v9.7.0.0 of the SDK.
 """
 from ctypes import *
 from enum import IntEnum
 
 import numpy as np
-from msl.loadlib import IS_WINDOWS
+from msl.loadlib import IS_WINDOWS, LoadLibrary
 
 from msl.equipment.connection_sdk import ConnectionSDK
 from msl.equipment.exceptions import AvantesError
 from msl.equipment.resources import register
 
-HWND = c_void_p
 
-if IS_WINDOWS:
-    FUNCTYPE = WINFUNCTYPE
-else:
-    FUNCTYPE = CFUNCTYPE
+def get_list(path='avaspecx64.dll', port_id=-1, nmax=16):
+    """Returns device information for each spectrometer that is connected.
 
-MeasureCallback = FUNCTYPE(None, POINTER(c_int), POINTER(c_int))
-"""Used as a decorator for a callback function when a scan is available."""
+    Parameters
+    ----------
+    path : :class:`str`
+        The path to the Avantes SDK.
+    port_id : :class:`int`
+        ID of port to be used. One of:
+
+            * -1: Use both Ethernet (AS7010) and USB ports
+            * 0: Use USB port
+            * 1..255: Not supported in v9.7 of the SDK
+            * 256: Use Ethernet port (AS7010)
+    nmax : :class:`int`, optional
+        The maximum number of devices that can be in the list.
+
+    Returns
+    -------
+    :class:`list` of :class:`.AvsIdentityType`
+        The information about the devices.
+    """
+    lib = LoadLibrary(path, 'windll').lib
+
+    ret = lib.AVS_Init(port_id)
+    if ret == 0:
+        raise AvantesError('No Avantes devices were found')
+
+    size = nmax * sizeof(AvsIdentityType)
+    required_size = c_uint32()
+    types = (AvsIdentityType * nmax)()
+
+    lib.AVS_GetList.argtypes = [c_uint32, POINTER(c_uint32), POINTER(AvsIdentityType)]
+    n = lib.AVS_GetList(size, required_size, types)
+    if n < 0:
+        error_name, msg = ERROR_CODES.get(n, ('UNKNOWN_ERROR', 'Unknown error'))
+        raise AvantesError('{}: {}'.format(error_name, msg))
+
+    return [types[i] for i in range(n)]
 
 
 @register(manufacturer=r'Avantes', model=r'.')
 class AvaSpec(ConnectionSDK):
 
     def __init__(self, record):
-        """Wrapper around the ``avaspec*.dll`` SDK from Avantes.
+        """Wrapper around the ``avaspec.dll`` SDK from Avantes.
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for an Avantes connection supports the following key-value pairs in the
@@ -53,91 +84,160 @@ class AvaSpec(ConnectionSDK):
         self.OemDataType = OemDataType  #: :class:`OemDataType`
         self.DeviceConfigType = DeviceConfigType  #: :class:`DeviceConfigType`
 
-        self.sdk.AVS_Activate.argtypes = [POINTER(AvsIdentityType)]
-        self.sdk.AVS_Activate.errcheck = self._err_check
-        # self.sdk.AVS_ActivateConn.argtypes = []
-        # self.sdk.AVS_ActivateConn.errcheck =
-        # self.sdk.AVS_ActivateConnCb.argtypes = []
-        # self.sdk.AVS_ActivateConnCb.errcheck =
-        self.sdk.AVS_Deactivate.argtypes = [c_int32]
-        self.sdk.AVS_Deactivate.errcheck = self._check_bool
-        self.sdk.AVS_Done.argtypes = []
-        self.sdk.AVS_Done.errcheck = self._err_check
-        self.sdk.AVS_GetAnalogIn.argtypes = [c_int32, c_uint8, POINTER(c_float)]
-        self.sdk.AVS_GetAnalogIn.errcheck = self._err_check
-        self.sdk.AVS_GetDigIn.argtypes = [c_int32, c_uint8, POINTER(c_uint8)]
-        self.sdk.AVS_GetDigIn.errcheck = self._err_check
-        self.sdk.AVS_GetIpConfig.argtypes = [c_int32, POINTER(EthernetSettingsType)]
-        self.sdk.AVS_GetIpConfig.errcheck = self._err_check
-        self.sdk.AVS_GetLambda.argtypes = [c_int32, POINTER(c_double)]
-        self.sdk.AVS_GetLambda.errcheck = self._err_check
-        self.sdk.AVS_GetList.argtypes = [c_uint32, POINTER(c_uint32), POINTER(AvsIdentityType)]
-        self.sdk.AVS_GetList.errcheck = self._err_check
-        self.sdk.AVS_GetNrOfDevices.argtypes = []
-        self.sdk.AVS_GetNrOfDevices.errcheck = self.log_errcheck
-        self.sdk.AVS_GetNumPixels.argtypes = [c_int32, POINTER(c_uint16)]
-        self.sdk.AVS_GetNumPixels.errcheck = self._err_check
-        self.sdk.AVS_GetOemParameter.argtypes = [c_int32, POINTER(OemDataType)]
-        self.sdk.AVS_GetOemParameter.errcheck = self._err_check
-        self.sdk.AVS_GetParameter.argtypes = [c_int32, c_uint32, POINTER(c_uint32), POINTER(DeviceConfigType)]
-        self.sdk.AVS_GetParameter.errcheck = self._err_check
-        self.sdk.AVS_GetSaturatedPixels.argtypes = [c_int32, POINTER(c_uint8)]
-        self.sdk.AVS_GetSaturatedPixels.errcheck = self._err_check
-        self.sdk.AVS_GetScopeData.argtypes = [c_int32, POINTER(c_uint32), POINTER(c_double)]
-        self.sdk.AVS_GetScopeData.errcheck = self._err_check
-        self.sdk.AVS_GetVersionInfo.argtypes = [c_int32, POINTER(c_uint8), POINTER(c_uint8), POINTER(c_uint8)]
-        self.sdk.AVS_GetVersionInfo.errcheck = self._err_check
-        self.sdk.AVS_Heartbeat.argtypes = [c_int32, POINTER(c_uint), POINTER(HeartbeatRespType)]
-        self.sdk.AVS_Heartbeat.errcheck = self._err_check
-        self.sdk.AVS_Init.argtypes = [c_short]
-        self.sdk.AVS_Init.errcheck = self._err_check
-        self.sdk.AVS_Measure.argtypes = [c_int32, HWND, c_short]
-        self.sdk.AVS_Measure.errcheck = self._err_check
-        self.sdk.AVS_MeasureCallback.argtypes = [c_int32, MeasureCallback, c_short]
-        self.sdk.AVS_MeasureCallback.errcheck = self._err_check
-        self.sdk.AVS_PollScan.argtypes = [c_int32]
-        self.sdk.AVS_PollScan.errcheck = self._err_check
-        self.sdk.AVS_PrepareMeasure.argtypes = [c_int32, POINTER(MeasConfigType)]
-        self.sdk.AVS_PrepareMeasure.errcheck = self._err_check
-        self.sdk.AVS_Register.argtypes = [HWND]
-        self.sdk.AVS_Register.errcheck = self._check_bool
-        self.sdk.AVS_ResetDevice.argtypes = [c_int32]
-        self.sdk.AVS_ResetDevice.errcheck = self._err_check
-        self.sdk.AVS_SetAnalogOut.argtypes = [c_int32, c_uint8, c_float]
-        self.sdk.AVS_SetAnalogOut.errcheck = self._err_check
-        self.sdk.AVS_SetDigOut.argtypes = [c_int32, c_uint8, c_uint8]
-        self.sdk.AVS_SetDigOut.errcheck = self._err_check
-        self.sdk.AVS_SetOemParameter.argtypes = [c_int32, POINTER(OemDataType)]
-        self.sdk.AVS_SetOemParameter.errcheck = self._err_check
-        self.sdk.AVS_SetParameter.argtypes = [c_int32, POINTER(DeviceConfigType)]
-        self.sdk.AVS_SetParameter.errcheck = self._err_check
-        self.sdk.AVS_SetPrescanMode.argtypes = [c_int32, c_bool]
-        self.sdk.AVS_SetPrescanMode.errcheck = self._err_check
-        self.sdk.AVS_SetPwmOut.argtypes = [c_int32, c_uint8, c_uint32, c_uint8]
-        self.sdk.AVS_SetPwmOut.errcheck = self._err_check
-        self.sdk.AVS_SetSensitivityMode.argtypes = [c_int32, c_uint32]
-        self.sdk.AVS_SetSensitivityMode.errcheck = self._err_check
-        self.sdk.AVS_SetSyncMode.argtypes = [c_int32, c_uint8]
-        self.sdk.AVS_SetSyncMode.errcheck = self._err_check
-        self.sdk.AVS_StopMeasure.argtypes = [c_int32]
-        self.sdk.AVS_StopMeasure.errcheck = self._err_check
-        self.sdk.AVS_SuppressStrayLight.argtypes = [c_int32, c_float, POINTER(c_double), POINTER(c_double)]
-        self.sdk.AVS_SuppressStrayLight.errcheck = self._err_check
-        self.sdk.AVS_UpdateETHDevices.argtypes = [c_uint32, POINTER(c_uint32), POINTER(BroadcastAnswerType)]
-        self.sdk.AVS_UpdateETHDevices.errcheck = self._err_check
-        self.sdk.AVS_UpdateUSBDevices.argtypes = []
-        self.sdk.AVS_UpdateUSBDevices.errcheck = self.log_errcheck
-        self.sdk.AVS_UseHighResAdc.argtypes = [c_int32, c_bool]
-        self.sdk.AVS_UseHighResAdc.errcheck = self._err_check
+        functions = {
+            'AVS_Init': (c_int32, self._err_check,
+                [('a_Port', c_int16)]),
+            'AVS_Done': (c_int32, self._err_check,
+                []),
+            'AVS_GetNrOfDevices': (c_int32, self.log_errcheck,
+                []),
+            'AVS_UpdateUSBDevices': (c_int32, self.log_errcheck,
+                []),
+            'AVS_UpdateETHDevices': (c_int32, self._err_check,
+                [('a_ListSize', c_uint32),
+                 ('a_pRequiredSize', POINTER(c_uint32)),
+                 ('a_pList', POINTER(BroadcastAnswerType))]),
+            'AVS_GetList': (c_int32, self._err_check,
+                [('a_ListSize', c_uint32),
+                 ('a_pRequiredSize', POINTER(c_uint32)),
+                 ('a_pList', POINTER(AvsIdentityType))]),
+            'AVS_Activate': (c_int32, self._err_check,
+                [('a_pDeviceId', POINTER(AvsIdentityType))]),
+            'AVS_ActivateConn': (c_int32, self._err_check,
+                [('a_pDeviceId', POINTER(AvsIdentityType))]),
+            'AVS_ActivateConnCb': (c_int32, self._err_check,
+                [('a_pDeviceId', POINTER(AvsIdentityType))]),
+            'AVS_Deactivate': (c_bool, self._check_bool,
+                [('a_hDevice', c_int32)]),
+            'AVS_GetHandleFromSerial': (c_int32, self._err_check,
+                [('a_pSerial', c_char_p)]),
+            'AVS_GetStatusBySerial': (c_int32, self._err_check,
+                [('a_pSerial', c_char_p),
+                 ('a_status', POINTER(c_int32))]),
+            'AVS_Register': (c_bool, self._check_bool,
+                [('a_Hwnd', c_void_p)]),
+            'AVS_Measure': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_hWnd', c_void_p),
+                 ('a_Nmsr', c_int16)]),
+            'AVS_MeasureCallback': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('__Done', MeasureCallback),
+                 ('a_Nmsr', c_int16)]),
+            'AVS_PrepareMeasure': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_pMeasConfig', POINTER(MeasConfigType))]),
+            'AVS_StopMeasure': (c_int32, self._err_check,
+                [('a_hDevice', c_int32)]),
+            'AVS_PollScan': (c_int32, self._err_check,
+                [('a_hDevice', c_int32)]),
+            'AVS_GetScopeData': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_pTimeLabel', POINTER(c_uint32)),
+                 ('a_pSpectrum', POINTER(c_double))]),
+            'AVS_GetSaturatedPixels': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_pSaturated', POINTER(c_ubyte))]),
+            'AVS_GetLambda': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_pWaveLength', POINTER(c_double))]),
+            'AVS_GetNumPixels': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_pNumPixels', POINTER(c_uint16))]),
+            'AVS_GetParameter': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_Size', c_uint32),
+                 ('a_pRequiredSize', POINTER(c_uint32)),
+                 ('a_pDeviceParm', POINTER(DeviceConfigType))]),
+            'AVS_SetParameter': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_pDeviceParm', POINTER(DeviceConfigType))]),
+            'AVS_GetVersionInfo': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_pFPGAVersion', c_char_p),
+                 ('a_pFirmwareVersion', c_char_p),
+                 ('a_pDLLVersion', c_char_p)]),
+            'AVS_GetDLLVersion': (c_int32, self._err_check,
+                [('a_pVersionString', c_char_p)]),
+            'AVS_SetSyncMode': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_Enable', c_ubyte)]),
+            'AVS_SetPrescanMode': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_Prescan', c_bool)]),
+            'AVS_UseHighResAdc': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_Enable', c_bool)]),
+            'AVS_GetAnalogIn': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_AnalogInId', c_ubyte),
+                 ('a_pAnalogIn', POINTER(c_float))]),
+            'AVS_GetDigIn': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_DigInId', c_ubyte),
+                 ('a_pDigIn', POINTER(c_ubyte))]),
+            'AVS_SetAnalogOut': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_PortId', c_ubyte),
+                 ('a_Value', c_float)]),
+            'AVS_SetDigOut': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_PortId', c_ubyte),
+                 ('a_Status', c_ubyte)]),
+            'AVS_SetPwmOut': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_PortId', c_ubyte),
+                 ('a_Freq', c_ulong),
+                 ('a_Duty', c_ubyte)]),
+            'AVS_GetDarkPixelData': (c_int32, self._check_bool,
+                [('a_hDevice', c_int32),
+                 ('a_pDarkData', POINTER(c_double))]),
+            'AVS_GetComPortName': (c_int32, self._check_bool,
+                [('a_pDeviceId', POINTER(AvsIdentityType)),
+                 ('a_pIp', c_char_p),
+                 ('a_size', POINTER(c_int32))]),
+            'AVS_GetComType': (c_int32, self._err_check,
+                [('a_pDeviceId', POINTER(AvsIdentityType)),
+                 ('a_type', POINTER(c_int32))]),
+            'AVS_SetSensitivityMode': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_SensitivityMode', c_uint32)]),
+            'AVS_GetIpConfig': (c_int32, self._check_bool,
+                [('a_hDevice', c_int32),
+                 ('a_Data', POINTER(EthernetSettingsType))]),
+            'AVS_SuppressStrayLight': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_Multifactor', c_float),
+                 ('a_pSrcSpectrum', POINTER(c_double)),
+                 ('a_pDestSpectrum', POINTER(c_double))]),
+            'AVS_Heartbeat': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_pHbReq', POINTER(c_uint32)),
+                 ('a_pHbResp', POINTER(HeartbeatRespType))]),
+            'AVS_ResetDevice': (c_int32, self._err_check,
+                [('a_hDevice', c_int32)]),
+            'AVS_GetOemParameter': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_pOemData', POINTER(OemDataType))]),
+            'AVS_SetOemParameter': (c_int32, self._err_check,
+                [('a_hDevice', c_int32),
+                 ('a_pOemData', POINTER(OemDataType))]),
+        }
 
-        self.init(record.connection.properties.get('port_id', -1))
-        if record.connection.properties.get('activate', True):
+        for key, value in functions.items():
+            attr = getattr(self.sdk, key)
+            attr.restype, attr.errcheck = value[:2]
+            attr.argtypes = [typ for _, typ in value[2]]
+
+        props = record.connection.properties
+        self.init(props.get('port_id', -1))
+        if props.get('activate', True):
             self.activate()
 
     def _err_check(self, result, func, arguments):
         self.log_errcheck(result, func, arguments)
         if result < 0:
-            error_name, msg = ERROR_CODES[result]
+            error_name, msg = ERROR_CODES.get(result, ('UNKNOWN_ERROR', 'Unknown error'))
             self.raise_exception('{}: {}'.format(error_name, msg))
         return result
 
@@ -154,7 +254,7 @@ class AvaSpec(ConnectionSDK):
         :class:`~msl.equipment.exceptions.AvantesError`
             If there was an error.
         """
-        out = self.get_list()
+        out = get_list(path=self.path)
         if len(out) < 1:
             self.raise_exception('Cannot activate. No devices found.')
         for item in out:
@@ -225,6 +325,84 @@ class AvaSpec(ConnectionSDK):
         self.sdk.AVS_GetAnalogIn(self._handle, analog_id, ain)
         return ain.value
 
+    def get_com_port_name(self):
+        """Get the IP address of the device.
+
+        Returns
+        -------
+        :class:`str`
+            The IP address of the device.
+
+        Raises
+        ------
+        :class:`~msl.equipment.exceptions.AvantesError`
+            If there was an error.
+        """
+        size = c_int32(1023)
+        device_id = AvsIdentityType()
+        device_id.SerialNumber = self.equipment_record.serial.encode()
+        name = create_string_buffer(size.value)
+        self.sdk.AVS_GetComPortName(device_id, name, size)
+        return name.value.decode()
+
+    def get_com_type(self):
+        """Get the communication protocol.
+
+        Returns
+        -------
+        :class:`str`
+            The communication type as defined below:
+
+            * RS232 = 0
+            * USB5216 = 1
+            * USBMINI = 2
+            * USB7010 = 3
+            * ETH7010 = 4
+            * UNKNOWN = -1
+
+        Raises
+        ------
+        :class:`~msl.equipment.exceptions.AvantesError`
+            If there was an error.
+        """
+        device_id = AvsIdentityType()
+        device_id.SerialNumber = self.equipment_record.serial.encode()
+        typ = c_int32(-1)
+        self.sdk.AVS_GetComType(device_id, typ)
+        return typ.value
+
+    def get_dark_pixel_data(self):
+        """Get the optically black pixel values of the last performed measurement.
+
+        You must call :meth:`get_data` before you call this method.
+
+        Returns
+        -------
+        :class:`numpy.ndarray`
+            The dark pixels.
+
+        Raises
+        ------
+        :class:`~msl.equipment.exceptions.AvantesError`
+            If there was an error.
+        """
+        # from the docs the maximum size is size=18 for the AvaSpec-2048-USB2 and AvaSpec-2048L-USB2
+        values = np.zeros(32, dtype=np.double)  # make it bigger than 18
+        self.sdk.AVS_GetDarkPixelData(self._handle, values.ctypes.data_as(POINTER(c_double)))
+        return values[values > 0]
+
+    def get_dll_version(self):
+        """Get the DLL version number.
+
+        Returns
+        -------
+        :class:`str`
+            The DLL version number
+        """
+        version = create_string_buffer(255)
+        self.sdk.AVS_GetDLLVersion(version)
+        return version.value.decode()
+
     def get_digital_in(self, digital_id):
         """Get the status of the specified digital input.
 
@@ -264,9 +442,59 @@ class AvaSpec(ConnectionSDK):
         :class:`~msl.equipment.exceptions.AvantesError`
             If there was an error.
         """
-        din = c_uint8()
+        din = c_ubyte()
         self.sdk.AVS_GetDigIn(self._handle, digital_id, din)
         return din.value
+
+    def get_handle_from_serial(self, serial=None):
+        """Get the handle ID for the specified serial number.
+
+        Parameters
+        ----------
+        serial : :class:`str`
+            The serial number. Default is to get the status for this object.
+
+        Returns
+        -------
+        :class:`int`
+            The handle.
+
+        Raises
+        ------
+        :class:`~msl.equipment.exceptions.AvantesError`
+            If there was an error.
+        """
+        if serial is None:
+            serial = self.equipment_record.serial.encode()
+        elif not isinstance(serial, bytes):
+            serial = serial.encode()
+        return self.sdk.AVS_GetHandleFromSerial(serial)
+
+    def get_status_by_serial(self, serial=None):
+        """Get the handle ID for the specified serial number.
+
+        Parameters
+        ----------
+        serial : :class:`str`, optional
+            The serial number. Default is to get the status for this object.
+
+        Returns
+        -------
+        :class:`int`
+            The status.
+
+        Raises
+        ------
+        :class:`~msl.equipment.exceptions.AvantesError`
+            If there was an error.
+        """
+        if serial is None:
+            serial = self.equipment_record.serial.encode()
+        elif not isinstance(serial, bytes):
+            serial = serial.encode()
+        status = c_int32()
+        self.sdk.AVS_GetStatusBySerial(serial, status)
+        return status.value
 
     def done(self):
         """Closes communication and releases internal storage."""
@@ -313,25 +541,6 @@ class AvaSpec(ConnectionSDK):
         values = np.zeros(MAX_NR_PIXELS, dtype=np.double)
         self.sdk.AVS_GetLambda(self._handle, values.ctypes.data_as(POINTER(c_double)))
         return values[values > 0]
-
-    def get_list(self, nmax=16):
-        """Returns device information for each spectrometer that is connected.
-
-        Parameters
-        ----------
-        nmax : :class:`int`, optional
-            The maximum number of devices that can be in the list.
-
-        Returns
-        -------
-        :class:`list` of :class:`.AvsIdentityType`
-            The information about the devices.
-        """
-        size = nmax * sizeof(AvsIdentityType)
-        required_size = c_uint32()
-        types = (AvsIdentityType * nmax)()
-        n = self.sdk.AVS_GetList(size, required_size, types)
-        return [types[i] for i in range(n)]
 
     def get_num_devices(self):
         """Scans for attached devices and returns the number of devices detected.
@@ -395,7 +604,7 @@ class AvaSpec(ConnectionSDK):
             If there was an error.
         """
         values = np.ones(MAX_NR_PIXELS, dtype=np.uint8) * 9
-        self.sdk.AVS_GetSaturatedPixels(self._handle, values.ctypes.data_as(POINTER(c_uint8)))
+        self.sdk.AVS_GetSaturatedPixels(self._handle, values.ctypes.data_as(POINTER(c_ubyte)))
         return values[values < 9]
 
     def get_version_info(self):
@@ -415,9 +624,9 @@ class AvaSpec(ConnectionSDK):
         :class:`~msl.equipment.exceptions.AvantesError`
             If there was an error.
         """
-        fpga = (c_uint8 * 16)()
-        fm = (c_uint8 * 16)()
-        dll = (c_uint8 * 16)()
+        fpga = (c_ubyte * 16)()
+        fm = (c_ubyte * 16)()
+        dll = (c_ubyte * 16)()
         self.sdk.AVS_GetVersionInfo(self._handle, fpga, fm, dll)
         return [string_at(addressof(obj)).decode() for obj in [fpga, fm, dll]]
 
@@ -1152,7 +1361,7 @@ class AvsIdentityType(Structure):
     _fields_ = [
         ('SerialNumber', c_char * AVS_SERIAL_LEN),
         ('UserFriendlyName', c_char * USER_ID_LEN),
-        ('Status', c_uint8)
+        ('Status', c_ubyte)
     ]
 
 
@@ -1160,13 +1369,13 @@ class BroadcastAnswerType(Structure):
     """BroadcastAnswerType Structure."""
     _pack_ = 1
     _fields_ = [
-        ('InterfaceType', c_uint8),
-        ('serial', c_uint8 * AVS_SERIAL_LEN),
+        ('InterfaceType', c_ubyte),
+        ('serial', c_ubyte * AVS_SERIAL_LEN),
         ('port', c_uint16),
-        ('status', c_uint8),
+        ('status', c_ubyte),
         ('RemoteHostIp', c_uint32),
         ('LocalIp', c_uint32),
-        ('reserved', c_uint8 * 4)
+        ('reserved', c_ubyte * 4)
     ]
 
 
@@ -1186,8 +1395,8 @@ class DarkCorrectionType(Structure):
     """DarkCorrectionType Structure."""
     _pack_ = 1
     _fields_ = [
-        ('m_Enable', c_uint8),
-        ('m_ForgetPercentage', c_uint8),
+        ('m_Enable', c_ubyte),
+        ('m_ForgetPercentage', c_ubyte),
     ]
 
 
@@ -1195,7 +1404,7 @@ class DetectorType(Structure):
     """DetectorType Structure."""
     _pack_ = 1
     _fields_ = [
-        ('m_SensorType', c_uint8),
+        ('m_SensorType', c_ubyte),
         ('m_NrPixels', c_uint16),
         ('m_aFit', c_float * NR_WAVELEN_POL_COEF),
         ('m_NLEnable', c_bool),
@@ -1215,7 +1424,7 @@ class SmoothingType(Structure):
     _pack_ = 1
     _fields_ = [
         ('m_SmoothPix', c_uint16),
-        ('m_SmoothModel', c_uint8),
+        ('m_SmoothModel', c_ubyte),
     ]
 
 
@@ -1234,7 +1443,7 @@ class IrradianceType(Structure):
     _pack_ = 1
     _fields_ = [
         ('m_IntensityCalib', SpectrumCalibrationType),
-        ('m_CalibrationType', c_uint8),
+        ('m_CalibrationType', c_ubyte),
         ('m_FiberDiameter', c_uint32),
     ]
 
@@ -1251,9 +1460,9 @@ class TriggerType(Structure):
     """TriggerType Structure."""
     _pack_ = 1
     _fields_ = [
-        ('m_Mode', c_uint8),
-        ('m_Source', c_uint8),
-        ('m_SourceType', c_uint8),
+        ('m_Mode', c_ubyte),
+        ('m_Source', c_ubyte),
+        ('m_SourceType', c_ubyte),
     ]
 
 
@@ -1268,7 +1477,7 @@ class MeasConfigType(Structure):
         ('m_NrAverages', c_uint32),
         ('m_CorDynDark', DarkCorrectionType),
         ('m_Smoothing', SmoothingType),
-        ('m_SaturationDetection', c_uint8),
+        ('m_SaturationDetection', c_ubyte),
         ('m_Trigger', TriggerType),
         ('m_Control', ControlSettingsType)
     ]
@@ -1298,7 +1507,7 @@ class DynamicStorageType(Structure):
     _pack_ = 1
     _fields_ = [
         ('m_Nmsr', c_int32),
-        ('m_Reserved', c_uint8 * 8),
+        ('m_Reserved', c_ubyte * 8),
     ]
 
 
@@ -1338,9 +1547,9 @@ class EthernetSettingsType(Structure):
         ('m_IpAddr', c_uint32),
         ('m_NetMask', c_uint32),
         ('m_Gateway', c_uint32),
-        ('m_DhcpEnabled', c_uint8),
+        ('m_DhcpEnabled', c_ubyte),
         ('m_TcpPort', c_uint16),
-        ('m_LinkStatus', c_uint8),
+        ('m_LinkStatus', c_ubyte),
     ]
 
 
@@ -1348,7 +1557,7 @@ class OemDataType(Structure):
     """OemDataType Structure."""
     _pack_ = 1
     _fields_ = [
-        ('m_data', c_uint8 * OEM_DATA_LEN)
+        ('m_data', c_ubyte * OEM_DATA_LEN)
     ]
 
 
@@ -1378,6 +1587,15 @@ class DeviceConfigType(Structure):
         ('m_TecControl', TecControlType),
         ('m_ProcessControl', ProcessControlType),
         ('m_EthernetSettings', EthernetSettingsType),
-        ('m_aReserved', c_uint8 * SETTINGS_RESERVED_LEN),
+        ('m_aReserved', c_ubyte * SETTINGS_RESERVED_LEN),
         ('m_OemData', OemDataType)
     ]
+
+
+if IS_WINDOWS:
+    FUNCTYPE = WINFUNCTYPE
+else:
+    FUNCTYPE = CFUNCTYPE
+
+MeasureCallback = FUNCTYPE(None, POINTER(c_int32), POINTER(c_int32))
+"""Used as a decorator for a callback function when a scan is available."""

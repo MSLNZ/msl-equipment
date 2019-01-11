@@ -10,8 +10,8 @@ if __name__ == '__main__':
 
     record = EquipmentRecord(
         manufacturer='Avantes',
-        model='AvaSpec-2048L',  # update the model number for your device
-        serial='1807344U1',  # update the serial number for your device
+        model='AvaSpec-2048L',  # update for your device
+        serial='1807344U1',  # update for your device
         connection=ConnectionRecord(
             address='SDK::D:/AvaSpecX64-DLL_9.7/avaspecx64.dll',  # update the path to the DLL file
             backend=Backend.MSL,
@@ -70,7 +70,7 @@ if __name__ == '__main__':
         time.sleep(0.01)
     tick_count, data = ava.get_data()
 
-    # We can get the Dark Pixel data after we call get_data()
+    # we can get the Dark Pixel data after we call get_data()
     print('Dark Pixel data: {}'.format(ava.get_dark_pixel_data()))
 
     # if matplotlib is available then plot the results
@@ -85,5 +85,5 @@ if __name__ == '__main__':
         plt.plot(wavelengths, data, 'bo')
         plt.show()
 
-    # safely shutdown the Avantes resources that are in use
+    # disconnect from the spectrometer
     ava.disconnect()

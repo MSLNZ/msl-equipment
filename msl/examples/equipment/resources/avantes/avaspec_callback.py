@@ -15,8 +15,8 @@ if __name__ == '__main__':
 
     record = EquipmentRecord(
         manufacturer='Avantes',
-        model='AvaSpec-2048L',  # update the model number for your device
-        serial='1807344U1',  # update the serial number for your device
+        model='AvaSpec-2048L',  # update for your device
+        serial='1807344U1',  # update for your device
         connection=ConnectionRecord(
             # only specify the SDK filename and add the root directory to sys.path (see above)
             address='SDK::avaspecx64.dll',
@@ -62,5 +62,5 @@ if __name__ == '__main__':
     # stop continuous measurements
     ava.stop_measure()
 
-    # safely shutdown the Avantes resources that are in use
+    # disconnect from the spectrometer
     ava.disconnect()

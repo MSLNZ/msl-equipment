@@ -27,4 +27,5 @@ Subpackages
     msl.equipment.resources.omega
     msl.equipment.resources.optosigma
     msl.equipment.resources.picotech
+    msl.equipment.resources.princeton_instruments
     msl.equipment.resources.thorlabs

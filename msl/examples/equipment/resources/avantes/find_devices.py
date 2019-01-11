@@ -6,7 +6,7 @@ Example showing how to find all Avantes devices that are available.
 if __name__ == '__main__':
     import sys
 
-    from msl.equipment.resources.avantes import get_list
+    from msl.equipment.resources import Avantes
 
     # You can either specify the full path to the SDK (including the filename
     # e.g., D:/AvaSpecX64-DLL_9.7/avaspecx64.dll) in the get_list() function, or,
@@ -14,7 +14,7 @@ if __name__ == '__main__':
     sys.path.append('D:/AvaSpecX64-DLL_9.7')
 
     print('Found the following Avantes devices: ')
-    for device in get_list():
+    for device in Avantes.get_list():
         print('  SerialNumber: {}'.format(device.SerialNumber))
         print('  UserFriendlyName: {}'.format(device.UserFriendlyName))
         print('  Status: {}'.format(device.Status))

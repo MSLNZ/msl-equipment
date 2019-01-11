@@ -81,3 +81,8 @@ for root, dirs, files in os.walk(os.path.dirname(__file__)):
     for filename in fnmatch.filter(files, '*.py'):  # ignore .pyc files
         if not filename == '__init__.py':  # these files get imported automatically
             importlib.import_module(root_pkg + '.' + filename[:-3])
+
+
+from .avantes import Avantes
+from .nkt import NKT
+from .princeton_instruments import PrincetonInstruments

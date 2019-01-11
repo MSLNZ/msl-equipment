@@ -7,7 +7,7 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
 * Avantes_
 
-  * :class:`~msl.equipment.resources.avantes.avaspec.AvaSpec` - Wrapper around the `Avantes SDK`_
+  * :class:`~msl.equipment.resources.avantes.avaspec.Avantes` - Wrapper around the `AvaSpec SDK`_
 
 * `Bentham Instruments Ltd`_
 
@@ -50,6 +50,10 @@ MSL Resources are specific classes that are used to communicate with the equipme
   * `PT-104 Platinum Resistance Data Logger`_
 
     * :class:`~msl.equipment.resources.picotech.pt104.PT104` - PT-104
+
+* `Princeton Instruments`_
+
+  * :class:`~msl.equipment.resources.princeton_instruments.arc_instrument.PrincetonInstruments` - Wrapper around the `ARC_Instrument.dll`_ library
 
 * Thorlabs_
 
@@ -167,6 +171,8 @@ Please follow the `style guide`_.
 .. _OptoSigma: https://www.global-optosigma.com/en_jp/
 .. _Electron Dynamics Ltd: http://www.electrondynamics.co.uk/wp/
 .. _Avantes: https://www.avantes.com/
-.. _Avantes SDK: ftp://ftp.piacton.com/Public/Software/Official/Acton/
+.. _AvaSpec SDK: https://www.avantes.com/support/software
 .. _NKT Photonics: https://www.nktphotonics.com/
 .. _NKT Photonics SDK: https://www.nktphotonics.com/lasers-fibers/support/software-drivers/
+.. _Princeton Instruments: https://www.princetoninstruments.com/
+.. _ARC_Instrument.dll: ftp://ftp.piacton.com/Public/Software/Official/Acton/

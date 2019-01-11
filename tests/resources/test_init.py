@@ -128,10 +128,14 @@ def test_find_resource_class():
 
     record = ConnectionRecord(manufacturer='Avantes', model='does not matter!', backend=Backend.MSL)
     cls = resources.find_resource_class(record)
-    assert cls == resources.avantes.avaspec.AvaSpec
+    assert cls == resources.avantes.avaspec.Avantes
 
     for man in ('NKT', 'NKT Photonics', 'NKTPhotonics'):
         for mod in ('Extreme', 'SuperK', 'Koheras BasiK', 'does not matter!'):
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)
             assert cls == resources.nkt.NKT
+
+    record = ConnectionRecord(manufacturer='Princeton Instruments', model='does not matter!', backend=Backend.MSL)
+    cls = resources.find_resource_class(record)
+    assert cls == resources.princeton_instruments.arc_instrument.PrincetonInstruments

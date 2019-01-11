@@ -14,49 +14,8 @@ from msl.equipment.exceptions import AvantesError
 from msl.equipment.resources import register
 
 
-def get_list(path='avaspecx64.dll', port_id=-1, nmax=16):
-    """Returns device information for each spectrometer that is connected.
-
-    Parameters
-    ----------
-    path : :class:`str`
-        The path to the Avantes SDK.
-    port_id : :class:`int`
-        ID of port to be used. One of:
-
-            * -1: Use both Ethernet (AS7010) and USB ports
-            * 0: Use USB port
-            * 1..255: Not supported in v9.7 of the SDK
-            * 256: Use Ethernet port (AS7010)
-    nmax : :class:`int`, optional
-        The maximum number of devices that can be in the list.
-
-    Returns
-    -------
-    :class:`list` of :class:`.AvsIdentityType`
-        The information about the devices.
-    """
-    lib = LoadLibrary(path, 'windll').lib
-
-    ret = lib.AVS_Init(port_id)
-    if ret == 0:
-        raise AvantesError('No Avantes devices were found')
-
-    size = nmax * sizeof(AvsIdentityType)
-    required_size = c_uint32()
-    types = (AvsIdentityType * nmax)()
-
-    lib.AVS_GetList.argtypes = [c_uint32, POINTER(c_uint32), POINTER(AvsIdentityType)]
-    n = lib.AVS_GetList(size, required_size, types)
-    if n < 0:
-        error_name, msg = ERROR_CODES.get(n, ('UNKNOWN_ERROR', 'Unknown error'))
-        raise AvantesError('{}: {}'.format(error_name, msg))
-
-    return [types[i] for i in range(n)]
-
-
 @register(manufacturer=r'Avantes', model=r'.')
-class AvaSpec(ConnectionSDK):
+class Avantes(ConnectionSDK):
 
     def __init__(self, record):
         """Wrapper around the ``avaspec.dll`` SDK from Avantes.
@@ -77,7 +36,8 @@ class AvaSpec(ConnectionSDK):
             A record from an :ref:`equipment_database`.
         """
         self._handle = None
-        super(AvaSpec, self).__init__(record, 'windll')
+        libtype = 'windll' if IS_WINDOWS else 'cdll'
+        super(Avantes, self).__init__(record, libtype)
         self.set_exception_class(AvantesError)
 
         self.MeasConfigType = MeasConfigType  #: :class:`MeasConfigType`
@@ -254,7 +214,7 @@ class AvaSpec(ConnectionSDK):
         :class:`~msl.equipment.exceptions.AvantesError`
             If there was an error.
         """
-        out = get_list(path=self.path)
+        out = Avantes.get_list(path=self.path)
         if len(out) < 1:
             self.raise_exception('Cannot activate. No devices found.')
         for item in out:
@@ -338,11 +298,10 @@ class AvaSpec(ConnectionSDK):
         :class:`~msl.equipment.exceptions.AvantesError`
             If there was an error.
         """
-        size = c_int32(1023)
         device_id = AvsIdentityType()
         device_id.SerialNumber = self.equipment_record.serial.encode()
-        name = create_string_buffer(size.value)
-        self.sdk.AVS_GetComPortName(device_id, name, size)
+        name = create_string_buffer(255)
+        self.sdk.AVS_GetComPortName(device_id, name, len(name))
         return name.value.decode()
 
     def get_com_type(self):
@@ -469,6 +428,48 @@ class AvaSpec(ConnectionSDK):
         elif not isinstance(serial, bytes):
             serial = serial.encode()
         return self.sdk.AVS_GetHandleFromSerial(serial)
+
+    @staticmethod
+    def get_list(path='avaspecx64.dll', port_id=-1, nmax=16):
+        """Returns device information for each spectrometer that is connected.
+
+        Parameters
+        ----------
+        path : :class:`str`
+            The path to the Avantes SDK.
+        port_id : :class:`int`
+            ID of port to be used. One of:
+
+                * -1: Use both Ethernet (AS7010) and USB ports
+                * 0: Use USB port
+                * 1..255: Not supported in v9.7 of the SDK
+                * 256: Use Ethernet port (AS7010)
+        nmax : :class:`int`, optional
+            The maximum number of devices that can be in the list.
+
+        Returns
+        -------
+        :class:`list` of :class:`.AvsIdentityType`
+            The information about the devices.
+        """
+        libtype = 'windll' if IS_WINDOWS else 'cdll'
+        lib = LoadLibrary(path, libtype=libtype).lib
+
+        ret = lib.AVS_Init(port_id)
+        if ret == 0:
+            raise AvantesError('No Avantes devices were found')
+
+        size = nmax * sizeof(AvsIdentityType)
+        required_size = c_uint32()
+        types = (AvsIdentityType * nmax)()
+
+        lib.AVS_GetList.argtypes = [c_uint32, POINTER(c_uint32), POINTER(AvsIdentityType)]
+        n = lib.AVS_GetList(size, required_size, types)
+        if n < 0:
+            error_name, msg = ERROR_CODES.get(n, ('UNKNOWN_ERROR', 'Unknown error'))
+            raise AvantesError('{}: {}'.format(error_name, msg))
+
+        return [types[i] for i in range(n)]
 
     def get_status_by_serial(self, serial=None):
         """Get the handle ID for the specified serial number.

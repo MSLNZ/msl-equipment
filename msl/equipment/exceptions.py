@@ -50,5 +50,9 @@ class PicoTechError(MSLConnectionError):
     """Exception for equipment from Pico Technology."""
 
 
+class PrincetonInstrumentsError(MSLConnectionError):
+    """Exception for equipment from Princeton Instruments."""
+
+
 class ThorlabsError(MSLConnectionError):
     """Exception for equipment from Thorlabs."""

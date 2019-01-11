@@ -4,7 +4,6 @@ Wrapper around the ``NKTPDLL.dll`` SDK from NKT Photonics.
 The wrapper was written using v2.1.2.766 of the SDK.
 """
 import os
-import logging
 from ctypes import *
 from enum import IntEnum
 
@@ -13,8 +12,6 @@ from msl.loadlib import LoadLibrary
 from msl.equipment.connection import Connection
 from msl.equipment.resources import register
 from msl.equipment.exceptions import NKTError
-
-logger = logging.getLogger(__name__)
 
 _PATH = os.environ.get('NKTP_SDK_PATH')
 if _PATH is not None:
@@ -29,7 +26,7 @@ else:
 @register(manufacturer=r'^NKT', model=r'.')
 class NKT(Connection):
 
-    _DLL = None
+    _SDK = None
 
     def __init__(self, record):
         """Wrapper around the ``NKTPDLL.dll`` SDK from NKT Photonics.
@@ -38,7 +35,7 @@ class NKT(Connection):
         for a NKT connection supports the following key-value pairs in the
         :ref:`connections_database`::
 
-            'dll_path': str, The full path to NKTPDLL.dll [default: automatically try to find NKTPDLL.dll]
+            'sdk_path': str, The path to the SDK [default: 'NKTPDLL.dll']
             'open_port': bool, Whether to automatically open the port [default: True]
             'auto': bool, Whether to open the port with bus scanning [default: True]
             'live': bool, Whether to open the port in live mode [default: True]
@@ -51,11 +48,11 @@ class NKT(Connection):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        super(NKT, self).__init__(record)
         self._PORTNAME = record.connection.address.encode()
+        super(NKT, self).__init__(record)
         self.set_exception_class(NKTError)
         props = record.connection.properties
-        self.load_sdk(props.get('dll_path', _PATH))
+        self.load_sdk(props.get('sdk_path', _PATH))
         if props.get('open_port', True):
             NKT.open_ports(self._PORTNAME, auto=props.get('auto', True), live=props.get('live', True))
 
@@ -81,19 +78,19 @@ class NKT(Connection):
             names = b','.join(name.encode() for name in names)
         elif isinstance(names, str):
             names = names.encode()
-        NKT.load_sdk().closePorts(names)
+        NKT._SDK.closePorts(names)
 
     @staticmethod
     def load_sdk(path=None):
-        """Load the ``NKTPDLL.dll`` library.
+        """Load the SDK.
 
         Parameters
         ----------
         path : :class:`str`, optional
             The path to ``NKTPDLL.dll``. If not specified then searches for the library.
         """
-        if NKT._DLL is not None:
-            return NKT._DLL
+        if NKT._SDK is not None:
+            return
 
         functions = {
             # Port functions
@@ -492,13 +489,11 @@ class NKT(Connection):
                 [('callback', c_void_p)]),
         }
 
-        NKT._DLL = LoadLibrary(_PATH if path is None else path).lib
+        NKT._SDK = LoadLibrary(_PATH if path is None else path).lib
         for key, value in functions.items():
-            attr = getattr(NKT._DLL, key)
+            attr = getattr(NKT._SDK, key)
             attr.restype, attr.errcheck = value[:2]
             attr.argtypes = [typ for _, typ in value[2]]
-
-        return NKT._DLL
 
     @staticmethod
     def device_get_all_types(opened_ports=None, size=255):
@@ -524,9 +519,8 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        NKT.load_sdk()
         if opened_ports is None:
-            opened_ports = [port.encode() for port in NKT._DLL.get_open_ports()]
+            opened_ports = [port.encode() for port in NKT._SDK.get_open_ports()]
         elif isinstance(opened_ports, (list, tuple)):
             opened_ports = [port.encode() for port in opened_ports]
         elif isinstance(opened_ports, str):
@@ -538,7 +532,7 @@ class NKT(Connection):
         length = c_ubyte(size)
         types = create_string_buffer(size)
         for port in opened_ports:
-            NKT._DLL.deviceGetAllTypes(port, types, length)
+            NKT._SDK.deviceGetAllTypes(port, types, length)
             key = port.decode()
             out[key] = {}
             for dev_id, typ in enumerate(types.raw):
@@ -568,7 +562,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.deviceCreate(self._PORTNAME, device_id, int(bool(wait_ready)))
+        NKT._SDK.deviceCreate(self._PORTNAME, device_id, int(bool(wait_ready)))
 
     def device_exists(self, device_id):
         """Checks if a specific device already exists in the internal device list.
@@ -589,7 +583,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         exists = c_ubyte(0)
-        self._DLL.deviceExists(self._PORTNAME, device_id, exists)
+        NKT._SDK.deviceExists(self._PORTNAME, device_id, exists)
         return bool(exists.value)
 
     def device_get_boot_loader_version(self, device_id):
@@ -614,7 +608,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         version = c_ushort(0)
-        self._DLL.deviceGetBootloaderVersion(self._PORTNAME, device_id, version)
+        NKT._SDK.deviceGetBootloaderVersion(self._PORTNAME, device_id, version)
         return version.value
 
     def device_get_boot_loader_version_str(self, device_id):
@@ -640,7 +634,7 @@ class NKT(Connection):
         """
         size = c_ubyte(255)
         version = create_string_buffer(size.value)
-        self._DLL.deviceGetBootloaderVersionStr(self._PORTNAME, device_id, version, size)
+        NKT._SDK.deviceGetBootloaderVersionStr(self._PORTNAME, device_id, version, size)
         return version.value.decode()
 
     def device_get_error_code(self, device_id):
@@ -665,7 +659,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         error_code = c_ushort(0)
-        self._DLL.deviceGetErrorCode(self._PORTNAME, device_id, error_code)
+        NKT._SDK.deviceGetErrorCode(self._PORTNAME, device_id, error_code)
         return error_code.value
 
     def device_get_firmware_version(self, device_id):
@@ -690,7 +684,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         version = c_ushort(0)
-        self._DLL.deviceGetFirmwareVersion(self._PORTNAME, device_id, version)
+        NKT._SDK.deviceGetFirmwareVersion(self._PORTNAME, device_id, version)
         return version.value
 
     def device_get_firmware_version_str(self, device_id):
@@ -716,7 +710,7 @@ class NKT(Connection):
         """
         size = c_ubyte(255)
         version = create_string_buffer(size.value)
-        self._DLL.deviceGetFirmwareVersionStr(self._PORTNAME, device_id, version, size)
+        NKT._SDK.deviceGetFirmwareVersionStr(self._PORTNAME, device_id, version, size)
         return version.value.decode()
 
     def device_get_live(self, device_id):
@@ -742,7 +736,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         live_mode = c_ubyte(0)
-        self._DLL.deviceGetLive(self._PORTNAME, device_id, live_mode)
+        NKT._SDK.deviceGetLive(self._PORTNAME, device_id, live_mode)
         return bool(live_mode.value)
 
     def device_get_mode(self, device_id):
@@ -768,7 +762,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         dev_mode = c_ubyte(0)
-        self._DLL.deviceGetMode(self._PORTNAME, device_id, dev_mode)
+        NKT._SDK.deviceGetMode(self._PORTNAME, device_id, dev_mode)
         return DeviceModeTypes(dev_mode.value)
 
     def device_get_module_serial_number_str(self, device_id):
@@ -794,7 +788,7 @@ class NKT(Connection):
         """
         size = c_ubyte(255)
         serial = create_string_buffer(size.value)
-        self._DLL.deviceGetModuleSerialNumberStr(self._PORTNAME, device_id, serial, size)
+        NKT._SDK.deviceGetModuleSerialNumberStr(self._PORTNAME, device_id, serial, size)
         return serial.value.decode()
 
     def device_get_part_number_str(self, device_id):
@@ -820,7 +814,7 @@ class NKT(Connection):
         """
         size = c_ubyte(255)
         part = create_string_buffer(size.value)
-        self._DLL.deviceGetPartNumberStr(self._PORTNAME, device_id, part, size)
+        NKT._SDK.deviceGetPartNumberStr(self._PORTNAME, device_id, part, size)
         return part.value.decode()
 
     def device_get_pcb_serial_number_str(self, device_id):
@@ -846,7 +840,7 @@ class NKT(Connection):
         """
         size = c_ubyte(255)
         serial = create_string_buffer(size.value)
-        self._DLL.deviceGetPCBSerialNumberStr(self._PORTNAME, device_id, serial, size)
+        NKT._SDK.deviceGetPCBSerialNumberStr(self._PORTNAME, device_id, serial, size)
         return serial.value.decode()
 
     def device_get_pcb_version(self, device_id):
@@ -871,7 +865,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         version = c_ubyte(0)
-        self._DLL.deviceGetPCBVersion(self._PORTNAME, device_id, version)
+        NKT._SDK.deviceGetPCBVersion(self._PORTNAME, device_id, version)
         return version.value
 
     def device_get_status_bits(self, device_id):
@@ -896,7 +890,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         status = c_ushort(0)
-        self._DLL.deviceGetStatusBits(self._PORTNAME, device_id, status)
+        NKT._SDK.deviceGetStatusBits(self._PORTNAME, device_id, status)
         return status.value
 
     def device_get_type(self, device_id):
@@ -921,7 +915,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         dev_type = c_ubyte(0)
-        self._DLL.deviceGetType(self._PORTNAME, device_id, dev_type)
+        NKT._SDK.deviceGetType(self._PORTNAME, device_id, dev_type)
         return dev_type.value
 
     def device_remove(self, device_id):
@@ -937,7 +931,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.deviceRemove(self._PORTNAME, device_id)
+        NKT._SDK.deviceRemove(self._PORTNAME, device_id)
 
     def device_remove_all(self):
         """Remove all devices from the internal device list.
@@ -949,7 +943,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.deviceRemoveAll(self._PORTNAME)
+        NKT._SDK.deviceRemoveAll(self._PORTNAME)
 
     def device_set_live(self, device_id, live_mode):
         """Sets the internal device live status for a specific device id (module address).
@@ -966,7 +960,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.deviceSetLive(self._PORTNAME, device_id, int(bool(live_mode)))
+        NKT._SDK.deviceSetLive(self._PORTNAME, device_id, int(bool(live_mode)))
 
     def disconnect(self):
         """Disconnect from the port.
@@ -994,7 +988,7 @@ class NKT(Connection):
         """
         length = c_ushort(size)
         names = create_string_buffer(size)
-        NKT.load_sdk().getAllPorts(names, length)
+        NKT._SDK.getAllPorts(names, length)
         return [name for name in names.value.decode().split(',') if name]
 
     def get_modules(self, size=255):
@@ -1026,7 +1020,7 @@ class NKT(Connection):
         :class:`bool`
             :data:`True` if in legacy mode otherwise in normal mode.
         """
-        return bool(NKT.load_sdk().getLegacyBusScanning())
+        return bool(NKT._SDK.getLegacyBusScanning())
 
     @staticmethod
     def get_open_ports(size=255):
@@ -1044,7 +1038,7 @@ class NKT(Connection):
         """
         length = c_ushort(size)
         names = create_string_buffer(size)
-        NKT.load_sdk().getOpenPorts(names, length)
+        NKT._SDK.getOpenPorts(names, length)
         return [name for name in names.value.decode().split(',') if name]
 
     def get_port_error_msg(self):
@@ -1060,9 +1054,9 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        length = c_ushort(1000)
+        length = c_ushort(255)
         msg = create_string_buffer(length.value)
-        self._DLL.getPortErrorMsg(self._PORTNAME, msg, length)
+        NKT._SDK.getPortErrorMsg(self._PORTNAME, msg, length)
         return msg.value.decode()
 
     def get_port_status(self):
@@ -1079,7 +1073,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         status = c_ubyte(0)
-        self._DLL.getPortStatus(self._PORTNAME, status)
+        NKT._SDK.getPortStatus(self._PORTNAME, status)
         return PortStatusTypes(status.value)
 
     @staticmethod
@@ -1120,7 +1114,7 @@ class NKT(Connection):
             names = b','.join(name.encode() for name in names)
         elif not isinstance(names, bytes):
             names = names.encode()
-        NKT.load_sdk().openPorts(names, int(bool(auto)), int(bool(live)))
+        NKT._SDK.openPorts(names, int(bool(auto)), int(bool(live)))
 
     def point_to_point_port_add(self, host_address, host_port, client_address, client_port, protocol, ms_timeout=100):
         """Creates or modifies a point to point port.
@@ -1145,7 +1139,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.pointToPointPortAdd(
+        NKT._SDK.pointToPointPortAdd(
             self._PORTNAME, host_address.encode(), host_port,
             client_address.encode(), client_port, protocol, ms_timeout
         )
@@ -1158,7 +1152,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.pointToPointPortDel(self._PORTNAME)
+        NKT._SDK.pointToPointPortDel(self._PORTNAME)
 
     def point_to_point_port_get(self):
         """Retrieve the information about the point-to-point port setting.
@@ -1181,7 +1175,7 @@ class NKT(Connection):
         client_port = c_ushort(0)
         protocol = c_ubyte(0)
         ms_timeout = c_ubyte(0)
-        self._DLL.pointToPointPortGet(
+        NKT._SDK.pointToPointPortGet(
             self._PORTNAME, host_address, host_length, host_port,
             client_address, client_length, client_port, protocol, ms_timeout
         )
@@ -1220,7 +1214,7 @@ class NKT(Connection):
         """
         size = c_ubyte(255)
         data = create_string_buffer(size.value)
-        self._DLL.registerRead(self._PORTNAME, device_id, reg_id, data, size, index)
+        NKT._SDK.registerRead(self._PORTNAME, device_id, reg_id, data, size, index)
         return data.raw[:size.value]
 
     def register_create(self, device_id, reg_id, priority, data_type):
@@ -1246,7 +1240,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.registerCreate(self._PORTNAME, device_id, reg_id,
+        NKT._SDK.registerCreate(self._PORTNAME, device_id, reg_id,
                                  RegisterPriorityTypes(priority), RegisterDataTypes(data_type))
 
     def register_exists(self, device_id, reg_id):
@@ -1270,7 +1264,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         exists = c_ubyte(0)
-        self._DLL.registerExists(self._PORTNAME, device_id, reg_id, exists)
+        NKT._SDK.registerExists(self._PORTNAME, device_id, reg_id, exists)
         return bool(exists.value)
 
     def register_get_all(self, device_id, reg_id):
@@ -1295,7 +1289,7 @@ class NKT(Connection):
         """
         size = c_ubyte(255)
         regs = create_string_buffer(size.value)
-        self._DLL.registerGetAll(self._PORTNAME, device_id, reg_id, regs, size)
+        NKT._SDK.registerGetAll(self._PORTNAME, device_id, reg_id, regs, size)
         return regs.raw[:size.value]
 
     def register_read_ascii(self, device_id, reg_id, index=-1):
@@ -1326,7 +1320,7 @@ class NKT(Connection):
         """
         size = c_ubyte(255)
         data = create_string_buffer(size.value)
-        self._DLL.registerReadAscii(self._PORTNAME, device_id, reg_id, data, size, index)
+        NKT._SDK.registerReadAscii(self._PORTNAME, device_id, reg_id, data, size, index)
         return data.value.decode()
 
     def register_read_f32(self, device_id, reg_id, index=-1):
@@ -1356,7 +1350,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         data = c_float(0)
-        self._DLL.registerReadF32(self._PORTNAME, device_id, reg_id, data, index)
+        NKT._SDK.registerReadF32(self._PORTNAME, device_id, reg_id, data, index)
         return data.value
 
     def register_read_f64(self, device_id, reg_id, index=-1):
@@ -1386,7 +1380,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         data = c_double(0)
-        self._DLL.registerReadF64(self._PORTNAME, device_id, reg_id, data, index)
+        NKT._SDK.registerReadF64(self._PORTNAME, device_id, reg_id, data, index)
         return data.value
 
     def register_read_s16(self, device_id, reg_id, index=-1):
@@ -1416,7 +1410,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         data = c_short(0)
-        self._DLL.registerReadS16(self._PORTNAME, device_id, reg_id, data, index)
+        NKT._SDK.registerReadS16(self._PORTNAME, device_id, reg_id, data, index)
         return data.value
 
     def register_read_s32(self, device_id, reg_id, index=-1):
@@ -1446,7 +1440,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         data = c_long(0)
-        self._DLL.registerReadS32(self._PORTNAME, device_id, reg_id, data, index)
+        NKT._SDK.registerReadS32(self._PORTNAME, device_id, reg_id, data, index)
         return data.value
 
     def register_read_s64(self, device_id, reg_id, index=-1):
@@ -1476,7 +1470,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         data = c_longlong(0)
-        self._DLL.registerReadS64(self._PORTNAME, device_id, reg_id, data, index)
+        NKT._SDK.registerReadS64(self._PORTNAME, device_id, reg_id, data, index)
         return data.value
 
     def register_read_s8(self, device_id, reg_id, index=-1):
@@ -1506,7 +1500,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         data = c_byte(0)
-        self._DLL.registerReadS8(self._PORTNAME, device_id, reg_id, data, index)
+        NKT._SDK.registerReadS8(self._PORTNAME, device_id, reg_id, data, index)
         return data.value
 
     def register_read_u16(self, device_id, reg_id, index=-1):
@@ -1536,7 +1530,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         data = c_ushort(0)
-        self._DLL.registerReadU16(self._PORTNAME, device_id, reg_id, data, index)
+        NKT._SDK.registerReadU16(self._PORTNAME, device_id, reg_id, data, index)
         return data.value
 
     def register_read_u32(self, device_id, reg_id, index=-1):
@@ -1566,7 +1560,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         data = c_ulong(0)
-        self._DLL.registerReadU32(self._PORTNAME, device_id, reg_id, data, index)
+        NKT._SDK.registerReadU32(self._PORTNAME, device_id, reg_id, data, index)
         return data.value
 
     def register_read_u64(self, device_id, reg_id, index=-1):
@@ -1596,7 +1590,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         data = c_ulonglong(0)
-        self._DLL.registerReadU64(self._PORTNAME, device_id, reg_id, data, index)
+        NKT._SDK.registerReadU64(self._PORTNAME, device_id, reg_id, data, index)
         return data.value
 
     def register_read_u8(self, device_id, reg_id, index=-1):
@@ -1626,7 +1620,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         data = c_ubyte(0)
-        self._DLL.registerReadU8(self._PORTNAME, device_id, reg_id, data, index)
+        NKT._SDK.registerReadU8(self._PORTNAME, device_id, reg_id, data, index)
         return data.value
 
     def register_remove(self, device_id, reg_id):
@@ -1644,7 +1638,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.registerRemove(self._PORTNAME, device_id, reg_id)
+        NKT._SDK.registerRemove(self._PORTNAME, device_id, reg_id)
 
     def register_remove_all(self, device_id):
         """Remove all registers from the internal register list.
@@ -1661,7 +1655,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.registerRemoveAll(self._PORTNAME, device_id)
+        NKT._SDK.registerRemoveAll(self._PORTNAME, device_id)
 
     def register_write(self, device_id, reg_id, data, index=-1):
         """Writes a register value.
@@ -1685,7 +1679,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.registerWrite(self._PORTNAME, device_id, reg_id, data, len(data), index)
+        NKT._SDK.registerWrite(self._PORTNAME, device_id, reg_id, data, len(data), index)
 
     def register_write_ascii(self, device_id, reg_id, string, write_eol, index=-1):
         """Writes a string to the register value.
@@ -1712,7 +1706,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         buffer = create_string_buffer(string.encode('ascii'))
-        self._DLL.registerWriteAscii(self._PORTNAME, device_id, reg_id, buffer, int(bool(write_eol)), index)
+        NKT._SDK.registerWriteAscii(self._PORTNAME, device_id, reg_id, buffer, int(bool(write_eol)), index)
 
     def register_write_f32(self, device_id, reg_id, value, index=-1):
         """Writes a 32-bit float register value.
@@ -1736,7 +1730,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.registerWriteF32(self._PORTNAME, device_id, reg_id, value, index)
+        NKT._SDK.registerWriteF32(self._PORTNAME, device_id, reg_id, value, index)
 
     def register_write_f64(self, device_id, reg_id, value, index=-1):
         """Writes a 64-bit double register value.
@@ -1760,7 +1754,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.registerWriteF64(self._PORTNAME, device_id, reg_id, value, index)
+        NKT._SDK.registerWriteF64(self._PORTNAME, device_id, reg_id, value, index)
 
     def register_write_read(self, device_id, reg_id, data, index=-1):
         """Writes then reads a register value.
@@ -1791,7 +1785,7 @@ class NKT(Connection):
         """
         size = c_ubyte(255)
         read = create_string_buffer(size.value)
-        self._DLL.registerWriteRead(self._PORTNAME, device_id, reg_id, data, len(data), index, read, size, index)
+        NKT._SDK.registerWriteRead(self._PORTNAME, device_id, reg_id, data, len(data), index, read, size, index)
         return read.raw[:size.value]
 
     def register_write_read_ascii(self, device_id, reg_id, string, write_eol, index=-1):
@@ -1826,7 +1820,7 @@ class NKT(Connection):
         ascii_value = create_string_buffer(string.encode('ascii'))
         size = c_ubyte(255)
         read = create_string_buffer(size.value)
-        self._DLL.registerWriteReadAscii(self._PORTNAME, device_id, reg_id, ascii_value,
+        NKT._SDK.registerWriteReadAscii(self._PORTNAME, device_id, reg_id, ascii_value,
                                          int(bool(write_eol)), read, size, index)
         return read.value.decode('ascii')
 
@@ -1858,7 +1852,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         read = c_float(0)
-        self._DLL.registerWriteReadF32(self._PORTNAME, device_id, reg_id, value, read, index)
+        NKT._SDK.registerWriteReadF32(self._PORTNAME, device_id, reg_id, value, read, index)
         return read.value
 
     def register_write_read_f64(self, device_id, reg_id, value, index=-1):
@@ -1889,7 +1883,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         read = c_double(0)
-        self._DLL.registerWriteReadF64(self._PORTNAME, device_id, reg_id, value, read, index)
+        NKT._SDK.registerWriteReadF64(self._PORTNAME, device_id, reg_id, value, read, index)
         return read.value
 
     def register_write_read_s16(self, device_id, reg_id, value, index=-1):
@@ -1920,7 +1914,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         read = c_short(0)
-        self._DLL.registerWriteReadS16(self._PORTNAME, device_id, reg_id, value, read, index)
+        NKT._SDK.registerWriteReadS16(self._PORTNAME, device_id, reg_id, value, read, index)
         return read.value
 
     def register_write_read_s32(self, device_id, reg_id, value, index=-1):
@@ -1951,7 +1945,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         read = c_long(0)
-        self._DLL.registerWriteReadS32(self._PORTNAME, device_id, reg_id, value, read, index)
+        NKT._SDK.registerWriteReadS32(self._PORTNAME, device_id, reg_id, value, read, index)
         return read.value
 
     def register_write_read_s64(self, device_id, reg_id, value, index=-1):
@@ -1982,7 +1976,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         read = c_longlong(0)
-        self._DLL.registerWriteReadS64(self._PORTNAME, device_id, reg_id, value, read, index)
+        NKT._SDK.registerWriteReadS64(self._PORTNAME, device_id, reg_id, value, read, index)
         return read.value
 
     def register_write_read_s8(self, device_id, reg_id, value, index=-1):
@@ -2013,7 +2007,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         read = c_byte(0)
-        self._DLL.registerWriteReadS8(self._PORTNAME, device_id, reg_id, value, read, index)
+        NKT._SDK.registerWriteReadS8(self._PORTNAME, device_id, reg_id, value, read, index)
         return read.value
 
     def register_write_read_u16(self, device_id, reg_id, value, index=-1):
@@ -2044,7 +2038,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         read = c_ushort(0)
-        self._DLL.registerWriteReadU16(self._PORTNAME, device_id, reg_id, value, read, index)
+        NKT._SDK.registerWriteReadU16(self._PORTNAME, device_id, reg_id, value, read, index)
         return read.value
 
     def register_write_read_u32(self, device_id, reg_id, value, index=-1):
@@ -2075,7 +2069,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         read = c_ulong(0)
-        self._DLL.registerWriteReadU32(self._PORTNAME, device_id, reg_id, value, read, index)
+        NKT._SDK.registerWriteReadU32(self._PORTNAME, device_id, reg_id, value, read, index)
         return read.value
 
     def register_write_read_u64(self, device_id, reg_id, value, index=-1):
@@ -2106,7 +2100,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         read = c_ulonglong(0)
-        self._DLL.registerWriteReadU64(self._PORTNAME, device_id, reg_id, value, read, index)
+        NKT._SDK.registerWriteReadU64(self._PORTNAME, device_id, reg_id, value, read, index)
         return read.value
 
     def register_write_read_u8(self, device_id, reg_id, value, index=-1):
@@ -2137,7 +2131,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         read = c_ubyte(0)
-        self._DLL.registerWriteReadU8(self._PORTNAME, device_id, reg_id, value, read, index)
+        NKT._SDK.registerWriteReadU8(self._PORTNAME, device_id, reg_id, value, read, index)
         return read.value
 
     def register_write_s16(self, device_id, reg_id, value, index=-1):
@@ -2162,7 +2156,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.registerWriteS16(self._PORTNAME, device_id, reg_id, value, index)
+        NKT._SDK.registerWriteS16(self._PORTNAME, device_id, reg_id, value, index)
 
     def register_write_s32(self, device_id, reg_id, value, index=-1):
         """Writes a 32-bit signed long register value.
@@ -2186,7 +2180,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.registerWriteS32(self._PORTNAME, device_id, reg_id, value, index)
+        NKT._SDK.registerWriteS32(self._PORTNAME, device_id, reg_id, value, index)
 
     def register_write_s64(self, device_id, reg_id, value, index=-1):
         """Writes a 64-bit signed long long register value.
@@ -2210,7 +2204,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.registerWriteS64(self._PORTNAME, device_id, reg_id, value, index)
+        NKT._SDK.registerWriteS64(self._PORTNAME, device_id, reg_id, value, index)
 
     def register_write_s8(self, device_id, reg_id, value, index=-1):
         """Writes a 8-bit signed char register value.
@@ -2234,7 +2228,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.registerWriteS8(self._PORTNAME, device_id, reg_id, value, index)
+        NKT._SDK.registerWriteS8(self._PORTNAME, device_id, reg_id, value, index)
 
     def register_write_u16(self, device_id, reg_id, value, index=-1):
         """Writes a 16-bit unsigned short register value.
@@ -2258,7 +2252,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.registerWriteU16(self._PORTNAME, device_id, reg_id, value, index)
+        NKT._SDK.registerWriteU16(self._PORTNAME, device_id, reg_id, value, index)
 
     def register_write_u32(self, device_id, reg_id, value, index=-1):
         """Writes a 32-bit unsigned long register value.
@@ -2282,7 +2276,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.registerWriteU32(self._PORTNAME, device_id, reg_id, value, index)
+        NKT._SDK.registerWriteU32(self._PORTNAME, device_id, reg_id, value, index)
 
     def register_write_u64(self, device_id, reg_id, value, index=-1):
         """Writes a 64-bit unsigned long long register value.
@@ -2306,7 +2300,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.registerWriteU64(self._PORTNAME, device_id, reg_id, value, index)
+        NKT._SDK.registerWriteU64(self._PORTNAME, device_id, reg_id, value, index)
 
     def register_write_u8(self, device_id, reg_id, value, index=-1):
         """Writes a 8-bit unsigned char register value.
@@ -2330,7 +2324,7 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self._DLL.registerWriteU8(self._PORTNAME, device_id, reg_id, value, index)
+        NKT._SDK.registerWriteU8(self._PORTNAME, device_id, reg_id, value, index)
 
     @staticmethod
     def set_legacy_bus_scanning(mode):
@@ -2346,7 +2340,7 @@ class NKT(Connection):
             address 66(0x42). Some older modules do not accept masterIds other
             than 66(0x42).
         """
-        NKT.load_sdk().setLegacyBusScanning(int(bool(mode)))
+        NKT._SDK.setLegacyBusScanning(int(bool(mode)))
 
     @staticmethod
     def set_callback_device_status(callback):
@@ -2382,7 +2376,7 @@ class NKT(Connection):
         """
         if callback is not None and not isinstance(callback, DeviceStatusCallback):
             raise TypeError('Must pass in a DeviceStatusCallback object')
-        NKT.load_sdk().setCallbackPtrDeviceInfo(callback)
+        NKT._SDK.setCallbackPtrDeviceInfo(callback)
 
     @staticmethod
     def set_callback_port_status(callback):
@@ -2420,7 +2414,7 @@ class NKT(Connection):
         """
         if callback is not None and not isinstance(callback, PortStatusCallback):
             raise TypeError('Must pass in a PortStatusCallback object')
-        NKT.load_sdk().setCallbackPtrPortInfo(callback)
+        NKT._SDK.setCallbackPtrPortInfo(callback)
 
     @staticmethod
     def set_callback_register_status(callback):
@@ -2458,7 +2452,7 @@ class NKT(Connection):
         """
         if callback is not None and not isinstance(callback, RegisterStatusCallback):
             raise TypeError('Must pass in a RegisterStatusCallback object')
-        NKT.load_sdk().setCallbackPtrRegisterInfo(callback)
+        NKT._SDK.setCallbackPtrRegisterInfo(callback)
 
 
 PortStatusCallback = CFUNCTYPE(None, c_char_p, c_ubyte, c_ubyte, c_ubyte, c_ubyte)
@@ -2688,7 +2682,7 @@ def unknown_error(result):
 
 
 def _log_debug(result, func, arguments):
-    logger.debug('NKT.{}{} -> {}'.format(func.__name__, arguments, result))
+    Connection.log_debug('NKT.{}{} -> {}'.format(func.__name__, arguments, result))
     return result
 
 

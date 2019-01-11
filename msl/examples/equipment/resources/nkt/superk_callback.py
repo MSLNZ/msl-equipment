@@ -7,15 +7,6 @@ if __name__ == '__main__':
     from msl.equipment.resources.nkt import NKT, RegisterStatusCallback, PortStatusCallback, DeviceStatusCallback
     from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
 
-    record = EquipmentRecord(
-        manufacturer='NKT',
-        model='SuperK Fianium',  # change for your device
-        connection=ConnectionRecord(
-            address='COM9',  # change for your device
-            backend=Backend.MSL,
-        )
-    )
-
     @RegisterStatusCallback
     def register_callback(port, dev_id, reg_id, reg_status, reg_type, data_length, data):
         print('RegisterStatusCallback: {}'.format((port, dev_id, reg_id, reg_status, reg_type, data_length, data)))
@@ -33,8 +24,17 @@ if __name__ == '__main__':
     # and this variable specifies the path of the dll file. However, you
     # can also explicitly specify the path of the dll file. For example, you
     # can use NKT.load_sdk() to automatically find the DLL file.
-    NKT.load_sdk(r'D:\SDKs\NKTPDLL.dll')
+    NKT.load_sdk('D:/NKTPDLL.dll')
     NKT.set_callback_port_status(port_callback)
+
+    record = EquipmentRecord(
+        manufacturer='NKT',
+        model='SuperK Fianium',  # change for your device
+        connection=ConnectionRecord(
+            address='COM9',  # change for your computer
+            backend=Backend.MSL,
+        )
+    )
 
     # Connect to the laser
     nkt = record.connect()

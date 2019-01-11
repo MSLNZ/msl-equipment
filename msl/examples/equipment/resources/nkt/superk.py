@@ -12,19 +12,19 @@ if __name__ == '__main__':
         manufacturer='NKT',
         model='SuperK Fianium',  # change for your device
         connection=ConnectionRecord(
-            address='COM9',  # change for your device
+            address='COM9',  # change for your computer
             backend=Backend.MSL,
             # When installing the SDK a NKTP_SDK_PATH environment variable is created
             # and this variable is used to specify the path to the dll file. However, you
             # can also explicitly specify the location of the dll file.
-            properties={'dll_path': r'D:\SDKs\NKTPDLL.dll'},
+            properties={'sdk_path': 'D:/NKTPDLL.dll'},
         )
     )
 
-    # Connect to the laser
+    # Connect to the SuperK laser
     nkt = record.connect()
 
-    # Get some info about The SuperK
+    # Get some info about the SuperK
     print('The status of the SuperK: {!r}'.format(nkt.get_port_status()))
     print('The following modules are available in the device:')
     for module, device_id in nkt.get_modules().items():

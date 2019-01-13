@@ -8,7 +8,7 @@ if __name__ == '__main__':
     from msl.equipment.resources.utils import CHeader
 
     path = r'C:\Program Files\Pico Technology\SDK\inc\ps5000aApi.h'
-    fcn_regex = 'PREF0\s+PREF1\s+(\w+)\s+PREF2\s+PREF3\s+\((\w+)\)'
+    fcn_regex = r'PREF0\s+PREF1\s+(\w+)\s+PREF2\s+PREF3\s+\((\w+)\)'
 
     header = CHeader(path)
 

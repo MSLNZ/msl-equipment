@@ -10068,7 +10068,7 @@ if __name__ == '__main__':
 
     struct_imports = []
     root = r'C:\Program Files\Thorlabs\Kinesis'
-    fcn_regex = '_API\s+([\w\s]+?)_?_cdecl\s+(\w+)'
+    fcn_regex = r'_API\s+([\w\s]+?)_?_cdecl\s+(\w+)'
     for f in os.listdir(root):
         if f.endswith('.h'):
             path = os.path.join(root, f)

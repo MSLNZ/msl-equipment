@@ -64,7 +64,7 @@ def test_tcp_socket_read():
             backend=Backend.MSL,
             properties=dict(
                 termination=term,  # sets both read_termination and write_termination
-                timeout=5
+                timeout=30
             ),
         )
     )
@@ -167,7 +167,7 @@ def test_udp_socket_read():
             backend=Backend.MSL,
             properties=dict(
                 termination=term,  # sets both read_termination and write_termination
-                timeout=5
+                timeout=30
             ),
         )
     )

@@ -42,8 +42,6 @@ class Database(object):
         ------
         IOError
             If `path` does not exist or if the :ref:`configuration_file` is invalid.
-        UnicodeError
-            For all errors that are related to encoding problems.
         AttributeError
             If an ``<equipment>`` XML tag is specified in the :ref:`configuration_file`
             and it does not uniquely identify an equipment record in an
@@ -94,16 +92,28 @@ class Database(object):
         self._equipment_records = {}
         for registers in root.findall('registers'):
             for register in registers.findall('register'):
-                header, rows = self._read(register)
-                index_map = self._make_index_map(header, EquipmentRecord._NAMES)
+                register_path = register.findtext('path')
                 team = register.attrib.get('team', '')
                 date_format = register.attrib.get('date_format', '%d/%m/%Y')
-                user_defined = register.attrib.get('user_defined', [])
-                register_path = register.findtext('path')
+
+                header, rows = self._read(register)
+                index_map = self._make_index_map(header, EquipmentRecord._NAMES)
+
+                # prepare the user_defined list
+                temp = register.attrib.get('user_defined', [])
+                user_defined = []
                 index_map_user_defined = {}
-                if user_defined:
-                    user_defined = [u.strip().lower().replace(' ', '_') for u in user_defined.split(',') if u.strip()]
-                    index_map_user_defined = self._make_index_map(header, user_defined)
+                if temp:
+                    temp = [t.strip().lower().replace(' ', '_') for t in temp.split(',') if t.strip()]
+                    for name in temp:
+                        if name in EquipmentRecord._NAMES:
+                            msg = 'The "user_defined" parameter {!r} is already an EquipmentRecord attribute'
+                            logger.warning(msg.format(name))
+                        else:
+                            user_defined.append(name)
+                    if user_defined:
+                        index_map_user_defined = self._make_index_map(header, user_defined)
+
                 for row in rows:
                     if not self._is_row_length_okay(row, header):
                         continue
@@ -156,15 +166,11 @@ class Database(object):
 
                     for name in user_defined:
                         try:
-                            value = row[index_map_user_defined[name]]
+                            s = row[index_map_user_defined[name]]
                         except KeyError:
                             pass
                         else:
-                            if name in kwargs:
-                                msg = 'The "user_defined" parameter {!r} is already an EquipmentRecord attribute'
-                                logger.warning(msg.format(name))
-                            else:
-                                kwargs[name] = value
+                            kwargs[name] = string_to_none_bool_int_float_complex(s)
 
                     self._equipment_records[key] = EquipmentRecord(**kwargs)
 

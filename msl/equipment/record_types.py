@@ -31,8 +31,8 @@ class EquipmentRecord(object):
 
     # Valid property names for an EquipmentRecord
     _NAMES = ['alias', 'calibration_cycle', 'category', 'connection',
-             'date_calibrated', 'description', 'latest_report_number',
-             'location', 'manufacturer', 'model', 'serial', 'team', 'user_defined']
+              'date_calibrated', 'description', 'latest_report_number',
+              'location', 'manufacturer', 'model', 'serial', 'team', 'user_defined']
 
     def __init__(self, **kwargs):
         """Contains the information about an equipment record in an :ref:`equipment_database`.
@@ -91,7 +91,7 @@ class EquipmentRecord(object):
             self.connection = kwargs['connection']
 
         # the manufacturer, model and serial cannot change once an EquipmentRecord is created
-        self._str = u'EquipmentRecord<{}|{}|{}>'.format(self._manufacturer, self._model, self._serial)
+        self._str = 'EquipmentRecord<{}|{}|{}>'.format(self._manufacturer, self._model, self._serial)
 
     def __repr__(self):
         # the alias and the connection can be updated so we cannot cache the __repr__
@@ -452,13 +452,7 @@ class ConnectionRecord(object):
             if name not in ConnectionRecord._NAMES:
                 self._properties[name] = kwargs[name]
 
-        # the manufacturer, model and serial cannot change once a ConnectionRecord is created
-        self._str = 'ConnectionRecord<{}|{}|{}>'.format(self._manufacturer, self._model, self._serial)
-
     def __repr__(self):
-        # the properties can be updated so we cannot cache the __repr__
-        # (and sometimes the interface can change if there is an MSL Resource defined for the
-        # EquipmentRecord, for example, the Resource uses an SDK but the address=COM5)
         out = []
         for name in ConnectionRecord._NAMES:
             if name == 'properties':
@@ -473,7 +467,7 @@ class ConnectionRecord(object):
         return '\n'.join(out)
 
     def __str__(self):
-        return self._str
+        return 'ConnectionRecord<{}|{}|{}>'.format(self._manufacturer, self._model, self._serial)
 
     @property
     def address(self):

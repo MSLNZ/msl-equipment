@@ -87,11 +87,20 @@ def fetch_init(key):
     return re.compile(r'{}\s*=\s*(.*)'.format(key)).search(init_text).group(1)[1:-1]
 
 
+install_requires = [
+    'msl-loadlib',
+    'numpy',
+    'pyserial>=3.0',
+    'python-dateutil',
+    'xlrd',
+    'enum34;python_version<"3.4"',
+]
+
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if testing else []
 
 needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
-sphinx = ['sphinx', 'sphinx_rtd_theme'] if needs_sphinx else []
+sphinx = ['sphinx', 'sphinx_rtd_theme'] + install_requires if needs_sphinx else []
 
 setup(
     name='msl-equipment',
@@ -120,15 +129,8 @@ setup(
         'Topic :: Scientific/Engineering :: Physics',
     ],
     setup_requires=sphinx + pytest_runner,
-    tests_require=['pytest-cov', 'pytest', 'nidaqmx', 'pyvisa>=1.6'],
-    install_requires=[
-        'msl-loadlib',
-        'numpy',
-        'pyserial>=3.0',
-        'python-dateutil',
-        'xlrd',
-        'enum34;python_version<"3.4"',
-    ],
+    tests_require=['pytest-cov', 'pytest', 'nidaqmx', 'pyvisa>=1.6', 'pyvisa-py'] + install_requires,
+    install_requires=install_requires,
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),
     include_package_data=True,

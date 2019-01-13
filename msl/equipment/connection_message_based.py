@@ -5,14 +5,15 @@ import time
 
 from .connection import Connection
 from .exceptions import MSLTimeoutError
+from .constants import LF, CR
 
 
 class ConnectionMessageBased(Connection):
 
-    CR = b'\r'
+    CR = CR
     """:class:`bytes`: The carriage-return character."""
 
-    LF = b'\n'
+    LF = LF
     """:class:`bytes`: The line-feed character."""
 
     def __init__(self, record):

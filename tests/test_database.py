@@ -5,7 +5,6 @@ import pytest
 
 from msl.equipment.config import Config
 from msl.equipment import constants
-from msl.equipment.connection_message_based import ConnectionMessageBased
 
 
 def test_database_io_errors():
@@ -122,9 +121,9 @@ def test_connection_properties():
     assert isinstance(props['f'], bool) and not props['f']
     assert props['g'] is None
     assert props['h'] == ''
-    assert props['i'].encode() == ConnectionMessageBased.LF
-    assert props['j'].encode() == ConnectionMessageBased.CR
-    assert props['k'].encode() == ConnectionMessageBased.CR + ConnectionMessageBased.LF
+    assert props['i_termination'] == constants.LF
+    assert props['j_termination'] == constants.CR
+    assert props['k_termination'] == constants.CR + constants.LF
     assert props['l'] == 'some text'
     assert props['m'] == 'D:\\Data\\'
 
@@ -159,3 +158,26 @@ def test_encoding():
 
         assert db.records(manufacturer='Kepco')[0].manufacturer == u'Kepco and \u201cTMK\u201d shunt'
         assert db.records(model='MFF101/M')[0].description == u'Motorized Filter Flip Mount for \xd825mm Optics'
+
+
+def test_database_user_defined():
+    path = os.path.join(os.path.dirname(__file__), 'db_user_defined.xml')
+    cfg = Config(path)
+    db = cfg.database()
+    for record in db.records():
+        if record.team == 'Any':
+            assert len(record.user_defined) == 2
+            assert record.user_defined['nothing_relevant'] == 'XXXXXXXXXX'
+            assert record.user_defined['policies'] == 'MSLE.X.YYY'
+        else:
+            assert len(record.user_defined) == 0
+
+    path = os.path.join(os.path.dirname(__file__), 'db_user_defined_bad.xml')
+    cfg = Config(path)
+    db = cfg.database()
+    for record in db.records():
+        if record.team == 'Any':
+            assert len(record.user_defined) == 1
+            assert record.user_defined['policies'] == 'MSLE.X.YYY'
+        else:
+            assert len(record.user_defined) == 0

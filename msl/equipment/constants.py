@@ -5,6 +5,8 @@ import enum
 
 import serial
 
+CR = b'\r'
+LF = b'\n'
 
 MSL_INTERFACE_ALIASES = {
     'SERIAL': ('ASRLCOM', 'ASRL', 'COM', 'LPT'),

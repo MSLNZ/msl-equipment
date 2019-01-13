@@ -45,10 +45,10 @@ def test_convert_to_enum():
     assert Connection.convert_to_enum('C', EnumTest1) == EnumTest1.C
     with pytest.raises(ValueError):
         Connection.convert_to_enum(4, EnumTest1)
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         Connection.convert_to_enum(None, EnumTest1)
 
-    assert Connection.convert_to_enum('a', EnumTest2, prefix='data_', to_upper=True) == EnumTest2.data_A
+    assert Connection.convert_to_enum('A', EnumTest2, prefix='data_') == EnumTest2.data_A
     assert Connection.convert_to_enum(EnumTest2.DATA_B, EnumTest2) == EnumTest2.DATA_B
     assert Connection.convert_to_enum('res_c', EnumTest2, to_upper=True) == EnumTest2.RES_C
 
@@ -60,8 +60,7 @@ def test_convert_to_enum():
 
     assert Connection.convert_to_enum('stop', EnumTest4, to_upper=True) == EnumTest4.STOP
     assert Connection.convert_to_enum('STarT', EnumTest4, to_upper=True) == EnumTest4.START
-    with pytest.raises(ValueError):
-        Connection.convert_to_enum('the end', EnumTest4)
+    assert Connection.convert_to_enum('the end', EnumTest4) == EnumTest4.STOP
 
 
 def test_exception_handler():

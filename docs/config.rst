@@ -91,6 +91,17 @@ The following illustrates an example configuration file.
            -->
            <path>equip-reg.txt</path>
          </register>
+         <register team="Length" user_defined="apples, pears, oranges">
+           <!--
+             An EquipmentRecord has standard properties (e.g, manufacturer, model, ...) that
+             are read from the database. You can also include additional fields from the database
+             that are not part of the standard properties. Include a "user_defined" list
+             (comma-separated) of additional properties to include. The field names that
+             contain the text "apples", "pears" and "oranges" are added to the "user_defined"
+             dictionary for all EquipmentRecord's in this register.
+           -->
+           <path>I:\LS-Equip-Reg\reg.csv</path>
+         </register>
        </registers>
 
        <!-- Specify the Connections Databases to load connection records from. -->

@@ -24,7 +24,7 @@ class ConnectionSocket(ConnectionMessageBased):
             'encoding_errors': str, encoding error handling scheme, e.g. 'strict', 'ignore' [default: 'strict']
             'timeout': float or None, the timeout (in seconds) for read and write operations [default: None]
             'family': str, the address family, e.g., 'INET', 'INET6', 'IPX' [default: 'INET']
-            'type': str, the socket type, e.g. 'STREAM', 'DGRAM' [default: 'STREAM']
+            'socket_type': str, the socket type, e.g. 'STREAM', 'DGRAM' [default: 'STREAM']
             'proto': int, the socket protocol number [default: 0]
             'buffer_size': int, the number of bytes to read at a time [default: 4096]
 
@@ -80,8 +80,8 @@ class ConnectionSocket(ConnectionMessageBased):
         else:
             self._family = socket.AF_INET
 
-        if 'type' in props:
-            typ = props['type'].upper()
+        if 'socket_type' in props:
+            typ = props['socket_type'].upper()
             if not typ.startswith('SOCK_'):
                 typ = 'SOCK_' + typ
             self._type = getattr(socket, typ)

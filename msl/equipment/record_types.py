@@ -1,20 +1,38 @@
 """
 Records from :ref:`equipment_database`\'s or :ref:`connections_database`\'s.
 """
+from __future__ import unicode_literals
 import re
-import enum
 import logging
 import datetime
+from enum import Enum
 from xml.etree.cElementTree import Element
 
 from dateutil.relativedelta import relativedelta
 
-from .constants import Backend, MSLInterface, MSL_INTERFACE_ALIASES
+from .utils import convert_to_enum
+from .constants import (
+    Parity,
+    StopBits,
+    DataBits,
+    Backend,
+    MSLInterface,
+    MSL_INTERFACE_ALIASES,
+    LF,
+    CR,
+)
 
 logger = logging.getLogger(__name__)
 
+_interface_regex = re.compile(r'[+_A-Z]+')
+
 
 class EquipmentRecord(object):
+
+    # Valid property names for an EquipmentRecord
+    _NAMES = ['alias', 'calibration_cycle', 'category', 'connection',
+             'date_calibrated', 'description', 'latest_report_number',
+             'location', 'manufacturer', 'model', 'serial', 'team', 'user_defined']
 
     def __init__(self, **kwargs):
         """Contains the information about an equipment record in an :ref:`equipment_database`.
@@ -22,60 +40,83 @@ class EquipmentRecord(object):
         Parameters
         ----------
         **kwargs
-            The argument names can be any of the :class:`EquipmentRecord` property names.
+            The argument names can be any of the :class:`EquipmentRecord` attribute names.
+            Any kwargs that are not one of the *standard* attribute names gets added to the
+            :attr:`.user_defined` :class:`dict`.
         """
 
-        # these properties are NOT defined as fields in the equipment-register database
-        self._alias = u''
+        # The following attributes are NOT defined as fields in the equipment-register database
+        self._alias = kwargs.get('alias', '')
         self._connection = None
-        self._team = u''
+        self._team = kwargs.get('team', '')
+        self._user_defined = {}
 
-        # these properties can be defined as fields in the equipment-register database
+        # The following attributes can be defined as fields in the equipment-register database
+        # IMPORTANT: When a new attribute is added below remember to include it in
+        #            "Field Names" section in docs/database.rst
         self._calibration_cycle = 0.0
-        self._category = u''
+        self._category = kwargs.get('category', '')
         self._date_calibrated = datetime.date(datetime.MINYEAR, 1, 1)
-        self._description = u''
-        self._latest_report_number = u''
-        self._location = u''
-        self._manufacturer = u''
-        self._model = u''
-        self._serial = u''
-        # IMPORTANT: when a new property is added remember to include it in docs/database#register_field_names
+        self._description = kwargs.get('description', '')
+        self._latest_report_number = kwargs.get('latest_report_number', '')
+        self._location = kwargs.get('location', '')
+        self._manufacturer = kwargs.get('manufacturer', '')
+        self._model = kwargs.get('model', '')
+        self._serial = kwargs.get('serial', '')
 
-        valid_names = self._valid_names()
-        for name in kwargs:
-            if name == 'connection':
-                # set the connection after the manufacturer, model and serial are all set
-                pass
-            elif name == 'date_calibrated':
-                if isinstance(kwargs[name], datetime.date):
-                    self._date_calibrated = kwargs[name]
-                else:
-                    raise TypeError('The date_calibrated value must be a datetime.date object')
-            elif name == 'calibration_cycle':
-                try:
-                    self._calibration_cycle = max(0.0, float(kwargs[name]))
-                    err = ''
-                except ValueError:
-                    err = 'The calibration_cycle must be a number.'
-                if err:
-                    raise ValueError(err)
+        # date_calibrated
+        try:
+            date = kwargs['date_calibrated']
+        except KeyError:
+            pass
+        else:
+            if isinstance(date, datetime.date):
+                self._date_calibrated = date
             else:
-                if name in valid_names:
-                    setattr(self, '_'+name, str(kwargs[name]))
-                else:
-                    err = 'An EquipmentRecord has no "{}" attribute.\nValid attributes are {}'.format(name, valid_names)
-                    raise AttributeError(err)
+                raise TypeError('The "date_calibrated" must be a datetime.date object')
+
+        # calibration_cycle
+        try:
+            cc = kwargs['calibration_cycle']
+        except KeyError:
+            pass
+        else:
+            self._calibration_cycle = max(0.0, float(cc))
+
+        for name in kwargs:
+            if name not in EquipmentRecord._NAMES:
+                self._user_defined[name] = kwargs[name]
 
         if 'connection' in kwargs:
             self.connection = kwargs['connection']
 
-    def __repr__(self):
-        return u'{}<{}|{}|{}>'.format(self.__class__.__name__, self.manufacturer, self.model, self.serial)
+        # the manufacturer, model and serial cannot change once an EquipmentRecord is created
+        self._str = u'EquipmentRecord<{}|{}|{}>'.format(self._manufacturer, self._model, self._serial)
 
-    def _valid_names(self):
-        """Returns a list of the valid property names for an EquipmentRecord"""
-        return sorted([k[1:] for k in vars(self)])
+    def __repr__(self):
+        # the alias and the connection can be updated so we cannot cache the __repr__
+        out = []
+        for name in EquipmentRecord._NAMES:
+            if name == 'connection':
+                if not self._connection:
+                    out.append('connection: None')
+                else:
+                    out.append('connection:')
+                    for line in repr(self._connection).splitlines():
+                        out.append('  ' + line)
+            elif name == 'user_defined':
+                if not self._user_defined:
+                    out.append('user_defined: {}')
+                else:
+                    out.append('user_defined:')
+                    for key in sorted(self._user_defined):
+                        out.append('  {}: {!r}'.format(key, self._user_defined[key]))
+            else:
+                out.append('{}: {!r}'.format(name, getattr(self, name)))
+        return '\n'.join(out)
+
+    def __str__(self):
+        return self._str
 
     @property
     def alias(self):
@@ -92,7 +133,7 @@ class EquipmentRecord(object):
 
     @alias.setter
     def alias(self, text):
-        self._alias = u'{}'.format(text)
+        self._alias = text
 
     @property
     def calibration_cycle(self):
@@ -111,40 +152,44 @@ class EquipmentRecord(object):
         return self._connection
 
     @connection.setter
-    def connection(self, connection_record):
+    def connection(self, record):
         """Set the information necessary to establish a connection to the equipment.
-        
+
         Parameters
         ----------
-        connection_record : :class:`ConnectionRecord`
+        record : :class:`ConnectionRecord`
             A connection record.
-        
+
         Raises
         ------
         TypeError
-            If `connection_record` is not of type :class:`ConnectionRecord`.            
+            If `connection_record` is not of type :class:`ConnectionRecord`.
         ValueError
-            If any of the `manufacturer`, `model`, `serial` values in the `connection_record` 
-            are set and they do not match those values in this :class:`EquipmentRecord`.
+            If any of the `manufacturer`, `model`, `serial` values in `record`
+            are defined and they do not match those values in this :class:`EquipmentRecord`.
         """
-        if not isinstance(connection_record, ConnectionRecord):
-            raise TypeError('The connection record must be a ConnectionRecord object')
+        if not isinstance(record, ConnectionRecord):
+            raise TypeError('Must pass in a ConnectionRecord object')
 
-        # check that the manufacturer, model number and serial number match
+        # ensure that the manufacturer, model and serial match
         for attrib in ('_manufacturer', '_model', '_serial'):
-            if not getattr(connection_record, attrib):
+            if not getattr(record, attrib):
                 # then it was not set in the connection_record
-                setattr(connection_record, attrib, getattr(self, attrib))
-            elif getattr(connection_record, attrib) != getattr(self, attrib):
+                setattr(record, attrib, getattr(self, attrib))
+            elif getattr(record, attrib) != getattr(self, attrib):
                 msg = 'ConnectionRecord.{0} ({1}) != EquipmentRecord.{0} ({2})'\
-                    .format(attrib[1:], getattr(connection_record, attrib), getattr(self, attrib))
+                    .format(attrib[1:], getattr(record, attrib), getattr(self, attrib))
                 raise ValueError(msg)
 
-        self._connection = connection_record
+        self._connection = record
 
     @property
     def date_calibrated(self):
-        """:class:`datetime.date`: The date that the equipment was last calibrated."""
+        """:class:`datetime.date`: The date that the equipment was last calibrated.
+
+        If the equipment has never been calibrated then the date is defined as
+        year=1, month=1, day=1.
+        """
         return self._date_calibrated
 
     @property
@@ -182,6 +227,30 @@ class EquipmentRecord(object):
         """:class:`str`: The team (e.g., Light Standards) that the equipment belongs to."""
         return self._team
 
+    @property
+    def user_defined(self):
+        """:class:`dict`: User-defined, key-value pairs for the :class:`EquipmentRecord`.
+
+        All \*\*kwargs that are passed to the :class:`EquipmentRecord` when it is instantiated
+        that are not part of the *standard* attributes for an :class:`EquipmentRecord`
+        are added to the *user_defined* :class:`dict`.
+
+        Examples
+        --------
+        ::
+
+            >>> from msl.equipment import EquipmentRecord
+            >>> record = EquipmentRecord(manufacturer='ABC', model='XYZ', chocolate='sugar', one=1)
+            >>> record.manufacturer  # doctest: +SKIP
+            'ABC'
+            >>> record.model  # doctest: +SKIP
+            'XYZ'
+            >>> record.user_defined  # doctest: +SKIP
+            {'chocolate': 'sugar', 'one': 1}
+
+        """
+        return self._user_defined
+
     def connect(self, demo=None):
         """Establish a connection to the equipment.
 
@@ -193,7 +262,7 @@ class EquipmentRecord(object):
             Whether to simulate a connection to the equipment by opening
             a connection in demo mode. This allows you to test your code
             if the equipment is not physically connected to a computer.
-            
+
             If :data:`None` then the `demo` value is determined from the
             :attr:`~.config.Config.DEMO_MODE` attribute.
 
@@ -219,12 +288,12 @@ class EquipmentRecord(object):
         -------
         :class:`bool`
             :data:`True` if the equipment needs to be re-calibrated, :data:`False`
-            if it does not need to be re-calibrated.
+            if it does not need to be re-calibrated (or it has never been calibrated).
         """
-        if self.date_calibrated.year == datetime.MINYEAR or self.calibration_cycle == 0.0:
+        if self._date_calibrated.year == datetime.MINYEAR or self._calibration_cycle == 0.0:
             return False
-        ask_date = datetime.date.today() + relativedelta(months=max(0, int(months)))
-        return ask_date >= self.next_calibration_date()
+        date = datetime.date.today() + relativedelta(months=max(0, int(months)))
+        return date > self.next_calibration_date()
 
     def next_calibration_date(self):
         """The date that the next calibration is due.
@@ -232,26 +301,36 @@ class EquipmentRecord(object):
         Returns
         -------
         :class:`datetime.date`
-            The next calibration date."""
-        years = int(self.calibration_cycle)
-        months = int(round(12 * (self.calibration_cycle - years)))
-        return self.date_calibrated + relativedelta(years=years, months=months)
+            The next calibration date (or :data:`None` it has never been calibrated)."""
+        if self._date_calibrated.year == datetime.MINYEAR:
+            return None
+        years = int(self._calibration_cycle)
+        months = int(round(12 * (self._calibration_cycle - years)))
+        return self._date_calibrated + relativedelta(years=years, months=months)
 
     def to_dict(self):
-        """Convert this :class:`EquipmentRecord` to a dictionary.
+        """Convert this :class:`EquipmentRecord` to a :class:`dict`.
 
         Returns
         -------
         :class:`dict`
-            The :class:`EquipmentRecord` as a dictionary.
+            The :class:`EquipmentRecord` as a :class:`dict`.
         """
-        d = {}
-        for name in self._valid_names():
-            if name == 'connection':
-                d[name] = self.connection.to_dict() if self.connection is not None else None
-            else:
-                d[name] = getattr(self, name)
-        return d
+        return {
+            'alias': self._alias,
+            'calibration_cycle': self._calibration_cycle,
+            'category': self._category,
+            'connection': None if self._connection is None else self._connection.to_dict(),
+            'date_calibrated': self._date_calibrated,
+            'description': self._description,
+            'latest_report_number': self._latest_report_number,
+            'location': self._location,
+            'manufacturer': self._manufacturer,
+            'model': self._model,
+            'serial': self._serial,
+            'team': self._team,
+            'user_defined': self._user_defined,
+        }
 
     def to_xml(self):
         """Convert this :class:`EquipmentRecord` to an XML :class:`~xml.etree.ElementTree.Element`.
@@ -263,60 +342,49 @@ class EquipmentRecord(object):
         :class:`~xml.etree.ElementTree.Element`
             The :class:`EquipmentRecord` as an XML element.
         """
-        root = Element('equipment')
-        for name in self._valid_names():
+        root = Element('EquipmentRecord')
+        for name in EquipmentRecord._NAMES:
             element = Element(name)
             if name == 'connection':
-                if self.connection is None:
-                    element.text = u''
+                if self._connection is None:
+                    element.text = ''
                 else:
-                    for el in self.connection.to_xml():
-                        element.append(el)
+                    for sub_element in self._connection.to_xml():
+                        element.append(sub_element)
             elif name == 'date_calibrated':
-                date = self.date_calibrated
-                element.text = u'{}'.format(date.isoformat()) if date.year != datetime.MINYEAR else u''
+                date = self._date_calibrated
+                element.text = '' if date.year == datetime.MINYEAR else date.isoformat()
+                element.attrib['format'] = 'YYYY-MM-DD'
             elif name == 'calibration_cycle':
-                if self.calibration_cycle == 0:
-                    element.text = u''
-                elif int(self.calibration_cycle) == self.calibration_cycle:
-                    element.text = u'{}'.format(int(self.calibration_cycle))
+                if self._calibration_cycle == 0:
+                    element.text = ''
+                elif int(self._calibration_cycle) == self._calibration_cycle:
+                    element.text = str(int(self._calibration_cycle))
                 else:
-                    element.text = u'{}'.format(self.calibration_cycle)
+                    element.text = str(self._calibration_cycle)
+                element.attrib['units'] = 'years'
+            elif name == 'user_defined':
+                if not self._user_defined:
+                    element.text = ''
+                else:
+                    for prop_key in sorted(self._user_defined):
+                        prop = Element(prop_key)
+                        prop.text = '{}'.format(self._user_defined[prop_key])
+                        element.append(prop)
             else:
-                element.text = u'{}'.format(getattr(self, name))
+                element.text = getattr(self, name)
             root.append(element)
         return root
 
-    def to_yaml(self, indent=2):
-        """Convert this :class:`EquipmentRecord` to a YAML_ string.
-
-        .. _YAML: https://en.wikipedia.org/wiki/YAML
-
-        Parameters
-        ----------
-        indent : :class:`int`
-            The amount of indentation added for each recursive level.
-
-        Returns
-        -------
-        :class:`str`
-            The :class:`EquipmentRecord` as a string.
-        """
-        out = u''
-        for element in self.to_xml():
-            if element.text is not None:
-                if element.text:
-                    out += u'{}: {}\n'.format(element.tag, element.text)
-                else:
-                    out += u"{}: ''\n".format(element.tag)
-            else:  # the connection values
-                out += u'connection:\n'
-                for line in self.connection.to_yaml(indent=indent).splitlines():
-                    out += u' ' * indent + line + u'\n'
-        return out[:-1]
-
 
 class ConnectionRecord(object):
+
+    # Valid property names for a ConnectionRecord
+    _NAMES = ['address', 'backend', 'interface', 'manufacturer', 'model', 'properties', 'serial']
+
+    _LF = ['\\n', "'\\n'", '"\\n"']
+    _CR = ['\\r', "'\\r'", '"\\r"']
+    _CRLF = ['\\r\\n', "'\\r\\n'", '"\\r\\n"']
 
     def __init__(self, **kwargs):
         """Contains the information about a connection record in a :ref:`connections_database`.
@@ -324,62 +392,88 @@ class ConnectionRecord(object):
         Parameters
         ----------
         **kwargs
-            The argument names can be any of the :class:`ConnectionRecord` property names.
+            The argument names can be any of the :class:`ConnectionRecord` attribute names.
+            Any kwargs that are not one of the *standard* attribute names gets added to the
+            :attr:`.properties` :class:`dict`.
         """
 
-        # these properties are NOT defined as fields in the connection database
+        # The following attributes are NOT defined as fields in the connection database
         self._interface = MSLInterface.NONE
 
-        # these properties can be defined as fields in the connection database
-        self._address = u''
+        # The following attributes can be defined as fields in the connection database
+        # IMPORTANT: When a new attribute is added below remember to include it in
+        #            "Field Names" section in docs/database.rst
+        self._address = kwargs.get('address', '')
         self._backend = Backend.UNKNOWN
-        self._manufacturer = u''
-        self._model = u''
-        self._properties = dict()
-        self._serial = u''
-        # IMPORTANT: when a new property is added remember to include it in table in docs/database#connections_database
+        self._manufacturer = kwargs.get('manufacturer', '')
+        self._model = kwargs.get('model', '')
+        self._properties = {}
+        self._serial = kwargs.get('serial', '')
 
-        valid_names = self._valid_names()
-        for name in kwargs:
-            if name == 'address':
-                # the backend value is dependent on the address value and the MSL Interface is dependant on the
-                # backend value, so deal with the backend and the interface here
-                self._address = str(kwargs[name])
-                if 'backend' in kwargs:
-                    self._backend = Backend(kwargs['backend'])
-                if self._backend == Backend.MSL:
-                    interface = MSLInterface[self._get_interface_name_from_address()]
-                    if 'interface' in kwargs:
-                        if not isinstance(kwargs['interface'], MSLInterface):
-                            raise TypeError('The interface must be of type {}'.format(MSLInterface))
-                        if kwargs['interface'] != interface:
-                            raise ValueError('The interface does not agree with what is expected from the address')
-                    self._interface = interface
-
-            elif name == 'backend':
-                if 'address' not in kwargs:
-                    self._backend = Backend(kwargs[name])
-            elif name == 'interface':
-                pass  # handled by `address`
-            elif name == 'properties':
-                self.properties = kwargs[name]
+        # update the backend
+        try:
+            backend = kwargs['backend']
+        except KeyError:
+            pass
+        else:
+            if isinstance(backend, int):
+                self._backend = Backend(backend)
             else:
-                if name in valid_names:
-                    setattr(self, '_'+name, str(kwargs[name]))
-                else:
-                    err = 'A ConnectionRecord has no "{}" attribute.\nValid attributes are {}'.format(name, valid_names)
-                    raise AttributeError(err)
+                self._backend = Backend.__members__.get(backend)
+                if self._backend is None:
+                    raise ValueError('{!r} is not a valid Backend'.format(backend))
 
-        # helpful checks based on the value of `address`
+        # update the interface
+        try:
+            interface = kwargs['interface']
+        except KeyError:
+            pass
+        else:
+            if isinstance(interface, int):
+                self._interface = MSLInterface(interface)
+            else:
+                self._interface = MSLInterface.__members__.get(interface)
+                if self._interface is None:
+                    raise ValueError('{!r} is not a valid MSLInterface'.format(interface))
+
+        if self._backend == Backend.MSL and self._interface == MSLInterface.NONE:
+            self._interface = self._get_interface_from_address()
+
+        # use the setter method to set the properties
+        try:
+            self.properties = kwargs['properties']
+        except KeyError:
+            pass
+
         if self._address.startswith('UDP'):
-            self._properties['type'] = 'SOCK_DGRAM'
+            self._properties['socket_type'] = 'SOCK_DGRAM'
+
+        for name in kwargs:
+            if name not in ConnectionRecord._NAMES:
+                self._properties[name] = kwargs[name]
+
+        # the manufacturer, model and serial cannot change once a ConnectionRecord is created
+        self._str = 'ConnectionRecord<{}|{}|{}>'.format(self._manufacturer, self._model, self._serial)
 
     def __repr__(self):
-        return u'{}<{}|{}|{}>'.format(self.__class__.__name__, self.manufacturer, self.model, self.serial)
+        # the properties can be updated so we cannot cache the __repr__
+        # (and sometimes the interface can change if there is an MSL Resource defined for the
+        # EquipmentRecord, for example, the Resource uses an SDK but the address=COM5)
+        out = []
+        for name in ConnectionRecord._NAMES:
+            if name == 'properties':
+                if not self._properties:
+                    out.append('properties: {}')
+                else:
+                    out.append('properties:')
+                    for key in sorted(self._properties):
+                        out.append('  {}: {!r}'.format(key, self._properties[key]))
+            else:
+                out.append('{}: {!r}'.format(name, getattr(self, name)))
+        return '\n'.join(out)
 
-    def _valid_names(self):
-        """Returns a list of the valid property names for an ConnectionRecord"""
-        return sorted([k[1:] for k in vars(self)])
+    def __str__(self):
+        return self._str
 
     @property
     def address(self):
@@ -425,8 +519,33 @@ class ConnectionRecord(object):
     @properties.setter
     def properties(self, props):
         if not isinstance(props, dict):
-            raise TypeError('The properties must be a dictionary')
+            raise TypeError('The "properties" must be a dictionary')
         self._properties = props.copy()
+
+        # update the Enums for a SERIAL connection
+        is_serial = self._interface == MSLInterface.SERIAL
+        if not is_serial:
+            for alias in MSL_INTERFACE_ALIASES['SERIAL']:
+                if self._address.startswith(alias):
+                    is_serial = True
+                    break
+
+        for key, value in props.items():
+            if is_serial:
+                k_lower = key.lower()
+                if k_lower == 'parity':
+                    self._properties[key] = convert_to_enum(value, Parity, to_upper=True)
+                elif k_lower.startswith('stop'):
+                    self._properties[key] = convert_to_enum(value, StopBits, to_upper=True)
+                elif k_lower.startswith('data'):
+                    self._properties[key] = convert_to_enum(value, DataBits, to_upper=True)
+            if key.endswith('termination'):
+                if value in ConnectionRecord._CRLF:  # must check before LR and CR checks
+                    self._properties[key] = CR + LF
+                elif value in ConnectionRecord._LF:
+                    self._properties[key] = LF
+                elif value in ConnectionRecord._CR:
+                    self._properties[key] = CR
 
     @property
     def serial(self):
@@ -434,99 +553,97 @@ class ConnectionRecord(object):
         return self._serial
 
     def to_dict(self):
-        """Convert this :class:`ConnectionRecord` to a dictionary.
+        """Convert this :class:`ConnectionRecord` to a :class:`dict`.
 
         Returns
         -------
         :class:`dict`
-            The :class:`ConnectionRecord` as a dictionary.
+            The :class:`ConnectionRecord` as a :class:`dict`.
         """
-        return {n: getattr(self, n) for n in self._valid_names()}
+        return {
+            'address': self._address,
+            'backend': self._backend,
+            'interface': self._interface,
+            'manufacturer': self._manufacturer,
+            'model': self._model,
+            'properties': self._properties,
+            'serial': self._serial,
+        }
 
     def to_xml(self):
         """Convert this :class:`ConnectionRecord` to an XML :class:`~xml.etree.ElementTree.Element`.
 
+        Note
+        ----
         All values of the :class:`ConnectionRecord` are converted to a :class:`str`.
 
         Returns
         -------
         :class:`~xml.etree.ElementTree.Element`
-            The :class:`ConnectionRecord` as a XML element.
+            The :class:`ConnectionRecord` as a XML :class:`~xml.etree.ElementTree.Element`.
         """
-        root = Element('connection')
-        for name in self._valid_names():
+        root = Element('ConnectionRecord')
+        for name in ConnectionRecord._NAMES:
+            value = getattr(self, name)
             element = Element(name)
             if name == 'properties':
-                if not self.properties:
-                    element.text = u''
+                if not self._properties:
+                    element.text = ''
                 else:
-                    for key, value in self.properties.items():
-                        prop = Element(key)
-                        if isinstance(value, enum.Enum):
-                            prop.text = u'{}'.format(str(value))
-                        elif 'termination' in key:
-                            prop.text = u'{!r}'.format(value)
+                    for prop_key in sorted(self._properties):
+                        prop_value = self._properties[prop_key]
+                        prop = Element(prop_key)
+                        if isinstance(prop_value, Enum):
+                            prop.text = prop_value.name
+                        elif prop_key.endswith('termination'):
+                            prop.text = repr(prop_value)
+                        elif isinstance(prop_value, bytes):
+                            prop.text = repr(prop_value)
                         else:
-                            prop.text = u'{}'.format(value)
+                            prop.text = '{}'.format(prop_value)
                         element.append(prop)
-            elif name == 'backend' or name == 'interface':
-                # want to get the enum name not the enum value
-                element.text = u'{}'.format(getattr(self, name).name)
+            elif isinstance(value, Enum):
+                element.text = value.name
             else:
-                element.text = u'{}'.format(getattr(self, name))
+                element.text = '{}'.format(value)
             root.append(element)
         return root
 
-    def to_yaml(self, indent=2):
-        """Convert this :class:`ConnectionRecord` to a YAML_ string.
-
-        .. _YAML: https://en.wikipedia.org/wiki/YAML
-
-        Parameters
-        ----------
-        indent : :class:`int`
-            The amount of indentation added for each recursive level.
+    def _get_interface_from_address(self):
+        """Get the interface based on the address value.
 
         Returns
         -------
-        :class:`str`
-            The :class:`ConnectionRecord` as a string.
-        """
-        out = u''
-        for element in self.to_xml():
-            if element.text:
-                out += u'{}: {}\n'.format(element.tag, element.text)
-            else:
-                out += u'{}'.format(element.tag)
-                if not element:
-                    out += u": ''\n"
-                else:
-                    out += u':\n'
-                    for prop in element:
-                        out += u' ' * indent + u'{}: {}\n'.format(prop.tag, prop.text)
-        return out[:-1]
+        :class:`MSLInterface`
+            The interface.
 
-    def _get_interface_name_from_address(self):
-        """:class:`str`: Gets the interface name based on the address value."""
+        Raises
+        ------
+        ValueError
+            If the interface cannot be determined from the value of address.
+        """
+        if not self._address:
+            return MSLInterface.NONE
 
         address_upper = self._address.upper()
 
         # checks for equivalent PyVISA addresses
         if address_upper.startswith('TCPIP') and address_upper.endswith('SOCKET'):
-            return 'SOCKET'
+            return MSLInterface.SOCKET
 
-        # determine the MSL Interface
-        match = re.match(r'[+_A-Z]+', address_upper)
+        # determine the name of the interface
+        match = _interface_regex.match(address_upper)
         interface_name = '' if match is None else match.group(0).replace('+', '_')
 
-        # check if aliases are used for the MSL Interface
-        replaced = False
+        try:
+            return MSLInterface[interface_name]
+        except KeyError:
+            pass
+
+        # check if an alias is used for the name of the interface
         for name, values in MSL_INTERFACE_ALIASES.items():
             for value in values:
-                if value in interface_name:
-                    interface_name = interface_name.replace(value, name)
-                    replaced = True
-            if replaced:
-                break
+                if interface_name.startswith(value):
+                    return MSLInterface[name]
 
-        return interface_name
+        raise ValueError('Cannot determine the MSLInterface from address {!r}'.format(self._address))

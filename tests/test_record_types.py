@@ -1,32 +1,29 @@
+# -*- coding: utf8 -*-
 import os
+import sys
 import datetime
+import tempfile
+from xml.etree.ElementTree import ElementTree
 
 import pytest
 
 from msl.equipment.config import Config
-from msl.equipment import EquipmentRecord, ConnectionRecord, constants
-from msl.equipment.connection_message_based import ConnectionMessageBased
+from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
+from msl.equipment.constants import MSLInterface, DataBits, Parity, StopBits, LF, CR
+
+PY2 = sys.version_info.major == 2
+if not PY2:
+    unicode = str
 
 
 def test_equipment_record():
 
-    a = EquipmentRecord().to_dict()
-    assert len(a) == 12
-    assert 'alias' in a
-    assert 'calibration_cycle' in a
-    assert 'category' in a
-    assert 'connection' in a
-    assert 'date_calibrated' in a
-    assert 'description' in a
-    assert 'latest_report_number' in a
-    assert 'location' in a
-    assert 'manufacturer' in a
-    assert 'model' in a
-    assert 'serial' in a
-    assert 'team' in a
+    temp = os.path.join(tempfile.gettempdir(), 'msl-equipment-record.xml')
 
     # the default values
     record = EquipmentRecord()
+    print(record)  # make sure it is printable
+    print(repr(record))
     assert record.alias == ''
     assert record.calibration_cycle == 0.0
     assert record.category == ''
@@ -39,11 +36,236 @@ def test_equipment_record():
     assert record.model == ''
     assert record.serial == ''
     assert record.team == ''
+    assert record.user_defined == {}
 
-    record = EquipmentRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055')
-    assert record.manufacturer == 'ABC def'
-    assert record.model == 'ZZZ'
-    assert record.serial == 'DY135/055'
+    a = record.to_dict()
+    assert len(a) == 13
+    assert a['alias'] == ''
+    assert a['calibration_cycle'] == 0.0
+    assert a['category'] == ''
+    assert a['connection'] is None
+    assert a['date_calibrated'] == datetime.date(datetime.MINYEAR, 1, 1)
+    assert a['description'] == ''
+    assert a['latest_report_number'] == ''
+    assert a['location'] == ''
+    assert a['manufacturer'] == ''
+    assert a['model'] == ''
+    assert a['serial'] == ''
+    assert a['team'] == ''
+    assert a['user_defined'] == {}
+
+    tree = ElementTree(record.to_xml())
+    tree.write(temp)
+    a = ElementTree().parse(temp)
+    assert len(a) == 13
+    assert a.find('alias').text is None
+    assert a.find('calibration_cycle').text is None
+    assert a.find('category').text is None
+    assert a.find('connection').text is None
+    assert a.find('date_calibrated').text is None
+    assert a.find('description').text is None
+    assert a.find('latest_report_number').text is None
+    assert a.find('location').text is None
+    assert a.find('manufacturer').text is None
+    assert a.find('model').text is None
+    assert a.find('serial').text is None
+    assert a.find('team').text is None
+    assert a.find('user_defined').text is None
+
+    a = repr(record).splitlines()
+    assert len(a) == 13
+    assert a[0] == "alias: u''" if PY2 else "alias: ''"
+    assert a[1] == 'calibration_cycle: 0.0'
+    assert a[2] == "category: u''" if PY2 else "category: ''"
+    assert a[3] == 'connection: None'
+    assert a[4] == 'date_calibrated: datetime.date(1, 1, 1)'
+    assert a[5] == "description: u''" if PY2 else "description: ''"
+    assert a[6] == "latest_report_number: u''" if PY2 else "latest_report_number: ''"
+    assert a[7] == "location: u''" if PY2 else "location: ''"
+    assert a[8] == "manufacturer: u''" if PY2 else "manufacturer: ''"
+    assert a[9] == "model: u''" if PY2 else "model: ''"
+    assert a[10] == "serial: u''" if PY2 else "serial: ''"
+    assert a[11] == "team: u''" if PY2 else "team: ''"
+    assert a[12] == "user_defined: {}"
+
+    # populate the EquipmentRecord
+    record = EquipmentRecord(
+        alias='my alias',
+        calibration_cycle=5,
+        category='DMM',
+        connection=ConnectionRecord(
+            address='GPIB::15',
+            backend=Backend.PyVISA,
+            manufacturer=u'uñicödé',
+            model='XYZ',
+            serial='ABC123',
+            properties={
+                'none': None,
+                'bytes': b'\x02\x19\x08',
+                'string': 'string',
+                'unicode': u'uñicödé',
+                'termination': '\r\n',
+                'boolean': True,
+                'integer': 77,
+                'float': 12.34,
+                'complex': -2-3j,
+                'enum': StopBits.ONE_POINT_FIVE,
+            },
+        ),
+        date_calibrated=datetime.date(2018, 8, 20),
+        description=u'Sométhing uséful',
+        latest_report_number='Report:12-3/4',
+        location='the lab',
+        manufacturer=u'uñicödé',
+        model='XYZ',
+        serial='ABC123',
+        team='P&R',
+        a='a',  # goes into the user_defined dict
+        b=8,  # goes into the user_defined dict
+        c=[1, 2, 3],  # goes into the user_defined dict
+    )
+    print(unicode(record))  # make sure it is printable
+    print(unicode(repr(record)))
+    assert record.alias == 'my alias'
+    assert record.calibration_cycle == 5
+    assert record.category == 'DMM'
+    assert record.connection.address == 'GPIB::15'
+    assert record.connection.backend == Backend.PyVISA
+    assert record.connection.interface == MSLInterface.NONE  # using PyVISA as the backend
+    assert record.connection.manufacturer == u'uñicödé'
+    assert record.connection.model == 'XYZ'
+    assert record.connection.properties['none'] is None
+    assert record.connection.properties['bytes'] == b'\x02\x19\x08'
+    assert record.connection.properties['string'] == 'string'
+    assert record.connection.properties['unicode'] == u'uñicödé'
+    assert record.connection.properties['termination'] == '\r\n'
+    assert record.connection.properties['boolean'] is True
+    assert record.connection.properties['integer'] == 77
+    assert record.connection.properties['float'] == 12.34
+    assert record.connection.properties['complex'] == -2-3j
+    assert record.connection.properties['enum'] == StopBits.ONE_POINT_FIVE
+    assert record.connection.serial == 'ABC123'
+    assert record.date_calibrated == datetime.date(2018, 8, 20)
+    assert record.description == u'Sométhing uséful'
+    assert record.latest_report_number == 'Report:12-3/4'
+    assert record.location == 'the lab'
+    assert record.manufacturer == u'uñicödé'
+    assert record.model == 'XYZ'
+    assert record.serial == 'ABC123'
+    assert record.team == 'P&R'
+    assert record.user_defined['a'] == 'a'
+    assert record.user_defined['b'] == 8
+    assert record.user_defined['c'] == [1, 2, 3]
+
+    a = record.to_dict()
+    assert len(a) == 13
+    assert a['alias'] == 'my alias'
+    assert a['calibration_cycle'] == 5
+    assert a['category'] == 'DMM'
+    assert a['connection']['address'] == 'GPIB::15'
+    assert a['connection']['backend'] == Backend.PyVISA
+    assert a['connection']['interface'] == MSLInterface.NONE  # using PyVISA as the backend
+    assert a['connection']['manufacturer'] == u'uñicödé'
+    assert a['connection']['model'] == 'XYZ'
+    assert a['connection']['properties']['none'] is None
+    assert a['connection']['properties']['bytes'] == b'\x02\x19\x08'
+    assert a['connection']['properties']['string'] == 'string'
+    assert a['connection']['properties']['unicode'] == u'uñicödé'
+    assert a['connection']['properties']['termination'] == '\r\n'
+    assert a['connection']['properties']['boolean'] is True
+    assert a['connection']['properties']['integer'] == 77
+    assert a['connection']['properties']['float'] == 12.34
+    assert a['connection']['properties']['complex'] == -2-3j
+    assert a['connection']['properties']['enum'] == StopBits.ONE_POINT_FIVE
+    assert a['connection']['serial'] == 'ABC123'
+    assert a['date_calibrated'] == datetime.date(2018, 8, 20)
+    assert a['description'] == u'Sométhing uséful'
+    assert a['latest_report_number'] == 'Report:12-3/4'
+    assert a['location'] == 'the lab'
+    assert a['manufacturer'] == u'uñicödé'
+    assert a['model'] == 'XYZ'
+    assert a['serial'] == 'ABC123'
+    assert a['team'] == 'P&R'
+    assert a['user_defined']['a'] == 'a'
+    assert a['user_defined']['b'] == 8
+    assert a['user_defined']['c'] == [1, 2, 3]
+
+    tree = ElementTree(record.to_xml())
+    tree.write(temp)
+    a = ElementTree().parse(temp)
+    assert len(a) == 13
+    assert a.find('alias').text == 'my alias'
+    assert a.find('calibration_cycle').text == '5'
+    assert a.find('category').text == 'DMM'
+    assert a.find('connection').find('address').text == 'GPIB::15'
+    assert a.find('connection/backend').text == 'PyVISA'
+    assert a.find('connection/interface').text == 'NONE'  # using PyVISA as the backend
+    assert a.find('connection/manufacturer').text == u'uñicödé'
+    assert a.find('connection/model').text == 'XYZ'
+    assert a.find('connection/properties').text is None
+    assert a.find('connection/properties/none').text == 'None'
+    assert a.find('connection/properties/bytes').text == "'\\x02\\x19\\x08'" if PY2 else "b'\x02\x19\x08'"
+    assert a.find('connection/properties/string').text == "'string'" if PY2 else 'string'
+    assert a.find('connection/properties/unicode').text == u'u\xf1ic\xf6d\xe9' if PY2 else 'uñicödé'
+    assert a.find('connection/properties/termination').text == "'\\r\\n'"
+    assert a.find('connection/properties/boolean').text == 'True'
+    assert a.find('connection/properties/integer').text == '77'
+    assert a.find('connection/properties/float').text == '12.34'
+    assert a.find('connection/properties/complex').text == '(-2-3j)'
+    assert a.find('connection/properties/enum').text == 'ONE_POINT_FIVE'
+    assert a.find('connection/serial').text == 'ABC123'
+    assert a.find('date_calibrated').text == '2018-08-20'
+    assert a.find('description').text == u'Sométhing uséful'
+    assert a.find('latest_report_number').text == 'Report:12-3/4'
+    assert a.find('location').text == 'the lab'
+    assert a.find('manufacturer').text == u'u\xf1ic\xf6d\xe9' if PY2 else 'uñicödé'
+    assert a.find('model').text == 'XYZ'
+    assert a.find('serial').text == 'ABC123'
+    assert a.find('team').text == 'P&R'
+    assert a.find('user_defined').text is None
+    assert a.find('user_defined/a').text == 'a'
+    assert a.find('user_defined/b').text == '8'
+    assert a.find('user_defined/c').text == '[1, 2, 3]'
+
+    a = repr(record).splitlines()
+    assert len(a) == 33
+    assert a[0] == "alias: 'my alias'"
+    assert a[1] == 'calibration_cycle: 5.0'
+    assert a[2] == "category: 'DMM'"
+    assert a[3] == 'connection:'
+    assert a[4] == "  address: 'GPIB::15'"
+    assert a[5] == '  backend: <Backend.PyVISA: 2>'
+    assert a[6] == '  interface: <MSLInterface.NONE: 0>'
+    assert a[7] == "  manufacturer: u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "manufacturer: 'uñicödé'"
+    assert a[8] == "  model: 'XYZ'"
+    assert a[9] == '  properties:'
+    assert a[10] == '    boolean: True'
+    assert a[11] == "    bytes: '\\x02\\x19\\x08'" if PY2 else "    bytes: b'\x02\x19\x08'"
+    assert a[12] == '    complex: (-2-3j)'
+    assert a[13] == '    enum: <StopBits.ONE_POINT_FIVE: 1.5>'
+    assert a[14] == '    float: 12.34'
+    assert a[15] == '    integer: 77'
+    assert a[16] == '    none: None'
+    assert a[17] == "    string: 'string'"
+    assert a[18] == "    termination: '\\r\\n'"
+    assert a[19] == "    unicode: u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "    unicode: 'uñicödé'"
+    assert a[20] == "  serial: 'ABC123'"
+    assert a[21] == 'date_calibrated: datetime.date(2018, 8, 20)'
+    assert a[22] == "description: u'Som\\xe9thing us\\xe9ful'" if PY2 else "description: 'Sométhing uséful'"
+    assert a[23] == "latest_report_number: 'Report:12-3/4'"
+    assert a[24] == "location: 'the lab'"
+    assert a[25] == "manufacturer: u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "manufacturer: 'uñicödé'"
+    assert a[26] == "model: 'XYZ'"
+    assert a[27] == "serial: 'ABC123'"
+    assert a[28] == "team: 'P&R'"
+    assert a[29] == 'user_defined:'
+    assert a[30] == "  a: 'a'"
+    assert a[31] == '  b: 8'
+    assert a[32] == '  c: [1, 2, 3]'
+
+    #
+    # Check specifying date_calibrated and/or calibration_cycle
+    #
 
     today = datetime.date.today()
     record = EquipmentRecord(date_calibrated=today, calibration_cycle=5)
@@ -60,25 +282,25 @@ def test_equipment_record():
     r = EquipmentRecord(calibration_cycle='-5.7')
     assert r.calibration_cycle == 0.0
 
-    with pytest.raises(ValueError) as err:
+    with pytest.raises(ValueError):
         EquipmentRecord(calibration_cycle='is not an number')
-    assert 'calibration_cycle' in str(err.value)
 
-    with pytest.raises(TypeError) as err:
+    with pytest.raises(TypeError):
         EquipmentRecord(date_calibrated='2017-08-15')
-    assert 'date_calibrated' in str(err.value)
 
-    with pytest.raises(TypeError) as err:
-        EquipmentRecord(connection='should be a ConnectionRecord object')
-    assert 'ConnectionRecord' in str(err.value)
+    #
+    # Check setting the ConnectionRecord
+    #
 
-    with pytest.raises(AttributeError):
-        EquipmentRecord(unknown_attribute='AAA')
+    for item in [None, 1, 6j, 'hello', True, object, 7.7, b'\x00']:
+        with pytest.raises(TypeError):
+            EquipmentRecord(connection=item)
 
     record = EquipmentRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055')
 
     # check that the manufacturer, model and serial values all match
     record.connection = ConnectionRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055')
+
     # one of the manufacturer, model or serial values do not match
     with pytest.raises(ValueError) as err:
         record.connection = ConnectionRecord(manufacturer='XYZ')
@@ -96,134 +318,290 @@ def test_equipment_record():
     assert record.connection.model == 'ABC'
     assert record.connection.serial == 'XYZ'
 
+    #
+    # Specifying a kwarg that is not expected goes into the self._user_defined dictionary
+    #
+    record = EquipmentRecord(unknown_attribute='AAA', dictionary={'a': 1, 'b': 2})
+    assert record.user_defined['unknown_attribute'] == 'AAA'
+    assert record.user_defined['dictionary'] == dict(a=1, b=2)
+
+    os.remove(temp)
+
 
 def test_connection_record():
+    temp = os.path.join(tempfile.gettempdir(), 'msl-connection-record.xml')
 
-    a = ConnectionRecord().to_dict()
-    assert len(a) == 7
-    assert 'address' in a
-    assert 'backend' in a
-    assert 'interface' in a
-    assert 'manufacturer' in a
-    assert 'model' in a
-    assert 'properties' in a
-    assert 'serial' in a
-
-    # the default values
+    # The default values
     record = ConnectionRecord()
+    print(record)  # make sure it is printable
+    print(repr(record))
     assert record.address == ''
-    assert record.backend == constants.Backend.UNKNOWN
-    assert record.interface == constants.MSLInterface.NONE
+    assert record.backend == Backend.UNKNOWN
+    assert record.interface == MSLInterface.NONE
     assert record.manufacturer == ''
     assert record.model == ''
     assert record.properties == {}
     assert record.serial == ''
 
+    a = record.to_dict()
+    assert len(a) == 7
+    assert a['address'] == ''
+    assert a['backend'] == Backend.UNKNOWN
+    assert a['interface'] == MSLInterface.NONE
+    assert a['manufacturer'] == ''
+    assert a['model'] == ''
+    assert a['properties'] == {}
+    assert a['serial'] == ''
+
+    tree = ElementTree(record.to_xml())
+    tree.write(temp, encoding='UTF-8')
+    a = ElementTree().parse(temp)
+    assert len(a) == 7
+    assert a.find('address').text is None
+    assert a.find('backend').text == 'UNKNOWN'
+    assert a.find('interface').text == 'NONE'
+    assert a.find('manufacturer').text is None
+    assert a.find('model').text is None
+    assert a.find('properties').text is None
+    assert a.find('serial').text is None
+
+    a = repr(ConnectionRecord()).splitlines()
+    assert len(a) == 7
+    assert a[0] == "address: u''" if PY2 else "address: ''"
+    assert a[1] == 'backend: <Backend.UNKNOWN: 0>'
+    assert a[2] == 'interface: <MSLInterface.NONE: 0>'
+    assert a[3] == "manufacturer: u''" if PY2 else "manufacturer: ''"
+    assert a[4] == "model: u''" if PY2 else "model: ''"
+    assert a[5] == 'properties: {}'
+    assert a[6] == "serial: u''" if PY2 else "serial: ''"
+
     # create a new ConnectionRecord
     record = ConnectionRecord(
         address='GPIB::15',
-        backend=constants.Backend.PyVISA,
-        manufacturer='ABC def',
-        model='ZZZ',
-        serial='DY135/055',
+        backend=Backend.PyVISA,
+        manufacturer=u'uñicödé',
+        model='XYZ',
+        serial='ABC123',
         properties={
-            'resolution': '14bit',
-            'data': 77,
+            'none': None,
+            'bytes': b'\x02\x19\x08',
+            'string': 'string',
+            'unicode': u'uñicödé',
+            'termination': '\r\n',
+            'boolean': True,
+            'integer': 77,
+            'float': 12.34,
+            'complex': -2-3j,
+            'enum': StopBits.ONE_POINT_FIVE,
         },
     )
+    print(unicode(record))  # make sure it is printable
+    print(unicode(repr(record)))
     assert record.address == 'GPIB::15'
-    assert record.backend == constants.Backend.PyVISA
-    assert record.interface == constants.MSLInterface.NONE
-    assert record.manufacturer == 'ABC def'
-    assert record.model == 'ZZZ'
-    assert record.serial == 'DY135/055'
-    assert record.properties['resolution'] == '14bit'
-    assert record.properties['data'] == 77
+    assert record.backend == Backend.PyVISA
+    assert record.interface == MSLInterface.NONE  # using PyVISA as the backend
+    assert record.manufacturer == u'uñicödé'
+    assert record.model == 'XYZ'
+    assert record.properties['none'] is None
+    assert record.properties['bytes'] == b'\x02\x19\x08'
+    assert record.properties['string'] == 'string'
+    assert record.properties['unicode'] == u'uñicödé'
+    assert record.properties['termination'] == '\r\n'
+    assert record.properties['boolean'] is True
+    assert record.properties['integer'] == 77
+    assert record.properties['float'] == 12.34
+    assert record.properties['complex'] == -2-3j
+    assert record.properties['enum'] == StopBits.ONE_POINT_FIVE
+    assert record.serial == 'ABC123'
+
+    a = record.to_dict()
+    assert len(a) == 7
+    assert a['address'] == 'GPIB::15'
+    assert a['backend'] == Backend.PyVISA
+    assert a['interface'] == MSLInterface.NONE  # using PyVISA as the backend
+    assert a['manufacturer'] == u'uñicödé'
+    assert a['model'] == 'XYZ'
+    assert a['properties']['none'] is None
+    assert a['properties']['bytes'] == b'\x02\x19\x08'
+    assert a['properties']['string'] == 'string'
+    assert a['properties']['unicode'] == u'uñicödé'
+    assert a['properties']['termination'] == '\r\n'
+    assert a['properties']['boolean'] is True
+    assert a['properties']['integer'] == 77
+    assert a['properties']['float'] == 12.34
+    assert a['properties']['complex'] == -2-3j
+    assert a['properties']['enum'] == StopBits.ONE_POINT_FIVE
+    assert a['serial'] == 'ABC123'
+
+    tree = ElementTree(record.to_xml())
+    tree.write(temp, encoding='UTF-8')
+    a = ElementTree().parse(temp)
+    assert len(a) == 7
+    assert a.find('address').text == 'GPIB::15'
+    assert a.find('backend').text == 'PyVISA'
+    assert a.find('interface').text == 'NONE'
+    assert a.find('manufacturer').text == u'uñicödé'
+    assert a.find('model').text == 'XYZ'
+    props = a.find('properties')
+    assert props.find('none').text == 'None'
+    assert props.find('bytes').text == "'\\x02\\x19\\x08'" if PY2 else "b'\x02\x19\x08'"
+    assert props.find('string').text == "'string'" if PY2 else 'string'
+    assert props.find('unicode').text == u'u\xf1ic\xf6d\xe9' if PY2 else 'uñicödé'
+    assert props.find('termination').text == "'\\r\\n'"
+    assert props.find('boolean').text == 'True'
+    assert props.find('integer').text == '77'
+    assert props.find('float').text == '12.34'
+    assert props.find('complex').text == '(-2-3j)'
+    assert props.find('enum').text == 'ONE_POINT_FIVE'
+    assert a.find('serial').text == 'ABC123'
+
+    a = repr(record).splitlines()
+    assert len(a) == 17
+    assert a[0] == "address: 'GPIB::15'"
+    assert a[1] == 'backend: <Backend.PyVISA: 2>'
+    assert a[2] == 'interface: <MSLInterface.NONE: 0>'
+    assert a[3] == "manufacturer: u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "manufacturer: 'uñicödé'"
+    assert a[4] == "model: 'XYZ'"
+    assert a[5] == 'properties:'
+    assert a[6] == '  boolean: True'
+    assert a[7] == "  bytes: '\\x02\\x19\\x08'" if PY2 else "  bytes: b'\\x02\\x19\\x08'"
+    assert a[8] == '  complex: (-2-3j)'
+    assert a[9] == '  enum: <StopBits.ONE_POINT_FIVE: 1.5>'
+    assert a[10] == '  float: 12.34'
+    assert a[11] == '  integer: 77'
+    assert a[12] == '  none: None'
+    assert a[13] == "  string: 'string'"
+    assert a[14] == "  termination: '\\r\\n'"
+    assert a[15] == "  unicode: u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "  unicode: 'uñicödé'"
+    assert a[16] == "serial: 'ABC123'"
+
+    #
+    # The following are interface checks
+    #
+
+    # unknown address value does not raise an exception because the backend is not MSL
+    c = ConnectionRecord(address='XXXXXX')
+    assert c.interface == MSLInterface.NONE
+
+    # invalid address for an MSL Backend -> cannot determine the MSLInterface
+    with pytest.raises(ValueError) as err:
+        ConnectionRecord(address='XXXXXX', backend=Backend.MSL)
+    assert str(err.value).startswith('Cannot determine the MSLInterface')
+
+    # if the user specifies the interface then this interface is used regardless of the value of address
+    for interface in [MSLInterface.SDK, 'SDK', u'SDK', 1]:
+        c = ConnectionRecord(address='XXXXXX', backend=Backend.MSL, interface=interface)
+        assert c.interface == MSLInterface.SDK
+
+    # setting the interface to something that cannot be converted to an MSLInterface
+    for interface in [None, -1, -9.9, 'XXXXX']:
+        with pytest.raises(ValueError) as err:
+            ConnectionRecord(address='COM1', backend=Backend.MSL, interface=interface)
+        assert str(err.value).endswith('not a valid MSLInterface')
 
     # MSLInterface.SDK
-    record = ConnectionRecord(address='SDK::whatever.dll', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.SDK
+    record = ConnectionRecord(address='SDK::whatever.dll', backend=Backend.MSL)
+    assert record.interface == MSLInterface.SDK
 
-    record = ConnectionRecord(address='SDK::/path/to/whatever.dll', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.SDK
+    record = ConnectionRecord(address='SDK::/path/to/whatever.dll', backend=Backend.MSL)
+    assert record.interface == MSLInterface.SDK
 
     # MSLInterface.SERIAL
-    record = ConnectionRecord(address='COM4', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.SERIAL  # COM is an alias
+    record = ConnectionRecord(address='COM4', backend=Backend.MSL)
+    assert record.interface == MSLInterface.SERIAL  # COM is an alias
 
-    record = ConnectionRecord(address='ASRLCOM4', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.SERIAL   # ASRLCOM is used by PyVISA
+    record = ConnectionRecord(address='ASRLCOM4', backend=Backend.MSL)
+    assert record.interface == MSLInterface.SERIAL   # ASRLCOM is used by PyVISA
 
-    record = ConnectionRecord(address='LPT5', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.SERIAL   # LPT is an alias
+    record = ConnectionRecord(address='LPT5', backend=Backend.MSL)
+    assert record.interface == MSLInterface.SERIAL   # LPT is an alias
 
-    record = ConnectionRecord(address='ASRL4', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.SERIAL  # ASRL is an alias
+    record = ConnectionRecord(address='ASRL4', backend=Backend.MSL)
+    assert record.interface == MSLInterface.SERIAL  # ASRL is an alias
 
     # MSLInterface.SOCKET
-    record = ConnectionRecord(address='SOCKET::127.0.0.1::1234', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.SOCKET
+    record = ConnectionRecord(address='SOCKET::127.0.0.1::1234', backend=Backend.MSL)
+    assert record.interface == MSLInterface.SOCKET
 
-    record = ConnectionRecord(address='ENET::127.0.0.1::1234', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.SOCKET  # ENET is an alias for SOCKET
+    record = ConnectionRecord(address='ENET::127.0.0.1::1234', backend=Backend.MSL)
+    assert record.interface == MSLInterface.SOCKET  # ENET is an alias for SOCKET
 
-    record = ConnectionRecord(address='ETHERNET::127.0.0.1::1234', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.SOCKET  # ETHERNET is an alias for SOCKET
+    record = ConnectionRecord(address='ETHERNET::127.0.0.1::1234', backend=Backend.MSL)
+    assert record.interface == MSLInterface.SOCKET  # ETHERNET is an alias for SOCKET
 
-    record = ConnectionRecord(address='LAN::127.0.0.1::1234', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.SOCKET  # LAN is an alias for SOCKET
+    record = ConnectionRecord(address='LAN::127.0.0.1::1234', backend=Backend.MSL)
+    assert record.interface == MSLInterface.SOCKET  # LAN is an alias for SOCKET
 
-    record = ConnectionRecord(address='TCPIP::127.0.0.1::1234::SOCKET', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.SOCKET  # PyVISA naming scheme
+    record = ConnectionRecord(address='TCPIP::127.0.0.1::1234::SOCKET', backend=Backend.MSL)
+    assert record.interface == MSLInterface.SOCKET  # PyVISA naming scheme
 
-    record = ConnectionRecord(address='TCP::127.0.0.1::1234', backend=constants.Backend.MSL)
-    assert record.interface == constants.MSLInterface.SOCKET  # TCP is an alias for SOCKET
+    record = ConnectionRecord(address='TCP::127.0.0.1::1234', backend=Backend.MSL)
+    assert record.interface == MSLInterface.SOCKET  # TCP is an alias for SOCKET
 
-    record = ConnectionRecord(address='UDP::127.0.0.1::1234', backend=constants.Backend.MSL, properties=dict(x=1))
-    assert record.interface == constants.MSLInterface.SOCKET  # UDP is an alias for SOCKET
-    assert record.properties['type'] == 'SOCK_DGRAM'  # gets set automatically
+    record = ConnectionRecord(address='UDP::127.0.0.1::1234', backend=Backend.MSL, properties=dict(x=1))
+    assert record.interface == MSLInterface.SOCKET  # UDP is an alias for SOCKET
+    assert record.properties['socket_type'] == 'SOCK_DGRAM'  # gets set automatically
     assert record.properties['x'] == 1  # does not get overwritten
 
     # TODO enable these tests once we create the TCPIP_ASRL and TCPIP_GPIB IntEnum constants in MSLInterface
-    # record = ConnectionRecord(address='ENET+COM::192.168.1.21+3', backend=constants.Backend.MSL)
+    # record = ConnectionRecord(address='ENET+COM::192.168.1.21+3', backend=Backend.MSL)
     # assert record.address == 'ENET+COM::192.168.1.21+3'
-    # assert record.backend == constants.Backend.MSL
-    # assert record.interface == constants.MSLInterface.TCPIP_ASRL
+    # assert record.backend == Backend.MSL
+    # assert record.interface == MSLInterface.TCPIP_ASRL
 
-    # record = ConnectionRecord(address='LAN+GPIB::192.168.1.21+7', backend=constants.Backend.MSL)
+    # record = ConnectionRecord(address='LAN+GPIB::192.168.1.21+7', backend=Backend.MSL)
     # assert record.address == 'LAN+GPIB::192.168.1.21+7'
-    # assert record.backend == constants.Backend.MSL
-    # assert record.interface == constants.MSLInterface.TCPIP_GPIB
+    # assert record.backend == Backend.MSL
+    # assert record.interface == MSLInterface.TCPIP_GPIB
 
-    # unknown address value
-    c = ConnectionRecord(address='XXXXXX')
-    assert c.interface == constants.MSLInterface.NONE
+    #
+    # The following are backend checks
+    #
 
-    # setting the interface, bad
-    with pytest.raises(ValueError) as err:
-        ConnectionRecord(address='COM1', backend=constants.Backend.MSL, interface=constants.MSLInterface.SDK)
-    assert 'interface' in str(err.value) and 'address' in str(err.value)
+    # equivalent ways to define a Backend
+    for backend in [Backend.MSL, 'MSL', u'MSL', 1]:
+        c = ConnectionRecord(backend=backend)
+        assert c.backend == Backend.MSL
 
-    # setting the interface, bad
-    with pytest.raises(TypeError) as err:
-        ConnectionRecord(address='COM1', backend=constants.Backend.MSL, interface=None)
-    assert 'interface' in str(err.value) and 'enum' in str(err.value)
+    # invalid Backends
+    for backend in [None, -1, -9.9, 'XXXXX']:
+        with pytest.raises(ValueError) as err:
+            ConnectionRecord(backend=backend)
+        assert str(err.value).endswith('not a valid Backend')
 
-    # setting the interface, good
-    ConnectionRecord(address='COM1', backend=constants.Backend.MSL, interface=constants.MSLInterface.SERIAL)
-
-    # the backend must be a Backend enum
-    with pytest.raises(ValueError) as err:
-        ConnectionRecord(backend='MSL')
-    assert 'Backend' in str(err.value)
+    #
+    # The following are "properties" checks
+    #
 
     # the properties attribute must be a dictionary
-    with pytest.raises(TypeError) as err:
-        ConnectionRecord(properties=[])
-    assert 'dictionary' in str(err.value)
+    for props in [[], (), set(), 'xxxxxxxx', None, 1, 0j, 9.9]:
+        with pytest.raises(TypeError) as err:
+            ConnectionRecord(properties=props)
+        assert 'dictionary' in str(err.value)
 
-    with pytest.raises(AttributeError):
-        ConnectionRecord(unknown_attribute='AAA')
+        c = ConnectionRecord(properties={'one': 1, 'two': 2})
+        with pytest.raises(TypeError) as err:
+            c.properties = props
+        assert 'dictionary' in str(err.value)
+
+    # unexpected kwargs get inserted into the "properties" dict
+    c = ConnectionRecord(model='ABC', unknown_attribute='AAA', xxxx=7.2)
+    assert c.model == 'ABC'
+    assert c.properties['unknown_attribute'] == 'AAA'
+    assert c.properties['xxxx'] == 7.2
+
+    # data types do not change
+    c = ConnectionRecord(properties=dict(a=1, b=True, c={'one': -1, 'two': 2.2}, d=4-9j, e='hey!', f=[0, -1]))
+    assert c.properties['a'] == 1
+    assert c.properties['b'] is True
+    assert c.properties['c']['one'] == -1
+    assert c.properties['c']['two'] == 2.2
+    assert c.properties['d'] == 4-9j
+    assert c.properties['e'] == 'hey!'
+    assert c.properties['f'][0] == 0
+    assert c.properties['f'][1] == -1
+
+    os.remove(temp)
 
 
 def test_dbase():
@@ -259,19 +637,20 @@ def test_dbase():
     assert eq2.team == 'Any'
     assert eq2.serial == 'A00024'
 
-    assert eq2.connection.manufacturer == 'Agilent'
-    assert eq2.connection.model == '34420A'
-    assert eq2.connection.serial == 'A00024'
-    assert eq2.connection.address == 'ASRL1::INSTR'
-    assert eq2.connection.backend == constants.Backend.MSL
-    assert eq2.connection.interface == constants.MSLInterface.SERIAL
-    assert eq2.connection.properties['baud_rate'] == 9600
-    assert eq2.connection.properties['read_termination'].encode() == ConnectionMessageBased.CR + ConnectionMessageBased.LF
-    assert eq2.connection.properties['write_termination'].encode() == ConnectionMessageBased.LF
+    c = eq2.connection
+    assert c.manufacturer == 'Agilent'
+    assert c.model == '34420A'
+    assert c.serial == 'A00024'
+    assert c.address == 'ASRL1::INSTR'
+    assert c.backend == Backend.MSL
+    assert c.interface == MSLInterface.SERIAL
+    assert c.properties['baud_rate'] == 9600
+    assert c.properties['read_termination'] == CR + LF
+    assert c.properties['write_termination'] == LF
 
-    try:
-        string = unicode
-    except NameError:
+    if PY2:
+        string = (str, unicode)
+    else:
         string = str
 
     for r in dbase.records():
@@ -279,14 +658,17 @@ def test_dbase():
             if key == 'calibration_cycle':
                 assert isinstance(value, float)
             elif key == 'date_calibrated':
-                assert isinstance(value, datetime.date)
+                if value is not None:
+                    assert isinstance(value, datetime.date)
+            elif key == 'user_defined':
+                assert isinstance(value, dict)
             elif key == 'connection':
                 if isinstance(value, dict):
                     for k, v in value.items():
                         if k == 'backend':
-                            assert isinstance(v, constants.Backend)
+                            assert isinstance(v, Backend)
                         elif k == 'interface':
-                            assert isinstance(v, constants.MSLInterface)
+                            assert isinstance(v, MSLInterface)
                         elif k == 'properties':
                             assert isinstance(v, dict)
                         else:
@@ -311,17 +693,17 @@ def test_asrl():
     assert pyvisa.properties['baud_rate'] == 119200
     assert msl.properties['baud_rate'] == 119200
 
-    assert pyvisa.properties['data_bits'] == constants.DataBits.SEVEN
-    assert msl.properties['data_bits'] == constants.DataBits.SEVEN
+    assert pyvisa.properties['data_bits'] == DataBits.SEVEN
+    assert msl.properties['data_bits'] == DataBits.SEVEN
 
-    assert pyvisa.properties['parity'] == constants.Parity.ODD
-    assert msl.properties['parity'] == constants.Parity.ODD
+    assert pyvisa.properties['parity'] == Parity.ODD
+    assert msl.properties['parity'] == Parity.ODD
 
-    assert pyvisa.properties['stop_bits'] == constants.StopBits.ONE_POINT_FIVE
-    assert msl.properties['stop_bits'] == constants.StopBits.ONE_POINT_FIVE
+    assert pyvisa.properties['stop_bits'] == StopBits.ONE_POINT_FIVE
+    assert msl.properties['stop_bits'] == StopBits.ONE_POINT_FIVE
 
 
-def test_calibration():
+def test_calibration_check_methods():
     today = datetime.date.today()
 
     record = EquipmentRecord()

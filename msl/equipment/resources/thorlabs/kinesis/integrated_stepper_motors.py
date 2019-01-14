@@ -60,8 +60,9 @@ class IntegratedStepperMotors(MotionControl):
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        MotionControl.build_device_list()  # otherwise cannot connect
-        super(IntegratedStepperMotors, self).__init__(record, IntegratedStepperMotors_FCNS)
+        super(IntegratedStepperMotors, self).__init__(
+            record, IntegratedStepperMotors_FCNS, build_device_list=True
+        )
 
     def can_home(self):
         """Can the device perform a :meth:`home`?

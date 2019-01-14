@@ -75,7 +75,7 @@ class MotionControl(ConnectionSDK):
     # a serial number is 8 characters, 1 for null terminated, 1 for the comma, allow for up to 50 devices
     SERIAL_NUMBER_BUFFER_SIZE = (8 + 1 + 1) * 50
 
-    def __init__(self, record, api_function):
+    def __init__(self, record, api_function, build_device_list=False):
         """
         Base **Thorlabs.MotionControl** class.
 
@@ -89,6 +89,9 @@ class MotionControl(ConnectionSDK):
         api_function : :mod:`.api_functions` 
             An API function list from :mod:`.api_functions` that the subclass 
             is a wrapper around.
+        build_device_list : :class:`bool`, optional
+            Whether to call :meth:`.build_device_list` before opening the connection
+            to the device.
             
         Raises
         ------
@@ -96,6 +99,8 @@ class MotionControl(ConnectionSDK):
             If a connection to the device cannot be established.
         """
         self._is_open = False
+        if build_device_list:
+            MotionControl.build_device_list()
         super(MotionControl, self).__init__(record, 'cdll')
         self.set_exception_class(ThorlabsError)
 

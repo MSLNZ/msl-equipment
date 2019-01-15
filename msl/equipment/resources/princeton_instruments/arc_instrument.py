@@ -77,7 +77,9 @@ class PrincetonInstruments(Connection):
                         try:
                             self.open_readout(enum)
                         except PrincetonInstrumentsError:
-                            break
+                            self.raise_exception('Could not open port {!r}'.format(port))
+
+        self.log_debug('Connected to {}'.format(record.connection))
 
     def disconnect(self):
         """Close all open connections."""

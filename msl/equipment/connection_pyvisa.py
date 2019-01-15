@@ -1,8 +1,9 @@
 """
 Uses PyVISA_ as the backend to communicate with the equipment.
 
-.. _PyVISA: https://pyvisa.readthedocs.io/en/stable/index.html
+.. _PyVISA: https://pyvisa.readthedocs.io/en/master/
 """
+import warnings
 try:
     import pyvisa
 except ImportError:
@@ -29,16 +30,13 @@ class ConnectionPyVISA(Connection):
         Do not instantiate this class directly. Use the
         :meth:`~.EquipmentRecord.connect` method to connect to the equipment.
 
-        .. _PyVISA: https://pyvisa.readthedocs.io/en/stable/index.html
-
         Parameters
         ----------
         record : :class:`.EquipmentRecord`
             A record from an :ref:`equipment_database`.
         """
-        super(ConnectionPyVISA, self).__init__(record)
-
         self._resource = None
+        super(ConnectionPyVISA, self).__init__(record)
 
         rm = ConnectionPyVISA.resource_manager()
 
@@ -63,12 +61,32 @@ class ConnectionPyVISA(Connection):
         # expose all of the PyVISA Resource functions and properties to ConnectionPyVISA
         # NOTE: the 'setter' function of the @property does NOT get called. If you want
         # it to be called you would have to deal with it in the same manner as 'timeout'
-        for attr in dir(self._resource):
-            if attr.startswith('_') or attr == 'timeout':
-                continue
-            setattr(self, attr, getattr(self._resource, attr, None))
+        with warnings.catch_warnings():
+            # ignore all warnings (these have typically been deprecation warnings)
+            warnings.simplefilter('ignore')
+            for attr in dir(self._resource):
+                if attr.startswith('_') or attr == 'timeout':
+                    continue
+                try:
+                    setattr(self, attr, getattr(self._resource, attr, None))
+                except:
+                    pass
 
         self.log_debug('Connected to {}'.format(record.connection))
+
+    @property
+    def resource(self):
+        """:class:`~pyvisa.resources.Resource`: The PyVISA_ resource that is used for the connection.
+
+        This is the :class:`~pyvisa.resources.Resource` that would have
+        been returned if you did the following in a script::
+
+            import visa
+            rm = visa.ResourceManager()
+            resource = rm.open_resource('COM6')
+
+        """
+        return self._resource
 
     @property
     def timeout(self):
@@ -92,7 +110,7 @@ class ConnectionPyVISA(Connection):
 
     @staticmethod
     def resource_manager(visa_library=None):
-        """Return the PyVISA :class:`~pyvisa.highlevel.ResourceManager`. 
+        """Return the PyVISA_ :class:`~pyvisa.highlevel.ResourceManager`.
 
         Parameters
         ----------
@@ -109,12 +127,12 @@ class ConnectionPyVISA(Connection):
         Returns
         -------
         :class:`~pyvisa.highlevel.ResourceManager`
-            The PyVISA Resource Manager.
+            The PyVISA_ Resource Manager.
 
         Raises
         ------
         ValueError
-            If the PyVISA backend wrapper cannot be found.
+            If the PyVISA_ backend wrapper cannot be found.
         OSError
             If the VISA library cannot be found.
         """
@@ -160,7 +178,7 @@ class ConnectionPyVISA(Connection):
         Returns
         -------
         A :class:`~pyvisa.resources.Resource` subclass
-            The PyVISA Resource class that can open the `record`.
+            The PyVISA_ Resource class that can open the `record`.
         """
         if isinstance(record, EquipmentRecord):
             if record.connection is None:

@@ -55,6 +55,7 @@ class NKT(Connection):
         self.load_sdk(props.get('sdk_path', _PATH))
         if props.get('open_port', True):
             NKT.open_ports(self._PORTNAME, auto=props.get('auto', True), live=props.get('live', True))
+        self.log_debug('Connected to {}'.format(record.connection))
 
     @staticmethod
     def close_ports(names=None):

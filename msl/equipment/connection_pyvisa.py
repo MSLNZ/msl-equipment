@@ -3,7 +3,6 @@ Uses PyVISA_ as the backend to communicate with the equipment.
 
 .. _PyVISA: https://pyvisa.readthedocs.io/en/master/
 """
-import warnings
 try:
     import pyvisa
 except ImportError:
@@ -56,23 +55,50 @@ class ConnectionPyVISA(Connection):
         else:
             props['stop_bits'] = self.convert_to_enum(val, pyvisa.constants.StopBits)
 
+        # "termination" is a shortcut used by the MSL backend to set both
+        # write_termination and read_termination to the same value
+        term = props.pop('termination', None)
+        if term is not None:
+            try:
+                # pyvisa requires the termination value to be a string, not bytes
+                term_as_string = term.decode()
+            except AttributeError:
+                term_as_string = term
+            props['write_termination'] = term_as_string
+            props['read_termination'] = term_as_string
+
+        # the "timeout" value is in seconds for MSL backend
+        # pyvisa uses a timeout in milliseconds
+        timeout = props.get('timeout')
+        if timeout and timeout < 100:
+            # if timeout < 100 then it's value is probably in seconds
+            props['timeout'] = timeout * 1000
+
         self._resource = rm.open_resource(record.connection.address, **props)
-
-        # expose all of the PyVISA Resource functions and properties to ConnectionPyVISA
-        # NOTE: the 'setter' function of the @property does NOT get called. If you want
-        # it to be called you would have to deal with it in the same manner as 'timeout'
-        with warnings.catch_warnings():
-            # ignore all warnings (these have typically been deprecation warnings)
-            warnings.simplefilter('ignore')
-            for attr in dir(self._resource):
-                if attr.startswith('_') or attr == 'timeout':
-                    continue
-                try:
-                    setattr(self, attr, getattr(self._resource, attr, None))
-                except:
-                    pass
-
         self.log_debug('Connected to {}'.format(record.connection))
+
+    def __getattr__(self, item):
+        attr = getattr(self._resource, item)
+        if callable(attr):
+            def wrapper(*args, **kwargs):
+                return attr(*args, **kwargs)
+            return wrapper
+        return attr
+
+    def __setattr__(self, item, value):
+        if item[0] == '_':
+            # handles all private attributes, like:
+            #   self._resource
+            #   self._record
+            #   self._exception_handler
+            #   self._repr
+            #   self._str
+            self.__dict__[item] = value
+        else:
+            setattr(self._resource, item, value)
+
+    def __delattr__(self, item):
+        delattr(self._resource, item)
 
     @property
     def resource(self):
@@ -87,19 +113,6 @@ class ConnectionPyVISA(Connection):
 
         """
         return self._resource
-
-    @property
-    def timeout(self):
-        """Calls :attr:`~pyvisa.resources.Resource.timeout`."""
-        return self._resource.timeout
-
-    @timeout.setter
-    def timeout(self, value):
-        self._resource.timeout = value
-
-    @timeout.deleter
-    def timeout(self):
-        del self._resource.timeout
 
     def disconnect(self):
         """Calls :meth:`~pyvisa.resources.Resource.close`."""

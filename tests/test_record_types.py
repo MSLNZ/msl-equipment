@@ -138,7 +138,7 @@ def test_equipment_record():
     assert record.connection.properties['bytes'] == b'\x02\x19\x08'
     assert record.connection.properties['string'] == 'string'
     assert record.connection.properties['unicode'] == u'uñicödé'
-    assert record.connection.properties['termination'] == '\r\n'
+    assert record.connection.properties['termination'] == b'\r\n'
     assert record.connection.properties['boolean'] is True
     assert record.connection.properties['integer'] == 77
     assert record.connection.properties['float'] == 12.34
@@ -171,7 +171,7 @@ def test_equipment_record():
     assert a['connection']['properties']['bytes'] == b'\x02\x19\x08'
     assert a['connection']['properties']['string'] == 'string'
     assert a['connection']['properties']['unicode'] == u'uñicödé'
-    assert a['connection']['properties']['termination'] == '\r\n'
+    assert a['connection']['properties']['termination'] == b'\r\n'
     assert a['connection']['properties']['boolean'] is True
     assert a['connection']['properties']['integer'] == 77
     assert a['connection']['properties']['float'] == 12.34
@@ -207,7 +207,7 @@ def test_equipment_record():
     assert a.find('connection/properties/bytes').text == "'\\x02\\x19\\x08'" if PY2 else "b'\x02\x19\x08'"
     assert a.find('connection/properties/string').text == "'string'" if PY2 else 'string'
     assert a.find('connection/properties/unicode').text == u'u\xf1ic\xf6d\xe9' if PY2 else 'uñicödé'
-    assert a.find('connection/properties/termination').text == "'\\r\\n'"
+    assert a.find('connection/properties/termination').text == "'\\r\\n'" if PY2 else "b'\\r\\n'"
     assert a.find('connection/properties/boolean').text == 'True'
     assert a.find('connection/properties/integer').text == '77'
     assert a.find('connection/properties/float').text == '12.34'
@@ -247,7 +247,7 @@ def test_equipment_record():
     assert a[15] == '    integer: 77'
     assert a[16] == '    none: None'
     assert a[17] == "    string: 'string'"
-    assert a[18] == "    termination: '\\r\\n'"
+    assert a[18] == "    termination: '\\r\\n'" if PY2 else "    termination: b'\\r\\n'"
     assert a[19] == "    unicode: u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "    unicode: 'uñicödé'"
     assert a[20] == "  serial: 'ABC123'"
     assert a[21] == 'date_calibrated: datetime.date(2018, 8, 20)'
@@ -406,7 +406,7 @@ def test_connection_record():
     assert record.properties['bytes'] == b'\x02\x19\x08'
     assert record.properties['string'] == 'string'
     assert record.properties['unicode'] == u'uñicödé'
-    assert record.properties['termination'] == '\r\n'
+    assert record.properties['termination'] == b'\r\n'
     assert record.properties['boolean'] is True
     assert record.properties['integer'] == 77
     assert record.properties['float'] == 12.34
@@ -425,7 +425,7 @@ def test_connection_record():
     assert a['properties']['bytes'] == b'\x02\x19\x08'
     assert a['properties']['string'] == 'string'
     assert a['properties']['unicode'] == u'uñicödé'
-    assert a['properties']['termination'] == '\r\n'
+    assert a['properties']['termination'] == b'\r\n'
     assert a['properties']['boolean'] is True
     assert a['properties']['integer'] == 77
     assert a['properties']['float'] == 12.34
@@ -447,7 +447,7 @@ def test_connection_record():
     assert props.find('bytes').text == "'\\x02\\x19\\x08'" if PY2 else "b'\x02\x19\x08'"
     assert props.find('string').text == "'string'" if PY2 else 'string'
     assert props.find('unicode').text == u'u\xf1ic\xf6d\xe9' if PY2 else 'uñicödé'
-    assert props.find('termination').text == "'\\r\\n'"
+    assert props.find('termination').text == "'\\r\\n'" if PY2 else "b'\\r\\n'"
     assert props.find('boolean').text == 'True'
     assert props.find('integer').text == '77'
     assert props.find('float').text == '12.34'
@@ -471,7 +471,7 @@ def test_connection_record():
     assert a[11] == '  integer: 77'
     assert a[12] == '  none: None'
     assert a[13] == "  string: 'string'"
-    assert a[14] == "  termination: '\\r\\n'"
+    assert a[14] == "  termination: '\\r\\n'" if PY2 else "  termination: b'\\r\\n'"
     assert a[15] == "  unicode: u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "  unicode: 'uñicödé'"
     assert a[16] == "serial: 'ABC123'"
 

@@ -540,6 +540,8 @@ class ConnectionRecord(object):
                     self._properties[key] = LF
                 elif value in ConnectionRecord._CR:
                     self._properties[key] = CR
+                elif not isinstance(value, bytes):
+                    self._properties[key] = value.encode()
 
     @property
     def serial(self):

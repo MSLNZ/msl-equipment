@@ -1,4 +1,4 @@
-from msl.equipment import EquipmentRecord
+from msl.equipment import EquipmentRecord, ConnectionRecord
 from msl.equipment.connection_message_based import ConnectionMessageBased
 
 
@@ -50,3 +50,14 @@ def test_termination_changed():
     assert isinstance(c.write_termination, bytes)
     assert c.read_termination == b'\r\n'
     assert c.write_termination == b'\r'
+
+
+def test_termination_converted_to_bytes():
+    record = EquipmentRecord(
+        connection=ConnectionRecord(
+            address='COM6',
+            backend='MSL',
+            properties={'termination': 'xyz'}
+        )
+    )
+    assert record.connection.properties['termination'] == b'xyz'

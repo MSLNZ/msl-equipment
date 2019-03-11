@@ -139,3 +139,9 @@ def test_find_resource_class():
     record = ConnectionRecord(manufacturer='Princeton Instruments', model='does not matter!', backend=Backend.MSL)
     cls = resources.find_resource_class(record)
     assert cls == resources.princeton_instruments.arc_instrument.PrincetonInstruments
+
+    for man in ('DataRay', 'Data Ray', 'Data Ray Inc.', 'DataRay Inc.'):
+        for mod in ('WinCamD', 'S-WCD-LCM-C-1310', 'does not matter!'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.dataray.datarayocx_64.DataRayOCX64

@@ -34,6 +34,10 @@ class CMIError(MSLConnectionError):
     """Exception for equipment from the Czech Metrology Institute."""
 
 
+class DataRayError(MSLConnectionError):
+    """Exception for equipment from DataRay Inc."""
+
+
 class NKTError(MSLConnectionError):
     """Exception for equipment from NKT Photonics."""
 

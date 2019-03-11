@@ -22,6 +22,7 @@ Subpackages
     msl.equipment.resources.avantes
     msl.equipment.resources.bentham
     msl.equipment.resources.cmi
+    msl.equipment.resources.dataray
     msl.equipment.resources.electron_dynamics
     msl.equipment.resources.nkt
     msl.equipment.resources.omega

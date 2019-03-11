@@ -17,6 +17,10 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
   * :class:`~msl.equipment.resources.cmi.sia3.SIA3` - Switched Integrator Amplifier
 
+* DataRay_
+
+  * :class:`~msl.equipment.resources.dataray.datarayocx_64.DataRayOCX64` - Wrapper around the DATARAYOCX_ library
+
 * `Electron Dynamics Ltd`_
 
   * :class:`~msl.equipment.resources.electron_dynamics.tc_series.TCSeries` - Temperature Controller (TC LV, TC M, TC Lite)
@@ -176,3 +180,5 @@ Please follow the `style guide`_.
 .. _NKT Photonics SDK: https://www.nktphotonics.com/lasers-fibers/support/software-drivers/
 .. _Princeton Instruments: https://www.princetoninstruments.com/
 .. _ARC_Instrument.dll: ftp://ftp.piacton.com/Public/Software/Official/Acton/
+.. _DataRay: https://www.dataray.com/
+.. _DATARAYOCX: https://www.dataray.com/interfacing.html

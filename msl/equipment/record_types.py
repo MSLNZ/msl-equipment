@@ -540,7 +540,7 @@ class ConnectionRecord(object):
                     self._properties[key] = LF
                 elif value in ConnectionRecord._CR:
                     self._properties[key] = CR
-                elif not isinstance(value, bytes):
+                elif not isinstance(value, bytes) and value is not None:
                     self._properties[key] = value.encode()
 
     @property

@@ -601,6 +601,10 @@ def test_connection_record():
     assert c.properties['f'][0] == 0
     assert c.properties['f'][1] == -1
 
+    # setting the read/write termination value to None is okay
+    c = ConnectionRecord(properties={'termination': None})
+    assert c.properties['termination'] is None
+
     os.remove(temp)
 
 

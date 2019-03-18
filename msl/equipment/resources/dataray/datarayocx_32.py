@@ -29,6 +29,7 @@ class DataRayOCX32(Server32):
         _create_app(**kwargs)
         if error_message:
             raise RuntimeError(error_message)
+        app.Show()
 
     def wait_to_configure(self):
         """Wait until the camera has been configured."""
@@ -433,9 +434,11 @@ if sys.executable.endswith(SERVER_FILENAME):
         def wait_to_configure(self):
             WinForms.MessageBox.Show(
                 'Click OK when you have finished configuring the camera.',
-                self.Text,
-                WinForms.MessageBoxButtons.OK,
-                WinForms.MessageBoxIcon.Information,
+                self.Text,  # the text in the titlebar
+                WinForms.MessageBoxButtons.OK,  # buttons
+                WinForms.MessageBoxIcon.Information,  # icon
+                WinForms.MessageBoxButtons.OK,  # default button
+                WinForms.MessageBoxOptions.ServiceNotification,  # bring the popup window to the front
             )
 
         def capture(self, timeout):

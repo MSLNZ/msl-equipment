@@ -971,7 +971,9 @@ class NKT(Connection):
         :class:`~msl.equipment.exceptions.NKTError`
             If there was an error calling this method.
         """
-        self.close_ports(self._PORTNAME)
+        if self._PORTNAME is not None:
+            self.close_ports(self._PORTNAME)
+            self._PORTNAME = None
 
     @staticmethod
     def get_all_ports(size=255):

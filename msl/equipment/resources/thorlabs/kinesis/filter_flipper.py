@@ -134,7 +134,7 @@ class FilterFlipper(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        self.sdk.FF_LoadNamedSettings(self._serial, settings_name)
+        self.sdk.FF_LoadNamedSettings(self._serial, settings_name.encode())
 
     def persist_settings(self):
         """Persist the devices current settings.

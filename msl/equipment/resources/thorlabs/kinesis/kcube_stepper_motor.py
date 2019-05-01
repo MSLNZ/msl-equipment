@@ -1072,7 +1072,7 @@ class KCubeStepperMotor(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        self.sdk.SCC_LoadNamedSettings(self._serial, settings_name)
+        self.sdk.SCC_LoadNamedSettings(self._serial, settings_name.encode())
 
     def message_queue_size(self):
         """Gets the size of the message queue.
@@ -1500,7 +1500,7 @@ class KCubeStepperMotor(MotionControl):
         """
         if not os.path.isfile(path):
             raise IOError('Cannot find {}'.format(path))
-        self.sdk.SCC_SetCalibrationFile(self._serial, path.encode(), enabled)
+        self.sdk.SCC_SetCalibrationFile(self._serial, path.encode('utf-8'), enabled)
 
     def set_digital_outputs(self, outputs_bits):
         """Sets the digital output bits.

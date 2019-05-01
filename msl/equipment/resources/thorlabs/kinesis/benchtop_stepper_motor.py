@@ -1203,7 +1203,7 @@ class BenchtopStepperMotor(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        self.sdk.SBC_LoadNamedSettings(self._serial, self._ch(channel), settings_name)
+        self.sdk.SBC_LoadNamedSettings(self._serial, self._ch(channel), settings_name.encode())
 
     def max_channel_count(self):
         """Gets the number of channels available to this device.

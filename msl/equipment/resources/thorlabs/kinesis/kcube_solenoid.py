@@ -421,7 +421,7 @@ class KCubeSolenoid(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        self.sdk.SC_LoadSettings(self._serial, settings_name)
+        self.sdk.SC_LoadSettings(self._serial, settings_name.encode())
 
     def message_queue_size(self):
         """Gets the size of the message queue.

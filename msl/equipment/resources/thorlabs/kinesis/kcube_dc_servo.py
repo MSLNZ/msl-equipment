@@ -1013,7 +1013,7 @@ class KCubeDCServo(MotionControl):
         :exc:`~msl.equipment.exceptions.ThorlabsError`
             If not successful.
         """
-        self.sdk.CC_LoadNamedSettings(self._serial, settings_name)
+        self.sdk.CC_LoadNamedSettings(self._serial, settings_name.encode())
 
     def message_queue_size(self):
         """Gets the size of the message queue.

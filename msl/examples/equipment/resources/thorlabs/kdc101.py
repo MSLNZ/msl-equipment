@@ -8,6 +8,7 @@ if __name__ == '__main__':
     from pprint import pprint
 
     from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
+    from msl.equipment.resources.thorlabs import MotionControl
 
     # ensure that the Kinesis folder is available on PATH
     os.environ['PATH'] += os.pathsep + 'C:/Program Files/Thorlabs/Kinesis'
@@ -31,6 +32,9 @@ if __name__ == '__main__':
             real = motor.get_real_value_from_device_unit(position, 'DISTANCE')
             print('  at position {} [device units] {} [real-world units]'.format(position, real))
             message_type, message_id, _ = motor.wait_for_message()
+
+    # avoid the FT_DeviceNotFound error
+    MotionControl.build_device_list()
 
     # connect to the KCube DC Servo
     motor = record.connect()

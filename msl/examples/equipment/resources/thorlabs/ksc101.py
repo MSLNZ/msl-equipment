@@ -8,6 +8,7 @@ if __name__ == '__main__':
     import time
 
     from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
+    from msl.equipment.resources.thorlabs import MotionControl
 
     # ensure that the Kinesis folder is available on PATH
     os.environ['PATH'] += os.pathsep + 'C:/Program Files/Thorlabs/Kinesis'
@@ -25,6 +26,9 @@ if __name__ == '__main__':
 
     def is_open():
         return shutter.get_operating_state() == 1
+
+    # avoid the FT_DeviceNotFound error
+    MotionControl.build_device_list()
 
     # connect to the KCube Solenoid
     shutter = record.connect()

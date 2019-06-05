@@ -1,10 +1,14 @@
 import enum
+import datetime
+from xml.etree.cElementTree import Element
 
 import pytest
 
 from msl.equipment.utils import (
     convert_to_enum,
     string_to_none_bool_int_float_complex,
+    convert_to_date,
+    convert_to_xml_string,
 )
 
 
@@ -123,3 +127,83 @@ def test_string_to_bool_int_float_complex():
     assert string_to_none_bool_int_float_complex('hello') == 'hello'
     assert string_to_none_bool_int_float_complex(b'\x00\x00') == b'\x00\x00'
     assert string_to_none_bool_int_float_complex('16i') == '16i'
+
+
+def test_convert_to_date():
+
+    # test datetime.date object
+    d = datetime.date(2000, 8, 24)
+    out = convert_to_date(d)
+    assert isinstance(out, datetime.date)
+    assert out is d
+    assert out.year == 2000
+    assert out.month == 8
+    assert out.day == 24
+
+    # test datetime.datetime object
+    # (this is an important timestamp in the movie Back to the Future)
+    d = datetime.datetime(1985, 10, 26, hour=1, minute=21, second=0)
+    out = convert_to_date(d)
+    assert isinstance(out, datetime.date)
+    assert out.year == 1985
+    assert out.month == 10
+    assert out.day == 26
+
+    # test string object
+    out = convert_to_date('2010-3-12')
+    assert isinstance(out, datetime.date)
+    assert out.year == 2010
+    assert out.month == 3
+    assert out.day == 12
+
+    # test string with format
+    out = convert_to_date('22.6.2100', fmt='%d.%m.%Y')
+    assert isinstance(out, datetime.date)
+    assert out.year == 2100
+    assert out.month == 6
+    assert out.day == 22
+
+    # test invalid string with strict=False
+    for item in ['2010-13-12', 'xxx', '22.6.2100']:
+        out = convert_to_date(item, strict=False)
+        assert isinstance(out, datetime.date)
+        assert out.year == datetime.MINYEAR
+        assert out.month == 1
+        assert out.day == 1
+
+        with pytest.raises(ValueError):
+            convert_to_date(item, strict=True)
+
+    # test None object
+    out = convert_to_date(None)
+    assert isinstance(out, datetime.date)
+    assert out.year == datetime.MINYEAR
+    assert out.month == 1
+    assert out.day == 1
+
+
+def test_convert_to_xml_string():
+
+    root = Element('msl')
+
+    team = Element('team')
+    team.text = 'Light'
+    root.append(team)
+
+    data = Element('data')
+    for a, b in [('one', '1'), ('two', '2'), ('three', '3')]:
+        element = Element(a)
+        element.text = b
+        data.append(element)
+    root.append(data)
+
+    lines = convert_to_xml_string(root).splitlines()
+    assert lines[0] == '<?xml version="1.0" encoding="utf-8"?>'
+    assert lines[1] == '<msl>'
+    assert lines[2] == '  <team>Light</team>'
+    assert lines[3] == '  <data>'
+    assert lines[4] == '    <one>1</one>'
+    assert lines[5] == '    <two>2</two>'
+    assert lines[6] == '    <three>3</three>'
+    assert lines[7] == '  </data>'
+    assert lines[8] == '</msl>'

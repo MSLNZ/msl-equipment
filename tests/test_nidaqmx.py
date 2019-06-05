@@ -3,11 +3,17 @@ import nidaqmx
 from nidaqmx import stream_readers
 from nidaqmx import stream_writers
 
-from msl.loadlib import IS_WINDOWS
 from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
 
+try:
+    nidaqmx.Task()
+except OSError:
+    HAS_NIDAQ_INSTALLED = False
+else:
+    HAS_NIDAQ_INSTALLED = True
 
-@pytest.mark.skipif(not IS_WINDOWS, reason='nidaqmx only runs on Windows')
+
+@pytest.mark.skipif(not HAS_NIDAQ_INSTALLED, reason='NI-DAQmx is not installed')
 def test_equivalent_to_importing_nidaqmx():
     record = EquipmentRecord(
         connection=ConnectionRecord(

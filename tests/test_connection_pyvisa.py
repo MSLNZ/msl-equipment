@@ -5,81 +5,84 @@ import threading
 import pytest
 import pyvisa
 
-from msl.loadlib import IS_WINDOWS
-
 from msl.equipment.config import Config
 from msl.equipment.connection_pyvisa import ConnectionPyVISA
 from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
 
 from test_connection_socket import echo_server_tcp, get_available_port
 
+try:
+    pyvisa.ResourceManager('@ni')
+except OSError:
+    HAS_NI_VISA = False
+else:
+    HAS_NI_VISA = True
 
-pyvisa_skipif = pytest.mark.skipif(not IS_WINDOWS, reason='pyvisa tests are for Windows only')
 
-
-@pyvisa_skipif
+@pytest.mark.skipif(not HAS_NI_VISA, reason='NI-VISA is not installed')
 def test_resource_manager():
     assert isinstance(ConnectionPyVISA.resource_manager(), pyvisa.ResourceManager)
 
 
-@pyvisa_skipif
 def test_pyclass():
+    backends = ('@ni', '@py') if HAS_NI_VISA else ('@py',)
 
-    for backend in ('@ni', '@py'):
+    for backend in backends:
 
         Config.PyVISA_LIBRARY = backend
 
         for item in ('ASRL1', 'ASRL1::INSTR', 'COM1', 'LPT1', 'ASRL::/dev/prt/1', 'ASRLCOM1'):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item))
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.SerialInstrument
 
         for item in ('GPIB::2', 'GPIB::1::0::INSTR'):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item))
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.GPIBInstrument
 
         for item in ('GPIB2::INTFC', ):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item))
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.GPIBInterface
 
         for item in ('PXI::15::INSTR', 'PXI::CHASSIS1::SLOT3', 'PXI0::2-12.1::INSTR'):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item))
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.PXIInstrument
 
         for item in ('PXI0::MEMACC',):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item))
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.PXIMemory
 
         for item in ('TCPIP::dev.company.com::INSTR',):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item))
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.TCPIPInstrument
 
         for item in ('TCPIP0::1.2.3.4::999::SOCKET',):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item))
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.TCPIPSocket
 
         for item in ('USB::0x1234::125::A22-5::INSTR',):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item))
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.USBInstrument
 
         for item in ('USB::0x5678::0x33::SN999::1::RAW',):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item))
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.USBRaw
 
         for item in ('VXI::1::BACKPLANE',):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item))
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.VXIBackplane
 
         for item in ('VXI::MEMACC',):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item))
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.VXIMemory
 
         for item in ('VXI0::1::INSTR', 'VXI0::SERVANT'):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item))
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.VXIInstrument
 
 
-@pyvisa_skipif
 def test_timeout_and_termination():
+    Config.PyVISA_LIBRARY = '@py'
+
     address = '127.0.0.1'
     port = get_available_port()
     term = b'xyz'

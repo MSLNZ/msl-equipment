@@ -2,7 +2,7 @@
 Base ``Thorlabs.MotionControl`` class.
 """
 import os
-from xml.etree import cElementTree as ET
+from xml.etree import cElementTree
 from ctypes import c_int, byref, create_string_buffer
 
 from msl.loadlib import LoadLibrary
@@ -154,7 +154,7 @@ class MotionControl(ConnectionSDK):
         controller.
 
         The possible values for ``device_name`` can be found in the ``ThorlabsDefaultSettings.xml``
-        file (located in the Kinesis installation folder, e.g., C:\Program Files\Thorlabs\Kinesis).
+        file (located in the Kinesis installation folder, e.g., C:\\Program Files\\Thorlabs\\Kinesis).
         as the ``Name`` value in one of the ``<DeviceSettingsType>`` tags.
         """
         return self._settings
@@ -361,7 +361,7 @@ class MotionControl(ConnectionSDK):
             if not os.path.isfile(cfg):
                 self.log_warning('Cannot find ThorlabsDeviceConfiguration.xml')
                 return
-            root = ET.parse(cfg).getroot()
+            root = cElementTree.parse(cfg).getroot()
             element = root.find('.//Device[@Name="{}"]'.format(self.equipment_record.serial))
             if element is None:
                 self.log_warning('Cannot find <Device Name="{}"> in '
@@ -385,7 +385,7 @@ class MotionControl(ConnectionSDK):
                 return
 
         # get the XML element that refers to this device name
-        root = ET.parse(path).getroot()
+        root = cElementTree.parse(path).getroot()
         element = root.find('.//DeviceSettingsType[@Name="{}"]'.format(name))
         if element is not None:
             # check if the device name refers to another device name
@@ -404,7 +404,7 @@ class MotionControl(ConnectionSDK):
             # some devices are specified in ThorlabsCustomSettings.xml
             cfg = 'C:/ProgramData/Thorlabs/MotionControl/ThorlabsCustomSettings.xml'
             if os.path.isfile(cfg):
-                root = ET.parse(cfg).getroot()
+                root = cElementTree.parse(cfg).getroot()
                 element = root.find('.//DeviceSettingsDefinition[@Name="{}"]'.format(name))
 
         if element is None:

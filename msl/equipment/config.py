@@ -3,7 +3,7 @@ Load an XML :ref:`configuration_file`.
 """
 import os
 import logging
-from xml.etree import cElementTree as ET
+from xml.etree import cElementTree
 
 from .database import Database
 
@@ -39,7 +39,7 @@ class Config(object):
         +----------------+-----------------------------------+-----------------------------------------+
         |      Name      |           Example Values          |               Description               |
         +================+===================================+=========================================+
-        | pyvisa_library | @ni, @py, @sim, /path/to/lib\@ni  | The PyVISA backend_ library to use.     |
+        | pyvisa_library | @ni, @py, @sim, /path/to/lib\\@ni | The PyVISA backend_ library to use.     |
         +----------------+-----------------------------------+-----------------------------------------+
         |   demo_mode    | true, false                       | Whether to open connections in demo     |
         |                |                                   | mode.                                   |
@@ -68,9 +68,9 @@ class Config(object):
         """
         logger.debug('Loading {}'.format(path))
         try:
-            self._root = ET.parse(path).getroot()
+            self._root = cElementTree.parse(path).getroot()
             parse_err = ''
-        except ET.ParseError as err:
+        except cElementTree.ParseError as err:
             parse_err = str(err)
 
         if parse_err:

@@ -1,5 +1,5 @@
 """
-Base class for the PicoScopes that have a header file which ends with \*Api.h.
+Base class for the PicoScopes that have a header file which ends with \\*Api.h.
 
 Namely, ps2000aApi, ps3000aApi, ps4000Api, ps4000aApi, ps5000Api, ps5000aApi and ps6000Api.
 """
@@ -22,7 +22,7 @@ from ..errors import (
 class PicoScopeApi(PicoScope):
 
     def __init__(self, record, func_ptrs):
-        """Base class for the PicoScopes that have a header file which ends with \*Api.h.
+        """Base class for the PicoScopes that have a header file which ends with \\*Api.h.
         
         Use the PicoScope SDK to communicate with the ps2000a, ps3000a, ps4000, ps4000a, 
         ps5000, ps5000a and ps6000 oscilloscopes.

@@ -3,17 +3,29 @@ import os
 import sys
 import datetime
 import tempfile
-from xml.etree.ElementTree import ElementTree
+import codecs
+from xml.etree.cElementTree import ElementTree
 
 import pytest
 
 from msl.equipment.config import Config
-from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
+from msl.equipment import (
+    EquipmentRecord,
+    ConnectionRecord,
+    CalibrationRecord,
+    MeasurandRecord,
+    MaintenanceRecord,
+    Backend,
+)
+from msl.equipment.record_types import RecordDict
 from msl.equipment.constants import MSLInterface, DataBits, Parity, StopBits, LF, CR
+from msl.equipment.utils import convert_to_xml_string
 
 PY2 = sys.version_info.major == 2
 if not PY2:
     unicode = str
+
+ROOT_DIR = os.path.join(os.path.dirname(__file__), 'db_files')
 
 
 def test_equipment_record():
@@ -25,73 +37,86 @@ def test_equipment_record():
     print(record)  # make sure it is printable
     print(repr(record))
     assert record.alias == ''
-    assert record.calibration_cycle == 0.0
+    assert isinstance(record.calibrations, tuple) and len(record.calibrations) == 0
     assert record.category == ''
     assert record.connection is None
-    assert record.date_calibrated == datetime.date(datetime.MINYEAR, 1, 1)
     assert record.description == ''
-    assert record.latest_report_number == ''
-    assert record.location == ''
+    assert not record.is_operable
+    assert isinstance(record.maintenances, tuple) and len(record.maintenances) == 0
     assert record.manufacturer == ''
     assert record.model == ''
     assert record.serial == ''
     assert record.team == ''
+    assert record.unique_key == ''
     assert record.user_defined == {}
+    assert record.latest_calibration is None
 
     a = record.to_dict()
-    assert len(a) == 13
+    assert len(a) == len(record.__slots__)
     assert a['alias'] == ''
-    assert a['calibration_cycle'] == 0.0
+    assert isinstance(a['calibrations'], tuple) and len(a['calibrations']) == 0
     assert a['category'] == ''
     assert a['connection'] is None
-    assert a['date_calibrated'] == datetime.date(datetime.MINYEAR, 1, 1)
     assert a['description'] == ''
-    assert a['latest_report_number'] == ''
-    assert a['location'] == ''
+    assert not a['is_operable']
+    assert isinstance(a['maintenances'], tuple) and len(a['maintenances']) == 0
     assert a['manufacturer'] == ''
     assert a['model'] == ''
     assert a['serial'] == ''
     assert a['team'] == ''
+    assert a['unique_key'] == ''
     assert a['user_defined'] == {}
 
-    tree = ElementTree(record.to_xml())
-    tree.write(temp)
+    with open(temp, 'w') as fp:  # no unicode, use builtin open() function
+        fp.write(convert_to_xml_string(record.to_xml()))
     a = ElementTree().parse(temp)
-    assert len(a) == 13
+    assert len(a) == len(record.__slots__)
     assert a.find('alias').text is None
-    assert a.find('calibration_cycle').text is None
+    assert a.find('calibrations').text is None
     assert a.find('category').text is None
     assert a.find('connection').text is None
-    assert a.find('date_calibrated').text is None
     assert a.find('description').text is None
-    assert a.find('latest_report_number').text is None
-    assert a.find('location').text is None
+    assert a.find('is_operable').text == 'False'
+    assert a.find('maintenances').text is None
     assert a.find('manufacturer').text is None
     assert a.find('model').text is None
     assert a.find('serial').text is None
     assert a.find('team').text is None
+    assert a.find('unique_key').text is None
     assert a.find('user_defined').text is None
 
     a = repr(record).splitlines()
-    assert len(a) == 13
-    assert a[0] == "alias: u''" if PY2 else "alias: ''"
-    assert a[1] == 'calibration_cycle: 0.0'
-    assert a[2] == "category: u''" if PY2 else "category: ''"
-    assert a[3] == 'connection: None'
-    assert a[4] == 'date_calibrated: datetime.date(1, 1, 1)'
-    assert a[5] == "description: u''" if PY2 else "description: ''"
-    assert a[6] == "latest_report_number: u''" if PY2 else "latest_report_number: ''"
-    assert a[7] == "location: u''" if PY2 else "location: ''"
-    assert a[8] == "manufacturer: u''" if PY2 else "manufacturer: ''"
-    assert a[9] == "model: u''" if PY2 else "model: ''"
-    assert a[10] == "serial: u''" if PY2 else "serial: ''"
-    assert a[11] == "team: u''" if PY2 else "team: ''"
-    assert a[12] == "user_defined: {}"
+    assert len(a) == len(record.__slots__) + 1
+    assert a[0] == 'EquipmentRecord'
+    assert a[1] == '  alias: {!r}'.format(u'' if PY2 else '')
+    assert a[2] == '  calibrations: None'
+    assert a[3] == '  category: {!r}'.format(u'' if PY2 else '')
+    assert a[4] == '  connection: None'
+    assert a[5] == '  description: {!r}'.format(u'' if PY2 else '')
+    assert a[6] == '  is_operable: False'
+    assert a[7] == '  maintenances: None'
+    assert a[8] == '  manufacturer: {!r}'.format(u'' if PY2 else '')
+    assert a[9] == '  model: {!r}'.format(u'' if PY2 else '')
+    assert a[10] == '  serial: {!r}'.format(u'' if PY2 else '')
+    assert a[11] == '  team: {!r}'.format(u'' if PY2 else '')
+    assert a[12] == '  unique_key: {!r}'.format(u'' if PY2 else '')
+    assert a[13] == '  user_defined: None'
 
     # populate the EquipmentRecord
     record = EquipmentRecord(
         alias='my alias',
-        calibration_cycle=5,
+        calibrations=[
+            CalibrationRecord(
+                calibration_cycle=2,
+                calibration_date='2018-8-20',
+                report_date='2018-8-20',
+                report_number='Report:12-3/4',
+                measurands=[
+                    MeasurandRecord(calibration={'min': 0, 'max': 10, 'coeff': [1, 2, 3]}, type='A', unit='B'),
+                    MeasurandRecord(calibration={'range': [0, 10], 'coeff': [0.2, 11]}, type='X', unit='Y'),
+                ]
+            ),
+        ],
         category='DMM',
         connection=ConnectionRecord(
             address='GPIB::15',
@@ -112,14 +137,16 @@ def test_equipment_record():
                 'enum': StopBits.ONE_POINT_FIVE,
             },
         ),
-        date_calibrated=datetime.date(2018, 8, 20),
         description=u'Sométhing uséful',
-        latest_report_number='Report:12-3/4',
-        location='the lab',
+        is_operable=True,
+        maintenances=[
+            MaintenanceRecord(date='2019-01-01', comment='fixed it'),
+        ],
         manufacturer=u'uñicödé',
         model='XYZ',
         serial='ABC123',
         team='P&R',
+        unique_key='keykeykey',
         a='a',  # goes into the user_defined dict
         b=8,  # goes into the user_defined dict
         c=[1, 2, 3],  # goes into the user_defined dict
@@ -127,7 +154,21 @@ def test_equipment_record():
     print(unicode(record))  # make sure it is printable
     print(unicode(repr(record)))
     assert record.alias == 'my alias'
-    assert record.calibration_cycle == 5
+    assert len(record.calibrations) == 1
+    assert record.calibrations[0].calibration_cycle == 2
+    assert record.calibrations[0].calibration_date == datetime.date(2018, 8, 20)
+    assert record.calibrations[0].report_date == datetime.date(2018, 8, 20)
+    assert record.calibrations[0].report_number == 'Report:12-3/4'
+    assert len(record.calibrations[0].measurands) == 2
+    assert record.calibrations[0].measurands.A.calibration.min == 0
+    assert record.calibrations[0].measurands.A.calibration.max == 10
+    assert record.calibrations[0].measurands.A.calibration.coeff == (1, 2, 3)
+    assert record.calibrations[0].measurands.A.type == 'A'
+    assert record.calibrations[0].measurands.A.unit == 'B'
+    assert record.calibrations[0].measurands['X'].calibration.range == (0, 10)
+    assert record.calibrations[0].measurands['X'].calibration.coeff == (0.2, 11)
+    assert record.calibrations[0].measurands['X'].type == 'X'
+    assert record.calibrations[0].measurands['X'].unit == 'Y'
     assert record.category == 'DMM'
     assert record.connection.address == 'GPIB::15'
     assert record.connection.backend == Backend.PyVISA
@@ -145,22 +186,39 @@ def test_equipment_record():
     assert record.connection.properties['complex'] == -2-3j
     assert record.connection.properties['enum'] == StopBits.ONE_POINT_FIVE
     assert record.connection.serial == 'ABC123'
-    assert record.date_calibrated == datetime.date(2018, 8, 20)
     assert record.description == u'Sométhing uséful'
-    assert record.latest_report_number == 'Report:12-3/4'
-    assert record.location == 'the lab'
+    assert record.is_operable
+    assert len(record.maintenances) == 1
+    assert record.maintenances[0].date == datetime.date(2019, 1, 1)
+    assert record.maintenances[0].comment == 'fixed it'
     assert record.manufacturer == u'uñicödé'
     assert record.model == 'XYZ'
     assert record.serial == 'ABC123'
     assert record.team == 'P&R'
+    assert record.unique_key == 'keykeykey'
     assert record.user_defined['a'] == 'a'
     assert record.user_defined['b'] == 8
-    assert record.user_defined['c'] == [1, 2, 3]
+    assert record.user_defined['c'] == (1, 2, 3)
+    assert record.latest_calibration is record.calibrations[0]
 
     a = record.to_dict()
-    assert len(a) == 13
+    assert len(a) == len(record.__slots__)
     assert a['alias'] == 'my alias'
-    assert a['calibration_cycle'] == 5
+    assert len(a['calibrations']) == 1
+    assert a['calibrations'][0]['calibration_cycle'] == 2
+    assert a['calibrations'][0]['calibration_date'] == datetime.date(2018, 8, 20)
+    assert a['calibrations'][0]['report_date'] == datetime.date(2018, 8, 20)
+    assert a['calibrations'][0]['report_number'] == 'Report:12-3/4'
+    assert len(a['calibrations'][0]['measurands']) == 2
+    assert a['calibrations'][0]['measurands']['A'].calibration['min'] == 0
+    assert a['calibrations'][0]['measurands']['A'].calibration['max'] == 10
+    assert a['calibrations'][0]['measurands']['A'].calibration['coeff'] == (1, 2, 3)
+    assert a['calibrations'][0]['measurands']['A'].type == 'A'
+    assert a['calibrations'][0]['measurands']['A'].unit == 'B'
+    assert a['calibrations'][0]['measurands']['X'].calibration['range'] == (0, 10)
+    assert a['calibrations'][0]['measurands']['X'].calibration['coeff'] == (0.2, 11)
+    assert a['calibrations'][0]['measurands']['X'].type == 'X'
+    assert a['calibrations'][0]['measurands']['X'].unit == 'Y'
     assert a['category'] == 'DMM'
     assert a['connection']['address'] == 'GPIB::15'
     assert a['connection']['backend'] == Backend.PyVISA
@@ -178,138 +236,307 @@ def test_equipment_record():
     assert a['connection']['properties']['complex'] == -2-3j
     assert a['connection']['properties']['enum'] == StopBits.ONE_POINT_FIVE
     assert a['connection']['serial'] == 'ABC123'
-    assert a['date_calibrated'] == datetime.date(2018, 8, 20)
     assert a['description'] == u'Sométhing uséful'
-    assert a['latest_report_number'] == 'Report:12-3/4'
-    assert a['location'] == 'the lab'
+    assert a['is_operable']
+    assert len(a['maintenances']) == 1
+    assert a['maintenances'][0]['date'] == datetime.date(2019, 1, 1)
+    assert a['maintenances'][0]['comment'] == 'fixed it'
     assert a['manufacturer'] == u'uñicödé'
     assert a['model'] == 'XYZ'
     assert a['serial'] == 'ABC123'
     assert a['team'] == 'P&R'
+    assert a['unique_key'] == 'keykeykey'
     assert a['user_defined']['a'] == 'a'
     assert a['user_defined']['b'] == 8
-    assert a['user_defined']['c'] == [1, 2, 3]
+    assert a['user_defined']['c'] == (1, 2, 3)
 
-    tree = ElementTree(record.to_xml())
-    tree.write(temp)
+    with codecs.open(temp, mode='w', encoding='utf-8') as fp:  # has unicode, use codecs.open() function
+        fp.write(convert_to_xml_string(record.to_xml()))
     a = ElementTree().parse(temp)
-    assert len(a) == 13
+    assert len(a) == len(record.__slots__)
     assert a.find('alias').text == 'my alias'
-    assert a.find('calibration_cycle').text == '5'
+    assert len(a.find('calibrations')) == 1
+    assert a.find('calibrations/CalibrationRecord/calibration_cycle').text == '2.0'
+    assert a.find('calibrations/CalibrationRecord/calibration_date').text == '2018-08-20'
+    assert a.find('calibrations/CalibrationRecord/calibration_date').attrib['format'] == 'YYYY-MM-DD'
+    assert a.find('calibrations/CalibrationRecord/report_date').text == '2018-08-20'
+    assert a.find('calibrations/CalibrationRecord/report_date').attrib['format'] == 'YYYY-MM-DD'
+    assert a.find('calibrations/CalibrationRecord/report_number').text == 'Report:12-3/4'
+    measurands = a.find('calibrations/CalibrationRecord/measurands')
+    assert len(measurands) == 2
+    ta = measurands.find('./MeasurandRecord[type="A"]')
+    assert ta.find('calibration/max').text == '10'
+    assert ta.find('calibration/min').text == '0'
+    assert ta.find('calibration/max').text == '10'
+    assert ta.find('calibration/coeff').text == '(1, 2, 3)'
+    assert ta.find('conditions').text is None
+    assert ta.find('type').text == 'A'
+    assert ta.find('unit').text == 'B'
+    tx = measurands.find('./MeasurandRecord[type="X"]')
+    assert tx.find('calibration/range').text == '(0, 10)'
+    assert tx.find('calibration/coeff').text == '(0.2, 11)'
+    assert tx.find('type').text == 'X'
+    assert tx.find('unit').text == 'Y'
     assert a.find('category').text == 'DMM'
-    assert a.find('connection').find('address').text == 'GPIB::15'
-    assert a.find('connection/backend').text == 'PyVISA'
-    assert a.find('connection/interface').text == 'NONE'  # using PyVISA as the backend
-    assert a.find('connection/manufacturer').text == u'uñicödé'
-    assert a.find('connection/model').text == 'XYZ'
-    assert a.find('connection/properties').text is None
-    assert a.find('connection/properties/none').text == 'None'
-    assert a.find('connection/properties/bytes').text == "'\\x02\\x19\\x08'" if PY2 else "b'\x02\x19\x08'"
-    assert a.find('connection/properties/string').text == "'string'" if PY2 else 'string'
-    assert a.find('connection/properties/unicode').text == u'u\xf1ic\xf6d\xe9' if PY2 else 'uñicödé'
-    assert a.find('connection/properties/termination').text == "'\\r\\n'" if PY2 else "b'\\r\\n'"
-    assert a.find('connection/properties/boolean').text == 'True'
-    assert a.find('connection/properties/integer').text == '77'
-    assert a.find('connection/properties/float').text == '12.34'
-    assert a.find('connection/properties/complex').text == '(-2-3j)'
-    assert a.find('connection/properties/enum').text == 'ONE_POINT_FIVE'
-    assert a.find('connection/serial').text == 'ABC123'
-    assert a.find('date_calibrated').text == '2018-08-20'
+    assert a.find('connection/ConnectionRecord/address').text == 'GPIB::15'
+    assert a.find('connection/ConnectionRecord/backend').text == 'PyVISA'
+    assert a.find('connection/ConnectionRecord/interface').text == 'NONE'  # using PyVISA as the backend
+    assert a.find('connection/ConnectionRecord/manufacturer').text == u'uñicödé'
+    assert a.find('connection/ConnectionRecord/model').text == 'XYZ'
+    assert len(a.find('connection/ConnectionRecord/properties').text.strip()) == 0
+    assert a.find('connection/ConnectionRecord/properties/none').text == 'None'
+    assert a.find('connection/ConnectionRecord/properties/bytes').text == "'\\x02\\x19\\x08'" if PY2 else "b'\x02\x19\x08'"
+    assert a.find('connection/ConnectionRecord/properties/string').text == "'string'" if PY2 else 'string'
+    assert a.find('connection/ConnectionRecord/properties/unicode').text == u'u\xf1ic\xf6d\xe9' if PY2 else 'uñicödé'
+    assert a.find('connection/ConnectionRecord/properties/termination').text == "'\\r\\n'" if PY2 else "b'\\r\\n'"
+    assert a.find('connection/ConnectionRecord/properties/boolean').text == 'True'
+    assert a.find('connection/ConnectionRecord/properties/integer').text == '77'
+    assert a.find('connection/ConnectionRecord/properties/float').text == '12.34'
+    assert a.find('connection/ConnectionRecord/properties/complex').text == '(-2-3j)'
+    assert a.find('connection/ConnectionRecord/properties/enum').text == 'ONE_POINT_FIVE'
+    assert a.find('connection/ConnectionRecord/serial').text == 'ABC123'
     assert a.find('description').text == u'Sométhing uséful'
-    assert a.find('latest_report_number').text == 'Report:12-3/4'
-    assert a.find('location').text == 'the lab'
+    assert a.find('is_operable').text == 'True'
+    assert len(a.find('maintenances')) == 1
+    assert a.find('maintenances/MaintenanceRecord/date').text == '2019-01-01'
+    assert a.find('maintenances/MaintenanceRecord/comment').text == 'fixed it'
     assert a.find('manufacturer').text == u'u\xf1ic\xf6d\xe9' if PY2 else 'uñicödé'
     assert a.find('model').text == 'XYZ'
     assert a.find('serial').text == 'ABC123'
     assert a.find('team').text == 'P&R'
-    assert a.find('user_defined').text is None
+    assert a.find('unique_key').text == 'keykeykey'
+    assert len(a.find('user_defined').text.strip()) == 0
     assert a.find('user_defined/a').text == 'a'
     assert a.find('user_defined/b').text == '8'
-    assert a.find('user_defined/c').text == '[1, 2, 3]'
+    assert a.find('user_defined/c').text == '(1, 2, 3)'
 
     a = repr(record).splitlines()
-    assert len(a) == 33
-    assert a[0] == "alias: 'my alias'"
-    assert a[1] == 'calibration_cycle: 5.0'
-    assert a[2] == "category: 'DMM'"
-    assert a[3] == 'connection:'
-    assert a[4] == "  address: 'GPIB::15'"
-    assert a[5] == '  backend: <Backend.PyVISA: 2>'
-    assert a[6] == '  interface: <MSLInterface.NONE: 0>'
-    assert a[7] == "  manufacturer: u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "manufacturer: 'uñicödé'"
-    assert a[8] == "  model: 'XYZ'"
-    assert a[9] == '  properties:'
-    assert a[10] == '    boolean: True'
-    assert a[11] == "    bytes: '\\x02\\x19\\x08'" if PY2 else "    bytes: b'\x02\x19\x08'"
-    assert a[12] == '    complex: (-2-3j)'
-    assert a[13] == '    enum: <StopBits.ONE_POINT_FIVE: 1.5>'
-    assert a[14] == '    float: 12.34'
-    assert a[15] == '    integer: 77'
-    assert a[16] == '    none: None'
-    assert a[17] == "    string: 'string'"
-    assert a[18] == "    termination: '\\r\\n'" if PY2 else "    termination: b'\\r\\n'"
-    assert a[19] == "    unicode: u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "    unicode: 'uñicödé'"
-    assert a[20] == "  serial: 'ABC123'"
-    assert a[21] == 'date_calibrated: datetime.date(2018, 8, 20)'
-    assert a[22] == "description: u'Som\\xe9thing us\\xe9ful'" if PY2 else "description: 'Sométhing uséful'"
-    assert a[23] == "latest_report_number: 'Report:12-3/4'"
-    assert a[24] == "location: 'the lab'"
-    assert a[25] == "manufacturer: u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "manufacturer: 'uñicödé'"
-    assert a[26] == "model: 'XYZ'"
-    assert a[27] == "serial: 'ABC123'"
-    assert a[28] == "team: 'P&R'"
-    assert a[29] == 'user_defined:'
-    assert a[30] == "  a: 'a'"
-    assert a[31] == '  b: 8'
-    assert a[32] == '  c: [1, 2, 3]'
+    assert len(a) == 59
+    assert a[0] == 'EquipmentRecord'
+    assert a[1] == "  alias: 'my alias'"
+    assert a[2] == '  calibrations: '
+    assert a[3] == '    CalibrationRecord'
+    assert a[4] == '      calibration_cycle: 2.0'
+    assert a[5] == '      calibration_date: 2018-08-20'
+    assert a[6] == '      measurands: '
+    assert a[7] == '        MeasurandRecord'
+    assert a[8] == '          calibration: '
+    assert a[9] == '            coeff: (1, 2, 3)'
+    assert a[10] == '            max: 10'
+    assert a[11] == '            min: 0'
+    assert a[12] == '          conditions: None'
+    assert a[13] == '          type: {}'.format("u'A'" if PY2 else "'A'")
+    assert a[14] == '          unit: {}'.format("u'B'" if PY2 else "'B'")
+    assert a[15] == '        MeasurandRecord'
+    assert a[16] == '          calibration: '
+    assert a[17] == '            coeff: (0.2, 11)'
+    assert a[18] == '            range: (0, 10)'
+    assert a[19] == '          conditions: None'
+    assert a[20] == '          type: {}'.format("u'X'" if PY2 else "'X'")
+    assert a[21] == '          unit: {}'.format("u'Y'" if PY2 else "'Y'")
+    assert a[22] == '      report_date: 2018-08-20'
+    assert a[23] == '      report_number: {}'.format("u'Report:12-3/4'" if PY2 else "'Report:12-3/4'")
+    assert a[24] == '  category: {}'.format("u'DMM'" if PY2 else "'DMM'")
+    assert a[25] == '  connection: '
+    assert a[26] == '    ConnectionRecord'
+    assert a[27] == '      address: {}'.format("u'GPIB::15'" if PY2 else "'GPIB::15'")
+    assert a[28] == '      backend: <Backend.PyVISA: 2>'
+    assert a[29] == '      interface: <MSLInterface.NONE: 0>'
+    assert a[30] == '      manufacturer: {}'.format("u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "'uñicödé'")
+    assert a[31] == '      model: {}'.format("u'XYZ'" if PY2 else "'XYZ'")
+    assert a[32] == '      properties: '
+    assert a[33] == '        boolean: True'
+    assert a[34] == '        bytes: {}'.format("'\\x02\\x19\\x08'" if PY2 else "b'\\x02\\x19\\x08'")
+    assert a[35] == '        complex: (-2-3j)'
+    assert a[36] == '        enum: <StopBits.ONE_POINT_FIVE: 1.5>'
+    assert a[37] == '        float: 12.34'
+    assert a[38] == '        integer: 77'
+    assert a[39] == '        none: None'
+    assert a[40] == "        string: 'string'"
+    assert a[41] == '        termination: {}'.format("'\\r\\n'" if PY2 else "b'\\r\\n'")
+    assert a[42] == '        unicode: {}'.format("u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "'uñicödé'")
+    assert a[43] == '      serial: {}'.format("u'ABC123'" if PY2 else "'ABC123'")
+    assert a[44] == '  description: {}'.format("u'Som\\xe9thing us\\xe9ful'" if PY2 else "'Sométhing uséful'")
+    assert a[45] == '  is_operable: True'
+    assert a[46] == '  maintenances: '
+    assert a[47] == '    MaintenanceRecord'
+    assert a[48] == '      comment: {}'.format("u'fixed it'" if PY2 else "'fixed it'")
+    assert a[49] == '      date: 2019-01-01'
+    assert a[50] == '  manufacturer: {}'.format("u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "'uñicödé'")
+    assert a[51] == '  model: {}'.format("u'XYZ'" if PY2 else "'XYZ'")
+    assert a[52] == '  serial: {}'.format("u'ABC123'" if PY2 else "'ABC123'")
+    assert a[53] == '  team: {}'.format("u'P&R'" if PY2 else "'P&R'")
+    assert a[54] == '  unique_key: {}'.format("u'keykeykey'" if PY2 else "'keykeykey'")
+    assert a[55] == '  user_defined: '
+    assert a[56] == "    a: 'a'"
+    assert a[57] == '    b: 8'
+    assert a[58] == '    c: (1, 2, 3)'
 
     #
-    # Check specifying date_calibrated and/or calibration_cycle
+    # The `alias` can be redefined
     #
+    assert record.alias != 'my new alias'
+    record.alias = 'my new alias'
+    assert record.alias == 'my new alias'
 
-    today = datetime.date.today()
-    record = EquipmentRecord(date_calibrated=today, calibration_cycle=5)
-    assert record.calibration_cycle == 5.0
-    assert record.date_calibrated.year == today.year
-    assert record.date_calibrated.month == today.month
-    assert record.date_calibrated.day == today.day
-
-    EquipmentRecord(calibration_cycle='5')
-
-    r = EquipmentRecord(calibration_cycle='5.7')
-    assert r.calibration_cycle == 5.7
-
-    r = EquipmentRecord(calibration_cycle='-5.7')
-    assert r.calibration_cycle == 0.0
-
-    with pytest.raises(ValueError):
-        EquipmentRecord(calibration_cycle='is not an number')
-
+    #
+    # Check that the `calibrations` attribute cannot be modified
+    #
     with pytest.raises(TypeError):
-        EquipmentRecord(date_calibrated='2017-08-15')
+        record.calibrations = None
+    with pytest.raises(TypeError):
+        setattr(record, 'calibrations', None)
+    with pytest.raises(TypeError):
+        record.calibrations[0] = None
+
+    #
+    # Check that the `category` attribute cannot be modified
+    #
+    with pytest.raises(TypeError):
+        record.category = None
+    with pytest.raises(TypeError):
+        setattr(record, 'category', None)
+
+    #
+    # Check that the `connection` attribute cannot be modified
+    #
+    with pytest.raises(TypeError):
+        record.connection = None
+    with pytest.raises(TypeError):
+        setattr(record, 'connection', None)
+
+    #
+    # Check that the `description` attribute cannot be modified
+    #
+    with pytest.raises(TypeError):
+        record.description = None
+    with pytest.raises(TypeError):
+        setattr(record, 'description', None)
+
+    #
+    # Check that the `is_operable` attribute cannot be modified
+    #
+    with pytest.raises(TypeError):
+        record.is_operable = None
+    with pytest.raises(TypeError):
+        setattr(record, 'is_operable', None)
+
+    #
+    # Check that the `maintenances` attribute cannot be modified
+    #
+    with pytest.raises(TypeError):
+        record.maintenances = None
+    with pytest.raises(TypeError):
+        setattr(record, 'maintenances', None)
+    with pytest.raises(TypeError):
+        record.maintenances[0] = None
+
+    #
+    # Check that the `manufacturer` attribute cannot be modified
+    #
+    with pytest.raises(TypeError):
+        record.manufacturer = None
+    with pytest.raises(TypeError):
+        setattr(record, 'manufacturer', None)
+
+    #
+    # Check that the `model` attribute cannot be modified
+    #
+    with pytest.raises(TypeError):
+        record.model = None
+    with pytest.raises(TypeError):
+        setattr(record, 'model', None)
+
+    #
+    # Check that the `serial` attribute cannot be modified
+    #
+    with pytest.raises(TypeError):
+        record.serial = None
+    with pytest.raises(TypeError):
+        setattr(record, 'serial', None)
+
+    #
+    # Check that the `team` attribute cannot be modified
+    #
+    with pytest.raises(TypeError):
+        record.team = None
+    with pytest.raises(TypeError):
+        setattr(record, 'team', None)
+
+    #
+    # Check that the `unique_key` attribute cannot be modified
+    #
+    with pytest.raises(TypeError):
+        record.unique_key = None
+    with pytest.raises(TypeError):
+        setattr(record, 'unique_key', None)
+
+    #
+    # Check that the `user_defined` attribute cannot be modified
+    #
+    with pytest.raises(TypeError):
+        record.user_defined = None
+    with pytest.raises(TypeError):
+        setattr(record, 'user_defined', None)
+    with pytest.raises(TypeError):
+        record.user_defined['new key'] = 'new value'
+    with pytest.raises(TypeError):
+        record.user_defined['a'] = 88
+
+    #
+    # Check setting invalid `calibrations`
+    #
+    with pytest.raises(TypeError) as err:
+        EquipmentRecord(calibrations=0)
+    assert str(err.value).endswith("'int' object is not iterable")
+    with pytest.raises(TypeError):  # not a iterable of CalibrationRecord
+        EquipmentRecord(calibrations=[1])
+    with pytest.raises(TypeError):  # not a iterable of CalibrationRecord
+        EquipmentRecord(calibrations=(None,))
+    with pytest.raises(KeyError):  # KeyError: 'measurands'
+        EquipmentRecord(calibrations=[{'calibration_cycle': 7}])
+    with pytest.raises(TypeError) as err:
+        EquipmentRecord(calibrations=[{'invalid_kwarg': 7, 'measurands': []}])
+    assert str(err.value).endswith("__init__() got an unexpected keyword argument 'invalid_kwarg'")
+
+    #
+    # Check setting invalid `maintenances`
+    #
+    with pytest.raises(TypeError) as err:
+        EquipmentRecord(maintenances=0)
+    assert str(err.value).endswith("'int' object is not iterable")
+    with pytest.raises(TypeError):  # not a iterable of MaintenanceRecord
+        EquipmentRecord(maintenances=[1])
+    with pytest.raises(TypeError):  # not a iterable of MaintenanceRecord
+        EquipmentRecord(maintenances=(None,))
+    with pytest.raises(TypeError) as err:
+        EquipmentRecord(maintenances=[{'invalid_kwarg': 7}])
+    assert str(err.value).endswith("__init__() got an unexpected keyword argument 'invalid_kwarg'")
 
     #
     # Check setting the ConnectionRecord
     #
 
-    for item in [None, 1, 6j, 'hello', True, object, 7.7, b'\x00']:
+    for item in [1, 6j, 'hello', True, object, 7.7, b'\x00']:
         with pytest.raises(TypeError):
             EquipmentRecord(connection=item)
 
-    record = EquipmentRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055')
-
-    # check that the manufacturer, model and serial values all match
-    record.connection = ConnectionRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055')
+    # no exception is raised since the manufacturer, model and serial values all match
+    cr = ConnectionRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055')
+    EquipmentRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055', connection=cr)
 
     # one of the manufacturer, model or serial values do not match
     with pytest.raises(ValueError) as err:
-        record.connection = ConnectionRecord(manufacturer='XYZ')
+        cr = ConnectionRecord(manufacturer='XYZ')
+        EquipmentRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055', connection=cr)
     assert '.manufacturer' in str(err.value)
     with pytest.raises(ValueError) as err:
-        record.connection = ConnectionRecord(manufacturer='ABC def', model='AAA')
+        cr = ConnectionRecord(manufacturer='ABC def', model='AAA')
+        EquipmentRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055', connection=cr)
     assert '.model' in str(err.value)
     with pytest.raises(ValueError) as err:
-        record.connection = ConnectionRecord(manufacturer='ABC def', model='ZZZ', serial='AAA')
+        cr = ConnectionRecord(manufacturer='ABC def', model='ZZZ', serial='AAA')
+        EquipmentRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055', connection=cr)
     assert '.serial' in str(err.value)
 
     # check that the manufacturer, model and serial values for the ConnectionRecord get updated
@@ -336,7 +563,7 @@ def test_connection_record():
     print(record)  # make sure it is printable
     print(repr(record))
     assert record.address == ''
-    assert record.backend == Backend.UNKNOWN
+    assert record.backend == Backend.MSL
     assert record.interface == MSLInterface.NONE
     assert record.manufacturer == ''
     assert record.model == ''
@@ -346,19 +573,19 @@ def test_connection_record():
     a = record.to_dict()
     assert len(a) == 7
     assert a['address'] == ''
-    assert a['backend'] == Backend.UNKNOWN
+    assert a['backend'] == Backend.MSL
     assert a['interface'] == MSLInterface.NONE
     assert a['manufacturer'] == ''
     assert a['model'] == ''
     assert a['properties'] == {}
     assert a['serial'] == ''
 
-    tree = ElementTree(record.to_xml())
-    tree.write(temp, encoding='UTF-8')
+    with open(temp, 'w') as fp:  # no unicode, use builtin open() function
+        fp.write(convert_to_xml_string(record.to_xml()))
     a = ElementTree().parse(temp)
     assert len(a) == 7
     assert a.find('address').text is None
-    assert a.find('backend').text == 'UNKNOWN'
+    assert a.find('backend').text == 'MSL'
     assert a.find('interface').text == 'NONE'
     assert a.find('manufacturer').text is None
     assert a.find('model').text is None
@@ -366,14 +593,15 @@ def test_connection_record():
     assert a.find('serial').text is None
 
     a = repr(ConnectionRecord()).splitlines()
-    assert len(a) == 7
-    assert a[0] == "address: u''" if PY2 else "address: ''"
-    assert a[1] == 'backend: <Backend.UNKNOWN: 0>'
-    assert a[2] == 'interface: <MSLInterface.NONE: 0>'
-    assert a[3] == "manufacturer: u''" if PY2 else "manufacturer: ''"
-    assert a[4] == "model: u''" if PY2 else "model: ''"
-    assert a[5] == 'properties: {}'
-    assert a[6] == "serial: u''" if PY2 else "serial: ''"
+    assert len(a) == 8
+    assert a[0] == 'ConnectionRecord'
+    assert a[1] == '  address: {!r}'.format(u'' if PY2 else '')
+    assert a[2] == '  backend: <Backend.MSL: 1>'
+    assert a[3] == '  interface: <MSLInterface.NONE: 0>'
+    assert a[4] == '  manufacturer: {!r}'.format(u'' if PY2 else '')
+    assert a[5] == '  model: {!r}'.format(u'' if PY2 else '')
+    assert a[6] == '  properties: None'
+    assert a[7] == '  serial: {!r}'.format(u'' if PY2 else '')
 
     # create a new ConnectionRecord
     record = ConnectionRecord(
@@ -433,8 +661,8 @@ def test_connection_record():
     assert a['properties']['enum'] == StopBits.ONE_POINT_FIVE
     assert a['serial'] == 'ABC123'
 
-    tree = ElementTree(record.to_xml())
-    tree.write(temp, encoding='UTF-8')
+    with codecs.open(temp, mode='w', encoding='utf-8') as fp:  # has unicode, use codecs.open() function
+        fp.write(convert_to_xml_string(record.to_xml()))
     a = ElementTree().parse(temp)
     assert len(a) == 7
     assert a.find('address').text == 'GPIB::15'
@@ -456,100 +684,101 @@ def test_connection_record():
     assert a.find('serial').text == 'ABC123'
 
     a = repr(record).splitlines()
-    assert len(a) == 17
-    assert a[0] == "address: 'GPIB::15'"
-    assert a[1] == 'backend: <Backend.PyVISA: 2>'
-    assert a[2] == 'interface: <MSLInterface.NONE: 0>'
-    assert a[3] == "manufacturer: u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "manufacturer: 'uñicödé'"
-    assert a[4] == "model: 'XYZ'"
-    assert a[5] == 'properties:'
-    assert a[6] == '  boolean: True'
-    assert a[7] == "  bytes: '\\x02\\x19\\x08'" if PY2 else "  bytes: b'\\x02\\x19\\x08'"
-    assert a[8] == '  complex: (-2-3j)'
-    assert a[9] == '  enum: <StopBits.ONE_POINT_FIVE: 1.5>'
-    assert a[10] == '  float: 12.34'
-    assert a[11] == '  integer: 77'
-    assert a[12] == '  none: None'
-    assert a[13] == "  string: 'string'"
-    assert a[14] == "  termination: '\\r\\n'" if PY2 else "  termination: b'\\r\\n'"
-    assert a[15] == "  unicode: u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "  unicode: 'uñicödé'"
-    assert a[16] == "serial: 'ABC123'"
+    assert len(a) == 18
+    assert a[0] == 'ConnectionRecord'
+    assert a[1] == '  address: {}'.format("u'GPIB::15'" if PY2 else "'GPIB::15'")
+    assert a[2] == '  backend: <Backend.PyVISA: 2>'
+    assert a[3] == '  interface: <MSLInterface.NONE: 0>'
+    assert a[4] == '  manufacturer: {}'.format("u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "'uñicödé'")
+    assert a[5] == '  model: {}'.format("u'XYZ'" if PY2 else "'XYZ'")
+    assert a[6] == '  properties: '
+    assert a[7] == '    boolean: True'
+    assert a[8] == '    bytes: {}'.format("'\\x02\\x19\\x08'" if PY2 else "b'\\x02\\x19\\x08'")
+    assert a[9] == '    complex: (-2-3j)'
+    assert a[10] == '    enum: <StopBits.ONE_POINT_FIVE: 1.5>'
+    assert a[11] == '    float: 12.34'
+    assert a[12] == '    integer: 77'
+    assert a[13] == '    none: None'
+    assert a[14] == "    string: 'string'"
+    assert a[15] == '    termination: {}'.format("'\\r\\n'" if PY2 else "b'\\r\\n'")
+    assert a[16] == '    unicode: {}'.format("u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "'uñicödé'")
+    assert a[17] == '  serial: {}'.format("u'ABC123'" if PY2 else "'ABC123'")
 
     #
     # The following are interface checks
     #
 
     # unknown address value does not raise an exception because the backend is not MSL
-    c = ConnectionRecord(address='XXXXXX')
+    c = ConnectionRecord(address='XXXXXX', backend='UNKNOWN')
     assert c.interface == MSLInterface.NONE
 
     # invalid address for an MSL Backend -> cannot determine the MSLInterface
     with pytest.raises(ValueError) as err:
-        ConnectionRecord(address='XXXXXX', backend=Backend.MSL)
+        ConnectionRecord(address='XXXXXX')
     assert str(err.value).startswith('Cannot determine the MSLInterface')
 
     # if the user specifies the interface then this interface is used regardless of the value of address
     for interface in [MSLInterface.SDK, 'SDK', u'SDK', 1]:
-        c = ConnectionRecord(address='XXXXXX', backend=Backend.MSL, interface=interface)
+        c = ConnectionRecord(address='XXXXXX', interface=interface)
         assert c.interface == MSLInterface.SDK
 
     # setting the interface to something that cannot be converted to an MSLInterface
-    for interface in [None, -1, -9.9, 'XXXXX']:
+    for interface in [-1, -9.9, 'XXXXX']:
         with pytest.raises(ValueError) as err:
-            ConnectionRecord(address='COM1', backend=Backend.MSL, interface=interface)
-        assert str(err.value).endswith('not a valid MSLInterface')
+            ConnectionRecord(address='COM1', interface=interface)
+        assert str(err.value).startswith('Cannot create')
 
     # MSLInterface.SDK
-    record = ConnectionRecord(address='SDK::whatever.dll', backend=Backend.MSL)
+    record = ConnectionRecord(address='SDK::whatever.dll')
     assert record.interface == MSLInterface.SDK
 
-    record = ConnectionRecord(address='SDK::/path/to/whatever.dll', backend=Backend.MSL)
+    record = ConnectionRecord(address='SDK::/path/to/whatever.dll')
     assert record.interface == MSLInterface.SDK
 
     # MSLInterface.SERIAL
-    record = ConnectionRecord(address='COM4', backend=Backend.MSL)
+    record = ConnectionRecord(address='COM4')
     assert record.interface == MSLInterface.SERIAL  # COM is an alias
 
-    record = ConnectionRecord(address='ASRLCOM4', backend=Backend.MSL)
+    record = ConnectionRecord(address='ASRLCOM4')
     assert record.interface == MSLInterface.SERIAL   # ASRLCOM is used by PyVISA
 
-    record = ConnectionRecord(address='LPT5', backend=Backend.MSL)
+    record = ConnectionRecord(address='LPT5')
     assert record.interface == MSLInterface.SERIAL   # LPT is an alias
 
-    record = ConnectionRecord(address='ASRL4', backend=Backend.MSL)
+    record = ConnectionRecord(address='ASRL4')
     assert record.interface == MSLInterface.SERIAL  # ASRL is an alias
 
     # MSLInterface.SOCKET
-    record = ConnectionRecord(address='SOCKET::127.0.0.1::1234', backend=Backend.MSL)
+    record = ConnectionRecord(address='SOCKET::127.0.0.1::1234')
     assert record.interface == MSLInterface.SOCKET
 
-    record = ConnectionRecord(address='ENET::127.0.0.1::1234', backend=Backend.MSL)
+    record = ConnectionRecord(address='ENET::127.0.0.1::1234')
     assert record.interface == MSLInterface.SOCKET  # ENET is an alias for SOCKET
 
-    record = ConnectionRecord(address='ETHERNET::127.0.0.1::1234', backend=Backend.MSL)
+    record = ConnectionRecord(address='ETHERNET::127.0.0.1::1234')
     assert record.interface == MSLInterface.SOCKET  # ETHERNET is an alias for SOCKET
 
-    record = ConnectionRecord(address='LAN::127.0.0.1::1234', backend=Backend.MSL)
+    record = ConnectionRecord(address='LAN::127.0.0.1::1234')
     assert record.interface == MSLInterface.SOCKET  # LAN is an alias for SOCKET
 
-    record = ConnectionRecord(address='TCPIP::127.0.0.1::1234::SOCKET', backend=Backend.MSL)
+    record = ConnectionRecord(address='TCPIP::127.0.0.1::1234::SOCKET')
     assert record.interface == MSLInterface.SOCKET  # PyVISA naming scheme
 
-    record = ConnectionRecord(address='TCP::127.0.0.1::1234', backend=Backend.MSL)
+    record = ConnectionRecord(address='TCP::127.0.0.1::1234')
     assert record.interface == MSLInterface.SOCKET  # TCP is an alias for SOCKET
 
-    record = ConnectionRecord(address='UDP::127.0.0.1::1234', backend=Backend.MSL, properties=dict(x=1))
+    record = ConnectionRecord(address='UDP::127.0.0.1::1234', properties=dict(x=1))
     assert record.interface == MSLInterface.SOCKET  # UDP is an alias for SOCKET
     assert record.properties['socket_type'] == 'SOCK_DGRAM'  # gets set automatically
     assert record.properties['x'] == 1  # does not get overwritten
 
     # TODO enable these tests once we create the TCPIP_ASRL and TCPIP_GPIB IntEnum constants in MSLInterface
-    # record = ConnectionRecord(address='ENET+COM::192.168.1.21+3', backend=Backend.MSL)
+    # record = ConnectionRecord(address='ENET+COM::192.168.1.21+3')
     # assert record.address == 'ENET+COM::192.168.1.21+3'
     # assert record.backend == Backend.MSL
     # assert record.interface == MSLInterface.TCPIP_ASRL
 
-    # record = ConnectionRecord(address='LAN+GPIB::192.168.1.21+7', backend=Backend.MSL)
+    # record = ConnectionRecord(address='LAN+GPIB::192.168.1.21+7')
     # assert record.address == 'LAN+GPIB::192.168.1.21+7'
     # assert record.backend == Backend.MSL
     # assert record.interface == MSLInterface.TCPIP_GPIB
@@ -567,22 +796,11 @@ def test_connection_record():
     for backend in [None, -1, -9.9, 'XXXXX']:
         with pytest.raises(ValueError) as err:
             ConnectionRecord(backend=backend)
-        assert str(err.value).endswith('not a valid Backend')
+        assert str(err.value).startswith('Cannot create')
 
     #
     # The following are "properties" checks
     #
-
-    # the properties attribute must be a dictionary
-    for props in [[], (), set(), 'xxxxxxxx', None, 1, 0j, 9.9]:
-        with pytest.raises(TypeError) as err:
-            ConnectionRecord(properties=props)
-        assert 'dictionary' in str(err.value)
-
-        c = ConnectionRecord(properties={'one': 1, 'two': 2})
-        with pytest.raises(TypeError) as err:
-            c.properties = props
-        assert 'dictionary' in str(err.value)
 
     # unexpected kwargs get inserted into the "properties" dict
     c = ConnectionRecord(model='ABC', unknown_attribute='AAA', xxxx=7.2)
@@ -590,7 +808,7 @@ def test_connection_record():
     assert c.properties['unknown_attribute'] == 'AAA'
     assert c.properties['xxxx'] == 7.2
 
-    # data types do not change
+    # define the properties explicitly
     c = ConnectionRecord(properties=dict(a=1, b=True, c={'one': -1, 'two': 2.2}, d=4-9j, e='hey!', f=[0, -1]))
     assert c.properties['a'] == 1
     assert c.properties['b'] is True
@@ -601,6 +819,24 @@ def test_connection_record():
     assert c.properties['f'][0] == 0
     assert c.properties['f'][1] == -1
 
+    # define the properties explicitly with additional kwargs
+    c = ConnectionRecord(properties={'one': 1, 'two': 2}, three=3, four=4)
+    assert c.properties['one'] == 1
+    assert c.properties['two'] == 2
+    assert c.properties['three'] == 3
+    assert c.properties['four'] == 4
+
+    with pytest.raises(TypeError) as err:
+        ConnectionRecord(properties=1, three=3, four=4)
+    assert 'must be of type dict' in str(err.value)
+
+    # bool(properties) evaluates to False so the 'properties' automatically get
+    # converted to an empty dict and 'three' and 'four' are added to the dict
+    for item in ['', None, False, []]:
+        c = ConnectionRecord(properties=item, three=3, four=4)
+        assert c.properties['three'] == 3
+        assert c.properties['four'] == 4
+
     # setting the read/write termination value to None is okay
     c = ConnectionRecord(properties={'termination': None})
     assert c.properties['termination'] is None
@@ -610,7 +846,7 @@ def test_connection_record():
 
 def test_dbase():
 
-    path = os.path.join(os.path.dirname(__file__), 'db.xml')
+    path = os.path.join(ROOT_DIR, 'db.xml')
     c = Config(path)
 
     dbase = c.database()
@@ -619,23 +855,14 @@ def test_dbase():
     assert eq1.manufacturer == 'F D080'
     assert eq1.model == '712ae'
     assert eq1.serial == '49e39f1'
-    assert eq1.date_calibrated.year == 2010
-    assert eq1.date_calibrated.month == 11
-    assert eq1.date_calibrated.day == 1
     assert eq1.category == 'DMM'
-    assert eq1.location == 'General'
     assert eq1.description == 'Digital Multimeter'
     assert eq1.connection is None
 
     eq2 = dbase.equipment['dvm']
     assert eq2.alias == 'dvm'
-    assert eq2.calibration_cycle == 5
     assert eq2.category == 'DVM'
-    assert eq2.date_calibrated.year == 2009
-    assert eq2.date_calibrated.month == 11
-    assert eq2.date_calibrated.day == 12
     assert eq2.description == 'Digital nanovoltmeter'
-    assert eq2.location == 'Watt Lab'
     assert eq2.manufacturer == 'Agilent'
     assert eq2.model == '34420A'
     assert eq2.team == 'Any'
@@ -659,13 +886,8 @@ def test_dbase():
 
     for r in dbase.records():
         for key, value in r.to_dict().items():
-            if key == 'calibration_cycle':
-                assert isinstance(value, float)
-            elif key == 'date_calibrated':
-                if value is not None:
-                    assert isinstance(value, datetime.date)
-            elif key == 'user_defined':
-                assert isinstance(value, dict)
+            if key == 'user_defined':
+                assert isinstance(value, RecordDict)
             elif key == 'connection':
                 if isinstance(value, dict):
                     for k, v in value.items():
@@ -679,12 +901,16 @@ def test_dbase():
                             assert isinstance(v, string)
                 else:
                     assert value is None
+            elif key == 'calibrations' or key == 'maintenances':
+                assert isinstance(value, tuple)
+            elif key == 'is_operable':
+                assert isinstance(value, bool)
             else:
                 assert isinstance(value, string)
 
 
 def test_asrl():
-    c = Config(os.path.join(os.path.dirname(__file__), 'db_asrl.xml'))
+    c = Config(os.path.join(ROOT_DIR, 'db_asrl.xml'))
 
     dbase = c.database()
 
@@ -707,55 +933,455 @@ def test_asrl():
     assert msl.properties['stop_bits'] == StopBits.ONE_POINT_FIVE
 
 
-def test_calibration_check_methods():
+def test_is_calibration_due():
     today = datetime.date.today()
 
-    record = EquipmentRecord()
-    assert not record.is_calibration_due()  # the date_calibrated value has not been set
-
-    record = EquipmentRecord(date_calibrated=today)
-    assert not record.is_calibration_due()  # the calibration_cycle value has not been set
-
-    record = EquipmentRecord(date_calibrated=today, calibration_cycle=5)
+    record = EquipmentRecord(is_operable=True)
     assert not record.is_calibration_due()
 
-    record = EquipmentRecord(date_calibrated=datetime.date(2000, 1, 1), calibration_cycle=1)
+    record = EquipmentRecord(is_operable=True, calibrations=[CalibrationRecord()])
+    assert not record.is_calibration_due()  # the calibration_cycle value has not been set
+
+    record = EquipmentRecord(
+        is_operable=True,
+        calibrations=[CalibrationRecord(calibration_date=today, calibration_cycle=5)]
+    )
+    assert not record.is_calibration_due()
+
+    record = EquipmentRecord(
+        is_operable=True,
+        calibrations=[CalibrationRecord(calibration_date=datetime.date(2000, 1, 1), calibration_cycle=1)]
+    )
     assert record.is_calibration_due()
 
-    record = EquipmentRecord(date_calibrated=datetime.date(2000, 1, 1), calibration_cycle=999)
+    record = EquipmentRecord(
+        is_operable=False,
+        calibrations=[CalibrationRecord(calibration_date=datetime.date(2000, 1, 1), calibration_cycle=1)]
+    )
+    assert not record.is_calibration_due()
+
+    record = EquipmentRecord(
+        is_operable=True,
+        calibrations=[CalibrationRecord(calibration_date=datetime.date(2000, 1, 1), calibration_cycle=999)]
+    )
     assert not record.is_calibration_due()
 
     date = datetime.date(today.year-1, today.month, today.day)
-    record = EquipmentRecord(date_calibrated=date, calibration_cycle=1.5)
+    record = EquipmentRecord(
+        is_operable=True,
+        calibrations=[CalibrationRecord(calibration_date=date, calibration_cycle=1.5)]
+    )
     assert not record.is_calibration_due()  # not due for another 6 months
     assert record.is_calibration_due(12)
 
-    record = EquipmentRecord(date_calibrated=datetime.date(2000, 1, 1))
-    d = record.next_calibration_date()
-    assert d.year == 2000
-    assert d.month == 1
-    assert d.day == 1
+    # the calibration date gets precedence over the report date
+    cal_date = datetime.date(today.year-1, today.month, today.day)
+    rep_date = datetime.date(today.year, today.month, today.day)
+    record = EquipmentRecord(
+        is_operable=True,
+        calibrations=[CalibrationRecord(calibration_date=cal_date, calibration_cycle=1.5, report_date=rep_date)]
+    )
+    assert not record.is_calibration_due()  # not due for another 6 months
+    assert record.is_calibration_due(12)
 
-    record = EquipmentRecord(date_calibrated=datetime.date(2000, 8, 4), calibration_cycle=1)
+    # the report date is used if the calibration date is not specified
+    record = EquipmentRecord(
+        is_operable=True,
+        calibrations=[CalibrationRecord(calibration_cycle=1.5, report_date=rep_date)]
+    )
+    assert not record.is_calibration_due()  # not due for another 18 months
+    assert not record.is_calibration_due(12)
+    assert record.is_calibration_due(19)
+
+
+def test_next_calibration_date():
+
+    # not operable and the calibration_cycle is not defined
+    record = EquipmentRecord(
+        is_operable=False,
+        calibrations=[CalibrationRecord(calibration_date=datetime.date(2000, 1, 1))]
+    )
+    assert record.next_calibration_date() is None
+
+    # operable but the calibration_cycle is not defined
+    record = EquipmentRecord(
+        is_operable=True,
+        calibrations=[CalibrationRecord(calibration_date=datetime.date(2000, 1, 1))]
+    )
+    assert record.next_calibration_date() is None
+
+    # not operable but the calibration_cycle is defined
+    record = EquipmentRecord(
+        is_operable=False,
+        calibrations=[CalibrationRecord(calibration_date=datetime.date(2000, 1, 1), calibration_cycle=1)]
+    )
+    assert record.next_calibration_date() is None
+
+    record = EquipmentRecord(
+        is_operable=True,
+        calibrations=[CalibrationRecord(calibration_date=datetime.date(2000, 8, 4), calibration_cycle=1)]
+    )
     d = record.next_calibration_date()
     assert d.year == 2001
     assert d.month == 8
     assert d.day == 4
 
-    record = EquipmentRecord(date_calibrated=datetime.date(2000, 12, 30), calibration_cycle=5.0)
+    record = EquipmentRecord(
+        is_operable=True,
+        calibrations=[CalibrationRecord(calibration_date=datetime.date(2000, 12, 30), calibration_cycle=5.0)]
+    )
     d = record.next_calibration_date()
     assert d.year == 2005
     assert d.month == 12
     assert d.day == 30
 
-    record = EquipmentRecord(date_calibrated=datetime.date(2000, 8, 4), calibration_cycle=1.5)
+    record = EquipmentRecord(
+        is_operable=True,
+        calibrations=[CalibrationRecord(calibration_date=datetime.date(2000, 8, 4), calibration_cycle=1.5)]
+    )
     d = record.next_calibration_date()
     assert d.year == 2002
     assert d.month == 2
     assert d.day == 4
 
-    record = EquipmentRecord(date_calibrated=datetime.date(2000, 3, 14), calibration_cycle=0.7)
+    record = EquipmentRecord(
+        is_operable=True,
+        calibrations=[CalibrationRecord(calibration_date=datetime.date(2000, 3, 14), calibration_cycle=0.7)]
+    )
     d = record.next_calibration_date()
     assert d.year == 2000
     assert d.month == 11
     assert d.day == 14
+
+    # the calibration date gets precedence over the report date
+    record = EquipmentRecord(
+        is_operable=True,
+        calibrations=[CalibrationRecord(calibration_date=datetime.date(2000, 3, 14), calibration_cycle=0.7,
+                                        report_date=datetime.date(2000, 7, 8))]
+    )
+    d = record.next_calibration_date()
+    assert d.year == 2000
+    assert d.month == 11
+    assert d.day == 14
+
+    # the report_date gets used if calibration_date is not defined
+    record = EquipmentRecord(
+        is_operable=True,
+        calibrations=[CalibrationRecord(report_date=datetime.date(2000, 3, 14), calibration_cycle=0.7)]
+    )
+    d = record.next_calibration_date()
+    assert d.year == 2000
+    assert d.month == 11
+    assert d.day == 14
+
+
+def test_record_dict():
+
+    for item in [None, 1, 3.56, [], (), 5j, set(), 'hello', True, b'world']:
+        with pytest.raises(TypeError):
+            RecordDict(item)
+
+    rd = RecordDict({'one': 1, 'ints': [1, 2, [3, 4, 5, [6, 7, [8]]], 9],
+                     'nested1': {'a': 'x', 'b': 'y', 'nested2': {'matrix': [[1, 2], [3, 4], [5, 6]]}}})
+
+    assert len(rd) == 3
+    assert sorted(list(rd.keys())) == ['ints', 'nested1', 'one']
+
+    # key access
+    assert rd['one'] == 1
+    assert rd['ints'] == (1, 2, (3, 4, 5, (6, 7, (8,))), 9)  # nested lists become nested tuples
+    assert isinstance(rd['nested1'], RecordDict)
+    assert rd['nested1']['a'] == 'x'
+    assert rd['nested1']['b'] == 'y'
+    assert isinstance(rd['nested1']['nested2'], RecordDict)
+    assert rd['nested1']['nested2']['matrix'] == ((1, 2), (3, 4), (5, 6))  # nested lists become nested tuples
+
+    # attribute access
+    assert rd.one == 1
+    assert rd.ints == (1, 2, (3, 4, 5, (6, 7, (8,))), 9)  # nested lists become nested tuples
+    assert isinstance(rd.nested1, RecordDict)
+    assert rd.nested1.a == 'x'
+    assert rd.nested1.b == 'y'
+    assert isinstance(rd.nested1.nested2, RecordDict)
+    assert rd.nested1.nested2.matrix == ((1, 2), (3, 4), (5, 6))  # nested lists become nested tuples
+
+    # read only
+    for key in ['one', 'ints', 'nested1']:
+        with pytest.raises(TypeError):
+            rd[key] = None
+    for key in ['a', 'b', 'nested2']:
+        with pytest.raises(TypeError):
+            rd['nested1'][key] = None
+    with pytest.raises(TypeError):
+        rd['nested1']['nested2']['matrix'] = None
+    with pytest.raises(TypeError):
+        rd.clear()
+    with pytest.raises(TypeError):
+        rd.fromkeys()
+    with pytest.raises(TypeError):
+        rd.pop()
+    with pytest.raises(TypeError):
+        rd.popitem()
+    with pytest.raises(TypeError):
+        rd.setdefault()
+    with pytest.raises(TypeError):
+        rd.update(x=7)
+
+    # convert to XML element
+    element = rd.to_xml()
+    assert element.tag == 'RecordDict'
+    assert element.find('one').text == '1'
+    assert element.find('ints').text == '(1, 2, (3, 4, 5, (6, 7, (8,))), 9)'
+    assert element.find('nested1/a').text == "'x'"
+    assert element.find('nested1/b').text == "'y'"
+    assert element.find('nested1/nested2/matrix').text == '((1, 2), (3, 4), (5, 6))'
+
+    element = rd.to_xml(root_name='whatever')
+    assert element.tag == 'whatever'
+
+
+def test_maintenance_record():
+
+    mr = MaintenanceRecord()
+    assert mr.date == datetime.date(datetime.MINYEAR, 1, 1)
+    assert mr.comment == ''
+
+    mr = MaintenanceRecord(comment='my comment', date='2019-04-23')
+    assert mr.date == datetime.date(2019, 4, 23)
+    assert mr.comment == 'my comment'
+
+    # read only
+    with pytest.raises(TypeError):
+        mr.date = datetime.date(2000, 1, 17)
+    with pytest.raises(TypeError):
+        mr.comment = 'update comment'
+
+    # cannot create new attributes
+    with pytest.raises(TypeError):
+        mr.new_attrib = 1
+
+    d = mr.to_dict()
+    assert d['date'] == datetime.date(2019, 4, 23)
+    assert d['comment'] == 'my comment'
+
+    x = mr.to_xml()
+    assert x.tag == 'MaintenanceRecord'
+    assert x.find('date').text == '2019-04-23'
+    assert x.find('comment').text == 'my comment'
+
+    assert str(mr) == 'MaintenanceRecord<2019-04-23>'
+
+    s = repr(mr).splitlines()
+    assert s[0] == 'MaintenanceRecord'
+    assert s[1] == '  comment: {}'.format("u'my comment'" if PY2 else "'my comment'")
+    assert s[2] == '  date: 2019-04-23'
+
+
+def test_measurand_record():
+
+    mr = MeasurandRecord()
+    assert isinstance(mr.calibration, RecordDict)
+    assert len(mr.calibration) == 0
+    assert isinstance(mr.conditions, RecordDict)
+    assert len(mr.conditions) == 0
+    assert mr.type == ''
+    assert mr.unit == ''
+
+    # type and unit are always converted to type str
+    mr = MeasurandRecord(type=7, unit=-1.2)
+    assert mr.type == '7'
+    assert mr.unit == '-1.2'
+
+    # calibration and conditions must always be of type dict
+    for item in [1, 3.56, [], (), 5j, set(), 'hello', True, b'world']:
+        with pytest.raises(TypeError):
+            MeasurandRecord(calibration=item)
+        with pytest.raises(TypeError):
+            MeasurandRecord(conditions=item)
+
+    mr = MeasurandRecord(calibration={'a': 0, 'b': 1}, conditions=dict(c=2, d=3), type='Humidity', unit='%rh')
+    assert mr.calibration.a == 0
+    assert mr.calibration.b == 1
+    assert mr.conditions.c == 2
+    assert mr.conditions.d == 3
+    assert mr.type == 'Humidity'
+    assert mr.unit == '%rh'
+
+    # read only
+    with pytest.raises(TypeError):
+        mr.calibration = None
+    with pytest.raises(TypeError):
+        mr.conditions = None
+    with pytest.raises(TypeError):
+        mr.type = None
+    with pytest.raises(TypeError):
+        mr.unit = None
+
+    # cannot create new attributes
+    with pytest.raises(TypeError):
+        mr.new_attrib = 1
+
+    assert str(mr) == 'MeasurandRecord<Humidity>'
+
+    s = repr(mr).splitlines()
+    assert s[0] == 'MeasurandRecord'
+    assert s[1] == '  calibration: '
+    assert s[2] == '    a: 0'
+    assert s[3] == '    b: 1'
+    assert s[4] == '  conditions: '
+    assert s[5] == '    c: 2'
+    assert s[6] == '    d: 3'
+    assert s[7] == '  type: {}'.format("u'Humidity'" if PY2 else "'Humidity'")
+    assert s[8] == '  unit: {}'.format("u'%rh'" if PY2 else "'%rh'")
+
+    d = mr.to_dict()
+    assert d['calibration']['a'] == 0
+    assert d['calibration']['b'] == 1
+    assert d['conditions']['c'] == 2
+    assert d['conditions']['d'] == 3
+    assert d['type'] == 'Humidity'
+    assert d['unit'] == '%rh'
+
+    x = mr.to_xml()
+    assert x.tag == 'MeasurandRecord'
+    assert x.find('calibration/a').text == '0'
+    assert x.find('calibration/b').text == '1'
+    assert x.find('conditions/c').text == '2'
+    assert x.find('conditions/d').text == '3'
+    assert x.find('type').text == 'Humidity'
+    assert x.find('unit').text == '%rh'
+
+
+def test_calibration_record():
+
+    cr = CalibrationRecord()
+    assert cr.calibration_cycle == 0
+    assert isinstance(cr.calibration_cycle, float)
+    assert cr.calibration_date == datetime.date(datetime.MINYEAR, 1, 1)
+    assert isinstance(cr.measurands, RecordDict)
+    assert len(cr.measurands) == 0
+    assert cr.report_date == datetime.date(datetime.MINYEAR, 1, 1)
+    assert cr.report_number == ''
+
+    # read only
+    with pytest.raises(TypeError):
+        cr.calibration_cycle = None
+    with pytest.raises(TypeError):
+        cr.calibration_date = None
+    with pytest.raises(TypeError):
+        cr.measurands = None
+    with pytest.raises(TypeError):
+        cr.report_date = None
+    with pytest.raises(TypeError):
+        cr.report_number = None
+
+    # cannot create new attributes
+    with pytest.raises(TypeError):
+        cr.new_attrib = 1
+
+    # the calibration_cycle is always of type float
+    for val in [1, '1', 1.0]:
+        c = CalibrationRecord(calibration_cycle=val)
+        assert c.calibration_cycle == 1.0
+        assert isinstance(c.calibration_cycle, float)
+
+    # the calibration_date and report_date are always of type datetime.date
+    for val in [None, '2019-02-13', datetime.date(2019, 2, 13), datetime.datetime(2018, 5, 2, 4, 5, 12)]:
+        c = CalibrationRecord(calibration_date=val, report_date=val)
+        assert isinstance(c.calibration_date, datetime.date)
+        assert isinstance(c.report_date, datetime.date)
+
+    # the report_number is always of type str
+    for val in ['7', 7]:
+        c = CalibrationRecord(report_number=val)
+        assert c.report_number == '7'
+
+    # the measurands must be an iterable of MeasurandRecord's
+    cr = CalibrationRecord(measurands=(None, 1, 2))
+    assert isinstance(cr.measurands, RecordDict)
+    assert len(cr.measurands) == 0
+
+    cr = CalibrationRecord(measurands={None, 1, 2})
+    assert isinstance(cr.measurands, RecordDict)
+    assert len(cr.measurands) == 0
+
+    cr = CalibrationRecord(measurands=[None, 1, 2])
+    assert isinstance(cr.measurands, RecordDict)
+    assert len(cr.measurands) == 0
+
+    with pytest.raises(TypeError):
+        CalibrationRecord(measurands=MeasurandRecord())
+
+    # items that are not of type MeasurandRecord are silently ignored
+    measurands = [MeasurandRecord(type='a'), None, MeasurandRecord(type='b'), {}, MeasurandRecord(type='c'), 99]
+
+    cr = CalibrationRecord(calibration_cycle=5, calibration_date='2018-02-24',
+                           measurands=measurands, report_date='2010-12-13', report_number='ABC123')
+
+    assert cr.calibration_cycle == 5.0
+    assert cr.calibration_date == datetime.date(2018, 2, 24)
+    assert isinstance(cr.measurands, RecordDict)
+    assert len(cr.measurands) == 3
+    assert 'a' in cr.measurands
+    assert 'b' in cr.measurands
+    assert 'c' in cr.measurands
+    assert cr.report_date == datetime.date(2010, 12, 13)
+    assert cr.report_number == 'ABC123'
+
+    d = cr.to_dict()
+    assert d['calibration_cycle'] == 5.0
+    assert d['calibration_date'] == datetime.date(2018, 2, 24)
+    assert isinstance(d['measurands'], RecordDict)
+    assert len(d['measurands']) == 3
+    assert 'a' in d['measurands']
+    assert 'b' in d['measurands']
+    assert 'c' in d['measurands']
+    assert d['report_date'] == datetime.date(2010, 12, 13)
+    assert d['report_number'] == 'ABC123'
+
+    x = cr.to_xml()
+    assert x.tag == 'CalibrationRecord'
+    assert x.find('calibration_cycle').text == '5.0'
+    assert x.find('calibration_date').text == '2018-02-24'
+    ta = x.find('.//MeasurandRecord[type="a"]')
+    assert ta.find('calibration').text is None
+    assert ta.find('conditions').text is None
+    assert ta.find('type').text == 'a'
+    assert ta.find('unit').text == ''
+    tb = x.find('.//MeasurandRecord[type="b"]')
+    assert tb.find('calibration').text is None
+    assert tb.find('conditions').text is None
+    assert tb.find('type').text == 'b'
+    assert tb.find('unit').text == ''
+    tc = x.find('.//MeasurandRecord[type="c"]')
+    assert tc.find('calibration').text is None
+    assert tc.find('conditions').text is None
+    assert tc.find('type').text == 'c'
+    assert tc.find('unit').text == ''
+    assert x.find('report_date').text == '2010-12-13'
+    assert x.find('report_number').text == 'ABC123'
+
+    assert str(cr) == 'CalibrationRecord<ABC123>'
+
+    s = repr(cr).splitlines()
+    assert s[0] == 'CalibrationRecord'
+    assert s[1] == '  calibration_cycle: 5.0'
+    assert s[2] == '  calibration_date: 2018-02-24'
+    assert s[3] == '  measurands: '
+    assert s[4] == '    MeasurandRecord'
+    assert s[5] == '      calibration: None'
+    assert s[6] == '      conditions: None'
+    assert s[7] == '      type: {}'.format("u'a'" if PY2 else "'a'")
+    assert s[8] == '      unit: {}'.format("u''" if PY2 else "''")
+    assert s[9] == '    MeasurandRecord'
+    assert s[10] == '      calibration: None'
+    assert s[11] == '      conditions: None'
+    assert s[12] == '      type: {}'.format("u'b'" if PY2 else "'b'")
+    assert s[13] == '      unit: {}'.format("u''" if PY2 else "''")
+    assert s[14] == '    MeasurandRecord'
+    assert s[15] == '      calibration: None'
+    assert s[16] == '      conditions: None'
+    assert s[17] == '      type: {}'.format("u'c'" if PY2 else "'c'")
+    assert s[18] == '      unit: {}'.format("u''" if PY2 else "''")
+    assert s[19] == '  report_date: 2010-12-13'
+    assert s[20] == '  report_number: {}'.format("u'ABC123'" if PY2 else "'ABC123'")

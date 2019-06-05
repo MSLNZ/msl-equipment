@@ -5,12 +5,21 @@ import re
 from collections import namedtuple
 
 from msl.equipment.config import Config
-from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
+from msl.equipment.record_types import (
+    EquipmentRecord,
+    ConnectionRecord,
+    CalibrationRecord,
+    MaintenanceRecord,
+    MeasurandRecord,
+)
 from msl.equipment.constants import Backend
-from msl.equipment.exceptions import MSLConnectionError, MSLTimeoutError
+from msl.equipment.exceptions import (
+    MSLConnectionError,
+    MSLTimeoutError,
+)
 from msl.equipment import resources
 
-__author__ = 'Joseph Borbely'
+__author__ = 'Measurement Standards Laboratory of New Zealand'
 __copyright__ = '\xa9 2017 - 2019, ' + __author__
 __version__ = '0.1.0.dev0'
 

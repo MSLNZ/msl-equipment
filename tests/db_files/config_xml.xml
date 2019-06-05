@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<msl>
+    <equipment alias="The A Team" manufacturer="foo"/>
+    <registers>
+        <register>
+            <path>equipment_register.xml</path>
+        </register>
+    </registers>
+    <connections>
+        <connection>
+            <path>connections.xml</path>
+        </connection>
+    </connections>
+</msl>

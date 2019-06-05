@@ -3,17 +3,18 @@
 
     <registers>
         <register team="P&amp;R" date_format="%Y-%m-%d">
-            <path>db_files/db.csv</path>
+            <path>db.csv</path>
         </register>
-        <register team="Any">
-            <path>db_files/db.xlsx</path>
+        <!-- any comma-separated list will be okay - spaces, emtpy and all -->
+        <register team="Any" user_defined="nothing relevant, Policies  , ,   ">
+            <path>db.xlsx</path>
             <sheet>Equipment</sheet>
         </register>
     </registers>
 
     <connections>
         <connection>
-            <path>db_files/db.xlsx</path>
+            <path>db.xlsx</path>
             <sheet>Connections</sheet>
         </connection>
     </connections>

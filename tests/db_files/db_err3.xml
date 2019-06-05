@@ -3,11 +3,8 @@
 
     <registers>
         <register>
-            <path>db_files/db.xlsx</path>
-            <sheet>Equipment</sheet>
+            <path>db.xlsx</path>
         </register>
     </registers>
-
-    <equipment manufacturer="Agilent"/>
 
 </msl>

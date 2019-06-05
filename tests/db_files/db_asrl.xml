@@ -3,16 +3,19 @@
 
     <registers>
         <register>
-            <path>db_files/db_encoding.xlsx</path>
-            <sheet>Register</sheet>
+            <path>db_asrl.xlsx</path>
+            <sheet>Equipment</sheet>
         </register>
     </registers>
 
     <connections>
         <connection>
-            <path>db_files/db_encoding.xlsx</path>
+            <path>db_asrl.xlsx</path>
             <sheet>Connections</sheet>
         </connection>
     </connections>
+
+    <equipment alias="msl" serial="A00023"/>
+    <equipment alias="pyvisa" serial="A00024"/>
 
 </msl>

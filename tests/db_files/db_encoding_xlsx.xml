@@ -3,13 +3,15 @@
 
     <registers>
         <register>
-            <path>db_files/db_encoding_utf8_register.txt</path>
+            <path>db_encoding.xlsx</path>
+            <sheet>Register</sheet>
         </register>
     </registers>
 
     <connections>
         <connection>
-            <path>db_files/db_encoding_utf8_connection.txt</path>
+            <path>db_encoding.xlsx</path>
+            <sheet>Connections</sheet>
         </connection>
     </connections>
 

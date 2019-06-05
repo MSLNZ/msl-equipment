@@ -3,14 +3,14 @@
 
     <registers>
         <register>
-            <path>db_files/db_alias.xlsx</path>
+            <path>db_alias.xlsx</path>
             <sheet>Equipment</sheet>
         </register>
     </registers>
 
     <connections>
         <connection>
-            <path>db_files/db_alias.xlsx</path>
+            <path>db_alias.xlsx</path>
             <sheet>Connections</sheet>
         </connection>
     </connections>

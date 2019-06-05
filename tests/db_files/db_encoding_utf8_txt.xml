@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<msl>
+
+    <registers>
+        <register>
+            <path>db_encoding_utf8_register.txt</path>
+        </register>
+    </registers>
+
+    <connections>
+        <connection>
+            <path>db_encoding_utf8_connection.txt</path>
+        </connection>
+    </connections>
+
+</msl>

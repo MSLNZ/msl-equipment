@@ -3,13 +3,13 @@
 
     <registers>
         <register encoding="cp1252">
-            <path>db_files/db_encoding_cp1252_register.txt</path>
+            <path>db_encoding_cp1252_register.txt</path>
         </register>
     </registers>
 
     <connections>
         <connection encoding="cp1252">
-            <path>db_files/db_encoding_cp1252_connection.txt</path>
+            <path>db_encoding_cp1252_connection.txt</path>
         </connection>
     </connections>
 

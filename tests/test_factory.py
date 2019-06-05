@@ -8,6 +8,8 @@ from msl.equipment.constants import Backend
 from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
 from msl.equipment.connection_demo import ConnectionDemo
 
+ROOT_DIR = os.path.join(os.path.dirname(__file__), 'db_files')
+
 
 def test_exceptions():
     Config.DEMO_MODE = False
@@ -42,7 +44,7 @@ def test_exceptions():
         })  # only 1 EquipmentRecord allowed
     assert 'dict' in str(err.value)
 
-    c = Config(os.path.join(os.path.dirname(__file__), 'db.xml'))
+    c = Config(os.path.join(ROOT_DIR, 'db.xml'))
     with pytest.raises(TypeError) as err:
         connect(c.database().equipment)  # only 1 EquipmentRecord allowed
     assert 'dict' in str(err.value)

@@ -3,7 +3,7 @@
 
     <registers>
         <register>
-            <path>db_files/db.invalid</path>
+            <path>db.invalid</path>
         </register>
     </registers>
 

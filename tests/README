@@ -1,3 +1,0 @@
-Do not include an __init__.py file in the 'tests' directory.
-
-see: https://doc.pytest.org/en/latest/goodpractices.html

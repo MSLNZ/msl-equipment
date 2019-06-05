@@ -4,10 +4,12 @@ Load equipment and connection records from :ref:`Databases <database>`.
 from __future__ import unicode_literals
 import os
 import re
+import ast
+import json
 import codecs
 import logging
 import datetime
-from xml.etree import cElementTree as ET
+from xml.etree import cElementTree
 
 import xlrd
 
@@ -53,8 +55,8 @@ class Database(object):
         logger.debug('Loading databases from {!r}'.format(path))
 
         try:
-            root = ET.parse(path).getroot()
-        except ET.ParseError as err:
+            root = cElementTree.parse(path).getroot()
+        except cElementTree.ParseError as err:
             parse_err = str(err)  # want to raise IOError not ParseError
         else:
             parse_err = None
@@ -67,112 +69,122 @@ class Database(object):
         # create a dictionary of all ConnectionRecord's
         self._connection_records = {}
         easy_names = ('address', 'backend', 'manufacturer', 'model', 'serial')
-        for connections in root.findall('connections'):
-            for element in connections.findall('connection'):
-                header, rows = self._read(element)
-                index_map = self._make_index_map(header, ConnectionRecord._NAMES)
-                for row in rows:
-                    if not self._is_row_length_okay(row, header):
-                        continue
-                    key = self._make_key(row, index_map)
-                    if not self._is_key_unique(key, self._connection_records, element):
-                        continue
-                    kwargs = {}
-                    for name in easy_names:
-                        kwargs[name] = row[index_map[name]]
-                    kwargs['properties'] = {}
-                    for item in row[index_map['properties']].split(';'):
-                        s = item.split('=')
-                        if len(s) != 2:
+        for connections in root.iterfind('connections'):
+            for element in connections.iterfind('connection'):
+                data = self._read(element)
+                if isinstance(data, tuple):  # then the information is stored as a table of rows and columns
+                    header, rows = self._read(element)
+                    index_map = self._make_index_map(header, ConnectionRecord.__slots__)
+                    for row in rows:
+                        if not self._is_row_length_okay(row, header):
                             continue
-                        kwargs['properties'][s[0].strip()] = string_to_none_bool_int_float_complex(s[1].strip())
-                    self._connection_records[key] = ConnectionRecord(**kwargs)
+                        key = self._make_key(row, self._connection_records, element, index_map=index_map)
+                        if not key:
+                            continue
+                        kwargs = {}
+                        for name in easy_names:
+                            kwargs[name] = row[index_map[name]]
+                        kwargs['properties'] = {}
+                        for item in row[index_map['properties']].split(';'):
+                            s = item.split('=')
+                            if len(s) != 2:
+                                continue
+                            kwargs['properties'][s[0].strip()] = string_to_none_bool_int_float_complex(s[1].strip())
+                        self._connection_records[key] = ConnectionRecord(**kwargs)
+                elif isinstance(data, dict):  # loaded a json or xml file
+                    for record in data['connection_records']:
+                        key = self._make_key(record, self._connection_records, element)
+                        if not key:
+                            continue
+                        self._connection_records[key] = ConnectionRecord(**record)
+                else:
+                    assert False, 'Not a tuple or dict'
 
         # create a dictionary of EquipmentRecord's
         self._equipment_records = {}
-        for registers in root.findall('registers'):
-            for register in registers.findall('register'):
-                register_path = register.findtext('path')
+        for registers in root.iterfind('registers'):
+            for register in registers.iterfind('register'):
                 team = register.attrib.get('team', '')
-                date_format = register.attrib.get('date_format', '%d/%m/%Y')
+                data = self._read(register)
+                if isinstance(data, tuple):  # then the information is stored as a table of rows and columns
+                    header, rows = data
+                    index_map = self._make_index_map(header, EquipmentRecord.__slots__)
 
-                header, rows = self._read(register)
-                index_map = self._make_index_map(header, EquipmentRecord._NAMES)
+                    # prepare the user_defined list
+                    temp = register.attrib.get('user_defined', [])
+                    user_defined = []
+                    index_map_user_defined = {}
+                    if temp:
+                        temp = [t.strip().lower().replace(' ', '_') for t in temp.split(',') if t.strip()]
+                        for name in temp:
+                            if name in EquipmentRecord.__slots__:
+                                logger.warning('The "user_defined" parameter {!r} is already an '
+                                               'EquipmentRecord attribute'.format(name))
+                            else:
+                                user_defined.append(name)
+                        if user_defined:
+                            index_map_user_defined = self._make_index_map(header, user_defined)
 
-                # prepare the user_defined list
-                temp = register.attrib.get('user_defined', [])
-                user_defined = []
-                index_map_user_defined = {}
-                if temp:
-                    temp = [t.strip().lower().replace(' ', '_') for t in temp.split(',') if t.strip()]
-                    for name in temp:
-                        if name in EquipmentRecord._NAMES:
-                            msg = 'The "user_defined" parameter {!r} is already an EquipmentRecord attribute'
-                            logger.warning(msg.format(name))
-                        else:
-                            user_defined.append(name)
-                    if user_defined:
-                        index_map_user_defined = self._make_index_map(header, user_defined)
-
-                for row in rows:
-                    if not self._is_row_length_okay(row, header):
-                        continue
-                    key = self._make_key(row, index_map)
-                    if not self._is_key_unique(key, self._equipment_records, register):
-                        continue
-
-                    kwargs = {'team': team}
-
-                    # find the corresponding ConnectionRecord (if it exists)
-                    try:
-                        kwargs['connection'] = self._connection_records[key]
-                    except KeyError:
-                        pass
-                    else:
-                        try:
-                            # check if an alias was defined in ConnectionRecord.properties
-                            alias = kwargs['connection'].properties['alias']
-                        except KeyError:
-                            pass
-                        else:
-                            kwargs['alias'] = alias
-                            del kwargs['connection'].properties['alias']
-
-                    for name in EquipmentRecord._NAMES:
-                        try:
-                            value = row[index_map[name]]
-                        except KeyError:
+                    for row in rows:
+                        if not self._is_row_length_okay(row, header):
                             continue
 
-                        if name == 'date_calibrated' and not isinstance(value, datetime.date):
-                            try:
-                                value = datetime.datetime.strptime(value, date_format).date()
-                            except ValueError:
-                                if value:
-                                    msg = '{} -> The date {!r} cannot be converted to a datetime.date object in {!r}'
-                                    logger.error(msg.format(key, value, register_path))
-                                continue
-                        elif name == 'calibration_cycle':
-                            if not value or value.upper() == 'N/A':
-                                continue
-                            try:
-                                value = float(value)
-                            except ValueError:
-                                msg = '{} -> The calibration cycle value, {!r}, must be a number in {!r}'
-                                logger.error(msg.format(key, value, register_path))
-                                continue
+                        key = self._make_key(row, self._equipment_records, register, index_map=index_map)
+                        if not key:
+                            continue
 
-                        kwargs[name] = value
+                        kwargs = {'team': team}
 
-                    for name in user_defined:
+                        # find the corresponding ConnectionRecord (if it exists)
                         try:
-                            s = row[index_map_user_defined[name]]
+                            kwargs['connection'] = self._connection_records[key]
                         except KeyError:
                             pass
                         else:
-                            kwargs[name] = string_to_none_bool_int_float_complex(s)
+                            alias = kwargs['connection'].properties.pop('alias', None)
+                            if alias:
+                                kwargs['alias'] = alias
 
-                    self._equipment_records[key] = EquipmentRecord(**kwargs)
+                        for name in EquipmentRecord.__slots__:
+                            try:
+                                value = row[index_map[name]]
+                            except KeyError:
+                                continue
+
+                            kwargs[name] = value
+
+                        for name in user_defined:
+                            try:
+                                s = row[index_map_user_defined[name]]
+                            except KeyError:
+                                pass
+                            else:
+                                kwargs[name] = string_to_none_bool_int_float_complex(s)
+
+                        self._equipment_records[key] = EquipmentRecord(**kwargs)
+
+                elif isinstance(data, dict):  # loaded a json or xml file
+                    team = data.get('team', team)
+                    for record in data['equipment_records']:
+                        key = self._make_key(record, self._equipment_records, register)
+                        if not key:
+                            continue
+
+                        record['team'] = team
+
+                        # find the corresponding ConnectionRecord (if it exists)
+                        try:
+                            record['connection'] = self._connection_records[key]
+                        except KeyError:
+                            pass
+                        else:
+                            alias = record['connection'].properties.pop('alias', None)
+                            if alias:
+                                record['alias'] = alias
+
+                        self._equipment_records[key] = EquipmentRecord(**record)
+                else:
+                    assert False, 'Not a tuple or dict'
 
         # create a dictionary of all the <equipment> tags
         self._equipment_using = {}
@@ -281,7 +293,7 @@ class Database(object):
         """
         flags = int(kwargs.pop('flags', 0))  # used by re.search
         for name in kwargs:
-            if name not in ConnectionRecord._NAMES:
+            if name not in ConnectionRecord.__slots__:
                 raise NameError('Invalid argument name {!r} for a {}'.format(name, ConnectionRecord.__name__))
         return [r for r in self._connection_records.values() if self._search(r, kwargs, flags)]
 
@@ -299,10 +311,6 @@ class Database(object):
             If a `kwarg` is ``connection`` then the value will be used to test which
             :class:`.EquipmentRecord`\'s have a :attr:`~.EquipmentRecord.connection` value that
             is either :data:`None` or :class:`.ConnectionRecord`. See the examples below.
-
-            If a `kwarg` is ``date_calibrated`` then the value must be a callable function that
-            takes 1 input argument (a :class:`datetime.date` object) and the function must return
-            a :class:`bool`. See the examples below.
 
         Examples
         --------
@@ -322,12 +330,6 @@ class Database(object):
         a list of all EquipmentRecords that contain 'I-V Converter' in the description field
         >>> records(connection=True)  # doctest: +SKIP
         a list of all EquipmentRecords that can be connected to
-        >>> records(connection=0)  # doctest: +SKIP
-        a list of all EquipmentRecords that cannot be connected to
-        >>> records(date_calibrated=lambda date: 1995 < date.year < 2005)  # doctest: +SKIP
-        a list of all EquipmentRecords that were calibrated between the years 1995 and 2005
-        >>> records(date_calibrated=lambda date: date > datetime.date(2008, 3, 15))  # doctest: +SKIP
-        a list of all EquipmentRecords that were calibrated after 15 March 2008
 
         Returns
         -------
@@ -342,12 +344,12 @@ class Database(object):
         """
         flags = int(kwargs.pop('flags', 0))  # used by re.search
         for name in kwargs:
-            if name not in EquipmentRecord._NAMES:
+            if name not in EquipmentRecord.__slots__:
                 raise NameError('Invalid argument name {!r} for an {}'.format(name, EquipmentRecord.__name__))
         return [r for r in self._equipment_records.values() if self._search(r, kwargs, flags)]
 
     def _read(self, element):
-        """Read any allowed database file type"""
+        """Read the allowed database file types."""
         path = element.findtext('path')
         if path is None:
             raise IOError('You must create a <path> </path> element in {} '
@@ -361,14 +363,91 @@ class Database(object):
 
         ext = os.path.splitext(path)[1].lower()
         if ext in ('.xls', '.xlsx'):
-            header, rows = self._read_excel(path, element.findtext('sheet'), element.attrib.get('encoding', None))
+            return self._read_excel(path, element.findtext('sheet'), element.attrib.get('encoding', None))
         elif ext in ('.csv', '.txt'):
             delimiter = ',' if ext == '.csv' else '\t'
-            header, rows = self._read_text_based(path, delimiter, element.attrib.get('encoding', 'utf-8'))
+            return self._read_text_based(path, delimiter, element.attrib.get('encoding', 'utf-8'))
+        elif ext == '.json':
+            return self._read_json(path)
+        elif ext == '.xml':
+            return self._read_xml(path)
         else:
             raise IOError('Unsupported equipment-registry database format ' + path)
 
-        return header, rows
+    def _read_json(self, path):
+        with open(path, 'r') as fp:
+            data = json.load(fp)
+        return data
+
+    def _read_xml(self, path):
+        """Read an XML database."""
+        def value(item):
+            if item.tag.endswith('date'):
+                return item.text
+            try:
+                return ast.literal_eval(item.text)
+            except:
+                return item.text
+
+        def get(element, tag, default=None):
+            e = element.find(tag) if tag else element
+            if e is None:
+                return default
+            if len(e) == 0:
+                return default if e.text is None else value(e)
+            return dict((item.tag, get(item, None) if len(item) > 0 else value(item)) for item in e)
+
+        root = cElementTree.parse(path).getroot()
+        _dict = {'team': get(root, 'team', default='')}
+        equipment_records = []
+        for er in root.iterfind('.//EquipmentRecord'):
+            record = {
+                'calibrations': [
+                    {
+                        'report_date': get(cr, 'report_date', default=None),
+                        'calibration_date': get(cr, 'calibration_date', default=None),
+                        'report_number': get(cr, 'report_number', default=''),
+                        'calibration_cycle': get(cr, 'calibration_cycle', default=0),
+                        'measurands': [
+                            {
+                                'type': get(mr, 'type', default=''),
+                                'unit': get(mr, 'unit', default=''),
+                                'conditions': get(mr, 'conditions'),
+                                'calibration': get(mr, 'calibration'),
+                            } for mr in cr.iterfind('.//MeasurandRecord')
+                        ]
+                    } for cr in er.iterfind('.//CalibrationRecord')
+                ],
+                'category': get(er, 'category', default=''),
+                'description': get(er, 'description', default=''),
+                'is_operable': get(er, 'is_operable', default=False),
+                'maintenances': [
+                    {
+                        'date': get(mr, 'date', default=None),
+                        'comment': get(mr, 'comment', default=''),
+                    } for mr in er.iterfind('.//MaintenanceRecord')
+                ],
+                'manufacturer': get(er, 'manufacturer', default=''),
+                'model': get(er, 'model', default=''),
+                'serial': get(er, 'serial', default=''),
+                'unique_key': get(er, 'unique_key', default=''),
+            }
+
+            # add the user_defined kwargs
+            for child in er:
+                if child.tag not in record:
+                    record[child.tag] = value(child)
+
+            equipment_records.append(record)
+
+        _dict['equipment_records'] = equipment_records
+
+        _dict['connection_records'] = [
+            dict((child.tag, get(child, None, default='')) for child in cr)
+            for cr in root.iterfind('.//ConnectionRecord')
+        ]
+
+        return _dict
 
     def _read_excel(self, path, sheet_name, encoding):
         """Read an Excel database file"""
@@ -435,11 +514,23 @@ class Database(object):
                     break
         return index_map
 
-    def _make_key(self, row, index_map):
-        """Make a new Manufacturer|Model|Serial key for a dictionary"""
-        return '{}|{}|{}'.format(row[index_map['manufacturer']],
-                                 row[index_map['model']],
-                                 row[index_map['serial']])
+    def _make_key(self, obj, records, element, index_map=None):
+        """Make a new Manufacturer|Model|Serial key."""
+        if index_map is not None:
+            manufacturer = obj[index_map['manufacturer']]
+            model = obj[index_map['model']]
+            serial = obj[index_map['serial']]
+        else:
+            manufacturer = obj.get('manufacturer', '')
+            model = obj.get('model', '')
+            serial = obj.get('serial', '')
+
+        key = '{}|{}|{}'.format(manufacturer, model, serial)
+        if key in records:
+            logger.error('Manufacturer|Model|Serial is not unique -> {} in {!r}'
+                         .format(key, element.findtext('path')))
+            return ''
+        return key
 
     def _is_key_unique(self, key, dictionary, element):
         """Returns whether the dictionary key is unique"""
@@ -482,14 +573,6 @@ class Database(object):
                 else:
                     if record.connection is not None:
                         return False
-            elif key == 'date_calibrated':
-                if not callable(value):
-                    raise TypeError('The "date_calibrated" value must be a callable function')
-                if not value(record.date_calibrated):
-                    return False
-            elif key == 'calibration_cycle':
-                if value != record.calibration_cycle:
-                    return False
             elif key == 'properties':
                 if not isinstance(value, dict):
                     raise TypeError('The "properties" value must be a dict, got {}'.format(type(value)))
@@ -498,6 +581,8 @@ class Database(object):
                         return False
                     if v != record.properties[k]:
                         return False
+            elif key == 'is_operable':
+                return getattr(record, key) is bool(value)
             else:
                 if not bool(re.search(value, getattr(record, key), flags)):
                     return False

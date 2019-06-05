@@ -3,11 +3,11 @@
 
     <registers>
         <register>
-            <path>db_files/db.xlsx</path>
+            <path>db.xlsx</path>
             <sheet>Equipment</sheet>
         </register>
     </registers>
 
-    <equipment manufacturer="Not a real manufacturer"/>
+    <equipment manufacturer="Agilent"/>
 
 </msl>

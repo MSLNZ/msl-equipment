@@ -4,6 +4,8 @@ import pytest
 
 from msl.equipment.config import Config
 
+ROOT_DIR = os.path.join(os.path.dirname(__file__), 'db_files')
+
 
 def test_config_io_errors():
 
@@ -13,7 +15,7 @@ def test_config_io_errors():
 
     # invalid xml file
     with pytest.raises(IOError):
-        Config(os.path.join(os.path.dirname(__file__), 'config0.xml'))
+        Config(os.path.join(ROOT_DIR, 'config0.xml'))
 
 
 def test_config_constants():
@@ -23,7 +25,7 @@ def test_config_constants():
     assert not Config.DEMO_MODE
     assert len(Config.PATH) == 0
 
-    path = os.path.join(os.path.dirname(__file__), 'config1.xml')
+    path = os.path.join(ROOT_DIR, 'config1.xml')
     c = Config(path)
 
     # the new Config values
@@ -48,7 +50,7 @@ def test_config_constants():
 def test_config_constants_reloaded():
 
     # make sure that loading a new config file does not alter the class-level attributes
-    path = os.path.join(os.path.dirname(__file__), 'config2.xml')
+    path = os.path.join(ROOT_DIR, 'config2.xml')
     c = Config(path)
 
     assert path == c.path

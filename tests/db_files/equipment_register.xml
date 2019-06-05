@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<msl>
+  <team>Light</team>
+  <equipment_records>
+    <EquipmentRecord>
+      <calibrations>
+        <CalibrationRecord>
+          <calibration_date format="YYYY-MM-DD">2018-06-08</calibration_date>
+          <calibration_cycle unit="years">2.0</calibration_cycle>
+          <measurands>
+            <MeasurandRecord>
+              <calibration>
+                <minimum>18</minimum>
+                <maximum>24</maximum>
+                <correction_coefficients>(0.01,)</correction_coefficients>
+                <expanded_uncertainty>0.13</expanded_uncertainty>
+                <coverage_factor>2.0</coverage_factor>
+                <level_of_confidence>0.95</level_of_confidence>
+                <correlation_matrix>()</correlation_matrix>
+              </calibration>
+              <conditions>
+                <lab_temperature>21</lab_temperature>
+                <lab_temperature_uncertainty>1</lab_temperature_uncertainty>
+                <lab_temperature_unit>C</lab_temperature_unit>
+              </conditions>
+              <type>temperature</type>
+              <unit>C</unit>
+            </MeasurandRecord>
+            <MeasurandRecord>
+              <calibration>
+                <minimum>30</minimum>
+                <maximum>85</maximum>
+                <correction_coefficients>(-9.5, 0.326, -0.00505, 3.21e-05)</correction_coefficients>
+                <expanded_uncertainty>0.9</expanded_uncertainty>
+                <coverage_factor>2.0</coverage_factor>
+                <level_of_confidence>0.95</level_of_confidence>
+                <correlation_matrix>()</correlation_matrix>
+              </calibration>
+              <conditions>
+                <lab_temperature>21</lab_temperature>
+                <lab_temperature_uncertainty>1</lab_temperature_uncertainty>
+                <lab_temperature_unit>C</lab_temperature_unit>
+              </conditions>
+              <type>humidity</type>
+              <unit>%rh</unit>
+            </MeasurandRecord>
+          </measurands>
+          <report_number>Humidity/2018/386</report_number>
+          <report_date format="YYYY-MM-DD">2018-07-21</report_date>
+        </CalibrationRecord>
+        <CalibrationRecord>
+          <calibration_date format="YYYY-MM-DD">2016-01-20</calibration_date>
+          <calibration_cycle unit="years">2.0</calibration_cycle>
+          <measurands>
+            <MeasurandRecord>
+              <calibration>
+                <minimum>17</minimum>
+                <maximum>23</maximum>
+                <correction_coefficients>(0.05,)</correction_coefficients>
+                <expanded_uncertainty>0.12</expanded_uncertainty>
+                <coverage_factor>2.0</coverage_factor>
+                <level_of_confidence>0.95</level_of_confidence>
+                <correlation_matrix>()</correlation_matrix>
+              </calibration>
+              <conditions>
+                <lab_temperature>21</lab_temperature>
+                <lab_temperature_uncertainty>1</lab_temperature_uncertainty>
+                <lab_temperature_unit>C</lab_temperature_unit>
+              </conditions>
+              <type>temperature</type>
+              <unit>C</unit>
+            </MeasurandRecord>
+            <MeasurandRecord>
+              <calibration>
+                <minimum>30</minimum>
+                <maximum>80</maximum>
+                <correction_coefficients>(-3.44, 0.0487)</correction_coefficients>
+                <expanded_uncertainty>0.8</expanded_uncertainty>
+                <coverage_factor>2.0</coverage_factor>
+                <level_of_confidence>0.95</level_of_confidence>
+                <correlation_matrix>()</correlation_matrix>
+              </calibration>
+              <conditions>
+                <lab_temperature>21</lab_temperature>
+                <lab_temperature_uncertainty>1</lab_temperature_uncertainty>
+                <lab_temperature_unit>C</lab_temperature_unit>
+              </conditions>
+              <type>humidity</type>
+              <unit>%rh</unit>
+            </MeasurandRecord>
+          </measurands>
+          <report_number>Humidity/2016/322</report_number>
+          <report_date format="YYYY-MM-DD">2016-02-22</report_date>
+        </CalibrationRecord>
+      </calibrations>
+      <category>Logger</category>
+      <connection/>
+      <description>Temperature, relative humidity and dew point reader</description>
+      <is_operable>True</is_operable>
+      <maintenances>
+        <MaintenanceRecord>
+          <comment>Nothing changed</comment>
+          <date format="YYYY-MM-DD">2019-03-24</date>
+        </MaintenanceRecord>
+        <MaintenanceRecord>
+          <comment>ABCDEF ghijkl MNOP qrstuvwxyz</comment>
+          <date format="YYYY-MM-DD">2018-01-17</date>
+        </MaintenanceRecord>
+      </maintenances>
+      <manufacturer>OMEGA</manufacturer>
+      <model>iTHX-W3-5</model>
+      <serial>4070777</serial>
+      <unique_key>137154e9-da33-46c9-b85b-3a1a351969d6</unique_key>
+      <my_custom_key>whatever I want</my_custom_key>
+    </EquipmentRecord>
+    <EquipmentRecord>
+      <calibrations>
+        <CalibrationRecord>
+          <calibration_date format="YYYY-MM-DD">2012-10-20</calibration_date>
+          <calibration_cycle unit="years">5.0</calibration_cycle>
+          <measurands>
+            <MeasurandRecord>
+              <calibration>
+                <calibration_type>dependent_artefact_values</calibration_type>
+                <dependent_parameter>wavelength</dependent_parameter>
+                <dependent_unit>nm</dependent_unit>
+                <dependent_minimum>250</dependent_minimum>
+                <dependent_maximum>2450</dependent_maximum>
+                <artefact_values>((250, 0.938), (260, 0.945), (270, 0.95), (2450, 0.934))</artefact_values>
+                <expanded_uncertainty>((0, 0.011), (0, 0.011), (0, 0.004), (0, 0.019))</expanded_uncertainty>
+                <coverage_factor>2.0</coverage_factor>
+                <level_of_confidence>0.95</level_of_confidence>
+                <correlation_matrix>()</correlation_matrix>
+              </calibration>
+              <conditions>
+                <measured_area_diameter>10</measured_area_diameter>
+                <measured_area_diameter_unit>mm</measured_area_diameter_unit>
+                <bandwidth_below_1100_nm>3</bandwidth_below_1100_nm>
+                <bandwidth_below_1100_nm_unit>nm</bandwidth_below_1100_nm_unit>
+                <bandwidth_above_1100_nm>6</bandwidth_above_1100_nm>
+                <bandwidth_above_1100_nm_unit>nm</bandwidth_above_1100_nm_unit>
+              </conditions>
+              <type>spectral_radiance_d6</type>
+              <unit/>
+            </MeasurandRecord>
+          </measurands>
+          <report_number>PTB 44183/12</report_number>
+          <report_date format="YYYY-MM-DD">2012-10-20</report_date>
+        </CalibrationRecord>
+        <CalibrationRecord>
+          <calibration_date format="YYYY-MM-DD">2012-10-20</calibration_date>
+          <calibration_cycle unit="years">5.0</calibration_cycle>
+          <measurands>
+            <MeasurandRecord>
+              <calibration>
+                <calibration_type>dependent_artefact_values</calibration_type>
+                <dependent_measurands>
+                  <wavelength>
+                    <minimum>350</minimum>
+                    <maximum>800</maximum>
+                    <unit>'nm'</unit>
+                  </wavelength>
+                  <incident_angle>
+                    <minimum>45</minimum>
+                    <maximum>45</maximum>
+                    <unit>'degrees'</unit>
+                  </incident_angle>
+                  <detection_angle>
+                    <minimum>-30</minimum>
+                    <maximum>65</maximum>
+                    <unit>'degrees'</unit>
+                  </detection_angle>
+                </dependent_measurands>
+                <artefact_values>((350, 45, -30, 1.039), (400, 45, -30, 1.048), (800, 45, 65, 0.909))</artefact_values>
+                <expanded_uncertainty>((0, 0, 0, 0.017), (0, 0, 0, 0.005), (0, 0, 0, 0.002), (0, 0, 0, 0.002))</expanded_uncertainty>
+                <coverage_factor>2.0</coverage_factor>
+                <level_of_confidence>0.95</level_of_confidence>
+                <correlation_matrix>()</correlation_matrix>
+              </calibration>
+              <conditions>
+                <measured_area_diameter>ellipse, 10 and 10/cos(theta_d)</measured_area_diameter>
+                <measured_area_diameter_unit>mm</measured_area_diameter_unit>
+                <bandwidth_below_900_nm>3</bandwidth_below_900_nm>
+                <bandwidth_below_900_nm_unit>nm</bandwidth_below_900_nm_unit>
+                <bandwidth_above_900_nm>6</bandwidth_above_900_nm>
+                <bandwidth_above_900_nm_unit>nm</bandwidth_above_900_nm_unit>
+                <divergence_of_incident_beam>1.5</divergence_of_incident_beam>
+                <divergence_of_incident_beam_unit>degrees</divergence_of_incident_beam_unit>
+                <divergence_of_detection_beam>0.32</divergence_of_detection_beam>
+                <divergence_of_detection_beam_unit>degrees</divergence_of_detection_beam_unit>
+              </conditions>
+              <type>spectral_radiance_factor</type>
+              <unit/>
+            </MeasurandRecord>
+          </measurands>
+          <report_number>PTB 44188/12</report_number>
+          <report_date format="YYYY-MM-DD">2012-10-20</report_date>
+        </CalibrationRecord>
+      </calibrations>
+      <category>reflectance standard</category>
+      <connection/>
+      <description>spectralon 99% reflectance standard</description>
+      <is_operable>True</is_operable>
+      <maintenances/>
+      <manufacturer>Labsphere</manufacturer>
+      <model>AS-01159-060, USRS-99-020, BT69E</model>
+      <serial>0.99</serial>
+      <unique_key>AK1</unique_key>
+    </EquipmentRecord>
+    <EquipmentRecord>
+      <calibrations/>
+      <category/>
+      <connection/>
+      <description/>
+      <is_operable>False</is_operable>
+      <maintenances/>
+      <manufacturer>foo</manufacturer>
+      <model>bar</model>
+      <serial>xyz</serial>
+      <unique_key/>
+    </EquipmentRecord>
+  </equipment_records>
+</msl>

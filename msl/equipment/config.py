@@ -36,20 +36,20 @@ class Config(object):
 
         **MSL-Equipment** constants that can be defined in a :ref:`configuration_file`:
 
-        +----------------+-----------------------------------+-----------------------------------------+
-        |      Name      |           Example Values          |               Description               |
-        +================+===================================+=========================================+
-        | pyvisa_library | @ni, @py, @sim, /path/to/lib\\@ni | The PyVISA backend_ library to use.     |
-        +----------------+-----------------------------------+-----------------------------------------+
-        |   demo_mode    | true, false                       | Whether to open connections in demo     |
-        |                |                                   | mode.                                   |
-        +----------------+-----------------------------------+-----------------------------------------+
-        |     path       | /path/to/SDKs, D:/images          | A path that contains external resources.|
-        |                |                                   | Accepts a *recursive="true"* attribute. |
-        |                |                                   | Appends the path(s) to                  |
-        |                |                                   | :data:`os.environ['PATH'] <os.environ>` |
-        |                |                                   | and to :attr:`.PATH`                    |
-        +----------------+-----------------------------------+-----------------------------------------+
+        +----------------+---------------------------------------+-----------------------------------------+
+        |      Name      |           Example Values              |               Description               |
+        +================+=======================================+=========================================+
+        | pyvisa_library | @ni, @py, @sim, /path/to/libvisa.so.7 | The PyVISA backend_ library to use.     |
+        +----------------+---------------------------------------+-----------------------------------------+
+        |   demo_mode    | true, false                           | Whether to open connections in demo     |
+        |                |                                       | mode.                                   |
+        +----------------+---------------------------------------+-----------------------------------------+
+        |     path       | /path/to/SDKs, D:/images              | A path that contains external resources.|
+        |                |                                       | Accepts a *recursive="true"* attribute. |
+        |                |                                       | Appends the path(s) to                  |
+        |                |                                       | :data:`os.environ['PATH'] <os.environ>` |
+        |                |                                       | and to :attr:`.PATH`                    |
+        +----------------+---------------------------------------+-----------------------------------------+
 
         Also, the user is encouraged to define their own application-specific constants within the
         configuration file.

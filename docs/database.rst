@@ -14,6 +14,12 @@ A database is composed of *fields* (columns) and *records* (rows).
 
 Equipment-Register Database
 ---------------------------
+
+.. attention::
+
+   The design of the Equipment-Register database is in active development and it can be unstable
+   until an official release of MSL-Equipment is made.
+
 The information about the equipment that is used to perform a measurement must be known and it must be kept up to date.
 Keeping a central and official (hence the word *Register*) database of the equipment that is available in the laboratory
 allows for easily managing this information and for helping to ensure that the equipment that is being used for a

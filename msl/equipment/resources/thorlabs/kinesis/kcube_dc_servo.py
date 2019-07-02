@@ -682,7 +682,7 @@ class KCubeDCServo(MotionControl):
 
         Returns
         -------
-        class`int`
+        :class:`int`
             The number of positions.
         """
         return self.sdk.CC_GetNumberPositions(self._serial)

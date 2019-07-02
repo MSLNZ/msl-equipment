@@ -1,7 +1,38 @@
 msl.equipment.record_types module
 =================================
 
-.. automodule:: msl.equipment.record_types
-    :members:
-    :undoc-members:
-    :show-inheritance:
+Records from :ref:`equipment_database`\'s or :ref:`connections_database`\'s.
+
+.. autoclass:: msl.equipment.record_types.EquipmentRecord
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+.. autoclass:: msl.equipment.record_types.CalibrationRecord
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+.. autoclass:: msl.equipment.record_types.MeasurandRecord
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+.. autoclass:: msl.equipment.record_types.MaintenanceRecord
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+.. autoclass:: msl.equipment.record_types.ConnectionRecord
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+.. autoclass:: msl.equipment.record_types.RecordDict
+   :members:
+   :show-inheritance:
+   :no-undoc-members:
+
+.. autoclass:: msl.equipment.record_types.Record
+   :members:
+   :show-inheritance:

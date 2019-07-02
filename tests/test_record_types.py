@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 import os
 import sys
+import json
 import datetime
 import tempfile
 import codecs
@@ -66,6 +67,23 @@ def test_equipment_record():
     assert a['team'] == ''
     assert a['unique_key'] == ''
     assert a['user_defined'] == {}
+
+    a = record.to_json()
+    assert len(a) == len(record.__slots__)
+    assert a['alias'] == ''
+    assert isinstance(a['calibrations'], tuple) and len(a['calibrations']) == 0
+    assert a['category'] == ''
+    assert a['connection'] is None
+    assert a['description'] == ''
+    assert not a['is_operable']
+    assert isinstance(a['maintenances'], tuple) and len(a['maintenances']) == 0
+    assert a['manufacturer'] == ''
+    assert a['model'] == ''
+    assert a['serial'] == ''
+    assert a['team'] == ''
+    assert a['unique_key'] == ''
+    assert a['user_defined'] == {}
+    EquipmentRecord(**json.loads(json.dumps(a)))  # check that this does not raise an error
 
     with open(temp, 'w') as fp:  # no unicode, use builtin open() function
         fp.write(convert_to_xml_string(record.to_xml()))
@@ -250,6 +268,56 @@ def test_equipment_record():
     assert a['user_defined']['b'] == 8
     assert a['user_defined']['c'] == (1, 2, 3)
 
+    a = record.to_json()
+    assert len(a) == len(record.__slots__)
+    assert a['alias'] == 'my alias'
+    assert len(a['calibrations']) == 1
+    assert a['calibrations'][0]['calibration_cycle'] == 2
+    assert a['calibrations'][0]['calibration_date'] == '2018-08-20'
+    assert a['calibrations'][0]['report_date'] == '2018-08-20'
+    assert a['calibrations'][0]['report_number'] == 'Report:12-3/4'
+    assert len(a['calibrations'][0]['measurands']) == 2
+    assert a['calibrations'][0]['measurands'][0]['calibration']['min'] == 0
+    assert a['calibrations'][0]['measurands'][0]['calibration']['max'] == 10
+    assert a['calibrations'][0]['measurands'][0]['calibration']['coeff'] == (1, 2, 3)
+    assert a['calibrations'][0]['measurands'][0]['type'] == 'A'
+    assert a['calibrations'][0]['measurands'][0]['unit'] == 'B'
+    assert a['calibrations'][0]['measurands'][1]['calibration']['range'] == (0, 10)
+    assert a['calibrations'][0]['measurands'][1]['calibration']['coeff'] == (0.2, 11)
+    assert a['calibrations'][0]['measurands'][1]['type'] == 'X'
+    assert a['calibrations'][0]['measurands'][1]['unit'] == 'Y'
+    assert a['category'] == 'DMM'
+    assert a['connection']['address'] == 'GPIB::15'
+    assert a['connection']['backend'] == 'PyVISA'
+    assert a['connection']['interface'] == 'NONE'  # using PyVISA as the backend
+    assert a['connection']['manufacturer'] == u'uñicödé'
+    assert a['connection']['model'] == 'XYZ'
+    assert a['connection']['properties']['none'] is None
+    assert a['connection']['properties']['bytes'] == '\x02\x19\x08' if PY2 else "b'\\x02\\x19\\x08'"
+    assert a['connection']['properties']['string'] == 'string'
+    assert a['connection']['properties']['unicode'] == u'uñicödé'
+    assert a['connection']['properties']['termination'] == '\r\n' if PY2 else "b'\\r\\n'"
+    assert a['connection']['properties']['boolean'] is True
+    assert a['connection']['properties']['integer'] == 77
+    assert a['connection']['properties']['float'] == 12.34
+    assert a['connection']['properties']['complex'] == '(-2-3j)'
+    assert a['connection']['properties']['enum'] == 'ONE_POINT_FIVE'
+    assert a['connection']['serial'] == 'ABC123'
+    assert a['description'] == u'Sométhing uséful'
+    assert a['is_operable']
+    assert len(a['maintenances']) == 1
+    assert a['maintenances'][0]['date'] == '2019-01-01'
+    assert a['maintenances'][0]['comment'] == 'fixed it'
+    assert a['manufacturer'] == u'uñicödé'
+    assert a['model'] == 'XYZ'
+    assert a['serial'] == 'ABC123'
+    assert a['team'] == 'P&R'
+    assert a['unique_key'] == 'keykeykey'
+    assert a['user_defined']['a'] == 'a'
+    assert a['user_defined']['b'] == 8
+    assert a['user_defined']['c'] == (1, 2, 3)
+    json_record = EquipmentRecord(**json.loads(json.dumps(a)))
+
     with codecs.open(temp, mode='w', encoding='utf-8') as fp:  # has unicode, use codecs.open() function
         fp.write(convert_to_xml_string(record.to_xml()))
     a = ElementTree().parse(temp)
@@ -309,6 +377,68 @@ def test_equipment_record():
     assert a.find('user_defined/a').text == 'a'
     assert a.find('user_defined/b').text == '8'
     assert a.find('user_defined/c').text == '(1, 2, 3)'
+
+    # The JSON-dumps-loads process should return the same EquipmentRecord object
+    for rec in [record, json_record]:
+        print(unicode(rec))  # make sure it is printable
+        print(unicode(repr(rec)))
+        assert rec.alias == 'my alias'
+        assert len(rec.calibrations) == 1
+        assert rec.calibrations[0].calibration_cycle == 2
+        assert rec.calibrations[0].calibration_date == datetime.date(2018, 8, 20)
+        assert rec.calibrations[0].report_date == datetime.date(2018, 8, 20)
+        assert rec.calibrations[0].report_number == 'Report:12-3/4'
+        assert len(rec.calibrations[0].measurands) == 2
+        assert rec.calibrations[0].measurands.A.calibration.min == 0
+        assert rec.calibrations[0].measurands.A.calibration.max == 10
+        assert rec.calibrations[0].measurands.A.calibration.coeff == (1, 2, 3)
+        assert rec.calibrations[0].measurands.A.type == 'A'
+        assert rec.calibrations[0].measurands.A.unit == 'B'
+        assert rec.calibrations[0].measurands['X'].calibration.range == (0, 10)
+        assert rec.calibrations[0].measurands['X'].calibration.coeff == (0.2, 11)
+        assert rec.calibrations[0].measurands['X'].type == 'X'
+        assert rec.calibrations[0].measurands['X'].unit == 'Y'
+        assert rec.category == 'DMM'
+        assert rec.connection.address == 'GPIB::15'
+        assert rec.connection.backend == Backend.PyVISA
+        assert rec.connection.interface == MSLInterface.NONE  # using PyVISA as the backend
+        assert rec.connection.manufacturer == u'uñicödé'
+        assert rec.connection.model == 'XYZ'
+        assert rec.connection.properties['none'] is None
+        if rec is json_record and not PY2:
+            assert rec.connection.properties['bytes'] == "b'\\x02\\x19\\x08'"
+        else:
+            assert rec.connection.properties['bytes'] == b'\x02\x19\x08'
+        assert rec.connection.properties['string'] == 'string'
+        assert rec.connection.properties['termination'] == b'\r\n'
+        assert rec.connection.properties['unicode'] == u'uñicödé'
+        assert rec.connection.properties['boolean'] is True
+        assert rec.connection.properties['integer'] == 77
+        assert rec.connection.properties['float'] == 12.34
+        if rec is json_record:
+            assert rec.connection.properties['complex'] == '(-2-3j)'
+            # the 'enum' value is a string because there is no reason for this value
+            # to be associated with a StopBits enum. A ConnectionRecord looks for a key
+            # that starts with 'stop' to convert the value to a StopBits enum
+            assert rec.connection.properties['enum'] == 'ONE_POINT_FIVE'
+        else:
+            assert rec.connection.properties['complex'] == -2 - 3j
+            assert rec.connection.properties['enum'] == StopBits.ONE_POINT_FIVE
+        assert rec.connection.serial == 'ABC123'
+        assert rec.description == u'Sométhing uséful'
+        assert rec.is_operable
+        assert len(rec.maintenances) == 1
+        assert rec.maintenances[0].date == datetime.date(2019, 1, 1)
+        assert rec.maintenances[0].comment == 'fixed it'
+        assert rec.manufacturer == u'uñicödé'
+        assert rec.model == 'XYZ'
+        assert rec.serial == 'ABC123'
+        assert rec.team == 'P&R'
+        assert rec.unique_key == 'keykeykey'
+        assert rec.user_defined['a'] == 'a'
+        assert rec.user_defined['b'] == 8
+        assert rec.user_defined['c'] == (1, 2, 3)
+        assert rec.latest_calibration is rec.calibrations[0]
 
     a = repr(record).splitlines()
     assert len(a) == 59
@@ -546,9 +676,16 @@ def test_equipment_record():
     assert record.connection.serial == 'XYZ'
 
     #
-    # Specifying a kwarg that is not expected goes into the self._user_defined dictionary
+    # Specifying a kwarg that is not expected goes into the user_defined dictionary
     #
     record = EquipmentRecord(unknown_attribute='AAA', dictionary={'a': 1, 'b': 2})
+    assert record.user_defined['unknown_attribute'] == 'AAA'
+    assert record.user_defined['dictionary'] == dict(a=1, b=2)
+
+    record = EquipmentRecord(user_defined={'x': 1, 'y': 2, 'z': 3}, unknown_attribute='AAA', dictionary={'a': 1, 'b': 2})
+    assert record.user_defined['x'] == 1
+    assert record.user_defined['y'] == 2
+    assert record.user_defined['z'] == 3
     assert record.user_defined['unknown_attribute'] == 'AAA'
     assert record.user_defined['dictionary'] == dict(a=1, b=2)
 
@@ -579,6 +716,17 @@ def test_connection_record():
     assert a['model'] == ''
     assert a['properties'] == {}
     assert a['serial'] == ''
+
+    a = record.to_json()
+    assert len(a) == 7
+    assert a['address'] == ''
+    assert a['backend'] == 'MSL'
+    assert a['interface'] == 'NONE'
+    assert a['manufacturer'] == ''
+    assert a['model'] == ''
+    assert a['properties'] == {}
+    assert a['serial'] == ''
+    ConnectionRecord(**json.loads(json.dumps(a)))  # check that this does not raise an error
 
     with open(temp, 'w') as fp:  # no unicode, use builtin open() function
         fp.write(convert_to_xml_string(record.to_xml()))
@@ -661,6 +809,26 @@ def test_connection_record():
     assert a['properties']['enum'] == StopBits.ONE_POINT_FIVE
     assert a['serial'] == 'ABC123'
 
+    a = record.to_json()
+    assert len(a) == 7
+    assert a['address'] == 'GPIB::15'
+    assert a['backend'] == 'PyVISA'
+    assert a['interface'] == 'NONE'  # using PyVISA as the backend
+    assert a['manufacturer'] == u'uñicödé'
+    assert a['model'] == 'XYZ'
+    assert a['properties']['none'] is None
+    assert a['properties']['bytes'] == '\x02\x19\x08' if PY2 else "b'\\x02\\x19\\x08'"
+    assert a['properties']['string'] == 'string'
+    assert a['properties']['unicode'] == u'uñicödé'
+    assert a['properties']['termination'] == '\r\n' if PY2 else "b'\\r\\n'"
+    assert a['properties']['boolean'] is True
+    assert a['properties']['integer'] == 77
+    assert a['properties']['float'] == 12.34
+    assert a['properties']['complex'] == '(-2-3j)'
+    assert a['properties']['enum'] == 'ONE_POINT_FIVE'
+    assert a['serial'] == 'ABC123'
+    json_record = ConnectionRecord(**json.loads(json.dumps(a)))  # check that this does not raise an error
+
     with codecs.open(temp, mode='w', encoding='utf-8') as fp:  # has unicode, use codecs.open() function
         fp.write(convert_to_xml_string(record.to_xml()))
     a = ElementTree().parse(temp)
@@ -682,6 +850,33 @@ def test_connection_record():
     assert props.find('complex').text == '(-2-3j)'
     assert props.find('enum').text == 'ONE_POINT_FIVE'
     assert a.find('serial').text == 'ABC123'
+
+    for rec in [record, json_record]:
+        print(unicode(rec))  # make sure it is printable
+        print(unicode(repr(rec)))
+        assert rec.address == 'GPIB::15'
+        assert rec.backend == Backend.PyVISA
+        assert rec.interface == MSLInterface.NONE  # using PyVISA as the backend
+        assert rec.manufacturer == u'uñicödé'
+        assert rec.model == 'XYZ'
+        assert rec.properties['none'] is None
+        if rec is json_record and not PY2:
+            assert rec.properties['bytes'] == "b'\\x02\\x19\\x08'"
+        else:
+            assert rec.properties['bytes'] == b'\x02\x19\x08'
+        if rec is json_record:
+            assert rec.properties['enum'] == 'ONE_POINT_FIVE'
+            assert rec.properties['complex'] == '(-2-3j)'
+        else:
+            assert rec.properties['enum'] == StopBits.ONE_POINT_FIVE
+            assert rec.properties['complex'] == -2 - 3j
+        assert rec.properties['string'] == 'string'
+        assert rec.properties['unicode'] == u'uñicödé'
+        assert rec.properties['termination'] == b'\r\n'
+        assert rec.properties['boolean'] is True
+        assert rec.properties['integer'] == 77
+        assert rec.properties['float'] == 12.34
+        assert rec.serial == 'ABC123'
 
     a = repr(record).splitlines()
     assert len(a) == 18
@@ -1127,6 +1322,15 @@ def test_record_dict():
     with pytest.raises(TypeError):
         rd.update(x=7)
 
+    # convert to JSON
+    a = rd.to_json()
+    assert a['one'] == 1
+    assert a['ints'] == (1, 2, (3, 4, 5, (6, 7, (8,))), 9)
+    assert a['nested1']['a'] == 'x'
+    assert a['nested1']['b'] == 'y'
+    assert a['nested1']['nested2']['matrix'] == ((1, 2), (3, 4), (5, 6))
+    RecordDict(json.loads(json.dumps(a)))  # check that this does not raise an error
+
     # convert to XML element
     element = rd.to_xml()
     assert element.tag == 'RecordDict'
@@ -1136,7 +1340,7 @@ def test_record_dict():
     assert element.find('nested1/b').text == "'y'"
     assert element.find('nested1/nested2/matrix').text == '((1, 2), (3, 4), (5, 6))'
 
-    element = rd.to_xml(root_name='whatever')
+    element = rd.to_xml(tag='whatever')
     assert element.tag == 'whatever'
 
 
@@ -1164,10 +1368,20 @@ def test_maintenance_record():
     assert d['date'] == datetime.date(2019, 4, 23)
     assert d['comment'] == 'my comment'
 
+    # convert to JSON
+    a = mr.to_json()
+    assert a['date'] == '2019-04-23'
+    assert a['comment'] == 'my comment'
+    json_record = MaintenanceRecord(**json.loads(json.dumps(a)))  # check that this does not raise an error
+
     x = mr.to_xml()
     assert x.tag == 'MaintenanceRecord'
     assert x.find('date').text == '2019-04-23'
     assert x.find('comment').text == 'my comment'
+
+    for rec in [mr, json_record]:
+        assert rec.date == datetime.date(2019, 4, 23)
+        assert rec.comment == 'my comment'
 
     assert str(mr) == 'MaintenanceRecord<2019-04-23>'
 
@@ -1242,6 +1456,15 @@ def test_measurand_record():
     assert d['type'] == 'Humidity'
     assert d['unit'] == '%rh'
 
+    d = mr.to_json()
+    assert d['calibration']['a'] == 0
+    assert d['calibration']['b'] == 1
+    assert d['conditions']['c'] == 2
+    assert d['conditions']['d'] == 3
+    assert d['type'] == 'Humidity'
+    assert d['unit'] == '%rh'
+    json_record = MeasurandRecord(**json.loads(json.dumps(d)))  # check that this does not raise an error
+
     x = mr.to_xml()
     assert x.tag == 'MeasurandRecord'
     assert x.find('calibration/a').text == '0'
@@ -1250,6 +1473,14 @@ def test_measurand_record():
     assert x.find('conditions/d').text == '3'
     assert x.find('type').text == 'Humidity'
     assert x.find('unit').text == '%rh'
+
+    for rec in [mr, json_record]:
+        assert rec.calibration.a == 0
+        assert rec.calibration.b == 1
+        assert rec.conditions.c == 2
+        assert rec.conditions.d == 3
+        assert rec.type == 'Humidity'
+        assert rec.unit == '%rh'
 
 
 def test_calibration_record():
@@ -1339,6 +1570,27 @@ def test_calibration_record():
     assert d['report_date'] == datetime.date(2010, 12, 13)
     assert d['report_number'] == 'ABC123'
 
+    d = cr.to_json()
+    assert d['calibration_cycle'] == 5.0
+    assert d['calibration_date'] == '2018-02-24'
+    assert isinstance(d['measurands'], tuple)
+    assert len(d['measurands']) == 3
+    assert d['measurands'][0]['calibration'] == {}
+    assert d['measurands'][0]['conditions'] == {}
+    assert d['measurands'][0]['type'] == 'a'
+    assert d['measurands'][0]['unit'] == ''
+    assert d['measurands'][1]['calibration'] == {}
+    assert d['measurands'][1]['conditions'] == {}
+    assert d['measurands'][1]['type'] == 'b'
+    assert d['measurands'][1]['unit'] == ''
+    assert d['measurands'][2]['calibration'] == {}
+    assert d['measurands'][2]['conditions'] == {}
+    assert d['measurands'][2]['type'] == 'c'
+    assert d['measurands'][2]['unit'] == ''
+    assert d['report_date'] == '2010-12-13'
+    assert d['report_number'] == 'ABC123'
+    json_record = CalibrationRecord(**json.loads(json.dumps(d)))  # check that this does not raise an error
+
     x = cr.to_xml()
     assert x.tag == 'CalibrationRecord'
     assert x.find('calibration_cycle').text == '5.0'
@@ -1385,3 +1637,14 @@ def test_calibration_record():
     assert s[18] == '      unit: {}'.format("u''" if PY2 else "''")
     assert s[19] == '  report_date: 2010-12-13'
     assert s[20] == '  report_number: {}'.format("u'ABC123'" if PY2 else "'ABC123'")
+
+    for rec in [cr, json_record]:
+        assert rec.calibration_cycle == 5.0
+        assert rec.calibration_date == datetime.date(2018, 2, 24)
+        assert isinstance(rec.measurands, RecordDict)
+        assert len(rec.measurands) == 3
+        assert 'a' in rec.measurands
+        assert 'b' in rec.measurands
+        assert 'c' in rec.measurands
+        assert rec.report_date == datetime.date(2010, 12, 13)
+        assert rec.report_number == 'ABC123'

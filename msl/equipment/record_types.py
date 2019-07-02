@@ -3,6 +3,7 @@ Records from :ref:`equipment_database`\'s or :ref:`connections_database`\'s.
 """
 from __future__ import unicode_literals
 import re
+import json
 import logging
 import datetime
 from enum import Enum
@@ -86,6 +87,7 @@ class RecordDict(Mapping):
         self._raise('clearing')
 
     def copy(self):
+        """:class:`RecordDict`: Return a copy of the :class:`RecordDict`."""
         return RecordDict(self._mapping.copy())
 
     def fromkeys(self, *args, **kwargs):
@@ -103,15 +105,47 @@ class RecordDict(Mapping):
     def update(self, *args, **kwargs):
         self._raise('updating')
 
-    def to_xml(self, root_name='RecordDict'):
-        root = Element(root_name)
+    def to_xml(self, tag='RecordDict'):
+        """Convert the :class:`RecordDict` to an XML :class:`~xml.etree.ElementTree.Element`
+
+        Parameters
+        ----------
+        tag : :class:`str`
+            The name of the :class:`~xml.etree.ElementTree.Element`.
+
+        Returns
+        -------
+        :class:`~xml.etree.ElementTree.Element`
+            The :class:`RecordDict` as an XML :class:`~xml.etree.ElementTree.Element`.
+        """
+        root = Element(tag)
         for k, v in self._mapping.items():
             if isinstance(v, RecordDict):
-                element = v.to_xml(root_name=k)
+                element = v.to_xml(tag=k)
             else:
                 element = Element(k)
                 element.text = repr(v)
             root.append(element)
+        return root
+
+    def to_json(self):
+        """:class:`dict`: Convert the :class:`RecordDict` to be JSON_ serializable.
+
+        .. _JSON: https://www.json.org/
+        """
+        root = dict()
+        for k, v in self._mapping.items():
+            if isinstance(v, RecordDict):
+                root[k] = v.to_json()
+            elif isinstance(v, Enum):
+                root[k] = v.name
+            else:
+                try:
+                    json.dumps(v)
+                except TypeError:
+                    root[k] = str(v)  # cannot be serialized
+                else:
+                    root[k] = v  # can be serialized
         return root
 
 
@@ -120,6 +154,17 @@ class Record(object):
     def to_dict(self):
         """:class:`dict`: Convert the Record to a :class:`dict`."""
         return dict((name, getattr(self, name)) for name in self.__slots__)
+
+    def to_json(self):
+        """:class:`dict`: Convert the Record to be JSON_ serializable.
+
+        This differs from :meth:`to_dict` such that all values that are not
+        JSON_ serializable, like :class:`datetime.date` objects, are
+        converted to a :class:`str`.
+
+        .. _JSON: https://www.json.org/
+        """
+        raise NotImplementedError
 
     def to_xml(self):
         """:class:`~xml.etree.ElementTree.Element`: Convert the Record to an XML
@@ -157,7 +202,7 @@ class EquipmentRecord(Record):
         ----------
         alias : :class:`str`
             An alias to use to reference this equipment by.
-        calibrations : :class:`list` or :class:`tuple` of :class:`.CalibrationRecord`
+        calibrations : :class:`list` of :class:`.CalibrationRecord`
             The calibration history of the equipment.
         category : :class:`str`
             The category (e.g., Laser, DMM) that the equipment belongs to.
@@ -167,7 +212,7 @@ class EquipmentRecord(Record):
             A description about the equipment.
         is_operable : :class:`bool`
             Whether the equipment is able to be used.
-        maintenances : :class:`list` or :class:`tuple` of :class:`.MaintenanceRecord`
+        maintenances : :class:`list` of :class:`.MaintenanceRecord`
             The maintenance history of the equipment.
         manufacturer : :class:`str`
             The name of the manufacturer of the equipment.
@@ -179,8 +224,8 @@ class EquipmentRecord(Record):
             The team (e.g., Light Standards) that the equipment belongs to.
         unique_key : :class:`str`
             The key that uniquely identifies the equipment record in a database.
-        user_defined
-            All additional key-value pairs are added to the :attr:`self.user_defined` attribute.
+        **user_defined
+            All additional key-value pairs are added to the :attr:`.user_defined` attribute.
         """
 
         self.alias = alias  # the alias should be of type str, but this is up to the user
@@ -188,7 +233,8 @@ class EquipmentRecord(Record):
         
         The `alias` can be defined in 4 ways:
         
-            * by explicitly creating an EquipmentRecord
+            * by specifying it when the EquipmentRecord is created
+            * by setting the value after the EquipmentRecord has been created 
             * in the **<equipment>** XML tag in a :ref:`configuration_file`
             * in the **Properties** field in a :ref:`connections_database`
         
@@ -231,7 +277,15 @@ class EquipmentRecord(Record):
         self.unique_key = '{}'.format(unique_key)
         """:class:`str`: The key that uniquely identifies the equipment record in a database."""
 
-        self.user_defined = RecordDict(user_defined)
+        try:
+            # a 'user_defined' kwarg was explicitly defined
+            ud = user_defined.pop('user_defined')
+        except KeyError:
+            ud = user_defined
+        else:
+            ud.update(**user_defined)  # the user_defined dict might still contain other key-value pairs
+
+        self.user_defined = RecordDict(ud)
         """:class:`.RecordDict`: User-defined, key-value pairs."""
 
     def __repr__(self):
@@ -327,7 +381,7 @@ class EquipmentRecord(Record):
 
     @property
     def latest_calibration(self):
-        """:class:`.CalibrationReport`: The latest calibration report or :data:`None`
+        """:class:`.CalibrationRecord`: The latest calibration or :data:`None`
         if the equipment has never been calibrated."""
         latest = None
         date = datetime.date(datetime.MINYEAR, 1, 1)
@@ -393,10 +447,34 @@ class EquipmentRecord(Record):
             'user_defined': self.user_defined,
         }
 
+    def to_json(self):
+        """Convert this :class:`EquipmentRecord` to be JSON_ serializable.
+
+        .. _JSON: https://www.json.org/
+
+        Returns
+        -------
+        :class:`dict`
+            The :class:`EquipmentRecord` as a JSON_\\-serializable object.
+        """
+        return {
+            'alias': self.alias,
+            'calibrations': tuple(cr.to_json() for cr in self.calibrations),
+            'category': self.category,
+            'connection': None if self.connection is None else self.connection.to_json(),
+            'description': self.description,
+            'is_operable': self.is_operable,
+            'maintenances': tuple(mh.to_json() for mh in self.maintenances),
+            'manufacturer': self.manufacturer,
+            'model': self.model,
+            'serial': self.serial,
+            'team': self.team,
+            'unique_key': self.unique_key,
+            'user_defined': self.user_defined.to_json(),
+        }
+
     def to_xml(self):
         """Convert this :class:`EquipmentRecord` to an XML :class:`~xml.etree.ElementTree.Element`.
-
-        All values of the :class:`EquipmentRecord` are converted to a :class:`str`.
 
         Returns
         -------
@@ -426,11 +504,14 @@ class EquipmentRecord(Record):
         return root
 
     def _set_connection(self, record):
-        if record is None:
+        if not record:
             return None
 
         if not isinstance(record, ConnectionRecord):
-            raise TypeError('Must pass in a ConnectionRecord object')
+            if isinstance(record, dict):
+                record = ConnectionRecord(**record)
+            else:
+                raise TypeError('Must pass in a ConnectionRecord object. Got {!r}'.format(record))
 
         # ensure that the manufacturer, model and serial match
         for item in ('manufacturer', 'model', 'serial'):
@@ -478,9 +559,9 @@ class ConnectionRecord(Record):
 
     __slots__ = ('address', 'backend', 'interface', 'manufacturer', 'model', 'properties', 'serial')
 
-    _LF = ['\\n', "'\\n'", '"\\n"']
-    _CR = ['\\r', "'\\r'", '"\\r"']
-    _CRLF = ['\\r\\n', "'\\r\\n'", '"\\r\\n"']
+    _LF = ['\\n', "'\\n'", '"\\n"', "b'\\n'", b'\n', b'\\n', b"b'\\n'"]
+    _CR = ['\\r', "'\\r'", '"\\r"', "b'\\r'", b'\r', b'\\r', b"b'\\r'"]
+    _CRLF = ['\\r\\n', "'\\r\\n'", '"\\r\\n"', "b'\\r\\n'", b'\r\n', b'\\r\\n', b"b'\r\n'", b"b'\\r\\n'"]
 
     def __init__(self, address='', backend=Backend.MSL, interface=None, manufacturer='',
                  model='', serial='', **properties):
@@ -551,12 +632,40 @@ class ConnectionRecord(Record):
     def __str__(self):
         return 'ConnectionRecord<{}|{}|{}>'.format(self.manufacturer, self.model, self.serial)
 
+    def to_json(self):
+        """Convert this :class:`ConnectionRecord` to be JSON_ serializable.
+
+        .. _JSON: https://www.json.org/
+
+        Returns
+        -------
+        :class:`dict`
+            The :class:`ConnectionRecord` as a JSON_\\-serializable object.
+        """
+        props = dict()
+        for k, v in self.properties.items():
+            if isinstance(v, Enum):
+                props[k] = v.name
+            else:
+                try:
+                    json.dumps(v)
+                except TypeError:
+                    props[k] = repr(v)  # cannot be serialized
+                else:
+                    props[k] = v  # can be serialized
+
+        return {
+            'address': self.address,
+            'backend': self.backend.name,
+            'interface': self.interface.name,
+            'manufacturer': self.manufacturer,
+            'model': self.model,
+            'properties': props,
+            'serial': self.serial,
+        }
+
     def to_xml(self):
         """Convert this :class:`ConnectionRecord` to an XML :class:`~xml.etree.ElementTree.Element`.
-
-        Note
-        ----
-        All values of the :class:`ConnectionRecord` are converted to a :class:`str`.
 
         Returns
         -------
@@ -699,12 +808,23 @@ class MaintenanceRecord(Record):
     def __str__(self):
         return 'MaintenanceRecord<{}>'.format(self.date)
 
+    def to_json(self):
+        """Convert this :class:`MaintenanceRecord` to be JSON_ serializable.
+
+        .. _JSON: https://www.json.org/
+
+        Returns
+        -------
+        :class:`dict`
+            The :class:`MaintenanceRecord` as a JSON_\\-serializable object.
+        """
+        return {
+            'comment': self.comment,
+            'date': self.date.isoformat(),
+        }
+
     def to_xml(self):
         """Convert this :class:`MaintenanceRecord` to an XML :class:`~xml.etree.ElementTree.Element`.
-
-        Note
-        ----
-        All values of the :class:`MaintenanceRecord` are converted to a :class:`str`.
 
         Returns
         -------
@@ -785,11 +905,35 @@ class MeasurandRecord(Record):
     def __str__(self):
         return 'MeasurandRecord<{}>'.format(self.type)
 
+    def to_json(self):
+        """Convert this :class:`MeasurandRecord` to be JSON_ serializable.
+
+        .. _JSON: https://www.json.org/
+
+        Returns
+        -------
+        :class:`dict`
+            The :class:`MeasurandRecord` as a JSON_\\-serializable object.
+        """
+        return {
+            'calibration': self.calibration.to_json(),
+            'conditions': self.conditions.to_json(),
+            'type': self.type,
+            'unit': self.unit,
+        }
+
     def to_xml(self):
+        """Convert this :class:`MeasurandRecord` to an XML :class:`~xml.etree.ElementTree.Element`.
+
+        Returns
+        -------
+        :class:`~xml.etree.ElementTree.Element`
+            The :class:`MeasurandRecord` as a XML :class:`~xml.etree.ElementTree.Element`.
+        """
         root = Element('MeasurandRecord')
 
         for name in ('calibration', 'conditions'):
-            root.append(getattr(self, name).to_xml(root_name=name))
+            root.append(getattr(self, name).to_xml(tag=name))
 
         for name in ('type', 'unit'):
             element = Element(name)
@@ -814,7 +958,7 @@ class CalibrationRecord(Record):
         calibration_date : :class:`datetime.date`, :class:`datetime.datetime` or :class:`str`
             The date that the calibration was performed. If a :class:`str` then in the
             format ``'YYYY-MM-DD'``.
-        measurands : :class:`list` or :class:`tuple` of :class:`.MeasurandRecord`
+        measurands : :class:`list` of :class:`.MeasurandRecord`
             The quantities that were measured.
         report_date : :class:`datetime.date`, :class:`datetime.datetime` or :class:`str`
             The date that the report was issued. If a :class:`str` then in the
@@ -823,7 +967,14 @@ class CalibrationRecord(Record):
             The report number.
         """
         if measurands is None:
-            measurands = tuple()
+            measurands = []
+
+        measures = []
+        for m in measurands:
+            if isinstance(m, MeasurandRecord):
+                measures.append(m)
+            elif m and isinstance(m, dict):
+                measures.append(MeasurandRecord(**m))
 
         self.calibration_cycle = float(calibration_cycle)
         """:class:`float`: The number of years that can pass before the equipment must be re-calibrated."""
@@ -831,7 +982,7 @@ class CalibrationRecord(Record):
         self.calibration_date = convert_to_date(calibration_date)
         """:class:`datetime.date`: The date that the calibration was performed."""
 
-        self.measurands = RecordDict(OrderedDict((m.type, m) for m in measurands if isinstance(m, MeasurandRecord)))
+        self.measurands = RecordDict(OrderedDict((m.type, m) for m in measures))
         """:class:`.RecordDict`: The quantities that were measured."""
 
         self.report_date = convert_to_date(report_date)
@@ -866,12 +1017,26 @@ class CalibrationRecord(Record):
     def __str__(self):
         return 'CalibrationRecord<{}>'.format(self.report_number)
 
+    def to_json(self):
+        """Convert this :class:`CalibrationRecord` to be JSON_ serializable.
+
+        .. _JSON: https://www.json.org/
+
+        Returns
+        -------
+        :class:`dict`
+            The :class:`CalibrationRecord` as a JSON_\\-serializable object.
+        """
+        return {
+            'calibration_cycle': self.calibration_cycle,
+            'calibration_date': self.calibration_date.isoformat(),
+            'measurands': tuple(m.to_json() for m in self.measurands.values()),
+            'report_date': self.report_date.isoformat(),
+            'report_number': self.report_number
+        }
+
     def to_xml(self):
         """Convert this :class:`CalibrationRecord` to an XML :class:`~xml.etree.ElementTree.Element`.
-
-        Note
-        ----
-        All values of the :class:`CalibrationRecord` are converted to a :class:`str`.
 
         Returns
         -------

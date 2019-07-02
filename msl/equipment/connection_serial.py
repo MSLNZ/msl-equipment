@@ -201,12 +201,13 @@ class ConnectionSerial(ConnectionMessageBased):
         size : :class:`int`, optional
             The number of bytes to read. If `size` is :data:`None` then read until:
 
-            1. :attr:`.read_termination` characters are read
-               (only if :attr:`.read_termination` is not :data:`None`)
-            2. :attr:`.max_read_size` bytes have been read
+            1. :obj:`.read_termination` characters are read
+               (only if :obj:`.read_termination` is not :data:`None`)
+            2. :obj:`.max_read_size` bytes have been read
                (raises :exc:`~msl.equipment.exceptions.MSLConnectionError` if occurs)
             3. :exc:`~msl.equipment.exceptions.MSLTimeoutError` occurs
-               (only if :attr:`.timeout` is not :data:`None`)
+               (only if :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.timeout`
+               is not :data:`None`)
 
             This method will block until at least one of the above conditions is fulfilled.
 

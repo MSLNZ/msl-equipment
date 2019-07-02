@@ -105,11 +105,11 @@ For example, the following headers are valid (the :blue:`blue` text is what is i
   +----------------------------------------------------------------+
 
 * Whitespace is replaced by an underscore. For a *field* to be assigned to the
-  :attr:`~msl.equipment.record_types.EquipmentRecord.calibration_cycle` attribute the header can be written as:
+  :attr:`~msl.equipment.record_types.EquipmentRecord.is_operable` attribute the header can be written as:
 
-  +---------------------------------------+
-  | :blue:`Calibration cycle`, *in years* |
-  +---------------------------------------+
+  +--------------------------------------+
+  | :blue:`Is Operable`, *True or False* |
+  +--------------------------------------+
 
 * If the header does not contain any of the specific *field* names that are being searched for then the values
   in that column are silently ignored.

@@ -70,7 +70,7 @@ def test_exceptions():
                 address='SDK::invalid.dll', backend=Backend.MSL
             )
         ))
-    assert 'loadlib' in str(err)
+    assert str(err.value).startswith('Cannot find')
 
 
 def test_demo_mode():

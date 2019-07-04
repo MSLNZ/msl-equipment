@@ -32,7 +32,7 @@ Alternatively, using the `MSL Package Manager`_ run:
 
 Compatibility
 -------------
-**MSL-Equipment** is tested with Python 2.7, 3.4+. However, some of the resources_ might not work in your
+**MSL-Equipment** is tested with Python 2.7, 3.5+. However, some of the resources_ might not work in your
 application because the resource might depend on an external dependency (e.g., the SDK provided by a manufacturer)
 and this external dependency might not be available for your operating system.
 

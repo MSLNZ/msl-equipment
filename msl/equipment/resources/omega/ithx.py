@@ -42,8 +42,9 @@ class iTHX(ConnectionSocket):
         """
         super(iTHX, self).__init__(record)
         self.set_exception_class(OmegaError)
+        self.IS_W_OR_2 = record.model.upper() in ['ITHX-2', 'ITHX-W']
 
-    def temperature(self, probe=1, celsius=True):
+    def temperature(self, probe=1, celsius=True, nbytes=None):
         """Read the temperature.
 
         Parameters
@@ -52,6 +53,9 @@ class iTHX(ConnectionSocket):
             The probe number to read the temperature of (for iTHX's that contain multiple probes).
         celsius : class:`bool`, optional
             :data:`True` to return the temperature in celsius, :data:`False` for fahrenheit.
+        nbytes : class:`int`, optional
+            The number of bytes to read. If :data:`None` then read until the termination
+            character sequence.
 
         Returns
         -------
@@ -59,24 +63,27 @@ class iTHX(ConnectionSocket):
             The current temperature.
         """
         msg = 'TC' if celsius else 'TF'
-        return self._get(msg, probe)
+        return self._get(msg, probe, size=nbytes)
 
-    def humidity(self, probe=1):
+    def humidity(self, probe=1, nbytes=None):
         """Read the percent humidity.
 
         Parameters
         ----------
         probe : :class:`int`, optional
             The probe number to read the humidity of (for iTHX's that contain multiple probes).
+        nbytes : class:`int`, optional
+            The number of bytes to read. If :data:`None` then read until the termination
+            character sequence.
 
         Returns
         -------
         :class:`float` or :class:`tuple` of :class:`float`
             The current percent humidity.
         """
-        return self._get('H', probe)
+        return self._get('H', probe, size=nbytes)
 
-    def dewpoint(self, probe=1, celsius=True):
+    def dewpoint(self, probe=1, celsius=True, nbytes=None):
         """Read the dew point.
 
         Parameters
@@ -85,6 +92,9 @@ class iTHX(ConnectionSocket):
             The probe number to read the dew point of (for iTHX's that contain multiple probes).
         celsius : :class:`bool`, optional
             :data:`True` to return the dew point in celsius, :data:`False` for fahrenheit.
+        nbytes : class:`int`, optional
+            The number of bytes to read. If :data:`None` then read until the termination
+            character sequence.
 
         Returns
         -------
@@ -92,9 +102,9 @@ class iTHX(ConnectionSocket):
             The current dew point.
         """
         msg = 'D' if celsius else 'DF'
-        return self._get(msg, probe)
+        return self._get(msg, probe, size=nbytes)
 
-    def temperature_humidity(self, probe=1, celsius=True):
+    def temperature_humidity(self, probe=1, celsius=True, nbytes=None):
         """Read the temperature and the humidity.
 
         Parameters
@@ -103,6 +113,8 @@ class iTHX(ConnectionSocket):
             The probe number to read the temperature and humidity of (for iTHX's that contain multiple probes).
         celsius : :class:`bool`, optional
             :data:`True` to return the temperature in celsius, :data:`False` for fahrenheit.
+        nbytes : class:`int`, optional
+            The number of bytes to read. If :data:`None` then the default value is 13 bytes.
 
         Returns
         -------
@@ -111,13 +123,21 @@ class iTHX(ConnectionSocket):
         :class:`float`
             The current humidity.
         """
-        msg = 'B' if celsius else 'BF'
-        # since the returned bytes are of the form b'019.4\r,057.0\r'
-        # the _get method would stop reading bytes at the first instance of '\r'
-        # therefore, we will specify the number of bytes to read to get both values
-        return self._get(msg, probe, size=13)
+        if nbytes is None:
+            # since the returned bytes are of the form b'019.4\r,057.0\r'
+            # the _get method would stop reading bytes at the first instance of '\r'
+            # therefore, we will specify the number of bytes to read to get both values
+            nbytes = 13
 
-    def temperature_humidity_dewpoint(self, probe=1, celsius=True):
+        if self.IS_W_OR_2:
+            # iTHX-W and iTHX-2 do not support the 'B' command
+            n = nbytes//2
+            return self.temperature(probe=probe, celsius=celsius, nbytes=n), self.humidity(probe=probe, nbytes=n)
+
+        msg = 'B' if celsius else 'BF'
+        return self._get(msg, probe, size=nbytes)
+
+    def temperature_humidity_dewpoint(self, probe=1, celsius=True, nbytes=None):
         """Read the temperature, the humidity and the dew point.
 
         Parameters
@@ -127,6 +147,10 @@ class iTHX(ConnectionSocket):
             (for iTHX's that contain multiple probes).
         celsius : :class:`bool`, optional
             :data:`True` to return the temperature and dew point in celsius, :data:`False` for fahrenheit.
+        nbytes : class:`int`, optional
+            The number of bytes to read. If :data:`None` then read until the termination
+            character sequence. For example, if no termination is returned and each value is
+            represented by 6 bytes then specify `nbytes`=18 to get all 3 values.
 
         Returns
         -------
@@ -137,10 +161,12 @@ class iTHX(ConnectionSocket):
         :class:`float`
             The current dew point.
         """
-        t, h = self.temperature_humidity(probe=probe, celsius=celsius)
-        return t, h, self.dewpoint(probe=probe, celsius=celsius)
+        nth = None if nbytes is None else (nbytes*2)//3
+        nd = None if nbytes is None else nbytes//3
+        t, h = self.temperature_humidity(probe=probe, celsius=celsius, nbytes=nth)
+        return t, h, self.dewpoint(probe=probe, celsius=celsius, nbytes=nd)
 
-    def start_logging(self, path, wait=60, num_probes=1):
+    def start_logging(self, path, wait=60, nprobes=1, nbytes=None):
         """Start logging the temperature, humidity and dew point to the specified path.
 
         The information is logged to a SQLite_ database. To stop logging press ``CTRL+C``.
@@ -154,11 +180,15 @@ class iTHX(ConnectionSocket):
             with the default filename, ``model_serial.sqlite3``, is created/opened in this folder.
         wait : :class:`int`, optional
             The number of seconds to wait between each log.
-        num_probes : :class:`int`, optional
+        nprobes : :class:`int`, optional
             The number of probes that the iServer has (1 or 2).
+        nbytes : class:`int`, optional
+            The number of bytes to read. If :data:`None` then read until the termination
+            character sequence. For example, if no termination is used and each value is
+            represented by 6 bytes then specify `nbytes`=18 to get all three values.
         """
         if os.path.isdir(path):
-            filename=self.equipment_record.model + '_' + self.equipment_record.serial + '.sqlite3'
+            filename = self.equipment_record.model + '_' + self.equipment_record.serial + '.sqlite3'
             path = os.path.join(path, filename)
 
         db_timeout = 10.0
@@ -166,7 +196,7 @@ class iTHX(ConnectionSocket):
         db = sqlite3.connect(path, timeout=db_timeout)
         self.log_info('start logging to {}'.format(path))
 
-        if num_probes == 1:
+        if nprobes == 1:
             db.execute(
                 'CREATE TABLE IF NOT EXISTS data ('
                 'timestamp TIMESTAMP, '
@@ -174,7 +204,7 @@ class iTHX(ConnectionSocket):
                 'humidity FLOAT, '
                 'dewpoint FLOAT);'
             )
-        elif num_probes == 2:
+        elif nprobes == 2:
             db.execute(
                 'CREATE TABLE IF NOT EXISTS data ('
                 'timestamp TIMESTAMP, '
@@ -186,7 +216,7 @@ class iTHX(ConnectionSocket):
                 'dewpoint2 FLOAT);'
             )
         else:
-            raise ValueError('The number-of-probes value must be either 1 or 2. Got {}'.format(num_probes))
+            raise ValueError('The number-of-probes value must be either 1 or 2. Got {}'.format(nprobes))
 
         db.commit()
         db.close()
@@ -200,9 +230,9 @@ class iTHX(ConnectionSocket):
 
                 # get the values
                 try:
-                    data = self.temperature_humidity_dewpoint(probe=1, celsius=True)
-                    if num_probes == 2:
-                        data += self.temperature_humidity_dewpoint(probe=2, celsius=True)
+                    data = self.temperature_humidity_dewpoint(probe=1, celsius=True, nbytes=nbytes)
+                    if nprobes == 2:
+                        data += self.temperature_humidity_dewpoint(probe=2, celsius=True, nbytes=nbytes)
                         self.log_info(msg+'T1={:.1f} H1={:.1f} DP1={:.1f} T2={:.1f} H2={:.1f} DP2={:.1f}'.format(*data))
                     else:
                         self.log_info(msg+'T={:.1f} H={:.1f} DP={:.1f}'.format(*data))
@@ -221,7 +251,7 @@ class iTHX(ConnectionSocket):
                 # save the values to the database and then wait
                 try:
                     db = sqlite3.connect(path, timeout=db_timeout)
-                    if num_probes == 1:
+                    if nprobes == 1:
                         db.execute('INSERT INTO data VALUES (?, ?, ?, ?);', results)
                     else:
                         db.execute('INSERT INTO data VALUES (?, ?, ?, ?, ?, ?, ?);', results)

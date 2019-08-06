@@ -87,14 +87,23 @@ def fetch_init(key):
     return re.compile(r'{}\s*=\s*(.*)'.format(key)).search(init_text).group(1)[1:-1]
 
 
+tests_require = ['pytest-cov', 'nidaqmx', 'pyvisa>=1.6', 'pyvisa-py']
+
 install_requires = [
     'msl-loadlib',
-    'numpy',
     'pyserial>=3.0',
     'python-dateutil',
     'xlrd',
     'enum34;python_version<"3.4"',
 ]
+
+if sys.version_info[:2] == (2, 7):
+    install_requires = ['numpy<=1.16.4']
+    tests_require.append('pytest<=4.6.4')
+else:
+    install_requires = ['numpy']
+    tests_require.append('pytest')
+
 
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if testing else []
@@ -129,7 +138,7 @@ setup(
         'Topic :: Scientific/Engineering',
     ],
     setup_requires=sphinx + pytest_runner,
-    tests_require=['pytest-cov', 'pytest', 'nidaqmx', 'pyvisa>=1.6', 'pyvisa-py'],
+    tests_require=tests_require,
     install_requires=install_requires,
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),

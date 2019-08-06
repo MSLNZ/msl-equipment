@@ -129,7 +129,7 @@ setup(
         'Topic :: Scientific/Engineering',
     ],
     setup_requires=sphinx + pytest_runner,
-    tests_require=['pytest-cov', 'pytest', 'nidaqmx', 'pyvisa>=1.6', 'pyvisa-py'] + install_requires,
+    tests_require=['pytest-cov', 'pytest', 'nidaqmx', 'pyvisa>=1.6', 'pyvisa-py'],
     install_requires=install_requires,
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),

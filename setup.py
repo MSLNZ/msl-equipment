@@ -98,10 +98,10 @@ install_requires = [
 ]
 
 if sys.version_info[:2] == (2, 7):
-    install_requires = ['numpy<=1.16.4']
+    install_requires.append('numpy<=1.16.4')
     tests_require.append('pytest<=4.6.4')
 else:
-    install_requires = ['numpy']
+    install_requires.append('numpy')
     tests_require.append('pytest')
 
 

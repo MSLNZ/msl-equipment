@@ -14,6 +14,7 @@ if __name__ == '__main__':
     from pprint import pprint
 
     from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
+    from msl.equipment.resources.thorlabs import MotionControl
 
     # ensure that the Kinesis folder is available on PATH
     os.environ['PATH'] += os.pathsep + 'C:/Program Files/Thorlabs/Kinesis'
@@ -36,6 +37,9 @@ if __name__ == '__main__':
             position = motor.get_position()
             print('  at position {} [device units]'.format(position))
             message_type, message_id, _ = motor.wait_for_message()
+
+    # Build the device list before connecting to the Integrated Stepper Motor
+    MotionControl.build_device_list()
 
     # connect to the Integrated Stepper Motor
     motor = record.connect()

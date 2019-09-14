@@ -77,14 +77,13 @@ class BuildDocs(Command):
 
 def read(filename):
     with open(filename) as fp:
-        text = fp.read()
-    return text
+        return fp.read()
 
 
 def fetch_init(key):
     # open the __init__.py file to determine the value instead of importing the package to get the value
     init_text = read('msl/equipment/__init__.py')
-    return re.compile(r'{}\s*=\s*(.*)'.format(key)).search(init_text).group(1)[1:-1]
+    return re.search(r'{}\s*=\s*(.*)'.format(key), init_text).group(1)[1:-1]
 
 
 tests_require = ['pytest-cov', 'nidaqmx', 'pyvisa>=1.6', 'pyvisa-py']

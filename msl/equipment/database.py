@@ -8,10 +8,11 @@ import ast
 import json
 import codecs
 import logging
-import datetime
 from xml.etree import cElementTree
 
-import xlrd
+from msl.io import (
+    read_table_excel,
+)
 
 from . import constants
 from .record_types import (
@@ -29,7 +30,7 @@ logger = logging.getLogger(__name__)
 class Database(object):
 
     def __init__(self, path):
-        """Create :class:`.EquipmentRecord`'s and :class:`.ConnectionRecord`'s 
+        """Create :class:`.EquipmentRecord`'s and :class:`.ConnectionRecord`'s
         from :ref:`Databases <database>` that are specified in a :ref:`configuration_file`.
 
         This class should be accessed through the :meth:`~.config.Config.database` method
@@ -50,7 +51,8 @@ class Database(object):
             :ref:`equipment_database`.
         ValueError
             If an :attr:`~.EquipmentRecord.alias` has been specified multiple times
-            for the same :class:`~.EquipmentRecord`.
+            for the same :class:`~.EquipmentRecord` or if the name of the Sheet in an Excel
+            spreadsheet is invalid.
         """
         logger.debug('Loading databases from {!r}'.format(path))
 
@@ -85,11 +87,13 @@ class Database(object):
                         for name in easy_names:
                             kwargs[name] = row[index_map[name]]
                         kwargs['properties'] = {}
-                        for item in row[index_map['properties']].split(';'):
-                            s = item.split('=')
-                            if len(s) != 2:
-                                continue
-                            kwargs['properties'][s[0].strip()] = string_to_none_bool_int_float_complex(s[1].strip())
+                        props = row[index_map['properties']]
+                        if props:
+                            for item in props.split(';'):
+                                s = item.split('=')
+                                if len(s) != 2:
+                                    continue
+                                kwargs['properties'][s[0].strip()] = string_to_none_bool_int_float_complex(s[1].strip())
                         self._connection_records[key] = ConnectionRecord(**kwargs)
                 elif isinstance(data, dict):  # loaded a json or xml file
                     for record in data['connection_records']:
@@ -352,32 +356,35 @@ class Database(object):
         """Read the allowed database file types."""
         path = element.findtext('path')
         if path is None:
-            raise IOError('You must create a <path> </path> element in {} '
+            raise IOError('You must create a <path> </path> element in {!r} '
                           'specifying where to find the database'.format(self._config_path))
 
         if not os.path.isfile(path):
             # check if the path is a relative path (relative to the XML file path)
             path = os.path.join(os.path.dirname(self._config_path), path)
             if not os.path.isfile(path):
-                raise IOError('Cannot find the database ' + path)
+                raise IOError('Cannot find the database {!r}'.format(path))
 
+        logger.debug('Reading database file {!r}'.format(path))
         ext = os.path.splitext(path)[1].lower()
         if ext in ('.xls', '.xlsx'):
-            return self._read_excel(path, element.findtext('sheet'), element.attrib.get('encoding', None))
+            dset = read_table_excel(path, sheet=element.findtext('sheet'), encoding=element.attrib.get('encoding'))
+            if dset.ndim == 1:
+                return dset.metadata.header, [dset.data]
+            return dset.metadata.header, dset.data
         elif ext in ('.csv', '.txt'):
             delimiter = ',' if ext == '.csv' else '\t'
-            return self._read_text_based(path, delimiter, element.attrib.get('encoding', 'utf-8'))
+            with codecs.open(path, mode='r', encoding=element.attrib.get('encoding', 'utf-8')) as fp:
+                header = [val for val in fp.readline().split(delimiter)]
+                rows = [[val.strip() for val in line.split(delimiter)] for line in fp.readlines() if line.strip()]
+            return header, rows
         elif ext == '.json':
-            return self._read_json(path)
+            with codecs.open(path, mode='r', encoding=element.attrib.get('encoding', 'utf-8')) as fp:
+                return json.load(fp)
         elif ext == '.xml':
             return self._read_xml(path)
         else:
-            raise IOError('Unsupported equipment-registry database format ' + path)
-
-    def _read_json(self, path):
-        with open(path, 'r') as fp:
-            data = json.load(fp)
-        return data
+            raise IOError('Unsupported equipment-registry database file {!r}'.format(path))
 
     def _read_xml(self, path):
         """Read an XML database."""
@@ -449,60 +456,6 @@ class Database(object):
 
         return _dict
 
-    def _read_excel(self, path, sheet_name, encoding):
-        """Read an Excel database file"""
-        self._book = xlrd.open_workbook(path, on_demand=True, encoding_override=encoding)
-
-        if sheet_name is None:
-            names = self._book.sheet_names()
-            if len(names) > 1:
-                msg = 'Cannot read the equipment register.\n' \
-                      'More than one Sheet is available in {dbase}\n' \
-                      'You must create a <sheet></sheet> element in {config}\n' \
-                      'The text between the "sheet" tag must be one of: {sheets}\n' \
-                      'For example,\n\t<path>{dbase}</path>\n\t<sheet>{first}</sheet>' \
-                    .format(dbase=path, config=self._config_path, sheets=', '.join(names), first=names[0])
-                raise IOError(msg)
-            else:
-                sheet_name = names[0]
-
-        try:
-            sheet = self._book.sheet_by_name(sheet_name)
-        except xlrd.XLRDError:
-            sheet = None
-
-        if sheet is None:
-            raise IOError('There is no Sheet named {!r} in {}'.format(sheet_name, path))
-
-        header = [val for val in sheet.row_values(0)]
-        rows = [[self._cell_convert(sheet.cell(r, c)) for c in range(sheet.ncols)] for r in range(1, sheet.nrows)]
-        logger.debug('Loading Sheet <{}> in {!r}'.format(sheet_name, path))
-        return header, rows
-
-    def _cell_convert(self, cell):
-        """Convert an Excel cell to the appropriate value and data type"""
-        t = cell.ctype
-        if t == xlrd.XL_CELL_NUMBER or t == xlrd.XL_CELL_BOOLEAN:
-            if int(cell.value) == cell.value:
-                return '{}'.format(int(cell.value))
-            else:
-                return '{}'.format(cell.value)
-        elif t == xlrd.XL_CELL_DATE:
-            date = xlrd.xldate_as_tuple(cell.value, self._book.datemode)
-            return datetime.date(date[0], date[1], date[2])
-        elif t == xlrd.XL_CELL_ERROR:
-            return xlrd.error_text_from_code[cell.value]
-        else:
-            return cell.value.strip()
-
-    def _read_text_based(self, path, delimiter, encoding):
-        """Read a text-based database file"""
-        with codecs.open(path, 'r', encoding) as fp:
-            header = [val for val in fp.readline().split(delimiter)]
-            rows = [[val.strip() for val in line.split(delimiter)] for line in fp.readlines() if line.strip()]
-        logger.debug('Loading database ' + path)
-        return header, rows
-
     def _make_index_map(self, header, field_names):
         """Determine the column index in the header that the field_names are located in"""
         index_map = {}
@@ -543,7 +496,7 @@ class Database(object):
     def _is_row_length_okay(self, row, header):
         """Check if the row and the header have the same length"""
         if not len(row) == len(header):
-            logger.error('len(row) [{}] != len(header) [{}] -> row={}'.format(len(row), len(header), row))
+            logger.error('len(row) [{}] != len(header) [{}] -> row: {}'.format(len(row), len(header), row))
             return False
         return True
 

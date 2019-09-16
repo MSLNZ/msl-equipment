@@ -29,7 +29,7 @@ def test_database_io_errors():
     # more than 1 Sheet in the Excel database
     with pytest.raises(IOError) as err:
         Config(os.path.join(ROOT_DIR, 'db_err3.xml')).database()
-    assert 'Sheet' in str(err.value)
+    assert 'sheets:\n  Equipment, Connections' in str(err.value)
 
     # the 'equipment' item in the xml file is not a valid Equipment Record
     with pytest.raises(AttributeError) as err:
@@ -47,9 +47,9 @@ def test_database_io_errors():
     assert 'aliases' in str(err.value)
 
     # invalid Sheet name in Excel database
-    with pytest.raises(IOError) as err:
+    with pytest.raises(ValueError) as err:
         Config(os.path.join(ROOT_DIR, 'db_err7.xml')).database()
-    assert 'Sheet' in str(err.value)
+    assert 'There is no sheet named \'Equipment\'' in str(err.value)
 
 
 def test_database():

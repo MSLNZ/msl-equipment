@@ -9,8 +9,8 @@ sphinx_rtd_theme
 
 # MSL-Equipment dependencies
 msl-loadlib
+https://github.com/MSLNZ/msl-io/archive/master.tar.gz
 enum34 ; python_version < '3.4'
-xlrd
 pyvisa>=1.6
 pyvisa-py
 numpy

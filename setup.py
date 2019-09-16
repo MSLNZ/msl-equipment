@@ -90,9 +90,9 @@ tests_require = ['pytest-cov', 'nidaqmx', 'pyvisa>=1.6', 'pyvisa-py']
 
 install_requires = [
     'msl-loadlib',
+    'msl-io @ https://github.com/MSLNZ/msl-io/archive/master.tar.gz',
     'pyserial>=3.0',
     'python-dateutil',
-    'xlrd',
     'enum34;python_version<"3.4"',
 ]
 

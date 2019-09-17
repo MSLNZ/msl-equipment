@@ -222,6 +222,7 @@ intersphinx_mapping = {
     'pyvisa': ('https://pyvisa.readthedocs.io/en/stable/', None),
     'pyserial': ('https://pyserial.readthedocs.io/en/stable/', None),
     'nidaqmx': ('https://nidaqmx-python.readthedocs.io/en/stable/', None),
+    'msl.io': ('https://msl-io.readthedocs.io/en/latest/', None),  # TODO replace latest with stable after releasing
 }
 
 # warn about all broken links

@@ -143,14 +143,13 @@ class iTHX(ConnectionSocket):
         Parameters
         ----------
         probe : :class:`int`, optional
-            The probe number to read the temperature, humidity and dew point of
-            (for iTHX's that contain multiple probes).
+            The probe number to read the temperature, humidity and dew point (for iTHX's that contain multiple probes).
         celsius : :class:`bool`, optional
-            :data:`True` to return the temperature and dew point in celsius, :data:`False` for fahrenheit.
-        nbytes : class:`int`, optional
+            If :data:`True` then return the temperature and dew point in celsius, :data:`False` for fahrenheit.
+        nbytes : :class:`int`, optional
             The number of bytes to read. If :data:`None` then read until the termination
             character sequence. For example, if no termination is returned and each value is
-            represented by 6 bytes then specify `nbytes`=18 to get all 3 values.
+            represented by 6 bytes then specify ``nbytes=18`` to get all 3 values.
 
         Returns
         -------
@@ -182,10 +181,10 @@ class iTHX(ConnectionSocket):
             The number of seconds to wait between each log.
         nprobes : :class:`int`, optional
             The number of probes that the iServer has (1 or 2).
-        nbytes : class:`int`, optional
+        nbytes : :class:`int`, optional
             The number of bytes to read. If :data:`None` then read until the termination
             character sequence. For example, if no termination is used and each value is
-            represented by 6 bytes then specify `nbytes`=18 to get all three values.
+            represented by 6 bytes then specify ``nbytes=18`` to get all three values.
         """
         if os.path.isdir(path):
             filename = self.equipment_record.model + '_' + self.equipment_record.serial + '.sqlite3'

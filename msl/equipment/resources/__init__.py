@@ -17,28 +17,30 @@ _registry = []
 class _Resource(object):
 
     def __init__(self, manufacturer, model, flags, cls):
-        self.manufacturer = re.compile(manufacturer, flags)
-        self.model = re.compile(model, flags)
+        self.manufacturer = re.compile(manufacturer, flags=flags) if manufacturer else None
+        self.model = re.compile(model, flags=flags) if model else None
         self.cls = cls
 
     def is_match(self, record, name):
         if name is not None:
             return self.cls.__name__ == name
-        if not self.manufacturer or not self.model:
+        if self.manufacturer is None and self.model is None:
             return False
-        if not self.manufacturer.search(record.manufacturer):
+        if self.manufacturer and not self.manufacturer.search(record.manufacturer):
             return False
-        return self.model.search(record.model)
+        if self.model and not self.model.search(record.model):
+            return False
+        return True
 
 
-def register(manufacturer, model, flags=0):
+def register(manufacturer=None, model=None, flags=0):
     """Use as a decorator to register a resource class.
 
     Parameters
     ----------
-    manufacturer : :class:`str`
+    manufacturer : :class:`str`, optional
         The name of the manufacturer. Can be a regex pattern.
-    model : :class:`str`
+    model : :class:`str`, optional
         The model number of the equipment. Can be a regex pattern.
     flags : :class:`int`, optional
         The flags to use for the regex pattern.

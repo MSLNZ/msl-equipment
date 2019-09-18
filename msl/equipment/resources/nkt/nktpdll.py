@@ -2533,6 +2533,7 @@ class DeviceStatusTypes(IntEnum):
     DeviceFwVerChanged = 8         # devData contains a zero terminated string with Firmware version.
     DeviceModuleSerialChanged = 9  # devData contains a zero terminated string with Module serial number.
     DevicePCBSerialChanged = 10    # devData contains a zero terminated string with PCB serial number.
+    DeviceSysTypeChanged = 11      # devData contains 1 unsigned byte with SystemType (system type).
 
 
 class ParamSetUnitTypes(IntEnum):

@@ -23,10 +23,196 @@ else:
     _PATH = 'NKTPDLL.dll'
 
 
-@register(manufacturer=r'^NKT', model=r'.')
+PortStatusCallback = CFUNCTYPE(None, c_char_p, c_ubyte, c_ubyte, c_ubyte, c_ubyte)
+"""Use as a decorator for a callback function when a port status changes."""
+
+DeviceStatusCallback = CFUNCTYPE(None, c_char_p, c_ubyte, c_ubyte, c_ubyte, c_void_p)
+"""Use as a decorator for a callback function when a device status changes."""
+
+RegisterStatusCallback = CFUNCTYPE(None, c_char_p, c_ubyte, c_ubyte, c_ubyte, c_ubyte, c_ubyte, c_void_p)
+"""Use as a decorator for a callback function when a register status changes."""
+
+
+class DateTimeType(Structure):
+    """The DateTimeType struct (24 hour format)."""
+    _pack_ = 1
+    _fields_ = [
+        ('Sec', c_uint8),   # Seconds
+        ('Min', c_uint8),   # Minutes
+        ('Hour', c_uint8),  # Hours
+        ('Day', c_uint8),   # Days
+        ('Month', c_uint8), # Months
+        ('Year', c_uint8),  # Years
+    ]
+
+
+class ParameterSetType(Structure):
+    """The ParameterSet struct.
+
+    This is how calculation on parameter sets is done internally by modules:
+
+    DAC_value = (value * (X/Y)) + Offset
+
+    where, value is either ParameterSetType::StartVal or ParameterSetType::FactoryVal
+
+    value = (ADC_value * (X/Y)) + Offset
+
+    where, value often is available via another measurement register.
+    """
+    _pack_ = 1
+    _fields_ = [
+        ('Unit', c_uint8),          # Unit type as defined in tParamSetUnitTypes
+        ('ErrorHandler', c_uint8),  # Warning/Error handler not used
+        ('StartVal', c_ushort),     # Setpoint for Settings parameter set, unused in Measurement parameter sets
+        ('FactoryVal', c_ushort),   # Factory Setpoint for Settings parameter set, unused in Measurement parameter sets
+        ('ULimit', c_ushort),       # Upper limit
+        ('LLimit', c_ushort),       # Lower limit
+        ('Numerator', c_short),     # Numerator(X) for calculation
+        ('Denominator', c_short),   # Denominator(Y) for calculation
+        ('Offset', c_short)         # Offset for calculation
+    ]
+
+
+class DeviceModeTypes(IntEnum):
+    """The DeviceModeTypes enum."""
+    DevModeDisabled = 0     # The device is disabled. Not being polled and serviced.
+    DevModeAnalyzeInit = 1  # The analyze cycle has been started for the device.
+    DevModeAnalyze = 2      # The analyze cycle is in progress. All default registers being read to determine its state.
+    DevModeNormal = 3       # The analyze cycle has completed and the device is ready.
+    DevModeLogDownload = 4  # A log is being downloaded from the device.
+    DevModeError = 5        # The device is in an error state.
+    DevModeTimeout = 6      # The connection to the device has been lost.
+    DevModeUpload = 7       # The device is in upload mode and can not be used normally.
+
+
+class DeviceStatusTypes(IntEnum):
+    """The DeviceStatusTypes enum."""
+    DeviceModeChanged = 0          # devData contains 1 unsigned byte DeviceModeTypes
+    DeviceLiveChanged = 1          # devData contains 1 unsigned byte, 0=live off, 1=live on.
+    DeviceTypeChanged = 2          # devData contains 1 unsigned byte with DeviceType (module type).
+    DevicePartNumberChanged = 3    # devData contains a zero terminated string with part number.
+    DevicePCBVersionChanged = 4    # devData contains 1 unsigned byte with PCB version number.
+    DeviceStatusBitsChanged = 5    # devData contains 1 unsigned long with status bits.
+    DeviceErrorCodeChanged = 6     # devData contains 1 unsigned short with error code.
+    DeviceBlVerChanged = 7         # devData contains a zero terminated string with Bootloader version.
+    DeviceFwVerChanged = 8         # devData contains a zero terminated string with Firmware version.
+    DeviceModuleSerialChanged = 9  # devData contains a zero terminated string with Module serial number.
+    DevicePCBSerialChanged = 10    # devData contains a zero terminated string with PCB serial number.
+    DeviceSysTypeChanged = 11      # devData contains 1 unsigned byte with SystemType (system type).
+
+
+class ParamSetUnitTypes(IntEnum):
+    """The ParamSetUnitTypes enum"""
+    UnitNone = 0       # none/unknown
+    UnitmV = 1         # mV
+    UnitV = 2          # V
+    UnituA = 3         # uA
+    UnitmA = 4         # mA
+    UnitA = 5          # A
+    UnituW = 6         # uW
+    UnitcmW = 7        # mW/100
+    UnitdmW = 8        # mW/10
+    UnitmW = 9         # mW
+    UnitW = 10         # W
+    UnitmC = 11        # degC/1000
+    UnitcC = 12        # degC/100
+    UnitdC = 13        # degC/10
+    Unitpm = 14        # pm
+    Unitdnm = 15       # nm/10
+    Unitnm = 16        # nm
+    UnitPerCent = 17   # Percent
+    UnitPerMille = 18  # Per mile
+    UnitcmA = 19       # mA/100
+    UnitdmA = 20       # mA/10
+    UnitRPM = 21       # RPM
+    UnitdBm = 22       # dBm
+    UnitcBm = 23       # dBm/10
+    UnitmBm = 24       # dBm/100
+    UnitdB = 25        # dB
+    UnitcB = 26        # dB/10
+    UnitmB = 27        # dB/100
+    Unitdpm = 28       # pm/10
+    UnitcV = 29        # V/100
+    UnitdV = 30        # V/10
+    Unitlm = 31        # lm (lumen)
+    Unitdlm = 32       # lm/10
+    Unitclm = 33       # lm/100
+    Unitmlm = 34       # lm/1000
+
+
+class RegisterPriorityTypes(IntEnum):
+    """The RegisterPriorityTypes enum."""
+    RegPriority_Low = 0    # The register is polled with low priority.
+    RegPriority_High = 1   # The register is polled with high priority.
+
+
+class RegisterDataTypes(IntEnum):
+    """The RegisterDataTypes enum."""
+    RegData_Unknown = 0    # Unknown/Undefined data type.
+    RegData_Mixed = 1      # Mixed content data type.
+    RegData_U8 = 2         # 8 bit unsigned data type (unsigned char).
+    RegData_S8 = 3         # 8 bit signed data type (char).
+    RegData_U16 = 4        # 16 bit unsigned data type (unsigned short).
+    RegData_S16 = 5        # 16 bit signed data type (short).
+    RegData_U32 = 6        # 32 bit unsigned data type (unsigned long).
+    RegData_S32 = 7        # 32 bit signed data type (long).
+    RegData_F32 = 8        # 32 bit floating point data type (float).
+    RegData_U64 = 9        # 64 bit unsigned data type (unsigned long long).
+    RegData_S64 = 10       # 64 bit signed data type (long long).
+    RegData_F64 = 11       # 64 bit floating point data type (double).
+    RegData_Ascii = 12     # Zero terminated ascii string data type.
+    RegData_Paramset = 13  # Parameterset data type. ::ParameterSetType
+    RegData_B8 = 14        # 8 bit binary data type (unsigned char).
+    RegData_H8 = 15        # 8 bit hexadecimal data type (unsigned char).
+    RegData_B16 = 16       # 16 bit binary data type (unsigned short).
+    RegData_H16 = 17       # 16 bit hexadecimal data type (unsigned short).
+    RegData_B32 = 18       # 32 bit binary data type (unsigned long).
+    RegData_H32 = 19       # 32 bit hexadecimal data type (unsigned long).
+    RegData_B64 = 20       # 64 bit binary data type (unsigned long long).
+    RegData_H64 = 21       # 64 bit hexadecimal data type (unsigned long long).
+    RegData_DateTime = 22  # Datetime data type. ::DateTimeType
+
+
+class RegisterStatusTypes(IntEnum):
+    """The RegisterStatusTypes enum."""
+    RegSuccess = 0     # Register operation was successful.
+    RegBusy = 1        # Register operation resulted in a busy.
+    RegNacked = 2      # Register operation resulted in a nack, seems to be non existing register.
+    RegCRCErr = 3      # Register operation resulted in a CRC error.
+    RegTimeout = 4     # Register operation resulted in a timeout.
+    RegComError = 5    # Register operation resulted in a COM error. Out of sync. or garbage error.
+
+
+class PortStatusTypes(IntEnum):
+    """The PortStatusTypes enum"""
+    PortStatusUnknown = 0     # Unknown status.
+    PortOpening = 1           # The port is opening.
+    PortOpened = 2            # The port is now open.
+    PortOpenFail = 3          # The port open failed.
+    PortScanStarted = 4       # The port scanning is started.
+    PortScanProgress = 5      # The port scanning progress.
+    PortScanDeviceFound = 6   # The port scan found a device.
+    PortScanEnded = 7         # The port scanning ended.
+    PortClosing = 8           # The port is closing.
+    PortClosed = 9            # The port is now closed.
+    PortReady = 10            # The port is open and ready.
+
+
+@register(manufacturer=r'^NKT')
 class NKT(Connection):
 
     _SDK = None
+
+    RegisterStatusCallback = RegisterStatusCallback
+    PortStatusCallback = PortStatusCallback
+    DeviceStatusCallback = DeviceStatusCallback
+    DeviceModeTypes = DeviceModeTypes
+    DeviceStatusTypes = DeviceStatusTypes
+    ParamSetUnitTypes = ParamSetUnitTypes
+    RegisterPriorityTypes = RegisterPriorityTypes
+    RegisterDataTypes = RegisterDataTypes
+    RegisterStatusTypes = RegisterStatusTypes
+    PortStatusTypes = PortStatusTypes
 
     def __init__(self, record):
         """Wrapper around the ``NKTPDLL.dll`` SDK from NKT Photonics.
@@ -2365,15 +2551,17 @@ class NKT(Connection):
         --------
         .. code-block:: python
 
-            from msl.equipment.resources.nkt import NKT, DeviceStatusCallback
+            from ctypes import c_ubyte
+            from msl.equipment.resources.nkt import NKT
 
-            @DeviceStatusCallback
-            def device_callback(port, dev_id, status, data_length, data):
-                print('The name of the port is %s' % port)
-                print('The device ID is %d' % dev_id)
-                print('The device status is %r' % NKT.DeviceStatusTypes(status))
-                print('data contains %d bytes' % data_length)
-                print('device data as specified in status %r' % data)
+            @NKT.DeviceStatusCallback
+            def device_callback(port, dev_id, status, length, address):
+                # 'address' is an integer and represents the address of c_void_p from the callback
+                data = bytearray((c_ubyte * length).from_address(address)[:])
+                print('The port is {!r}'.format(port))
+                print('The device ID is {}'.format(dev_id))
+                print('The device status is {!r}'.format(NKT.DeviceStatusTypes(status)))
+                print('The device data is {!r}'.format(data))
 
             NKT.set_callback_device_status(device_callback)
         """
@@ -2403,15 +2591,15 @@ class NKT(Connection):
         --------
         .. code-block:: python
 
-            from msl.equipment.resources.nkt import NKT, PortStatusCallback
+            from msl.equipment.resources.nkt import NKT
 
-            @PortStatusCallback
-            def port_callback(port, status, address, total, device):
-                print('The name of the port is %s' % port)
-                print('The port status is %r' % NKT.PortStatusTypes(status))
-                print('Current scanned address or device found address is %d' % address)
-                print('There are %d addresses to scan in total' % total)
-                print('Found device with type %r' % device)
+            @NKT.PortStatusCallback
+            def port_callback(port, status, cur_scan, max_scan, device):
+                print('The port is {!r}'.format(port))
+                print('The port status is {!r}'.format(NKT.PortStatusTypes(status)))
+                print('Current scanned address or device found address is {}'.format(cur_scan))
+                print('There are {} addresses to scan in total'.format(max_scan))
+                print('Found device with type {}'.format(device))
 
             NKT.set_callback_port_status(port_callback)
         """
@@ -2439,198 +2627,25 @@ class NKT(Connection):
         --------
         .. code-block:: python
 
-            from msl.equipment.resources.nkt import NKT, RegisterStatusCallback
+            from ctypes import c_ubyte
+            from msl.equipment.resources.nkt import NKT
 
-            @RegisterStatusCallback
-            def register_callback(port, dev_id, reg_id, reg_status, reg_type, data_length, data):
-                print('The name of the port is %s' % port)
-                print('The device ID is %d' % dev_id)
-                print('The register ID is %d' % reg_id)
-                print('The register status is %r' % NKT.RegisterStatusTypes(reg_status))
-                print('The register type is %r' % NKT.RegisterDataTypes(reg_type))
-                print('data contains %d bytes' % data_length)
-                print('register data %r' % data)
+            @NKT.RegisterStatusCallback
+            def register_callback(port, dev_id, reg_id, reg_status, reg_type, length, address):
+                # 'address' is an integer and represents the address of c_void_p from the callback
+                data = bytearray((c_ubyte * length).from_address(address)[:])
+                print('The port is {!r}'.format(port))
+                print('The device ID is {}'.format(dev_id))
+                print('The register ID is {}'.format(reg_id))
+                print('The register status is {!r}'.format(NKT.RegisterStatusTypes(reg_status)))
+                print('The register type is {!r}'.format(NKT.RegisterDataTypes(reg_type)))
+                print('The register data is {!r}'.format(data))
 
             NKT.set_callback_register_status(register_callback)
         """
         if callback is not None and not isinstance(callback, RegisterStatusCallback):
             raise TypeError('Must pass in a RegisterStatusCallback object')
         NKT._SDK.setCallbackPtrRegisterInfo(callback)
-
-
-PortStatusCallback = CFUNCTYPE(None, c_char_p, c_ubyte, c_ubyte, c_ubyte, c_ubyte)
-"""Use as a decorator for a callback function when a port status changes."""
-
-DeviceStatusCallback = CFUNCTYPE(None, c_char_p, c_ubyte, c_ubyte, c_ubyte, c_void_p)
-"""Use as a decorator for a callback function when a device status changes."""
-
-RegisterStatusCallback = CFUNCTYPE(None, c_char_p, c_ubyte, c_ubyte, c_ubyte, c_ubyte, c_ubyte, c_void_p)
-"""Use as a decorator for a callback function when a register status changes."""
-
-
-class DateTimeType(Structure):
-    """The DateTimeType struct (24 hour format)."""
-    _pack_ = 1
-    _fields_ = [
-        ('Sec', c_uint8),   # Seconds
-        ('Min', c_uint8),   # Minutes
-        ('Hour', c_uint8),  # Hours
-        ('Day', c_uint8),   # Days
-        ('Month', c_uint8), # Months
-        ('Year', c_uint8),  # Years
-    ]
-
-
-class ParameterSetType(Structure):
-    """The ParameterSet struct.
-
-    This is how calculation on parameter sets is done internally by modules:
-
-    DAC_value = (value * (X/Y)) + Offset
-
-    where, value is either ParameterSetType::StartVal or ParameterSetType::FactoryVal
-
-    value = (ADC_value * (X/Y)) + Offset
-
-    where, value often is available via another measurement register.
-    """
-    _pack_ = 1
-    _fields_ = [
-        ('Unit', c_uint8),          # Unit type as defined in tParamSetUnitTypes
-        ('ErrorHandler', c_uint8),  # Warning/Error handler not used
-        ('StartVal', c_ushort),     # Setpoint for Settings parameter set, unused in Measurement parameter sets
-        ('FactoryVal', c_ushort),   # Factory Setpoint for Settings parameter set, unused in Measurement parameter sets
-        ('ULimit', c_ushort),       # Upper limit
-        ('LLimit', c_ushort),       # Lower limit
-        ('Numerator', c_short),     # Numerator(X) for calculation
-        ('Denominator', c_short),   # Denominator(Y) for calculation
-        ('Offset', c_short)         # Offset for calculation
-    ]
-
-
-class DeviceModeTypes(IntEnum):
-    """The DeviceModeTypes enum."""
-    DevModeDisabled = 0     # The device is disabled. Not being polled and serviced.
-    DevModeAnalyzeInit = 1  # The analyze cycle has been started for the device.
-    DevModeAnalyze = 2      # The analyze cycle is in progress. All default registers being read to determine its state.
-    DevModeNormal = 3       # The analyze cycle has completed and the device is ready.
-    DevModeLogDownload = 4  # A log is being downloaded from the device.
-    DevModeError = 5        # The device is in an error state.
-    DevModeTimeout = 6      # The connection to the device has been lost.
-    DevModeUpload = 7       # The device is in upload mode and can not be used normally.
-
-
-class DeviceStatusTypes(IntEnum):
-    """The DeviceStatusTypes enum."""
-    DeviceModeChanged = 0          # devData contains 1 unsigned byte DeviceModeTypes
-    DeviceLiveChanged = 1          # devData contains 1 unsigned byte, 0=live off, 1=live on.
-    DeviceTypeChanged = 2          # devData contains 1 unsigned byte with DeviceType (module type).
-    DevicePartNumberChanged = 3    # devData contains a zero terminated string with part number.
-    DevicePCBVersionChanged = 4    # devData contains 1 unsigned byte with PCB version number.
-    DeviceStatusBitsChanged = 5    # devData contains 1 unsigned long with status bits.
-    DeviceErrorCodeChanged = 6     # devData contains 1 unsigned short with error code.
-    DeviceBlVerChanged = 7         # devData contains a zero terminated string with Bootloader version.
-    DeviceFwVerChanged = 8         # devData contains a zero terminated string with Firmware version.
-    DeviceModuleSerialChanged = 9  # devData contains a zero terminated string with Module serial number.
-    DevicePCBSerialChanged = 10    # devData contains a zero terminated string with PCB serial number.
-    DeviceSysTypeChanged = 11      # devData contains 1 unsigned byte with SystemType (system type).
-
-
-class ParamSetUnitTypes(IntEnum):
-    """The ParamSetUnitTypes enum"""
-    UnitNone = 0       # none/unknown
-    UnitmV = 1         # mV
-    UnitV = 2          # V
-    UnituA = 3         # uA
-    UnitmA = 4         # mA
-    UnitA = 5          # A
-    UnituW = 6         # uW
-    UnitcmW = 7        # mW/100
-    UnitdmW = 8        # mW/10
-    UnitmW = 9         # mW
-    UnitW = 10         # W
-    UnitmC = 11        # degC/1000
-    UnitcC = 12        # degC/100
-    UnitdC = 13        # degC/10
-    Unitpm = 14        # pm
-    Unitdnm = 15       # nm/10
-    Unitnm = 16        # nm
-    UnitPerCent = 17   # Percent
-    UnitPerMille = 18  # Per mile
-    UnitcmA = 19       # mA/100
-    UnitdmA = 20       # mA/10
-    UnitRPM = 21       # RPM
-    UnitdBm = 22       # dBm
-    UnitcBm = 23       # dBm/10
-    UnitmBm = 24       # dBm/100
-    UnitdB = 25        # dB
-    UnitcB = 26        # dB/10
-    UnitmB = 27        # dB/100
-    Unitdpm = 28       # pm/10
-    UnitcV = 29        # V/100
-    UnitdV = 30        # V/10
-    Unitlm = 31        # lm (lumen)
-    Unitdlm = 32       # lm/10
-    Unitclm = 33       # lm/100
-    Unitmlm = 34       # lm/1000
-
-
-class RegisterPriorityTypes(IntEnum):
-    """The RegisterPriorityTypes enum."""
-    RegPriority_Low = 0    # The register is polled with low priority.
-    RegPriority_High = 1   # The register is polled with high priority.
-
-
-class RegisterDataTypes(IntEnum):
-    """The RegisterDataTypes enum."""
-    RegData_Unknown = 0    # Unknown/Undefined data type.
-    RegData_Mixed = 1      # Mixed content data type.
-    RegData_U8 = 2         # 8 bit unsigned data type (unsigned char).
-    RegData_S8 = 3         # 8 bit signed data type (char).
-    RegData_U16 = 4        # 16 bit unsigned data type (unsigned short).
-    RegData_S16 = 5        # 16 bit signed data type (short).
-    RegData_U32 = 6        # 32 bit unsigned data type (unsigned long).
-    RegData_S32 = 7        # 32 bit signed data type (long).
-    RegData_F32 = 8        # 32 bit floating point data type (float).
-    RegData_U64 = 9        # 64 bit unsigned data type (unsigned long long).
-    RegData_S64 = 10       # 64 bit signed data type (long long).
-    RegData_F64 = 11       # 64 bit floating point data type (double).
-    RegData_Ascii = 12     # Zero terminated ascii string data type.
-    RegData_Paramset = 13  # Parameterset data type. ::ParameterSetType
-    RegData_B8 = 14        # 8 bit binary data type (unsigned char).
-    RegData_H8 = 15        # 8 bit hexadecimal data type (unsigned char).
-    RegData_B16 = 16       # 16 bit binary data type (unsigned short).
-    RegData_H16 = 17       # 16 bit hexadecimal data type (unsigned short).
-    RegData_B32 = 18       # 32 bit binary data type (unsigned long).
-    RegData_H32 = 19       # 32 bit hexadecimal data type (unsigned long).
-    RegData_B64 = 20       # 64 bit binary data type (unsigned long long).
-    RegData_H64 = 21       # 64 bit hexadecimal data type (unsigned long long).
-    RegData_DateTime = 22  # Datetime data type. ::DateTimeType
-
-
-class RegisterStatusTypes(IntEnum):
-    """The RegisterStatusTypes enum."""
-    RegSuccess = 0     # Register operation was successful.
-    RegBusy = 1        # Register operation resulted in a busy.
-    RegNacked = 2      # Register operation resulted in a nack, seems to be non existing register.
-    RegCRCErr = 3      # Register operation resulted in a CRC error.
-    RegTimeout = 4     # Register operation resulted in a timeout.
-    RegComError = 5    # Register operation resulted in a COM error. Out of sync. or garbage error.
-
-
-class PortStatusTypes(IntEnum):
-    """The PortStatusTypes enum"""
-    PortStatusUnknown = 0     # Unknown status.
-    PortOpening = 1           # The port is opening.
-    PortOpened = 2            # The port is now open.
-    PortOpenFail = 3          # The port open failed.
-    PortScanStarted = 4       # The port scanning is started.
-    PortScanProgress = 5      # The port scanning progress.
-    PortScanDeviceFound = 6   # The port scan found a device.
-    PortScanEnded = 7         # The port scanning ended.
-    PortClosing = 8           # The port is closing.
-    PortClosed = 9            # The port is now closed.
-    PortReady = 10            # The port is open and ready.
 
 
 _port_errors = {

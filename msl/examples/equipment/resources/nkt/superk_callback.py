@@ -7,7 +7,7 @@ if __name__ == '__main__':
     from ctypes import c_ubyte
 
     from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
-    from msl.equipment.resources.nkt import NKT
+    from msl.equipment.resources import NKT
 
     @NKT.RegisterStatusCallback
     def register_callback(port, dev_id, reg_id, reg_status, reg_type, length, address):

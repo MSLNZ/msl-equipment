@@ -25,7 +25,7 @@ def _errcheck(result, func, arguments):
     return result
 
 
-@register(manufacturer=r'Princeton Instruments', model=r'.')
+@register(manufacturer=r'Princeton Instruments')
 class PrincetonInstruments(Connection):
 
     _SDK = None
@@ -50,7 +50,7 @@ class PrincetonInstruments(Connection):
         """
         self._mono_enum = None
         self._ncl_enum = None
-        self._filter_enum = None        
+        self._filter_enum = None
         super(PrincetonInstruments, self).__init__(record)
         self.set_exception_class(PrincetonInstrumentsError)
 

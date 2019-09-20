@@ -2552,7 +2552,7 @@ class NKT(Connection):
         .. code-block:: python
 
             from ctypes import c_ubyte
-            from msl.equipment.resources.nkt import NKT
+            from msl.equipment.resources import NKT
 
             @NKT.DeviceStatusCallback
             def device_callback(port, dev_id, status, length, address):
@@ -2591,7 +2591,7 @@ class NKT(Connection):
         --------
         .. code-block:: python
 
-            from msl.equipment.resources.nkt import NKT
+            from msl.equipment.resources import NKT
 
             @NKT.PortStatusCallback
             def port_callback(port, status, cur_scan, max_scan, device):
@@ -2628,7 +2628,7 @@ class NKT(Connection):
         .. code-block:: python
 
             from ctypes import c_ubyte
-            from msl.equipment.resources.nkt import NKT
+            from msl.equipment.resources import NKT
 
             @NKT.RegisterStatusCallback
             def register_callback(port, dev_id, reg_id, reg_status, reg_type, length, address):

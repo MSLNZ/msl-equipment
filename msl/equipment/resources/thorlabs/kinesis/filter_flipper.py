@@ -1,5 +1,5 @@
 """
-This module provides all the functionality required to control a 
+This module provides all the functionality required to control a
 Filter Flipper (MFF101, MFF102).
 """
 from ctypes import byref, c_int64
@@ -148,7 +148,7 @@ class FilterFlipper(MotionControl):
 
     def get_number_positions(self):
         """Get number of positions available from the device.
-        
+
         Returns
         -------
         :class:`int`
@@ -157,11 +157,11 @@ class FilterFlipper(MotionControl):
         return self.sdk.FF_GetNumberPositions(self._serial)
 
     def home(self):
-        """Home the device. 
-        
-        Homing the device will set the device to a known state and determine 
+        """Home the device.
+
+        Homing the device will set the device to a known state and determine
         the home position.
-        
+
         Raises
         ------
         :exc:`~msl.equipment.exceptions.ThorlabsError`
@@ -175,7 +175,7 @@ class FilterFlipper(MotionControl):
         Parameters
         ----------
         position : :class:`int`
-            The required position. Must be 1 or 2. 
+            The required position. Must be 1 or 2.
 
         Raises
         ------
@@ -185,18 +185,18 @@ class FilterFlipper(MotionControl):
         self.sdk.FF_MoveToPosition(self._serial, position)
 
     def get_position(self):
-        """Get the current position (index).
-        
+        """Get the current position.
+
         Returns
         -------
         :class:`int`
-            The current position, 1 or 2.
+            The position, 1 or 2 (can be 0 during a move).
         """
         return self.sdk.FF_GetPosition(self._serial)
 
     def get_io_settings(self):
         """Gets the I/O settings from filter flipper.
-        
+
         Returns
         -------
         :class:`~.structs.FF_IOSettings`
@@ -212,8 +212,8 @@ class FilterFlipper(MotionControl):
         return settings
 
     def request_io_settings(self):
-        """Requests the I/O settings from the filter flipper. 
-        
+        """Requests the I/O settings from the filter flipper.
+
         Raises
         ------
         :exc:`~msl.equipment.exceptions.ThorlabsError`
@@ -226,7 +226,7 @@ class FilterFlipper(MotionControl):
                         oper2=FF_IOModes.FF_ToggleOnPositiveEdge, sig2=FF_SignalModes.FF_OutputLevel, pw2=200):
         """
         Sets the settings on filter flipper.
-        
+
         Parameters
         ----------
         transit_time : :class:`int`, optional
@@ -236,13 +236,13 @@ class FilterFlipper(MotionControl):
         sig1 : :class:`~.enums.FF_SignalModes`, optional
             I/O 1 Signal Mode.
         pw1 : :class:`int`, optional
-            Digital I/O 1 pulse width in milliseconds. 
+            Digital I/O 1 pulse width in milliseconds.
         oper2 : :class:`~.enums.FF_IOModes`, optional
             I/O 2 Operating Mode.
         sig2 : :class:`~.enums.FF_SignalModes`, optional
             I/O 2 Signal Mode.
         pw2 : :class:`int`, optional
-            Digital I/O 2 pulse width in milliseconds. 
+            Digital I/O 2 pulse width in milliseconds.
 
         Raises
         ------
@@ -274,7 +274,7 @@ class FilterFlipper(MotionControl):
 
     def get_transit_time(self):
         """Gets the transit time.
-        
+
         Returns
         -------
         :class:`int`
@@ -284,7 +284,7 @@ class FilterFlipper(MotionControl):
 
     def set_transit_time(self, transit_time):
         """Sets the transit time.
-        
+
         Parameters
         ----------
         transit_time : :class:`int`
@@ -303,12 +303,12 @@ class FilterFlipper(MotionControl):
 
     def request_status(self):
         """Request status bits.
-        
+
         This needs to be called to get the device to send it's current status.
-        
-        This is called automatically if Polling is enabled for the device using 
+
+        This is called automatically if Polling is enabled for the device using
         :meth:`.start_polling`.
-        
+
         Raises
         ------
         :exc:`~msl.equipment.exceptions.ThorlabsError`
@@ -318,11 +318,11 @@ class FilterFlipper(MotionControl):
 
     def get_status_bits(self):
         """Get the current status bits.
-        
-        This returns the latest status bits received from the device. To get 
-        new status bits, use :meth:`.request_status` or use the polling 
+
+        This returns the latest status bits received from the device. To get
+        new status bits, use :meth:`.request_status` or use the polling
         function, :meth:`.start_polling`
-        
+
         Returns
         -------
         :class:`int`
@@ -332,9 +332,9 @@ class FilterFlipper(MotionControl):
 
     def start_polling(self, milliseconds):
         """Starts the internal polling loop.
-        
+
         This function continuously requests position and status messages.
-        
+
         Parameters
         ----------
         milliseconds : :class:`int`
@@ -349,7 +349,7 @@ class FilterFlipper(MotionControl):
 
     def polling_duration(self):
         """Gets the polling loop duration.
-        
+
         Returns
         -------
         :class:`int`
@@ -363,10 +363,10 @@ class FilterFlipper(MotionControl):
 
     def time_since_last_msg_received(self):
         """Gets the time, in milliseconds, since tha last message was received.
-        
-        This can be used to determine whether communications with the device is 
+
+        This can be used to determine whether communications with the device is
         still good.
-        
+
         Returns
         -------
         :class:`int`
@@ -378,10 +378,10 @@ class FilterFlipper(MotionControl):
 
     def enable_last_msg_timer(self, enable, msg_timeout=0):
         """Enables the last message monitoring timer.
-        
-        This can be used to determine whether communications with the device is 
+
+        This can be used to determine whether communications with the device is
         still good.
-        
+
         Parameters
         ----------
         enable : :class:`bool`
@@ -392,12 +392,12 @@ class FilterFlipper(MotionControl):
         self.sdk.FF_EnableLastMsgTimer(self._serial, enable, msg_timeout)
 
     def has_last_msg_timer_overrun(self):
-        """Queries if the time since the last message has exceeded the 
+        """Queries if the time since the last message has exceeded the
         ``lastMsgTimeout`` set by :meth:`.enable_last_msg_timer`.
-        
-        This can be used to determine whether communications with the device is 
+
+        This can be used to determine whether communications with the device is
         still good.
-        
+
         Returns
         -------
         :class:`bool`
@@ -409,10 +409,10 @@ class FilterFlipper(MotionControl):
 
     def request_settings(self):
         """Requests that all settings are downloaded from the device.
-        
-        This function requests that the device upload all it's settings to the 
+
+        This function requests that the device upload all it's settings to the
         DLL.
-        
+
         Raises
         ------
         :exc:`~msl.equipment.exceptions.ThorlabsError`
@@ -426,7 +426,7 @@ class FilterFlipper(MotionControl):
 
     def register_message_callback(self, callback):
         """Registers a callback on the message queue.
-        
+
         Parameters
         ----------
         callback : :class:`~msl.equipment.resources.thorlabs.kinesis.callbacks.MotionControlCallback`
@@ -436,17 +436,17 @@ class FilterFlipper(MotionControl):
 
     def message_queue_size(self):
         """Gets the size of the message queue.
-        
+
         Returns
         -------
         :class:`int`
-            The number of messages in the queue.        
+            The number of messages in the queue.
         """
         return self.sdk.FF_MessageQueueSize(self._serial)
 
     def get_next_message(self):
         """Get the next Message Queue item. See :mod:`.messages`.
-        
+
         Returns
         -------
         :class:`int`
@@ -454,7 +454,7 @@ class FilterFlipper(MotionControl):
         :class:`int`
             The message ID.
         :class:`int`
-            The message data.        
+            The message data.
 
         Raises
         ------
@@ -469,7 +469,7 @@ class FilterFlipper(MotionControl):
 
     def wait_for_message(self):
         """Wait for next Message Queue item. See :mod:`.messages`.
-        
+
         Returns
         -------
         :class:`int`

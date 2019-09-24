@@ -19,7 +19,7 @@ _motion_control_device_manager = None
 
 def device_manager():
     """Returns a reference to the DeviceManager library.
-    
+
     The ``Thorlabs.MotionControl.DeviceManager.dll`` library must be available on
     :data:`os.environ['PATH'] <os.environ>`.
 
@@ -86,13 +86,13 @@ class MotionControl(ConnectionSDK):
         ----------
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
             A record from an :ref:`equipment_database`.
-        api_function : :mod:`.api_functions` 
-            An API function list from :mod:`.api_functions` that the subclass 
+        api_function : :mod:`.api_functions`
+            An API function list from :mod:`.api_functions` that the subclass
             is a wrapper around.
         build_device_list : :class:`bool`, optional
             Whether to call :meth:`.build_device_list` before opening the connection
             to the device.
-            
+
         Raises
         ------
         :exc:`.ThorlabsError`
@@ -161,20 +161,20 @@ class MotionControl(ConnectionSDK):
 
     @staticmethod
     def build_device_list():
-        """Build the device list. 
-    
-        This function builds an internal collection of all devices found on a 
+        """Build the device list.
+
+        This function builds an internal collection of all devices found on a
         USB port that are not currently open.
-         
+
         Note
         ----
-        If a device is open, it will not appear in the list until the device 
+        If a device is open, it will not appear in the list until the device
         has been closed.
-        
+
         Raises
         ------
         :exc:`.ThorlabsError`
-            If the device list cannot be built. 
+            If the device list cannot be built.
         """
         ret = device_manager().TLI_BuildDeviceList()
         if ret != 0:
@@ -189,12 +189,12 @@ class MotionControl(ConnectionSDK):
     @staticmethod
     def get_device_list(*device_ids):
         """Get the contents of the device list which match the supplied device IDs.
-    
+
         Parameters
         ----------
         device_ids : :class:`int`
             A sequence of device ID's.
-    
+
         Returns
         -------
         :class:`list` of :class:`str`
@@ -203,7 +203,7 @@ class MotionControl(ConnectionSDK):
         Raises
         ------
         :exc:`.ThorlabsError`
-            If there was an error getting the device list. 
+            If there was an error getting the device list.
         """
         n = MotionControl.SERIAL_NUMBER_BUFFER_SIZE
         buffer = create_string_buffer(n)
@@ -219,14 +219,14 @@ class MotionControl(ConnectionSDK):
     @staticmethod
     def get_device_info(serial_number):
         """Get the device information from a USB port.
-    
+
         The device info is read from the USB port not from the device itself.
-    
+
         Parameters
         ----------
         serial_number : :class:`str`
             The serial number of the device.
-    
+
         Returns
         -------
         :class:`.structs.TLI_DeviceInfo`
@@ -235,7 +235,7 @@ class MotionControl(ConnectionSDK):
         Raises
         ------
         :exc:`.ThorlabsError`
-            If there was an error getting the device information. 
+            If there was an error getting the device information.
         """
         info = TLI_DeviceInfo()
         ret = device_manager().TLI_GetDeviceInfo(str(serial_number).encode(), byref(info))
@@ -246,12 +246,12 @@ class MotionControl(ConnectionSDK):
     @staticmethod
     def to_version(dword):
         """Convert the firmware or software number to a string.
-        
+
         The number is made up of 4-byte parts.
-        
-        See the *get_firmware_version()* or the *get_software_version()* method 
+
+        See the *get_firmware_version()* or the *get_software_version()* method
         of the appropriate Thorlabs MotionControl subclass.
-        
+
         Parameters
         ----------
         dword : :class:`int`
@@ -270,36 +270,37 @@ class MotionControl(ConnectionSDK):
 
     @staticmethod
     def convert_message(msg_type, msg_id, msg_data):
-        """Converts the message into a string representation.
+        """Converts the message into a :class:`dict`.
 
-        See the *get_next_message()* or the *wait_for_message()* method of 
+        See the *get_next_message()* or the *wait_for_message()* method of
         the appropriate Thorlabs MotionControl subclass.
-        
+
         Parameters
         ----------
         msg_type : :class:`int`
             The message type defines the device type which raised the message.
         msg_id : :class:`int`
-            The message ID for the `msg_type`. 
+            The message ID for the `msg_type`.
         msg_data : :class:`int`
             The message data.
 
         Returns
         -------
-        :class:`str`
-            The message as a string, with the type, id and data separated 
-            by a semicolon.
+        :class:`dict`
+            The message represented as
+            {'type': :class:`~msl.equipment.resources.thorlabs.kinesis.messages.MessageTypes`,
+            'id': :class:`~msl.equipment.resources.thorlabs.kinesis.messages.MessageID`,
+            'data': :class:`int`}
         """
         _type = MessageTypes[msg_type]
-        _id = MessageID[_type][msg_id]
-        return 'Type:{}; ID:{}; Data:{}'.format(_type, _id, msg_data)
+        return {'type': _type, 'id': MessageID[_type][msg_id], 'data': msg_data}
 
     def _get_hardware_info(self, sdk_function, channel=None):
         """Gets the hardware information from the device.
-        
+
         The SDK function signature must be:
-                
-        sdk_function(char const * serialNo, char * modelNo, DWORD sizeOfModelNo, WORD * type, WORD * numChannels, 
+
+        sdk_function(char const * serialNo, char * modelNo, DWORD sizeOfModelNo, WORD * type, WORD * numChannels,
         char * notes, DWORD sizeOfNotes, DWORD * firmwareVersion, WORD * hardwareVersion, WORD * modificationState);
 
         or

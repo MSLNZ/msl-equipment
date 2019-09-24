@@ -409,7 +409,7 @@ class SHOT702(ConnectionSerial):
             The current position of stage 1.
         pos2 : :class:`int`
             The current position of stage 2.
-        stopped : :class:`str`
+        state : :class:`str`
             The stopped state of the stage (one of ``'L'``, ``'M'``, ``'W'``, ``'K'``) --
             see the manual for more details.
         is_moving : :class:`bool`
@@ -425,9 +425,9 @@ class SHOT702(ConnectionSerial):
             self.raise_exception('cannot get the status')
         pos1 = int(values[0])
         pos2 = int(values[1])
-        stopped = values[3]
+        state = values[3]
         is_moving = values[4] == 'B'
-        return pos1, pos2, stopped, is_moving
+        return pos1, pos2, state, is_moving
 
     def stop(self):
         """Immediately stop both stages from moving.

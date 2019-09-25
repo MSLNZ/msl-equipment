@@ -25,7 +25,7 @@ class SHOT702(ConnectionSerial):
         """
         super(SHOT702, self).__init__(record)
 
-        self._status_regex = re.compile(r'-*\s*(\d+),\s*(\d+),([XK]),([LMWK]),([BR])')
+        self._status_regex = re.compile(r'(-*)\s*(\d+),(-*)\s*(\d+),([XK]),([LMWK]),([BR])')
         self._speed_regex = re.compile(r'S(\d+)F(\d+)R(\d+)S(\d+)F(\d+)R(\d+)')
         self.set_exception_class(OptoSigmaError)
 
@@ -420,14 +420,15 @@ class SHOT702(ConnectionSerial):
         :exc:`.OptoSigmaError`
             If there was an error processing the command.
         """
-        values = re.match(self._status_regex, self.query('Q:')).groups()
-        if values[2] != 'K':
-            self.raise_exception('cannot get the status')
-        pos1 = int(values[0])
-        pos2 = int(values[1])
-        state = values[3]
-        is_moving = values[4] == 'B'
-        return pos1, pos2, state, is_moving
+        match = re.match(self._status_regex, self.query('Q:'))
+        if not match:
+            self.raise_exception('Invalid regex expression.')
+        negative1, position1, negative2, position2, ok, state, moving = match.groups()
+        if ok != 'K':
+            self.raise_exception('Error getting the status from the controller')
+        pos1 = -int(position1) if negative1 else int(position1)
+        pos2 = -int(position2) if negative2 else int(position2)
+        return pos1, pos2, state, moving == 'B'
 
     def stop(self):
         """Immediately stop both stages from moving.

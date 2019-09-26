@@ -1,12 +1,12 @@
 """
-Device Message Queue defined in Thorlabs Kinesis v1.14.10
+Device Message Queue defined in Thorlabs Kinesis v1.14.18
 
-The device message queue allows the internal events raised by the device to be 
-monitored by the DLLs owner. 
+The device message queue allows the internal events raised by the device to be
+monitored by the DLLs owner.
 
 The device raises many different events, usually associated with a change of state.
 
-These messages are temporarily stored in the DLL and can be accessed using the 
+These messages are temporarily stored in the DLL and can be accessed using the
 appropriate message functions.
 
 The message consists of 3 components, a messageType, a messageID and messageData::
@@ -37,8 +37,10 @@ MessageTypes = {
 GenericDevice = {
     0: 'settingsInitialized',
     1: 'settingsUpdated',
-    2: 'error',
-    3: 'close',
+    2: 'settingsExtern',
+    3: 'error',
+    4: 'close',
+    5: 'settingsReset',
 }
 
 #: GenericMotor

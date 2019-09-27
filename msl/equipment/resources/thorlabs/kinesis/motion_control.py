@@ -288,9 +288,10 @@ class MotionControl(ConnectionSDK):
         -------
         :class:`dict`
             The message represented as
-            {'type': :class:`~msl.equipment.resources.thorlabs.kinesis.messages.MessageTypes`,
-            'id': :class:`~msl.equipment.resources.thorlabs.kinesis.messages.MessageID`,
-            'data': :class:`int`}
+
+            ``{ 'type':`` :class:`~msl.equipment.resources.thorlabs.kinesis.messages.MessageTypes`,
+            ``'id':`` :class:`~msl.equipment.resources.thorlabs.kinesis.messages.MessageID`,
+            ``'data':`` :class:`int` ``}``
         """
         _type = MessageTypes[msg_type]
         return {'type': _type, 'id': MessageID[_type][msg_id], 'data': msg_data}

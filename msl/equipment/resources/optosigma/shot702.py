@@ -25,9 +25,6 @@ class SHOT702(ConnectionSerial):
         """
         super(SHOT702, self).__init__(record)
 
-        self.serial.reset_input_buffer()
-        self.serial.reset_output_buffer()
-
         self._status_regex = re.compile(r'(-*)\s*(\d+),(-*)\s*(\d+),([XK]),([LMWK]),([BR])')
         self._speed_regex = re.compile(r'S(\d+)F(\d+)R(\d+)S(\d+)F(\d+)R(\d+)')
         self.set_exception_class(OptoSigmaError)
@@ -424,6 +421,10 @@ class SHOT702(ConnectionSerial):
             If there was an error processing the command.
         """
         reply = self.query('Q:')
+        if reply == 'NG':  # then try again
+            self.serial.reset_input_buffer()
+            self.serial.reset_output_buffer()
+            return self.status()
         match = re.match(self._status_regex, reply)
         if not match:
             self.raise_exception('Invalid regex expression for the reply {!r}'.format(reply))

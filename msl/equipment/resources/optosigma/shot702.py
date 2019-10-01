@@ -25,6 +25,9 @@ class SHOT702(ConnectionSerial):
         """
         super(SHOT702, self).__init__(record)
 
+        self.serial.reset_input_buffer()
+        self.serial.reset_output_buffer()
+
         self._status_regex = re.compile(r'(-*)\s*(\d+),(-*)\s*(\d+),([XK]),([LMWK]),([BR])')
         self._speed_regex = re.compile(r'S(\d+)F(\d+)R(\d+)S(\d+)F(\d+)R(\d+)')
         self.set_exception_class(OptoSigmaError)
@@ -420,12 +423,13 @@ class SHOT702(ConnectionSerial):
         :exc:`.OptoSigmaError`
             If there was an error processing the command.
         """
-        match = re.match(self._status_regex, self.query('Q:'))
+        reply = self.query('Q:')
+        match = re.match(self._status_regex, reply)
         if not match:
-            self.raise_exception('Invalid regex expression.')
+            self.raise_exception('Invalid regex expression for the reply {!r}'.format(reply))
         negative1, position1, negative2, position2, ok, state, moving = match.groups()
         if ok != 'K':
-            self.raise_exception('Error getting the status from the controller')
+            self.raise_exception('Error getting the status from the controller {!r}'.format(reply))
         pos1 = -int(position1) if negative1 else int(position1)
         pos2 = -int(position2) if negative2 else int(position2)
         return pos1, pos2, state, moving == 'B'

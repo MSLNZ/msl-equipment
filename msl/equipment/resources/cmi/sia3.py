@@ -69,16 +69,20 @@ class SIA3(ConnectionSerial):
         self._send_byte(self.convert_to_enum(time, IntegrationTime, prefix='TIME_'))
 
     def set_ps(self, ps):
-        """Set the PS.
+        """Set the timer pre-scale value.
+
+        The timer pre-scale value divides the microprocessor internal frequency
+        by something similar to 2^PS. Therefore, to reach a 2 second integration time
+        the `ps` value must be set to the maximum value of 7.
 
         Parameters
         ----------
         ps : :class:`int`
-            The PS to use. The value must be in the range [0, 7].
+            The timer pre-scale value. Must be in the range [0, 7].
 
         Raises
         ------
-        ValueError
+        :exc:`ValueError`
             If the value of `ps` is invalid.
         """
         _ps = int(ps)

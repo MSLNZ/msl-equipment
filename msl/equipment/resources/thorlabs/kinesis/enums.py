@@ -699,6 +699,7 @@ class SC_OperatingModes(IntEnum):
 
 
 class SC_OperatingStates(IntEnum):
+    SC_Unknown = 0x00   # this value is not in the docs but a value of 0 is sometimes returned
     SC_Active = 0x01
     SC_Inactive = 0x02
 

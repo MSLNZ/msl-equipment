@@ -130,20 +130,52 @@ class Config(object):
             self._database = Database(self._path)
         return self._database
 
-    def value(self, tag):
+    def value(self, tag, default=None):
         """Gets the value associated with the specified `tag` in the configuration file.
 
         Parameters
         ----------
         tag : :class:`str`
-            The name of a XML tag in the configuration file.
+            The name of an XML tag in the configuration file.
+        default : :class:`str`, optional
+            The default value if `tag` cannot be found.
 
         Returns
         -------
-        :class:`str` or :data:`None`
-            The value associated with the `tag` or :data:`None` if the tag cannot be found.
+        :class:`str`
+            The value associated with `tag` or `default` if the tag cannot be found.
         """
         element = self._root.find(tag)
         if element is not None:
             return element.text
-        return None
+        return default
+
+    def find(self, tag):
+        """Find the first sub-element (from the :meth:`root`) matching `tag` in the configuration file.
+
+        Parameters
+        ----------
+        tag : :class:`str`
+            The name of an XML tag in the configuration file.
+
+        Returns
+        -------
+        :class:`~xml.etree.ElementTree.Element` or :data:`None`
+            The first sub-element or :data:`None` if the tag cannot be found.
+        """
+        return self._root.find(tag)
+
+    def findall(self, tag):
+        """Find all matching sub-elements (from the :meth:`root`) matching `tag` in the configuration file.
+
+        Parameters
+        ----------
+        tag : :class:`str`
+            The name of an XML tag in the configuration file.
+
+        Returns
+        -------
+        :class:`list` of :class:`~xml.etree.ElementTree.Element`
+            All matching elements in document order.
+        """
+        return self._root.findall(tag)

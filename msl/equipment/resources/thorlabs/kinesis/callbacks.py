@@ -20,7 +20,7 @@ message queue.
    flipper = db.equipment['filter_flipper'].connect()
    flipper.register_message_callback(msg_callback)
 
-   ... do stuff with the `flipper` ...
+   # ... do stuff with the `flipper` ...
 
 """
 from msl.loadlib import IS_WINDOWS

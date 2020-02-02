@@ -19,6 +19,11 @@ else:
     HAS_NI_VISA = True
 
 
+def teardown_module():
+    import cleanup_os_environ
+    cleanup_os_environ.cleanup()
+
+
 @pytest.mark.skipif(not HAS_NI_VISA, reason='NI-VISA is not installed')
 def test_resource_manager():
     assert isinstance(ConnectionPyVISA.resource_manager(), pyvisa.ResourceManager)

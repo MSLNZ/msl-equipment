@@ -7,6 +7,11 @@ from msl.equipment.config import Config
 ROOT_DIR = os.path.join(os.path.dirname(__file__), 'db_files')
 
 
+def teardown_module():
+    import cleanup_os_environ
+    cleanup_os_environ.cleanup()
+
+
 def test_config_io_errors():
 
     # xml file does not exist

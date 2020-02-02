@@ -29,6 +29,11 @@ if not PY2:
 ROOT_DIR = os.path.join(os.path.dirname(__file__), 'db_files')
 
 
+def teardown_module():
+    import cleanup_os_environ
+    cleanup_os_environ.cleanup()
+
+
 def test_equipment_record():
 
     temp = os.path.join(tempfile.gettempdir(), 'msl-equipment-record.xml')

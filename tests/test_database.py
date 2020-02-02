@@ -10,6 +10,11 @@ from msl.equipment.record_types import RecordDict
 ROOT_DIR = os.path.join(os.path.dirname(__file__), 'db_files')
 
 
+def teardown_module():
+    import cleanup_os_environ
+    cleanup_os_environ.cleanup()
+
+
 def test_database_io_errors():
 
     # no <path></path> tag

@@ -11,6 +11,11 @@ from msl.equipment.connection_demo import ConnectionDemo
 ROOT_DIR = os.path.join(os.path.dirname(__file__), 'db_files')
 
 
+def teardown_module():
+    import cleanup_os_environ
+    cleanup_os_environ.cleanup()
+
+
 def test_exceptions():
     Config.DEMO_MODE = False
 

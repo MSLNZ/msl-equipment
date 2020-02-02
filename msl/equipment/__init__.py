@@ -20,7 +20,7 @@ from msl.equipment.exceptions import (
 from msl.equipment import resources
 
 __author__ = 'Measurement Standards Laboratory of New Zealand'
-__copyright__ = '\xa9 2017 - 2019, ' + __author__
+__copyright__ = '\xa9 2017 - 2020, ' + __author__
 __version__ = '0.1.0.dev0'
 
 _v = re.search(r'(\d+)\.(\d+)\.(\d+)[.-]?(.*)', __version__).groups()

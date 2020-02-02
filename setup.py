@@ -29,7 +29,7 @@ class ApiDocs(Command):
         ]
 
         import sphinx
-        if sphinx.version_info < (1, 7):
+        if sphinx.version_info[:2] < (1, 7):
             from sphinx.apidoc import main
         else:
             from sphinx.ext.apidoc import main  # Sphinx also changed the location of apidoc.main
@@ -65,7 +65,7 @@ class BuildDocs(Command):
             './docs/_build/html',  # where to save the output files
         ]
 
-        if sphinx.version_info < (1, 7):
+        if sphinx.version_info[:2] < (1, 7):
             from sphinx import build_main
         else:
             from sphinx.cmd.build import build_main  # Sphinx also changed the location of build_main
@@ -98,7 +98,7 @@ install_requires = [
 
 if sys.version_info[:2] == (2, 7):
     install_requires.append('numpy<1.17')
-    tests_require.append('pytest<5.0')
+    tests_require.extend(['zipp<2.0.0', 'pytest<5.0'])
 else:
     install_requires.append('numpy')
     tests_require.append('pytest')

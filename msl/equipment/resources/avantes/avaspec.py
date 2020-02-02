@@ -211,7 +211,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         out = Avantes.get_list(path=self.path)
@@ -278,7 +278,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         ain = c_float()
@@ -295,7 +295,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         device_id = AvsIdentityType()
@@ -321,7 +321,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         device_id = AvsIdentityType()
@@ -342,7 +342,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         # from the docs the maximum size is size=18 for the AvaSpec-2048-USB2 and AvaSpec-2048L-USB2
@@ -398,7 +398,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         din = c_ubyte()
@@ -420,7 +420,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         if serial is None:
@@ -486,7 +486,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         if serial is None:
@@ -519,7 +519,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         eth = EthernetSettingsType()
@@ -536,7 +536,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         values = np.zeros(MAX_NR_PIXELS, dtype=np.double)
@@ -566,7 +566,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         odt = OemDataType()
@@ -583,7 +583,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         dct = DeviceConfigType()
@@ -601,7 +601,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         values = np.ones(MAX_NR_PIXELS, dtype=np.uint8) * 9
@@ -622,7 +622,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         fpga = (c_ubyte * 16)()
@@ -644,7 +644,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         ticks = c_uint32()
@@ -657,7 +657,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         n = c_uint16()
@@ -681,7 +681,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         resp = HeartbeatRespType()
@@ -711,7 +711,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If no devices were found.
         """
         ret = self.sdk.AVS_Init(port_id)
@@ -737,7 +737,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         self.sdk.AVS_Measure(self._handle, window_handle, num_measurements)
@@ -776,7 +776,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         self.sdk.AVS_MeasureCallback(self._handle, callback, num_measurements)
@@ -791,7 +791,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         return self.sdk.AVS_PollScan(self._handle)
@@ -806,7 +806,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         if not isinstance(config, MeasConfigType):
@@ -824,7 +824,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         self.sdk.AVS_Register(handle)
@@ -840,7 +840,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         self.sdk.AVS_ResetDevice(self._handle)
@@ -873,7 +873,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         self.sdk.AVS_SetAnalogOut(self._handle, port_id, value)
@@ -930,7 +930,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         self.sdk.AVS_SetDigOut(self._handle, port_id, value)
@@ -945,7 +945,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         if not isinstance(parameter, OemDataType):
@@ -966,7 +966,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         if not isinstance(parameter, DeviceConfigType):
@@ -987,7 +987,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         self.sdk.AVS_SetPrescanMode(self._handle, boolean)
@@ -1021,7 +1021,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         self.sdk.AVS_SetPwmOut(self._handle, port_id, frequency, duty_cycle)
@@ -1039,7 +1039,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         self.sdk.AVS_SetSensitivityMode(self._handle, value)
@@ -1054,7 +1054,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         self.sdk.AVS_SetSyncMode(self._handle, int(bool(enable)))
@@ -1064,7 +1064,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         self.sdk.AVS_StopMeasure(self._handle)
@@ -1086,7 +1086,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         x = -9e99
@@ -1155,7 +1155,7 @@ class Avantes(ConnectionSDK):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.AvantesError`
+        ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
         self.sdk.AVS_UseHighResAdc(self._handle, bool(enable))

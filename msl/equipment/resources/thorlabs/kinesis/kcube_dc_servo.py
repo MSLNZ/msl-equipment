@@ -115,7 +115,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_DisableChannel(self._serial)
@@ -127,7 +127,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_EnableChannel(self._serial)
@@ -170,7 +170,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_DC_PIDParameters()
@@ -197,7 +197,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         device_unit = c_int()
@@ -247,7 +247,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         return self._get_hardware_info(self.sdk.CC_GetHardwareInfo)
@@ -262,7 +262,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         info = TLI_HardwareInformation()
@@ -279,7 +279,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_HomingParameters()
@@ -321,7 +321,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = c_short()
@@ -339,7 +339,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_JogParameters()
@@ -374,7 +374,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         acceleration = c_int()
@@ -414,7 +414,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         cw_lim = WORD()
@@ -448,7 +448,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_LimitSwitchParameters()
@@ -505,7 +505,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = c_int16()
@@ -542,7 +542,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         return self.get_motor_params_ext()
@@ -565,7 +565,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         steps_per_rev = c_double()
@@ -586,7 +586,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         min_position = c_double()
@@ -616,7 +616,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         max_velocity = c_double()
@@ -664,7 +664,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         message_type = WORD()
@@ -736,7 +736,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         real_unit = c_double()
@@ -820,7 +820,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode1 = c_int16()
@@ -841,7 +841,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = KMOT_TriggerConfig()
@@ -875,7 +875,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         trigger_start_position_fwd = c_int32()
@@ -905,7 +905,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = KMOT_TriggerParams()
@@ -927,7 +927,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         acceleration = c_int()
@@ -945,7 +945,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_VelocityParameters()
@@ -976,7 +976,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_Home(self._serial)
@@ -993,7 +993,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_LoadSettings(self._serial)
@@ -1010,7 +1010,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_LoadNamedSettings(self._serial, settings_name.encode())
@@ -1030,7 +1030,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_MoveAbsolute(self._serial)
@@ -1046,7 +1046,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_MoveAtVelocity(self._serial, direction)
@@ -1062,7 +1062,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         direction = self.convert_to_enum(jog_direction, MOT_TravelDirection, prefix='MOT_')
@@ -1081,7 +1081,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_MoveRelative(self._serial, displacement)
@@ -1091,7 +1091,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_MoveRelativeDistance(self._serial)
@@ -1112,7 +1112,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_MoveToPosition(self._serial, index)
@@ -1134,7 +1134,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_Open(self._serial)
@@ -1144,7 +1144,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_PersistSettings(self._serial)
@@ -1174,7 +1174,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestBacklash(self._serial)
@@ -1184,7 +1184,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestDCPIDParams(self._serial)
@@ -1194,7 +1194,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestDigitalOutputs(self._serial)
@@ -1204,7 +1204,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestEncoderCounter(self._serial)
@@ -1214,7 +1214,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestFrontPanelLocked(self._serial)
@@ -1224,7 +1224,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestHomingParams(self._serial)
@@ -1234,7 +1234,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestJogParams(self._serial)
@@ -1244,7 +1244,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestLEDswitches(self._serial)
@@ -1254,7 +1254,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestLimitSwitchParams(self._serial)
@@ -1264,7 +1264,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestMMIparams(self._serial)
@@ -1274,7 +1274,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestMoveAbsolutePosition(self._serial)
@@ -1284,7 +1284,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestMoveRelativeDistance(self._serial)
@@ -1294,7 +1294,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestPosTriggerParams(self._serial)
@@ -1308,7 +1308,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestPosition(self._serial)
@@ -1321,7 +1321,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestSettings(self._serial)
@@ -1335,7 +1335,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestStatusBits(self._serial)
@@ -1345,7 +1345,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestTriggerConfigParams(self._serial)
@@ -1355,7 +1355,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_RequestVelParams(self._serial)
@@ -1365,7 +1365,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_ResetRotationModes(self._serial)
@@ -1375,7 +1375,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_ResetStageToDefaults(self._serial)
@@ -1385,7 +1385,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_ResumeMoveMessages(self._serial)
@@ -1403,7 +1403,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetBacklash(self._serial, distance)
@@ -1418,7 +1418,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         TypeError
             If the data type of `params` is not :class:`.structs.MOT_DC_PIDParameters`
@@ -1437,7 +1437,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetDigitalOutputs(self._serial, outputs_bits)
@@ -1456,7 +1456,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetDirection(self._serial, reverse)
@@ -1474,7 +1474,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetEncoderCounter(self._serial, count)
@@ -1489,7 +1489,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetFrontPanelLock(self._serial, locked)
@@ -1512,7 +1512,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_HomingParameters()
@@ -1535,7 +1535,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetHomingVelocity(self._serial, velocity)
@@ -1553,7 +1553,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode_ = self.convert_to_enum(mode, MOT_JogModes, prefix='MOT_')
@@ -1570,7 +1570,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         TypeError
             If the data type of `jog_params` is not :class:`.structs.MOT_JogParameters`
@@ -1592,7 +1592,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetJogStepSize(self._serial, step_size)
@@ -1612,7 +1612,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetJogVelParams(self._serial, acceleration, max_velocity)
@@ -1628,7 +1628,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetLEDswitches(self._serial, led_switches)
@@ -1657,7 +1657,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         cw_lim_ = self.convert_to_enum(cw_lim, MOT_LimitSwitchModes, prefix='MOT_')
@@ -1675,7 +1675,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         if not isinstance(params, MOT_LimitSwitchParameters):
@@ -1703,7 +1703,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         return self.set_mmi_params_ext(joystick_mode, joystick_max_velocity, joystick_acceleration, direction_sense,
@@ -1719,7 +1719,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         if not isinstance(mmi_params, KMOT_MMIParams):
@@ -1759,7 +1759,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = self.convert_to_enum(joystick_mode, KMOT_WheelMode, prefix='KMOT_JS_')
@@ -1791,7 +1791,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.set_motor_params_ext(steps_per_rev, gear_box_ratio, pitch)
@@ -1817,7 +1817,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetMotorParamsExt(self._serial, steps_per_rev, gear_box_ratio, pitch)
@@ -1839,7 +1839,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetMotorTravelLimits(self._serial, min_position, max_position)
@@ -1855,7 +1855,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = self.convert_to_enum(travel_mode, MOT_TravelModes, prefix='MOT_')
@@ -1876,7 +1876,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetMotorVelocityLimits(self._serial, max_velocity, max_acceleration)
@@ -1894,7 +1894,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetMoveAbsolutePosition(self._serial, position)
@@ -1912,7 +1912,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetMoveRelativeDistance(self._serial, distance)
@@ -1934,7 +1934,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetPositionCounter(self._serial, count)
@@ -1953,7 +1953,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = self.convert_to_enum(mode, MOT_MovementModes)
@@ -1975,7 +1975,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetStageAxisLimits(self._serial, min_position, max_position)
@@ -2000,7 +2000,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         m1 = self.convert_to_enum(mode1, KMOT_TriggerPortMode, prefix='KMOT_')
@@ -2019,7 +2019,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         :exc:`TypeError`
             If `trigger_config_params` is not a :class:`.structs.KMOT_TriggerConfig`.
@@ -2057,7 +2057,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetTriggerParamsParams(self._serial, trigger_start_position_fwd, trigger_interval_fwd,
@@ -2074,7 +2074,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         :exc:`TypeError`
             If `trigger_params_params` is not a :class:`.structs.KMOT_TriggerParams`.
@@ -2098,7 +2098,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SetVelParams(self._serial, acceleration, max_velocity)
@@ -2117,7 +2117,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_VelocityParameters()
@@ -2138,7 +2138,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_StartPolling(self._serial, milliseconds)
@@ -2148,7 +2148,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_StopImmediate(self._serial)
@@ -2162,7 +2162,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_StopProfiled(self._serial)
@@ -2174,7 +2174,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.CC_SuspendMoveMessages(self._serial)
@@ -2210,7 +2210,7 @@ class KCubeDCServo(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         message_type = WORD()

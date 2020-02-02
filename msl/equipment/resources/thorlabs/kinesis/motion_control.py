@@ -95,7 +95,7 @@ class MotionControl(ConnectionSDK):
 
         Raises
         ------
-        :exc:`.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If a connection to the device cannot be established.
         """
         self._is_open = False
@@ -173,7 +173,7 @@ class MotionControl(ConnectionSDK):
 
         Raises
         ------
-        :exc:`.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If the device list cannot be built.
         """
         ret = device_manager().TLI_BuildDeviceList()
@@ -202,7 +202,7 @@ class MotionControl(ConnectionSDK):
 
         Raises
         ------
-        :exc:`.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If there was an error getting the device list.
         """
         n = MotionControl.SERIAL_NUMBER_BUFFER_SIZE
@@ -234,7 +234,7 @@ class MotionControl(ConnectionSDK):
 
         Raises
         ------
-        :exc:`.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If there was an error getting the device information.
         """
         info = TLI_DeviceInfo()
@@ -316,7 +316,7 @@ class MotionControl(ConnectionSDK):
 
         Raises
         ------
-        :exc:`.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         firmware_version = DWORD()

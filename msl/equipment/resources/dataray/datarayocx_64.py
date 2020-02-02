@@ -136,7 +136,7 @@ class DataRayOCX64(Connection):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.DataRayError`
+        ~msl.equipment.exceptions.DataRayError
             If not successful.
         """
         self.log_debug('DataRayOCX64.acquire(timeout={})'.format(timeout))

@@ -75,7 +75,7 @@ class FilterWheelXX2C(ConnectionSDK):
 
         Raises
         ------
-        :exc:`.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If a connection to the filter wheel cannot be established.
         """
         self._handle = None

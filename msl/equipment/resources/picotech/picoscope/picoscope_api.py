@@ -834,7 +834,7 @@ class PicoScopeApi(PicoScope):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.PicoTechError`
+        ~msl.equipment.exceptions.PicoTechError
             If the value of an input parameter is invalid.
         """
         min_value, max_value, min_size, max_size = self.sig_gen_arbitrary_min_max_values()
@@ -1072,7 +1072,7 @@ class PicoScopeApi(PicoScope):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.PicoTechError`
+        ~msl.equipment.exceptions.PicoTechError
             If the value of an input parameter is invalid.
         """
         mode = self.convert_to_enum(index_mode, self.enIndexMode, to_upper=True)

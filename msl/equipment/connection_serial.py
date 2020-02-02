@@ -52,7 +52,7 @@ class ConnectionSerial(ConnectionMessageBased):
 
         Raises
         ------
-        :exc:`~.exceptions.MSLConnectionError`
+        ~msl.equipment.exceptions.MSLConnectionError
             If the serial port cannot be opened.
         """
         super(ConnectionSerial, self).__init__(record)

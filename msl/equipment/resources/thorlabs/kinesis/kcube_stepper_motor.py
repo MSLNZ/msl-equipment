@@ -117,7 +117,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_DisableChannel(self._serial)
@@ -129,7 +129,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_EnableChannel(self._serial)
@@ -182,7 +182,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         size = 256
@@ -210,7 +210,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         device_unit = c_int()
@@ -260,7 +260,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         return self._get_hardware_info(self.sdk.SCC_GetHardwareInfo)
@@ -275,7 +275,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         info = TLI_HardwareInformation()
@@ -292,7 +292,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_HomingParameters()
@@ -334,7 +334,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = c_short()
@@ -352,7 +352,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_JogParameters()
@@ -387,7 +387,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         acceleration = c_int()
@@ -416,7 +416,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         cw_lim = WORD()
@@ -450,7 +450,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_LimitSwitchParameters()
@@ -507,7 +507,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = c_int16()
@@ -544,7 +544,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         return self.get_motor_params_ext()
@@ -567,7 +567,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         steps_per_rev = c_double()
@@ -588,7 +588,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         min_position = c_double()
@@ -618,7 +618,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         max_velocity = c_double()
@@ -666,7 +666,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         message_type = WORD()
@@ -712,7 +712,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_PIDLoopEncoderParams()
@@ -758,7 +758,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_PowerParameters()
@@ -785,7 +785,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         real_unit = c_double()
@@ -869,7 +869,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode1 = c_int16()
@@ -890,7 +890,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = KMOT_TriggerConfig()
@@ -924,7 +924,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         trigger_start_position_fwd = c_int32()
@@ -954,7 +954,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = KMOT_TriggerParams()
@@ -976,7 +976,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         acceleration = c_int()
@@ -994,7 +994,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_VelocityParameters()
@@ -1025,7 +1025,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_Home(self._serial)
@@ -1052,7 +1052,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_LoadSettings(self._serial)
@@ -1069,7 +1069,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_LoadNamedSettings(self._serial, settings_name.encode())
@@ -1089,7 +1089,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_MoveAbsolute(self._serial)
@@ -1105,7 +1105,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         direction_ = self.convert_to_enum(direction, MOT_TravelDirection, prefix='MOT_')
@@ -1122,7 +1122,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         direction = self.convert_to_enum(jog_direction, MOT_TravelDirection, prefix='MOT_')
@@ -1141,7 +1141,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_MoveRelative(self._serial, displacement)
@@ -1151,7 +1151,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_MoveRelativeDistance(self._serial)
@@ -1172,7 +1172,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_MoveToPosition(self._serial, index)
@@ -1194,7 +1194,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_Open(self._serial)
@@ -1204,7 +1204,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_PersistSettings(self._serial)
@@ -1234,7 +1234,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestBacklash(self._serial)
@@ -1244,7 +1244,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestBowIndex(self._serial)
@@ -1254,7 +1254,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestDigitalOutputs(self._serial)
@@ -1264,7 +1264,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestEncoderCounter(self._serial)
@@ -1274,7 +1274,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestFrontPanelLocked(self._serial)
@@ -1284,7 +1284,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestHomingParams(self._serial)
@@ -1294,7 +1294,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestJogParams(self._serial)
@@ -1304,7 +1304,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestLimitSwitchParams(self._serial)
@@ -1314,7 +1314,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestMMIParams(self._serial)
@@ -1324,7 +1324,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestMoveAbsolutePosition(self._serial)
@@ -1334,7 +1334,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestMoveRelativeDistance(self._serial)
@@ -1344,7 +1344,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestPIDLoopEncoderParams(self._serial)
@@ -1354,7 +1354,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestPosTriggerParams(self._serial)
@@ -1368,7 +1368,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestPosition(self._serial)
@@ -1378,7 +1378,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestPowerParams(self._serial)
@@ -1391,7 +1391,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestSettings(self._serial)
@@ -1405,7 +1405,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestStatusBits(self._serial)
@@ -1415,7 +1415,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestTriggerConfigParams(self._serial)
@@ -1425,7 +1425,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_RequestVelParams(self._serial)
@@ -1435,7 +1435,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_ResetRotationModes(self._serial)
@@ -1445,7 +1445,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_ResumeMoveMessages(self._serial)
@@ -1463,7 +1463,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetBacklash(self._serial, distance)
@@ -1478,7 +1478,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetBowIndex(self._serial, bow_index)
@@ -1512,7 +1512,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetDigitalOutputs(self._serial, outputs_bits)
@@ -1531,7 +1531,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetDirection(self._serial, reverse)
@@ -1549,7 +1549,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetEncoderCounter(self._serial, count)
@@ -1564,7 +1564,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetFrontPanelLock(self._serial, locked)
@@ -1587,7 +1587,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_HomingParameters()
@@ -1610,7 +1610,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetHomingVelocity(self._serial, velocity)
@@ -1628,7 +1628,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode_ = self.convert_to_enum(mode, MOT_JogModes, prefix='MOT_')
@@ -1645,7 +1645,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         TypeError
             If the data type of `jog_params` is not :class:`.structs.MOT_JogParameters`
@@ -1667,7 +1667,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetJogStepSize(self._serial, step_size)
@@ -1687,7 +1687,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetJogVelParams(self._serial, acceleration, max_velocity)
@@ -1716,7 +1716,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         cw_lim_ = self.convert_to_enum(cw_lim, MOT_LimitSwitchModes, prefix='MOT_')
@@ -1734,7 +1734,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         if not isinstance(params, MOT_LimitSwitchParameters):
@@ -1762,7 +1762,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         return self.set_mmi_params_ext(joystick_mode, joystick_max_velocity, joystick_acceleration, direction_sense,
@@ -1778,7 +1778,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         if not isinstance(mmi_params, KMOT_MMIParams):
@@ -1818,7 +1818,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = self.convert_to_enum(joystick_mode, KMOT_WheelMode, prefix='KMOT_JS_')
@@ -1850,7 +1850,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.set_motor_params_ext(steps_per_rev, gear_box_ratio, pitch)
@@ -1876,7 +1876,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetMotorParamsExt(self._serial, steps_per_rev, gear_box_ratio, pitch)
@@ -1898,7 +1898,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetMotorTravelLimits(self._serial, min_position, max_position)
@@ -1914,7 +1914,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = self.convert_to_enum(travel_mode, MOT_TravelModes, prefix='MOT_')
@@ -1935,7 +1935,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetMotorVelocityLimits(self._serial, max_velocity, max_acceleration)
@@ -1953,7 +1953,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetMoveAbsolutePosition(self._serial, position)
@@ -1971,7 +1971,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetMoveRelativeDistance(self._serial, distance)
@@ -1989,7 +1989,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetPIDLoopEncoderCoeff(self._serial, coeff)
@@ -2004,7 +2004,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         :exc:`TypeError`
             If `params` is not a :class:`.structs.MOT_PIDLoopEncoderParams`.
@@ -2030,7 +2030,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetPositionCounter(self._serial, count)
@@ -2047,7 +2047,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         if rest < 0 or rest > 100:
@@ -2073,7 +2073,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = self.convert_to_enum(mode, MOT_MovementModes)
@@ -2095,7 +2095,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetStageAxisLimits(self._serial, min_position, max_position)
@@ -2120,7 +2120,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         m1 = self.convert_to_enum(mode1, KMOT_TriggerPortMode, prefix='KMOT_')
@@ -2139,7 +2139,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         :exc:`TypeError`
             If `trigger_config_params` is not a :class:`.structs.KMOT_TriggerConfig`.
@@ -2177,7 +2177,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetTriggerParamsParams(self._serial, trigger_start_position_fwd, trigger_interval_fwd,
@@ -2194,7 +2194,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         :exc:`TypeError`
             If `trigger_params_params` is not a :class:`.structs.KMOT_TriggerParams`.
@@ -2218,7 +2218,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SetVelParams(self._serial, acceleration, max_velocity)
@@ -2237,7 +2237,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_VelocityParameters()
@@ -2258,7 +2258,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_StartPolling(self._serial, milliseconds)
@@ -2268,7 +2268,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_StopImmediate(self._serial)
@@ -2282,7 +2282,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_StopProfiled(self._serial)
@@ -2294,7 +2294,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SCC_SuspendMoveMessages(self._serial)
@@ -2343,7 +2343,7 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         message_type = WORD()

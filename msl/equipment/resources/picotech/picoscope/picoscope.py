@@ -449,7 +449,7 @@ class PicoScope(ConnectionSDK):
 
         Raises
         ------
-        :exc:`.PicoTechError`
+        ~msl.equipment.exceptions.PicoTechError
             If the timebase or duration is invalid.
         """
         if len(self._channels_dict) == 0:

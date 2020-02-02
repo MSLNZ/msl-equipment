@@ -109,7 +109,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_DisableChannel(self._serial)
@@ -121,7 +121,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_EnableChannel(self._serial)
@@ -184,7 +184,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = WORD()
@@ -204,7 +204,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_ButtonParameters()
@@ -221,7 +221,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         size = 256
@@ -249,7 +249,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         device_unit = c_int()
@@ -277,7 +277,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         return self._get_hardware_info(self.sdk.ISC_GetHardwareInfo)
@@ -292,7 +292,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         info = TLI_HardwareInformation()
@@ -309,7 +309,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_HomingParameters()
@@ -341,7 +341,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = c_short()
@@ -359,7 +359,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_JogParameters()
@@ -394,7 +394,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         acceleration = c_int()
@@ -434,7 +434,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         cw_lim = WORD()
@@ -468,7 +468,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_LimitSwitchParameters()
@@ -500,7 +500,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         steps_per_rev = c_double()
@@ -521,7 +521,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         min_position = c_double()
@@ -551,7 +551,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         max_velocity = c_double()
@@ -599,7 +599,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         message_type = WORD()
@@ -671,7 +671,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         threshold = c_int()
@@ -689,7 +689,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_PotentiometerSteps()
@@ -706,7 +706,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_PowerParameters()
@@ -733,7 +733,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         real_unit = c_double()
@@ -827,7 +827,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         acceleration = c_int()
@@ -845,7 +845,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_VelocityParameters()
@@ -875,7 +875,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_Home(self._serial)
@@ -885,7 +885,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_Identify(self._serial)
@@ -908,7 +908,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_LoadSettings(self._serial)
@@ -925,7 +925,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_LoadNamedSettings(self._serial, settings_name.encode())
@@ -945,7 +945,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_MoveAbsolute(self._serial)
@@ -961,7 +961,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         direction_ = self.convert_to_enum(direction, MOT_TravelDirection, prefix='MOT_')
@@ -978,7 +978,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         direction = self.convert_to_enum(jog_direction, MOT_TravelDirection, prefix='MOT_')
@@ -997,7 +997,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_MoveRelative(self._serial, displacement)
@@ -1007,7 +1007,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_MoveRelativeDistance(self._serial)
@@ -1028,7 +1028,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_MoveToPosition(self._serial, index)
@@ -1050,7 +1050,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_Open(self._serial)
@@ -1060,7 +1060,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_PersistSettings(self._serial)
@@ -1090,7 +1090,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestBacklash(self._serial)
@@ -1100,7 +1100,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestBowIndex(self._serial)
@@ -1110,7 +1110,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestButtonParams(self._serial)
@@ -1120,7 +1120,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestHomingParams(self._serial)
@@ -1130,7 +1130,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestJogParams(self._serial)
@@ -1140,7 +1140,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestLimitSwitchParams(self._serial)
@@ -1150,7 +1150,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestMoveAbsolutePosition(self._serial)
@@ -1160,7 +1160,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestMoveRelativeDistance(self._serial)
@@ -1174,7 +1174,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestPosition(self._serial)
@@ -1184,7 +1184,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestPotentiometerParams(self._serial)
@@ -1194,7 +1194,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestPowerParams(self._serial)
@@ -1206,7 +1206,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestSettings(self._serial)
@@ -1220,7 +1220,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestStatus(self._serial)
@@ -1234,7 +1234,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestStatusBits(self._serial)
@@ -1244,7 +1244,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestTriggerSwitches(self._serial)
@@ -1254,7 +1254,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_RequestVelParams(self._serial)
@@ -1264,7 +1264,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_ResetRotationModes(self._serial)
@@ -1274,7 +1274,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_ResetStageToDefaults(self._serial)
@@ -1292,7 +1292,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetBacklash(self._serial, distance)
@@ -1307,7 +1307,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetBowIndex(self._serial, bow_index)
@@ -1329,7 +1329,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetButtonParams(self._serial, button_mode, left_button_position, right_button_position)
@@ -1351,7 +1351,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_ButtonParameters()
@@ -1395,7 +1395,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetDirection(self._serial, reverse)
@@ -1418,7 +1418,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_HomingParameters()
@@ -1441,7 +1441,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetHomingVelocity(self._serial, velocity)
@@ -1458,7 +1458,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode_ = self.convert_to_enum(mode, MOT_JogModes, prefix='MOT_')
@@ -1475,7 +1475,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         TypeError
             If the data type of `jog_params` is not :class:`.structs.MOT_JogParameters`
@@ -1497,7 +1497,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetJogStepSize(self._serial, step_size)
@@ -1517,7 +1517,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetJogVelParams(self._serial, acceleration, max_velocity)
@@ -1533,7 +1533,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetLEDswitches(self._serial, led_switches)
@@ -1562,7 +1562,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         cw_lim_ = self.convert_to_enum(cw_lim, MOT_LimitSwitchModes, prefix='MOT_')
@@ -1580,7 +1580,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         TypeError
             If the data type of `joystick_params` is not :class:`.structs.MOT_JoystickParameters`
@@ -1624,7 +1624,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.set_motor_params_ext(steps_per_rev, gear_box_ratio, pitch)
@@ -1650,7 +1650,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetMotorParamsExt(self._serial, steps_per_rev, gear_box_ratio, pitch)
@@ -1672,7 +1672,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetMotorTravelLimits(self._serial, min_position, max_position)
@@ -1688,7 +1688,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = self.convert_to_enum(travel_mode, MOT_TravelModes, prefix='MOT_')
@@ -1709,7 +1709,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetMotorVelocityLimits(self._serial, max_velocity, max_acceleration)
@@ -1727,7 +1727,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetMoveAbsolutePosition(self._serial, position)
@@ -1745,7 +1745,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetMoveRelativeDistance(self._serial, distance)
@@ -1767,7 +1767,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetPositionCounter(self._serial, count)
@@ -1789,7 +1789,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         if threshold < 0 or threshold > 127:
@@ -1807,7 +1807,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         if not isinstance(params, MOT_PotentiometerSteps):
@@ -1826,7 +1826,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         if rest < 0 or rest > 100:
@@ -1852,7 +1852,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = self.convert_to_enum(mode, MOT_MovementModes)
@@ -1874,7 +1874,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetStageAxisLimits(self._serial, min_position, max_position)
@@ -1890,7 +1890,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetTriggerSwitches(self._serial, indicator_bits)
@@ -1910,7 +1910,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_SetVelParams(self._serial, acceleration, max_velocity)
@@ -1932,7 +1932,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_VelocityParameters()
@@ -1953,7 +1953,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_StartPolling(self._serial, int(milliseconds))
@@ -1963,7 +1963,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_StopImmediate(self._serial)
@@ -1977,7 +1977,7 @@ class IntegratedStepperMotors(MotionControl):
         
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.ISC_StopProfiled(self._serial)
@@ -2013,7 +2013,7 @@ class IntegratedStepperMotors(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         message_type = WORD()

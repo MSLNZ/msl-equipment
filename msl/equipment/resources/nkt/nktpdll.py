@@ -256,7 +256,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         if names is None:
@@ -703,7 +703,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         if opened_ports is None:
@@ -746,7 +746,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.deviceCreate(self._PORTNAME, device_id, int(bool(wait_ready)))
@@ -766,7 +766,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         exists = c_ubyte(0)
@@ -791,7 +791,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         version = c_ushort(0)
@@ -816,7 +816,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         size = c_ubyte(255)
@@ -842,7 +842,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         error_code = c_ushort(0)
@@ -867,7 +867,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         version = c_ushort(0)
@@ -892,7 +892,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         size = c_ubyte(255)
@@ -919,7 +919,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         live_mode = c_ubyte(0)
@@ -945,7 +945,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         dev_mode = c_ubyte(0)
@@ -970,7 +970,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         size = c_ubyte(255)
@@ -996,7 +996,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         size = c_ubyte(255)
@@ -1022,7 +1022,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         size = c_ubyte(255)
@@ -1048,7 +1048,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         version = c_ubyte(0)
@@ -1073,7 +1073,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         status = c_ushort(0)
@@ -1098,7 +1098,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         dev_type = c_ubyte(0)
@@ -1115,7 +1115,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.deviceRemove(self._PORTNAME, device_id)
@@ -1127,7 +1127,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.deviceRemoveAll(self._PORTNAME)
@@ -1144,7 +1144,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.deviceSetLive(self._PORTNAME, device_id, int(bool(live_mode)))
@@ -1154,7 +1154,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         if self._PORTNAME is not None:
@@ -1195,7 +1195,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         return NKT.device_get_all_types(opened_ports=self._PORTNAME, size=size)[self._PORTNAME.decode()]
@@ -1240,7 +1240,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         length = c_ushort(255)
@@ -1258,7 +1258,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         status = c_ubyte(0)
@@ -1294,7 +1294,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         if names is None:
@@ -1325,7 +1325,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.pointToPointPortAdd(
@@ -1338,7 +1338,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.pointToPointPortDel(self._PORTNAME)
@@ -1353,7 +1353,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         host_length = c_ubyte(255)
@@ -1398,7 +1398,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         size = c_ubyte(255)
@@ -1426,7 +1426,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.registerCreate(self._PORTNAME, device_id, reg_id,
@@ -1449,7 +1449,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         exists = c_ubyte(0)
@@ -1473,7 +1473,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         size = c_ubyte(255)
@@ -1504,7 +1504,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         size = c_ubyte(255)
@@ -1535,7 +1535,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         data = c_float(0)
@@ -1565,7 +1565,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         data = c_double(0)
@@ -1595,7 +1595,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         data = c_short(0)
@@ -1625,7 +1625,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         data = c_long(0)
@@ -1655,7 +1655,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         data = c_longlong(0)
@@ -1685,7 +1685,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         data = c_byte(0)
@@ -1715,7 +1715,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         data = c_ushort(0)
@@ -1745,7 +1745,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         data = c_ulong(0)
@@ -1775,7 +1775,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         data = c_ulonglong(0)
@@ -1805,7 +1805,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         data = c_ubyte(0)
@@ -1824,7 +1824,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.registerRemove(self._PORTNAME, device_id, reg_id)
@@ -1841,7 +1841,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.registerRemoveAll(self._PORTNAME, device_id)
@@ -1865,7 +1865,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.registerWrite(self._PORTNAME, device_id, reg_id, data, len(data), index)
@@ -1891,7 +1891,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         buffer = create_string_buffer(string.encode('ascii'))
@@ -1916,7 +1916,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.registerWriteF32(self._PORTNAME, device_id, reg_id, value, index)
@@ -1940,7 +1940,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.registerWriteF64(self._PORTNAME, device_id, reg_id, value, index)
@@ -1969,7 +1969,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         size = c_ubyte(255)
@@ -2003,7 +2003,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         ascii_value = create_string_buffer(string.encode('ascii'))
@@ -2037,7 +2037,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         read = c_float(0)
@@ -2068,7 +2068,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         read = c_double(0)
@@ -2099,7 +2099,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         read = c_short(0)
@@ -2130,7 +2130,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         read = c_long(0)
@@ -2161,7 +2161,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         read = c_longlong(0)
@@ -2192,7 +2192,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         read = c_byte(0)
@@ -2223,7 +2223,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         read = c_ushort(0)
@@ -2254,7 +2254,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         read = c_ulong(0)
@@ -2285,7 +2285,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         read = c_ulonglong(0)
@@ -2316,7 +2316,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         read = c_ubyte(0)
@@ -2342,7 +2342,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.registerWriteS16(self._PORTNAME, device_id, reg_id, value, index)
@@ -2366,7 +2366,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.registerWriteS32(self._PORTNAME, device_id, reg_id, value, index)
@@ -2390,7 +2390,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.registerWriteS64(self._PORTNAME, device_id, reg_id, value, index)
@@ -2414,7 +2414,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.registerWriteS8(self._PORTNAME, device_id, reg_id, value, index)
@@ -2438,7 +2438,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.registerWriteU16(self._PORTNAME, device_id, reg_id, value, index)
@@ -2462,7 +2462,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.registerWriteU32(self._PORTNAME, device_id, reg_id, value, index)
@@ -2486,7 +2486,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.registerWriteU64(self._PORTNAME, device_id, reg_id, value, index)
@@ -2510,7 +2510,7 @@ class NKT(Connection):
 
         Raises
         ------
-        :class:`~msl.equipment.exceptions.NKTError`
+        ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
         NKT._SDK.registerWriteU8(self._PORTNAME, device_id, reg_id, value, index)

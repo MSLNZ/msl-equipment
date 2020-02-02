@@ -129,7 +129,7 @@ class SHOT702(ConnectionSerial):
 
         Raises
         ------
-        :exc:`.OptoSigmaError`
+        ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
         if self.query('H:{}'.format(stage)) != 'OK':
@@ -168,7 +168,7 @@ class SHOT702(ConnectionSerial):
 
         Raises
         ------
-        :exc:`.OptoSigmaError`
+        ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
         ret = self.query('J:{}{}'.format(stage, direction))
@@ -202,7 +202,7 @@ class SHOT702(ConnectionSerial):
 
         Raises
         ------
-        :exc:`.OptoSigmaError`
+        ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
         self._move('A', stage, *position)
@@ -234,7 +234,7 @@ class SHOT702(ConnectionSerial):
 
         Raises
         ------
-        :exc:`.OptoSigmaError`
+        ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
         self._move('M', stage, *num_pulses)
@@ -256,7 +256,7 @@ class SHOT702(ConnectionSerial):
 
         Raises
         ------
-        :exc:`.OptoSigmaError`
+        ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
         if self.query('C:{}{}'.format(stage, mode)) != 'OK':
@@ -276,7 +276,7 @@ class SHOT702(ConnectionSerial):
 
         Raises
         ------
-        :exc:`.OptoSigmaError`
+        ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
         if self.query('R:{}'.format(stage)) != 'OK':
@@ -292,7 +292,7 @@ class SHOT702(ConnectionSerial):
 
         Raises
         ------
-        :exc:`.OptoSigmaError`
+        ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
         if self.query('O:{}'.format(status)) != 'OK':
@@ -333,7 +333,7 @@ class SHOT702(ConnectionSerial):
 
         Raises
         ------
-        :exc:`.OptoSigmaError`
+        ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
         self._speed('D', stage, minimum, maximum, acceleration)
@@ -373,7 +373,7 @@ class SHOT702(ConnectionSerial):
 
         Raises
         ------
-        :exc:`.OptoSigmaError`
+        ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
         self._speed('V', stage, minimum, maximum, acceleration)
@@ -394,7 +394,7 @@ class SHOT702(ConnectionSerial):
 
         Raises
         ------
-        :exc:`.OptoSigmaError`
+        ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
         if self.query('S:{}{}'.format(stage, num_steps)) != 'OK':
@@ -417,7 +417,7 @@ class SHOT702(ConnectionSerial):
 
         Raises
         ------
-        :exc:`.OptoSigmaError`
+        ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
         reply = self.query('Q:')
@@ -440,7 +440,7 @@ class SHOT702(ConnectionSerial):
 
         Raises
         ------
-        :exc:`.OptoSigmaError`
+        ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
         if self.query('L:E') != 'OK':
@@ -460,7 +460,7 @@ class SHOT702(ConnectionSerial):
 
         Raises
         ------
-        :exc:`.OptoSigmaError`
+        ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
         if self.query('L:{}'.format(stage)) != 'OK':

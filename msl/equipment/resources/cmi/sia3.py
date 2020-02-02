@@ -82,7 +82,7 @@ class SIA3(ConnectionSerial):
 
         Raises
         ------
-        :exc:`ValueError`
+        ValueError
             If the value of `ps` is invalid.
         """
         _ps = int(ps)

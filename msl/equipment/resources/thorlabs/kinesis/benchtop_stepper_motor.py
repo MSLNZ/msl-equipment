@@ -116,7 +116,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_ClearMessageQueue(self._serial, self._ch(channel))
@@ -126,7 +126,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_Close(self._serial)
@@ -143,7 +143,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_DisableChannel(self._serial, self._ch(channel))
@@ -160,7 +160,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_EnableChannel(self._serial, self._ch(channel))
@@ -230,7 +230,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         size = 256
@@ -260,7 +260,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         device = c_int()
@@ -325,7 +325,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         return self._get_hardware_info(self.sdk.SBC_GetHardwareInfo, channel=self._ch(channel))
@@ -345,7 +345,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         info = TLI_HardwareInformation()
@@ -367,7 +367,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_HomingParameters()
@@ -424,7 +424,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = c_short()
@@ -447,7 +447,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_JogParameters()
@@ -492,7 +492,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         acceleration = c_int()
@@ -515,7 +515,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_JoystickParameters()
@@ -545,7 +545,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         cw_limit = MOT_LimitSwitchModes()
@@ -572,7 +572,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_LimitSwitchParameters()
@@ -609,7 +609,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         steps = c_double()
@@ -637,7 +637,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         min_position = c_double()
@@ -677,7 +677,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         vel = c_double()
@@ -740,7 +740,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         msg_type = WORD()
@@ -808,7 +808,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_PIDLoopEncoderParams()
@@ -873,7 +873,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_PowerParameters()
@@ -922,7 +922,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         real = c_double()
@@ -1055,7 +1055,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         acceleration = c_int()
@@ -1078,7 +1078,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_VelocityParameters()
@@ -1118,7 +1118,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_Home(self._serial, self._ch(channel))
@@ -1133,7 +1133,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_Identify(self._serial, self._ch(channel))
@@ -1181,7 +1181,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_LoadSettings(self._serial, self._ch(channel))
@@ -1200,7 +1200,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_LoadNamedSettings(self._serial, self._ch(channel), settings_name.encode())
@@ -1242,7 +1242,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_MoveAbsolute(self._serial, self._ch(channel))
@@ -1260,7 +1260,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         direction_ = self.convert_to_enum(direction, MOT_TravelDirection, prefix='MOT_')
@@ -1279,7 +1279,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         direction = self.convert_to_enum(jog_direction, MOT_TravelDirection, prefix='MOT_')
@@ -1300,7 +1300,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_MoveRelative(self._serial, self._ch(channel), displacement)
@@ -1315,7 +1315,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_MoveRelativeDistance(self._serial, self._ch(channel))
@@ -1338,7 +1338,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_MoveToPosition(self._serial, self._ch(channel), index)
@@ -1360,7 +1360,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_Open(self._serial)
@@ -1402,7 +1402,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RegisterMessageCallback(self._serial, self._ch(channel), callback)
@@ -1417,7 +1417,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestBacklash(self._serial, self._ch(channel))
@@ -1432,7 +1432,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestBowIndex(self._serial, self._ch(channel))
@@ -1447,7 +1447,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestDigitalOutputs(self._serial, self._ch(channel))
@@ -1464,7 +1464,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestEncoderCounter(self._serial, self._ch(channel))
@@ -1479,7 +1479,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestHomingParams(self._serial, self._ch(channel))
@@ -1494,7 +1494,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestInputVoltage(self._serial, self._ch(channel))
@@ -1509,7 +1509,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestJogParams(self._serial, self._ch(channel))
@@ -1524,7 +1524,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestJoystickParams(self._serial, self._ch(channel))
@@ -1539,7 +1539,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestLimitSwitchParams(self._serial, self._ch(channel))
@@ -1554,7 +1554,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestMoveAbsolutePosition(self._serial, self._ch(channel))
@@ -1569,7 +1569,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestMoveRelativeDistance(self._serial, self._ch(channel))
@@ -1584,7 +1584,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestPIDLoopEncoderParams(self._serial, self._ch(channel))
@@ -1603,7 +1603,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestPosition(self._serial, self._ch(channel))
@@ -1618,7 +1618,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestPowerParams(self._serial, self._ch(channel))
@@ -1628,7 +1628,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestRackDigitalOutputs(self._serial)
@@ -1638,7 +1638,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestRackStatusBits(self._serial)
@@ -1655,7 +1655,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestSettings(self._serial, self._ch(channel))
@@ -1674,7 +1674,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestStatusBits(self._serial, self._ch(channel))
@@ -1692,7 +1692,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestTriggerSwitches(self._serial, self._ch(channel))
@@ -1707,7 +1707,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_RequestVelParams(self._serial, self._ch(channel))
@@ -1722,7 +1722,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_ResetRotationModes(self._serial, self._ch(channel))
@@ -1737,7 +1737,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_ResumeMoveMessages(self._serial, self._ch(channel))
@@ -1757,7 +1757,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetBacklash(self._serial, self._ch(channel), distance)
@@ -1774,7 +1774,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetBowIndex(self._serial, self._ch(channel), bow_index)
@@ -1812,7 +1812,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetDigitalOutputs(self._serial, self._ch(channel), outputs_bits)
@@ -1833,7 +1833,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetDirection(self._serial, self._ch(channel), reverse)
@@ -1853,7 +1853,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetEncoderCounter(self._serial, self._ch(channel), count)
@@ -1878,7 +1878,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_HomingParameters()
@@ -1903,7 +1903,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetHomingVelocity(self._serial, self._ch(channel), velocity)
@@ -1922,7 +1922,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode_ = self.convert_to_enum(mode, MOT_JogModes, prefix='MOT_')
@@ -1941,7 +1941,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         if not isinstance(jog_params, MOT_JogParameters):
@@ -1963,7 +1963,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetJogStepSize(self._serial, self._ch(channel), step_size)
@@ -1985,7 +1985,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetJogVelParams(self._serial, self._ch(channel), acceleration, max_velocity)
@@ -2002,7 +2002,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         if not isinstance(joystick_params, MOT_JoystickParameters):
@@ -2035,7 +2035,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         cw_lim_ = self.convert_to_enum(cw_lim, MOT_LimitSwitchModes, prefix='MOT_')
@@ -2055,7 +2055,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         if not isinstance(params, MOT_LimitSwitchParameters):
@@ -2106,7 +2106,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetMotorParamsExt(self._serial, self._ch(channel), steps_per_rev, gear_box_ratio, pitch)
@@ -2130,7 +2130,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetMotorTravelLimits(self._serial, self._ch(channel), min_position, max_position)
@@ -2148,7 +2148,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = self.convert_to_enum(travel_mode, MOT_TravelModes, prefix='MOT_')
@@ -2171,7 +2171,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetMotorVelocityLimits(self._serial, self._ch(channel), max_velocity, max_acceleration)
@@ -2191,7 +2191,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetMoveAbsolutePosition(self._serial, self._ch(channel), position)
@@ -2211,7 +2211,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetMoveRelativeDistance(self._serial, self._ch(channel), distance)
@@ -2229,7 +2229,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetPIDLoopEncoderCoeff(self._serial, self._ch(channel), coeff)
@@ -2256,7 +2256,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_PIDLoopEncoderParams()
@@ -2287,7 +2287,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetPositionCounter(self._serial, self._ch(channel), count)
@@ -2306,7 +2306,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         if rest < 0 or rest > 100:
@@ -2328,7 +2328,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetRackDigitalOutputs(self._serial, outputs_bits)
@@ -2349,7 +2349,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         mode = self.convert_to_enum(mode, MOT_MovementModes)
@@ -2373,7 +2373,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetStageAxisLimits(self._serial, self._ch(channel), min_position, max_position)
@@ -2399,7 +2399,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetTriggerSwitches(self._serial, self._ch(channel), indicator_bits)
@@ -2421,7 +2421,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SetVelParams(self._serial, self._ch(channel), acceleration, max_velocity)
@@ -2445,7 +2445,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         params = MOT_VelocityParameters()
@@ -2468,7 +2468,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_StartPolling(self._serial, self._ch(channel), int(milliseconds))
@@ -2483,7 +2483,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_StopImmediate(self._serial, self._ch(channel))
@@ -2508,7 +2508,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_StopProfiled(self._serial, self._ch(channel))
@@ -2525,7 +2525,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         self.sdk.SBC_SuspendMoveMessages(self._serial, self._ch(channel))
@@ -2584,7 +2584,7 @@ class BenchtopStepperMotor(MotionControl):
 
         Raises
         ------
-        :exc:`~msl.equipment.exceptions.ThorlabsError`
+        ~msl.equipment.exceptions.ThorlabsError
             If not successful.
         """
         msg_type = WORD()

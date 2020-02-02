@@ -44,7 +44,7 @@ class ConnectionSocket(ConnectionMessageBased):
 
         Raises
         ------
-        :exc:`~.exceptions.MSLConnectionError`
+        ~msl.equipment.exceptions.MSLConnectionError
             If the socket cannot be opened.
         """
         super(ConnectionSocket, self).__init__(record)

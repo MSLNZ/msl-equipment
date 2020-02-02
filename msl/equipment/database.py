@@ -163,7 +163,9 @@ class Database(object):
                             except KeyError:
                                 pass
                             else:
-                                kwargs[name] = string_to_none_bool_int_float_complex(s)
+                                if isinstance(s, str):
+                                    s = string_to_none_bool_int_float_complex(s)
+                                kwargs[name] = s
 
                         self._equipment_records[key] = EquipmentRecord(**kwargs)
 

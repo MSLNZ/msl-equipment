@@ -168,7 +168,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'MSL-Equipment.tex', 'MSL-Equipment Documentation',
-     'Measurement Standards Laboratory', 'manual'),
+     'Measurement Standards Laboratory of New Zealand', 'manual'),
 ]
 
 

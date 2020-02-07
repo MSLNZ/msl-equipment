@@ -48,7 +48,7 @@ extensions = [
 ]
 
 # autodoc options
-if sphinx.version_info < (1, 8):
+if sphinx.version_info[:2] < (1, 8):
     # 'alphabetical', 'bysource', 'groupwise'
     autodoc_member_order = 'bysource'
 

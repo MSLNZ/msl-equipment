@@ -7,12 +7,9 @@ import re
 import ast
 import json
 import codecs
-import logging
 from xml.etree import cElementTree
 
-from msl.io import (
-    read_table_excel,
-)
+from msl.io import read_table_excel
 
 from . import constants
 from .record_types import (
@@ -20,11 +17,10 @@ from .record_types import (
     ConnectionRecord,
 )
 from .utils import (
+    logger,
     string_to_none_bool_int_float_complex,
     convert_to_enum,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class Database(object):

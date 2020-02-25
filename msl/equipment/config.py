@@ -2,12 +2,10 @@
 Load an XML :ref:`configuration_file`.
 """
 import os
-import logging
 from xml.etree import cElementTree
 
+from .utils import logger
 from .database import Database
-
-logger = logging.getLogger(__name__)
 
 
 class Config(object):

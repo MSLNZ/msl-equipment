@@ -4,12 +4,13 @@ MSL resources for connecting to equipment.
 import os
 import re
 import fnmatch
-import logging
 import importlib
 
-from ..record_types import EquipmentRecord, ConnectionRecord
-
-_logger = logging.getLogger(__name__)
+from ..utils import logger
+from ..record_types import (
+    EquipmentRecord,
+    ConnectionRecord
+)
 
 _registry = []
 
@@ -47,7 +48,7 @@ def register(manufacturer=None, model=None, flags=0):
     """
     def cls(obj):
         _registry.append(_Resource(manufacturer, model, flags, obj))
-        _logger.debug('added {} to the registry'.format(obj))
+        logger.debug('added {} to the registry'.format(obj))
         return obj
     return cls
 

@@ -1,10 +1,12 @@
 """
 Establish a connection to the equipment.
 """
-import logging
-
+from .utils import logger
 from .config import Config
-from .constants import Backend, MSLInterface
+from .constants import (
+    Backend,
+    MSLInterface
+)
 from .exceptions import ResourceClassNotFound
 from .record_types import EquipmentRecord
 from .resources import find_resource_class
@@ -14,8 +16,6 @@ from .connection_pyvisa import ConnectionPyVISA
 from .connection_serial import ConnectionSerial
 from .connection_socket import ConnectionSocket
 from .connection_nidaq import ConnectionNIDAQ
-
-logger = logging.getLogger(__name__)
 
 
 def connect(record, demo=None):
@@ -30,7 +30,7 @@ def connect(record, demo=None):
         Whether to simulate a connection to the equipment by opening
         a connection in demo mode. This allows you to test your code
         if the equipment is not physically connected to a computer.
-        
+
         If :data:`None` then the `demo` value is determined from the
         :attr:`~.config.Config.DEMO_MODE` attribute.
 

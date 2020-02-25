@@ -2,13 +2,13 @@
 Base class for establishing a connection to the equipment.
 """
 from __future__ import unicode_literals
-import logging
 
 from .record_types import EquipmentRecord
 from .exceptions import MSLConnectionError
-from .utils import convert_to_enum
-
-logger = logging.getLogger(__name__)
+from .utils import (
+    logger,
+    convert_to_enum
+)
 
 
 class Connection(object):
@@ -50,16 +50,16 @@ class Connection(object):
 
     def disconnect(self):
         """Disconnect from the equipment.
-        
+
         This method should be overridden in the subclass if the subclass must implement
         tasks that need to be performed in order to safely disconnect from the equipment.
-        
+
         For example:
 
             * to clean up system resources from memory (e.g., if using a manufacturer's SDK)
-            * to configure the equipment to be in a state that is safe for people 
+            * to configure the equipment to be in a state that is safe for people
               working in the lab when the equipment is not in use
-        
+
         Note
         ----
         This method gets called automatically when the :class:`.Connection` object
@@ -78,7 +78,7 @@ class Connection(object):
 
     def raise_exception(self, msg):
         """Raise a :exc:`~.MSLConnectionError`.
-        
+
         Parameters
         ----------
         msg : :class:`str`

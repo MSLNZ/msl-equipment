@@ -4,7 +4,6 @@ Records from :ref:`equipment_database`\'s or :ref:`connections_database`\'s.
 from __future__ import unicode_literals
 import re
 import json
-import logging
 import datetime
 from enum import Enum
 from xml.etree.cElementTree import Element
@@ -30,8 +29,6 @@ from .constants import (
     LF,
     CR,
 )
-
-logger = logging.getLogger(__name__)
 
 _interface_regex = re.compile(r'[+_A-Z]+')
 

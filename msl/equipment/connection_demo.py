@@ -4,10 +4,10 @@ Simulate a connection to the equipment.
 import os
 import re
 import random
-import logging
 import importlib
 
 from .connection import Connection
+from .utils import logger
 
 _backtick_regex = re.compile(r'`(.+?)`')
 
@@ -16,14 +16,14 @@ class ConnectionDemo(Connection):
 
     def __init__(self, record, cls):
         """Simulate a connection to the equipment.
-        
-        Establishing a connection in demo mode is useful when developing a 
+
+        Establishing a connection in demo mode is useful when developing a
         program and the equipment is not physically connected to a computer.
 
         A custom :ref:`logging level <levels>` is used for logging messages with a
         connection in demo mode. The ``logging.DEMO`` :ref:`logging level <levels>`
         is set to be between ``logging.INFO`` and ``logging.WARNING``.
-        
+
         The returned data type is determined from the docstring of the called method.
         For example, if ``:rtype: int`` then an :class:`int` is returned or if
         ``:rtype: int, float`` then an :class:`int` and a :class:`float` are returned.
@@ -181,16 +181,3 @@ class ConnectionDemo(Connection):
             return _object()  # try to initialize it
         except TypeError:
             return _object
-
-
-def _demo_logger(self, msg, *args, **kwargs):
-    """A custom logger for :class:`ConnectionDemo` objects."""
-    if self.isEnabledFor(logging.DEMO):
-        self._log(logging.DEMO, msg, args, **kwargs)
-
-
-# create a demo logger level between INFO and WARNING
-logger = logging.getLogger(__name__)
-logging.DEMO = logging.INFO + 5
-logging.addLevelName(logging.DEMO, 'DEMO')
-logging.Logger.demo = _demo_logger

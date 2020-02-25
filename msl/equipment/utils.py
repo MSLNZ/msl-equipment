@@ -6,7 +6,19 @@ import datetime
 from xml.etree import cElementTree
 from xml.dom import minidom
 
-logger = logging.getLogger(__name__)
+
+def _demo_logger(self, msg, *args, **kwargs):
+    """A custom logger for :class:`~msl.equipment.connection_demo.ConnectionDemo` objects."""
+    if self.isEnabledFor(logging.DEMO):
+        self._log(logging.DEMO, msg, args, **kwargs)
+
+
+logger = logging.getLogger(__package__)
+
+# create a demo logger level between INFO and WARNING
+logging.DEMO = logging.INFO + 5
+logging.addLevelName(logging.DEMO, 'DEMO')
+logging.Logger.demo = _demo_logger
 
 DEFAULT_DATE = datetime.date(datetime.MINYEAR, 1, 1)
 

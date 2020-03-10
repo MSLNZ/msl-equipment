@@ -191,7 +191,7 @@ setup(
 )
 
 if 'dev' in version and not version.endswith('editable'):
-    # ensure that the value of __version__ is correct if installing the package from a non-release code base
+    # ensure that the value of __version__ is correct if installing the package from an unreleased code base
     init_path = ''
     if sys.argv[0] == 'setup.py' and 'install' in sys.argv and not {'--help', '-h'}.intersection(sys.argv):
         # python setup.py install

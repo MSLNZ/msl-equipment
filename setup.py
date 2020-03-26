@@ -129,6 +129,9 @@ def get_version():
     return init_version + '+' + suffix
 
 
+testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
+pytest_runner = ['pytest-runner'] if testing else []
+
 install_requires = [
     'msl-loadlib',
     'msl-io @ https://github.com/MSLNZ/msl-io/archive/master.tar.gz',
@@ -138,17 +141,13 @@ install_requires = [
 ]
 
 tests_require = ['pytest-cov', 'nidaqmx', 'pyvisa>=1.6', 'pyvisa-py']
-
-if sys.version_info[:2] == (2, 7):
-    install_requires.append('numpy<1.17')
-    tests_require.extend(['zipp<2.0.0', 'pytest<5.0'])
-else:
+if not testing:
     install_requires.append('numpy')
-    tests_require.append('pytest')
-
-
-testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
-pytest_runner = ['pytest-runner'] if testing else []
+else:
+    if sys.version_info[:2] == (2, 7):
+        tests_require.extend(['zipp<2.0.0', 'pytest<5.0', 'numpy<1.17'])
+    else:
+        tests_require.extend(['pytest', 'numpy'])
 
 needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
 sphinx = ['sphinx', 'sphinx_rtd_theme'] + install_requires if needs_sphinx else []

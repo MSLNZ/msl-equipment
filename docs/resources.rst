@@ -5,6 +5,11 @@ MSL Resources
 =============
 MSL Resources are specific classes that are used to communicate with the equipment.
 
+* `Aim and Thurlby Thandar Instruments`_
+
+  * :class:`~msl.equipment.resources.aim_tti.mx_series.MXSeries` - MX100QP, MX100TP, MX180TP
+    *(could be re-implemented to support other Series of DC Power Supplies)*
+
 * Avantes_
 
   * :class:`~msl.equipment.resources.avantes.avaspec.Avantes` - Wrapper around the `AvaSpec SDK`_
@@ -182,3 +187,4 @@ Please follow the `style guide`_.
 .. _ARC_Instrument.dll: ftp://ftp.piacton.com/Public/Software/Official/Acton/
 .. _DataRay: https://www.dataray.com/
 .. _DATARAYOCX: https://www.dataray.com/interfacing.html
+.. _Aim and Thurlby Thandar Instruments: https://www.aimtti.com/

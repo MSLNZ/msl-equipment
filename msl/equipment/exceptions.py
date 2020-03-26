@@ -22,6 +22,10 @@ class ResourceClassNotFound(MSLConnectionError):
         super(ResourceClassNotFound, self).__init__(msg)
 
 
+class AimTTiError(MSLConnectionError):
+    """Exception for equipment from Aim and Thurlby Thandar Instruments."""
+
+
 class AvantesError(MSLConnectionError):
     """Exception for equipment from Avantes."""
 

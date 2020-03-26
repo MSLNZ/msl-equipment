@@ -19,6 +19,7 @@ Subpackages
 
 .. toctree::
 
+    msl.equipment.resources.aim_tti
     msl.equipment.resources.avantes
     msl.equipment.resources.bentham
     msl.equipment.resources.cmi

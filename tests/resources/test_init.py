@@ -145,3 +145,11 @@ def test_find_resource_class():
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)
             assert cls == resources.dataray.datarayocx_64.DataRayOCX64
+
+    for man in ('Aim & Thurlby Thandar Instruments', 'Aim    and  Thurlby    Thandar         Instruments',
+                'Thurlby Thandar Instruments', 'aim & tti', 'Aim and TTi', 'aim-tti',
+                'aim_tti', 'aim tti', 'tti', 'TTi'):
+        for mod in ('mx100tp', 'Mx100tP', 'mx180tp', 'MX180TP', 'mX100Qp', 'MX100QP'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.aim_tti.mx_series.MXSeries

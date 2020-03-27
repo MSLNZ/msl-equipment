@@ -10,6 +10,26 @@ from . import constants
 from .connection_message_based import ConnectionMessageBased
 
 
+def _parse_address(address):
+    """Get the COM port from the address.
+
+    Parameters
+    ----------
+    address : :class:`str`
+        A :class:`~msl.equipment.record_types.ConnectionRecord` address.
+
+    Returns
+    -------
+    :class:`str` or :data:`None`
+        The COM port, e.g. ``'COM2'``, or :data:`None` if the
+        port cannot be determined from the `address`.
+    """
+    s = re.search(r'\d+', address)
+    if s is None:
+        return
+    return 'COM{}'.format(s.group(0))
+
+
 class ConnectionSerial(ConnectionMessageBased):
 
     def __init__(self, record):
@@ -120,10 +140,10 @@ class ConnectionSerial(ConnectionMessageBased):
         except serial.serialutil.SerialException:
             # PyVISA and PyVISA-py accept various resource names: 'ASRL#', 'COM#', 'LPT#', 'ASRLCOM#'
             # but Serial seems to only be happy with 'COM#'
-            number = re.search(r'\d+', record.connection.address)  # get the port number from the address
-            if number is None:
+            port = _parse_address(record.connection.address)
+            if port is None:
                 self.raise_exception('A port number was not specified -- address={}'.format(record.connection.address))
-            self._serial.port = 'COM{}'.format(number.group(0))
+            self._serial.port = port
 
             try:
                 self._serial.open()

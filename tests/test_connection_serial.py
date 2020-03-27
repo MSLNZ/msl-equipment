@@ -10,6 +10,7 @@ except ImportError:
 import pytest
 
 from msl.equipment import EquipmentRecord, ConnectionRecord, Backend, MSLConnectionError
+from msl.equipment.connection_serial import _parse_address
 
 
 @pytest.mark.skipif(pty is None, reason='pty is not available')
@@ -78,3 +79,15 @@ def test_connection_serial_read():
     assert dev.read() == ',054.2'  # read until second `term`
 
     dev.write('SHUTDOWN')
+
+
+def test_address():
+    assert 'COM3' == _parse_address('ASRL3')
+    assert 'COM3' == _parse_address('COM3')
+    assert 'COM3' == _parse_address('LPT3')
+    assert 'COM3' == _parse_address('ASRLCOM3')
+    assert 'COM3' == _parse_address('Prologix::COM3::6')
+    assert 'COM3' == _parse_address('Prologix::COM3::6::112')
+
+    for a in ['ASRL', 'COM', 'LPT', 'ASRLCOM', 'Prologix::COM::', '', 'ABC']:
+        assert _parse_address(a) is None

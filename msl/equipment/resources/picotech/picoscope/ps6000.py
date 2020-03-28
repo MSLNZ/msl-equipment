@@ -50,7 +50,7 @@ class PicoScope6000(PicoScopeApi):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         super(PicoScope6000, self).__init__(record, ps6000Api_funcptrs)
 
@@ -85,12 +85,12 @@ class PicoScope6000(PicoScopeApi):
         This function tells the scope whether or not to use an external clock signal fed into the
         AUX input. The external clock can be used to synchronise one or more PicoScope 6000
         units to an external source.
-        
+
         When the external clock input is enabled, the oscilloscope relies on the clock signal for
         all of its timing. The driver checks that the clock is running before starting a capture,
         but if the clock signal stops after the initial check, the oscilloscope will not respond to
         any further commands until it is powered down and back up again.
-        
+
         Note: if the AUX input is set as an external clock input then it cannot also be used as
         an external trigger input.
         """

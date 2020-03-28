@@ -57,7 +57,7 @@ class MXSeries(object):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         interface = record.connection.interface
         if interface == MSLInterface.SOCKET:

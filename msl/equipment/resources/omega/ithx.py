@@ -38,7 +38,7 @@ class iTHX(ConnectionSocket):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         super(iTHX, self).__init__(record)
         self.set_exception_class(OmegaError)

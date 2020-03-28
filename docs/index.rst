@@ -15,12 +15,12 @@ query, for example, a ``*IDN?`` command from the equipment.
 Three items are used by **MSL-Equipment** to help organise, share and communicate with equipment that is available
 in the laboratory to perform a measurement
 
-1. :ref:`configuration_file`
+1. :ref:`configuration-file`
 
-and two different types of :ref:`database`
+and two different types of :ref:`database-formats`
 
-2. :ref:`equipment_database`
-3. :ref:`connections_database`
+2. :ref:`equipment-database`
+3. :ref:`connections-database`
 
 The following example uses a `configuration file`_ that specifies a `registry database`_ containing
 3 digital multimeters that are available in a lab which can be used to measure a voltage. The information
@@ -38,7 +38,7 @@ in to the **MSL-Equipment** package:
   >>> db = cfg.database() # doctest: +SKIP
 
 Once you have a reference to the :meth:`~msl.equipment.config.Config.database` you have access to all the records in
-the :ref:`equipment_database` and in the :ref:`connections_database`. To access the **Hewlett Packard 34401A** [#f1]_
+the :ref:`equipment-database` and in the :ref:`connections-database`. To access the **Hewlett Packard 34401A** [#f1]_
 :class:`~msl.equipment.record_types.EquipmentRecord` in the `registry database`_ (which is known by the ``dmm``
 alias that is specified in the `configuration file`_) use:
 
@@ -55,9 +55,9 @@ Connect to the **Hewlett Packard 34401A** [#f1]_ digital multimeter and query th
   >>> dmm.query('*IDN?') # doctest: +SKIP
   'Hewlett Packard,34401A,D10011,A.02.14-02.40-02.14-00.49-03-01'
 
-For more examples of what a :ref:`configuration_file` or a :ref:`database` can look like or how to use
-**MSL-Equipment** in your own application see the :ref:`examples`. The :ref:`api` also shows a more detailed
-example that loads the same `configuration file`_.
+For more examples of what a :ref:`configuration-file` or a :ref:`database-formats` can look like or how to use
+**MSL-Equipment** in your own application see the :ref:`equipment-examples`. The :ref:`equipment-api` also
+shows a more detailed example that loads the same `configuration file`_.
 
 ========
 Contents

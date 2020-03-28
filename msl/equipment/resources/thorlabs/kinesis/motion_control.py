@@ -85,7 +85,7 @@ class MotionControl(ConnectionSDK):
         Parameters
         ----------
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         api_function : :mod:`.api_functions`
             An API function list from :mod:`.api_functions` that the subclass
             is a wrapper around.
@@ -149,7 +149,7 @@ class MotionControl(ConnectionSDK):
         """:class:`dict`: The device settings specified in ``ThorlabsDefaultSettings.xml``
 
         If this is an empty :class:`dict` then you can specify the ``device_name`` in the
-        properties field in the :ref:`connections_database` or you can run the Kinesis
+        properties field in the :ref:`connections-database` or you can run the Kinesis
         software and allow Kinesis to configure the actuator that is connected to the motor
         controller.
 

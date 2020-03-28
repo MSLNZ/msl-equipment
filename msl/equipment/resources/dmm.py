@@ -31,7 +31,7 @@ def dmm_factory(connection_record, connection_class):
     Parameters
     ----------
     connection_record : :class:`~.record_types.ConnectionRecord`
-        A connection record from a :ref:`connections_database`.
+        A connection record from a :ref:`connections-database`.
     connection_class : :class:`~.connection_message_based.ConnectionMessageBased` or :class:`~pyvisa.resources.MessageBasedResource`
         A connection subclass that communicates with the equipment through `read` and `write` commands.
 
@@ -50,7 +50,7 @@ def dmm_factory(connection_record, connection_class):
             Parameters
             ----------
             record : :class:`~.record_types.EquipmentRecord`
-                A record from an :ref:`equipment_database`.
+                A record from an :ref:`equipment-database`.
             """
             super(DMM, self).__init__(record)
 

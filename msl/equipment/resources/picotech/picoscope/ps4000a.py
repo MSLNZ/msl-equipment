@@ -50,7 +50,7 @@ class PicoScope4000A(PicoScopeApi):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         super(PicoScope4000A, self).__init__(record, ps4000aApi_funcptrs)
 
@@ -112,7 +112,7 @@ class PicoScope4000A(PicoScopeApi):
         logical AND of the elements of the ``conditions`` array. Calling this function multiple
         times creates the logical OR of multiple AND operations. This AND-OR logic allows you
         to create any possible Boolean function of the scope's inputs.
-        
+
         Other settings of the pulse width qualifier are configured by calling
         :meth:`set_pulse_width_qualifier_properties`.
         """

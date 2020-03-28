@@ -14,7 +14,7 @@ class ConnectionSocket(ConnectionMessageBased):
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a socket connection supports the following key-value pairs in the
-        :ref:`connections_database` (see also :func:`socket.socket` for more details)::
+        :ref:`connections-database` (see also :func:`socket.socket` for more details)::
 
             'read_termination': str or None, read until this termination sequence is found [default: '\\n']
             'write_termination': str or None, termination sequence appended to write messages [default: '\\r\\n']
@@ -32,7 +32,7 @@ class ConnectionSocket(ConnectionMessageBased):
         value must be equal to :data:`~msl.equipment.constants.Backend.MSL`
         to use this class for the communication system. This is achieved by
         setting the value in the **Backend** field for a connection record
-        in the :ref:`connections_database` to be ``MSL``.
+        in the :ref:`connections-database` to be ``MSL``.
 
         Do not instantiate this class directly. Use the
         :meth:`~.EquipmentRecord.connect` method to connect to the equipment.
@@ -40,7 +40,7 @@ class ConnectionSocket(ConnectionMessageBased):
         Parameters
         ----------
         record : :class:`~.record_types.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
 
         Raises
         ------

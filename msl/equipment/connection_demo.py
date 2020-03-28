@@ -34,7 +34,7 @@ class ConnectionDemo(Connection):
         Do not instantiate this class directly. Use the
         :meth:`record.connect(demo=True) <.record_types.EquipmentRecord.connect>` method
         to connect to the equipment in demo mode or set :attr:`~.config.Config.DEMO_MODE`
-        to be :data:`True` in the :ref:`configuration_file` to open all connections
+        to be :data:`True` in the :ref:`configuration-file` to open all connections
         in demo mode.
 
         .. _reStructuredText: https://www.python.org/dev/peps/pep-0287/
@@ -43,7 +43,7 @@ class ConnectionDemo(Connection):
         Parameters
         ----------
         record : :class:`~.record_types.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         cls : :class:`.Connection`
             A :class:`.Connection` subclass (that has **NOT** been instantiated).
         """

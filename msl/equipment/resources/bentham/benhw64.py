@@ -24,12 +24,12 @@ class Bentham(Connection):
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a Bentham connection supports the following key-value pairs in the
-        :ref:`connections_database`::
+        :ref:`connections-database`::
 
             'cfg': str, the path to the System.cfg file [default: None]
             'atr': str, the path to the System.atr file [default: None]
-        
-        If the ``cfg`` and ``atr`` values are not defined in the :ref:`connections_database`
+
+        If the ``cfg`` and ``atr`` values are not defined in the :ref:`connections-database`
         then you will have to call :meth:`build_system_model`, :meth:`load_setup`
         and :meth:`initialise` (in that order) to configure the SDK.
 
@@ -39,7 +39,7 @@ class Bentham(Connection):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         self._is_connected = False
 

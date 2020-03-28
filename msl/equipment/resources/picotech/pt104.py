@@ -90,7 +90,7 @@ class PT104(ConnectionSDK):
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a PT-104 connection supports the following key-value pairs in the
-        :ref:`connections_database`::
+        :ref:`connections-database`::
 
             'ip_address': str, The IP address and port number of the PT-104 (e.g., '192.168.1.201:1234')
             'open_via_ip': bool, Whether to connect to the PT-104 by Ethernet. Default is to connect by USB.
@@ -101,7 +101,7 @@ class PT104(ConnectionSDK):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         self._handle = None
         libtype = 'windll' if IS_WINDOWS else 'cdll'

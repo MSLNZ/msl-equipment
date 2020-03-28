@@ -20,7 +20,7 @@ class TCSeries(ConnectionSerial):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         if not record.connection.properties:
             # then use the default connection properties

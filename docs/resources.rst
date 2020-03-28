@@ -1,4 +1,4 @@
-.. _msl-resources:
+.. _equipment-resources:
 
 =============
 MSL Resources
@@ -77,7 +77,7 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
   * :class:`~msl.equipment.resources.thorlabs.fwxx2c.FilterWheelXX2C` - FW102C, FW212C
 
-.. _new_resource:
+.. _new-equipment-resource:
 
 Creating a new MSL Resource
 ---------------------------
@@ -97,7 +97,7 @@ Please follow the `style guide`_.
 4. If a :mod:`msl.equipment.exceptions` class has not been created for this manufacture then create a new
    exception handler class using the name of the *manufacturer* in the class name.
 5. Create a new connection class within the module that you created in Step 3. The class must be a subclass of one of
-   the :ref:`connection_classes`.
+   the :ref:`connection-classes`.
 
    .. code-block:: python
 
@@ -120,7 +120,7 @@ Please follow the `style guide`_.
                 Parameters
                 ----------
                 record : :class:`~.EquipmentRecord`
-                    A record from an :ref:`equipment_database`.
+                    A record from an :ref:`equipment-database`.
                 """
                 super(ModelNumber, self).__init__(record)  # change ModelNumber
 
@@ -135,7 +135,7 @@ Please follow the `style guide`_.
    communicating with the equipment works). The very minimal test to create is to add a test case to the
    `def test_find_resource_class()`_ function for ensuring that your class is returned for various values of
    *manufacturer* and *model*. Run the tests using ``python setup.py test`` (ideally you would run the tests
-   for all :ref:`currently-supported versions <equip-dependencies>` of Python, see also `condatests.py`_).
+   for all :ref:`currently-supported versions <equipment-dependencies>` of Python, see also `condatests.py`_).
 8. Add ``.rst`` documentation files for the new MSL Resource to the `docs/_api`_ folder. You can either run
    ``python setup.py apidoc`` to automatically generate the ``.rst`` documentation files or you can create the
    necessary ``.rst`` files manually. Running ``python setup.py apidoc`` will generate ``.rst`` files for *all*

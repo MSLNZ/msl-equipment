@@ -21,7 +21,7 @@ class SHOT702(ConnectionSerial):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         super(SHOT702, self).__init__(record)
 

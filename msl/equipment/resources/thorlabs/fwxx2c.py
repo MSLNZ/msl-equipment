@@ -50,18 +50,18 @@ class FilterWheelXX2C(ConnectionSDK):
         """Wrapper around Thorlabs ``FilterWheel102.dll``, v4.0.0.
 
         Connects to the Thorlabs FW102C Series and FW212C Series Motorized Filter Wheels.
-        
-        A 64-bit version of the library can be download from here_ and it is 
+
+        A 64-bit version of the library can be download from here_ and it is
         located in **AppNotes_FW102C/LabVIEW/Thorlabs_FW102C/Library/FilterWheel102_win64.dll**.
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a FilterWheelXX2C connection supports the following key-value pairs in the
-        :ref:`connections_database`::
+        :ref:`connections-database`::
 
             'port': str, the serial port number, e.g., 'COM3'
             'baud_rate': int, the baud rate for the serial connection [default: 115200]
             'timeout': int, the timeout in seconds [default: 10]
-        
+
         .. _here:
             https://www.thorlabs.com/software_pages/viewsoftwarepage.cfm?code=FW102C&viewtab=2
 
@@ -71,7 +71,7 @@ class FilterWheelXX2C(ConnectionSDK):
         Parameters
         ----------
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
 
         Raises
         ------
@@ -214,7 +214,7 @@ class FilterWheelXX2C(ConnectionSDK):
         return acceleration.value
 
     def get_id(self):
-        """        
+        """
         Returns
         -------
         :class:`str`
@@ -248,12 +248,12 @@ class FilterWheelXX2C(ConnectionSDK):
 
     def get_ports(self):
         """List all the COM ports on the computer.
-        
+
         Returns
         -------
         :class:`dict`
             A dictionary where the keys are the port numbers, e.g. COM1, COM3,
-            and the values are a description about each device connected to the 
+            and the values are a description about each device connected to the
             port.
         """
         ports_ptr = create_string_buffer(256)
@@ -265,7 +265,7 @@ class FilterWheelXX2C(ConnectionSDK):
         return ports
 
     def get_position(self):
-        """        
+        """
         Returns
         -------
         :class:`int`
@@ -291,7 +291,7 @@ class FilterWheelXX2C(ConnectionSDK):
         Returns
         -------
         :class:`.SensorMode`
-            The current sensor mode of the filter wheel. 
+            The current sensor mode of the filter wheel.
         """
         mode = c_int()
         self.sdk.GetSensorMode(self._handle, byref(mode))
@@ -302,7 +302,7 @@ class FilterWheelXX2C(ConnectionSDK):
         Returns
         -------
         :class:`.SpeedMode`
-            The current speed mode of the filter wheel. 
+            The current speed mode of the filter wheel.
         """
         mode = c_int()
         self.sdk.GetSpeed(self._handle, byref(mode))
@@ -347,16 +347,16 @@ class FilterWheelXX2C(ConnectionSDK):
 
     def open(self, port, baud_rate, timeout):
         """Open a COM port for communication.
-        
+
         Parameters
         ----------
         port : :class:`str`
-            The port to be opened, use the :meth:`get_ports` 
+            The port to be opened, use the :meth:`get_ports`
             function to get a list of available ports.
         baud_rate : :class:`int`
-            The number of bits per second to use for the communication protocol.        
+            The number of bits per second to use for the communication protocol.
         timeout : :class:`int`
-            Set the timeout value, in seconds. 
+            Set the timeout value, in seconds.
         """
         if self._handle is None:
             self._handle = self.sdk.Open(port.encode(), baud_rate, timeout)
@@ -397,7 +397,7 @@ class FilterWheelXX2C(ConnectionSDK):
 
     def set_position(self, position):
         """Set the filter wheel's position.
-        
+
         Parameters
         ----------
         position : :class:`int`
@@ -415,15 +415,15 @@ class FilterWheelXX2C(ConnectionSDK):
 
     def set_position_count(self, count):
         """Set the filter wheel's position count.
-        
-        This is the number of filter positions that the filter wheel has. 
+
+        This is the number of filter positions that the filter wheel has.
 
         Parameters
         ----------
         count : :class:`.FilterCount`
             The number of filters in the filter wheel as a :class:`.FilterCount`
             enum value or member name.
-        
+
         Raises
         ------
         ValueError
@@ -452,13 +452,13 @@ class FilterWheelXX2C(ConnectionSDK):
 
     def set_speed_mode(self, mode):
         """Set the filter wheel's speed mode.
- 
+
         Parameters
         ----------
         mode : :class:`.SpeedMode`
             The speed mode of the filter wheel as a :class:`SpeedMode`
             enum value or member name.
-        
+
         Raises
         ------
         ValueError
@@ -474,8 +474,8 @@ class FilterWheelXX2C(ConnectionSDK):
         ----------
         mode : :class:`.TriggerMode`
             The filter wheel's trigger mode as a :class:`TriggerMode`
-            enum value or member name.            
-        
+            enum value or member name.
+
         Raises
         ------
         ValueError

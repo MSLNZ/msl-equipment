@@ -24,7 +24,7 @@ class DataRayOCX64(Connection):
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a DataRay connection supports the following key-value pairs in the
-        :ref:`connections_database`::
+        :ref:`connections-database`::
 
             'area_filter': int, area filter: 1=1pixel, 2=3pixels, 3=5pixels, 4=7pixels, 5=9pixels [default: 1]
             'camera_index': int, the camera to use (between 0 and 7; 0=first camera found) [default: 0]
@@ -39,7 +39,7 @@ class DataRayOCX64(Connection):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         self._client = None
         super(DataRayOCX64, self).__init__(record)

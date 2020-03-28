@@ -50,7 +50,7 @@ class BenchtopStepperMotor(MotionControl):
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a BenchtopStepperMotor connection supports the following key-value pairs in the
-        :ref:`connections_database`::
+        :ref:`connections-database`::
 
             'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
@@ -60,7 +60,7 @@ class BenchtopStepperMotor(MotionControl):
         Parameters
         ----------
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         super(BenchtopStepperMotor, self).__init__(record, Benchtop_StepperMotor_FCNS)
 

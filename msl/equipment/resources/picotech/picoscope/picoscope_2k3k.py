@@ -12,7 +12,7 @@ from ..errors import ERROR_CODES
 class PicoScope2k3k(PicoScope):
 
     def __init__(self, record, func_ptrs):
-        """Use the PicoScope SDK to communicate with ps2000 and ps3000 oscilloscopes.        
+        """Use the PicoScope SDK to communicate with ps2000 and ps3000 oscilloscopes.
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.
@@ -20,9 +20,9 @@ class PicoScope2k3k(PicoScope):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         func_ptrs : :mod:`.functions`
-            The appropriate function-pointer list for the SDK. 
+            The appropriate function-pointer list for the SDK.
         """
         super(PicoScope2k3k, self).__init__(record, func_ptrs)
         self.enPicoScopeInfo = PS2000Info  # PS2000Info enum == PS3000Info enum
@@ -64,15 +64,15 @@ class PicoScope2k3k(PicoScope):
     def _raise(self, msg=None, error_code=None):
         """
         Raise an exception.
-        
+
         If ``msg`` is not :py:data:`None` then display this message.
-        
-        If ``error_code`` is not :py:data:`None` then display the corrseponding error message 
+
+        If ``error_code`` is not :py:data:`None` then display the corrseponding error message
         that is specified in the programmers manual.
-        
+
         If both ``msg`` and ``error_code`` are :py:data:`None` then calls the :meth:`get_unit_info`
         method to get the last error message from the PicoScope *(this has not been tested yet)*.
-        
+
         Parameters
         ----------
         msg : :class:`str`, optional
@@ -108,7 +108,7 @@ class PicoScope2k3k(PicoScope):
 
     def flash_led(self):
         """
-        Flashes the LED on the front of the oscilloscope three times and returns 
+        Flashes the LED on the front of the oscilloscope three times and returns
         within one second.
         """
         return self.FlashLed(self._handle)
@@ -233,7 +233,7 @@ class PicoScope2k3k(PicoScope):
         This function opens a PicoScope 2000/3000 Series oscilloscope without waiting for the
         operation to finish. You can find out when it has finished by periodically calling
         :meth:`open_unit_progress`, which returns a value of 100 when the scope is open.
-        
+
         The driver can support up to 64 oscilloscopes.
         """
         if self._handle is not None:
@@ -247,8 +247,8 @@ class PicoScope2k3k(PicoScope):
     def open_unit_progress(self):
         """
         This function checks on the progress of :meth:`open_unit_async`.
-        
-        The function will return a value from 0 to 100, where 100 implies 
+
+        The function will return a value from 0 to 100, where 100 implies
         that the operation is complete.
         """
         handle = c_int16()
@@ -269,7 +269,7 @@ class PicoScope2k3k(PicoScope):
         This function indicates whether or not the overview buffers used by
         :meth:`run_streaming_ns` have overrun. If an overrun occurs, you can choose to
         increase the overview_buffer_size argument that you pass in the next call to
-        :meth:`run_streaming_ns`.        
+        :meth:`run_streaming_ns`.
         """
         previous_buffer_overrun = c_int16()
         ret = self.OverviewBufferStatus(self._handle, byref(previous_buffer_overrun))
@@ -333,7 +333,7 @@ class PicoScope2k3k(PicoScope):
 
     def set_trigger(self, source, threshold, direction, delay, auto_trigger_ms):
         """
-        This function just calls :meth:`set_trigger2`, since Python supports a 
+        This function just calls :meth:`set_trigger2`, since Python supports a
         floating-point value for defining the ``delay`` parameter.
         """
         return self.set_trigger2(source, threshold, direction, delay, auto_trigger_ms)
@@ -342,8 +342,8 @@ class PicoScope2k3k(PicoScope):
         """
         This function is used to enable or disable triggering and its parameters. It has the
         same behaviour as :meth:`set_trigger`, except that the delay parameter is a floating-point value.
-        
-        For oscilloscopes that support advanced triggering, see :meth:`set_adv_trigger_channel_conditions` 
+
+        For oscilloscopes that support advanced triggering, see :meth:`set_adv_trigger_channel_conditions`
         and related functions.
         """
         return self.SetTrigger2(self._handle, source, threshold, direction, delay, auto_trigger_ms)

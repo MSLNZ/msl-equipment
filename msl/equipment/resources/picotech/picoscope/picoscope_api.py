@@ -23,8 +23,8 @@ class PicoScopeApi(PicoScope):
 
     def __init__(self, record, func_ptrs):
         """Base class for the PicoScopes that have a header file which ends with \\*Api.h.
-        
-        Use the PicoScope SDK to communicate with the ps2000a, ps3000a, ps4000, ps4000a, 
+
+        Use the PicoScope SDK to communicate with the ps2000a, ps3000a, ps4000, ps4000a,
         ps5000, ps5000a and ps6000 oscilloscopes.
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
@@ -33,9 +33,9 @@ class PicoScopeApi(PicoScope):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         func_ptrs : :mod:`.functions`
-            The appropriate function-pointer list for the SDK. 
+            The appropriate function-pointer list for the SDK.
         """
         super(PicoScopeApi, self).__init__(record, func_ptrs)
         self.enPicoScopeInfo = PicoScopeInfoApi
@@ -75,16 +75,16 @@ class PicoScopeApi(PicoScope):
 
     def change_power_source(self, power_state):
         """Change the power source.
-        
+
         This function selects the power supply mode. You must call this function if any of the
         following conditions arises:
-        
+
             * USB power is required
             * the AC power adapter is connected or disconnected during use
             * a USB 3.0 scope is plugged into a USB 2.0 port (indicated if any function returns
               the ``PICO_USB3_0_DEVICE_NON_USB3_0_PORT`` status code)
-        
-        This function is only valid for ps3000a, ps4000a and ps5000a. 
+
+        This function is only valid for ps3000a, ps4000a and ps5000a.
         """
         return self.ChangePowerSource(self._handle, power_state)
 
@@ -92,7 +92,7 @@ class PicoScopeApi(PicoScope):
         """
         This function returns the current power state of the device.
 
-        This function is only valid for ps3000a, ps4000a and ps5000a. 
+        This function is only valid for ps3000a, ps4000a and ps5000a.
         """
         ret = self.CurrentPowerSource(self._handle)
         if ret == PICO_POWER_SUPPLY_CONNECTED:
@@ -115,7 +115,7 @@ class PicoScopeApi(PicoScope):
         """
         This function is used to get the maximum and minimum allowable analog offset for a
         specific voltage range.
-        
+
         This function is invalid for ps4000 and ps5000.
         """
         coupling_ = self.convert_to_enum(coupling, self.enCoupling, to_upper=True)
@@ -130,9 +130,9 @@ class PicoScopeApi(PicoScope):
         This function queries which ranges are available on a scope device.
 
         This function is invalid for ps5000 and ps6000.
-        
+
         Parameters
-        ----------            
+        ----------
         channel : :class:`enum.IntEnum`
             0=ChannelA, 1=ChannelB, ...
         info : :class:`enum.IntEnum`, optional
@@ -163,7 +163,7 @@ class PicoScopeApi(PicoScope):
 
     def get_max_segments(self):
         """This function is valid for ps2000a, ps3000a, ps4000a and ps5000a.
-        
+
         Returns
         -------
         :class:`int`
@@ -197,7 +197,7 @@ class PicoScopeApi(PicoScope):
         collection of waveforms was interrupted by calling :meth:`~.PicoScope.stop`. The returned value
         (``nCaptures``) can then be used to iterate through the number of segments using
         :meth:`get_values`, or in a single call to :meth:`get_values_bulk` where it is used
-        to calculate the ``toSegmentIndex`` parameter.        
+        to calculate the ``toSegmentIndex`` parameter.
 
         Not valid for ps4000 and ps5000.
         """
@@ -218,11 +218,11 @@ class PicoScopeApi(PicoScope):
         """
         Since Python supports the :class:`float` data type, this function returns
         :meth:`get_timebase2`. The timebase that is returned is in **seconds** (not ns).
-        
+
         This function calculates the sampling rate and maximum number of samples for a
         given timebase under the specified conditions. The result will depend on the number of
         channels enabled by the last call to :meth:`~.PicoScope.set_channel`.
-        
+
         The `oversample` argument is only used by ps4000, ps5000 and ps6000.
         """
         return self.get_timebase2(timebase, num_samples, segment_index, oversample)
@@ -232,9 +232,9 @@ class PicoScopeApi(PicoScope):
         This function is an upgraded version of :meth:`get_timebase`, and returns the time
         interval as a :class:`float` rather than an :class:`int`. This allows it to return
         sub-nanosecond time intervals. See :meth:`get_timebase` for a full description.
-        
+
         The timebase that is returned is in **seconds** (not ns).
-        
+
         The `oversample` argument is only used by ps4000, ps5000 and ps6000.
         """
         num_samples = int(num_samples)
@@ -278,14 +278,14 @@ class PicoScopeApi(PicoScope):
         This function returns block-mode data, with or without down sampling, starting at the
         specified sample number. It is used to get the stored data from the driver after data
         collection has stopped.
-        
+
         Parameters
         ----------
         num_samples : :class:`int` or :data:`None`, optional
             The number of samples required. If :data:`None` then automatically determine the
             number of samples to retrieve.
         start_index : :class:`int`, optional
-            A zero-based index that indicates the start point for data collection. 
+            A zero-based index that indicates the start point for data collection.
             It is measured in sample intervals from the start of the buffer.
         factor : :class:`int`, optional
             The down-sampling factor that will be applied to the raw data.
@@ -317,7 +317,7 @@ class PicoScopeApi(PicoScope):
             The number of samples required. If :data:`None` then automatically determine the
             number of samples to retrieve.
         start_index : :class:`int`, optional
-            A zero-based index that indicates the start point for data collection. 
+            A zero-based index that indicates the start point for data collection.
             It is measured in sample intervals from the start of the buffer.
         factor : :class:`int`, optional
             The downsampling factor that will be applied to the raw data.
@@ -337,8 +337,8 @@ class PicoScopeApi(PicoScope):
         """
         This function retrieves waveforms captured using rapid block mode. The waveforms
         must have been collected sequentially and in the same run.
-        
-        The `down_sample_ratio` and `down_sample_ratio_mode` arguments are ignored for 
+
+        The `down_sample_ratio` and `down_sample_ratio_mode` arguments are ignored for
         ps4000 and ps5000.
         """
         assert self.get_no_of_captures() == self._num_captures
@@ -365,7 +365,7 @@ class PicoScopeApi(PicoScope):
         occur when you use the conventional :meth:`~.PicoScope.run_block`, :meth:`get_values` calling
         sequence. This slightly reduces the dead time between successive captures in block
         mode.
-        
+
         This function is invalid for ps4000 and ps5000.
         """
         no_of_samples = c_uint32()
@@ -384,7 +384,7 @@ class PicoScopeApi(PicoScope):
         that occur when you use the conventional :meth:`~.PicoScope.run_block`,
         :meth:`get_values_bulk` calling sequence. This slightly reduces the dead time
         between successive captures in rapid block mode.
-        
+
         This function is invalid for ps4000 and ps5000.
         """
         no_of_samples = c_uint32()
@@ -411,7 +411,7 @@ class PicoScopeApi(PicoScope):
     def get_values_trigger_time_offset_bulk64(self, from_segment_index=0, to_segment_index=None):
         """
         This function retrieves the 64-bit time offsets for waveforms captured in rapid block mode.
-        
+
         A 32-bit version of this function, :meth:`get_values_trigger_time_offset_bulk`, is
         available for use with programming languages that do not support 64-bit integers
         """
@@ -426,7 +426,7 @@ class PicoScopeApi(PicoScope):
     def hold_off(self, holdoff, holdoff_type):
         """
         This function is for backward compatibility only and is not currently used.
-        
+
         This function is only defined for ps2000a, ps3000a and ps4000.
         """
         return self.HoldOff(self._handle, holdoff, holdoff_type)
@@ -434,7 +434,7 @@ class PicoScopeApi(PicoScope):
     def is_led_flashing(self):
         """
         This function reports whether or not the LED is flashing.
-        
+
         This function is supported by ps4000, ps4000a and ps5000.
         """
         status = c_int16()
@@ -505,21 +505,21 @@ class PicoScopeApi(PicoScope):
 
     def open_unit(self, auto_select_power=True, resolution='8Bit'):
         """Open the PicoScope for communication.
-        
-        This function opens a PicoScope attached to the computer. The maximum number of 
-        units that can be opened depends on the operating system, the kernel driver 
+
+        This function opens a PicoScope attached to the computer. The maximum number of
+        units that can be opened depends on the operating system, the kernel driver
         and the computer.
-        
+
         Parameters
         ----------
         auto_select_power : :class:`bool`, optional
-            PicoScopes that can be powered by either DC power 
-            or by USB power may raise ``PICO_POWER_SUPPLY_NOT_CONNECTED`` if the DC power 
+            PicoScopes that can be powered by either DC power
+            or by USB power may raise ``PICO_POWER_SUPPLY_NOT_CONNECTED`` if the DC power
             supply is not connected. Passing in :data:`True` will automatically switch to
             the USB power source.
         resolution : :class:`str`, optional
-            The ADC resolution: 8, 12, 14, 15 or 16Bit. Only used by the PS5000A Series 
-            and it is ignored for all other PicoScope Series.  
+            The ADC resolution: 8, 12, 14, 15 or 16Bit. Only used by the PS5000A Series
+            and it is ignored for all other PicoScope Series.
         """
         if self._handle is not None:
             self.log_warning(self._base_msg + ' is already open')
@@ -552,13 +552,13 @@ class PicoScopeApi(PicoScope):
         Parameters
         ----------
         auto_select_power : :class:`bool`, optional
-            PicoScopes that can be powered by either DC power 
-            or by USB power may raise ``PICO_POWER_SUPPLY_NOT_CONNECTED`` if the DC power 
+            PicoScopes that can be powered by either DC power
+            or by USB power may raise ``PICO_POWER_SUPPLY_NOT_CONNECTED`` if the DC power
             supply is not connected. Passing in :data:`True` will automatically switch to
             the USB power source.
         resolution : :class:`str`, optional
-            The ADC resolution: 8, 12, 14, 15 or 16Bit. Only used by the PS5000A Series 
-            and it is ignored for all other PicoScope Series.  
+            The ADC resolution: 8, 12, 14, 15 or 16Bit. Only used by the PS5000A Series
+            and it is ignored for all other PicoScope Series.
         """
         if self._handle is not None:
             self.log_warning(self._base_msg + ' is already open')
@@ -573,7 +573,7 @@ class PicoScopeApi(PicoScope):
     def open_unit_progress(self):
         """
         This function checks on the progress of a request made to :meth:`open_unit_async` to
-        open a scope. The return value is from 0 to 100, where 100 implies 
+        open a scope. The return value is from 0 to 100, where 100 implies
         that the operation is complete.
         """
         handle = c_int16()
@@ -600,11 +600,11 @@ class PicoScopeApi(PicoScope):
         data has been collected from the device it is down sampled if necessary and then
         delivered to the application. Call :meth:`get_streaming_latest_values` to retrieve the
         data. See Using streaming mode for a step-by-step guide to this process.
-        
+
         When a trigger is set, the total number of samples stored in the driver is the sum of
         `max_pre_trigger_samples` and `max_post_trigger_samples`. If `auto_stop` is false then
         this will become the maximum number of samples without down sampling.
-        
+
         The `down_sample_ratio_mode` argument is ignored for ps4000 and ps5000.
         """
         units = self.convert_to_enum(time_units, self.enTimeUnits, to_upper=True)
@@ -623,8 +623,8 @@ class PicoScopeApi(PicoScope):
     def set_bandwidth_filter(self, channel, bandwidth):
         """
         This function is reserved for future use.
-        
-        This function is only valid for ps3000a, ps4000a and ps5000a.        
+
+        This function is only valid for ps3000a, ps4000a and ps5000a.
         """
         ch = self.convert_to_enum(channel, self.enChannel, to_upper=True)
         bw = self.convert_to_enum(bandwidth, self.enBandwidthLimiter, prefix='BW_', to_upper=True)
@@ -632,14 +632,14 @@ class PicoScopeApi(PicoScope):
 
     def set_data_buffer(self, channel, buffer=None, mode='None', segment_index=0):
         """Set the data buffer for the specified channel.
-        
-        The `mode` argument is ignored for ps4000 and ps5000.        
+
+        The `mode` argument is ignored for ps4000 and ps5000.
         The `segment_index` argument is ignored for ps4000, ps5000 and ps6000.
 
         Parameters
         ----------
         channel : :class:`enum.IntEnum`
-            An enum value or member name from ``Channel``. 
+            An enum value or member name from ``Channel``.
         buffer : :class:`numpy.ndarray`, optional
             A int16, numpy array. If :data:`None` then use a pre-allocated array.
         mode : :class:`enum.IntEnum`, optional
@@ -686,7 +686,7 @@ class PicoScopeApi(PicoScope):
         down sampled, that will be returned after the next call to one of the GetValues
         functions. The function allows you to specify only a single buffer, so for aggregation
         mode, which requires two buffers, you need to call :meth:`set_data_buffers` instead.
-        
+
         You must allocate memory for the buffer before calling this function.
 
         The `mode` argument is ignored for ps4000 and ps5000.
@@ -708,7 +708,7 @@ class PicoScopeApi(PicoScope):
         """
         This function is used to enable the digital port and set the logic level (the voltage at
         which the state transitions from 0 to 1).
-        
+
         This function is only used by ps2000a and ps3000a.
         """
         return self.SetDigitalPort(self._handle, port, enabled, logic_level)
@@ -728,7 +728,7 @@ class PicoScopeApi(PicoScope):
         This function tells the driver where to find your applications ETS time buffers. These
         buffers contain the 64-bit timing information for each ETS sample after you run a
         block-mode ETS capture.
-        
+
         Parameters
         ----------
         buffer : :class:`ctypes.c_longlong`
@@ -753,7 +753,7 @@ class PicoScopeApi(PicoScope):
     def set_frequency_counter(self, channel, enabled, range, threshold_major, threshold_minor):
         """
         This function is only define in the header file and it is not in the manual.
-        This function is only valid for ps4000 and ps4000a.        
+        This function is only valid for ps4000 and ps4000a.
         """
         return self.SetFrequencyCounter(self._handle, channel, enabled, range, threshold_major, threshold_minor)
 
@@ -902,9 +902,9 @@ class PicoScopeApi(PicoScope):
         """
         This function is an upgraded version of :meth:`set_sig_gen_builtin` with double-precision
         frequency arguments for more precise control at low frequencies.
-        
+
         This function is invalid for ps4000 and ps4000a.
-        
+
         Parameters
         ----------
         offset_voltage : :class:`float`, optional
@@ -922,11 +922,11 @@ class PicoScopeApi(PicoScope):
         dwell_time : :class:`float`, optional
             The time, in seconds, for which the sweep stays at each frequency.
         sweep_type : :class:`enum.IntEnum`, optional
-            Whether the frequency will sweep from `start_frequency` to `stop_frequency`, or 
+            Whether the frequency will sweep from `start_frequency` to `stop_frequency`, or
             in the opposite direction, or repeatedly reverse direction. One of:  ``UP``, ``DOWN``,
             ``UPDOWN``, ``DOWNUP``
         operation : :class:`enum.IntEnum`, optional
-            The type of waveform to be produced, specified by one of the following enumerated 
+            The type of waveform to be produced, specified by one of the following enumerated
             types (B models only): ``OFF``, ``WHITENOISE``, ``PRBS``
         shots : :class:`int`, optional
             If :data:`None` then start and run continuously after trigger occurs.
@@ -989,7 +989,7 @@ class PicoScopeApi(PicoScope):
         """
         This function reprograms the signal generator. Values can be changed while the signal
         generator is waiting for a trigger.
-        
+
         The `offset_voltage` and `pk_to_pk` arguments are only used for ps6000.
 
         This function is invalid for ps4000 and ps5000.
@@ -1009,7 +1009,7 @@ class PicoScopeApi(PicoScope):
         """
         This function simplifies arming the trigger. It supports only the LEVEL trigger types
         and does not allow more than one channel to have a trigger applied to it. Any previous
-        pulse width qualifier is cancelled.        
+        pulse width qualifier is cancelled.
         """
         return self.SetSimpleTrigger(self._handle, enable, source, threshold, direction, delay, auto_trigger_ms)
 
@@ -1017,8 +1017,8 @@ class PicoScopeApi(PicoScope):
                                        ext='rising', aux='rising'):
         """
         This function sets the direction of the trigger for each channel.
-        
-        ps4000a overrides this method because it has a different implementation. 
+
+        ps4000a overrides this method because it has a different implementation.
         """
         a_ = self.convert_to_enum(a, self.enThresholdDirection, to_upper=True)
         b_ = self.convert_to_enum(b, self.enThresholdDirection, to_upper=True)
@@ -1055,7 +1055,7 @@ class PicoScopeApi(PicoScope):
         waveform generator (AWG). The value returned depends on the length of the buffer,
         the index mode passed and the device model. The phase count can then be sent to the
         driver through :meth:`set_sig_gen_arbitrary` or :meth:`set_sig_gen_properties_arbitrary`.
-        
+
         Parameters
         ----------
         repetition_rate : :class:`float`
@@ -1064,7 +1064,7 @@ class PicoScopeApi(PicoScope):
             An ``IndexMode`` enum value or member name.
         buffer_length : :class:`int`
             The size (number of samples) of the waveform.
-        
+
         Returns
         -------
         :class:`int`
@@ -1093,8 +1093,8 @@ class PicoScopeApi(PicoScope):
     def trigger_within_pre_trigger_samples(self, state):
         """
         This function is in the header file, but it is not in the manual.
-        
-        This function is only valid for ps4000 and ps5000a.        
+
+        This function is only valid for ps4000 and ps5000a.
         """
         return self.TriggerWithinPreTriggerSamples(self._handle, state)
 
@@ -1106,7 +1106,7 @@ class PicoScopeApi(PicoScope):
         together. Each structure is itself the ``AND`` of the states of one or more of the inputs.
         This ``AND-OR`` logic allows you to create any possible Boolean function of the scope's
         inputs.
-        
+
         The `info` parameter is only used for ps4000a and it is a ``PS4000AConditionsInfo`` enum.
         """
         if self.IS_PS4000A:
@@ -1126,11 +1126,11 @@ class PicoScopeApi(PicoScope):
         channel_properties : :class:`list` of ``TriggerChannelProperties`` :mod:`~msl.equipment.resources.picotech.picoscope.structs`
             A list of ``TriggerChannelProperties`` structures describing the requested properties.
         timeout : :class:`float`, optional
-            The time, in seconds, for which the scope device will wait before collecting data 
-            if no trigger event occurs. If this is set to zero, the scope device will wait 
+            The time, in seconds, for which the scope device will wait before collecting data
+            if no trigger event occurs. If this is set to zero, the scope device will wait
             indefinitely for a trigger.
         aux_output_enable : :class:`int`, optional
-            Zero configures the AUXIO connector as a trigger input. Any other value configures 
+            Zero configures the AUXIO connector as a trigger input. Any other value configures
             it as a trigger output. Only used by ps5000.
         """
         auto_trigger_ms = int(round(max(0.0, timeout * 1e3)))

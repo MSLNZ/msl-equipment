@@ -23,7 +23,7 @@ class ConnectionPyVISA(Connection):
         The :data:`~msl.equipment.record_types.ConnectionRecord.backend`
         value must be equal to :data:`~msl.equipment.constants.Backend.PyVISA`
         to use this class for the communication system. This is achieved by setting the
-        value in the **Backend** field for a connection record in the :ref:`connections_database`
+        value in the **Backend** field for a connection record in the :ref:`connections-database`
         to be ``PyVISA``.
 
         Do not instantiate this class directly. Use the
@@ -32,7 +32,7 @@ class ConnectionPyVISA(Connection):
         Parameters
         ----------
         record : :class:`.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         self._resource = None
         super(ConnectionPyVISA, self).__init__(record)
@@ -129,11 +129,11 @@ class ConnectionPyVISA(Connection):
         ----------
         visa_library : :class:`~pyvisa.highlevel.VisaLibraryBase` or :class:`str`, optional
             The library to use for PyVISA. For example:
-    
+
                 * ``@ni`` to use `NI-VISA <https://www.ni.com/visa/>`_
                 * ``@py`` to use `PyVISA-py <https://pyvisa-py.readthedocs.io/en/latest/>`_
                 * ``@sim`` to use `PyVISA-sim <https://pyvisa-sim.readthedocs.io/en/latest/>`_
-    
+
             If :data:`None` then `visa_library` is read from the
             :attr:`~.config.Config.PyVISA_LIBRARY` variable.
 
@@ -182,11 +182,11 @@ class ConnectionPyVISA(Connection):
         """Find the specific_ PyVISA Resource class that can open the `record`.
 
         .. _specific: https://pyvisa.readthedocs.io/en/stable/api/resources.html
-         
+
         Parameters
         ----------
         record : :class:`~.record_types.EquipmentRecord` or :class:`~.record_types.ConnectionRecord`
-            An equipment or connection record from a :ref:`Database <database>`.
+            An equipment or connection record from a :ref:`Database <database-formats>`.
 
         Returns
         -------

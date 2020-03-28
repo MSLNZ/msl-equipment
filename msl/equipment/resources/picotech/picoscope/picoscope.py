@@ -21,14 +21,14 @@ ALLOWED_SDKs = ('ps2000', 'ps2000a', 'ps3000', 'ps3000a', 'ps4000', 'ps4000a', '
 
 def enumerate_units():
     """Find the PicoScopes that are connected to the computer.
-    
+
     This function counts the number of PicoScopes connected to the
     computer, and returns a list of serial numbers as a string.
 
     Note
     ----
     You cannot call this function after you have opened a connection to a PicoScope.
-    
+
     Returns
     -------
     :class:`list` of :class:`str`
@@ -56,13 +56,13 @@ class PicoScope(ConnectionSDK):
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a PicoScope connection supports the following key-value pairs in the
-        :ref:`connections_database`::
+        :ref:`connections-database`::
 
             'open': bool, Whether to open the connection synchronously [default: True]
             'open_async': bool, Whether to open the connection asynchronously [default: False]
             'auto_select_power': bool, For devices that can be powered by an AC adaptor or a USB cable [default: True]
             'resolution': str, Only valid for ps5000a [default: '8bit']
-        
+
         The SDK version that was initially used to create this base class and the PicoScope
         subclasses was *Pico Technology SDK 64-bit v10.6.10.24*
 
@@ -72,9 +72,9 @@ class PicoScope(ConnectionSDK):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         func_ptrs : :mod:`.functions`
-            The appropriate function-pointer list for the SDK. 
+            The appropriate function-pointer list for the SDK.
         """
         self._handle = None
         libtype = 'windll' if IS_WINDOWS else 'cdll'
@@ -202,8 +202,8 @@ class PicoScope(ConnectionSDK):
 
     def get_unit_info(self, info=None, include_name=True):
         """Retrieves information about the PicoScope.
-        
-        This function retrieves information about the specified oscilloscope. If the device 
+
+        This function retrieves information about the specified oscilloscope. If the device
         fails to open, or no device is opened only the driver version is available.
 
         Parameters
@@ -240,12 +240,12 @@ class PicoScope(ConnectionSDK):
 
     def is_ready(self):
         """Has the PicoScope collecting the requested number of samples?
-        
+
         This function may be used instead of a callback function to receive data from
         :meth:`run_block`. To use this method, pass :data:`None` as the callback parameter
         in :meth:`run_block`. You must then poll the driver to see if it has finished
         collecting the requested samples.
-        
+
         Returns
         -------
         :class:`bool`
@@ -273,17 +273,17 @@ class PicoScope(ConnectionSDK):
 
     def ping_unit(self):
         """Ping the PicoScope.
-        
-        This function can be used to check that the already opened device is still 
+
+        This function can be used to check that the already opened device is still
         connected to the USB port and communication is successful.
         """
         return self.PingUnit(self._handle)
 
     def run_block(self, pre_trigger=0.0, callback=None, segment_index=0):
         """Start collecting data in block mode.
-        
+
         All input arguments are ignored for ps2000 and ps3000.
-        
+
         Parameters
         ----------
         pre_trigger : :class:`float`, optional
@@ -323,7 +323,7 @@ class PicoScope(ConnectionSDK):
 
     def run_streaming(self, pre_trigger=0.0, auto_stop=True, factor=1, ratio_mode='NONE'):
         """Start collecting data in streaming mode.
-        
+
         This function tells the oscilloscope to start collecting data in streaming mode. When
         data has been collected from the device it is down sampled if necessary and then
         delivered to the application. Call :meth:`~.picoscope_api.PicoScopeApi.get_streaming_latest_values`
@@ -334,18 +334,18 @@ class PicoScope(ConnectionSDK):
         this will become the maximum number of samples without down sampling.
 
         The `ratio_mode` argument is ignored for ps4000 and ps5000.
-        
+
         Parameters
         ----------
         pre_trigger : :class:`float`, optional
             The number of seconds before the trigger event to start acquiring data.
         auto_stop : :class:`bool`, optional
-            A flag that specifies if the streaming should stop when all of 
+            A flag that specifies if the streaming should stop when all of
             samples have been captured.
         factor : :class:`int`, optional
-            The down-sampling factor that will be applied to the raw data.        
+            The down-sampling factor that will be applied to the raw data.
         ratio_mode : :class:`enum.IntEnum`, optional
-            Which down-sampling mode to use.            
+            Which down-sampling mode to use.
         """
         if len(self._channels_dict) == 0:
             self.raise_exception('Must call set_channel(...) before starting a run block')
@@ -370,10 +370,10 @@ class PicoScope(ConnectionSDK):
 
     def set_channel(self, channel, coupling='dc', scale='10V', offset=0.0, bandwidth='full', enabled=True):
         """Configure a channel.
-        
+
         This function specifies whether an input channel is to be enabled, its input coupling
         type, voltage range, analog offset and bandwidth limit. Some of the arguments within
-        this function have model-specific values. Please consult the manual according to the 
+        this function have model-specific values. Please consult the manual according to the
         model you have.
 
         The `bandwidth` argument is only used for ps6000.
@@ -389,7 +389,7 @@ class PicoScope(ConnectionSDK):
         scale : :class:`enum.IntEnum`, optional
             The input voltage range.
         offset : :class:`float`, optional
-            A voltage to add to the input channel before digitization. The allowable range of 
+            A voltage to add to the input channel before digitization. The allowable range of
             offsets depends on the input range selected for the channel, as obtained from
             :meth:`.get_analogue_offset`.
         bandwidth : :class:`enum.IntEnum`, optional
@@ -424,17 +424,17 @@ class PicoScope(ConnectionSDK):
 
     def set_timebase(self, dt, duration, segment_index=0, oversample=0):
         """Set the timebase information.
-        
+
         The `segment_index` is ignored for ps2000 and ps3000.
-        
+
         The `oversample` argument is ignored by ps2000a, ps3000a, ps4000a and ps5000a.
-        
+
         Parameters
         ----------
         dt : :class:`float`
-            The sampling interval, in seconds. 
+            The sampling interval, in seconds.
         duration : :class:`float`
-            The number of seconds to acquire data for.  
+            The number of seconds to acquire data for.
         segment_index : :class:`int`, optional
             Which memory segment to save the data to.
         oversample : :class:`int`, optional
@@ -486,7 +486,7 @@ class PicoScope(ConnectionSDK):
 
     def set_trigger(self, channel, threshold, delay=0.0, direction='rising', timeout=0.1, enable=True):
         """Set up the trigger.
-        
+
         Parameters
         ----------
         channel : :class:`enum.IntEnum`
@@ -496,11 +496,11 @@ class PicoScope(ConnectionSDK):
         delay : :class:`float`, optional
             The time, in seconds, between the trigger occurring and the first sample.
         direction : :class:`enum.IntEnum`, optional
-            The direction in which the signal must move to cause a trigger. 
+            The direction in which the signal must move to cause a trigger.
         timeout : :class:`float`, optional
-            The time, in seconds, to wait to automatically create a trigger event if no 
-            trigger event occurs. If `timeout` <= 0 then wait indefinitely for a trigger. 
-            Only accurate to the nearest millisecond. 
+            The time, in seconds, to wait to automatically create a trigger event if no
+            trigger event occurs. If `timeout` <= 0 then wait indefinitely for a trigger.
+            Only accurate to the nearest millisecond.
         enable : :class:`bool`, optional
             Set to :data:`False` to disable the trigger for this channel.
             Not used for ps2000 or ps3000.
@@ -534,9 +534,9 @@ class PicoScope(ConnectionSDK):
         return self.SetSimpleTrigger(self._handle, enable, ch, threshold_adu, trig_dir, delay_, auto_trigger_ms)
 
     def stop(self):
-        """Stop the oscilloscope from sampling data. 
-        
-        If this function is called before a trigger event occurs, then the 
+        """Stop the oscilloscope from sampling data.
+
+        If this function is called before a trigger event occurs, then the
         oscilloscope may not contain valid data.
         """
         return self.Stop(self._handle)

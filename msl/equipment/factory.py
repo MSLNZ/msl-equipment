@@ -25,7 +25,7 @@ def connect(record, demo=None):
     Parameters
     ----------
     record : :class:`~.record_types.EquipmentRecord`
-        A record from an :ref:`equipment_database`.
+        A record from an :ref:`equipment-database`.
 
     demo : :class:`bool`, optional
         Whether to simulate a connection to the equipment by opening

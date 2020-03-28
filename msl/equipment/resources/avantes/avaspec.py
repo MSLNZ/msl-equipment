@@ -22,7 +22,7 @@ class Avantes(ConnectionSDK):
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for an Avantes connection supports the following key-value pairs in the
-        :ref:`connections_database`::
+        :ref:`connections-database`::
 
             'port_id': int, One of -1 (Ethernet+USB), 0 (USB) or 256 (Ethernet) [default: -1]
             'activate': bool, Whether to automatically activate the connection [default: True]
@@ -33,7 +33,7 @@ class Avantes(ConnectionSDK):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         self._handle = None
         libtype = 'windll' if IS_WINDOWS else 'cdll'

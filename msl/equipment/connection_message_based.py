@@ -23,7 +23,7 @@ class ConnectionMessageBased(Connection):
         value must be equal to :data:`~msl.equipment.constants.Backend.MSL`
         to use this class for the communication system. This is achieved by
         setting the value in the **Backend** field for a connection record
-        in the :ref:`connections_database` to be ``MSL``.
+        in the :ref:`connections-database` to be ``MSL``.
 
         Do not instantiate this class directly. Use the
         :meth:`~.EquipmentRecord.connect` method to connect to the equipment.
@@ -31,7 +31,7 @@ class ConnectionMessageBased(Connection):
         Parameters
         ----------
         record : :class:`.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         super(ConnectionMessageBased, self).__init__(record)
 

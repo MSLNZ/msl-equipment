@@ -65,7 +65,7 @@ class PicoScope3000A(PicoScopeApi):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         super(PicoScope3000A, self).__init__(record, ps3000aApi_funcptrs)
 

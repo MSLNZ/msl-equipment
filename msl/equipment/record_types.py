@@ -1,5 +1,5 @@
 """
-Records from :ref:`equipment_database`\'s or :ref:`connections_database`\'s.
+Records from :ref:`equipment-database`\'s or :ref:`connections-database`\'s.
 """
 from __future__ import unicode_literals
 import re
@@ -193,7 +193,7 @@ class EquipmentRecord(Record):
     def __init__(self, alias='', calibrations=None, category='', connection=None,
                  description='', is_operable=False, maintenances=None,
                  manufacturer='', model='', serial='', team='', unique_key='', **user_defined):
-        """Contains the information about an equipment record in an :ref:`equipment_database`.
+        """Contains the information about an equipment record in an :ref:`equipment-database`.
 
         Parameters
         ----------
@@ -232,8 +232,8 @@ class EquipmentRecord(Record):
         
             * by specifying it when the EquipmentRecord is created
             * by setting the value after the EquipmentRecord has been created 
-            * in the **<equipment>** XML tag in a :ref:`configuration_file`
-            * in the **Properties** field in a :ref:`connections_database`
+            * in the **<equipment>** XML tag in a :ref:`configuration-file`
+            * in the **Properties** field in a :ref:`connections-database`
         
         """
 
@@ -562,12 +562,12 @@ class ConnectionRecord(Record):
 
     def __init__(self, address='', backend=Backend.MSL, interface=None, manufacturer='',
                  model='', serial='', **properties):
-        """Contains the information about a connection record in a :ref:`connections_database`.
+        """Contains the information about a connection record in a :ref:`connections-database`.
 
         Parameters
         ----------
         address : :class:`str`
-            The address to use for the connection (see :ref:`address_syntax` for examples).
+            The address to use for the connection (see :ref:`address-syntax` for examples).
         backend : :class:`str`, :class:`int`, or :class:`.Backend`
             The backend to use to communicate with the equipment. The value must be able to
             be converted to a :class:`.Backend` enum.
@@ -585,7 +585,7 @@ class ConnectionRecord(Record):
             Additional key-value pairs that are required to communicate with the equipment.
         """
         self.address = '{}'.format(address)
-        """:class:`str`: The address to use for the connection (see :ref:`address_syntax` for examples)."""
+        """:class:`str`: The address to use for the connection (see :ref:`address-syntax` for examples)."""
 
         self.backend = convert_to_enum(backend, Backend)
         """:class:`.Backend`: The backend to use to communicate with the equipment."""
@@ -608,7 +608,7 @@ class ConnectionRecord(Record):
         
             {'baud_rate': 19200, 'parity': 'even'}
         
-        See the :ref:`connections_database` for examples on how to set the `properties`.
+        See the :ref:`connections-database` for examples on how to set the `properties`.
         """
 
         self.serial = '{}'.format(serial)
@@ -772,7 +772,7 @@ class MaintenanceRecord(Record):
     __slots__ = ('comment', 'date')
 
     def __init__(self, comment='', date=None):
-        """Contains the information about a maintenance record in an :ref:`equipment_database`.
+        """Contains the information about a maintenance record in an :ref:`equipment-database`.
 
         Parameters
         ----------
@@ -945,7 +945,7 @@ class CalibrationRecord(Record):
 
     def __init__(self, calibration_cycle=0, calibration_date=None, measurands=None,
                  report_date=None, report_number=''):
-        """Contains the information about a calibration record in an :ref:`equipment_database`.
+        """Contains the information about a calibration record in an :ref:`equipment-database`.
 
         Parameters
         ----------

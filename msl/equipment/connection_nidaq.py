@@ -48,7 +48,7 @@ class ConnectionNIDAQ(Connection):
         The :data:`~msl.equipment.record_types.ConnectionRecord.backend`
         value must be equal to :data:`~msl.equipment.constants.Backend.NIDAQ`
         to use this class for the communication system. This is achieved by setting the
-        value in the **Backend** field for a connection record in the :ref:`connections_database`
+        value in the **Backend** field for a connection record in the :ref:`connections-database`
         to be ``NIDAQ``.
 
         Do not instantiate this class directly. Use the
@@ -59,7 +59,7 @@ class ConnectionNIDAQ(Connection):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         super(ConnectionNIDAQ, self).__init__(record)
 

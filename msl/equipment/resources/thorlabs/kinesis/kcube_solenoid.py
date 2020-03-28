@@ -31,7 +31,7 @@ class KCubeSolenoid(MotionControl):
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a KCubeSolenoid connection supports the following key-value pairs in the
-        :ref:`connections_database`::
+        :ref:`connections-database`::
 
             'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
@@ -41,7 +41,7 @@ class KCubeSolenoid(MotionControl):
         Parameters
         ----------
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         super(KCubeSolenoid, self).__init__(record, KCube_Solenoid_FCNS)
 

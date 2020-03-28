@@ -1,5 +1,5 @@
 """
-Load equipment and connection records from :ref:`Databases <database>`.
+Load equipment and connection records from :ref:`Databases <database-formats>`.
 """
 from __future__ import unicode_literals
 import os
@@ -27,7 +27,7 @@ class Database(object):
 
     def __init__(self, path):
         """Create :class:`.EquipmentRecord`'s and :class:`.ConnectionRecord`'s
-        from :ref:`Databases <database>` that are specified in a :ref:`configuration_file`.
+        from :ref:`Databases <database-formats>` that are specified in a :ref:`configuration-file`.
 
         This class should be accessed through the :meth:`~.config.Config.database` method
         after a :class:`~.config.Config` object has been created.
@@ -35,16 +35,16 @@ class Database(object):
         Parameters
         ----------
         path : :class:`str`
-            The path to an XML :ref:`configuration_file`.
+            The path to an XML :ref:`configuration-file`.
 
         Raises
         ------
         IOError
-            If `path` does not exist or if the :ref:`configuration_file` is invalid.
+            If `path` does not exist or if the :ref:`configuration-file` is invalid.
         AttributeError
-            If an ``<equipment>`` XML tag is specified in the :ref:`configuration_file`
+            If an ``<equipment>`` XML tag is specified in the :ref:`configuration-file`
             and it does not uniquely identify an equipment record in an
-            :ref:`equipment_database`.
+            :ref:`equipment-database`.
         ValueError
             If an :attr:`~.EquipmentRecord.alias` has been specified multiple times
             for the same :class:`~.EquipmentRecord` or if the name of the Sheet in an Excel
@@ -236,18 +236,18 @@ class Database(object):
     @property
     def equipment(self):
         """:class:`dict`: :class:`.EquipmentRecord`\'s that were listed as ``<equipment>`` XML tags in
-        the :ref:`configuration_file`.
+        the :ref:`configuration-file`.
         """
         return self._equipment_using
 
     @property
     def path(self):
-        """:class:`str`: The path to the :ref:`configuration_file`.
+        """:class:`str`: The path to the :ref:`configuration-file`.
         """
         return self._config_path
 
     def connections(self, **kwargs):
-        """Search the :ref:`connections_database` to find all :class:`.ConnectionRecord`\'s that
+        """Search the :ref:`connections-database` to find all :class:`.ConnectionRecord`\'s that
         match the specified criteria.
 
         Parameters
@@ -300,7 +300,7 @@ class Database(object):
         return [r for r in self._connection_records.values() if self._search(r, kwargs, flags)]
 
     def records(self, **kwargs):
-        """Search the :ref:`equipment_database` to find all :class:`.EquipmentRecord`\'s that
+        """Search the :ref:`equipment-database` to find all :class:`.EquipmentRecord`\'s that
         match the specified criteria.
 
         Parameters

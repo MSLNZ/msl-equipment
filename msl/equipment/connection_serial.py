@@ -27,7 +27,7 @@ class ConnectionSerial(ConnectionMessageBased):
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a serial connection supports the following key-value pairs in the
-        :ref:`connections_database` (see also :class:`serial.Serial` for more
+        :ref:`connections-database` (see also :class:`serial.Serial` for more
         details about each parameter)::
 
             'read_termination': str or None, read until this termination sequence is found [default: '\\n']
@@ -50,7 +50,7 @@ class ConnectionSerial(ConnectionMessageBased):
         value must be equal to :data:`~msl.equipment.constants.Backend.MSL`
         to use this class for the communication system. This is achieved by
         setting the value in the **Backend** field for a connection record
-        in the :ref:`connections_database` to be ``MSL``.
+        in the :ref:`connections-database` to be ``MSL``.
 
         Do not instantiate this class directly. Use the
         :meth:`~.EquipmentRecord.connect` method to connect to the equipment.
@@ -58,7 +58,7 @@ class ConnectionSerial(ConnectionMessageBased):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
 
         Raises
         ------

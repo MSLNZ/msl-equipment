@@ -219,7 +219,7 @@ class NKT(Connection):
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a NKT connection supports the following key-value pairs in the
-        :ref:`connections_database`::
+        :ref:`connections-database`::
 
             'sdk_path': str, The path to the SDK [default: 'NKTPDLL.dll']
             'open_port': bool, Whether to automatically open the port [default: True]
@@ -232,7 +232,7 @@ class NKT(Connection):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         self._PORTNAME = record.connection.address.encode()
         super(NKT, self).__init__(record)

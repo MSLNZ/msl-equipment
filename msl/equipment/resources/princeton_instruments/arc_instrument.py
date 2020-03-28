@@ -35,7 +35,7 @@ class PrincetonInstruments(Connection):
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a ARCInstrument connection supports the following key-value pairs in the
-        :ref:`connections_database`::
+        :ref:`connections-database`::
 
             'sdk_path': str, The path to the SDK [default: 'ARC_Instrument_x64.dll']
             'open': bool, Whether to automatically open the connection [default: True]
@@ -46,7 +46,7 @@ class PrincetonInstruments(Connection):
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         self._mono_enum = None
         self._ncl_enum = None

@@ -1,5 +1,5 @@
 """
-This module provides all the functionality required to control a number 
+This module provides all the functionality required to control a number
 of **Integrated Stepper Motors** including:
 
 * Long Travel Stages (LTS150 and LTS300)
@@ -48,7 +48,7 @@ class IntegratedStepperMotors(MotionControl):
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for an IntegratedStepperMotors connection supports the following key-value pairs in the
-        :ref:`connections_database`::
+        :ref:`connections-database`::
 
             'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
@@ -58,7 +58,7 @@ class IntegratedStepperMotors(MotionControl):
         Parameters
         ----------
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         super(IntegratedStepperMotors, self).__init__(
             record, IntegratedStepperMotors_FCNS, build_device_list=True
@@ -1524,12 +1524,12 @@ class IntegratedStepperMotors(MotionControl):
 
     def set_led_switches(self, led_switches):
         """Set the LED indicator bits on the device.
-        
+
         Parameters
         ----------
         led_switches : :class:`int`
-            Sum of: 8 to indicate moving 2 to indicate end of track and 1 to 
-            flash on identify command.            
+            Sum of: 8 to indicate moving 2 to indicate end of track and 1 to
+            flash on identify command.
 
         Raises
         ------
@@ -1974,7 +1974,7 @@ class IntegratedStepperMotors(MotionControl):
 
     def stop_profiled(self):
         """Stop the current move using the current velocity profile.
-        
+
         Raises
         ------
         ~msl.equipment.exceptions.ThorlabsError

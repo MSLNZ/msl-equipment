@@ -57,14 +57,14 @@ class PicoScope5000A(PicoScopeApi):
 
     def __init__(self, record):
         """A wrapper around the PicoScope ps5000a SDK.
-        
+
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.
 
         Parameters
         ----------
         record : :class:`~.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         super(PicoScope5000A, self).__init__(record, ps5000aApi_funcptrs)
 

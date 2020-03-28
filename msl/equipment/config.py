@@ -1,5 +1,5 @@
 """
-Load an XML :ref:`configuration_file`.
+Load an XML :ref:`configuration-file`.
 """
 import os
 from xml.etree import cElementTree
@@ -26,13 +26,13 @@ class Config(object):
     """:class:`list` of :class:`str`: Paths are also appended to :data:`os.environ['PATH'] <os.environ>`."""
 
     def __init__(self, path):
-        """Load an XML :ref:`configuration_file`.
+        """Load an XML :ref:`configuration-file`.
 
         This function is used to set the configuration constants to use for the Python runtime
-        and it allows you to access :class:`.EquipmentRecord`'s from an :ref:`equipment_database`
-        and :class:`.ConnectionRecord`'s from a :ref:`connections_database`.
+        and it allows you to access :class:`.EquipmentRecord`'s from an :ref:`equipment-database`
+        and :class:`.ConnectionRecord`'s from a :ref:`connections-database`.
 
-        **MSL-Equipment** constants that can be defined in a :ref:`configuration_file`:
+        **MSL-Equipment** constants that can be defined in a :ref:`configuration-file`:
 
         +----------------+---------------------------------------+-----------------------------------------+
         |      Name      |           Example Values              |               Description               |
@@ -57,12 +57,12 @@ class Config(object):
         Parameters
         ----------
         path : :class:`str`
-            The path to an XML :ref:`configuration_file`.
+            The path to an XML :ref:`configuration-file`.
 
         Raises
         ------
         IOError
-            If `path` does not exist or if the :ref:`configuration_file` is invalid.
+            If `path` does not exist or if the :ref:`configuration-file` is invalid.
         """
         logger.debug('Loading {}'.format(path))
         try:

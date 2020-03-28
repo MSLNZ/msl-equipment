@@ -22,7 +22,7 @@ class Connection(object):
         Parameters
         ----------
         record : :class:`.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         if not isinstance(record, EquipmentRecord):
             raise TypeError('Must pass in an {} object'.format(EquipmentRecord.__name__))

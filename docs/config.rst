@@ -1,11 +1,11 @@
-.. _configuration_file:
+.. _configuration-file:
 
 ==================
 Configuration File
 ==================
 A configuration file is used by **MSL-Equipment** to:
 
-1. Specify which :ref:`Databases <database>` to use
+1. Specify which :ref:`Databases <database-formats>` to use
 2. Specify the equipment that is being used to perform a measurement
 3. Specify constants to use in your Python program
 

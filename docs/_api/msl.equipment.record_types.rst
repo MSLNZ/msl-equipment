@@ -1,7 +1,7 @@
 msl.equipment.record_types module
 =================================
 
-Records from :ref:`equipment_database`\'s or :ref:`connections_database`\'s.
+Records from :ref:`equipment-database`\'s or :ref:`connections-database`\'s.
 
 .. autoclass:: msl.equipment.record_types.EquipmentRecord
    :members:

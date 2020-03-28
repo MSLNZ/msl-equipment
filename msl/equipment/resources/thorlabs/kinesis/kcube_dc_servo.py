@@ -46,7 +46,7 @@ class KCubeDCServo(MotionControl):
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a KCubeDCServo connection supports the following key-value pairs in the
-        :ref:`connections_database`::
+        :ref:`connections-database`::
 
             'device_name': str, the device name found in ThorlabsDefaultSettings.xml [default: None]
 
@@ -56,7 +56,7 @@ class KCubeDCServo(MotionControl):
         Parameters
         ----------
         record : :class:`~msl.equipment.record_types.EquipmentRecord`
-            A record from an :ref:`equipment_database`.
+            A record from an :ref:`equipment-database`.
         """
         super(KCubeDCServo, self).__init__(record, KCube_DCServo_FCNS)
 

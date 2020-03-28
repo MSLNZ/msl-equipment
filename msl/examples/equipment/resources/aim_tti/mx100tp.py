@@ -9,10 +9,12 @@ if __name__ == '__main__':
     from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
 
     record = EquipmentRecord(
-        manufacturer='TTi',
+        manufacturer='Aim-TTi',
         model='MX100TP',
         connection=ConnectionRecord(
-            address='TCP::192.168.1.70::9221',
+            address='TCP::192.168.1.70::9221',  # if using the LAN port
+            # address='COM5',  # if using the USB or RS232 port
+            # address='Prologix::192.168.1.71::1234::6',  # if using a Prologix GPIB-ETHERNET Controller
             backend=Backend.MSL,
             timeout=5,
         )

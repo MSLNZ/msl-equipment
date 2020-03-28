@@ -1,10 +1,10 @@
-.. _api:
+.. _equipment-api:
 
 =================
 API Documentation
 =================
 
-The main entryway in to **MSL-Equipment** is achieved by loading a :ref:`configuration_file` and that is achieved by
+The main entryway in to **MSL-Equipment** is achieved by loading a :ref:`configuration-file` and that is achieved by
 creating a :class:`~msl.equipment.config.Config` object. This example loads the `example.xml`_ file.
 
 .. code-block:: pycon
@@ -15,7 +15,7 @@ creating a :class:`~msl.equipment.config.Config` object. This example loads the 
 
 Once a :class:`~msl.equipment.config.Config` object exists you can access of all the
 :class:`~msl.equipment.record_types.EquipmentRecord`\'s and :class:`~msl.equipment.record_types.ConnectionRecord`\'s
-that are contained within the :ref:`Databases <database>` as well as all of the
+that are contained within the :ref:`Databases <database-formats>` as well as all of the
 :attr:`~msl.equipment.database.Database.equipment` that is being used to perform the measurement by calling the
 :meth:`~msl.equipment.config.Config.database` method to create an instance of the
 :class:`~msl.equipment.database.Database`.
@@ -70,7 +70,7 @@ communicating with the equipment.
 
 In addition, the :mod:`~msl.equipment.constants` module contains the package constants.
 
-.. _connection_classes:
+.. _connection-classes:
 
 Connection Classes
 ------------------
@@ -80,13 +80,15 @@ with the equipment *(although you should never need to instantiate these classes
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_demo.ConnectionDemo`                  | Simulate a connection to the equipment                                   |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_sdk.ConnectionSDK`                    | Equipment that use the SDK provided by a manufacturer for the connection |
+| :class:`~msl.equipment.connection_message_based.ConnectionMessageBased` | Equipment that use message-based communication                           |
++-------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :class:`~msl.equipment.connection_prologix.ConnectionPrologix`          | Equipment that is connected through a Prologix_ Controller               |
++-------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :class:`~msl.equipment.connection_sdk.ConnectionSDK`                    | Equipment that use the manufacturer's SDK for the connection             |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_serial.ConnectionSerial`              | Equipment that is connected through a Serial port                        |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_socket.ConnectionSocket`              | Equipment that is connected through a Socket                             |
-+-------------------------------------------------------------------------+--------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_message_based.ConnectionMessageBased` | Equipment that use message based communication                           |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 
 and the :class:`~msl.equipment.connection.Connection` classes that are available from external Python libraries are:
@@ -109,6 +111,7 @@ Package Structure
    msl.equipment.connection_demo <_api/msl.equipment.connection_demo>
    msl.equipment.connection_message_based <_api/msl.equipment.connection_message_based>
    msl.equipment.connection_nidaq <_api/msl.equipment.connection_nidaq>
+   msl.equipment.connection_prologix <_api/msl.equipment.connection_prologix>
    msl.equipment.connection_pyvisa <_api/msl.equipment.connection_pyvisa>
    msl.equipment.connection_sdk <_api/msl.equipment.connection_sdk>
    msl.equipment.connection_serial <_api/msl.equipment.connection_serial>
@@ -119,7 +122,9 @@ Package Structure
    msl.equipment.factory <_api/msl.equipment.factory>
    msl.equipment.record_types <_api/msl.equipment.record_types>
    msl.equipment.resources <_api/msl.equipment.resources>
+   msl.equipment.utils <_api/msl.equipment.utils>
 
 .. _PyVISA: https://pyvisa.readthedocs.io/en/stable/index.html
 .. _NI-DAQ: https://nidaqmx-python.readthedocs.io/en/latest/index.html
 .. _example.xml: https://github.com/MSLNZ/msl-equipment/blob/master/msl/examples/equipment/example.xml
+.. _Prologix: https://prologix.biz/

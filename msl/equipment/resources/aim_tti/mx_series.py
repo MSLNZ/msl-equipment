@@ -12,6 +12,7 @@ from msl.equipment.exceptions import AimTTiError
 from msl.equipment.resources import register
 from msl.equipment.connection_socket import ConnectionSocket
 from msl.equipment.connection_serial import ConnectionSerial
+from msl.equipment.connection_prologix import ConnectionPrologix
 
 EXECUTION_ERROR_CODES = {
     0: ('OK',
@@ -46,6 +47,7 @@ class MXSeries(object):
         Establishes a connection to an MX100QP, MX100TP or MX180TP DC power supply
         from `Aim and Thurlby Thandar Instruments`_ for different interfaces:
 
+        * :obj:`.MSLInterface.PROLOGIX`
         * :obj:`.MSLInterface.SERIAL`
         * :obj:`.MSLInterface.SOCKET`
 
@@ -62,6 +64,8 @@ class MXSeries(object):
             base = ConnectionSocket
         elif interface == MSLInterface.SERIAL:
             base = ConnectionSerial
+        elif interface == MSLInterface.PROLOGIX:
+            base = ConnectionPrologix
         else:
             raise AimTTiError('Unsupported interface {!r}'.format(interface))
 

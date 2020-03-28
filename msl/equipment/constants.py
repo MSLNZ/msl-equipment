@@ -35,15 +35,7 @@ class MSLInterface(enum.IntEnum):
     SDK = 1
     SERIAL = 2
     SOCKET = 3
-    # USB = 4
-    # GPIB = 5
-    # PXI = 6
-    # VXI = 7
-    # TCPIP_ASRL = 8
-    # TCPIP_GPIB = 9
-    # USB_GPIB = 10
-    # PROLOGIX_ENET = 11
-    # PROLOGIX_USB = 12
+    PROLOGIX = 4
 
 
 class Parity(enum.Enum):

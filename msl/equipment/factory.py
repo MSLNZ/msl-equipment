@@ -16,6 +16,7 @@ from .connection_pyvisa import ConnectionPyVISA
 from .connection_serial import ConnectionSerial
 from .connection_socket import ConnectionSocket
 from .connection_nidaq import ConnectionNIDAQ
+from .connection_prologix import ConnectionPrologix
 
 
 def connect(record, demo=None):
@@ -68,6 +69,8 @@ def connect(record, demo=None):
                     cls = ConnectionSerial
                 elif conn.interface == MSLInterface.SOCKET:
                     cls = ConnectionSocket
+                elif conn.interface == MSLInterface.PROLOGIX:
+                    cls = ConnectionPrologix
                 else:
                     raise NotImplementedError('The {} interface has not be written yet'.format(conn.interface.name))
         elif conn.backend == Backend.PyVISA:

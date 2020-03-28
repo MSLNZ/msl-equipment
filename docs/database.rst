@@ -1,16 +1,16 @@
-.. _database:
+.. _database-formats:
 
 ================
 Database Formats
 ================
 Databases are used by **MSL-Equipment** to store :class:`~msl.equipment.record_types.EquipmentRecord`\'s in an
-:ref:`equipment_database` and :class:`~msl.equipment.record_types.ConnectionRecord`\'s in a
-:ref:`connections_database`. The database file formats that are currently supported are **.txt** (``\t`` delimited),
+:ref:`equipment-database` and :class:`~msl.equipment.record_types.ConnectionRecord`\'s in a
+:ref:`connections-database`. The database file formats that are currently supported are **.txt** (``\t`` delimited),
 **.csv** (``,`` delimited) and **.xls[x]**.
 
 A database is composed of *fields* (columns) and *records* (rows).
 
-.. _equipment_database:
+.. _equipment-database:
 
 Equipment-Register Database
 ---------------------------
@@ -26,19 +26,19 @@ allows for easily managing this information and for helping to ensure that the e
 task meets the calibration requirements needed to obtain the desired measurement uncertainty.
 
 **MSL-Equipment** does not require that a *single* database is used for all equipment records. However, it is vital
-that each equipment record can only be uniquely found in one :ref:`equipment_database`. The records in a database must
+that each equipment record can only be uniquely found in one :ref:`equipment-database`. The records in a database must
 never be copied from one database to another database *(keeping a backup copy of the database is encouraged)*.
 Rather, if you are borrowing equipment from another team you simply specify the path to that teams
-:ref:`equipment_database` as a ``<register>`` element in your :ref:`configuration_file`. The owner of the equipment
+:ref:`equipment-database` as a ``<register>`` element in your :ref:`configuration-file`. The owner of the equipment
 is responsible for ensuring that the information about the equipment is kept up to date in their
-:ref:`equipment_database` and the user of the equipment defines an ``<equipment>`` element in the
-:ref:`configuration_file` to access this information. Therefore, an :ref:`equipment_database` is to be considered as
+:ref:`equipment-database` and the user of the equipment defines an ``<equipment>`` element in the
+:ref:`configuration-file` to access this information. Therefore, an :ref:`equipment-database` is to be considered as
 a *global* database that can be accessed (with read permission only) by anyone.
 
-Each record in an :ref:`equipment_database` is converted into an :class:`~msl.equipment.record_types.EquipmentRecord`.
+Each record in an :ref:`equipment-database` is converted into an :class:`~msl.equipment.record_types.EquipmentRecord`.
 
-The following is an example of an :ref:`equipment_database` (additional *fields* can also be added to a database,
-see :ref:`register_field_names`).
+The following is an example of an :ref:`equipment-database` (additional *fields* can also be added to a database,
+see :ref:`register-field-names`).
 
 +-----------------+---------+--------+--------------+---------------+---------------------------------------+
 | Manufacturer    | Model   | Serial | Date         | Calibration   | Description                           |
@@ -52,16 +52,16 @@ see :ref:`register_field_names`).
 +-----------------+---------+--------+--------------+---------------+---------------------------------------+
 
 .. tip::
-   Not all records in the :ref:`equipment_database` need to have the ability to be interfaced with a computer. For
+   Not all records in the :ref:`equipment-database` need to have the ability to be interfaced with a computer. For
    example, cables, amplifiers, filters and adaptors can all be important equipment that may be used to perform a
-   measurement and should be included in the :ref:`equipment_database` and specified as ``<equipment>`` elements in the
-   :ref:`configuration_file`.
+   measurement and should be included in the :ref:`equipment-database` and specified as ``<equipment>`` elements in the
+   :ref:`configuration-file`.
 
-.. _register_field_names:
+.. _register-field-names:
 
 Field Names
 +++++++++++
-The supported *fields* for an :ref:`equipment_database` are:
+The supported *fields* for an :ref:`equipment-database` are:
 
 * **Calibration Cycle** -- The number of years that can pass before the equipment must be re-calibrated.
 * **Category** -- The category (e.g., Laser, DMM) that the equipment belongs to.
@@ -114,7 +114,7 @@ For example, the following headers are valid (the :blue:`blue` text is what is i
 * If the header does not contain any of the specific *field* names that are being searched for then the values
   in that column are silently ignored.
 
-Equipment records should be defined in a properly-managed :ref:`equipment_database` (especially if the equipment is
+Equipment records should be defined in a properly-managed :ref:`equipment-database` (especially if the equipment is
 used within a Quality Management System, such as `ISO/IEC 17025`_) and accessed via the
 :meth:`~msl.equipment.config.Config.database` method; however, for those not bound to a rigorous Quality Management
 System you can also store your equipment records in a Python module, for example:
@@ -165,24 +165,24 @@ System you can also store your equipment records in a Python module, for example
             ),
     }
 
-.. _connections_database:
+.. _connections-database:
 
 Connections Database
 --------------------
-A :ref:`connections_database` is used to store the information that is required to establish communication with the
+A :ref:`connections-database` is used to store the information that is required to establish communication with the
 equipment.
 
-You specify the :ref:`connections_database` that you what to use as a ``<connection>`` element in your
-:ref:`configuration_file`. Each record in an :ref:`connections_database` is converted into a
+You specify the :ref:`connections-database` that you what to use as a ``<connection>`` element in your
+:ref:`configuration-file`. Each record in an :ref:`connections-database` is converted into a
 :class:`~msl.equipment.record_types.ConnectionRecord`.
 
-.. _connections_field_names:
+.. _connections-field-names:
 
 Field Names
 +++++++++++
-The supported *fields* for a :ref:`connections_database` are:
+The supported *fields* for a :ref:`connections-database` are:
 
-* **Address** -- The address to use for the connection (see :ref:`address_syntax`).
+* **Address** -- The address to use for the connection (see :ref:`address-syntax`).
 * **Backend** -- The :class:`~msl.equipment.constants.Backend` to use to communicate with the equipment.
 * **Manufacturer** -- The name of the manufacturer of the equipment.
 * **Model** -- The model number of the equipment.
@@ -194,12 +194,12 @@ The supported *fields* for a :ref:`connections_database` are:
   :data:`Parity.EVEN <msl.equipment.constants.Parity.EVEN>`.
 * **Serial** -- The serial number, or engraved unique ID, of the equipment.
 
-A record in a :ref:`connections_database` gets matched with the appropriate record in an :ref:`equipment_database`
+A record in a :ref:`connections-database` gets matched with the appropriate record in an :ref:`equipment-database`
 by the unique combination of the ``manufacturer + model + serial`` values, which when combined act as the primary key
 in each database.
 
-The following is an example of a :ref:`connections_database`. The header of each *field* also follows the same
-:ref:`register_field_names` format used in an :ref:`equipment_database` and so *MODEL#* would also be
+The following is an example of a :ref:`connections-database`. The header of each *field* also follows the same
+:ref:`register-field-names` format used in an :ref:`equipment-database` and so *MODEL#* would also be
 an acceptable header for *Model Number*.
 
 +-----------------+---------+--------+---------+---------------------------+-------------------------------+
@@ -213,15 +213,15 @@ an acceptable header for *Model Number*.
 | Agilent         | 53230A  | 49e39f | MSL     | COM2                      | baud_rate=119200; parity=even |
 +-----------------+---------+--------+---------+---------------------------+-------------------------------+
 
-Unlike an :ref:`equipment_database` each person can maintain their own :ref:`connections_database`. The reason being
+Unlike an :ref:`equipment-database` each person can maintain their own :ref:`connections-database`. The reason being
 that since equipment can be shared between people some Connection *fields*, like the COM address, can vary depending on
 which computer the equipment is connected to and what other equipment is also connected to that computer. Therefore,
-everyone could have their own :ref:`connections_database` and connection records can be copied from one
-:ref:`connections_database` to another. If you are using someone else's equipment and if none of the Connection *fields*
+everyone could have their own :ref:`connections-database` and connection records can be copied from one
+:ref:`connections-database` to another. If you are using someone else's equipment and if none of the Connection *fields*
 need to be changed to be able to communicate with the equipment then it is recommended to add their
-:ref:`connections_database` as a ``<connection>`` element in your :ref:`configuration_file`.
+:ref:`connections-database` as a ``<connection>`` element in your :ref:`configuration-file`.
 
-.. _address_syntax:
+.. _address-syntax:
 
 Address Syntax
 ++++++++++++++
@@ -230,9 +230,17 @@ The following are examples of an **Address** syntax (see more examples from `Nat
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
 | :class:`~msl.equipment.constants.MSLInterface` | Syntax Example                                      |  Notes                                                                                                                                         |
 +================================================+=====================================================+================================================================================================================================================+
+| PROLOGIX                                       | Prologix::192.168.1.110::1234::6                    | The GPIB-ETHERNET Controller: host=192.168.1.110, port=1234, primary-GPIB-address=6                                                            |
++------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
+| PROLOGIX                                       | Prologix::192.168.1.70::1234::6::112                | The GPIB-ETHERNET Controller: host=192.168.1.70, port=1234, primary-GPIB-address=6, secondary-GPIB-address=112                                 |
++------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
+| PROLOGIX                                       | Prologix::COM3::6                                   | The GPIB-USB Controller: port=COM3, primary-GPIB-address=6                                                                                     |
++------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
+| PROLOGIX                                       | Prologix::/dev/ttyUSB0::4::96                       | The GPIB-USB Controller: port=/dev/ttyUSB0, primary-GPIB-address=4, secondary-GPIB-address=96                                                  |
++------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
 | SDK                                            | SDK::C:/Program Files/Manufacturer/bin/filename.dll | Specify the full path to the SDK                                                                                                               |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| SDK                                            | SDK::filename.dll                                   | Specify only the filename if the path to where the SDK file is located has been added as a ``<path>`` element in the :ref:`configuration_file` |
+| SDK                                            | SDK::filename.dll                                   | Specify only the filename if the path to where the SDK file is located has been added as a ``<path>`` element in the :ref:`configuration-file` |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
 | SERIAL                                         | COM2                                                |                                                                                                                                                |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -240,7 +248,7 @@ The following are examples of an **Address** syntax (see more examples from `Nat
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
 | SERIAL                                         | ASRLCOM4                                            | Compatible with PyVISA-py_ syntax                                                                                                              |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| SERIAL                                         | SERIAL::/dev/pts/12                                 |                                                                                                                                                |
+| SERIAL                                         | SERIAL::/dev/ttyS1                                  |                                                                                                                                                |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
 | SOCKET                                         | \TCP::192.168.1.100::5000                           | Creates the connection as a :data:`socket.SOCK_STREAM` to host=192.168.1.100, port=5000                                                        |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+

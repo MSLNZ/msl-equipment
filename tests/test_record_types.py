@@ -937,7 +937,7 @@ def test_connection_record():
 
     # MSLInterface.SERIAL
     record = ConnectionRecord(address='COM4')
-    assert record.interface == MSLInterface.SERIAL  # COM is an alias
+    assert record.interface == MSLInterface.SERIAL
 
     record = ConnectionRecord(address='ASRLCOM4')
     assert record.interface == MSLInterface.SERIAL   # ASRLCOM is used by PyVISA
@@ -947,6 +947,18 @@ def test_connection_record():
 
     record = ConnectionRecord(address='ASRL4')
     assert record.interface == MSLInterface.SERIAL  # ASRL is an alias
+
+    record = ConnectionRecord(address='ASRL4::INSTR')
+    assert record.interface == MSLInterface.SERIAL
+
+    record = ConnectionRecord(address='ASRL::/dev/ttyS1')
+    assert record.interface == MSLInterface.SERIAL
+
+    record = ConnectionRecord(address='SERIAL::/dev/ttyUSB0')
+    assert record.interface == MSLInterface.SERIAL
+
+    record = ConnectionRecord(address='LPT::/dev/pts/1::INSTR')
+    assert record.interface == MSLInterface.SERIAL
 
     # MSLInterface.SOCKET
     record = ConnectionRecord(address='SOCKET::127.0.0.1::1234')
@@ -972,16 +984,18 @@ def test_connection_record():
     assert record.properties['socket_type'] == 'SOCK_DGRAM'  # gets set automatically
     assert record.properties['x'] == 1  # does not get overwritten
 
-    # TODO enable these tests once we create the TCPIP_ASRL and TCPIP_GPIB IntEnum constants in MSLInterface
-    # record = ConnectionRecord(address='ENET+COM::192.168.1.21+3')
-    # assert record.address == 'ENET+COM::192.168.1.21+3'
-    # assert record.backend == Backend.MSL
-    # assert record.interface == MSLInterface.TCPIP_ASRL
+    # MSLInterface.PROLOGIX
+    record = ConnectionRecord(address='Prologix::192.168.1.110::1234::6')
+    assert record.interface == MSLInterface.PROLOGIX
 
-    # record = ConnectionRecord(address='LAN+GPIB::192.168.1.21+7')
-    # assert record.address == 'LAN+GPIB::192.168.1.21+7'
-    # assert record.backend == Backend.MSL
-    # assert record.interface == MSLInterface.TCPIP_GPIB
+    record = ConnectionRecord(address='PROLOGIX::/dev/ttyUSB0::16::100')
+    assert record.interface == MSLInterface.PROLOGIX
+
+    record = ConnectionRecord(address='Prologix::COM4::1')
+    assert record.interface == MSLInterface.PROLOGIX
+
+    record = ConnectionRecord(address='Prologix -> only needs to start with "Prologix"')
+    assert record.interface == MSLInterface.PROLOGIX
 
     #
     # The following are backend checks

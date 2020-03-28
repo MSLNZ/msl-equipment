@@ -55,7 +55,11 @@ def _parse_address(address):
 
 class ConnectionPrologix(ConnectionMessageBased):
 
-    Controllers = {}  #: A :class:`dict` of all Prologix_ Controllers that being used for connections.
+    controllers = {}
+    """A :class:`dict` of all Prologix_ Controllers that being used for connections."""
+
+    selected_addresses = {}
+    """A :class:`dict` of the currently-selected GPIB address for all Prologix_ Controllers."""
 
     def __init__(self, record):
         """Uses Prologix_ hardware to establish a connection to the equipment.
@@ -124,12 +128,13 @@ class ConnectionPrologix(ConnectionMessageBased):
             self._addr = '++addr {}'.format(pad)
 
         self._query_auto = True
+        self._controller_name = name
 
         try:
-            self._controller = ConnectionPrologix.Controllers[name]
+            self._controller = ConnectionPrologix.controllers[name]
         except KeyError:
             self._controller = cls(record)
-            ConnectionPrologix.Controllers[name] = self._controller
+            ConnectionPrologix.controllers[name] = self._controller
 
         props = record.connection.properties
 
@@ -141,6 +146,9 @@ class ConnectionPrologix(ConnectionMessageBased):
             value = props.get(option, None)
             if value is not None:
                 self._controller.write('++{} {}'.format(option, value))
+
+        # set this equipment record as the currently-selected GPIB address for the Controller
+        self._select_gpib_address()
 
     @property
     def controller(self):
@@ -192,7 +200,7 @@ class ConnectionPrologix(ConnectionMessageBased):
         :class:`str`
             The response from the equipment.
         """
-        self._controller.write(self._addr)
+        self._ensure_gpib_address_selected()
         return self._controller.read(size=size)
 
     def write(self, msg):
@@ -208,7 +216,7 @@ class ConnectionPrologix(ConnectionMessageBased):
         :class:`int`
             The number of bytes written.
         """
-        self._controller.write(self._addr)
+        self._ensure_gpib_address_selected()
         return self._controller.write(msg)
 
     def query(self, msg, delay=0.0, size=None):
@@ -232,10 +240,7 @@ class ConnectionPrologix(ConnectionMessageBased):
         if self._query_auto:
             self._controller.write('++auto 1')
 
-        self.write(msg)
-        if delay > 0.0:
-            time.sleep(delay)
-        reply = self.read(size=size)
+        reply = super(ConnectionPrologix, self).query(msg, delay=delay, size=size)
 
         if self._query_auto:
             self._controller.write('++auto 0')
@@ -259,6 +264,24 @@ class ConnectionPrologix(ConnectionMessageBased):
         Returns
         -------
         :class:`str`
-            The version.
+            The type of the Controller (GPIB-USB or GPIB-ETHERNET) and
+            the version of the firmware.
         """
         return self._controller.query('++ver').rstrip()
+
+    def _ensure_gpib_address_selected(self):
+        """
+        Make sure that the connection to the equipment for this instance of the
+        ConnectionPrologix class is the equipment that the message will be sent to.
+        """
+        if self._addr != ConnectionPrologix.selected_addresses[self._controller_name]:
+            self._select_gpib_address()
+
+    def _select_gpib_address(self):
+        """
+        Set the currently-selected GPIB address for a Controller to be the GPIB
+        address of the equipment that this instance of the ConnectionPrologix class
+        belongs to.
+        """
+        ConnectionPrologix.selected_addresses[self._controller_name] = self._addr
+        self._controller.write(self._addr)

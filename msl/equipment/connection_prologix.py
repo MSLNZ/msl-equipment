@@ -85,6 +85,11 @@ class ConnectionPrologix(ConnectionMessageBased):
             'eot_char': int, an ASCII value less than 256
             'read_tmo_ms': int, a timeout value between 1 and 3000 milliseconds
 
+        The key-value pairs in :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
+        can also be any of the options supported by :class:`.ConnectionSerial` or
+        :class:`.ConnectionSocket` (depending on whether a GPIB-USB or a GPIB-ETHERNET
+        Controller is used).
+
         The :attr:`~msl.equipment.record_types.ConnectionRecord.backend`
         value must be equal to :attr:`~msl.equipment.constants.Backend.MSL`
         to use this class for the communication system. This is achieved by setting the

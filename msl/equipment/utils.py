@@ -24,7 +24,7 @@ DEFAULT_DATE = datetime.date(datetime.MINYEAR, 1, 1)
 
 
 def convert_to_enum(obj, enum, prefix=None, to_upper=False, strict=True):
-    """Convert `obj` to an Enum.
+    """Convert `obj` to an :class:`~enum.Enum` member.
 
     Parameters
     ----------
@@ -46,8 +46,8 @@ def convert_to_enum(obj, enum, prefix=None, to_upper=False, strict=True):
 
     Returns
     -------
-    :class:`object`
-        The `enum` value.
+    :class:`~enum.Enum`
+        The `enum` member.
 
     Raises
     ------

@@ -748,12 +748,11 @@ class ConnectionRecord(Record):
 
         for key, value in properties.items():
             if is_serial:
-                k_lower = key.lower()
-                if k_lower == 'parity':
+                if key == 'parity':
                     properties[key] = convert_to_enum(value, Parity, to_upper=True)
-                elif k_lower.startswith('stop'):
+                elif key.startswith('stop'):
                     properties[key] = convert_to_enum(value, StopBits, to_upper=True)
-                elif k_lower.startswith('data'):
+                elif key == 'data_bits' or key == 'bytesize':
                     properties[key] = convert_to_enum(value, DataBits, to_upper=True)
             if key.endswith('termination'):
                 if value in ConnectionRecord._CRLF:  # must check before LR and CR checks

@@ -1038,8 +1038,43 @@ def test_connection_record():
         assert c.properties['four'] == 4
 
     # setting the read/write termination value to None is okay
-    c = ConnectionRecord(properties={'termination': None})
+    c = ConnectionRecord(address='COM1', properties={'termination': None})
     assert c.properties['termination'] is None
+
+    # different ways to define Serial key-values pairs
+    c = ConnectionRecord(address='COM1', data_bits=6, parity='EvEn', stop_bits=1.5)
+    assert c.properties['data_bits'].name == 'SIX'
+    assert c.properties['data_bits'].value == DataBits.SIX.value
+    assert c.properties['data_bits'] == DataBits.SIX
+    assert c.properties['parity'].name == 'EVEN'
+    assert c.properties['parity'].value == Parity.EVEN.value
+    assert c.properties['parity'] == Parity.EVEN
+    assert c.properties['stop_bits'].name == 'ONE_POINT_FIVE'
+    assert c.properties['stop_bits'].value == StopBits.ONE_POINT_FIVE.value
+    assert c.properties['stop_bits'] == StopBits.ONE_POINT_FIVE
+
+    c = ConnectionRecord(address='COM1', data_bits=DataBits.SEVEN, parity=Parity.ODD, stop_bits=StopBits.ONE)
+    assert c.properties['data_bits'].name == 'SEVEN'
+    assert c.properties['data_bits'].value == DataBits.SEVEN.value
+    assert c.properties['data_bits'] == DataBits.SEVEN
+    assert c.properties['parity'].name == 'ODD'
+    assert c.properties['parity'].value == Parity.ODD.value
+    assert c.properties['parity'] == Parity.ODD
+    assert c.properties['stop_bits'].name == 'ONE'
+    assert c.properties['stop_bits'].value == StopBits.ONE.value
+    assert c.properties['stop_bits'] == StopBits.ONE
+
+    # use PySerial kwargs (bytesize, stopbits) and use :data:`None` for parity
+    c = ConnectionRecord(address='COM1', bytesize=8, parity=None, stopbits=StopBits.TWO)
+    assert c.properties['bytesize'].name == 'EIGHT'
+    assert c.properties['bytesize'].value == DataBits.EIGHT.value
+    assert c.properties['bytesize'] == DataBits.EIGHT
+    assert c.properties['parity'].name == 'NONE'
+    assert c.properties['parity'].value == Parity.NONE.value
+    assert c.properties['parity'] == Parity.NONE
+    assert c.properties['stopbits'].name == 'TWO'
+    assert c.properties['stopbits'].value == StopBits.TWO.value
+    assert c.properties['stopbits'] == StopBits.TWO
 
     os.remove(temp)
 

@@ -92,11 +92,10 @@ class ConnectionSocket(ConnectionMessageBased):
 
         self._proto = props.get('proto', 0)
 
-        items = record.connection.address.split('::')
-        if len(items) < 3:
-            raise ValueError('Invalid Connection address ' + record.connection.address)
-        self._ip_address = items[1]
-        self._port = int(items[2])
+        host_port = ConnectionSocket.host_and_port_from_address(record.connection.address)
+        if host_port is None:
+            self.raise_exception('Invalid address {!r}'.format(record.connection.address))
+        self._host, self._port = host_port
 
         self._connect()
         self.log_debug('Connected to {} '.format(record.connection))
@@ -115,7 +114,7 @@ class ConnectionSocket(ConnectionMessageBased):
 
         if self._is_stream:
             try:
-                self._socket.connect((self._ip_address, self._port))
+                self._socket.connect((self._host, self._port))
             except socket.timeout:
                 pass
             except socket.error as e:
@@ -130,14 +129,14 @@ class ConnectionSocket(ConnectionMessageBased):
         self.raise_exception('Cannot connect to {}\n{}'.format(self.equipment_record, err_msg))
 
     @property
-    def address(self):
-        """:class:`str`: The IP address."""
-        return self._ip_address
-
-    @property
     def byte_buffer(self):
         """:class:`bytearray`: Returns the reference to the byte buffer."""
         return self._byte_buffer
+
+    @property
+    def host(self):
+        """:class:`str`: The host (IP address)."""
+        return self._host
 
     @property
     def port(self):
@@ -181,7 +180,7 @@ class ConnectionSocket(ConnectionMessageBased):
             if self._is_stream:
                 self._socket.sendall(data)
             else:
-                self._socket.sendto(data, (self._ip_address, self._port))
+                self._socket.sendto(data, (self._host, self._port))
         except socket.timeout:
             timeout_error = True  # want to raise MSLTimeoutError not socket.timeout
 
@@ -255,3 +254,24 @@ class ConnectionSocket(ConnectionMessageBased):
                 self.raise_timeout()
 
         return self._decode(size, out)
+
+    @staticmethod
+    def host_and_port_from_address(address):
+        """Get the host and port from an address.
+
+        Parameters
+        ----------
+        address : :class:`str`
+            The address from a :class:`~msl.equipment.record_types.ConnectionRecord`
+
+        Returns
+        -------
+        :class:`tuple` or :data:`None`
+            The host and the port or :data:`None` (if `address` is invalid).
+        """
+        split = address.split('::')
+        if len(split) > 2:
+            try:
+                return split[1], int(split[2])
+            except ValueError:
+                pass

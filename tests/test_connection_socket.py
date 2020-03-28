@@ -7,7 +7,8 @@ import pytest
 from msl.loadlib.utils import get_available_port
 
 from msl.equipment import EquipmentRecord, ConnectionRecord, Backend, MSLTimeoutError, MSLConnectionError
-
+from msl.equipment.connection_socket import ConnectionSocket
+from msl.equipment.constants import MSL_INTERFACE_ALIASES
 
 def echo_server_tcp(address, port, term):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -242,3 +243,40 @@ def test_wrong_socket_type():
     # use the correct socket type to shutdown the server
     dev = record.connect()
     dev.write('SHUTDOWN')
+
+
+def test_host_and_port_from_address():
+
+    for prefix in list(MSL_INTERFACE_ALIASES['SOCKET']) + ['SOCKET', 'TCPIP']:
+        host, port = ConnectionSocket.host_and_port_from_address(prefix + '::192.168.1.100::1234')
+        assert host == '192.168.1.100'
+        assert port == 1234
+
+        host, port = ConnectionSocket.host_and_port_from_address(prefix + '::my.hostname.com::8080::SOCKET')
+        assert host == 'my.hostname.com'
+        assert port == 8080
+
+        host, port = ConnectionSocket.host_and_port_from_address(prefix + '::172.16.14.100::5000::extra::stuff')
+        assert host == '172.16.14.100'
+        assert port == 5000
+
+        assert ConnectionSocket.host_and_port_from_address(prefix) is None
+        assert ConnectionSocket.host_and_port_from_address(prefix + '::no.port.specified') is None
+        assert ConnectionSocket.host_and_port_from_address(prefix + '::172.16.14.1::not_an_int') is None
+
+    assert ConnectionSocket.host_and_port_from_address('not.enough.double.colons::1234') is None
+    assert ConnectionSocket.host_and_port_from_address('COM5') is None
+    assert ConnectionSocket.host_and_port_from_address('ASRL::COM11::INSTR') is None
+    assert ConnectionSocket.host_and_port_from_address('GPIB0::1') is None
+
+    host, port = ConnectionSocket.host_and_port_from_address('Prologix::192.168.1.70::1234::6')
+    assert host == '192.168.1.70'
+    assert port == 1234
+
+    host, port = ConnectionSocket.host_and_port_from_address('Prologix::hostname::1234::6')
+    assert host == 'hostname'
+    assert port == 1234
+
+    host, port = ConnectionSocket.host_and_port_from_address('Prologix::full.domain.name::1234::6')
+    assert host == 'full.domain.name'
+    assert port == 1234

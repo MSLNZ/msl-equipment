@@ -56,7 +56,7 @@ def _parse_address(address):
 class ConnectionPrologix(ConnectionMessageBased):
 
     controllers = {}
-    """A :class:`dict` of all Prologix_ Controllers that being used for connections."""
+    """A :class:`dict` of all Prologix_ Controllers that are being used to communicate with GPIB devices."""
 
     selected_addresses = {}
     """A :class:`dict` of the currently-selected GPIB address for all Prologix_ Controllers."""
@@ -80,7 +80,9 @@ class ConnectionPrologix(ConnectionMessageBased):
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a Prologix_ connection supports the following key-value pairs in the
-        :ref:`connections-database` (see the manual for more details about each option)::
+        :ref:`connections-database` and any of the key-value pairs supported by
+        :class:`.ConnectionSerial` or :class:`.ConnectionSocket` (depending on
+        whether a GPIB-USB or a GPIB-ETHERNET Controller is used)::
 
             'mode': int, 0 or 1 [default: 1]
             'eoi': int, 0 or 1
@@ -88,11 +90,6 @@ class ConnectionPrologix(ConnectionMessageBased):
             'eot_enable': int, 0 or 1
             'eot_char': int, an ASCII value less than 256
             'read_tmo_ms': int, a timeout value between 1 and 3000 milliseconds
-
-        The key-value pairs in :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
-        can also be any of the options supported by :class:`.ConnectionSerial` or
-        :class:`.ConnectionSocket` (depending on whether a GPIB-USB or a GPIB-ETHERNET
-        Controller is used).
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.backend`
         value must be equal to :attr:`~msl.equipment.constants.Backend.MSL`
@@ -153,12 +150,23 @@ class ConnectionPrologix(ConnectionMessageBased):
     @property
     def controller(self):
         """:class:`.ConnectionSerial` or :class:`.ConnectionSocket`:
-        The connection to the Prologix_ Controller.
+        The connection to the Prologix_ Controller for this equipment.
 
         Depends on whether a GPIB-USB or a GPIB-ETHERNET Controller
         is being used to communicate with the equipment.
         """
         return self._controller
+
+    def disconnect(self):
+        """
+        Calling this method does not close the underlying :class:`.ConnectionSerial`
+        or :class:`.ConnectionSocket` connection to the Prologix_ Controller since
+        the connection to the Prologix_ Controller may still be required to send
+        messages to other devices via GPIB.
+
+        Calling this method sets the :attr:`.controller` to be :data:`None`.
+        """
+        self._controller = None
 
     def group_execute_trigger(self, *addresses):
         """Send the Group Execute Trigger command to equipment at the specified addresses.

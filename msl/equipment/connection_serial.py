@@ -18,31 +18,6 @@ _com_regex = re.compile(
 _dev_regex = re.compile(r'(?P<port>/dev/[\w\d/]+)')
 
 
-def _serial_port_from_address(address):
-    """Get the serial port from the address.
-
-    PyVISA and PyVISA-py accept various resource names:
-      'ASRL', 'COM', 'LPT', 'ASRLCOM'
-
-    PySerial accepts COM and /dev/
-
-    Parameters
-    ----------
-    address : :class:`str`
-        A :class:`~msl.equipment.record_types.ConnectionRecord` address.
-
-    Returns
-    -------
-    :class:`str` or :data:`None`
-        The serial port that is valid for PySerial or :data:`None`
-        (if the port cannot be determined from `address`).
-    """
-    search = _com_regex.search(address)
-    if search:
-        return 'COM{}'.format(search.groupdict()['number'])
-    search = _dev_regex.search(address)
-    if search:
-        return search.groupdict()['port']
 
 
 class ConnectionSerial(ConnectionMessageBased):
@@ -110,9 +85,9 @@ class ConnectionSerial(ConnectionMessageBased):
         self.max_read_size = props.get('max_read_size', self._max_read_size)
         self.timeout = props.get('timeout', None)
 
-        port = _serial_port_from_address(record.connection.address)
+        port = ConnectionSerial.port_from_address(record.connection.address)
         if port is None:
-            self.raise_exception('Invalid SERIAL address {!r}'.format(record.connection.address))
+            self.raise_exception('Invalid address {!r}'.format(record.connection.address))
         self._serial.port = port
 
         self._serial.parity = props.get('parity', constants.Parity.NONE).value
@@ -271,3 +246,25 @@ class ConnectionSerial(ConnectionMessageBased):
                     self.raise_timeout()
 
         return self._decode(size, out)
+
+    @staticmethod
+    def port_from_address(address):
+        """Get the serial port from an address.
+
+        Parameters
+        ----------
+        address : :class:`str`
+            The address from a :class:`~msl.equipment.record_types.ConnectionRecord`
+
+        Returns
+        -------
+        :class:`str` or :data:`None`
+            The serial port that is valid for PySerial (i.e., ``ASRL3`` becomes ``COM3``)
+            or :data:`None` (if the port cannot be determined from `address`).
+        """
+        search = _com_regex.search(address)
+        if search:
+            return 'COM{}'.format(search.groupdict()['number'])
+        search = _dev_regex.search(address)
+        if search:
+            return search.groupdict()['port']

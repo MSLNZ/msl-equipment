@@ -70,7 +70,7 @@ class ConnectionMessageBased(Connection):
     def read_termination(self):
         """:class:`bytes` or :data:`None`: The termination character sequence
         that is used for the :meth:`read` method.
-        
+
         Reading stops when the equipment stops sending data or the `read_termination`
         character sequence is detected. If you set the `read_termination` to be equal
         to a variable of type :class:`str` it will automatically be encoded.
@@ -171,7 +171,7 @@ class ConnectionMessageBased(Connection):
         msg : :class:`str`
             The message to write to the equipment.
         delay : :class:`float`, optional
-            The time delay, in seconds, to wait between :meth:`write` and 
+            The time delay, in seconds, to wait between :meth:`write` and
             :meth:`read` operations.
         size : :class:`int`, optional
             The number of bytes to read.
@@ -184,7 +184,7 @@ class ConnectionMessageBased(Connection):
         self.write(msg)
         if delay > 0.0:
             time.sleep(delay)
-        return self.read(size)
+        return self.read(size=size)
 
     def _set_timeout_value(self, value):
         # convenience method for setting the timeout value

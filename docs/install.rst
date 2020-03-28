@@ -1,4 +1,4 @@
-.. _equip-install:
+.. _equipment-install:
 
 Install MSL-Equipment
 =====================
@@ -15,20 +15,20 @@ Alternatively, using the `MSL Package Manager`_ run:
 
    msl install equipment
 
-.. _equip-dependencies:
+.. _equipment-dependencies:
 
 Dependencies
 ------------
 * Python 2.7, 3.5+
 * msl-loadlib_
+* msl-io_
 * numpy_
 * pyserial_
 * python-dateutil_
-* xlrd_
 * PyVISA_ or PyVISA-py_, optional
 * NI-DAQmx_, optional
 
-Some of the :ref:`msl-resources` might not work in your application because the resource might depend on an external
+Some of the :ref:`equipment-resources` might not work in your application because the resource might depend on an external
 dependency (e.g., the SDK provided by a manufacturer) and this external dependency might not be available for
 your operating system.
 
@@ -38,6 +38,6 @@ your operating system.
 .. _NI-DAQmx: https://nidaqmx-python.readthedocs.io/en/latest/
 .. _numpy: https://www.numpy.org/
 .. _msl-loadlib: https://msl-loadlib.readthedocs.io/en/latest/
+.. _msl-io: https://msl-io.readthedocs.io/en/latest/
 .. _pyserial: https://pythonhosted.org/pyserial/
 .. _python-dateutil: https://dateutil.readthedocs.io/en/latest/
-.. _xlrd: https://pypi.org/project/xlrd/

@@ -10,7 +10,7 @@ except ImportError:
 import pytest
 
 from msl.equipment import EquipmentRecord, ConnectionRecord, Backend, MSLConnectionError
-from msl.equipment.connection_serial import _parse_address
+from msl.equipment.connection_serial import _serial_port_from_address
 
 
 @pytest.mark.skipif(pty is None, reason='pty is not available')
@@ -81,13 +81,24 @@ def test_connection_serial_read():
     dev.write('SHUTDOWN')
 
 
-def test_address():
-    assert 'COM3' == _parse_address('ASRL3')
-    assert 'COM3' == _parse_address('COM3')
-    assert 'COM3' == _parse_address('LPT3')
-    assert 'COM3' == _parse_address('ASRLCOM3')
-    assert 'COM3' == _parse_address('Prologix::COM3::6')
-    assert 'COM3' == _parse_address('Prologix::COM3::6::112')
+def test_serial_port_from_address():
 
-    for a in ['ASRL', 'COM', 'LPT', 'ASRLCOM', 'Prologix::COM::', '', 'ABC']:
-        assert _parse_address(a) is None
+    for a in ['ASRL', 'COM', 'LPT', 'ASRLCOM', 'Prologix::COM::', '', 'SERIAL::XXX4', 'ABC2'
+              'GPIB::2::INSTR', 'SDK::filename.so', 'SOCKET::192.168.1.100::5000']:
+        assert _serial_port_from_address(a) is None
+
+    assert 'COM15' == _serial_port_from_address('ASRL15')
+    assert 'COM3' == _serial_port_from_address('ASRL3::INSTR')
+    assert 'COM3' == _serial_port_from_address('ASRL3::instr')
+    assert 'COM10' == _serial_port_from_address('COM10')
+    assert 'COM11' == _serial_port_from_address('SERIAL::COM11')
+    assert 'COM3' == _serial_port_from_address('LPT3')
+    assert 'COM7' == _serial_port_from_address('ASRLCOM7')
+    assert '/dev/pts/12' == _serial_port_from_address('SERIAL::/dev/pts/12')
+    assert '/dev/ttyUSB0' == _serial_port_from_address('ASRL::/dev/ttyUSB0::INSTR')
+    assert '/dev/ttyS1' == _serial_port_from_address('ASRLCOM::/dev/ttyS1')
+    assert 'COM3' == _serial_port_from_address('Prologix::COM3::6')
+    assert 'COM3' == _serial_port_from_address('Prologix::ASRL3::6::112')
+    assert '/dev/ttyUSB0' == _serial_port_from_address('Prologix::/dev/ttyUSB0::6')
+    assert '/dev/ttyS1' == _serial_port_from_address('PROLOGIX::/dev/ttyS1::6::96')
+    assert '/dev/pts/1' == _serial_port_from_address('Prologix::/dev/pts/1::2')

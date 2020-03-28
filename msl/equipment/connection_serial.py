@@ -9,9 +9,22 @@ import serial
 from . import constants
 from .connection_message_based import ConnectionMessageBased
 
+_com_regex = re.compile(
+    r'(?P<name>' +
+    r'|'.join(constants.MSL_INTERFACE_ALIASES['SERIAL']) +
+    r')(?P<number>\d+)'
+)
 
-def _parse_address(address):
-    """Get the COM port from the address.
+_dev_regex = re.compile(r'(?P<port>/dev/[\w\d/]+)')
+
+
+def _serial_port_from_address(address):
+    """Get the serial port from the address.
+
+    PyVISA and PyVISA-py accept various resource names:
+      'ASRL', 'COM', 'LPT', 'ASRLCOM'
+
+    PySerial accepts COM and /dev/
 
     Parameters
     ----------
@@ -21,13 +34,15 @@ def _parse_address(address):
     Returns
     -------
     :class:`str` or :data:`None`
-        The COM port, e.g. ``'COM2'``, or :data:`None` if the
-        port cannot be determined from the `address`.
+        The serial port that is valid for PySerial or :data:`None`
+        (if the port cannot be determined from `address`).
     """
-    s = re.search(r'\d+', address)
-    if s is None:
-        return
-    return 'COM{}'.format(s.group(0))
+    search = _com_regex.search(address)
+    if search:
+        return 'COM{}'.format(search.groupdict()['number'])
+    search = _dev_regex.search(address)
+    if search:
+        return search.groupdict()['port']
 
 
 class ConnectionSerial(ConnectionMessageBased):
@@ -95,11 +110,10 @@ class ConnectionSerial(ConnectionMessageBased):
         self.max_read_size = props.get('max_read_size', self._max_read_size)
         self.timeout = props.get('timeout', None)
 
-        if '/dev/' in record.connection.address:
-            # for addresses like -> SERIAL::/dev/ttyS2
-            self._serial.port = record.connection.address.split('::')[-1]
-        else:
-            self._serial.port = record.connection.address
+        port = _serial_port_from_address(record.connection.address)
+        if port is None:
+            self.raise_exception('Invalid SERIAL address {!r}'.format(record.connection.address))
+        self._serial.port = port
 
         self._serial.parity = props.get('parity', constants.Parity.NONE).value
         self._serial.inter_byte_timeout = props.get('inter_byte_timeout', None)
@@ -110,7 +124,7 @@ class ConnectionSerial(ConnectionMessageBased):
             self._serial.baudrate = props.get('baudrate', 9600)
 
         try:
-            self._serial.bytesize = props['data_bits']
+            self._serial.bytesize = props['data_bits'].value
         except KeyError:
             self._serial.bytesize = props.get('bytesize', constants.DataBits.EIGHT).value
 
@@ -134,21 +148,13 @@ class ConnectionSerial(ConnectionMessageBased):
         except KeyError:
             self._serial.dsrdtr = props.get('dsrdtr', False)
 
-        error_msg = ''
         try:
             self._serial.open()
-        except serial.serialutil.SerialException:
-            # PyVISA and PyVISA-py accept various resource names: 'ASRL#', 'COM#', 'LPT#', 'ASRLCOM#'
-            # but Serial seems to only be happy with 'COM#'
-            port = _parse_address(record.connection.address)
-            if port is None:
-                self.raise_exception('A port number was not specified -- address={}'.format(record.connection.address))
-            self._serial.port = port
-
-            try:
-                self._serial.open()
-            except serial.serialutil.SerialException as e:
-                error_msg = str(e)
+        except serial.serialutil.SerialException as err:
+            # don't raise SerialException, use self.raise_exception below
+            error_msg = str(err)
+        else:
+            error_msg = None
 
         if error_msg:
             self.raise_exception(error_msg)

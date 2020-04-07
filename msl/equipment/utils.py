@@ -141,7 +141,7 @@ def convert_to_date(obj, fmt='%Y-%m-%d', strict=True):
             return DEFAULT_DATE
 
 
-def convert_to_xml_string(element, indent='  ', encoding='utf-8'):
+def convert_to_xml_string(element, indent='  ', encoding='utf-8', fix_newlines=True):
     """Convert an XML :class:`~xml.etree.ElementTree.Element` in to a string
     with proper indentation.
 
@@ -149,10 +149,12 @@ def convert_to_xml_string(element, indent='  ', encoding='utf-8'):
     ----------
     element : :class:`~xml.etree.ElementTree.Element`
         The element to convert.
-    indent : :class:`str`
+    indent : :class:`str`, optional
         The value to use for the indentation.
-    encoding : :class:`str`
+    encoding : :class:`str`, optional
         The encoding to use.
+    fix_newlines : :class:`bool`, optional
+        Whether to remove newlines inside text nodes.
 
     Returns
     -------
@@ -163,7 +165,8 @@ def convert_to_xml_string(element, indent='  ', encoding='utf-8'):
     Examples
     --------
     If the :class:`~xml.etree.ElementTree.Element` contains unicode
-    characters then you should use the :mod:`codecs` module to create the file::
+    characters then you should use the :mod:`codecs` module to create the file
+    if you are using Python 2.7::
 
         import codecs
         with codecs.open('my_file.xml', mode='w', encoding='utf-8') as fp:
@@ -171,9 +174,54 @@ def convert_to_xml_string(element, indent='  ', encoding='utf-8'):
 
     otherwise you can use the builtin :func:`open` function::
 
-        with open('my_file.xml', mode='w') as fp:
+        with open('my_file.xml', mode='w', encoding='utf-8') as fp:
             fp.write(convert_to_xml_string(element))
 
     """
     parsed = minidom.parseString(cElementTree.tostring(element))
-    return parsed.toprettyxml(indent=indent, encoding=encoding).decode(encoding)
+    pretty = parsed.toprettyxml(indent=indent, encoding=encoding).decode(encoding)
+    if fix_newlines:
+        return '\n'.join(s for s in pretty.splitlines() if s.strip())
+    return pretty
+
+
+def xml_element(tag, text=None, tail=None, **attributes):
+    """Create a new XML element.
+
+    Parameters
+    ----------
+    tag : :class:`str`
+        The element's name.
+    text : :class:`str`, optional
+        The text before the first sub-element. Can either be a string or :data:`None`.
+    tail : :class:`str`, optional
+        The text after this element's end tag, but before the next sibling element's start tag.
+    attributes
+        All additional key-value pairs are included as XML attributes
+        for the element. The value must be of type :class:`str`.
+
+    Returns
+    -------
+    :class:`~xml.etree.ElementTree.Element`
+        The new XML element.
+    """
+    element = cElementTree.Element(tag, **attributes)
+    element.text = text
+    element.tail = tail
+    return element
+
+
+def xml_comment(text):
+    """Create a new XML comment element.
+
+    Parameters
+    ----------
+    text : :class:`str`
+        The comment.
+
+    Returns
+    -------
+    :class:`~xml.etree.ElementTree.Comment`
+        A special element that is an XML comment.
+    """
+    return cElementTree.Comment(text)

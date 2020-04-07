@@ -1,6 +1,6 @@
 import enum
 import datetime
-from xml.etree.cElementTree import Element
+from xml.etree.cElementTree import Element, Comment
 
 import pytest
 
@@ -9,6 +9,8 @@ from msl.equipment.utils import (
     string_to_none_bool_int_float_complex,
     convert_to_date,
     convert_to_xml_string,
+    xml_comment,
+    xml_element,
 )
 
 
@@ -207,3 +209,81 @@ def test_convert_to_xml_string():
     assert lines[6] == '    <three>3</three>'
     assert lines[7] == '  </data>'
     assert lines[8] == '</msl>'
+
+
+def test_xml_element():
+
+    element = xml_element('tag')
+    assert element.tag == 'tag'
+    assert element.text is None
+    assert element.tail is None
+    assert len(element.attrib) == 0
+
+    element = xml_element('tag', text='the text')
+    assert element.tag == 'tag'
+    assert element.text == 'the text'
+    assert element.tail is None
+    assert len(element.attrib) == 0
+
+    element = xml_element('tag', tail='the tail')
+    assert element.tag == 'tag'
+    assert element.text is None
+    assert element.tail == 'the tail'
+    assert len(element.attrib) == 0
+
+    element = xml_element('tag', text='the text', tail='the tail', one='1', two='2', three='3')
+    assert element.tag == 'tag'
+    assert element.text == 'the text'
+    assert element.tail == 'the tail'
+    assert len(element.attrib) == 3
+    assert element.attrib['one'] == '1'
+    assert element.attrib['two'] == '2'
+    assert element.attrib['three'] == '3'
+
+
+def test_xml_comment():
+    element = xml_comment('this is a comment')
+    assert element.tag == Comment
+    assert element.text == 'this is a comment'
+
+
+def test_convert_to_xml_string_v2():
+    root = xml_element('root')
+    housekeeping = xml_element('Housekeeping')
+
+    job = xml_element('job', text='ABC123')
+
+    client = xml_element('client', city='Wellington')
+    client.text = 'NZ Mass Inc.'
+
+    masses = xml_element('masses')
+    for index, mass in enumerate(['1ug', '1mg', '1g', '1kg']):
+        masses.append(xml_element('mass_{}'.format(index), text=mass))
+
+    housekeeping.append(masses)
+    housekeeping.append(job)
+    housekeeping.append(xml_comment('the Client info'))
+    housekeeping.append(client)
+    housekeeping.append(xml_element('bug', tail='Bugger'))
+
+    root.append(xml_comment('Here is some information from the Housekeeping GUI'))
+    root.append(housekeeping)
+
+    lines = convert_to_xml_string(root).splitlines()
+    assert lines[0] == '<?xml version="1.0" encoding="utf-8"?>'
+    assert lines[1] == '<root>'
+    assert lines[2] == '  <!--Here is some information from the Housekeeping GUI-->'
+    assert lines[3] == '  <Housekeeping>'
+    assert lines[4] == '    <masses>'
+    assert lines[5] == '      <mass_0>1ug</mass_0>'
+    assert lines[6] == '      <mass_1>1mg</mass_1>'
+    assert lines[7] == '      <mass_2>1g</mass_2>'
+    assert lines[8] == '      <mass_3>1kg</mass_3>'
+    assert lines[9] == '    </masses>'
+    assert lines[10] == '    <job>ABC123</job>'
+    assert lines[11] == '    <!--the Client info-->'
+    assert lines[12] == '    <client city="Wellington">NZ Mass Inc.</client>'
+    assert lines[13] == '    <bug/>'
+    assert lines[14] == '    Bugger'
+    assert lines[15] == '  </Housekeeping>'
+    assert lines[16] == '</root>'

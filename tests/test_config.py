@@ -43,7 +43,9 @@ def test_config_constants():
     assert os.path.join('docs', '_api') in Config.PATH
     assert os.path.join('docs', '_static') in os.environ['PATH']
     assert os.path.join('docs', '_templates') in os.environ['PATH']
-    assert c.value('some_value') == '1.2345'
+    assert c.value('some_value') == 1.2345
+    assert c.value('pyvisa_library') == '@py'
+    assert c.value('demo_mode') is True
 
     # database default values
     assert path == c.database().path

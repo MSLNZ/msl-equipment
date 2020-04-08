@@ -4,8 +4,11 @@ Load an XML :ref:`configuration-file`.
 import os
 from xml.etree import cElementTree
 
-from .utils import logger
 from .database import Database
+from .utils import (
+    logger,
+    convert_to_primitive,
+)
 
 
 class Config(object):
@@ -140,12 +143,11 @@ class Config(object):
 
         Returns
         -------
-        :class:`str`
-            The value associated with `tag` or `default` if the tag cannot be found.
+        The value associated with `tag` or `default` if the tag cannot be found.
         """
         element = self._root.find(tag)
         if element is not None:
-            return element.text
+            return convert_to_primitive(element.text)
         return default
 
     def find(self, tag):

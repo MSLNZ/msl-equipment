@@ -6,7 +6,7 @@ import pytest
 
 from msl.equipment.utils import (
     convert_to_enum,
-    string_to_none_bool_int_float_complex,
+    convert_to_primitive,
     convert_to_date,
     convert_to_xml_string,
     xml_comment,
@@ -95,40 +95,64 @@ def test_convert_to_enum():
 
 
 def test_string_to_bool_int_float_complex():
-    assert string_to_none_bool_int_float_complex('true') is True
-    assert string_to_none_bool_int_float_complex('True') is True
-    assert string_to_none_bool_int_float_complex('TRuE') is True
-    assert string_to_none_bool_int_float_complex('false') is False
-    assert string_to_none_bool_int_float_complex('False') is False
-    assert string_to_none_bool_int_float_complex('FaLSe') is False
+    assert convert_to_primitive('none') is None
+    assert convert_to_primitive('None') is None
+    assert convert_to_primitive('nOnE') is None
+    assert convert_to_primitive('  None \t') is None
+    assert convert_to_primitive(None) is None
 
-    assert string_to_none_bool_int_float_complex('0') == 0
-    assert isinstance(string_to_none_bool_int_float_complex('0'), int)
-    assert string_to_none_bool_int_float_complex('1') == 1
-    assert isinstance(string_to_none_bool_int_float_complex('1'), int)
-    assert string_to_none_bool_int_float_complex('-999') == -999
-    assert isinstance(string_to_none_bool_int_float_complex('-999'), int)
+    assert convert_to_primitive('true') is True
+    assert convert_to_primitive('True') is True
+    assert convert_to_primitive('TRuE') is True
+    assert convert_to_primitive('  True\n') is True
+    assert convert_to_primitive(True) is True
+    assert convert_to_primitive('false') is False
+    assert convert_to_primitive('False') is False
+    assert convert_to_primitive('FaLSe') is False
+    assert convert_to_primitive('\nFalse\n') is False
+    assert convert_to_primitive(False) is False
 
-    assert string_to_none_bool_int_float_complex('1.9') == 1.9
-    assert isinstance(string_to_none_bool_int_float_complex('1.9'), float)
-    assert string_to_none_bool_int_float_complex('-49.4') == -49.4
-    assert isinstance(string_to_none_bool_int_float_complex('-49.4'), float)
-    assert string_to_none_bool_int_float_complex('2.553e83') == 2.553e83
-    assert isinstance(string_to_none_bool_int_float_complex('2.553e83'), float)
+    assert convert_to_primitive('0') == 0
+    assert convert_to_primitive(' 0 ') == 0
+    assert convert_to_primitive(0) == 0
+    assert isinstance(convert_to_primitive('0'), int)
+    assert convert_to_primitive('1') == 1
+    assert convert_to_primitive('       1\n') == 1
+    assert isinstance(convert_to_primitive('1'), int)
+    assert convert_to_primitive('-999') == -999
+    assert isinstance(convert_to_primitive('-999'), int)
 
-    assert string_to_none_bool_int_float_complex('1.9j') == 1.9j
-    assert isinstance(string_to_none_bool_int_float_complex('1.9j'), complex)
-    assert string_to_none_bool_int_float_complex('-3+2.4j') == -3 + 2.4j
-    assert isinstance(string_to_none_bool_int_float_complex('-3+2.4j'), complex)
-    assert string_to_none_bool_int_float_complex('1+0j') == 1 + 0j
-    assert isinstance(string_to_none_bool_int_float_complex('1+0j'), complex)
-    assert string_to_none_bool_int_float_complex('1.52+2.32e-3j') == complex(1.52, 2.32e-3)
-    assert isinstance(string_to_none_bool_int_float_complex('1.52e8+2.32e-5j'), complex)
+    assert convert_to_primitive('1.9') == 1.9
+    assert convert_to_primitive(1.9) == 1.9
+    assert isinstance(convert_to_primitive('1.9'), float)
+    assert convert_to_primitive('-49.4') == -49.4
+    assert convert_to_primitive('\t-49.4\n') == -49.4
+    assert isinstance(convert_to_primitive('-49.4'), float)
+    assert convert_to_primitive('2.553e83') == 2.553e83
+    assert isinstance(convert_to_primitive('2.553e83'), float)
 
-    assert string_to_none_bool_int_float_complex('') == ''
-    assert string_to_none_bool_int_float_complex('hello') == 'hello'
-    assert string_to_none_bool_int_float_complex(b'\x00\x00') == b'\x00\x00'
-    assert string_to_none_bool_int_float_complex('16i') == '16i'
+    assert convert_to_primitive('1.9j') == 1.9j
+    assert convert_to_primitive(' 1.9j\t  ') == 1.9j
+    assert isinstance(convert_to_primitive('1.9j'), complex)
+    assert convert_to_primitive('-3+2.4j') == -3 + 2.4j
+    assert isinstance(convert_to_primitive('-3+2.4j'), complex)
+    assert convert_to_primitive('1+0j') == 1 + 0j
+    assert isinstance(convert_to_primitive('1+0j'), complex)
+    assert convert_to_primitive('1.52+2.32e-3j') == complex(1.52, 2.32e-3)
+    assert isinstance(convert_to_primitive('1.52e8+2.32e-5j'), complex)
+    assert convert_to_primitive(-3.2+2.4j) == complex(-3.2, 2.4)
+
+    assert convert_to_primitive('') == ''
+    assert convert_to_primitive(' \t \n ') == ' \t \n '
+    assert convert_to_primitive('hello') == 'hello'
+    assert convert_to_primitive('hello\tworld\r\n') == 'hello\tworld\r\n'
+    assert convert_to_primitive(b'\x00\x00') == b'\x00\x00'
+    assert convert_to_primitive('16i') == '16i'
+    assert convert_to_primitive('[1,2,3]') == '[1,2,3]'
+
+    assert convert_to_primitive([1, 2, 3]) == [1, 2, 3]
+    assert convert_to_primitive({'1': 1}) == {'1': 1}
+    assert convert_to_primitive(bytearray([1, 2, 3])) == b'\x01\x02\x03'
 
 
 def test_convert_to_date():

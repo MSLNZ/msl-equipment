@@ -18,7 +18,7 @@ from .record_types import (
 )
 from .utils import (
     logger,
-    string_to_none_bool_int_float_complex,
+    convert_to_primitive,
     convert_to_enum,
 )
 
@@ -89,7 +89,7 @@ class Database(object):
                                 s = item.split('=')
                                 if len(s) != 2:
                                     continue
-                                kwargs['properties'][s[0].strip()] = string_to_none_bool_int_float_complex(s[1].strip())
+                                kwargs['properties'][s[0].strip()] = convert_to_primitive(s[1])
                         self._connection_records[key] = ConnectionRecord(**kwargs)
                 elif isinstance(data, dict):  # loaded a json or xml file
                     for record in data['connection_records']:
@@ -159,9 +159,7 @@ class Database(object):
                             except KeyError:
                                 pass
                             else:
-                                if isinstance(s, str):
-                                    s = string_to_none_bool_int_float_complex(s)
-                                kwargs[name] = s
+                                kwargs[name] = convert_to_primitive(s)
 
                         self._equipment_records[key] = EquipmentRecord(**kwargs)
 

@@ -79,27 +79,42 @@ def convert_to_enum(obj, enum, prefix=None, to_upper=False, strict=True):
     return obj
 
 
-def string_to_none_bool_int_float_complex(string):
-    """Convert a string into :data:`None`, :data:`True`, :data:`False`,
-    :class:`int`, :class:`float` or :class:`complex`.
+def convert_to_primitive(text):
+    """Convert text into a primitive value.
 
-    Returns `string` if it cannot be converted to any of these types.
+    Parameters
+    ----------
+    text : :class:`str` or :class:`bytes`
+        The text to convert.
 
-    0 and 1 get converted to an integer not a boolean.
+    Returns
+    -------
+    The `text` as a :data:`None`, :class:`bool`, :class:`int`,
+    :class:`float` or :class:`complex` object. Returns the
+    original `text` if it cannot be converted to any of these types.
+    The text 0 and 1 get converted to an integer not a boolean.
     """
-    su = string.upper()
-    if su == 'NONE':
+    try:
+        upper = text.upper().strip()
+    except AttributeError:
+        return text
+
+    if upper == 'NONE':
         return None
-    if su == 'TRUE':
+    if upper == 'TRUE':
         return True
-    if su == 'FALSE':
+    if upper == 'FALSE':
         return False
+
+    # TODO could consider using ast.literal_eval if text representations of
+    #  list, dict, set, tuple would like to be supported
     for typ in (int, float, complex):
         try:
-            return typ(string)
+            return typ(text)
         except (ValueError, TypeError):
             pass
-    return string
+
+    return text
 
 
 def convert_to_date(obj, fmt='%Y-%m-%d', strict=True):

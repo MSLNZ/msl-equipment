@@ -148,6 +148,62 @@ class ConnectionPrologix(ConnectionMessageBased):
         self._select_gpib_address()
 
     @property
+    def encoding(self):
+        """:class:`str`: The encoding that is used for :meth:`read` and :meth:`write` operations."""
+        return self._controller.encoding
+
+    @encoding.setter
+    def encoding(self, encoding):
+        self._controller.encoding = encoding
+
+    @property
+    def read_termination(self):
+        """:class:`bytes` or :data:`None`: The termination character sequence
+        that is used for the :meth:`read` method.
+
+        Reading stops when the equipment stops sending data or the `read_termination`
+        character sequence is detected. If you set the `read_termination` to be equal
+        to a variable of type :class:`str` it will automatically be encoded.
+        """
+        return self._controller.read_termination
+
+    @read_termination.setter
+    def read_termination(self, termination):
+        self._controller.read_termination = termination
+
+    @property
+    def write_termination(self):
+        """:class:`bytes` or :data:`None`: The termination character sequence that
+        is appended to :meth:`write` messages.
+
+        If you set the `write_termination` to be equal to a variable of type
+        :class:`str` it will automatically be encoded.
+        """
+        return self._controller.write_termination
+
+    @write_termination.setter
+    def write_termination(self, termination):
+        self._controller.write_termination = termination
+
+    @property
+    def max_read_size(self):
+        """:class:`int`: The maximum number of bytes that can be :meth:`read`."""
+        return self._controller.max_read_size
+
+    @max_read_size.setter
+    def max_read_size(self, size):
+        self._controller.max_read_size = size
+
+    @property
+    def timeout(self):
+        """:class:`float` or :data:`None`: The timeout, in seconds, for :meth:`read` and :meth:`write` operations."""
+        return self._controller.timeout
+
+    @timeout.setter
+    def timeout(self, value):
+        self._controller.timeout = value
+
+    @property
     def controller(self):
         """:class:`.ConnectionSerial` or :class:`.ConnectionSocket`:
         The connection to the Prologix_ Controller for this equipment.

@@ -172,11 +172,11 @@ class ConnectionSerial(ConnectionMessageBased):
         try:
             # if the subclass raised an error in the constructor before
             # the this class is initialized then self._serial won't exist
-            self._serial.close()
+            if self._serial.is_open:
+                self._serial.close()
+                self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
         except AttributeError:
             pass
-        else:
-            self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
 
     def write(self, msg):
         """Write a message over the serial port.

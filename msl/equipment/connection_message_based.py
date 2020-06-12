@@ -113,6 +113,10 @@ class ConnectionMessageBased(Connection):
         """:class:`float` or :data:`None`: The timeout, in seconds, for :meth:`read` and :meth:`write` operations."""
         return self._timeout
 
+    @timeout.setter
+    def timeout(self, value):
+        self._timeout = value
+
     def raise_timeout(self, append_msg=''):
         """Raise a :exc:`~.exceptions.MSLTimeoutError`.
 

@@ -3,8 +3,6 @@ Uses Prologix_ hardware to establish a connection to the equipment.
 
 .. _Prologix: https://prologix.biz/
 """
-import time
-
 from .connection_message_based import ConnectionMessageBased
 from .connection_socket import ConnectionSocket
 from .connection_serial import ConnectionSerial

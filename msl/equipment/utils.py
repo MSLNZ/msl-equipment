@@ -236,7 +236,7 @@ def xml_comment(text):
 
     Returns
     -------
-    :class:`~xml.etree.ElementTree.Comment`
+    :func:`~xml.etree.ElementTree.Comment`
         A special element that is an XML comment.
     """
     return cElementTree.Comment(text)

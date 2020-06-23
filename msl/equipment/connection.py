@@ -93,10 +93,10 @@ class Connection(object):
 
         Parameters
         ----------
-        obj : :class:`object`
+        obj
             Any object to be converted to the specified `enum`. Can be a
             value of member of the specified `enum`.
-        enum : :class:`~enum.Enum`
+        enum
             The :class:`~enum.Enum` object that `obj` should be converted to.
         prefix : :class:`str`, optional
             If `obj` is a :class:`str`, then ensures that `prefix` is included at

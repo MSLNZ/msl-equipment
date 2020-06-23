@@ -197,10 +197,12 @@ class ConnectionSocket(ConnectionMessageBased):
         size : :class:`int`, optional
             The number of bytes to read. If `size` is :data:`None` then read until:
 
-            1. :obj:`.read_termination` characters are read
-               (only if :obj:`.read_termination` is not :data:`None`)
-            2. :obj:`.max_read_size` bytes have been read
-               (raises :exc:`~msl.equipment.exceptions.MSLConnectionError` if occurs)
+            1. :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.read_termination`
+               characters are read (only if
+               :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.read_termination`
+               is not :data:`None`)
+            2. :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.max_read_size`
+               bytes have been read (raises :exc:`~msl.equipment.exceptions.MSLConnectionError` if occurs)
             3. :exc:`~msl.equipment.exceptions.MSLTimeoutError` occurs
                (only if :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.timeout`
                is not :data:`None`)

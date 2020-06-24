@@ -707,7 +707,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         if opened_ports is None:
-            opened_ports = [port.encode() for port in NKT._SDK.get_open_ports()]
+            opened_ports = [port.encode() for port in NKT.get_open_ports()]
         elif isinstance(opened_ports, (list, tuple)):
             opened_ports = [port.encode() for port in opened_ports]
         elif isinstance(opened_ports, str):

@@ -1,6 +1,10 @@
-from msl.equipment.connection_prologix import _parse_address
+from msl.equipment.connection_prologix import (
+    _parse_address,
+    ConnectionPrologix,
+)
 from msl.equipment.connection_serial import ConnectionSerial
 from msl.equipment.connection_socket import ConnectionSocket
+from msl.equipment.connection_message_based import ConnectionMessageBased
 
 
 def test_parse_address():
@@ -46,3 +50,11 @@ def test_parse_address():
     assert name == '/dev/ttyUSB0'
     assert primary == '16'
     assert secondary == '96'
+
+
+def test_connection_message_based_attributes():
+    cp = dir(ConnectionPrologix)
+    for attr in dir(ConnectionMessageBased):
+        if attr.startswith('_') or attr in ['CR', 'LF', 'raise_timeout']:
+            continue
+        assert attr in cp

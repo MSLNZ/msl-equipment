@@ -3,7 +3,7 @@ Uses Prologix_ hardware to establish a connection to the equipment.
 
 .. _Prologix: https://prologix.biz/
 """
-from .connection_message_based import ConnectionMessageBased
+from .connection import Connection
 from .connection_socket import ConnectionSocket
 from .connection_serial import ConnectionSerial
 
@@ -51,7 +51,7 @@ def _parse_address(address):
     return cls, name, primary, secondary
 
 
-class ConnectionPrologix(ConnectionMessageBased):
+class ConnectionPrologix(Connection):
 
     controllers = {}
     """A :class:`dict` of all Prologix_ Controllers that are being used to communicate with GPIB devices."""
@@ -147,7 +147,7 @@ class ConnectionPrologix(ConnectionMessageBased):
 
     @property
     def encoding(self):
-        """:class:`str`: The encoding that is used for :meth:`read` and :meth:`write` operations."""
+        """:class:`str`: The encoding that is used for :meth:`.read` and :meth:`.write` operations."""
         return self._controller.encoding
 
     @encoding.setter
@@ -157,7 +157,7 @@ class ConnectionPrologix(ConnectionMessageBased):
     @property
     def read_termination(self):
         """:class:`bytes` or :data:`None`: The termination character sequence
-        that is used for the :meth:`read` method.
+        that is used for the :meth:`.read` method.
 
         Reading stops when the equipment stops sending data or the `read_termination`
         character sequence is detected. If you set the `read_termination` to be equal
@@ -172,7 +172,7 @@ class ConnectionPrologix(ConnectionMessageBased):
     @property
     def write_termination(self):
         """:class:`bytes` or :data:`None`: The termination character sequence that
-        is appended to :meth:`write` messages.
+        is appended to :meth:`.write` messages.
 
         If you set the `write_termination` to be equal to a variable of type
         :class:`str` it will automatically be encoded.
@@ -185,7 +185,7 @@ class ConnectionPrologix(ConnectionMessageBased):
 
     @property
     def max_read_size(self):
-        """:class:`int`: The maximum number of bytes that can be :meth:`read`."""
+        """:class:`int`: The maximum number of bytes that can be :meth:`.read`."""
         return self._controller.max_read_size
 
     @max_read_size.setter
@@ -194,7 +194,7 @@ class ConnectionPrologix(ConnectionMessageBased):
 
     @property
     def timeout(self):
-        """:class:`float` or :data:`None`: The timeout, in seconds, for :meth:`read` and :meth:`write` operations."""
+        """:class:`float` or :data:`None`: The timeout, in seconds, for :meth:`.read` and :meth:`.write` operations."""
         return self._controller.timeout
 
     @timeout.setter
@@ -289,8 +289,8 @@ class ConnectionPrologix(ConnectionMessageBased):
         msg : :class:`str`
             The message to write to the equipment.
         delay : :class:`float`, optional
-            The time delay, in seconds, to wait between :meth:`write` and
-            :meth:`read` operations.
+            The time delay, in seconds, to wait between :meth:`.write` and
+            :meth:`.read` operations.
         size : :class:`int`, optional
             The number of bytes to read.
 
@@ -302,7 +302,7 @@ class ConnectionPrologix(ConnectionMessageBased):
         if self._query_auto:
             self._controller.write('++auto 1')
 
-        reply = super(ConnectionPrologix, self).query(msg, delay=delay, size=size)
+        reply = self._controller.query(msg, delay=delay, size=size)
 
         if self._query_auto:
             self._controller.write('++auto 0')

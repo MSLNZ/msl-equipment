@@ -30,6 +30,10 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
   * :class:`~msl.equipment.resources.electron_dynamics.tc_series.TCSeries` - Temperature Controller (TC LV, TC M, TC Lite)
 
+* `MKS Instruments`_
+
+  * :class:`~msl.equipment.resources.mks_instruments.pr4000b.PR4000B` - Flow and Pressure controller
+
 * `NKT Photonics`_
 
   * :class:`~msl.equipment.resources.nkt.nktpdll.NKT` - Wrapper around the `NKT Photonics SDK`_
@@ -188,3 +192,4 @@ Please follow the `style guide`_.
 .. _DataRay: https://www.dataray.com/
 .. _DATARAYOCX: https://www.dataray.com/interfacing.html
 .. _Aim and Thurlby Thandar Instruments: https://www.aimtti.com/
+.. _MKS Instruments: https://www.mksinst.com/

@@ -153,3 +153,9 @@ def test_find_resource_class():
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)
             assert cls == resources.aim_tti.mx_series.MXSeries
+
+    for man in ('MKS', 'mks', 'mks instruments', 'MKS Instruments'):
+        for mod in ('PR4000B', 'pr4000b', 'PR4000BF2V2', 'PR4000B-does-not-matter'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.mks_instruments.pr4000b.PR4000B

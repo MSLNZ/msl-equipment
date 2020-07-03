@@ -4,6 +4,8 @@ import threading
 
 import pytest
 import pyvisa
+from pyvisa.resources.tcpip import TCPIPSocket
+from pyvisa.attributes import AttrVI_ATTR_TMO_VALUE
 
 from msl.equipment.config import Config
 from msl.equipment.connection_pyvisa import ConnectionPyVISA
@@ -105,6 +107,25 @@ def test_timeout_and_termination():
         )
     )
 
+    record2 = EquipmentRecord(
+        connection=ConnectionRecord(
+            address='TCPIP::{}::{}::SOCKET'.format(address, port),
+            backend='PyVISA',
+            properties={
+                'write_termination': b'abc',
+                'read_termination': '123',
+                'timeout': 1000
+            }
+        )
+    )
+
+    record3 = EquipmentRecord(
+        connection=ConnectionRecord(
+            address='TCPIP::{}::{}::SOCKET'.format(address, port),
+            backend='PyVISA',
+        )
+    )
+
     dev = record.connect()
 
     assert dev.timeout == 10000  # 10 seconds gets converted to 10000 ms
@@ -113,6 +134,23 @@ def test_timeout_and_termination():
     assert dev.write_termination == dev.resource.write_termination
     assert dev.read_termination == term.decode()
     assert dev.read_termination == dev.resource.read_termination
+
+    dev2 = record2.connect()
+    assert dev2.timeout == 1000  # >100 so does not get converted
+    assert dev2.timeout == dev2.resource.timeout
+    assert dev2.write_termination == 'abc'
+    assert dev2.write_termination == dev2.resource.write_termination
+    assert dev2.read_termination == '123'
+    assert dev2.read_termination == dev2.resource.read_termination
+
+    dev3 = record3.connect()
+    assert dev3.timeout == AttrVI_ATTR_TMO_VALUE.default
+    assert dev3.timeout == dev3.resource.timeout
+    assert dev3.write_termination == TCPIPSocket._write_termination
+    assert dev3.write_termination == dev3.resource.write_termination
+    assert dev3.read_termination == TCPIPSocket._read_termination
+    assert dev3.read_termination is None
+    assert dev3.read_termination == dev3.resource.read_termination
 
     dev.timeout = 1234
     dev.write_termination = 'hello'
@@ -152,3 +190,5 @@ def test_timeout_and_termination():
 
     dev.write('SHUTDOWN')
     dev.disconnect()
+    dev2.disconnect()
+    dev3.disconnect()

@@ -13,7 +13,7 @@ from msl.equipment.constants import MSL_INTERFACE_ALIASES
 def echo_server_tcp(address, port, term):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((address, port))
-    s.listen(1)
+    s.listen(2)
     conn, _ = s.accept()
 
     while True:

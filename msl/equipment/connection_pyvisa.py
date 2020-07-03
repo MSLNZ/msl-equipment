@@ -55,20 +55,25 @@ class ConnectionPyVISA(Connection):
         else:
             props['stop_bits'] = self.convert_to_enum(val, pyvisa.constants.StopBits)
 
+        # PyVISA requires the read/write termination data type to be str not bytes
+        def ensure_term(term):
+            try:
+                return term.decode()
+            except AttributeError:
+                return term
+
         # "termination" is a shortcut used by the MSL backend to set both
         # write_termination and read_termination to the same value
-        term = props.pop('termination', None)
-        if term is not None:
-            try:
-                # pyvisa requires the termination value to be a string, not bytes
-                term_as_string = term.decode()
-            except AttributeError:
-                term_as_string = term
-            props['write_termination'] = term_as_string
-            props['read_termination'] = term_as_string
+        rw_term = props.pop('termination', None)
+        r_term = props.pop('read_termination', rw_term)
+        w_term = props.pop('write_termination', rw_term)
+        if r_term is not None:
+            props['read_termination'] = ensure_term(r_term)
+        if w_term is not None:
+            props['write_termination'] = ensure_term(w_term)
 
         # the "timeout" value is in seconds for MSL backend
-        # pyvisa uses a timeout in milliseconds
+        # PyVISA uses a timeout in milliseconds
         timeout = props.get('timeout')
         if timeout and timeout < 100:
             # if timeout < 100 then it's value is probably in seconds

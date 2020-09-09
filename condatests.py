@@ -19,6 +19,9 @@ except ImportError:
 IS_WINDOWS = sys.platform == 'win32'
 if IS_WINDOWS:
     CONDA_DIR, PYTHON_DIR, EXT = 'Scripts', '', '.exe'
+    # Avoid getting "LookupError: unknown encoding: cp65001"
+    if os.environ.get('PYTHONIOENCODING') is None:
+        os.environ['PYTHONIOENCODING'] = 'utf-8'
 else:
     CONDA_DIR, PYTHON_DIR, EXT = 'bin', 'bin', ''
 

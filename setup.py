@@ -148,7 +148,7 @@ if not testing:
     install_requires.append('numpy')
 else:
     if sys.version_info[:2] == (2, 7):
-        tests_require.extend(['zipp<2.0.0', 'pytest<5.0', 'numpy<1.17'])
+        tests_require.extend(['zipp<2.0', 'pyparsing<3.0', 'pytest~=4.6', 'numpy<1.17'])
     else:
         tests_require.extend(['pytest', 'numpy'])
 

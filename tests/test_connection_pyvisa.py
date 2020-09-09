@@ -15,7 +15,7 @@ from test_connection_socket import echo_server_tcp, get_available_port
 
 try:
     pyvisa.ResourceManager('@ni')
-except OSError:
+except:
     HAS_NI_VISA = False
 else:
     HAS_NI_VISA = True

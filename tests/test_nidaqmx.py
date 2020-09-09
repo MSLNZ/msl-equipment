@@ -7,7 +7,7 @@ from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
 
 try:
     nidaqmx.Task()
-except OSError:
+except:
     HAS_NIDAQ_INSTALLED = False
 else:
     HAS_NIDAQ_INSTALLED = True

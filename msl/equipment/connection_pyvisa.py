@@ -112,7 +112,7 @@ class ConnectionPyVISA(Connection):
         This is the :class:`~pyvisa.resources.Resource` that would have
         been returned if you did the following in a script::
 
-            import visa
+            import pyvisa
             rm = visa.ResourceManager()
             resource = rm.open_resource('COM6')
 
@@ -133,14 +133,14 @@ class ConnectionPyVISA(Connection):
         Parameters
         ----------
         visa_library : :class:`~pyvisa.highlevel.VisaLibraryBase` or :class:`str`, optional
-            The library to use for PyVISA. For example:
+            The library to use for PyVISA_. For example:
 
-                * ``@ni`` to use `NI-VISA <https://www.ni.com/visa/>`_
+                * ``@ivi`` to use :ref:`IVI <intro-configuring>`
+                * ``@ni`` to use `NI-VISA <https://www.ni.com/visa/>`_ (only supported in PyVISA <1.12)
                 * ``@py`` to use `PyVISA-py <https://pyvisa-py.readthedocs.io/en/latest/>`_
                 * ``@sim`` to use `PyVISA-sim <https://pyvisa-sim.readthedocs.io/en/latest/>`_
 
-            If :data:`None` then `visa_library` is read from the
-            :attr:`~.config.Config.PyVISA_LIBRARY` variable.
+            If :data:`None` then :attr:`~.config.Config.PyVISA_LIBRARY` will be used.
 
         Returns
         -------
@@ -152,7 +152,7 @@ class ConnectionPyVISA(Connection):
         ValueError
             If the PyVISA_ backend wrapper cannot be found.
         OSError
-            If the VISA library cannot be found.
+            If an IVI library cannot be found.
         """
         if pyvisa is None:
             raise ImportError('pyvisa is not installed. Run: pip install pyvisa')
@@ -180,13 +180,19 @@ class ConnectionPyVISA(Connection):
         if visa_library is None:
             visa_library = Config.PyVISA_LIBRARY
 
-        return pyvisa.ResourceManager(visa_library)
+        try:
+            return pyvisa.ResourceManager(visa_library)
+        except ValueError as err:
+            # as of PyVISA 1.11 the @ni backend became deprecated and it is planned
+            # to be removed in 1.12, which is when the @ivi value must be used instead
+            if str(err).endswith('pyvisa-ivi'):
+                Config.PyVISA_LIBRARY = '@ni'
+                return pyvisa.ResourceManager()
+            raise
 
     @staticmethod
     def resource_class(record):
-        """Find the specific_ PyVISA Resource class that can open the `record`.
-
-        .. _specific: https://pyvisa.readthedocs.io/en/stable/api/resources.html
+        """Get the PyVISA_ :ref:`Resource class <api_resources>`.
 
         Parameters
         ----------
@@ -200,7 +206,7 @@ class ConnectionPyVISA(Connection):
         """
         if isinstance(record, EquipmentRecord):
             if record.connection is None:
-                raise ValueError('The connection object has not been set for {}'.format(record))
+                raise ValueError('The ConnectionRecord has not been set for {}'.format(record))
             address = record.connection.address
         elif isinstance(record, ConnectionRecord):
             address = record.address
@@ -210,7 +216,7 @@ class ConnectionPyVISA(Connection):
             raise TypeError(msg)
 
         if not address:
-            raise ValueError('The connection address for {} has not been set'.format(record))
+            raise ValueError('The ConnectionRecord.address for {} has not been set'.format(record))
 
         rm = ConnectionPyVISA.resource_manager()
         try:
@@ -242,4 +248,4 @@ class ConnectionPyVISA(Connection):
                 if a.startswith(key):
                     return value
 
-            raise ValueError('Cannot find PyVISA resource class for {}'.format(address))
+            raise ValueError('Cannot find a PyVISA resource class for {}'.format(address))

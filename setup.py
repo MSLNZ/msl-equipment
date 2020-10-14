@@ -143,14 +143,16 @@ install_requires = [
     'enum34;python_version<"3.4"',
 ]
 
-tests_require = ['pytest-cov', 'nidaqmx', 'pyvisa>=1.6', 'pyvisa-py']
+tests_require = ['pytest-cov', 'nidaqmx']
 if not testing:
     install_requires.append('numpy')
 else:
     if sys.version_info[:2] == (2, 7):
-        tests_require.extend(['zipp<2.0', 'pyparsing<3.0', 'pytest~=4.6', 'numpy<1.17'])
+        tests_require.extend(['zipp<2.0', 'pyparsing<3.0', 'pytest~=4.6', 'numpy<1.17', 'pyvisa<1.11', 'pyvisa-py<0.5'])
+    elif sys.version_info[:2] == (3, 5):
+        tests_require.extend(['pytest', 'numpy<1.19', 'pyvisa<1.11', 'pyvisa-py<0.5'])
     else:
-        tests_require.extend(['pytest', 'numpy'])
+        tests_require.extend(['pytest', 'numpy', 'pyvisa', 'pyvisa-py'])
 
 needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
 sphinx = ['sphinx', 'sphinx_rtd_theme'] + install_requires if needs_sphinx else []

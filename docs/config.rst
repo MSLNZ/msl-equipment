@@ -19,7 +19,10 @@ The following illustrates an example configuration file.
      <msl>
        <!--
          Use PyVISA-py as the PyVISA backend library.
-         Allowed values are: @ni, @py, @sim, /path/to/lib\@ni
+         Other options are:
+           @ivi (PyVISA >=1.11)
+           @ni (PyVISA <1.11)
+           @sim (PyVISA-sim)
        -->
        <pyvisa_library>@py</pyvisa_library>
 

@@ -26,7 +26,7 @@ def test_config_io_errors():
 def test_config_constants():
 
     # the default Config values
-    assert Config.PyVISA_LIBRARY == '@ni'
+    assert Config.PyVISA_LIBRARY == '@ivi'
     assert not Config.DEMO_MODE
     assert len(Config.PATH) == 0
 
@@ -68,7 +68,7 @@ def test_config_constants_reloaded():
     assert len(c.database().records()) == 7
 
     # reset the default Config values so that other tests can assume the default values
-    Config.PyVISA_LIBRARY = '@ni'
+    Config.PyVISA_LIBRARY = '@ivi'
     Config.DEMO_MODE = False
-    assert Config.PyVISA_LIBRARY == '@ni'
+    assert Config.PyVISA_LIBRARY == '@ivi'
     assert not Config.DEMO_MODE

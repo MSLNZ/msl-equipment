@@ -1,6 +1,7 @@
 import time
 import math
 import threading
+from pkg_resources import parse_version
 
 import pytest
 import pyvisa
@@ -13,8 +14,10 @@ from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
 
 from test_connection_socket import echo_server_tcp, get_available_port
 
+VISA_LIBRARY = '@ni' if parse_version(pyvisa.__version__) < parse_version('1.11') else '@ivi'
+
 try:
-    pyvisa.ResourceManager('@ni')
+    pyvisa.ResourceManager(VISA_LIBRARY)
 except:
     HAS_NI_VISA = False
 else:
@@ -31,8 +34,8 @@ def test_resource_manager():
     assert isinstance(ConnectionPyVISA.resource_manager(), pyvisa.ResourceManager)
 
 
-def test_pyclass():
-    backends = ('@ni', '@py') if HAS_NI_VISA else ('@py',)
+def test_resource_class():
+    backends = (VISA_LIBRARY, '@py') if HAS_NI_VISA else ('@py',)
 
     for backend in backends:
 
@@ -85,6 +88,9 @@ def test_pyclass():
         for item in ('VXI0::1::INSTR', 'VXI0::SERVANT'):
             record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.VXIInstrument
+
+    with pytest.raises(ValueError):
+        ConnectionPyVISA.resource_manager('@invalid')
 
 
 def test_timeout_and_termination():

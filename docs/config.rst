@@ -7,7 +7,7 @@ A configuration file is used by **MSL-Equipment** to:
 
 1. Specify which :ref:`Databases <database-formats>` to use
 2. Specify the equipment that is being used to perform a measurement
-3. Specify constants to use in your Python program
+3. Specify parameters to use in your Python program
 
 The configuration file uses the eXtensible Markup Language (XML_) format to specify this information.
 
@@ -38,7 +38,7 @@ The following illustrates an example configuration file.
        <!-- Recursively add all subfolders starting from a root path (includes the root path). -->
        <path recursive="true">C:\Program Files\Thorlabs</path>
 
-       <!-- Also, the user can define their own constants. -->
+       <!-- The user can also define their own tags. -->
        <max_temperature units="C">60</max_temperature>
 
        <!--

@@ -19,7 +19,8 @@ class Config(object):
     DEMO_MODE = False
     """:class:`bool`: Whether to open connections in demo mode. 
     
-    The equipment does not need to be physically connected to a computer.
+    If enabled then the equipment does not need to be physically connected to a computer
+    and the connection is simulated.
     """
 
     PATH = []
@@ -32,7 +33,8 @@ class Config(object):
         and it allows you to access :class:`.EquipmentRecord`'s from an :ref:`equipment-database`
         and :class:`.ConnectionRecord`'s from a :ref:`connections-database`.
 
-        **MSL-Equipment** constants that can be defined in a :ref:`configuration-file`:
+        The following table summarizes the XML elements that are used by **MSL-Equipment**
+        and can be defined in a :ref:`configuration-file`:
 
         +----------------+----------------------------------------+-----------------------------------------------+
         |    XML Tag     |           Example Values               |               Description                     |
@@ -50,10 +52,8 @@ class Config(object):
         |                |                                        | and to :attr:`.PATH`                          |
         +----------------+----------------------------------------+-----------------------------------------------+
 
-        Also, the user is encouraged to define their own application-specific constants within the
-        configuration file.
-
-        .. _backend: https://pyvisa.readthedocs.io/en/stable/backends.html
+        The user is also encouraged to define their own application-specific elements within the
+        :ref:`configuration-file`.
 
         Parameters
         ----------
@@ -132,11 +132,14 @@ class Config(object):
     def value(self, tag, default=None):
         """Gets the value associated with the specified `tag` in the configuration file.
 
+        The value is converted to the appropriate data type if possible. Otherwise,
+        the value will be returned as a :class:`str`.
+
         Parameters
         ----------
         tag : :class:`str`
             The name of an XML tag in the configuration file.
-        default : :class:`str`, optional
+        default
             The default value if `tag` cannot be found.
 
         Returns
@@ -149,7 +152,7 @@ class Config(object):
         return default
 
     def find(self, tag):
-        """Find the first sub-element (from the :meth:`root`) matching `tag` in the configuration file.
+        """Find the first sub-element (from the :obj:`root`) matching `tag` in the configuration file.
 
         Parameters
         ----------
@@ -164,7 +167,7 @@ class Config(object):
         return self._root.find(tag)
 
     def findall(self, tag):
-        """Find all matching sub-elements (from the :meth:`root`) matching `tag` in the configuration file.
+        """Find all matching sub-elements (from the :obj:`root`) matching `tag` in the configuration file.
 
         Parameters
         ----------

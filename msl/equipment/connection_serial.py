@@ -63,31 +63,15 @@ class ConnectionSerial(ConnectionMessageBased):
         ~msl.equipment.exceptions.MSLConnectionError
             If the serial port cannot be opened.
         """
-        super(ConnectionSerial, self).__init__(record)
-
         self._serial = serial.Serial()
-
-        props = record.connection.properties
-
-        try:
-            termination = props['termination']
-        except KeyError:
-            self.read_termination = props.get('read_termination', self._read_termination)
-            self.write_termination = props.get('write_termination', self._write_termination)
-        else:
-            self.read_termination = termination
-            self.write_termination = termination
-
-        self.encoding = props.get('encoding', self._encoding)
-        self._encoding_errors = props.get('encoding_errors', self._encoding_errors)
-        self.max_read_size = props.get('max_read_size', self._max_read_size)
-        self.timeout = props.get('timeout', None)
+        super(ConnectionSerial, self).__init__(record)
 
         port = ConnectionSerial.port_from_address(record.connection.address)
         if port is None:
             self.raise_exception('Invalid address {!r}'.format(record.connection.address))
         self._serial.port = port
 
+        props = record.connection.properties
         self._serial.parity = props.get('parity', constants.Parity.NONE).value
         self._serial.inter_byte_timeout = props.get('inter_byte_timeout', None)
 
@@ -159,9 +143,7 @@ class ConnectionSerial(ConnectionMessageBased):
         """:class:`~.constants.Parity`: The parity setting."""
         return constants.Parity(self._serial.parity)
 
-    @ConnectionMessageBased.timeout.setter
-    def timeout(self, seconds):
-        self._set_timeout_value(seconds)
+    def _set_backend_timeout(self):
         self._serial.timeout = self._timeout
         self._serial.write_timeout = self._timeout
 

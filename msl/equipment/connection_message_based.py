@@ -36,11 +36,28 @@ class ConnectionMessageBased(Connection):
         super(ConnectionMessageBased, self).__init__(record)
 
         self._encoding = 'utf-8'
-        self._encoding_errors = 'strict'
-        self._read_termination = ConnectionMessageBased.LF
-        self._write_termination = ConnectionMessageBased.CR + ConnectionMessageBased.LF
-        self._max_read_size = 2 ** 16
-        self._timeout = None
+        p = record.connection.properties
+
+        try:
+            termination = p['termination']
+        except KeyError:
+            self.read_termination = p.get('read_termination', ConnectionMessageBased.LF)
+            self.write_termination = p.get('write_termination', ConnectionMessageBased.CR + ConnectionMessageBased.LF)
+        else:
+            self.read_termination = termination
+            self.write_termination = termination
+
+        self.max_read_size = p.get('max_read_size', 2 ** 16)
+
+        self.timeout = p.get('timeout', None)
+
+        self.encoding = p.get('encoding', self._encoding)
+
+        self.encoding_errors = p.get('encoding_errors', 'strict')
+        """:class:`str`: The error handling scheme to use when encoding and decoding messages.
+
+        For example: 'strict', 'ignore', 'replace'.
+        """
 
     @property
     def encoding(self):
@@ -115,7 +132,20 @@ class ConnectionMessageBased(Connection):
 
     @timeout.setter
     def timeout(self, value):
-        self._timeout = value
+        if value is not None:
+            self._timeout = float(value)
+            if self._timeout == 0:
+                self._timeout = None
+            elif self._timeout < 0:
+                raise ValueError('Not a valid timeout value: {}'.format(value))
+        else:
+            self._timeout = None
+        self._set_backend_timeout()
+
+    def _set_backend_timeout(self):
+        # Some connections (e.g. pyserial, socket) need to be notified of the timeout change.
+        # The connection subclass must override this method to notify the backend.
+        pass
 
     def raise_timeout(self, append_msg=''):
         """Raise a :exc:`~.exceptions.MSLTimeoutError`.
@@ -190,17 +220,6 @@ class ConnectionMessageBased(Connection):
             time.sleep(delay)
         return self.read(size=size)
 
-    def _set_timeout_value(self, value):
-        # convenience method for setting the timeout value
-        if value is not None:
-            self._timeout = float(value)
-            if self._timeout == 0:
-                self._timeout = None
-            elif self._timeout < 0:
-                raise ValueError('Not a valid timeout value: {}'.format(value))
-        else:
-            self._timeout = None
-
     def _set_termination_encoding(self, termination):
         # convenience method for setting the termination encoding
         try:
@@ -213,7 +232,7 @@ class ConnectionMessageBased(Connection):
         if isinstance(message, bytes):
             data = message
         else:
-            data = message.encode(encoding=self._encoding, errors=self._encoding_errors)
+            data = message.encode(encoding=self._encoding, errors=self.encoding_errors)
         if self._write_termination is not None and not data.endswith(self._write_termination):
             data += self._write_termination
         self.log_debug('{}.write({!r})'.format(self, data))
@@ -225,4 +244,4 @@ class ConnectionMessageBased(Connection):
             self.log_debug('{}.read() -> {!r}'.format(self, message))
         else:
             self.log_debug('{}.read({}) -> {!r}'.format(self, size, message))
-        return message.decode(encoding=self._encoding, errors=self._encoding_errors)
+        return message.decode(encoding=self._encoding, errors=self.encoding_errors)

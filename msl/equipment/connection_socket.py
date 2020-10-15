@@ -47,30 +47,16 @@ class ConnectionSocket(ConnectionMessageBased):
         ~msl.equipment.exceptions.MSLConnectionError
             If the socket cannot be opened.
         """
+        self._socket = None
         super(ConnectionSocket, self).__init__(record)
 
-        self._socket = None
         self._byte_buffer = bytearray()
 
         # TODO consider using the `select` module for asynchronous I/O behaviour
 
         props = record.connection.properties
 
-        try:
-            termination = props['termination']
-        except KeyError:
-            self.read_termination = props.get('read_termination', self._read_termination)
-            self.write_termination = props.get('write_termination', self._write_termination)
-        else:
-            self.read_termination = termination
-            self.write_termination = termination
-
-        self.max_read_size = props.get('max_read_size', self._max_read_size)
-        self.encoding = props.get('encoding', self._encoding)
-        self._encoding_errors = props.get('encoding_errors', self._encoding_errors)
         self._buffer_size = props.get('buffer_size', 4096)
-
-        self._set_timeout_value(props.get('timeout', None))
 
         if 'family' in props:
             family = props['family'].upper()
@@ -107,7 +93,7 @@ class ConnectionSocket(ConnectionMessageBased):
             self._socket.close()
 
         self._socket = socket.socket(family=self._family, type=self._type, proto=self._proto)
-        # in general it is recommended to call settimeout() before calling connect()
+        # in general, it is recommended to set the timeout before calling connect()
         self.timeout = self._timeout
 
         err_msg = None
@@ -128,6 +114,10 @@ class ConnectionSocket(ConnectionMessageBased):
             self.raise_timeout()
         self.raise_exception('Cannot connect to {}\n{}'.format(self.equipment_record, err_msg))
 
+    def _set_backend_timeout(self):
+        if self._socket is not None:
+            self._socket.settimeout(self._timeout)
+
     @property
     def byte_buffer(self):
         """:class:`bytearray`: Returns the reference to the byte buffer."""
@@ -147,11 +137,6 @@ class ConnectionSocket(ConnectionMessageBased):
     def socket(self):
         """:func:`socket.socket`: The reference to the socket."""
         return self._socket
-
-    @ConnectionMessageBased.timeout.setter
-    def timeout(self, seconds):
-        self._set_timeout_value(seconds)
-        self._socket.settimeout(self._timeout)
 
     def disconnect(self):
         """Close the socket."""

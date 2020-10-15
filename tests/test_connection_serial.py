@@ -13,26 +13,27 @@ from msl.equipment import EquipmentRecord, ConnectionRecord, Backend, MSLConnect
 from msl.equipment.connection_serial import ConnectionSerial
 
 
+def echo_server(port, term):
+    while True:
+        data = bytearray()
+        while not data.endswith(term):
+            data.extend(os.read(port, 1))
+
+        if data.startswith(b'SHUTDOWN'):
+            break
+
+        os.write(port, data)
+
+
 @pytest.mark.skipif(pty is None, reason='pty is not available')
 def test_connection_serial_read():
 
     term = b'\r\n'
 
-    def echo_server(port):
-        while True:
-            data = bytearray()
-            while not data.endswith(term):
-                data.extend(os.read(port, 1))
-
-            if data.startswith(b'SHUTDOWN'):
-                break
-
-            os.write(port, data)
-
     # simulate a Serial port
     master, slave = pty.openpty()
 
-    thread = threading.Thread(target=echo_server, args=(master,))
+    thread = threading.Thread(target=echo_server, args=(master, term))
     thread.start()
 
     time.sleep(0.5)  # allow some time for the echo server to start
@@ -77,6 +78,49 @@ def test_connection_serial_read():
     dev.write(b'021.3' + term + b',054.2')
     assert dev.read() == '021.3'  # read until first `term`
     assert dev.read() == ',054.2'  # read until second `term`
+
+    dev.write('SHUTDOWN')
+
+
+@pytest.mark.skipif(pty is None, reason='pty is not available')
+def test_connection_serial_timeout():
+
+    term = b'\r\n'
+
+    # simulate a Serial port
+    master, slave = pty.openpty()
+
+    thread = threading.Thread(target=echo_server, args=(master, term))
+    thread.start()
+
+    time.sleep(0.5)  # allow some time for the echo server to start
+
+    record = EquipmentRecord(
+        connection=ConnectionRecord(
+            address='SERIAL::' + os.ttyname(slave),
+            backend=Backend.MSL,
+            properties={
+                'termination': term,
+                'timeout': 21,
+            },
+        )
+    )
+
+    dev = record.connect()
+
+    assert dev.timeout == 21
+    assert dev.serial.timeout == 21
+    assert dev.serial.write_timeout == 21
+
+    dev.timeout = None
+    assert dev.timeout is None
+    assert dev.serial.timeout is None
+    assert dev.serial.write_timeout is None
+
+    dev.timeout = 10
+    assert dev.timeout == 10
+    assert dev.serial.timeout == 10
+    assert dev.serial.write_timeout == 10
 
     dev.write('SHUTDOWN')
 

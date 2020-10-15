@@ -3,7 +3,7 @@ from msl.equipment.connection_message_based import ConnectionMessageBased
 
 
 def test_termination_changed():
-    c = ConnectionMessageBased(EquipmentRecord())
+    c = ConnectionMessageBased(EquipmentRecord(connection=ConnectionRecord()))
 
     c.encoding = 'cp1252'
 

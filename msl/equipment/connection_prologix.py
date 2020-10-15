@@ -155,6 +155,18 @@ class ConnectionPrologix(Connection):
         self._controller.encoding = encoding
 
     @property
+    def encoding_errors(self):
+        """:class:`str`: The error handling scheme to use when encoding and decoding messages.
+
+        For example: 'strict', 'ignore', 'replace', 'xmlcharrefreplace', 'backslashreplace', ...
+        """
+        return self._controller.encoding_errors
+
+    @encoding_errors.setter
+    def encoding_errors(self, value):
+        self._controller.encoding_errors = value
+
+    @property
     def read_termination(self):
         """:class:`bytes` or :data:`None`: The termination character sequence
         that is used for the :meth:`.read` method.

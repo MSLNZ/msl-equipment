@@ -54,10 +54,6 @@ class ConnectionMessageBased(Connection):
         self.encoding = p.get('encoding', self._encoding)
 
         self.encoding_errors = p.get('encoding_errors', 'strict')
-        """:class:`str`: The error handling scheme to use when encoding and decoding messages.
-
-        For example: 'strict', 'ignore', 'replace'.
-        """
 
     @property
     def encoding(self):
@@ -82,6 +78,32 @@ class ConnectionMessageBased(Connection):
             self.read_termination = read_term
         if self._write_termination is not None:
             self.write_termination = write_term
+
+    @property
+    def encoding_errors(self):
+        """:class:`str`: The error handling scheme to use when encoding and decoding messages.
+
+        For example: 'strict', 'ignore', 'replace', 'xmlcharrefreplace', 'backslashreplace', ...
+        """
+        return self._encoding_errors
+
+    @encoding_errors.setter
+    def encoding_errors(self, value):
+        name = str(value).lower()
+
+        if name not in ('strict', 'ignore', 'replace', 'xmlcharrefreplace', 'backslashreplace'):
+            err = None
+            try:
+                u'\u03B2'.encode('ascii', errors=name)
+            except LookupError:
+                # TODO This avoids nested exceptions. When dropping Python 2.7 support
+                #  we can use "raise Exception() from None"
+                err = 'unknown encoding error handler {!r}'.format(value)
+
+            if err is not None:
+                self.raise_exception(err)
+
+        self._encoding_errors = name
 
     @property
     def read_termination(self):

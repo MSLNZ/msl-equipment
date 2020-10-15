@@ -1,4 +1,8 @@
-from msl.equipment import EquipmentRecord, ConnectionRecord
+import sys
+
+import pytest
+
+from msl.equipment import EquipmentRecord, ConnectionRecord, MSLConnectionError
 from msl.equipment.connection_message_based import ConnectionMessageBased
 
 
@@ -61,3 +65,25 @@ def test_termination_converted_to_bytes():
         )
     )
     assert record.connection.properties['termination'] == b'xyz'
+
+
+def test_encoding_errors():
+    cmb = ConnectionMessageBased(EquipmentRecord(connection=ConnectionRecord()))
+
+    assert cmb.encoding_errors == 'strict'
+
+    allowed = ['strict', 'ignore', 'replace', 'xmlcharrefreplace', 'backslashreplace']
+    if sys.version_info[:2] > (2, 7):
+        allowed.append('namereplace')
+
+    for value in allowed:
+        cmb.encoding_errors = value
+        assert cmb.encoding_errors == value
+
+    for value in allowed:
+        cmb.encoding_errors = value.upper()
+        assert cmb.encoding_errors == value
+
+    for item in ['doesnotexist', None, '', 888]:
+        with pytest.raises(MSLConnectionError):
+            cmb.encoding_errors = item

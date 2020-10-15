@@ -127,17 +127,18 @@ class ConnectionMessageBased(Connection):
 
     @property
     def timeout(self):
-        """:class:`float` or :data:`None`: The timeout, in seconds, for :meth:`read` and :meth:`write` operations."""
+        r""":class:`float` or :data:`None`: The timeout, in seconds, for :meth:`read` and :meth:`write` operations.
+
+        A value :math:`\leq` 0 will set the timeout to be :data:`None`.
+        """
         return self._timeout
 
     @timeout.setter
     def timeout(self, value):
         if value is not None:
             self._timeout = float(value)
-            if self._timeout == 0:
+            if self._timeout <= 0:
                 self._timeout = None
-            elif self._timeout < 0:
-                raise ValueError('Not a valid timeout value: {}'.format(value))
         else:
             self._timeout = None
         self._set_backend_timeout()

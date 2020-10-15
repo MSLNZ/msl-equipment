@@ -144,9 +144,25 @@ def test_tcp_socket_timeout():
     assert dev.timeout is None
     assert dev.socket.gettimeout() is None
 
-    dev.timeout = 1
-    assert dev.timeout == 1
-    assert dev.socket.gettimeout() == 1
+    dev.timeout = 0.1
+    assert dev.timeout == 0.1
+    assert dev.socket.gettimeout() == 0.1
+
+    dev.timeout = 0
+    assert dev.timeout is None
+    assert dev.socket.gettimeout() is None
+
+    dev.timeout = -1
+    assert dev.timeout is None
+    assert dev.socket.gettimeout() is None
+
+    dev.timeout = -12345
+    assert dev.timeout is None
+    assert dev.socket.gettimeout() is None
+
+    dev.timeout = 10
+    assert dev.timeout == 10
+    assert dev.socket.gettimeout() == 10
 
     dev.write('SHUTDOWN')
 

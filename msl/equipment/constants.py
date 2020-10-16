@@ -9,8 +9,8 @@ CR = b'\r'
 LF = b'\n'
 
 MSL_INTERFACE_ALIASES = {
-    'SERIAL': ('ASRLCOM', 'ASRL', 'COM', 'LPT'),
-    'SOCKET': ('ENET', 'ETHERNET', 'LAN', 'TCP', 'UDP'),
+    'SERIAL': ('SERIAL', 'ASRLCOM', 'ASRL', 'COM', 'LPT'),
+    'SOCKET': ('SOCKET', 'ENET', 'ETHERNET', 'LAN', 'TCP', 'UDP'),
 }
 
 

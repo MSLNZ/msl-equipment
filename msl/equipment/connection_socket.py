@@ -274,4 +274,4 @@ class ConnectionSocket(ConnectionMessageBased):
         match = REGEX_PROLOGIX.match(address)
         if match:
             d = match.groupdict()
-            return ConnectionSocket.parse_address('SOCKET::' + d['name'] + d['port'])
+            return ConnectionSocket.parse_address('TCP::' + d['name'] + d['port'])

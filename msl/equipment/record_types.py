@@ -2,7 +2,6 @@
 Records from :ref:`equipment-database`\'s or :ref:`connections-database`\'s.
 """
 from __future__ import unicode_literals
-import re
 import json
 import datetime
 from enum import Enum
@@ -25,12 +24,13 @@ from .constants import (
     DataBits,
     Backend,
     MSLInterface,
-    MSL_INTERFACE_ALIASES,
     LF,
     CR,
 )
-
-_interface_regex = re.compile(r'[+_A-Z]+')
+from .factory import (
+    connect,
+    find_interface,
+)
 
 
 class RecordDict(Mapping):
@@ -349,8 +349,7 @@ class EquipmentRecord(Record):
         -------
         A :class:`~msl.equipment.connection.Connection` subclass.
         """
-        from msl.equipment import factory  # import here to avoid circular imports
-        return factory.connect(self, demo)
+        return connect(self, demo=demo)
 
     def is_calibration_due(self, months=0):
         """Whether the equipment needs to be re-calibrated.
@@ -590,7 +589,12 @@ class ConnectionRecord(Record):
         self.backend = convert_to_enum(backend, Backend)
         """:class:`.Backend`: The backend to use to communicate with the equipment."""
 
-        self.interface = self._set_interface(interface)
+        if interface:
+            self.interface = convert_to_enum(interface, MSLInterface, to_upper=True)
+        elif not address or self.backend != Backend.MSL:
+            self.interface = MSLInterface.NONE
+        else:
+            self.interface = find_interface(address)
         """:class:`.MSLInterface`: The interface that is used for the communication system that
         transfers data between a computer and the equipment (only used if the :attr:`.backend`
         is equal to :attr:`~.Backend.MSL`)."""
@@ -692,36 +696,6 @@ class ConnectionRecord(Record):
             root.append(element)
         return root
 
-    def _set_interface(self, interface):
-        if interface:
-            return convert_to_enum(interface, MSLInterface, to_upper=True)
-
-        if not self.address or self.backend != Backend.MSL:
-            return MSLInterface.NONE
-
-        address_upper = self.address.upper()
-
-        # checks for equivalent PyVISA addresses
-        if address_upper.startswith('TCPIP') and address_upper.endswith('SOCKET'):
-            return MSLInterface.SOCKET
-
-        # determine the name of the interface
-        match = _interface_regex.match(address_upper)
-        interface_name = '' if match is None else match.group(0).replace('+', '_')
-
-        try:
-            return MSLInterface[interface_name]
-        except KeyError:
-            pass
-
-        # check if an alias is used for the name of the interface
-        for name, values in MSL_INTERFACE_ALIASES.items():
-            for value in values:
-                if interface_name.startswith(value):
-                    return MSLInterface[name]
-
-        raise ValueError('Cannot determine the MSLInterface from address {!r}'.format(self.address))
-
     def _set_properties(self, kwargs):
         try:
             # a 'properties' kwarg was explicitly defined
@@ -731,7 +705,7 @@ class ConnectionRecord(Record):
         else:
             if not properties:
                 properties = {}
-            if not isinstance(properties, dict):
+            elif not isinstance(properties, dict):
                 raise TypeError('The properties kwarg for a ConnectionRecord must be of type dict. '
                                 'Got {!r} -> {!r}'.format(type(properties), properties))
             properties.update(kwargs)
@@ -740,8 +714,8 @@ class ConnectionRecord(Record):
             properties['socket_type'] = 'SOCK_DGRAM'
 
         is_serial = self.interface == MSLInterface.SERIAL
-        if not is_serial:
-            for alias in MSL_INTERFACE_ALIASES['SERIAL']:
+        if not is_serial and self.backend == Backend.PyVISA:
+            for alias in ('COM', 'ASRL', 'ASRLCOM'):
                 if self.address.startswith(alias):
                     is_serial = True
                     break
@@ -750,7 +724,7 @@ class ConnectionRecord(Record):
             if is_serial:
                 if key == 'parity':
                     properties[key] = convert_to_enum(value, Parity, to_upper=True)
-                elif key.startswith('stop'):
+                elif key == 'stop_bits' or key == 'stopbits':
                     properties[key] = convert_to_enum(value, StopBits, to_upper=True)
                 elif key == 'data_bits' or key == 'bytesize':
                     properties[key] = convert_to_enum(value, DataBits, to_upper=True)

@@ -6,6 +6,8 @@ import datetime
 from xml.etree import cElementTree
 from xml.dom import minidom
 
+from .constants import DEFAULT_DATE
+
 
 def _demo_logger(self, msg, *args, **kwargs):
     """A custom logger for :class:`~msl.equipment.connection_demo.ConnectionDemo` objects."""
@@ -19,8 +21,6 @@ logger = logging.getLogger(__package__)
 logging.DEMO = logging.INFO + 5
 logging.addLevelName(logging.DEMO, 'DEMO')
 logging.Logger.demo = _demo_logger
-
-DEFAULT_DATE = datetime.date(datetime.MINYEAR, 1, 1)
 
 
 def convert_to_enum(obj, enum, prefix=None, to_upper=False, strict=True):

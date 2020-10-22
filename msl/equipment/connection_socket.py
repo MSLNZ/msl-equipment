@@ -5,6 +5,10 @@ import time
 import socket
 
 from .connection_message_based import ConnectionMessageBased
+from .constants import (
+    REGEX_SOCKET,
+    REGEX_PROLOGIX,
+)
 
 
 class ConnectionSocket(ConnectionMessageBased):
@@ -78,10 +82,10 @@ class ConnectionSocket(ConnectionMessageBased):
 
         self._proto = props.get('proto', 0)
 
-        host_port = ConnectionSocket.host_and_port_from_address(record.connection.address)
-        if host_port is None:
+        info = ConnectionSocket.parse_address(record.connection.address)
+        if info is None:
             self.raise_exception('Invalid address {!r}'.format(record.connection.address))
-        self._host, self._port = host_port
+        self._host, self._port = info['host'], info['port']
 
         self._connect()
         self.log_debug('Connected to {} '.format(record.connection))
@@ -243,22 +247,31 @@ class ConnectionSocket(ConnectionMessageBased):
         return self._decode(size, out)
 
     @staticmethod
-    def host_and_port_from_address(address):
+    def parse_address(address):
         """Get the host and port from an address.
 
         Parameters
         ----------
         address : :class:`str`
-            The address from a :class:`~msl.equipment.record_types.ConnectionRecord`
+            The address of a :class:`~msl.equipment.record_types.ConnectionRecord`.
 
         Returns
         -------
-        :class:`tuple` or :data:`None`
-            The host and the port or :data:`None` (if `address` is invalid).
+        :class:`dict` or :data:`None`
+            The value of the host and the port or :data:`None` if `address`
+            is not valid for a socket.
         """
-        split = address.split('::')
-        if len(split) > 2:
-            try:
-                return split[1], int(split[2])
-            except ValueError:
-                pass
+        match = REGEX_SOCKET.match(address)
+        if match:
+            d = match.groupdict()
+
+            # if in the IVI format then make sure that `address` is valid`
+            if d['prefix'].startswith('TCPIP') and not d['suffix'] == '::SOCKET':
+                return
+
+            return {'host': d['host'], 'port': int(d['port'])}
+
+        match = REGEX_PROLOGIX.match(address)
+        if match:
+            d = match.groupdict()
+            return ConnectionSocket.parse_address('SOCKET::' + d['name'] + d['port'])

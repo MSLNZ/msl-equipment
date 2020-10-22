@@ -125,24 +125,39 @@ def test_connection_serial_timeout():
     dev.write('SHUTDOWN')
 
 
-def test_port_from_address():
+def test_parse_address():
 
-    for a in ['ASRL', 'COM', 'LPT', 'ASRLCOM', 'Prologix::COM::', '', 'SERIAL::XXX4', 'ABC2'
-              'GPIB::2::INSTR', 'SDK::filename.so', 'SOCKET::192.168.1.100::5000']:
-        assert ConnectionSerial.port_from_address(a) is None
+    for a in ['', 'ASRL', 'COM', 'LPT', 'ASRLCOM', 'XXXX4', 'ABC2', 'COMx'
+              'GPIB0::2', 'SDK::filename.so', 'SOCKET::192.168.1.100::5000', 'Prologix::COM6']:
+        assert ConnectionSerial.parse_address(a) is None
 
-    assert 'COM15' == ConnectionSerial.port_from_address('ASRL15')
-    assert 'COM3' == ConnectionSerial.port_from_address('ASRL3::INSTR')
-    assert 'COM3' == ConnectionSerial.port_from_address('ASRL3::instr')
-    assert 'COM10' == ConnectionSerial.port_from_address('COM10')
-    assert 'COM11' == ConnectionSerial.port_from_address('SERIAL::COM11')
-    assert 'COM3' == ConnectionSerial.port_from_address('LPT3')
-    assert 'COM7' == ConnectionSerial.port_from_address('ASRLCOM7')
-    assert '/dev/pts/12' == ConnectionSerial.port_from_address('SERIAL::/dev/pts/12')
-    assert '/dev/ttyUSB0' == ConnectionSerial.port_from_address('ASRL::/dev/ttyUSB0::INSTR')
-    assert '/dev/ttyS1' == ConnectionSerial.port_from_address('ASRLCOM::/dev/ttyS1')
-    assert 'COM3' == ConnectionSerial.port_from_address('Prologix::COM3::6')
-    assert 'COM3' == ConnectionSerial.port_from_address('Prologix::ASRL3::6::112')
-    assert '/dev/ttyUSB0' == ConnectionSerial.port_from_address('Prologix::/dev/ttyUSB0::6')
-    assert '/dev/ttyS1' == ConnectionSerial.port_from_address('PROLOGIX::/dev/ttyS1::6::96')
-    assert '/dev/pts/1' == ConnectionSerial.port_from_address('Prologix::/dev/pts/1::2')
+    assert 'COM1' == ConnectionSerial.parse_address('COM1')['port']
+    assert 'COM2' == ConnectionSerial.parse_address('ASRL2')['port']
+    assert 'COM3' == ConnectionSerial.parse_address('ASRLCOM3')['port']
+    assert 'COM1' == ConnectionSerial.parse_address('com1')['port']
+    assert 'COM2' == ConnectionSerial.parse_address('asrl2')['port']
+    assert 'COM3' == ConnectionSerial.parse_address('asrl3')['port']
+    assert 'COM12' == ConnectionSerial.parse_address('COM12::INSTR')['port']
+    assert 'COM2' == ConnectionSerial.parse_address('asrl2::instr')['port']
+    assert 'COM30' == ConnectionSerial.parse_address('ASRLcom30::instr')['port']
+
+    assert '/dev/ttyS0' == ConnectionSerial.parse_address('COM/dev/ttyS0')['port']
+    assert '/dev/ttyS1' == ConnectionSerial.parse_address('ASRL/dev/ttyS1')['port']
+    assert '/dev/ttyS2' == ConnectionSerial.parse_address('ASRLCOM/dev/ttyS2')['port']
+    assert '/dev/pts/12' == ConnectionSerial.parse_address('COM/dev/pts/12')['port']
+    assert '/dev/pts/12' == ConnectionSerial.parse_address('ASRL/dev/pts/12::INSTR')['port']
+    assert '/dev/pts/1' == ConnectionSerial.parse_address('ASRLCOM/dev/pts/1::INSTR')['port']
+
+    assert '/dev/ttyUSB0' == ConnectionSerial.parse_address('COM/dev/ttyUSB0')['port']
+    assert '/dev/ttyUSB10' == ConnectionSerial.parse_address('COM/dev/ttyUSB10::INSTR')['port']
+    assert '/dev/ttyUSB1' == ConnectionSerial.parse_address('ASRL/dev/ttyUSB1')['port']
+    assert '/dev/ttyUSB0' == ConnectionSerial.parse_address('ASRL/dev/ttyUSB0::INSTR')['port']
+    assert '/dev/ttyUSB2' == ConnectionSerial.parse_address('ASRLCOM/dev/ttyUSB2')['port']
+    assert '/dev/ttyUSB2' == ConnectionSerial.parse_address('ASRLCOM/dev/ttyUSB2::INSTR')['port']
+
+    assert 'COM3' == ConnectionSerial.parse_address('Prologix::COM3::6')['port']
+    assert 'COM3' == ConnectionSerial.parse_address('Prologix::ASRL3::6::112')['port']
+    assert 'COM7' == ConnectionSerial.parse_address('Prologix::ASRLCOM7::6::112')['port']
+    assert '/dev/ttyS2' == ConnectionSerial.parse_address('Prologix::/dev/ttyS2::6')['port']
+    assert '/dev/ttyUSB1' == ConnectionSerial.parse_address('PROLOGIX::/dev/ttyUSB1::1::96')['port']
+    assert '/dev/pts/1' == ConnectionSerial.parse_address('ProLOgix::/dev/pts/1::2')['port']

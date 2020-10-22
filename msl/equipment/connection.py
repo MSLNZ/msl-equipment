@@ -3,7 +3,6 @@ Base class for establishing a connection to the equipment.
 """
 from __future__ import unicode_literals
 
-from .record_types import EquipmentRecord
 from .exceptions import MSLConnectionError
 from .utils import (
     logger,
@@ -24,8 +23,6 @@ class Connection(object):
         record : :class:`.EquipmentRecord`
             A record from an :ref:`equipment-database`.
         """
-        if not isinstance(record, EquipmentRecord):
-            raise TypeError('Must pass in an {} object'.format(EquipmentRecord.__name__))
         self._record = record
         self._exception_handler = MSLConnectionError
         self._repr = '{}<{}|{}|{} at {}>'.format(
@@ -178,3 +175,26 @@ class Connection(object):
             self._exception_handler = handler
         else:
             raise TypeError('The exception handler must be a subclass of {}'.format(MSLConnectionError))
+
+    @staticmethod
+    def parse_address(address):
+        """Determine whether a subclass should be used to connect to the equipment.
+
+        .. attention::
+           The subclass should override this method.
+
+        Parameters
+        ----------
+        address : :class:`str`
+            The address of a :class:`~msl.equipment.record_types.ConnectionRecord`.
+
+        Returns
+        -------
+        :class:`dict` or :data:`None`
+            If the `address` is in a valid format for the subclass to be able to connect
+            to the equipment then a :class:`dict` is returned containing the information
+            necessary to connect to the equipment. Otherwise, if the `address` is not
+            valid for the subclass to be able to connect to the equipment then
+            :data:`None` is returned.
+        """
+        return

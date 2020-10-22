@@ -1,21 +1,18 @@
 """
 Base class for equipment that is connected through a serial port.
 """
-import re
 import time
 
 import serial
 
-from . import constants
 from .connection_message_based import ConnectionMessageBased
-
-_com_regex = re.compile(
-    r'(?P<name>' +
-    r'|'.join(constants.MSL_INTERFACE_ALIASES['SERIAL']) +
-    r')(?P<number>\d+)'
+from .constants import (
+    Parity,
+    StopBits,
+    DataBits,
+    REGEX_SERIAL,
+    REGEX_PROLOGIX,
 )
-
-_dev_regex = re.compile(r'(?P<port>/dev/[\w\d/]+)')
 
 
 class ConnectionSerial(ConnectionMessageBased):
@@ -66,13 +63,13 @@ class ConnectionSerial(ConnectionMessageBased):
         self._serial = serial.Serial()
         super(ConnectionSerial, self).__init__(record)
 
-        port = ConnectionSerial.port_from_address(record.connection.address)
-        if port is None:
+        info = ConnectionSerial.parse_address(record.connection.address)
+        if info is None:
             self.raise_exception('Invalid address {!r}'.format(record.connection.address))
-        self._serial.port = port
+        self._serial.port = info['port']
 
         props = record.connection.properties
-        self._serial.parity = props.get('parity', constants.Parity.NONE).value
+        self._serial.parity = props.get('parity', Parity.NONE).value
         self._serial.inter_byte_timeout = props.get('inter_byte_timeout', None)
 
         try:
@@ -83,12 +80,12 @@ class ConnectionSerial(ConnectionMessageBased):
         try:
             self._serial.bytesize = props['data_bits'].value
         except KeyError:
-            self._serial.bytesize = props.get('bytesize', constants.DataBits.EIGHT).value
+            self._serial.bytesize = props.get('bytesize', DataBits.EIGHT).value
 
         try:
             self._serial.stopbits = props['stop_bits'].value
         except KeyError:
-            self._serial.stopbits = props.get('stopbits', constants.StopBits.ONE).value
+            self._serial.stopbits = props.get('stopbits', StopBits.ONE).value
 
         try:
             self._serial.xonxoff = props['xon_xoff']
@@ -131,17 +128,17 @@ class ConnectionSerial(ConnectionMessageBased):
     @property
     def data_bits(self):
         """:class:`~.constants.DataBits`: The number of data bits."""
-        return constants.DataBits(self._serial.bytesize)
+        return DataBits(self._serial.bytesize)
 
     @property
     def stop_bits(self):
         """:class:`~.constants.StopBits`: The stop bit setting."""
-        return constants.StopBits(self._serial.stopbits)
+        return StopBits(self._serial.stopbits)
 
     @property
     def parity(self):
         """:class:`~.constants.Parity`: The parity setting."""
-        return constants.Parity(self._serial.parity)
+        return Parity(self._serial.parity)
 
     def _set_backend_timeout(self):
         self._serial.timeout = self._timeout
@@ -230,23 +227,28 @@ class ConnectionSerial(ConnectionMessageBased):
         return self._decode(size, out)
 
     @staticmethod
-    def port_from_address(address):
+    def parse_address(address):
         """Get the serial port from an address.
 
         Parameters
         ----------
         address : :class:`str`
-            The address from a :class:`~msl.equipment.record_types.ConnectionRecord`
+            The address of a :class:`~msl.equipment.record_types.ConnectionRecord`
 
         Returns
         -------
-        :class:`str` or :data:`None`
-            The serial port that is valid for PySerial (i.e., ``ASRL3`` becomes ``COM3``)
-            or :data:`None` (if the port cannot be determined from `address`).
+        :class:`dict` or :data:`None`
+            The serial port in a format that is valid for PySerial (i.e., ``ASRL3`` becomes ``COM3``)
+            or :data:`None` if the port cannot be determined from `address`.
         """
-        search = _com_regex.search(address)
-        if search:
-            return 'COM{}'.format(search.groupdict()['number'])
-        search = _dev_regex.search(address)
-        if search:
-            return search.groupdict()['port']
+        match = REGEX_SERIAL.match(address)
+        if match:
+            d = match.groupdict()
+            prefix = 'COM' if d['dev'] is None else d['dev']
+            return {'port': prefix + d['number']}
+
+        match = REGEX_PROLOGIX.match(address)
+        if match:
+            d = match.groupdict()
+            prefix = 'ASRL' if d['name'].startswith('/') else ''
+            return ConnectionSerial.parse_address(prefix + d['name'])

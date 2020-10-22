@@ -8,7 +8,7 @@ from msl.loadlib.utils import get_available_port
 
 from msl.equipment import EquipmentRecord, ConnectionRecord, Backend, MSLTimeoutError, MSLConnectionError
 from msl.equipment.connection_socket import ConnectionSocket
-from msl.equipment.constants import MSL_INTERFACE_ALIASES
+
 
 def echo_server_tcp(address, port, term):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -261,38 +261,90 @@ def test_wrong_socket_type():
     dev.write('SHUTDOWN')
 
 
-def test_host_and_port_from_address():
+def test_parse_address():
 
-    for prefix in list(MSL_INTERFACE_ALIASES['SOCKET']) + ['SOCKET', 'TCPIP']:
-        host, port = ConnectionSocket.host_and_port_from_address(prefix + '::192.168.1.100::1234')
-        assert host == '192.168.1.100'
-        assert port == 1234
+    #
+    # different number of digits in IP address
+    #
+    info = ConnectionSocket.parse_address('SOCKET::1.2.3.4::1234')
+    assert info['host'] == '1.2.3.4'
+    assert info['port'] == 1234
 
-        host, port = ConnectionSocket.host_and_port_from_address(prefix + '::my.hostname.com::8080::SOCKET')
-        assert host == 'my.hostname.com'
-        assert port == 8080
+    info = ConnectionSocket.parse_address('SOCKET::11.22.33.44::1234')
+    assert info['host'] == '11.22.33.44'
+    assert info['port'] == 1234
 
-        host, port = ConnectionSocket.host_and_port_from_address(prefix + '::172.16.14.100::5000::extra::stuff')
-        assert host == '172.16.14.100'
-        assert port == 5000
+    info = ConnectionSocket.parse_address('SOCKET::111.222.103.231::1234')
+    assert info['host'] == '111.222.103.231'
+    assert info['port'] == 1234
 
-        assert ConnectionSocket.host_and_port_from_address(prefix) is None
-        assert ConnectionSocket.host_and_port_from_address(prefix + '::no.port.specified') is None
-        assert ConnectionSocket.host_and_port_from_address(prefix + '::172.16.14.1::not_an_int') is None
+    # different interface prefix
+    for prefix in ('TCP', 'UDP', 'SOCKET'):
+        info = ConnectionSocket.parse_address(prefix + '::192.168.1.100::1234')
+        assert info['host'] == '192.168.1.100'
+        assert info['port'] == 1234
 
-    assert ConnectionSocket.host_and_port_from_address('not.enough.double.colons::1234') is None
-    assert ConnectionSocket.host_and_port_from_address('COM5') is None
-    assert ConnectionSocket.host_and_port_from_address('ASRL::COM11::INSTR') is None
-    assert ConnectionSocket.host_and_port_from_address('GPIB0::1') is None
+        info = ConnectionSocket.parse_address(prefix + '::my.hostname.com::8080::SOCKET')
+        assert info['host'] == 'my.hostname.com'
+        assert info['port'] == 8080
 
-    host, port = ConnectionSocket.host_and_port_from_address('Prologix::192.168.1.70::1234::6')
-    assert host == '192.168.1.70'
-    assert port == 1234
+        info = ConnectionSocket.parse_address(prefix + '::192.168.1.100::54123::SOCKET')
+        assert info['host'] == '192.168.1.100'
+        assert info['port'] == 54123
 
-    host, port = ConnectionSocket.host_and_port_from_address('Prologix::hostname::1234::6')
-    assert host == 'hostname'
-    assert port == 1234
+        info = ConnectionSocket.parse_address(prefix + '::172.16.14.100::5000::some::extra::stuff::added')
+        assert info['host'] == '172.16.14.100'
+        assert info['port'] == 5000
 
-    host, port = ConnectionSocket.host_and_port_from_address('Prologix::full.domain.name::1234::6')
-    assert host == 'full.domain.name'
-    assert port == 1234
+        assert ConnectionSocket.parse_address(prefix) is None
+        assert ConnectionSocket.parse_address(prefix + '::no.port.specified') is None
+        assert ConnectionSocket.parse_address(prefix + '::no.port.specified::') is None
+        assert ConnectionSocket.parse_address(prefix + '::172.16.14.1::not_an_int') is None
+
+    assert ConnectionSocket.parse_address('') is None
+    assert ConnectionSocket.parse_address('COM5') is None
+    assert ConnectionSocket.parse_address('ASRL::COM11::INSTR') is None
+    assert ConnectionSocket.parse_address('GPIB0::1') is None
+    assert ConnectionSocket.parse_address('GPIB0::1::2') is None
+
+    #
+    # check compatibility with the IVI library: TCPIP[board]::host address::port::SOCKET
+    #
+
+    assert ConnectionSocket.parse_address('TCPIP::full.domain.name::1234') is None
+    assert ConnectionSocket.parse_address('TCPIP::full.domain.name::1234::INVALID') is None
+    assert ConnectionSocket.parse_address('TCPIP::192.168.1.100::1234::INSTR') is None
+
+    info = ConnectionSocket.parse_address('TCPIP::full.domain.name::1234::SOCKET')
+    assert info['host'] == 'full.domain.name'
+    assert info['port'] == 1234
+
+    info = ConnectionSocket.parse_address('TCPIP0::1.2.3.4::12345::SOCKET')
+    assert info['host'] == '1.2.3.4'
+    assert info['port'] == 12345
+
+    info = ConnectionSocket.parse_address('TCPIP2::1.22.3.100::12345::SOCKET')
+    assert info['host'] == '1.22.3.100'
+    assert info['port'] == 12345
+
+    info = ConnectionSocket.parse_address('TCPIP10::192.10.126.3::1234::SOCKET')
+    assert info['host'] == '192.10.126.3'
+    assert info['port'] == 1234
+
+    #
+    # check that an address for the Prologix interface is valid
+    #
+
+    info = ConnectionSocket.parse_address('Prologix::192.168.1.70::1234::6')
+    assert info['host'] == '192.168.1.70'
+    assert info['port'] == 1234
+
+    info = ConnectionSocket.parse_address('PROLOGIX::hostname::1234::6')
+    assert info['host'] == 'hostname'
+    assert info['port'] == 1234
+
+    info = ConnectionSocket.parse_address('ProLOgiX::full.domain.name::1234::6')
+    assert info['host'] == 'full.domain.name'
+    assert info['port'] == 1234
+
+    assert ConnectionSocket.parse_address('Prologics::192.168.1.70::1234::6') is None

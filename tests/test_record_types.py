@@ -630,23 +630,20 @@ def test_equipment_record():
         EquipmentRecord(calibrations=(None,))
     with pytest.raises(KeyError):  # KeyError: 'measurands'
         EquipmentRecord(calibrations=[{'calibration_cycle': 7}])
-    with pytest.raises(TypeError) as err:
+    with pytest.raises(TypeError, match=r"unexpected keyword argument 'invalid_kwarg'"):
         EquipmentRecord(calibrations=[{'invalid_kwarg': 7, 'measurands': []}])
-    assert str(err.value).endswith("__init__() got an unexpected keyword argument 'invalid_kwarg'")
 
     #
     # Check setting invalid `maintenances`
     #
-    with pytest.raises(TypeError) as err:
+    with pytest.raises(TypeError, match=r"'int' object is not iterable"):
         EquipmentRecord(maintenances=0)
-    assert str(err.value).endswith("'int' object is not iterable")
-    with pytest.raises(TypeError):  # not a iterable of MaintenanceRecord
+    with pytest.raises(TypeError):  # not an iterable of MaintenanceRecord
         EquipmentRecord(maintenances=[1])
-    with pytest.raises(TypeError):  # not a iterable of MaintenanceRecord
+    with pytest.raises(TypeError):  # not an iterable of MaintenanceRecord
         EquipmentRecord(maintenances=(None,))
-    with pytest.raises(TypeError) as err:
+    with pytest.raises(TypeError, match=r"unexpected keyword argument 'invalid_kwarg'"):
         EquipmentRecord(maintenances=[{'invalid_kwarg': 7}])
-    assert str(err.value).endswith("__init__() got an unexpected keyword argument 'invalid_kwarg'")
 
     #
     # Check setting the ConnectionRecord
@@ -661,18 +658,15 @@ def test_equipment_record():
     EquipmentRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055', connection=cr)
 
     # one of the manufacturer, model or serial values do not match
-    with pytest.raises(ValueError) as err:
+    with pytest.raises(ValueError, match='.manufacturer'):
         cr = ConnectionRecord(manufacturer='XYZ')
         EquipmentRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055', connection=cr)
-    assert '.manufacturer' in str(err.value)
-    with pytest.raises(ValueError) as err:
+    with pytest.raises(ValueError, match='.model'):
         cr = ConnectionRecord(manufacturer='ABC def', model='AAA')
         EquipmentRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055', connection=cr)
-    assert '.model' in str(err.value)
-    with pytest.raises(ValueError) as err:
+    with pytest.raises(ValueError, match='.serial'):
         cr = ConnectionRecord(manufacturer='ABC def', model='ZZZ', serial='AAA')
         EquipmentRecord(manufacturer='ABC def', model='ZZZ', serial='DY135/055', connection=cr)
-    assert '.serial' in str(err.value)
 
     # check that the manufacturer, model and serial values for the ConnectionRecord get updated
     record = EquipmentRecord(manufacturer='Company', model='ABC', serial='XYZ', connection=ConnectionRecord())
@@ -904,35 +898,43 @@ def test_connection_record():
     assert a[16] == '    unicode: {}'.format("u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "'uñicödé'")
     assert a[17] == '  serial: {}'.format("u'ABC123'" if PY2 else "'ABC123'")
 
-    #
-    # The following are interface checks
-    #
+    os.remove(temp)
 
-    # unknown address value does not raise an exception because the backend is not MSL
+
+def test_connection_record_interface():
+
+    # an invalid `address` does not raise an exception because the backend is not MSL
     c = ConnectionRecord(address='XXXXXX', backend='UNKNOWN')
     assert c.interface == MSLInterface.NONE
 
-    # invalid address for an MSL Backend -> cannot determine the MSLInterface
-    with pytest.raises(ValueError) as err:
+    # invalid `address` using the MSL Backend -> cannot determine the MSLInterface
+    with pytest.raises(ValueError, match='Cannot determine the MSLInterface'):
         ConnectionRecord(address='XXXXXX')
-    assert str(err.value).startswith('Cannot determine the MSLInterface')
 
     # if the user specifies the interface then this interface is used regardless of the value of address
-    for interface in [MSLInterface.SDK, 'SDK', u'SDK', 1]:
+    for interface in [MSLInterface.SDK, 'SDK', u'SDK', 'sDk', 1]:
         c = ConnectionRecord(address='XXXXXX', interface=interface)
         assert c.interface == MSLInterface.SDK
+    for interface in [MSLInterface.SOCKET, 'SOCKET', u'SOCKET', 'soCKet', 3]:
+        c = ConnectionRecord(address='XXXXXX', interface=interface)
+        assert c.interface == MSLInterface.SOCKET
 
     # setting the interface to something that cannot be converted to an MSLInterface
     for interface in [-1, -9.9, 'XXXXX']:
-        with pytest.raises(ValueError) as err:
+        with pytest.raises(ValueError, match='Cannot create'):
             ConnectionRecord(address='COM1', interface=interface)
-        assert str(err.value).startswith('Cannot create')
 
     # MSLInterface.SDK
-    record = ConnectionRecord(address='SDK::whatever.dll')
+    record = ConnectionRecord(address='SDK::file.dll')
     assert record.interface == MSLInterface.SDK
 
-    record = ConnectionRecord(address='SDK::/path/to/whatever.dll')
+    record = ConnectionRecord(address='SDK::/path/to/file.so')
+    assert record.interface == MSLInterface.SDK
+
+    record = ConnectionRecord(address='SDK::C:\\path\\to\\file.dll')
+    assert record.interface == MSLInterface.SDK
+
+    record = ConnectionRecord(address=r'SDK::C:\path\to\file.dll')
     assert record.interface == MSLInterface.SDK
 
     # MSLInterface.SERIAL
@@ -942,38 +944,26 @@ def test_connection_record():
     record = ConnectionRecord(address='ASRLCOM4')
     assert record.interface == MSLInterface.SERIAL   # ASRLCOM is used by PyVISA
 
-    record = ConnectionRecord(address='LPT5')
-    assert record.interface == MSLInterface.SERIAL   # LPT is an alias
-
     record = ConnectionRecord(address='ASRL4')
     assert record.interface == MSLInterface.SERIAL  # ASRL is an alias
 
     record = ConnectionRecord(address='ASRL4::INSTR')
     assert record.interface == MSLInterface.SERIAL
 
-    record = ConnectionRecord(address='ASRL::/dev/ttyS1')
+    record = ConnectionRecord(address='ASRL/dev/ttyS1')
     assert record.interface == MSLInterface.SERIAL
 
-    record = ConnectionRecord(address='SERIAL::/dev/ttyUSB0')
-    assert record.interface == MSLInterface.SERIAL
-
-    record = ConnectionRecord(address='LPT::/dev/pts/1::INSTR')
+    record = ConnectionRecord(address='ASRL/dev/ttyUSB0::INSTR')
     assert record.interface == MSLInterface.SERIAL
 
     # MSLInterface.SOCKET
     record = ConnectionRecord(address='SOCKET::127.0.0.1::1234')
     assert record.interface == MSLInterface.SOCKET
 
-    record = ConnectionRecord(address='ENET::127.0.0.1::1234')
-    assert record.interface == MSLInterface.SOCKET  # ENET is an alias for SOCKET
-
-    record = ConnectionRecord(address='ETHERNET::127.0.0.1::1234')
-    assert record.interface == MSLInterface.SOCKET  # ETHERNET is an alias for SOCKET
-
-    record = ConnectionRecord(address='LAN::127.0.0.1::1234')
-    assert record.interface == MSLInterface.SOCKET  # LAN is an alias for SOCKET
-
     record = ConnectionRecord(address='TCPIP::127.0.0.1::1234::SOCKET')
+    assert record.interface == MSLInterface.SOCKET  # PyVISA naming scheme
+
+    record = ConnectionRecord(address='TCPIP0::127.0.0.1::1234::SOCKET')
     assert record.interface == MSLInterface.SOCKET  # PyVISA naming scheme
 
     record = ConnectionRecord(address='TCP::127.0.0.1::1234')
@@ -988,18 +978,23 @@ def test_connection_record():
     record = ConnectionRecord(address='Prologix::192.168.1.110::1234::6')
     assert record.interface == MSLInterface.PROLOGIX
 
-    record = ConnectionRecord(address='PROLOGIX::/dev/ttyUSB0::16::100')
+    record = ConnectionRecord(address='Prologix::domain.name::1234::6')
+    assert record.interface == MSLInterface.PROLOGIX
+
+    record = ConnectionRecord(address='PROLOGIX::/dev/ttyS0::16::100')
     assert record.interface == MSLInterface.PROLOGIX
 
     record = ConnectionRecord(address='Prologix::COM4::1')
     assert record.interface == MSLInterface.PROLOGIX
 
-    record = ConnectionRecord(address='Prologix -> only needs to start with "Prologix"')
+    record = ConnectionRecord(address='Prologix::ASRL4::1')
     assert record.interface == MSLInterface.PROLOGIX
 
-    #
-    # The following are backend checks
-    #
+    record = ConnectionRecord(address='Prologix::ASRLCOM4::1')
+    assert record.interface == MSLInterface.PROLOGIX
+
+
+def test_connection_record_backend():
 
     # equivalent ways to define a Backend
     for backend in [Backend.MSL, 'MSL', u'MSL', 1]:
@@ -1008,13 +1003,11 @@ def test_connection_record():
 
     # invalid Backends
     for backend in [None, -1, -9.9, 'XXXXX']:
-        with pytest.raises(ValueError) as err:
+        with pytest.raises(ValueError, match='Cannot create'):
             ConnectionRecord(backend=backend)
-        assert str(err.value).startswith('Cannot create')
 
-    #
-    # The following are "properties" checks
-    #
+
+def test_connection_record_properties():
 
     # unexpected kwargs get inserted into the "properties" dict
     c = ConnectionRecord(model='ABC', unknown_attribute='AAA', xxxx=7.2)
@@ -1040,9 +1033,8 @@ def test_connection_record():
     assert c.properties['three'] == 3
     assert c.properties['four'] == 4
 
-    with pytest.raises(TypeError) as err:
+    with pytest.raises(TypeError, match='must be of type dict'):
         ConnectionRecord(properties=1, three=3, four=4)
-    assert 'must be of type dict' in str(err.value)
 
     # bool(properties) evaluates to False so the 'properties' automatically get
     # converted to an empty dict and 'three' and 'four' are added to the dict
@@ -1089,8 +1081,6 @@ def test_connection_record():
     assert c.properties['stopbits'].name == 'TWO'
     assert c.properties['stopbits'].value == StopBits.TWO.value
     assert c.properties['stopbits'] == StopBits.TWO
-
-    os.remove(temp)
 
 
 def test_dbase():

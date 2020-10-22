@@ -4,7 +4,6 @@ Load an XML :ref:`configuration-file`.
 import os
 from xml.etree import cElementTree
 
-from .database import Database
 from .utils import (
     logger,
     convert_to_primitive,
@@ -126,6 +125,7 @@ class Config(object):
             that are specified in the configuration file.
         """
         if self._database is None:
+            from .database import Database  # import here to avoid circular import errors
             self._database = Database(self._path)
         return self._database
 

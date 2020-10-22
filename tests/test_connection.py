@@ -4,7 +4,7 @@ import pytest
 
 from msl.equipment import exceptions
 from msl.equipment.connection import Connection
-from msl.equipment.record_types import ConnectionRecord, EquipmentRecord
+from msl.equipment.record_types import EquipmentRecord
 
 
 class EnumTest1(enum.IntEnum):
@@ -28,15 +28,6 @@ class EnumTest3(enum.Enum):
 class EnumTest4(enum.Enum):
     START = 'the beginning'
     STOP = 'the end'
-
-
-def test_initialize():
-    Connection(EquipmentRecord())
-
-    with pytest.raises(TypeError):
-        Connection(None)
-    with pytest.raises(TypeError):
-        Connection(ConnectionRecord())
 
 
 def test_convert_to_enum():

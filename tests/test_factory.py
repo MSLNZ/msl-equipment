@@ -19,69 +19,58 @@ def teardown_module():
 def test_exceptions():
     Config.DEMO_MODE = False
 
-    with pytest.raises(TypeError) as err:
-        connect(None)  # not an EquipmentRecord
-    assert 'EquipmentRecord' in str(err.value)
+    # not an EquipmentRecord
+    for item in [None, ConnectionRecord()]:
+        with pytest.raises(AttributeError, match=r"no attribute 'connection'"):
+            connect(item)
 
-    with pytest.raises(TypeError) as err:
-        connect(ConnectionRecord())  # not an EquipmentRecord
-    assert 'EquipmentRecord' in str(err.value)
-
-    with pytest.raises(TypeError) as err:
-        connect([None])  # not an EquipmentRecord
-    assert 'EquipmentRecord' in str(err.value)
-
-    with pytest.raises(TypeError) as err:
-        connect({None})  # not an EquipmentRecord
-    assert 'EquipmentRecord' in str(err.value)
-
-    with pytest.raises(TypeError) as err:
+    # only 1 EquipmentRecord is allowed
+    with pytest.raises(AttributeError, match=r"no attribute 'connection'"):
         connect([
             EquipmentRecord(connection=ConnectionRecord(address='COM1', backend=Backend.MSL)),
             EquipmentRecord(connection=ConnectionRecord(address='COM2', backend=Backend.MSL))
-        ])  # only 1 EquipmentRecord allowed
-    assert 'list' in str(err.value)
+        ])
 
-    with pytest.raises(TypeError) as err:
+    # only 1 EquipmentRecord is allowed
+    with pytest.raises(AttributeError, match=r"no attribute 'connection'"):
         connect({
             'a': EquipmentRecord(connection=ConnectionRecord(address='COM1', backend=Backend.MSL)),
             'b': EquipmentRecord(connection=ConnectionRecord(address='COM2', backend=Backend.MSL))
-        })  # only 1 EquipmentRecord allowed
-    assert 'dict' in str(err.value)
+        })
 
+    # only 1 EquipmentRecord allowed
     c = Config(os.path.join(ROOT_DIR, 'db.xml'))
-    with pytest.raises(TypeError) as err:
-        connect(c.database().equipment)  # only 1 EquipmentRecord allowed
-    assert 'dict' in str(err.value)
+    with pytest.raises(AttributeError, match=r"no attribute 'connection'"):
+        connect(c.database().equipment)
 
-    with pytest.raises(ValueError) as err:
-        connect(EquipmentRecord())  # no ConnectionRecord defined for the EquipmentRecord
-    assert 'connection object' in str(err.value)
+    # no ConnectionRecord defined for the EquipmentRecord
+    with pytest.raises(ValueError, match='connection object'):
+        connect(EquipmentRecord())
 
-    with pytest.raises(ValueError) as err:
-        connect(EquipmentRecord(connection=ConnectionRecord()))  # no address has been set
-    assert 'connection address' in str(err.value)
+    # no address has been set
+    with pytest.raises(ValueError, match='connection address'):
+        connect(EquipmentRecord(connection=ConnectionRecord()))
 
-    with pytest.raises(ValueError) as err:
-        connect(EquipmentRecord(connection=ConnectionRecord(address='COM1', backend=Backend.UNKNOWN)))  # no backend
-    assert 'connection backend' in str(err.value)
+    # no backend
+    with pytest.raises(ValueError, match='connection backend'):
+        connect(EquipmentRecord(connection=ConnectionRecord(address='COM1', backend=Backend.UNKNOWN)))
 
     # the SDK library does not exist
-    with pytest.raises(IOError) as err:
+    with pytest.raises(IOError, match='Cannot find'):
         connect(EquipmentRecord(
             manufacturer='Thorlabs',
             model='FW212C',
             connection=ConnectionRecord(
-                address='SDK::invalid.dll', backend=Backend.MSL
+                address='SDK::invalid.dll',
+                backend=Backend.MSL
             )
         ))
-    assert str(err.value).startswith('Cannot find')
 
 
 def test_demo_mode():
     Config.DEMO_MODE = True
 
-    c = connect(EquipmentRecord(connection=ConnectionRecord(address='COM1', backend=Backend.MSL)), True)
+    c = connect(EquipmentRecord(connection=ConnectionRecord(address='COM1', backend=Backend.MSL)), demo=True)
     assert isinstance(c, ConnectionDemo)
 
     c = connect(EquipmentRecord(connection=ConnectionRecord(address='COM1', backend=Backend.MSL)))

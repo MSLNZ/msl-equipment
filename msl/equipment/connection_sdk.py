@@ -4,6 +4,7 @@ Base class for equipment that use the SDK provided by the manufacturer for the c
 from msl.loadlib import LoadLibrary
 
 from .connection import Connection
+from .constants import REGEX_SDK
 
 
 class ConnectionSDK(Connection):
@@ -42,7 +43,10 @@ class ConnectionSDK(Connection):
         super(ConnectionSDK, self).__init__(record)
 
         if path is None:
-            path = record.connection.address[5:]  # the address starts with 'SDK::'
+            info = ConnectionSDK.parse_address(record.connection.address)
+            if info is None:
+                self.raise_exception('Invalid address for {!r}'.format(self.__class__.__name__))
+            path = info['path']
 
         self._lib = LoadLibrary(path, libtype)
         self._path = self._lib.path
@@ -50,7 +54,7 @@ class ConnectionSDK(Connection):
         self._assembly = self._lib.assembly
         self._gateway = self._lib.gateway
 
-        self.log_debug('Connected to {}'.format(self.equipment_record.connection))
+        self.log_debug('Connected to {}'.format(record.connection))
 
     @property
     def assembly(self):
@@ -76,3 +80,21 @@ class ConnectionSDK(Connection):
         """Convenience method for logging an :attr:`~ctypes._FuncPtr.errcheck`"""
         self.log_debug('{}.{}{} -> {}'.format(self.__class__.__name__, func.__name__, arguments, result))
         return result
+
+    @staticmethod
+    def parse_address(address):
+        """Get the file path from an address.
+
+        Parameters
+        ----------
+        address : :class:`str`
+            The address of a :class:`~msl.equipment.record_types.ConnectionRecord`.
+
+        Returns
+        -------
+        :class:`dict` or :data:`None`
+            The file path or :data:`None` if `address` is not valid for an SDK.
+        """
+        match = REGEX_SDK.match(address)
+        if match:
+            return match.groupdict()

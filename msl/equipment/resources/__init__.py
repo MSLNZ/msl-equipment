@@ -7,10 +7,6 @@ import fnmatch
 import importlib
 
 from ..utils import logger
-from ..record_types import (
-    EquipmentRecord,
-    ConnectionRecord
-)
 
 _registry = []
 
@@ -68,14 +64,15 @@ def find_resource_class(record):
     -------
     The :class:`~.connection.Connection` subclass or :data:`None` if a resource class cannot be found.
     """
-    if not isinstance(record, (ConnectionRecord, EquipmentRecord)):
-        raise TypeError('Must pass in an EquipmentRecord or a ConnectionRecord')
-    if isinstance(record, EquipmentRecord):
+    try:
         record = record.connection
+    except AttributeError:
+        pass  # assume that `record` is already a ConnectionRecord
+
     for resource in _registry:
         if resource.is_match(record, record.properties.get('resource_class_name')):
             return resource.cls
-    return None
+    return
 
 
 # import all submodules to register all resources in the subpackages

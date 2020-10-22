@@ -8,11 +8,11 @@ from .constants import (
     MSLInterface
 )
 from .exceptions import ResourceClassNotFound
-from .record_types import EquipmentRecord
 from .resources import find_resource_class
 from .resources.dmm import dmm_factory
 from .connection_demo import ConnectionDemo
 from .connection_pyvisa import ConnectionPyVISA
+from .connection_sdk import ConnectionSDK
 from .connection_serial import ConnectionSerial
 from .connection_socket import ConnectionSocket
 from .connection_nidaq import ConnectionNIDAQ
@@ -44,10 +44,6 @@ def connect(record, demo=None):
         def _raise(name):
             raise ValueError('The connection {} has not been set for {}'.format(name, _record))
 
-        if not isinstance(_record, EquipmentRecord):
-            raise TypeError('The "record" argument must be a {}.{} object. Got {}'.format(
-                EquipmentRecord.__module__, EquipmentRecord.__name__, type(_record)))
-
         conn = _record.connection
 
         if conn is None:
@@ -72,7 +68,7 @@ def connect(record, demo=None):
                 elif conn.interface == MSLInterface.PROLOGIX:
                     cls = ConnectionPrologix
                 else:
-                    raise NotImplementedError('The {} interface has not be written yet'.format(conn.interface.name))
+                    raise NotImplementedError('The {!r} interface has not be written yet'.format(conn.interface.name))
         elif conn.backend == Backend.PyVISA:
             if demo:
                 cls = ConnectionPyVISA.resource_class(conn)
@@ -104,3 +100,32 @@ def connect(record, demo=None):
     elif isinstance(record, (list, tuple)) and len(record) == 1:
         return _connect(record[0])
     return _connect(record)
+
+
+def find_interface(address):
+    """Find the interface enum.
+
+    Parameters
+    ----------
+    address : :class:`str`
+        The address of a :class:`~msl.equipment.record_types.ConnectionRecord`.
+
+    Returns
+    -------
+    :class:`.constants.MSLInterface`
+        The interface to use for `address`.
+    """
+    if ConnectionSDK.parse_address(address):
+        return MSLInterface.SDK
+
+    # this check must come before the SERIAL and SOCKET checks
+    if ConnectionPrologix.parse_address(address):
+        return MSLInterface.PROLOGIX
+
+    if ConnectionSerial.parse_address(address):
+        return MSLInterface.SERIAL
+
+    if ConnectionSocket.parse_address(address):
+        return MSLInterface.SOCKET
+
+    raise ValueError('Cannot determine the MSLInterface from address {!r}'.format(address))

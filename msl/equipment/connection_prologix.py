@@ -6,49 +6,7 @@ Uses Prologix_ hardware to establish a connection to the equipment.
 from .connection import Connection
 from .connection_socket import ConnectionSocket
 from .connection_serial import ConnectionSerial
-
-
-def _parse_address(address):
-    """Parse the address to determine the connection class and GPIB address.
-
-    Parameters
-    ----------
-    address : :class:`str`
-        A :class:`~msl.equipment.record_types.ConnectionRecord` address.
-
-    Returns
-    -------
-    :class:`ConnectionSocket` or :class:`ConnectionSerial` or :data:`None`
-        The underlying connection class to use (not instantiated).
-    :class:`str` or :data:`None`
-        The serial port or IP address.
-    :class:`str` or :data:`None`
-        The primary GPIB address.
-    :class:`str` or :data:`None`
-        The secondary GPIB address.
-    """
-    cls, name, primary, secondary = None, None, None, None
-
-    addr_split = address.split('::')
-
-    if '::1234::' in address:  # the TCP port is specified
-        cls = ConnectionSocket
-        name, _ = ConnectionSocket.host_and_port_from_address(address)
-        if len(addr_split) == 4:
-            primary = addr_split[-1]
-        elif len(addr_split) == 5:
-            primary, secondary = addr_split[-2], addr_split[-1]
-
-    port = ConnectionSerial.port_from_address(address)
-    if port is not None:
-        cls = ConnectionSerial
-        name = port
-        if len(addr_split) == 3:
-            primary = addr_split[-1]
-        elif len(addr_split) == 4:
-            primary, secondary = addr_split[-2], addr_split[-1]
-
-    return cls, name, primary, secondary
+from .constants import REGEX_PROLOGIX
 
 
 class ConnectionPrologix(Connection):
@@ -105,17 +63,16 @@ class ConnectionPrologix(Connection):
         """
         super(ConnectionPrologix, self).__init__(record)
 
-        cls, name, primary, secondary = _parse_address(record.connection.address)
+        info = ConnectionPrologix.parse_address(record.connection.address)
+        if info is None:
+            self.raise_exception('Invalid Prologix address {!r}'.format(record.connection.address))
 
-        if cls is None:
-            self.raise_exception('Invalid address {!r}'.format(record.connection.address))
-
-        pad = int(primary)
+        pad = info['pad']
         if pad < 0 or pad > 30:
-            self.raise_exception('Invalid primary address {}'.format(primary))
+            self.raise_exception('Invalid primary address {}'.format(pad))
 
-        if secondary:
-            sad = int(secondary)
+        sad = info['sad']
+        if sad is not None:
             if sad < 96 or sad > 126:
                 self.raise_exception('Invalid secondary address {}'.format(sad))
             self._addr = '++addr {} {}'.format(pad, sad)
@@ -123,13 +80,13 @@ class ConnectionPrologix(Connection):
             self._addr = '++addr {}'.format(pad)
 
         self._query_auto = True
-        self._controller_name = name
+        self._controller_name = info['name']
 
         try:
-            self._controller = ConnectionPrologix.controllers[name]
+            self._controller = ConnectionPrologix.controllers[self._controller_name]
         except KeyError:
-            self._controller = cls(record)
-            ConnectionPrologix.controllers[name] = self._controller
+            self._controller = info['class'](record)
+            ConnectionPrologix.controllers[self._controller_name] = self._controller
 
         props = record.connection.properties
 
@@ -342,6 +299,38 @@ class ConnectionPrologix(Connection):
             the version of the firmware.
         """
         return self._controller.query('++ver').rstrip()
+
+    @staticmethod
+    def parse_address(address):
+        """Parse the address to determine the connection class and the GPIB address.
+
+        Parameters
+        ----------
+        address : :class:`str`
+            The address of a :class:`~msl.equipment.record_types.ConnectionRecord`.
+
+        Returns
+        -------
+        :class:`dict` or :data:`None`
+            If `address` is valid then the key-value pairs are:
+
+                * class : :class:`ConnectionSocket` or :class:`ConnectionSerial`
+                    The underlying connection class to use (not instantiated).
+                * name : :class:`str`
+                    The name of the connection class.
+                * pad : :class:`int`
+                    The primary GPIB address.
+                * sad : :class:`int` or :data:`None`
+                    The secondary GPIB address.
+        """
+        match = REGEX_PROLOGIX.match(address)
+        if match is None:
+            return
+
+        d = match.groupdict()
+        cls = ConnectionSocket if d['port'] else ConnectionSerial
+        sad = None if d['sad'] is None else int(d['sad'])
+        return {'class': cls, 'name': d['name'], 'pad': int(d['pad']), 'sad': sad}
 
     def _ensure_gpib_address_selected(self):
         """

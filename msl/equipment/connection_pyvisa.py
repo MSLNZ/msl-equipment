@@ -10,7 +10,6 @@ except ImportError:
 
 from .config import Config
 from .connection import Connection
-from .record_types import EquipmentRecord, ConnectionRecord
 
 
 class ConnectionPyVISA(Connection):
@@ -204,16 +203,10 @@ class ConnectionPyVISA(Connection):
         A :class:`~pyvisa.resources.Resource` subclass
             The PyVISA_ Resource class that can open the `record`.
         """
-        if isinstance(record, EquipmentRecord):
-            if record.connection is None:
-                raise ValueError('The ConnectionRecord has not been set for {}'.format(record))
+        try:
             address = record.connection.address
-        elif isinstance(record, ConnectionRecord):
+        except AttributeError:
             address = record.address
-        else:
-            msg = 'Invalid record type. Must be of type {} or {}'.format(
-                EquipmentRecord.__name__, ConnectionRecord.__name__)
-            raise TypeError(msg)
 
         if not address:
             raise ValueError('The ConnectionRecord.address for {} has not been set'.format(record))

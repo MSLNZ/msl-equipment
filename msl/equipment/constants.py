@@ -1,17 +1,46 @@
 """
 MSL-Equipment constants.
 """
+import re
 import enum
+import datetime
 
 import serial
 
 CR = b'\r'
 LF = b'\n'
 
-MSL_INTERFACE_ALIASES = {
-    'SERIAL': ('SERIAL', 'ASRLCOM', 'ASRL', 'COM', 'LPT'),
-    'SOCKET': ('SOCKET', 'ENET', 'ETHERNET', 'LAN', 'TCP', 'UDP'),
-}
+REGEX_SDK = re.compile(
+    r'SDK::(?P<path>.+)',
+    flags=re.IGNORECASE
+)
+
+REGEX_SERIAL = re.compile(
+    r'(COM|ASRL|ASRLCOM)(?P<dev>/dev/[a-z/]+)?(?P<number>\d+)',
+    flags=re.IGNORECASE
+)
+
+REGEX_SOCKET = re.compile(
+    r'(?P<prefix>SOCKET|TCP|UDP|TCPIP\d*)::(?P<host>[^\s:]+)::(?P<port>\d+)(?P<suffix>::SOCKET)?',
+    flags=re.IGNORECASE
+)
+
+REGEX_SOCKET_IVI = re.compile(
+    r'TCPIP::(?P<host>[^\s:]+)::(?P<port>\d+)',
+    flags=re.IGNORECASE
+)
+
+REGEX_PROLOGIX = re.compile(
+    r'Prologix::'
+    r'(?P<name>[^\s:]+)'
+    r'(?P<port>::1234)?'
+    r'(::GPIB\d*)?'
+    r'::(?P<pad>\d+)'
+    r'(::(?P<sad>\d+))?',
+    flags=re.IGNORECASE
+)
+
+DEFAULT_DATE = datetime.date(datetime.MINYEAR, 1, 1)
 
 
 class Backend(enum.IntEnum):

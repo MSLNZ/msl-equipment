@@ -312,16 +312,18 @@ class ConnectionPrologix(Connection):
         Returns
         -------
         :class:`dict` or :data:`None`
-            If `address` is valid then the key-value pairs are:
+            If `address` is valid for a Prologix connection then the key-value pairs are:
 
-                * class : :class:`ConnectionSocket` or :class:`ConnectionSerial`
-                    The underlying connection class to use (not instantiated).
-                * name : :class:`str`
-                    The name of the connection class.
-                * pad : :class:`int`
-                    The primary GPIB address.
-                * sad : :class:`int` or :data:`None`
-                    The secondary GPIB address.
+            * class, :class:`.ConnectionSocket` or :class:`.ConnectionSerial`
+                The underlying connection class to use (not instantiated).
+            * name, :class:`str`
+                The name of the connection class.
+            * pad, :class:`int`
+                The primary GPIB address.
+            * sad, :class:`int` or :data:`None`
+                The secondary GPIB address.
+
+            otherwise :data:`None` is returned.
         """
         match = REGEX_PROLOGIX.match(address)
         if match is None:

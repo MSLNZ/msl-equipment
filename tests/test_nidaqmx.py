@@ -6,7 +6,8 @@ from nidaqmx import stream_writers
 from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
 
 try:
-    nidaqmx.Task()
+    with nidaqmx.Task() as task:
+        pass
 except:
     HAS_NIDAQ_INSTALLED = False
 else:

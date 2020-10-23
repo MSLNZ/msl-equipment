@@ -63,21 +63,13 @@ class ConnectionMessageBased(Connection):
     @encoding.setter
     def encoding(self, encoding):
         """Set the encoding to use for :meth:`read` and :meth:`write` operations."""
-        _ = 'test encoding'.encode(encoding).decode(encoding)
-
-        # re-encoding the read/write termination values ensure that the termination
-        # sequence can be encoded using the new encoding
-        if self._read_termination is not None:
-            read_term = self._read_termination.decode(self._encoding)
-        if self._write_termination is not None:
-            write_term = self._write_termination.decode(self._encoding)
-
+        if self._read_termination is None and self._write_termination is None:
+            _ = 'test encoding'.encode(encoding).decode(encoding)
         self._encoding = encoding
-
         if self._read_termination is not None:
-            self.read_termination = read_term
+            self.read_termination = self._read_termination.decode(encoding)
         if self._write_termination is not None:
-            self.write_termination = write_term
+            self.write_termination = self._write_termination.decode(encoding)
 
     @property
     def encoding_errors(self):
@@ -118,7 +110,7 @@ class ConnectionMessageBased(Connection):
 
     @read_termination.setter
     def read_termination(self, termination):
-        self._read_termination = self._set_termination_encoding(termination)
+        self._read_termination = self._encode_termination(termination)
 
     @property
     def write_termination(self):
@@ -132,7 +124,7 @@ class ConnectionMessageBased(Connection):
 
     @write_termination.setter
     def write_termination(self, termination):
-        self._write_termination = self._set_termination_encoding(termination)
+        self._write_termination = self._encode_termination(termination)
 
     @property
     def max_read_size(self):
@@ -243,12 +235,13 @@ class ConnectionMessageBased(Connection):
             time.sleep(delay)
         return self.read(size=size)
 
-    def _set_termination_encoding(self, termination):
-        # convenience method for setting the termination encoding
-        try:
-            return termination.encode(self._encoding)
-        except AttributeError:
-            return termination  # `termination` is already encoded
+    def _encode_termination(self, termination):
+        # convenience method for setting a termination encoding
+        if termination is not None:
+            try:
+                return termination.encode(self._encoding)
+            except AttributeError:
+                return termination  # `termination` is already encoded
 
     def _encode(self, message):
         # convenience method for preparing the message for a write operation

@@ -23,8 +23,8 @@ def test_termination_changed():
     c.write_termination = term
     assert isinstance(c.read_termination, bytes)
     assert isinstance(c.write_termination, bytes)
-    assert c.read_termination == term.encode()
-    assert c.write_termination == term.encode()
+    assert c.read_termination == b'xxx'
+    assert c.write_termination == b'xxx'
 
     term = b'yyy'
     c.read_termination = term
@@ -54,6 +54,18 @@ def test_termination_changed():
     assert isinstance(c.write_termination, bytes)
     assert c.read_termination == b'\r\n'
     assert c.write_termination == b'\r'
+
+    # check that the encoding is valid
+    assert c.read_termination == b'\r\n'
+    assert c.write_termination == b'\r'
+    with pytest.raises(LookupError):
+        c.encoding = 'unknown'
+    c.read_termination = None
+    c.write_termination = None
+    assert c.read_termination is None
+    assert c.write_termination is None
+    with pytest.raises(LookupError):
+        c.encoding = 'unknown'
 
 
 def test_termination_converted_to_bytes():

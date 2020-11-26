@@ -1127,7 +1127,7 @@ class KCubeDCServo(MotionControl):
         :class:`bool`
             Whether the device needs to be homed.
         """
-        return self.sdk.can_move_without_homing_first()
+        return self.can_move_without_homing_first()
 
     def open(self):
         """Open the device for communication.

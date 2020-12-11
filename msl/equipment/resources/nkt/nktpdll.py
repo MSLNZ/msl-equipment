@@ -1157,7 +1157,7 @@ class NKT(Connection):
         ~msl.equipment.exceptions.NKTError
             If there was an error calling this method.
         """
-        if self._PORTNAME is not None:
+        if NKT._SDK is not None and self._PORTNAME is not None:
             self.close_ports(self._PORTNAME)
             self._PORTNAME = None
 

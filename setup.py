@@ -132,27 +132,26 @@ def get_version():
     return init_version + '+' + suffix
 
 
-testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
-pytest_runner = ['pytest-runner'] if testing else []
-
 install_requires = [
     'msl-loadlib',
     'msl-io @ https://github.com/MSLNZ/msl-io/archive/master.tar.gz',
+    'numpy',
     'pyserial>=3.0',
     'python-dateutil',
     'enum34;python_version<"3.4"',
 ]
 
-tests_require = ['pytest-cov', 'nidaqmx']
-if not testing:
-    install_requires.append('numpy')
-else:
-    if sys.version_info[:2] == (2, 7):
-        tests_require.extend(['zipp<2.0', 'pyparsing<3.0', 'pytest~=4.6', 'numpy<1.17', 'pyvisa<1.11', 'pyvisa-py<0.5'])
-    elif sys.version_info[:2] == (3, 5):
-        tests_require.extend(['pytest', 'numpy<1.19', 'pyvisa<1.11', 'pyvisa-py<0.5'])
-    else:
-        tests_require.extend(['pytest', 'numpy', 'pyvisa', 'pyvisa-py'])
+tests_require = [
+    'pytest',
+    'pytest-cov',
+    'nidaqmx',
+    'pyvisa>=1.6',
+    'pyvisa-py;python_version>"3.5"',
+    'pyvisa-py<0.5;python_version<="3.5"',
+]
+
+testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
+pytest_runner = ['pytest-runner'] if testing else []
 
 needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
 sphinx = ['sphinx', 'sphinx_rtd_theme'] + install_requires if needs_sphinx else []
@@ -190,6 +189,7 @@ setup(
     setup_requires=sphinx + pytest_runner,
     tests_require=tests_require,
     install_requires=install_requires,
+    extras_require={'tests': tests_require},
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),
     include_package_data=True,

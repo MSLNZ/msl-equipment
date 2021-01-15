@@ -209,7 +209,7 @@ class CHeader(object):
         return self._callbacks
 
     def functions(self, regex):
-        """Returns the function signatures.
+        r"""Returns the function signatures.
 
         Parameters
         ----------

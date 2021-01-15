@@ -30,7 +30,7 @@ class ConnectionSocket(ConnectionMessageBased):
             'family': str, the address family, e.g., 'INET', 'INET6', 'IPX' [default: 'INET']
             'socket_type': str, the socket type, e.g. 'STREAM', 'DGRAM' [default: 'STREAM']
             'proto': int, the socket protocol number [default: 0]
-            'buffer_size': int, the number of bytes to read at a time [default: 4096]
+            'buffer_size': int, the maximum number of bytes to read at a time [default: 4096]
 
         The :data:`~msl.equipment.record_types.ConnectionRecord.backend`
         value must be equal to :data:`~msl.equipment.constants.Backend.MSL`

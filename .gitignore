@@ -45,6 +45,3 @@ condatests.ini
 # created by the PicoScope SDK
 *Pipe_inOut
 *Pipe_inOutFifo
-
-# ignore all junk files
-junk/

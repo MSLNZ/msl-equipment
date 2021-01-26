@@ -220,7 +220,9 @@ class iTHX(ConnectionSocket):
         db.commit()
         db.close()
 
-        msg = 'Sn:{} - {}:{} => '.format(self.equipment_record.serial, self._host, self._port)
+        msg = 'Alias:{!r} Sn:{} {}:{} => '.format(
+            self.equipment_record.alias, self.equipment_record.serial, self._host, self._port
+        )
 
         try:
             while True:

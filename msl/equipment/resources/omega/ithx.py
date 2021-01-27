@@ -15,7 +15,7 @@ import re
 import time
 import socket
 import sqlite3
-import datetime
+from datetime import datetime
 try:
     ConnectionResetError
 except NameError:
@@ -165,7 +165,7 @@ class iTHX(ConnectionSocket):
         t, h = self.temperature_humidity(probe=probe, celsius=celsius, nbytes=nth)
         return t, h, self.dewpoint(probe=probe, celsius=celsius, nbytes=nd)
 
-    def start_logging(self, path, wait=60, nprobes=1, nbytes=None):
+    def start_logging(self, path, wait=60, nprobes=1, nbytes=None, celsius=True, msg_format=None, db_timeout=10):
         """Start logging the temperature, humidity and dew point to the specified path.
 
         The information is logged to a SQLite_ database. To stop logging press ``CTRL+C``.
@@ -178,19 +178,29 @@ class iTHX(ConnectionSocket):
             The path to the SQLite_ database. If you only specify a folder then a database
             with the default filename, ``model_serial.sqlite3``, is created/opened in this folder.
         wait : :class:`int`, optional
-            The number of seconds to wait between each log.
+            The number of seconds to wait between each log event.
         nprobes : :class:`int`, optional
             The number of probes that the iServer has (1 or 2).
         nbytes : :class:`int`, optional
-            The number of bytes to read. If :data:`None` then read until the termination
-            character sequence. For example, if no termination is used and each value is
-            represented by 6 bytes then specify ``nbytes=18`` to get all three values.
+            The number of bytes to read from each probe (the probes are read sequentially).
+            The value is passed to :meth:`.temperature_humidity_dewpoint`.
+        celsius : :class:`bool`, optional
+           :data:`True` to return the temperature and dew point in celsius,
+           :data:`False` for fahrenheit.
+        msg_format : :class:`str`, optional
+            The format to use for the INFO :mod:`logging` messages each time data is read
+            from an iServer. The format must use the string formatting operator, ``%``,
+            for example, ``'T=%.1f H=%.1f D=%.1f'``, such that ``msg_format % data`` is valid,
+            where, `data` = `(temperature, humidity, dewpoint)` for a 1-probe sensor and
+            `data` = `(temperature1, humidity1, dewpoint1, temperature2, humidity2, dewpoint2)`
+            for a 2-probe sensor.
+        db_timeout : :class:`float`, optional
+            The number of seconds the connection to the database should wait for the
+            lock to go away until raising an exception.
         """
         if os.path.isdir(path):
             filename = self.equipment_record.model + '_' + self.equipment_record.serial + '.sqlite3'
             path = os.path.join(path, filename)
-
-        db_timeout = 10.0
 
         db = sqlite3.connect(path, timeout=db_timeout)
         self.log_info('start logging to {}'.format(path))
@@ -203,6 +213,8 @@ class iTHX(ConnectionSocket):
                 'humidity FLOAT, '
                 'dewpoint FLOAT);'
             )
+            if not msg_format:
+                msg_format = 'T=%.1f H=%.1f DP=%.1f'
         elif nprobes == 2:
             db.execute(
                 'CREATE TABLE IF NOT EXISTS data ('
@@ -214,29 +226,25 @@ class iTHX(ConnectionSocket):
                 'humidity2 FLOAT, '
                 'dewpoint2 FLOAT);'
             )
+            if not msg_format:
+                msg_format = 'T1=%.1f H1=%.1f DP1=%.1f T2=%.1f H2=%.1f DP2=%.1f'
         else:
             raise ValueError('The number-of-probes value must be either 1 or 2. Got {}'.format(nprobes))
 
         db.commit()
         db.close()
 
-        msg = 'Alias:{!r} Sn:{} {}:{} => '.format(
-            self.equipment_record.alias, self.equipment_record.serial, self._host, self._port
-        )
-
         try:
             while True:
                 t0 = time.time()
-                results = [datetime.datetime.now()]
+                results = [datetime.fromtimestamp(t0)]
 
                 # get the values
                 try:
-                    data = self.temperature_humidity_dewpoint(probe=1, celsius=True, nbytes=nbytes)
+                    data = self.temperature_humidity_dewpoint(probe=1, celsius=celsius, nbytes=nbytes)
                     if nprobes == 2:
-                        data += self.temperature_humidity_dewpoint(probe=2, celsius=True, nbytes=nbytes)
-                        self.log_info(msg+'T1={:.1f} H1={:.1f} DP1={:.1f} T2={:.1f} H2={:.1f} DP2={:.1f}'.format(*data))
-                    else:
-                        self.log_info(msg+'T={:.1f} H={:.1f} DP={:.1f}'.format(*data))
+                        data += self.temperature_humidity_dewpoint(probe=2, celsius=celsius, nbytes=nbytes)
+                    self.log_info(msg_format, *data)
                 except MSLTimeoutError:
                     while True:
                         try:
@@ -294,7 +302,7 @@ class iTHX(ConnectionSocket):
         Returns
         -------
         :class:`list` of :class:`tuple`
-            A list of ``(timestamp, temperature, humidity, dewpoint)`` log records,
+            A list of ``(timestamp, temperature, humidity, dewpoint, ...)`` log records,
             depending on the value of `select`.
         """
         if not os.path.isfile(path):

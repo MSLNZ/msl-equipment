@@ -199,10 +199,10 @@ class iTHX(ConnectionSocket):
 
             Examples:
 
-            * T={0:.1f} H={1:.1f} D={2:.1f}
-            * {connection[address]} T={0} H={1} D={2}
+            * T={0} H={1} D={2}
+            * {connection[address]} T={0:.1f} H={1:.1f} D={2:.1f}
             * T1={0} T2={3} H1={1} H2={4} D1={2} D2={5}
-            * {alias} {serial} -> T={0:.2f} H={1:.2f} D={2:.2f}
+            * {alias} {serial} -> T={0}C H={1}% D={2}C
 
         db_timeout : :class:`float`, optional
             The number of seconds the connection to the database should wait for the
@@ -226,7 +226,7 @@ class iTHX(ConnectionSocket):
                 'dewpoint FLOAT);'
             )
             if not msg_format:
-                msg_format = 'T={0:.1f} H={1:.1f} D={2:.1f}'
+                msg_format = 'Sn={serial} T={0:.1f} H={1:.1f} D={2:.1f}'
         elif nprobes == 2:
             db.execute(
                 'CREATE TABLE IF NOT EXISTS data ('
@@ -239,7 +239,7 @@ class iTHX(ConnectionSocket):
                 'dewpoint2 FLOAT);'
             )
             if not msg_format:
-                msg_format = 'T1={0:.1f} H1={1:.1f} D1={2:.1f} T2={3:.1f} H2={4:.1f} D2={5:.1f}'
+                msg_format = 'Sn={serial} T1={0:.1f} H1={1:.1f} D1={2:.1f} T2={3:.1f} H2={4:.1f} D2={5:.1f}'
         else:
             raise ValueError('The number-of-probes value must be either 1 or 2. Got {}'.format(nprobes))
 

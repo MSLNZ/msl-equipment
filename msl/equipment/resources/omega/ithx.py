@@ -188,12 +188,22 @@ class iTHX(ConnectionSocket):
            :data:`True` to return the temperature and dew point in celsius,
            :data:`False` for fahrenheit.
         msg_format : :class:`str`, optional
-            The format to use for the INFO :mod:`logging` messages each time data is read
-            from an iServer. The format must use the string formatting operator, ``%``,
-            for example, ``'T=%.1f H=%.1f D=%.1f'``, such that ``msg_format % data`` is valid,
-            where, `data` = `(temperature, humidity, dewpoint)` for a 1-probe sensor and
-            `data` = `(temperature1, humidity1, dewpoint1, temperature2, humidity2, dewpoint2)`
-            for a 2-probe sensor.
+            The format to use for the INFO :mod:`logging` messages each time
+            data is read from an iServer. The format must use the
+            :meth:`str.format` syntax, ``{}``. The positional arguments to
+            :meth:`str.format` are the values from the iServer, where the values
+            are `(temperature, humidity, dewpoint)` for a 1-probe sensor and
+            `(temperature1, humidity1, dewpoint1, temperature2, humidity2, dewpoint2)`
+            for a 2-probe sensor. The keyword arguments to :meth:`str.format`
+            are the attributes of an :class:`~.EquipmentRecord`.
+
+            Examples:
+
+            * T={0:.1f} H={1:.1f} D={2:.1f}
+            * {connection[address]} T={0} H={1} D={2}
+            * T1={0} T2={3} H1={1} H2={4} D1={2} D2={5}
+            * {alias} {serial} -> T={0:.2f} H={1:.2f} D={2:.2f}
+
         db_timeout : :class:`float`, optional
             The number of seconds the connection to the database should wait for the
             lock to go away until raising an exception.
@@ -201,6 +211,8 @@ class iTHX(ConnectionSocket):
         if os.path.isdir(path):
             filename = self.equipment_record.model + '_' + self.equipment_record.serial + '.sqlite3'
             path = os.path.join(path, filename)
+
+        record_as_dict = self.equipment_record.to_dict()
 
         db = sqlite3.connect(path, timeout=db_timeout)
         self.log_info('start logging to {}'.format(path))
@@ -214,7 +226,7 @@ class iTHX(ConnectionSocket):
                 'dewpoint FLOAT);'
             )
             if not msg_format:
-                msg_format = 'T=%.1f H=%.1f DP=%.1f'
+                msg_format = 'T={0:.1f} H={1:.1f} D={2:.1f}'
         elif nprobes == 2:
             db.execute(
                 'CREATE TABLE IF NOT EXISTS data ('
@@ -227,7 +239,7 @@ class iTHX(ConnectionSocket):
                 'dewpoint2 FLOAT);'
             )
             if not msg_format:
-                msg_format = 'T1=%.1f H1=%.1f DP1=%.1f T2=%.1f H2=%.1f DP2=%.1f'
+                msg_format = 'T1={0:.1f} H1={1:.1f} D1={2:.1f} T2={3:.1f} H2={4:.1f} D2={5:.1f}'
         else:
             raise ValueError('The number-of-probes value must be either 1 or 2. Got {}'.format(nprobes))
 
@@ -244,7 +256,7 @@ class iTHX(ConnectionSocket):
                     data = self.temperature_humidity_dewpoint(probe=1, celsius=celsius, nbytes=nbytes)
                     if nprobes == 2:
                         data += self.temperature_humidity_dewpoint(probe=2, celsius=celsius, nbytes=nbytes)
-                    self.log_info(msg_format, *data)
+                    self.log_info(msg_format.format(*data, **record_as_dict))
                 except MSLTimeoutError:
                     while True:
                         try:
@@ -266,9 +278,9 @@ class iTHX(ConnectionSocket):
                         db.execute('INSERT INTO data VALUES (?, ?, ?, ?, ?, ?, ?);', results)
                     db.commit()
                     db.close()
-                except sqlite3.OperationalError as e:  # database is locked, someone is reading data
+                except sqlite3.DatabaseError as e:
                     db.close()
-                    self.log_error('sqlite3.OperationalError: ' + str(e))
+                    self.log_error('{}: {}'.format(e.__class__.__name__, e))
                 else:
                     time.sleep(max(0.0, wait - (time.time() - t0)))
 

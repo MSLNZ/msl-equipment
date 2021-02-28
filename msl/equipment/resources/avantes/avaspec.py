@@ -625,11 +625,11 @@ class Avantes(ConnectionSDK):
         ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
-        fpga = (c_ubyte * 16)()
-        fm = (c_ubyte * 16)()
-        dll = (c_ubyte * 16)()
+        fpga = create_string_buffer(16)
+        fm = create_string_buffer(16)
+        dll = create_string_buffer(16)
         self.sdk.AVS_GetVersionInfo(self._handle, fpga, fm, dll)
-        return [string_at(addressof(obj)).decode() for obj in [fpga, fm, dll]]
+        return tuple(obj.value.decode() for obj in [fpga, fm, dll])
 
     def get_data(self):
         """Returns the pixel values of the last performed measurement.

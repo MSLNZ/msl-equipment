@@ -1028,8 +1028,9 @@ class Avantes(ConnectionSDK):
 
     def disconnect(self):
         """Closes communication with the spectrometer."""
-        self.deactivate()
-        self.done()
+        if self._handle is not None:
+            self.deactivate()
+            self.done()
 
     def get_ip_config(self):
         """Retrieve IP settings from the spectrometer.
@@ -1684,5 +1685,3 @@ class Avantes(ConnectionSDK):
             If there was an error.
         """
         self.sdk.AVS_UseHighResAdc(self._handle, bool(enable))
-
-

@@ -73,6 +73,12 @@ class Connection(object):
     def __del__(self):
         self.disconnect()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.disconnect()
+
     def raise_exception(self, msg):
         """Raise a :exc:`~.MSLConnectionError`.
 

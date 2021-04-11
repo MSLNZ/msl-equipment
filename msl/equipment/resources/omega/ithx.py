@@ -21,7 +21,7 @@ try:
 except NameError:
     ConnectionResetError = socket.error  # for Python 2.7
 
-from msl.equipment.exceptions import OmegaError, MSLTimeoutError
+from msl.equipment.exceptions import OmegaError
 from msl.equipment.connection_socket import ConnectionSocket
 from msl.equipment.resources import register
 
@@ -269,17 +269,17 @@ class iTHX(ConnectionSocket):
                     if nprobes == 2:
                         data += self.temperature_humidity_dewpoint(probe=2, celsius=celsius, nbytes=nbytes)
                     self.log_info(msg_format.format(*data, **record_as_dict))
-                except MSLTimeoutError:
+                    results.extend(data)
+                except Exception as e:
+                    self.log_error('{}: {}'.format(e.__class__.__name__, e))
                     while True:
                         try:
                             self._connect()
-                        except MSLTimeoutError:
+                        except:
                             pass
                         else:
                             break
                     continue
-                else:
-                    results.extend(data)
 
                 # save the values to the database and then wait
                 try:

@@ -1,3 +1,4 @@
+import time
 import socket
 import threading
 
@@ -84,6 +85,8 @@ def test_omega_ithx_iserver():
         thread = threading.Thread(target=simulate_omega_iserver, args=(address, port, term))
         thread.daemon = True
         thread.start()
+
+        time.sleep(1)
 
         dev = record.connect(demo=False)
         assert isinstance(dev, iTHX)

@@ -18,43 +18,36 @@ def teardown_module():
 def test_database_io_errors():
 
     # no <path></path> tag
-    with pytest.raises(IOError) as err:
+    with pytest.raises(IOError, match=r'<path>'):
         Config(os.path.join(ROOT_DIR, 'db_err0.xml')).database()
-    assert '<path>' in str(err.value)
 
     # database file does not exist
     with pytest.raises(IOError):
         Config(os.path.join(ROOT_DIR, 'db_err1.xml')).database()
 
     # unsupported database file
-    with pytest.raises(IOError) as err:
+    with pytest.raises(IOError, match=r'database'):
         Config(os.path.join(ROOT_DIR, 'db_err2.xml')).database()
-    assert 'database' in str(err.value)
 
     # more than 1 Sheet in the Excel database
-    with pytest.raises(IOError) as err:
+    with pytest.raises(ValueError, match=r'You must specify the name of the sheet to read'):
         Config(os.path.join(ROOT_DIR, 'db_err3.xml')).database()
-    assert 'sheets:\n  Equipment, Connections' in str(err.value)
 
     # the 'equipment' item in the xml file is not a valid Equipment Record
-    with pytest.raises(AttributeError) as err:
+    with pytest.raises(AttributeError, match=r'attributes'):
         Config(os.path.join(ROOT_DIR, 'db_err4.xml')).database()
-    assert 'attributes' in str(err.value)
 
     # the 'equipment' item in the xml file is not a unique Equipment Record
-    with pytest.raises(AttributeError) as err:
+    with pytest.raises(AttributeError, match=r'unique'):
         Config(os.path.join(ROOT_DIR, 'db_err5.xml')).database()
-    assert 'unique' in str(err.value)
 
     # the 'equipment' item in the xml file is has multiple aliases
-    with pytest.raises(ValueError) as err:
+    with pytest.raises(ValueError, match=r'aliases'):
         Config(os.path.join(ROOT_DIR, 'db_err6.xml')).database()
-    assert 'aliases' in str(err.value)
 
     # invalid Sheet name in Excel database
-    with pytest.raises(ValueError) as err:
+    with pytest.raises(ValueError, match=r'There is no sheet'):
         Config(os.path.join(ROOT_DIR, 'db_err7.xml')).database()
-    assert 'There is no sheet named \'Equipment\'' in str(err.value)
 
 
 def test_database():

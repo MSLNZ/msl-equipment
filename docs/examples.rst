@@ -15,4 +15,4 @@ will also show how one can use **MSL-Equipment** in their own research projects.
 * `pr-single-photons <https://github.com/MSLNZ/pr-single-photons>`_
 
 
-.. _repository: https://github.com/MSLNZ/msl-equipment/tree/master/msl/examples/equipment
+.. _repository: https://github.com/MSLNZ/msl-equipment/tree/main/msl/examples/equipment

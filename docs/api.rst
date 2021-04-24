@@ -126,5 +126,5 @@ Package Structure
 
 .. _PyVISA: https://pyvisa.readthedocs.io/en/stable/index.html
 .. _NI-DAQ: https://nidaqmx-python.readthedocs.io/en/latest/index.html
-.. _example.xml: https://github.com/MSLNZ/msl-equipment/blob/master/msl/examples/equipment/example.xml
+.. _example.xml: https://github.com/MSLNZ/msl-equipment/blob/main/msl/examples/equipment/example.xml
 .. _Prologix: https://prologix.biz/

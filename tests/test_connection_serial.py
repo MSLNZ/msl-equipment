@@ -31,16 +31,16 @@ def test_connection_serial_read():
     term = b'\r\n'
 
     # simulate a Serial port
-    master, slave = pty.openpty()
+    primary, secondary = pty.openpty()
 
-    thread = threading.Thread(target=echo_server, args=(master, term), daemon=True)
+    thread = threading.Thread(target=echo_server, args=(primary, term), daemon=True)
     thread.start()
 
     time.sleep(0.5)  # allow some time for the echo server to start
 
     record = EquipmentRecord(
         connection=ConnectionRecord(
-            address='ASRL' + os.ttyname(slave),
+            address='ASRL' + os.ttyname(secondary),
             backend=Backend.MSL,
             properties={
                 'read_termination': term,
@@ -88,16 +88,16 @@ def test_connection_serial_timeout():
     term = b'\r\n'
 
     # simulate a Serial port
-    master, slave = pty.openpty()
+    primary, secondary = pty.openpty()
 
-    thread = threading.Thread(target=echo_server, args=(master, term), daemon=True)
+    thread = threading.Thread(target=echo_server, args=(primary, term), daemon=True)
     thread.start()
 
     time.sleep(0.5)  # allow some time for the echo server to start
 
     record = EquipmentRecord(
         connection=ConnectionRecord(
-            address='ASRL' + os.ttyname(slave),
+            address='ASRL' + os.ttyname(secondary),
             backend=Backend.MSL,
             properties={
                 'termination': term,

@@ -1,7 +1,7 @@
 """
 Uses PyVISA_ as the backend to communicate with the equipment.
 
-.. _PyVISA: https://pyvisa.readthedocs.io/en/master/
+.. _PyVISA: https://pyvisa.readthedocs.io/en/latest/
 """
 try:
     import pyvisa

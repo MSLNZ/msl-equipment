@@ -7,7 +7,7 @@ To install **MSL-Equipment** run:
 
 .. code-block:: console
 
-   pip install https://github.com/MSLNZ/msl-equipment/archive/master.zip
+   pip install https://github.com/MSLNZ/msl-equipment/archive/main.zip
 
 Alternatively, using the `MSL Package Manager`_ run:
 

@@ -162,13 +162,13 @@ Please follow the `style guide`_.
 .. _style guide: https://msl-package-manager.readthedocs.io/en/latest/developers_guide.html#edit-the-source-code-using-the-style-guide
 .. _fork: https://help.github.com/articles/fork-a-repo/
 .. _repository: https://github.com/MSLNZ/msl-equipment
-.. _msl/equipment/resources: https://github.com/MSLNZ/msl-equipment/tree/master/msl/equipment/resources
-.. _msl/examples/equipment/resources: https://github.com/MSLNZ/msl-equipment/tree/master/msl/examples/equipment/resources
-.. _def test_find_resource_class(): https://github.com/MSLNZ/msl-equipment/blob/master/tests/resources/test_init.py
+.. _msl/equipment/resources: https://github.com/MSLNZ/msl-equipment/tree/main/msl/equipment/resources
+.. _msl/examples/equipment/resources: https://github.com/MSLNZ/msl-equipment/tree/main/msl/examples/equipment/resources
+.. _def test_find_resource_class(): https://github.com/MSLNZ/msl-equipment/blob/main/tests/resources/test_init.py
 .. _condatests.py: https://msl-package-manager.readthedocs.io/en/latest/new_package_readme.html#create-readme-condatests
-.. _docs/_api: https://github.com/MSLNZ/msl-equipment/tree/master/docs/_api
-.. _docs/_api/msl.equipment.resources.rst: https://github.com/MSLNZ/msl-equipment/blob/master/docs/_api/msl.equipment.resources.rst
-.. _docs/resources.rst: https://github.com/MSLNZ/msl-equipment/blob/master/docs/resources.rst
+.. _docs/_api: https://github.com/MSLNZ/msl-equipment/tree/main/docs/_api
+.. _docs/_api/msl.equipment.resources.rst: https://github.com/MSLNZ/msl-equipment/blob/main/docs/_api/msl.equipment.resources.rst
+.. _docs/resources.rst: https://github.com/MSLNZ/msl-equipment/blob/main/docs/resources.rst
 .. _pull request: https://help.github.com/articles/creating-a-pull-request-from-a-fork/
 
 .. _Bentham Instruments Ltd: https://www.bentham.co.uk/

@@ -82,9 +82,9 @@ Index
 
 * :ref:`modindex`
 
-.. _configuration file: https://github.com/MSLNZ/msl-equipment/tree/master/msl/examples/equipment/example.xml
-.. _registry database: https://github.com/MSLNZ/msl-equipment/tree/master/msl/examples/equipment/equipment-register.csv
-.. _connections database: https://github.com/MSLNZ/msl-equipment/tree/master/msl/examples/equipment/connections.csv
+.. _configuration file: https://github.com/MSLNZ/msl-equipment/tree/main/msl/examples/equipment/example.xml
+.. _registry database: https://github.com/MSLNZ/msl-equipment/tree/main/msl/examples/equipment/equipment-register.csv
+.. _connections database: https://github.com/MSLNZ/msl-equipment/tree/main/msl/examples/equipment/connections.csv
 
 
 .. [#f1] Companies that sell equipment that is used for scientific research are identified in this guide in order

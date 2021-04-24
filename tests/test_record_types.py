@@ -621,9 +621,8 @@ def test_equipment_record():
     #
     # Check setting invalid `calibrations`
     #
-    with pytest.raises(TypeError) as err:
+    with pytest.raises(TypeError, match=r"'int' object is not iterable"):
         EquipmentRecord(calibrations=0)
-    assert str(err.value).endswith("'int' object is not iterable")
     with pytest.raises(TypeError):  # not a iterable of CalibrationRecord
         EquipmentRecord(calibrations=[1])
     with pytest.raises(TypeError):  # not a iterable of CalibrationRecord

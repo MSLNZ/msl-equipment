@@ -33,7 +33,8 @@ def test_connection_serial_read():
     # simulate a Serial port
     primary, secondary = pty.openpty()
 
-    thread = threading.Thread(target=echo_server, args=(primary, term), daemon=True)
+    thread = threading.Thread(target=echo_server, args=(primary, term))
+    thread.daemon = True
     thread.start()
 
     time.sleep(0.5)  # allow some time for the echo server to start
@@ -90,7 +91,8 @@ def test_connection_serial_timeout():
     # simulate a Serial port
     primary, secondary = pty.openpty()
 
-    thread = threading.Thread(target=echo_server, args=(primary, term), daemon=True)
+    thread = threading.Thread(target=echo_server, args=(primary, term))
+    thread.daemon = True
     thread.start()
 
     time.sleep(0.5)  # allow some time for the echo server to start

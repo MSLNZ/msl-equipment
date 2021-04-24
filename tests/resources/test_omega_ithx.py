@@ -10,7 +10,7 @@ from msl.equipment.resources.omega import iTHX
 def simulate_omega_iserver(address, port, term):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((address, port))
-    s.listen(1)
+    s.listen(10)
     conn, _ = s.accept()
 
     while True:

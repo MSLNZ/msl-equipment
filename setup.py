@@ -1,7 +1,7 @@
 import os
 import re
 import sys
-import subprocess
+from subprocess import check_output
 from setuptools import (
     setup,
     find_packages,
@@ -12,7 +12,7 @@ from setuptools import (
 class ApiDocs(Command):
     """
     A custom command that calls sphinx-apidoc
-    see: https://www.sphinx-doc.org/en/latest/man/sphinx-apidoc.html
+    see: https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html
     """
     description = 'builds the api documentation using sphinx-apidoc'
     user_options = []
@@ -37,17 +37,16 @@ class ApiDocs(Command):
         if sphinx.version_info[:2] < (1, 7):
             from sphinx.apidoc import main
         else:
-            from sphinx.ext.apidoc import main  # Sphinx also changed the location of apidoc.main
+            from sphinx.ext.apidoc import main
             command.pop(0)
 
         main(command)
-        sys.exit(0)
 
 
 class BuildDocs(Command):
     """
     A custom command that calls sphinx-build
-    see: https://www.sphinx-doc.org/en/latest/man/sphinx-build.html
+    see: https://www.sphinx-doc.org/en/master/man/sphinx-build.html
     """
     description = 'builds the documentation using sphinx-build'
     user_options = []
@@ -59,8 +58,6 @@ class BuildDocs(Command):
         pass
 
     def run(self):
-        import sphinx
-
         command = [
             None,  # in Sphinx < 1.7.0 the first command-line argument was parsed, in 1.7.0 it became argv[1:]
             '-b', 'html',  # the builder to use, e.g., create a HTML version of the documentation
@@ -70,14 +67,14 @@ class BuildDocs(Command):
             './docs/_build/html',  # where to save the output files
         ]
 
+        import sphinx
         if sphinx.version_info[:2] < (1, 7):
             from sphinx import build_main
         else:
-            from sphinx.cmd.build import build_main  # Sphinx also changed the location of build_main
+            from sphinx.cmd.build import build_main
             command.pop(0)
 
         build_main(command)
-        sys.exit(0)
 
 
 def read(filename):
@@ -86,50 +83,66 @@ def read(filename):
 
 
 def fetch_init(key):
-    # open the __init__.py file to determine the value instead of importing the package to get the value
-    init_text = read('msl/equipment/__init__.py')
-    return re.search(r'{}\s*=\s*(.*)'.format(key), init_text).group(1).strip('\'\"')
+    # open the __init__.py file to determine a value instead of importing the package
+    return re.search(r'{}\s*=\s*(.+)'.format(key), read(init_original)).group(1).strip('\'\"')
 
 
 def get_version():
     init_version = fetch_init('__version__')
-    if 'dev' not in init_version:
+    if 'dev' not in init_version or testing:
         return init_version
 
-    if ('develop' in sys.argv) or (os.path.join('msl-equipment', 'setup.py') in sys.argv[0]):
+    if 'develop' in sys.argv:
         # then installing in editable (develop) mode
         #   python setup.py develop
         #   pip install -e .
-        suffix = 'editable'
-    else:
-        file_dir = os.path.dirname(os.path.abspath(__file__))
+        # following PEP-440, the local version identifier starts with '+'
+        return init_version + '+editable'
+
+    # append the commit hash to __version__
+    setup_dir = os.path.dirname(os.path.realpath(__file__))
+    try:
+        # write all error messages from git to devnull
+        with open(os.devnull, mode='w') as devnull:
+            out = check_output(['git', 'rev-parse', 'HEAD'], cwd=setup_dir, stderr=devnull)
+            sha1 = out.strip().decode()
+    except:
+        # the git executable is not available, manually parse .git directory
         try:
-            # write all error messages from git to devnull
-            with open(os.devnull, 'w') as devnull:
-                out = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=file_dir, stderr=devnull)
+            git_dir = os.path.join(setup_dir, '.git')
+            with open(os.path.join(git_dir, 'HEAD'), mode='rt') as fp1:
+                line = fp1.readline().strip()
+                if line.startswith('ref:'):
+                    _, ref_path = line.split()
+                    with open(os.path.join(git_dir, ref_path), mode='rt') as fp2:
+                        sha1 = fp2.readline().strip()
+                else:  # detached HEAD
+                    sha1 = line
         except:
-            try:
-                git_dir = os.path.join(file_dir, '.git')
-                with open(os.path.join(git_dir, 'HEAD'), mode='rt') as fp1:
-                    line = fp1.readline().strip()
-                    if line.startswith('ref:'):
-                        _, ref_path = line.split()
-                        with open(os.path.join(git_dir, ref_path), mode='rt') as fp2:
-                            sha1 = fp2.readline().strip()
-                    else:  # detached HEAD
-                        sha1 = line
-            except:
-                return init_version
-        else:
-            sha1 = out.strip().decode('ascii')
+            return init_version
 
-        suffix = sha1[:7]
-
-    if init_version.endswith(suffix):
+    suffix = sha1[:7]
+    if not suffix or init_version.endswith(suffix):
         return init_version
 
     # following PEP-440, the local version identifier starts with '+'
-    return init_version + '+' + suffix
+    dev_version = init_version + '+' + suffix
+
+    with open(init_original) as fp:
+        init_source = fp.read()
+
+    if os.path.isfile(init_backup):
+        os.remove(init_backup)
+    os.rename(init_original, init_backup)
+
+    with open(init_original, mode='wt') as fp:
+        fp.write(re.sub(
+            r'__version__\s*=.+',
+            "__version__ = '{}'".format(dev_version),
+            init_source
+        ))
+
+    return dev_version
 
 
 install_requires = [
@@ -150,12 +163,16 @@ tests_require = [
     'pyvisa-py<0.5;python_version<="3.5"',
 ]
 
+docs_require = ['sphinx', 'sphinx_rtd_theme']
+
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if testing else []
 
 needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
-sphinx = ['sphinx', 'sphinx_rtd_theme'] + install_requires if needs_sphinx else []
+sphinx = docs_require + install_requires if needs_sphinx else []
 
+init_original = 'msl/equipment/__init__.py'
+init_backup = init_original + '.backup'
 version = get_version()
 
 setup(
@@ -189,29 +206,15 @@ setup(
     setup_requires=sphinx + pytest_runner,
     tests_require=tests_require,
     install_requires=install_requires,
-    extras_require={'tests': tests_require},
+    extras_require={
+        'tests': tests_require,
+        'docs': docs_require,
+    },
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),
     include_package_data=True,
 )
 
-if 'dev' in version and not version.endswith('editable'):
-    # ensure that the value of __version__ is correct if installing the package from an unreleased code base
-    init_path = ''
-    if sys.argv[0] == 'setup.py' and 'install' in sys.argv and not {'--help', '-h'}.intersection(sys.argv):
-        # python setup.py install
-        try:
-            cmd = [sys.executable, '-c', 'import msl.equipment as p; print(p.__file__)']
-            output = subprocess.check_output(cmd, cwd=os.path.dirname(sys.executable))
-            init_path = output.strip().decode()
-        except:
-            pass
-    elif 'egg_info' in sys.argv:
-        # pip install
-        init_path = os.path.dirname(sys.argv[0]) + '/msl/equipment/__init__.py'
-
-    if init_path and os.path.isfile(init_path):
-        with open(init_path, mode='r+') as fp:
-            source = fp.read()
-            fp.seek(0)
-            fp.write(re.sub(r'__version__\s*=.*', "__version__ = '{}'".format(version), source))
+if os.path.isfile(init_backup):
+    os.remove(init_original)
+    os.rename(init_backup, init_original)

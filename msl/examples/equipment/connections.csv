@@ -1,5 +1,0 @@
-Manufacturer,Model Number,Serial Number,Backend,Address,Properties
-Fluke,8506A,A10008,PyVISA,GPIB::3,
-Hewlett Packard,34401A,D10011,MSL,COM4,baud_rate=19200
-Stanford Research Systems,SR850 DSP,G10014,MSL,COM3,
-Hewlett Packard,3478A,D10011,PyVISA,GPIB::4,

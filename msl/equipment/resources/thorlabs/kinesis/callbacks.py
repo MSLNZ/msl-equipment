@@ -6,7 +6,6 @@ message queue.
 
    from msl.equipment import Config
    from msl.equipment.resources.thorlabs import MotionControlCallback
-   from msl.examples.equipment import EXAMPLES_DIR
 
    @MotionControlCallback
    def msg_callback():
@@ -15,7 +14,7 @@ message queue.
    # The "example2.xml" configuration file contains the following element:
    # <equipment alias="filter_flipper" manufacturer="Thorlabs" model="MFF101/M"/>
 
-   db = Config(os.path.join(EXAMPLES_DIR, 'example2.xml')).database()
+   db = Config('config.xml').database()
 
    flipper = db.equipment['filter_flipper'].connect()
    flipper.register_message_callback(msg_callback)

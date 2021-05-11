@@ -1,8 +1,0 @@
-Model	Manufacturer	Date calibrated	Calibration Cycle	Serial	Description	Location	Category
-3458A	Agilent	29.04.14	5	G00001	Digital Multimeter	Light Lab	DMM
-Innova 70c Spectrum	Coherent Scientific			G00002	Innova 70c Spectrum Laser	Light Lab	Laser
-DTMc300V_sub	Bentham			G00003	Double monochromator	Light Lab	Monochromator
-1049	MSL - Light Standards	7.11.06	5	G00004	I-V Converter	Light Lab	
-TDS1012B	Tektronix			G00005	Oscilloscope - 100MHz Dual channel	Primary Lab	Oscilloscope
-AH1100	Andeen-Hagerling			G00006	Standard Capacitor frame	Primary Lab	
-4210	Leeds & Northrup			G00007	1 ohm Resistor T24	Primary Lab	

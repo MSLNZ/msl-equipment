@@ -133,6 +133,6 @@ in to the **MSL-Equipment** package. For example:
 .. code-block:: python
 
   >>> from msl.equipment import Config
-  >>> cfg = Config('/path/to/my/configuration/file.xml')  # doctest: +SKIP
+  >>> cfg = Config('/path/to/my/configuration/file.xml')
 
 .. _XML: https://www.w3schools.com/Xml/

@@ -10,8 +10,7 @@ creating a :class:`~msl.equipment.config.Config` object. This example loads the 
 .. code-block:: pycon
 
     >>> from msl.equipment import Config
-    >>> from msl.examples.equipment import EXAMPLES_DIR
-    >>> cfg = Config(EXAMPLES_DIR + '/example.xml')
+    >>> cfg = Config('config.xml')
 
 Once a :class:`~msl.equipment.config.Config` object exists you can access of all the
 :class:`~msl.equipment.record_types.EquipmentRecord`\'s and :class:`~msl.equipment.record_types.ConnectionRecord`\'s
@@ -22,9 +21,9 @@ that are contained within the :ref:`Databases <database-formats>` as well as all
 
 .. code-block:: pycon
 
-    >>> db = cfg.database() # doctest: +SKIP
+    >>> db = cfg.database()
     >>> for record in db.records():
-    ...    print(record) # doctest: +SKIP
+    ...    print(record)
     ...
     EquipmentRecord<Fluke|8506A|A10008>
     EquipmentRecord<Oriel|66087|B10009>
@@ -35,25 +34,25 @@ that are contained within the :ref:`Databases <database-formats>` as well as all
     EquipmentRecord<Stanford Research Systems|SR850 DSP|G10014>
     EquipmentRecord<Hewlett Packard|3478A|D10015>
     >>> for record in db.records(manufacturer='H.*P'):
-    ...    print(record) # doctest: +SKIP
+    ...    print(record)
     ...
     EquipmentRecord<Hewlett Packard|34401A|D10011>
     EquipmentRecord<Hewlett Packard|3478A|D10015>
     >>> for conn in db.connections():
-    ...    print(conn) # doctest: +SKIP
+    ...    print(conn)
     ...
     ConnectionRecord<Fluke|8506A|A10008>
     ConnectionRecord<Hewlett Packard|34401A|D10011>
     ConnectionRecord<Stanford Research Systems|SR850 DSP|G10014>
     ConnectionRecord<Hewlett Packard|3478A|D10011>
     >>> for conn in db.connections(address='GPIB'):
-    ...     print(conn) # doctest: +SKIP
+    ...     print(conn)
     ...
     ConnectionRecord<Fluke|8506A|A10008>
     ConnectionRecord<Hewlett Packard|3478A|D10011>
-    >>> db.equipment # doctest: +SKIP
+    >>> db.equipment
     {'dmm': EquipmentRecord<Hewlett Packard|34401A|D10011>}
-    >>> db.equipment['dmm'].connection # doctest: +SKIP
+    >>> db.equipment['dmm'].connection
     ConnectionRecord<Hewlett Packard|34401A|D10011>
 
 Establishing a connection to the equipment is achieved by calling the
@@ -64,8 +63,8 @@ communicating with the equipment.
 
 .. code-block:: pycon
 
-    >>> dmm = db.equipment['dmm'].connect() # doctest: +SKIP
-    >>> dmm.query('*IDN?') # doctest: +SKIP
+    >>> dmm = db.equipment['dmm'].connect()
+    >>> dmm.query('*IDN?')
     'Hewlett Packard,34401A,D10011,A.02.14-02.40-02.14-00.49-03-01'
 
 In addition, the :mod:`~msl.equipment.constants` module contains the package constants.

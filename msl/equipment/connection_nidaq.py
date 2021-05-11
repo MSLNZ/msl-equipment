@@ -27,8 +27,8 @@ class ConnectionNIDAQ(Connection):
 
         .. code-block:: pycon
 
-           >>> nidaqmx = record.connect()  # doctest: +SKIP
-           >>> with nidaqmx.Task() as task:  # doctest: +SKIP
+           >>> nidaqmx = record.connect()
+           >>> with nidaqmx.Task() as task:
            ...     task.ai_channels.add_ai_voltage_chan('Dev1/ai0')
            ...     task.read()
            ...
@@ -38,8 +38,8 @@ class ConnectionNIDAQ(Connection):
 
         .. code-block:: pycon
 
-           >>> import nidaqmx # doctest: +SKIP
-           >>> with nidaqmx.Task() as task:  # doctest: +SKIP
+           >>> import nidaqmx
+           >>> with nidaqmx.Task() as task:
            ...     task.ai_channels.add_ai_voltage_chan('Dev1/ai0')
            ...     task.read()
            ...

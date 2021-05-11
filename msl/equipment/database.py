@@ -259,25 +259,25 @@ class Database(object):
 
         Examples
         --------
-        >>> connections()  # doctest: +SKIP
+        >>> connections()
         a list of all ConnectionRecords
-        >>> connections(manufacturer='Keysight')  # doctest: +SKIP
+        >>> connections(manufacturer='Keysight')
         a list of all ConnectionRecords that have Keysight as the manufacturer
-        >>> records(manufacturer='Agilent|Keysight')  # doctest: +SKIP
+        >>> records(manufacturer='Agilent|Keysight')
         a list of all ConnectionRecords that are from Agilent OR Keysight
-        >>> connections(manufacturer=r'H.*P')  # doctest: +SKIP
+        >>> connections(manufacturer=r'H.*P')
         a list of all ConnectionRecords that have Hewlett Packard (or HP) as the manufacturer
-        >>> connections(manufacturer='Agilent', model='^34')  # doctest: +SKIP
+        >>> connections(manufacturer='Agilent', model='^34')
         a list of all ConnectionRecords that have Agilent as the manufacturer AND a model number beginning with '34'
-        >>> connections(interface=MSLInterface.SERIAL)  # doctest: +SKIP
+        >>> connections(interface=MSLInterface.SERIAL)
         a list of all ConnectionRecords that use SERIAL for the connection bus
-        >>> connections(interface='USB')  # doctest: +SKIP
+        >>> connections(interface='USB')
         a list of all ConnectionRecords that use USB for the connection bus
-        >>> connections(backend=Backend.PyVISA)  # doctest: +SKIP
+        >>> connections(backend=Backend.PyVISA)
         a list of all ConnectionRecords that use PyVISA as the backend
-        >>> connections(backend='MSL')  # doctest: +SKIP
+        >>> connections(backend='MSL')
         a list of all ConnectionRecords that use MSL as the backend
-        >>> connections(properties={'baud_rate': 115200})  # doctest: +SKIP
+        >>> connections(properties={'baud_rate': 115200})
         a list of all ConnectionRecords that specify a baud rate equal to 115200 in the Properties field
 
         Returns
@@ -314,21 +314,21 @@ class Database(object):
 
         Examples
         --------
-        >>> records()  # doctest: +SKIP
+        >>> records()
         a list of all EquipmentRecords
-        >>> records(manufacturer='Agilent')  # doctest: +SKIP
+        >>> records(manufacturer='Agilent')
         a list of all EquipmentRecords that are from Agilent
-        >>> records(manufacturer='Agilent|Keysight')  # doctest: +SKIP
+        >>> records(manufacturer='Agilent|Keysight')
         a list of all EquipmentRecords that are from Agilent OR Keysight
-        >>> records(manufacturer='Agilent', model='3458A')  # doctest: +SKIP
+        >>> records(manufacturer='Agilent', model='3458A')
         a list of all EquipmentRecords that are from Agilent AND that have the model number 3458A
-        >>> records(manufacturer='Agilent', model='3458A', serial='MY45046470')  # doctest: +SKIP
+        >>> records(manufacturer='Agilent', model='3458A', serial='MY45046470')
         a list of only one EquipmentRecord (if the equipment record exists, otherwise an empty list)
-        >>> records(manufacturer=r'H.*P')  # doctest: +SKIP
+        >>> records(manufacturer=r'H.*P')
         a list of all EquipmentRecords that have Hewlett Packard (or HP) as the manufacturer
-        >>> records(description='I-V Converter')  # doctest: +SKIP
+        >>> records(description='I-V Converter')
         a list of all EquipmentRecords that contain 'I-V Converter' in the description field
-        >>> records(connection=True)  # doctest: +SKIP
+        >>> records(connection=True)
         a list of all EquipmentRecords that can be connected to
 
         Returns

@@ -1,5 +1,0 @@
-msl-loadlib
-https://github.com/MSLNZ/msl-io/archive/main.tar.gz
-numpy
-pyserial>=3.3
-python-dateutil

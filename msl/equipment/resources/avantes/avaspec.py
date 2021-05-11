@@ -739,8 +739,8 @@ class Avantes(ConnectionSDK):
         ~msl.equipment.exceptions.AvantesError
             If there was an error.
         """
-        out = Avantes.get_list(path=self.path)
-        if len(out) < 1:
+        out = Avantes.find(path=self.path)
+        if not out:
             self.raise_exception('Cannot activate. No devices found.')
         for item in out:
             if item.SerialNumber.decode() == self.equipment_record.serial:
@@ -955,7 +955,7 @@ class Avantes(ConnectionSDK):
         return self.sdk.AVS_GetHandleFromSerial(serial)
 
     @staticmethod
-    def get_list(path='avaspecx64.dll', port_id=-1, nmax=16):
+    def find(path='avaspecx64.dll', port_id=-1, nmax=16):
         """Returns device information for each spectrometer that is connected.
 
         Parameters
@@ -969,6 +969,7 @@ class Avantes(ConnectionSDK):
                 * 0: Use USB port
                 * 1..255: Not supported in v9.7 of the SDK
                 * 256: Use Ethernet port (AS7010)
+
         nmax : :class:`int`, optional
             The maximum number of devices that can be in the list.
 
@@ -982,7 +983,7 @@ class Avantes(ConnectionSDK):
 
         ret = lib.AVS_Init(port_id)
         if ret == 0:
-            raise AvantesError('No Avantes devices were found')
+            return []
 
         size = nmax * sizeof(AvsIdentityType)
         required_size = c_uint32()

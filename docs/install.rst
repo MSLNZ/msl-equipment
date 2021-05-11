@@ -1,15 +1,16 @@
 .. _equipment-install:
 
+=====================
 Install MSL-Equipment
 =====================
 
-To install **MSL-Equipment** run:
+To install **MSL-Equipment** run
 
 .. code-block:: console
 
    pip install https://github.com/MSLNZ/msl-equipment/archive/main.zip
 
-Alternatively, using the `MSL Package Manager`_ run:
+Alternatively, using the `MSL Package Manager`_ run
 
 .. code-block:: console
 
@@ -25,12 +26,17 @@ Dependencies
 * numpy_
 * pyserial_
 * python-dateutil_
-* PyVISA_ or PyVISA-py_, optional
-* NI-DAQmx_, optional
 
-Some of the :ref:`equipment-resources` might not work in your application because the resource might depend on an external
-dependency (e.g., the SDK provided by a manufacturer) and this external dependency might not be available for
-your operating system.
+Optional Dependencies
+---------------------
+* PyVISA_
+* PyVISA-py_
+* NI-DAQmx_
+
+Some of the :ref:`equipment-resources` might not work in your application
+because the resource might depend on an external dependency (e.g., the SDK
+provided by a manufacturer) and this external dependency might not be
+available for your operating system.
 
 .. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/latest/
 .. _PyVISA: https://pyvisa.readthedocs.io/en/latest/

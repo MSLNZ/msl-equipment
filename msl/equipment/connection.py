@@ -79,16 +79,18 @@ class Connection(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.disconnect()
 
-    def raise_exception(self, msg):
-        """Raise a :exc:`~.MSLConnectionError`.
+    def raise_exception(self, message):
+        """Raise an :exc:`~.MSLConnectionError` and log the error message.
 
         Parameters
         ----------
-        msg : :class:`str`
-            The message to display when the exception is raised.
+        message : :class:`str` or :exc:`Exception`
+            The message to display in the exception class that was set by
+            :meth:`.set_exception_class`. If an :exc:`Exception` object then
+            its string representation is used as the message.
         """
-        self.log_error('{!r} {}'.format(self, msg))
-        raise self._exception_handler('{!r}\n{}'.format(self, msg))
+        self.log_error('{!r} {}'.format(self, message))
+        raise self._exception_handler('{!r}\n{}'.format(self, message))
 
     @staticmethod
     def convert_to_enum(obj, enum, prefix=None, to_upper=False, strict=True):

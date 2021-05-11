@@ -52,7 +52,7 @@ class PicoScopeApi(PicoScope):
 
         if open_unit and open_unit_async is None:
             self.open_unit(self._auto_select_power, resolution)
-        elif open_unit_async :
+        elif open_unit_async:
             self.open_unit_async(self._auto_select_power, resolution)
 
     def errcheck_api(self, result, func, args):
@@ -568,6 +568,10 @@ class PicoScopeApi(PicoScope):
         opts = self._get_optional_open_args(resolution)
         self.OpenUnitAsync(byref(status), *opts)
         self._auto_select_power = auto_select_power
+        if status.value == 0:
+            self.raise_exception(
+                'The open async operation was disallowed because another open operation is in progress'
+            )
         return status.value
 
     def open_unit_progress(self):

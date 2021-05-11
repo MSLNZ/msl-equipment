@@ -4,12 +4,15 @@ Establishes a connection to the ``DATARAYOCX`` library developed by DataRay Inc.
 import os
 
 import numpy as np
+from msl.loadlib import (
+    Client64,
+    Server32Error,
+    ConnectionTimeoutError,
+)
 
 from msl.equipment.connection import Connection
 from msl.equipment.resources import register
 from msl.equipment.exceptions import DataRayError
-
-from msl.loadlib import Client64, Server32Error
 
 
 @register(manufacturer=r'Data\s*Ray', model=r'.')
@@ -41,30 +44,38 @@ class DataRayOCX64(Connection):
         record : :class:`~.EquipmentRecord`
             A record from an :ref:`equipment-database`.
         """
-        self._client = None
         super(DataRayOCX64, self).__init__(record)
         self.set_exception_class(DataRayError)
 
-        error_connecting = None
+        self._client = None
+        error = None
         try:
             self._client = Client64(
-                'datarayocx_32',
-                append_sys_path=os.path.dirname(__file__),
-                timeout=10,
+                os.path.join(os.path.dirname(__file__), 'datarayocx_32.py'),
+                prog_id_prefix=record.connection.address[5:],
                 **record.connection.properties
             )
-        except Exception as err:
-            error_connecting = err
+        except ConnectionTimeoutError as err:
+            error = err.reason
 
-        if error_connecting:
-            self.raise_exception('Cannot connect to the DataRay Beam Profiler.\n{}'.format(error_connecting))
+        # check for errors instantiating the DataRayOCX32 class
+        if error:
+            self.raise_exception(
+                'Cannot connect to the DataRay Beam Profiler.\n{}'.format(error)
+            )
+
+        # check for errors starting the camera
+        error = self._client.request32('error')
+        if error:
+            self.disconnect()
+            self.raise_exception('Error initializing the DataRay OCX library\n{}'.format(error))
 
         self.log_debug('Connected to {}'.format(record.connection))
 
     def wait_to_configure(self):
         """Wait until the camera has been configured.
 
-        This is a blocking call until you close the popup Window.
+        This is a blocking call and waits until you close the popup Window.
         """
         self.log_debug('DataRayOCX64.wait_to_configure()')
         self._client.request32('wait_to_configure')
@@ -74,8 +85,8 @@ class DataRayOCX64(Connection):
 
         Parameters
         ----------
-        timeout : :class:`float`
-            The maximum number of seconds to wait to capture the image.
+        timeout : :class:`float`, optional
+            The maximum number of seconds to wait to capture an image.
 
         Returns
         -------
@@ -141,30 +152,36 @@ class DataRayOCX64(Connection):
         """
         self.log_debug('DataRayOCX64.acquire(timeout={})'.format(timeout))
 
-        info = None
-        err_msg = None
+        info = {}
+        error = None
         try:
-            info = self._client.request32('capture', float(timeout))
+            info = self._client.request32('capture', timeout)
         except Server32Error as err:
-            err_msg = err.value  # avoid raising nested exceptions in Python 2.7
-        else:
-            shape = info.pop('shape')
-            if not info['is_full_resolution']:
-                shape = (shape[0]//2, shape[1]//2)
+            error = err  # TODO avoid raising nested exceptions in Python 2.7
 
-            info['image'] = np.asarray(info['image']).reshape(shape)
-            info['profile_x'] = np.asarray(info['profile_x'])[:shape[1]]
-            info['profile_y'] = np.asarray(info['profile_y'])[:shape[0]]
+        if error:
+            self.raise_exception(error)
 
-        if err_msg:
-            self.log_error(err_msg)
-            self.raise_exception(err_msg)
+        shape = info.pop('shape')
+        if not info['is_full_resolution']:
+            shape = (shape[0]//2, shape[1]//2)
 
+        info['image'] = np.asarray(info['image']).reshape(shape)
+        info['profile_x'] = np.asarray(info['profile_x'])[:shape[1]]
+        info['profile_y'] = np.asarray(info['profile_y'])[:shape[0]]
         return info
 
     def disconnect(self):
         """Disconnect from the camera."""
-        if self._client is not None:
-            self._client.shutdown_server32()
-            self._client = None
-            self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
+        if not self._client:
+            return
+
+        try:
+            stdout, stderr = self._client.shutdown_server32()
+            stdout.close()
+            stderr.close()
+        except:
+            pass
+
+        self._client = None
+        self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))

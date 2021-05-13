@@ -1,5 +1,6 @@
 """
-Example showing how to communicate with an SHOT-702 from OptoSigma.
+Example showing how to communicate with a SHOT-702 (2-axis stage controller)
+from OptoSigma.
 """
 import time
 
@@ -13,7 +14,7 @@ record = EquipmentRecord(
     manufacturer='OptoSigma',
     model='SHOT-702',
     connection=ConnectionRecord(
-        address='COM1',  # update for your serial port number
+        address='COM1',  # update for your controller
         backend=Backend.MSL,
         properties=dict(
             termination='\r\n',
@@ -24,10 +25,12 @@ record = EquipmentRecord(
 )
 
 
+# callback used by the "wait" method
 def show_status(*args):
     print('  position1={}, position2={}, stopped={}, is_moving={}'.format(*args))
 
 
+# connect to the controller
 shot = record.connect()
 
 # move stage 1 to the home position

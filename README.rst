@@ -2,7 +2,7 @@
 Welcome to MSL-Equipment
 ========================
 
-|docs|
+|docs| |github tests|
 
 Purpose
 -------
@@ -45,6 +45,9 @@ The documentation for **MSL-Equipment** can be found
    :target: https://msl-equipment.readthedocs.io/en/latest/
    :alt: Documentation Status
    :scale: 100%
+
+.. |github tests| image:: https://github.com/MSLNZ/msl-equipment/actions/workflows/run-tests.yml/badge.svg
+   :target: https://github.com/MSLNZ/msl-equipment/actions/workflows/run-tests.yml
 
 .. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/latest/
 .. _resources: https://msl-equipment.readthedocs.io/en/latest/resources.html

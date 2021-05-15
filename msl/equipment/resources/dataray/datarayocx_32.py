@@ -138,32 +138,33 @@ if Server32.is_interpreter():
             self.camera_index = int(kwargs.get('camera_index', 0))
             if self.camera_index < 0 or self.camera_index > 7:
                 raise ValueError(
-                    f'The camera index must be between 0 and 7 (got {self.camera_index})'
+                    'The camera index must be between 0 and 7 (got {})'.format(self.camera_index)
                 )
 
             self.default_major_minor_method = int(kwargs.get('major_minor_method', 0))
             if self.default_major_minor_method not in [0, 1, 2]:
                 raise ValueError(
-                    f'The major/minor method must be 0, 1 or 2 (got {self.default_major_minor_method})'
+                    'The major/minor method must be 0, 1 or 2 (got {})'.format(self.default_major_minor_method)
                 )
 
             self.default_centroid_method = int(kwargs.get('centroid_method', 0))
             if self.default_centroid_method not in [0, 1, 2]:
                 raise ValueError(
-                    f'The centroid method must be 0, 1 or 2 (got {self.default_centroid_method})'
+                    'The centroid method must be 0, 1 or 2 (got {})'.format(self.default_centroid_method)
                 )
 
             # the manual claims it can be between 0 and 10.1
             self.default_full_scale_filter = float(kwargs.get('filter', 0.2))
             if self.default_full_scale_filter < 0 or self.default_full_scale_filter > 10.1:
                 raise ValueError(
-                    f'The full-scale-filter index must be between 0 and 10.1 (got {self.default_full_scale_filter})'
+                    'The full-scale-filter index must be between '
+                    '0 and 10.1 (got {})'.format(self.default_full_scale_filter)
                 )
 
             self.default_area_filter = int(kwargs.get('area_filter', 1))
             if self.default_area_filter not in [1, 2, 3, 4, 5]:
                 raise ValueError(
-                    f'The area-filter method must be between 1 and 5 (got {self.default_area_filter})'
+                    'The area-filter method must be between 1 and 5 (got {})'.format(self.default_area_filter)
                 )
 
             # the total number of images acquired
@@ -196,7 +197,7 @@ if Server32.is_interpreter():
             # Load the necessary OCX objects
             # =================================================================
 
-            self.GetData = self.load(f'{prefix}.GetDataCtrl.1', parent=self)
+            self.GetData = self.load(prefix+'.GetDataCtrl.1', parent=self)
             self.GetData.CameraSelect = self.camera_index
 
             # handle events emitted by the GetData object
@@ -483,7 +484,7 @@ if Server32.is_interpreter():
                         text = '{} images'.format(self.num_to_average)
                     self.GetData.StopDevice()
                     raise TimeoutError(
-                        f'TimeoutError: Could not capture {text} in {timeout} seconds.'
+                        'TimeoutError: Could not capture {} in {} seconds.'.format(text, timeout)
                     )
 
             error = self.GetData.GetLastError()

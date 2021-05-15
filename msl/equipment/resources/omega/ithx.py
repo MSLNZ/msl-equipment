@@ -330,7 +330,7 @@ class iTHX(ConnectionSocket):
             depending on the value of `select`.
         """
         if not os.path.isfile(path):
-            raise IOError('Cannot find {}'.format(path))
+            raise OSError('Cannot find {}'.format(path))
 
         detect_types = sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES if as_datetime else 0
         db = sqlite3.connect(path, timeout=10.0, detect_types=detect_types)

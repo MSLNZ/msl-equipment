@@ -86,7 +86,7 @@ class Bentham(Connection):
             The path to the ``System.cfg`` file.
         """
         if not os.path.isfile(path):
-            raise IOError('Cannot find {}'.format(path))
+            raise OSError('Cannot find {}'.format(path))
         ret, error_report = self._client.request32('build_system_model', path)
         self.errcheck(ret, path, append_msg=error_report)
         return ret
@@ -160,7 +160,7 @@ class Bentham(Connection):
             The path to the ``System.atr`` file.
         """
         if not os.path.isfile(path):
-            raise IOError('Cannot find {}'.format(path))
+            raise OSError('Cannot find {}'.format(path))
         return self.errcheck(self._client.request32('load_setup', path), path)
 
     def park(self):

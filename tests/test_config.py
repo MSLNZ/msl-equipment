@@ -15,11 +15,11 @@ def teardown_module():
 def test_config_io_errors():
 
     # xml file does not exist
-    with pytest.raises(IOError):
+    with pytest.raises(OSError):
         Config('does_not_exist.xml')
 
     # invalid xml file
-    with pytest.raises(IOError):
+    with pytest.raises(OSError):
         Config(os.path.join(ROOT_DIR, 'config0.xml'))
 
 

@@ -1495,11 +1495,11 @@ class KCubeStepperMotor(MotionControl):
 
         Raises
         ------
-        IOError
+        OSError
             If the `path` does not exist.
         """
         if not os.path.isfile(path):
-            raise IOError('Cannot find {}'.format(path))
+            raise OSError('Cannot find {}'.format(path))
         self.sdk.SCC_SetCalibrationFile(self._serial, path.encode('utf-8'), enabled)
 
     def set_digital_outputs(self, outputs_bits):

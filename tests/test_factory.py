@@ -56,7 +56,7 @@ def test_exceptions():
         connect(EquipmentRecord(connection=ConnectionRecord(address='COM1', backend=Backend.UNKNOWN)))
 
     # the SDK library does not exist
-    with pytest.raises(IOError, match='Cannot find'):
+    with pytest.raises(OSError, match='Cannot find'):
         connect(EquipmentRecord(
             manufacturer='Thorlabs',
             model='FW212C',

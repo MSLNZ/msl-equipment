@@ -35,7 +35,7 @@ class ConnectionSDK(Connection):
 
         Raises
         ------
-        IOError
+        OSError
             If the shared library cannot be loaded.
         TypeError
             If either `record` or `libtype` is invalid.

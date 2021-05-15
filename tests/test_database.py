@@ -18,15 +18,15 @@ def teardown_module():
 def test_database_io_errors():
 
     # no <path></path> tag
-    with pytest.raises(IOError, match=r'<path>'):
+    with pytest.raises(OSError, match=r'<path>'):
         Config(os.path.join(ROOT_DIR, 'db_err0.xml')).database()
 
     # database file does not exist
-    with pytest.raises(IOError):
+    with pytest.raises(OSError):
         Config(os.path.join(ROOT_DIR, 'db_err1.xml')).database()
 
     # unsupported database file
-    with pytest.raises(IOError, match=r'database'):
+    with pytest.raises(OSError, match=r'database'):
         Config(os.path.join(ROOT_DIR, 'db_err2.xml')).database()
 
     # more than 1 Sheet in the Excel database

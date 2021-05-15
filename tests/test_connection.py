@@ -64,7 +64,7 @@ def test_exception_handler():
 
     # not a subclass of MSLConnectionError
     with pytest.raises(TypeError, match=r'MSLConnectionError'):
-        c.set_exception_class(IOError)
+        c.set_exception_class(OSError)
 
     c.set_exception_class(exceptions.ThorlabsError)
     assert c._exception_handler == exceptions.ThorlabsError

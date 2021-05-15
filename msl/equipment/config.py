@@ -61,7 +61,7 @@ class Config(object):
 
         Raises
         ------
-        IOError
+        OSError
             If `path` does not exist or if the :ref:`configuration-file` is invalid.
         """
         logger.debug('Loading {}'.format(path))
@@ -72,7 +72,7 @@ class Config(object):
             parse_err = str(err)
 
         if parse_err:
-            raise IOError(parse_err)
+            raise OSError(parse_err)
 
         self._path = path
         self._database = None

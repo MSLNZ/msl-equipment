@@ -39,7 +39,7 @@ class Database(object):
 
         Raises
         ------
-        IOError
+        OSError
             If `path` does not exist or if the :ref:`configuration-file` is invalid.
         AttributeError
             If an ``<equipment>`` XML tag is specified in the :ref:`configuration-file`
@@ -55,12 +55,12 @@ class Database(object):
         try:
             root = cElementTree.parse(path).getroot()
         except cElementTree.ParseError as err:
-            parse_err = str(err)  # want to raise IOError not ParseError
+            parse_err = str(err)  # want to raise OSError not ParseError
         else:
             parse_err = None
 
         if parse_err:
-            raise IOError(parse_err)
+            raise OSError(parse_err)
 
         self._config_path = path
 
@@ -352,14 +352,14 @@ class Database(object):
         """Read the allowed database file types."""
         path = element.findtext('path')
         if path is None:
-            raise IOError('You must create a <path> </path> element in {!r} '
+            raise OSError('You must create a <path> </path> element in {!r} '
                           'specifying where to find the database'.format(self._config_path))
 
         if not os.path.isfile(path):
             # check if the path is a relative path (relative to the XML file path)
             path = os.path.join(os.path.dirname(self._config_path), path)
             if not os.path.isfile(path):
-                raise IOError('Cannot find the database {!r}'.format(path))
+                raise OSError('Cannot find the database {!r}'.format(path))
 
         logger.debug('Reading database file {!r}'.format(path))
         ext = os.path.splitext(path)[1].lower()
@@ -380,7 +380,7 @@ class Database(object):
         elif ext == '.xml':
             return self._read_xml(path)
         else:
-            raise IOError('Unsupported equipment-registry database file {!r}'.format(path))
+            raise OSError('Unsupported equipment-registry database file {!r}'.format(path))
 
     def _read_xml(self, path):
         """Read an XML database."""

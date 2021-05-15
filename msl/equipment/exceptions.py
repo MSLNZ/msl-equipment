@@ -3,7 +3,7 @@ Exceptions used by MSL-Equipment.
 """
 
 
-class MSLConnectionError(IOError):
+class MSLConnectionError(OSError):
     """Base class for all MSL :class:`~.connection.Connection` exceptions."""
 
 

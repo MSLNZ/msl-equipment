@@ -2,6 +2,10 @@ name: Tests
 
 on: [push, pull_request]
 
+env:
+  # enable coloured output
+  PY_COLORS: 1
+
 jobs:
   test:
     name: Test

@@ -142,41 +142,42 @@ class ConnectionSocket(ConnectionMessageBased):
         """:func:`socket.socket`: The reference to the socket."""
         return self._socket
 
+    @staticmethod
+    def parse_address(address):
+        """Get the host and port from an address.
+
+        Parameters
+        ----------
+        address : :class:`str`
+            The address of a :class:`~msl.equipment.record_types.ConnectionRecord`.
+
+        Returns
+        -------
+        :class:`dict` or :data:`None`
+            The value of the host and the port or :data:`None` if `address`
+            is not valid for a socket.
+        """
+        match = REGEX_SOCKET.match(address)
+        if match:
+            d = match.groupdict()
+
+            # if in the IVI format then make sure that `address` is valid`
+            if d['prefix'].startswith('TCPIP') and not d['suffix'] == '::SOCKET':
+                return
+
+            return {'host': d['host'], 'port': int(d['port'])}
+
+        match = REGEX_PROLOGIX.match(address)
+        if match:
+            d = match.groupdict()
+            return ConnectionSocket.parse_address('TCP::' + d['name'] + d['port'])
+
     def disconnect(self):
         """Close the socket."""
         if self._socket is not None:
             self._socket.close()
             self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
             self._socket = None
-
-    def write(self, msg):
-        """Write the given message over the socket.
-
-        Parameters
-        ----------
-        msg : :class:`str`
-            The message to write.
-
-        Returns
-        -------
-        :class:`int`
-            The number of bytes sent over the socket.
-        """
-        data = self._encode(msg)
-
-        timeout_error = False
-        try:
-            if self._is_stream:
-                self._socket.sendall(data)
-            else:
-                self._socket.sendto(data, (self._host, self._port))
-        except socket.timeout:
-            timeout_error = True  # want to raise MSLTimeoutError not socket.timeout
-
-        if timeout_error:
-            self.raise_timeout()
-
-        return len(data)
 
     def read(self, size=None):
         """Read a message from the socket.
@@ -246,32 +247,55 @@ class ConnectionSocket(ConnectionMessageBased):
 
         return self._decode(size, out)
 
-    @staticmethod
-    def parse_address(address):
-        """Get the host and port from an address.
+    def reconnect(self, max_attempts=1):
+        """Reconnect to the equipment.
 
         Parameters
         ----------
-        address : :class:`str`
-            The address of a :class:`~msl.equipment.record_types.ConnectionRecord`.
+        max_attempts : :class:`int`, optional
+            The maximum number of attempts to try to reconnect with the
+            equipment. If < 1 or :data:`None` then keep trying until a
+            connection is successful. If the maximum number of attempts
+            has been reached then an exception is raise.
+        """
+        if max_attempts is None:
+            max_attempts = -1
+
+        attempt = 0
+        while True:
+            attempt += 1
+            try:
+                return self._connect()
+            except:
+                if 0 < max_attempts <= attempt:
+                    raise
+
+    def write(self, msg):
+        """Write the given message over the socket.
+
+        Parameters
+        ----------
+        msg : :class:`str`
+            The message to write.
 
         Returns
         -------
-        :class:`dict` or :data:`None`
-            The value of the host and the port or :data:`None` if `address`
-            is not valid for a socket.
+        :class:`int`
+            The number of bytes sent over the socket.
         """
-        match = REGEX_SOCKET.match(address)
-        if match:
-            d = match.groupdict()
+        data = self._encode(msg)
 
-            # if in the IVI format then make sure that `address` is valid`
-            if d['prefix'].startswith('TCPIP') and not d['suffix'] == '::SOCKET':
-                return
+        timeout_error = False
+        try:
+            if self._is_stream:
+                self._socket.sendall(data)
+            else:
+                self._socket.sendto(data, (self._host, self._port))
+        except socket.timeout:
+            # want to raise MSLTimeoutError not socket.timeout
+            timeout_error = True
 
-            return {'host': d['host'], 'port': int(d['port'])}
+        if timeout_error:
+            self.raise_timeout()
 
-        match = REGEX_PROLOGIX.match(address)
-        if match:
-            d = match.groupdict()
-            return ConnectionSocket.parse_address('TCP::' + d['name'] + d['port'])
+        return len(data)

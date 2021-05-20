@@ -176,10 +176,63 @@ class iTHX(ConnectionSocket):
         t, h = self.temperature_humidity(probe=probe, celsius=celsius, nbytes=nth)
         return t, h, self.dewpoint(probe=probe, celsius=celsius, nbytes=nd)
 
-    def start_logging(self, path, wait=60, nprobes=1, nbytes=None, celsius=True, msg_format=None, db_timeout=10):
+    def reset(self, wait=True, password=None, port=2002, timeout=10):
+        """Power reset the iServer.
+
+        Some iServers accept the reset command to be sent via the
+        TCP/UDP protocol and some require the reset command to be sent
+        via the Telnet protocol.
+
+        Parameters
+        ----------
+        wait : :class:`bool`, optional
+            Whether to wait for the connection to the iServer to be
+            re-established before returning to the calling program. Rebooting
+            an iServer takes about 10 to 15 seconds.
+        password : :class:`str`, optional
+            The administrator's password of the iServer. If not specified then
+            uses the default manufacturer's password. Only used if the iServer
+            needs to be reset via the Telnet protocol.
+        port : :class:`int`, optional
+            The port to use for the Telnet connection. Only used if the iServer
+            needs to be reset via the Telnet protocol.
+        timeout : :class:`float`, optional
+            The timeout value to use during the Telnet session. Only used if
+            the iServer needs to be reset via the Telnet protocol.
+        """
+        reply = self.query('*SRYRST').strip()
+        if reply == 'Reset':
+            # this was the reply that was received with an iTHX-W3
+            # which accepts the reset command via TCP/UDP
+            if wait:
+                time.sleep(10)
+                self.reconnect(max_attempts=-1)
+        elif reply == 'Serial Time Out':
+            # this was the reply that was received with an iTHX-W
+            # which requires the Telnet protocol
+            from telnetlib import Telnet
+            pw = password or '00000000'
+            with Telnet(self.host, port, timeout=timeout) as tn:
+                tn.read_until(b'Password:', timeout=timeout)
+                tn.write(pw.encode() + b'\n')
+                tn.read_until(b'Login Successful', timeout=timeout)
+                tn.write(b'reset\n')
+                tn.read_until(b'The unit will reset in 5 seconds.', timeout=timeout)
+            if wait:
+                # 5 seconds from the Telnet message
+                # 10 seconds for the time it takes to reboot
+                time.sleep(15)
+                self.reconnect(max_attempts=-1)
+        else:
+            self.raise_exception(
+                'Received an unexpected reply, {!r}, for the reset command'.format(reply)
+            )
+
+    def start_logging(self, path, wait=60, nprobes=1, nbytes=None,
+                      celsius=True, msg_format=None, db_timeout=10, validator=None):
         """Start logging the temperature, humidity and dew point to the specified path.
 
-        The information is logged to a SQLite_ database. To stop logging press ``CTRL+C``.
+        The information is logged to an SQLite_ database. To stop logging press ``CTRL+C``.
 
         .. _SQLite: https://www.sqlite.org/index.html
 
@@ -217,8 +270,17 @@ class iTHX(ConnectionSocket):
             * {alias} {serial} -> T={0}C H={1}% D={2}C
 
         db_timeout : :class:`float`, optional
-            The number of seconds the connection to the database should wait for the
-            lock to go away until raising an exception.
+            The number of seconds the connection to the database should wait
+            for the lock to go away until raising an exception.
+        validator
+            A callback that is used to validate the data. The callback must
+            accept two arguments `(data, ithx)`, where `data` is a
+            :class:`tuple` of the temperature, humidity and dewpoint values
+            for each probe and `ithx` is the :class:`.iTHX` instance
+            (i.e., `self`). The callback must return a value whose truthness
+            decides whether to insert the data into the database. If the
+            returned value evaluates to :data:`True` then the data is inserted
+            into the database.
         """
         if os.path.isdir(path):
             filename = self.equipment_record.model + '_' + self.equipment_record.serial + '.sqlite3'
@@ -272,13 +334,11 @@ class iTHX(ConnectionSocket):
                     results.extend(data)
                 except Exception as e:
                     self.log_error('{}: {}'.format(e.__class__.__name__, e))
-                    while True:
-                        try:
-                            self._connect()
-                        except:
-                            pass
-                        else:
-                            break
+                    self.reconnect(max_attempts=-1)
+                    continue
+
+                if validator is not None and not validator(data, self):
+                    time.sleep(max(0.0, wait - (time.time() - t0)))
                     continue
 
                 # save the values to the database and then wait
@@ -371,7 +431,7 @@ class iTHX(ConnectionSocket):
             # messages have been sent. For example, querying the temperature, humidity and
             # dew point every >60 seconds raised:
             #   [Errno errno.ECONNRESET] An existing connection was forcibly closed by the remote host
-            self._connect()  # reconnect
+            self.reconnect(max_attempts=1)
             return self._get(message, probe, size=size)  # retry
         else:
             values = tuple(float(v) for v in re.split(r'[,;]', ret))

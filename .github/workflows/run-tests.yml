@@ -3,7 +3,6 @@ name: Tests
 on: [push, pull_request]
 
 env:
-  # enable coloured output
   PY_COLORS: 1
 
 jobs:
@@ -16,20 +15,24 @@ jobs:
       matrix:
         python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9]
         os: [windows-latest, ubuntu-latest, macos-latest]
-        platform: [x64]
+        architecture: [x64]
+        include:
+          - python-version: 3.x
+            os: windows-latest
+            architecture: x86
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+          architecture: ${{ matrix.architecture }}
+      - name: Install dependencies and package
         run: |
           python -m pip install --upgrade pip
           python -m pip install --upgrade setuptools wheel
           python -m pip install --upgrade .[tests]
       - name: Run tests
-        run: |
-          python -m pytest
+        run: python -m pytest

@@ -59,6 +59,10 @@ class OptoSigmaError(MSLConnectionError):
     """Exception for equipment from OptoSigma."""
 
 
+class OptronicLaboratoriesError(MSLConnectionError):
+    """Exception for equipment from Optronic Laboratories."""
+
+
 class PicoTechError(MSLConnectionError):
     """Exception for equipment from Pico Technology."""
 

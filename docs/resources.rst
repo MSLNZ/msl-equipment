@@ -7,46 +7,50 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
 * `Aim and Thurlby Thandar Instruments`_
 
-  * :class:`~msl.equipment.resources.aim_tti.mx_series.MXSeries` - MX100QP, MX100TP, MX180TP
+  * :class:`~msl.equipment.resources.aim_tti.mx_series.MXSeries` -- MX100QP, MX100TP, MX180TP
     *(could be re-implemented to support other Series of DC Power Supplies)*
 
 * Avantes_
 
-  * :class:`~msl.equipment.resources.avantes.avaspec.Avantes` - Wrapper around the `AvaSpec SDK`_
+  * :class:`~msl.equipment.resources.avantes.avaspec.Avantes` -- Wrapper around the `AvaSpec SDK`_
 
 * `Bentham Instruments Ltd`_
 
-  * :class:`~msl.equipment.resources.bentham.benhw64.Bentham` - Wrapper around the `Bentham SDK`_
+  * :class:`~msl.equipment.resources.bentham.benhw64.Bentham` -- Wrapper around the `Bentham SDK`_
 
 * CMI_ (Czech Metrology Institute)
 
-  * :class:`~msl.equipment.resources.cmi.sia3.SIA3` - Switched Integrator Amplifier
+  * :class:`~msl.equipment.resources.cmi.sia3.SIA3` -- Switched Integrator Amplifier
 
 * DataRay_
 
-  * :class:`~msl.equipment.resources.dataray.datarayocx_64.DataRayOCX64` - Wrapper around the DATARAYOCX_ library
+  * :class:`~msl.equipment.resources.dataray.datarayocx_64.DataRayOCX64` -- Wrapper around the DATARAYOCX_ library
 
 * `Electron Dynamics Ltd`_
 
-  * :class:`~msl.equipment.resources.electron_dynamics.tc_series.TCSeries` - Temperature Controller (TC LV, TC M, TC Lite)
+  * :class:`~msl.equipment.resources.electron_dynamics.tc_series.TCSeries` -- Temperature Controller (TC LV, TC M, TC Lite)
 
 * `MKS Instruments`_
 
-  * :class:`~msl.equipment.resources.mks_instruments.pr4000b.PR4000B` - Flow and Pressure controller
+  * :class:`~msl.equipment.resources.mks_instruments.pr4000b.PR4000B` -- Flow and Pressure controller
 
 * `NKT Photonics`_
 
-  * :class:`~msl.equipment.resources.nkt.nktpdll.NKT` - Wrapper around the `NKT Photonics SDK`_
+  * :class:`~msl.equipment.resources.nkt.nktpdll.NKT` -- Wrapper around the `NKT Photonics SDK`_
 
 * OMEGA_
 
-  * :class:`~msl.equipment.resources.omega.ithx.iTHX` - iTHX-W3, iTHX-D3, iTHX-SD, iTHX-M, iTHX-W, iTHX-2
+  * :class:`~msl.equipment.resources.omega.ithx.iTHX` -- iTHX-W3, iTHX-D3, iTHX-SD, iTHX-M, iTHX-W, iTHX-2
 
 * OptoSigma_
 
-  * :class:`~msl.equipment.resources.optosigma.shot702.SHOT702` - Two-axis Stage Controller
+  * :class:`~msl.equipment.resources.optosigma.shot702.SHOT702` -- Two-axis Stage Controller
 
-* `Pico Technology`_ -  Wrapper around the `Pico Technology SDK`_
+* `Optronic Laboratories`_
+
+  * :class:`~msl.equipment.resources.optronic_laboratories.ol756ocx_64.OL756` -- UV-VIS spectroradiometer
+
+* `Pico Technology`_ --  Wrapper around the `Pico Technology SDK`_
 
   * PicoScope_
 
@@ -62,24 +66,24 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
   * `PT-104 Platinum Resistance Data Logger`_
 
-    * :class:`~msl.equipment.resources.picotech.pt104.PT104` - PT-104
+    * :class:`~msl.equipment.resources.picotech.pt104.PT104` -- PT-104
 
 * `Princeton Instruments`_
 
-  * :class:`~msl.equipment.resources.princeton_instruments.arc_instrument.PrincetonInstruments` - Wrapper around the `ARC_Instrument.dll`_ library
+  * :class:`~msl.equipment.resources.princeton_instruments.arc_instrument.PrincetonInstruments` -- Wrapper around the `ARC_Instrument.dll`_ library
 
 * Thorlabs_
 
   * Wrapper around the Kinesis_ SDK.
 
-    * :class:`~msl.equipment.resources.thorlabs.kinesis.filter_flipper.FilterFlipper` - MFF101, MFF102
-    * :class:`~msl.equipment.resources.thorlabs.kinesis.integrated_stepper_motors.IntegratedStepperMotors` - LTS150, LTS300, MLJ050, MLJ150, K10CR1
-    * :class:`~msl.equipment.resources.thorlabs.kinesis.kcube_solenoid.KCubeSolenoid` - KSC101
-    * :class:`~msl.equipment.resources.thorlabs.kinesis.kcube_stepper_motor.KCubeStepperMotor` - KST101
-    * :class:`~msl.equipment.resources.thorlabs.kinesis.kcube_dc_servo.KCubeDCServo` - KDC101
-    * :class:`~msl.equipment.resources.thorlabs.kinesis.benchtop_stepper_motor.BenchtopStepperMotor` - BSC101, BSC102, BSC103, BSC201, BSC202, BSC203
+    * :class:`~msl.equipment.resources.thorlabs.kinesis.filter_flipper.FilterFlipper` -- MFF101, MFF102
+    * :class:`~msl.equipment.resources.thorlabs.kinesis.integrated_stepper_motors.IntegratedStepperMotors` -- LTS150, LTS300, MLJ050, MLJ150, K10CR1
+    * :class:`~msl.equipment.resources.thorlabs.kinesis.kcube_solenoid.KCubeSolenoid` -- KSC101
+    * :class:`~msl.equipment.resources.thorlabs.kinesis.kcube_stepper_motor.KCubeStepperMotor` -- KST101
+    * :class:`~msl.equipment.resources.thorlabs.kinesis.kcube_dc_servo.KCubeDCServo` -- KDC101
+    * :class:`~msl.equipment.resources.thorlabs.kinesis.benchtop_stepper_motor.BenchtopStepperMotor` -- BSC101, BSC102, BSC103, BSC201, BSC202, BSC203
 
-  * :class:`~msl.equipment.resources.thorlabs.fwxx2c.FilterWheelXX2C` - FW102C, FW212C
+  * :class:`~msl.equipment.resources.thorlabs.fwxx2c.FilterWheelXX2C` -- FW102C, FW212C
 
 .. _new-equipment-resource:
 
@@ -131,7 +135,7 @@ Please follow the `style guide`_.
                 # the following is optional, the default exception handler is MSLConnectionError
                 self.set_exception_class(TheErrorClassFromStep4)  # change TheErrorClassFromStep4
 
-6. Add at least one example for how to use the new MSL Resource in `msl/examples/equipment/resources`_.
+6. Add at least one example for how to use the new MSL Resource in `msl/examples/equipment`_.
    Follow the template of the other examples in this package for naming conventions and for showing how to use the
    new MSL Resource.
 7. Create tests for the new MSL Resource. The tests cannot be dependent on whether the equipment is physically
@@ -163,7 +167,7 @@ Please follow the `style guide`_.
 .. _fork: https://help.github.com/articles/fork-a-repo/
 .. _repository: https://github.com/MSLNZ/msl-equipment
 .. _msl/equipment/resources: https://github.com/MSLNZ/msl-equipment/tree/main/msl/equipment/resources
-.. _msl/examples/equipment/resources: https://github.com/MSLNZ/msl-equipment/tree/main/msl/examples/equipment/resources
+.. _msl/examples/equipment: https://github.com/MSLNZ/msl-equipment/tree/main/msl/examples/equipment
 .. _def test_find_resource_class(): https://github.com/MSLNZ/msl-equipment/blob/main/tests/resources/test_init.py
 .. _condatests.py: https://msl-package-manager.readthedocs.io/en/latest/new_package_readme.html#create-readme-condatests
 .. _docs/_api: https://github.com/MSLNZ/msl-equipment/tree/main/docs/_api
@@ -193,3 +197,4 @@ Please follow the `style guide`_.
 .. _DATARAYOCX: https://www.dataray.com/interfacing.html
 .. _Aim and Thurlby Thandar Instruments: https://www.aimtti.com/
 .. _MKS Instruments: https://www.mksinst.com/
+.. _Optronic Laboratories: https://optroniclabs.com/

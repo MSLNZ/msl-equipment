@@ -29,6 +29,7 @@ Subpackages
     msl.equipment.resources.nkt
     msl.equipment.resources.omega
     msl.equipment.resources.optosigma
+    msl.equipment.resources.optronic_laboratories
     msl.equipment.resources.picotech
     msl.equipment.resources.princeton_instruments
     msl.equipment.resources.thorlabs

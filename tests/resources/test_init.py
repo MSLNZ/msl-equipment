@@ -159,3 +159,9 @@ def test_find_resource_class():
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)
             assert cls == resources.mks_instruments.pr4000b.PR4000B
+
+    for man in ('Optronic Laboratories', 'Optronic Laboratories, Inc.'):
+        for mod in ('756', 'OL756'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.optronic_laboratories.ol756ocx_64.OL756

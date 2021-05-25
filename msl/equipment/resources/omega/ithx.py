@@ -200,16 +200,7 @@ class iTHX(ConnectionSocket):
             The timeout value to use during the Telnet session. Only used if
             the iServer needs to be reset via the Telnet protocol.
         """
-        reply = self.query('*SRYRST').strip()
-        if reply == 'Reset':
-            # this was the reply that was received with an iTHX-W3
-            # which accepts the reset command via TCP/UDP
-            if wait:
-                time.sleep(10)
-                self.reconnect(max_attempts=-1)
-        elif reply == 'Serial Time Out':
-            # this was the reply that was received with an iTHX-W
-            # which requires the Telnet protocol
+        def use_telnet():
             from telnetlib import Telnet
             pw = password or '00000000'
             with Telnet(self.host, port, timeout=timeout) as tn:
@@ -223,9 +214,27 @@ class iTHX(ConnectionSocket):
                 # 10 seconds for the time it takes to reboot
                 time.sleep(15)
                 self.reconnect(max_attempts=-1)
+
+        # according to the manual, these models require Telnet
+        if self.equipment_record.model in ['iTHX-W', 'iTHX-2']:
+            return use_telnet()
+
+        # The manual indicates that iTHX-W3, iTHX-D3, iTHX-SD and iTHX-M
+        # all accept the *SRYRST command
+        reply = self.query('*SRYRST').strip()
+        if reply == 'Reset':
+            # this was the reply that was received with an iTHX-W3
+            # which accepts the reset command via TCP/UDP
+            if wait:
+                time.sleep(10)
+                self.reconnect(max_attempts=-1)
+        elif reply == 'Serial Time Out':
+            # this was the reply that was received with an iTHX-W
+            # which does not recognize the *SRYRST command
+            use_telnet()
         else:
             self.raise_exception(
-                'Received an unexpected reply, {!r}, for the reset command'.format(reply)
+                'Received an unexpected reply, {!r}, for the *SRYRST command'.format(reply)
             )
 
     def start_logging(self, path, wait=60, nprobes=1, nbytes=None,

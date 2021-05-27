@@ -25,6 +25,7 @@ Subpackages
     msl.equipment.resources.cmi
     msl.equipment.resources.dataray
     msl.equipment.resources.electron_dynamics
+    msl.equipment.resources.energetiq
     msl.equipment.resources.mks_instruments
     msl.equipment.resources.nkt
     msl.equipment.resources.omega

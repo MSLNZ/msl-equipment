@@ -30,6 +30,10 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
   * :class:`~msl.equipment.resources.electron_dynamics.tc_series.TCSeries` -- Temperature Controller (TC LV, TC M, TC Lite)
 
+* Energetiq_
+
+  * :class:`~msl.equipment.resources.energetiq.eq99.EQ99` -- EQ-99 Manager
+
 * `MKS Instruments`_
 
   * :class:`~msl.equipment.resources.mks_instruments.pr4000b.PR4000B` -- Flow and Pressure controller
@@ -198,3 +202,4 @@ Please follow the `style guide`_.
 .. _Aim and Thurlby Thandar Instruments: https://www.aimtti.com/
 .. _MKS Instruments: https://www.mksinst.com/
 .. _Optronic Laboratories: https://optroniclabs.com/
+.. _Energetiq: https://www.energetiq.com/

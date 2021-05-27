@@ -42,6 +42,10 @@ class DataRayError(MSLConnectionError):
     """Exception for equipment from DataRay Inc."""
 
 
+class EnergetiqError(MSLConnectionError):
+    """Exception for equipment from Energetiq."""
+
+
 class MKSInstrumentsError(MSLConnectionError):
     """Exception for equipment from MKS Instruments."""
     pass

@@ -165,3 +165,10 @@ def test_find_resource_class():
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)
             assert cls == resources.optronic_laboratories.ol756ocx_64.OL756
+
+    for man in ('Energetiq', 'ENERGETIQ', 'Energetiq Technology, Inc.',
+                'Energetiq Technology Inc', 'Energetiq Technology'):
+        for mod in ('eq-99', 'EQ-99', 'eQ-99-MgR', 'EQ-99-MGR'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.energetiq.eq99.EQ99

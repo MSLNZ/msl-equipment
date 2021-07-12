@@ -355,32 +355,39 @@ class Database(object):
             raise OSError('You must create a <path> </path> element in {!r} '
                           'specifying where to find the database'.format(self._config_path))
 
-        if not os.path.isfile(path):
-            # check if the path is a relative path (relative to the XML file path)
-            path = os.path.join(os.path.dirname(self._config_path), path)
-            if not os.path.isfile(path):
-                raise OSError('Cannot find the database {!r}'.format(path))
-
         logger.debug('Reading database file {!r}'.format(path))
         ext = os.path.splitext(path)[1].lower()
-        if ext in ('.xls', '.xlsx'):
-            dset = read_table_excel(path, sheet=element.findtext('sheet'), encoding=element.attrib.get('encoding'))
-            if dset.ndim == 1:
-                return dset.metadata.header, [dset.data]
-            return dset.metadata.header, dset.data
-        elif ext in ('.csv', '.txt'):
-            delimiter = ',' if ext == '.csv' else '\t'
-            with codecs.open(path, mode='r', encoding=element.attrib.get('encoding', 'utf-8')) as fp:
-                header = [val for val in fp.readline().split(delimiter)]
-                rows = [[val.strip() for val in line.split(delimiter)] for line in fp.readlines() if line.strip()]
-            return header, rows
-        elif ext == '.json':
-            with codecs.open(path, mode='r', encoding=element.attrib.get('encoding', 'utf-8')) as fp:
-                return json.load(fp)
-        elif ext == '.xml':
-            return self._read_xml(path)
-        else:
-            raise OSError('Unsupported equipment-registry database file {!r}'.format(path))
+
+        # also check if the path is a relative path (relative to the XML file path)
+        relative_path = os.path.join(os.path.dirname(self._config_path), path)
+        for p in [path, relative_path]:
+            try:
+                if ext in ('.xls', '.xlsx'):
+                    encoding = element.attrib.get('encoding')
+                    dset = read_table_excel(p, sheet=element.findtext('sheet'), encoding=encoding)
+                    if dset.ndim == 1:
+                        return dset.metadata.header, [dset.data]
+                    return dset.metadata.header, dset.data
+                elif ext in ('.csv', '.txt'):
+                    delimiter = ',' if ext == '.csv' else '\t'
+                    encoding = element.attrib.get('encoding', 'utf-8')
+                    with codecs.open(p, mode='r', encoding=encoding) as fp:
+                        header = [val for val in fp.readline().split(delimiter)]
+                        rows = [[val.strip() for val in line.split(delimiter)]
+                                for line in fp.readlines() if line.strip()]
+                    return header, rows
+                elif ext == '.json':
+                    encoding = element.attrib.get('encoding', 'utf-8')
+                    with codecs.open(p, mode='r', encoding=encoding) as fp:
+                        return json.load(fp)
+                elif ext == '.xml':
+                    return self._read_xml(p)
+                else:
+                    raise OSError('Unsupported equipment-registry database file {!r}'.format(p))
+            except (IOError, OSError) as err:
+                if str(err).startswith('Unsupported equipment-registry'):
+                    raise
+        raise OSError('Cannot find the database {!r}'.format(path))
 
     def _read_xml(self, path):
         """Read an XML database."""

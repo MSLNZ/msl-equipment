@@ -22,11 +22,11 @@ def test_database_io_errors():
         Config(os.path.join(ROOT_DIR, 'db_err0.xml')).database()
 
     # database file does not exist
-    with pytest.raises(OSError):
+    with pytest.raises(OSError, match=r'Cannot find the database'):
         Config(os.path.join(ROOT_DIR, 'db_err1.xml')).database()
 
     # unsupported database file
-    with pytest.raises(OSError, match=r'database'):
+    with pytest.raises(OSError, match=r'Unsupported equipment-registry database'):
         Config(os.path.join(ROOT_DIR, 'db_err2.xml')).database()
 
     # more than 1 Sheet in the Excel database

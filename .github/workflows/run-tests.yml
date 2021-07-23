@@ -4,21 +4,22 @@ on: [push, pull_request]
 
 env:
   PY_COLORS: 1
+  COLUMNS: 130
 
 jobs:
   test:
     name: Test
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
 
     strategy:
       fail-fast: false
       matrix:
         python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9]
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows, ubuntu, macos]
         architecture: [x64]
         include:
           - python-version: 3.x
-            os: windows-latest
+            os: windows
             architecture: x86
 
     steps:

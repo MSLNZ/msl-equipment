@@ -26,11 +26,21 @@ from msl.equipment.connection_socket import ConnectionSocket
 from msl.equipment.resources import register
 
 
-@register(manufacturer=r'OMEGA', model=r'iTHX-[2DMSW][3D]*', flags=re.IGNORECASE)
+@register(manufacturer=r'OMEGA', model=r'iTHX-[2DMSW][3D]?', flags=re.IGNORECASE)
 class iTHX(ConnectionSocket):
 
     def __init__(self, record):
         """OMEGA iTHX Series Temperature and Humidity Chart Recorder.
+
+        The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
+        for an iTHX connection supports the following key-value pairs in the
+        :ref:`connections-database`::
+
+            'nprobes': int, the number of probes the device has
+            'nbytes': int, the number of bytes to read from each probe
+
+        as well as those key-value pairs supported by the parent
+        :class:`~msl.equipment.connection_socket.ConnectionSocket` class.
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.
@@ -237,7 +247,7 @@ class iTHX(ConnectionSocket):
                 'Received an unexpected reply, {!r}, for the *SRYRST command'.format(reply)
             )
 
-    def start_logging(self, path, wait=60, nprobes=1, nbytes=None,
+    def start_logging(self, path, wait=60, nprobes=None, nbytes=None,
                       celsius=True, msg_format=None, db_timeout=10, validator=None):
         """Start logging the temperature, humidity and dew point to the specified path.
 
@@ -248,16 +258,22 @@ class iTHX(ConnectionSocket):
         Parameters
         ----------
         path : :class:`str`
-            The path to the SQLite_ database. If you only specify a folder
+            The path to the SQLite_ database. If you only specify a directory
             then a database with the default filename, ``model_serial.sqlite3``,
-            is created/opened in this folder.
+            is created/opened in this directory.
         wait : :class:`int`, optional
             The number of seconds to wait between each log event.
         nprobes : :class:`int`, optional
             The number of probes that the iServer has (1 or 2).
+            If not specified then gets the value defined in
+            :attr:`~msl.equipment.record_types.ConnectionRecord.properties`.
+            Default is 1.
         nbytes : :class:`int`, optional
             The number of bytes to read from each probe (the probes are read
             sequentially). The value is passed to :meth:`.temperature_humidity_dewpoint`.
+            If not specified then gets the value defined in
+            :attr:`~msl.equipment.record_types.ConnectionRecord.properties`.
+            Default is :data:`None`.
         celsius : :class:`bool`, optional
            :data:`True` to return the temperature and dew point in celsius,
            :data:`False` for fahrenheit.
@@ -300,20 +316,28 @@ class iTHX(ConnectionSocket):
         db = sqlite3.connect(path, timeout=db_timeout)
         self.log_info('start logging to {}'.format(path))
 
+        props = self.equipment_record.connection.properties
+        if nprobes is None:
+            nprobes = props.get('nprobes', 1)
+        if nbytes is None:
+            nbytes = props.get('nbytes', None)
+
         if nprobes == 1:
             db.execute(
                 'CREATE TABLE IF NOT EXISTS data ('
-                'timestamp TIMESTAMP, '
+                'pid INTEGER PRIMARY KEY AUTOINCREMENT, '
+                'datetime DATETIME, '
                 'temperature FLOAT, '
                 'humidity FLOAT, '
                 'dewpoint FLOAT);'
             )
             if not msg_format:
-                msg_format = 'Sn={serial} T={0:.1f} H={1:.1f} D={2:.1f}'
+                msg_format = 'Sn={serial} T={0} H={1} D={2}'
         elif nprobes == 2:
             db.execute(
                 'CREATE TABLE IF NOT EXISTS data ('
-                'timestamp TIMESTAMP, '
+                'pid INTEGER PRIMARY KEY AUTOINCREMENT, '
+                'datetime DATETIME, '
                 'temperature1 FLOAT, '
                 'humidity1 FLOAT, '
                 'dewpoint1 FLOAT, '
@@ -322,7 +346,7 @@ class iTHX(ConnectionSocket):
                 'dewpoint2 FLOAT);'
             )
             if not msg_format:
-                msg_format = 'Sn={serial} T1={0:.1f} H1={1:.1f} D1={2:.1f} T2={3:.1f} H2={4:.1f} D2={5:.1f}'
+                msg_format = 'Sn={serial} T1={0} H1={1} D1={2} T2={3} H2={4} D2={5}'
         else:
             raise ValueError('The number-of-probes value must be either 1 or 2. Got {}'.format(nprobes))
 
@@ -332,7 +356,6 @@ class iTHX(ConnectionSocket):
         try:
             while True:
                 t0 = time.time()
-                results = [datetime.fromtimestamp(t0)]
 
                 # get the values
                 try:
@@ -340,23 +363,25 @@ class iTHX(ConnectionSocket):
                     if nprobes == 2:
                         data += self.temperature_humidity_dewpoint(probe=2, celsius=celsius, nbytes=nbytes)
                     self.log_info(msg_format.format(*data, **record_as_dict))
-                    results.extend(data)
                 except Exception as e:
                     self.log_error('{}: {}'.format(e.__class__.__name__, e))
                     self.reconnect(max_attempts=-1)
                     continue
+
+                now = datetime.now().replace(microsecond=0).isoformat(sep='T')
 
                 if validator is not None and not validator(data, self):
                     time.sleep(max(0.0, wait - (time.time() - t0)))
                     continue
 
                 # save the values to the database and then wait
+                values = [now] + list(data)
                 try:
                     db = sqlite3.connect(path, timeout=db_timeout)
                     if nprobes == 1:
-                        db.execute('INSERT INTO data VALUES (?, ?, ?, ?);', results)
+                        db.execute('INSERT INTO data VALUES (NULL, ?, ?, ?, ?);', values)
                     else:
-                        db.execute('INSERT INTO data VALUES (?, ?, ?, ?, ?, ?, ?);', results)
+                        db.execute('INSERT INTO data VALUES (NULL, ?, ?, ?, ?, ?, ?, ?);', values)
                     db.commit()
                     db.close()
                 except sqlite3.DatabaseError as e:
@@ -372,31 +397,36 @@ class iTHX(ConnectionSocket):
         self.log_info('stopped logging to {}'.format(path))
 
     @staticmethod
-    def data(path, date1=None, date2=None, as_datetime=True, select='*'):
+    def data(path, start=None, end=None, as_datetime=True, select='*'):
         """Fetch all the log records between two dates.
 
         Parameters
         ----------
         path : :class:`str`
             The path to the SQLite_ database.
-        date1 : :class:`datetime.datetime` or :class:`str`, optional
-            Include all records that have a timestamp > `date1`. If :class:`str` then in
-            ``yyyy-mm-dd`` or ``yyyy-mm-dd HH:MM:SS`` format.
-        date2 : :class:`datetime.datetime` or :class:`str`, optional
-            Include all records that have a timestamp < `date2`. If :class:`str` then in
-            ``yyyy-mm-dd`` or ``yyyy-mm-dd HH:MM:SS`` format.
+        start : :class:`~datetime.datetime` or :class:`str`, optional
+            Include all records that have a timestamp :math:`\\ge` `start`.
+            If a :class:`str` then in the ISO 8601 ``yyyy-mm-dd`` or
+            ``yyyy-mm-ddTHH:MM:SS`` format.
+        end : :class:`~datetime.datetime` or :class:`str`, optional
+            Include all records that have a timestamp :math:`\\le` `end`.
+            If a :class:`str` then in the ISO 8601 ``yyyy-mm-dd`` or
+            ``yyyy-mm-ddTHH:MM:SS`` format.
         as_datetime : :class:`bool`, optional
-            Whether to fetch the timestamps from the database as :class:`datetime.datetime` objects.
-            If :data:`False` then the timestamps will be of type :class:`str` and this function
+            Whether to fetch the timestamps in the database as
+            :class:`~datetime.datetime` objects. If :data:`False` then the
+            timestamps will be of type :class:`str` and this function
             will return much faster if requesting data over a large date range.
         select : :class:`str` or :class:`list` of :class:`str`, optional
-            The column(s) in the database to use with the ``SELECT`` SQL command.
+            The field name(s) in the database table to use for the ``SELECT``
+            SQL command (e.g., ``'datetime,temperature'`` or
+            ``['datetime', 'humidity']``).
 
         Returns
         -------
         :class:`list` of :class:`tuple`
-            A list of ``(timestamp, temperature, humidity, dewpoint, ...)`` log records,
-            depending on the value of `select`.
+            A list of ``(pid, datetime, temperature, humidity, dewpoint, ...)``
+            log records, depending on the value of `select`.
         """
         if not os.path.isfile(path):
             raise OSError('Cannot find {}'.format(path))
@@ -410,14 +440,14 @@ class iTHX(ConnectionSocket):
                 select = ','.join(select)
         base = 'SELECT {} FROM data'.format(select)
 
-        if date1 is None and date2 is None:
+        if start is None and end is None:
             cursor.execute(base + ';')
-        elif date1 is not None and date2 is None:
-            cursor.execute(base + ' WHERE timestamp > ?;', (date1,))
-        elif date1 is None and date2 is not None:
-            cursor.execute(base + ' WHERE timestamp < ?;', (date2,))
+        elif start is not None and end is None:
+            cursor.execute(base + ' WHERE datetime >= ?;', (start,))
+        elif start is None and end is not None:
+            cursor.execute(base + ' WHERE datetime <= ?;', (end,))
         else:
-            cursor.execute(base + ' WHERE timestamp BETWEEN ? AND ?;', (date1, date2))
+            cursor.execute(base + ' WHERE datetime BETWEEN ? AND ?;', (start, end))
 
         data = cursor.fetchall()
         cursor.close()
@@ -448,3 +478,39 @@ class iTHX(ConnectionSocket):
                 return values[0]
             else:
                 return values
+
+
+def convert_datetime(value):
+    """Convert a date and time to a :class:`~datetime.datetime` object.
+
+    Parameters
+    ----------
+    value : :class:`bytes`
+        The datetime value from an SQLite database.
+
+    Returns
+    -------
+    :class:`datetime.datetime`
+        The `value` as a datetime object.
+    """
+    try:
+        # datetime.fromisoformat is available in Python 3.7+
+        return datetime.fromisoformat(value.decode())
+    except AttributeError:
+        # mimics the sqlite3.dbapi2.convert_timestamp function
+        datepart, timepart = value[:10], value[11:]
+        year, month, day = map(int, datepart.split(b'-'))
+        timepart_full = timepart.split(b'.')
+        hours, minutes, seconds = map(int, timepart_full[0].split(b':'))
+        if len(timepart_full) == 2:
+            microseconds = int('{:0<6.6}'.format(timepart_full[1].decode()))
+        else:
+            microseconds = 0
+        return datetime(year, month, day, hours, minutes, seconds, microseconds)
+
+
+# Do not use the builtin TIMESTAMP converter since it does not support
+# the T separator between the date and time. Also, according to
+# https://www.sqlite.org/lang_datefunc.html the name DATETIME seems
+# to be more logical than TIMESTAMP as a field name.
+sqlite3.register_converter('DATETIME', convert_datetime)

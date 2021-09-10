@@ -1,6 +1,8 @@
+import os
 import time
 import socket
 import threading
+from datetime import datetime
 
 from msl.loadlib.utils import get_available_port
 
@@ -42,7 +44,7 @@ def simulate_omega_iserver(address, port, term):
     s.close()
 
 
-def test_omega_ithx_iserver():
+def test_temperature_humidity_dewpoint():
     address = '127.0.0.1'
     port = get_available_port()
     term = b'\r'
@@ -130,3 +132,89 @@ def test_omega_ithx_iserver():
         dev.write('SHUTDOWN')
         dev.disconnect()
         thread.join()
+
+
+def test_database():
+    db_files = os.path.normpath(os.path.join(os.path.dirname(__file__), os.pardir, 'db_files'))
+
+    data = iTHX.data(os.path.join(db_files, 'iTHX-1probe.sqlite3'), as_datetime=False)
+    assert data == [
+        (1, '2021-09-10T16:03:36', 19.5, 57.5, 10.8),
+        (2, '2021-09-10T16:03:37', 19.5, 57.5, 10.8),
+        (3, '2021-09-10T16:03:38', 19.5, 57.5, 10.8),
+        (4, '2021-09-10T16:03:39', 19.5, 57.5, 10.8),
+        (5, '2021-09-10T16:03:40', 19.5, 57.5, 10.8),
+        (6, '2021-09-10T16:03:41', 19.5, 57.5, 10.8),
+        (7, '2021-09-10T16:03:42', 19.5, 57.5, 10.8),
+        (8, '2021-09-10T16:03:43', 19.5, 57.5, 10.8),
+        (9, '2021-09-10T16:03:44', 19.5, 57.5, 10.8),
+        (10, '2021-09-10T16:03:45', 19.5, 57.5, 10.8)
+    ]
+
+    data = iTHX.data(os.path.join(db_files, 'iTHX-2probe.sqlite3'), as_datetime=False)
+    assert data == [
+        (1, '2021-09-10T16:01:52', 20.43, 56.23, 11.42, 19.28, 61.53, 11.7),
+        (2, '2021-09-10T16:01:53', 20.43, 56.23, 11.41, 19.26, 61.55, 11.69),
+        (3, '2021-09-10T16:01:54', 20.43, 56.23, 11.42, 19.28, 61.53, 11.69),
+        (4, '2021-09-10T16:01:55', 20.43, 56.23, 11.42, 19.28, 61.53, 11.69),
+        (5, '2021-09-10T16:01:56', 20.42, 56.23, 11.41, 19.27, 61.53, 11.69),
+        (6, '2021-09-10T16:01:57', 20.43, 56.23, 11.42, 19.27, 61.53, 11.69),
+        (7, '2021-09-10T16:01:58', 20.43, 56.23, 11.42, 19.28, 61.56, 11.71),
+        (8, '2021-09-10T16:01:59', 20.43, 56.23, 11.42, 19.27, 61.53, 11.69),
+        (9, '2021-09-10T16:02:00', 20.42, 56.23, 11.41, 19.27, 61.53, 11.69),
+        (10, '2021-09-10T16:02:01', 20.42, 56.23, 11.41, 19.28, 61.53, 11.7)
+    ]
+
+    data = iTHX.data(os.path.join(db_files, 'iTHX-1probe.sqlite3'), as_datetime=True)
+    assert data[0] == (1, datetime(2021, 9, 10, 16, 3, 36), 19.5, 57.5, 10.8)
+
+    data = iTHX.data(os.path.join(db_files, 'iTHX-1probe.sqlite3'),
+                     select='pid,temperature,dewpoint')
+    assert data == [(i, 19.5, 10.8) for i in range(1, 11)]
+
+    data = iTHX.data(os.path.join(db_files, 'iTHX-2probe.sqlite3'),
+                     select=['temperature1', 'dewpoint2'])
+    assert data == [
+        (20.43, 11.7),
+        (20.43, 11.69),
+        (20.43, 11.69),
+        (20.43, 11.69),
+        (20.42, 11.69),
+        (20.43, 11.69),
+        (20.43, 11.71),
+        (20.43, 11.69),
+        (20.42, 11.69),
+        (20.42, 11.7)
+    ]
+
+    data = iTHX.data(os.path.join(db_files, 'iTHX-1probe.sqlite3'),
+                     start='2021-09-10T16:03:39', as_datetime=False)
+    assert data == [
+        (4, '2021-09-10T16:03:39', 19.5, 57.5, 10.8),
+        (5, '2021-09-10T16:03:40', 19.5, 57.5, 10.8),
+        (6, '2021-09-10T16:03:41', 19.5, 57.5, 10.8),
+        (7, '2021-09-10T16:03:42', 19.5, 57.5, 10.8),
+        (8, '2021-09-10T16:03:43', 19.5, 57.5, 10.8),
+        (9, '2021-09-10T16:03:44', 19.5, 57.5, 10.8),
+        (10, '2021-09-10T16:03:45', 19.5, 57.5, 10.8)
+    ]
+
+    data = iTHX.data(os.path.join(db_files, 'iTHX-1probe.sqlite3'),
+                     end='2021-09-10T16:03:38', as_datetime=False)
+    assert data == [
+        (1, '2021-09-10T16:03:36', 19.5, 57.5, 10.8),
+        (2, '2021-09-10T16:03:37', 19.5, 57.5, 10.8),
+        (3, '2021-09-10T16:03:38', 19.5, 57.5, 10.8),
+    ]
+
+    data = iTHX.data(os.path.join(db_files, 'iTHX-1probe.sqlite3'),
+                     start='2021-09-10T16:03:39', end='2021-09-10T16:03:41', as_datetime=False)
+    assert data == [
+        (4, '2021-09-10T16:03:39', 19.5, 57.5, 10.8),
+        (5, '2021-09-10T16:03:40', 19.5, 57.5, 10.8),
+        (6, '2021-09-10T16:03:41', 19.5, 57.5, 10.8),
+    ]
+
+    data = iTHX.data(os.path.join(db_files, 'iTHX-1probe.sqlite3'),
+                     start='2020-09-10', end='2020-01-01')
+    assert data == []

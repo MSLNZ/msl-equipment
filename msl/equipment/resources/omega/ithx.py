@@ -440,6 +440,11 @@ class iTHX(ConnectionSocket):
                 select = ','.join(select)
         base = 'SELECT {} FROM data'.format(select)
 
+        if isinstance(start, datetime):
+            start = start.isoformat(sep='T')
+        if isinstance(end, datetime):
+            end = end.isoformat(sep='T')
+
         if start is None and end is None:
             cursor.execute(base + ';')
         elif start is not None and end is None:

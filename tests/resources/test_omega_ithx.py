@@ -200,11 +200,27 @@ def test_database():
     ]
 
     data = iTHX.data(os.path.join(db_files, 'iTHX-1probe.sqlite3'),
+                     start=datetime(2021, month=9, day=10, hour=16, minute=3, second=41), as_datetime=False)
+    assert data == [
+        (6, '2021-09-10T16:03:41', 19.5, 57.5, 10.8),
+        (7, '2021-09-10T16:03:42', 19.5, 57.5, 10.8),
+        (8, '2021-09-10T16:03:43', 19.5, 57.5, 10.8),
+        (9, '2021-09-10T16:03:44', 19.5, 57.5, 10.8),
+        (10, '2021-09-10T16:03:45', 19.5, 57.5, 10.8)
+    ]
+
+    data = iTHX.data(os.path.join(db_files, 'iTHX-1probe.sqlite3'),
                      end='2021-09-10T16:03:38', as_datetime=False)
     assert data == [
         (1, '2021-09-10T16:03:36', 19.5, 57.5, 10.8),
         (2, '2021-09-10T16:03:37', 19.5, 57.5, 10.8),
         (3, '2021-09-10T16:03:38', 19.5, 57.5, 10.8),
+    ]
+
+    data = iTHX.data(os.path.join(db_files, 'iTHX-1probe.sqlite3'),
+                     end=datetime(2021, month=9, day=10, hour=16, minute=3, second=36), as_datetime=False)
+    assert data == [
+        (1, '2021-09-10T16:03:36', 19.5, 57.5, 10.8),
     ]
 
     data = iTHX.data(os.path.join(db_files, 'iTHX-1probe.sqlite3'),

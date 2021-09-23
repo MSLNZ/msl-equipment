@@ -12,7 +12,10 @@ from msl.loadlib import Server32
 class DataRayOCX32(Server32):
 
     def __init__(self, host, port, **kwargs):
-        """Communicates with the 32-bit ``DATARAYOCX`` library."""
+        """Communicates with the 32-bit ``DATARAYOCX`` library.
+
+        Tested with the WinCamD-LCM-8.0D36 software version.
+        """
 
         # the DATARAYOCX library must be started in a separate thread in order
         # to keep the GUI responsive. Therefore, a dummy DLL is loaded on the

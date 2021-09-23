@@ -25,6 +25,8 @@ class DataRayOCX64(Connection):
         to call the 32-bit functions in the ``DATARAYOCX`` library. A GUI is
         created to configure and visualize the images taken by the camera.
 
+        Tested with the WinCamD-LCM-8.0D36 software version.
+
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a DataRay connection supports the following key-value pairs in the
         :ref:`connections-database`::

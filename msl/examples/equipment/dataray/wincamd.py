@@ -1,6 +1,7 @@
 """
-Example showing how to communicate with a WinCamD beam
-profiling camera from DataRay.
+Example showing how to communicate with a WinCamD beam profiling camera from DataRay.
+
+Tested with the WinCamD-LCM-8.0D36 software version.
 """
 import pprint
 

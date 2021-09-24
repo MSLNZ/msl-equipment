@@ -37,12 +37,12 @@ class DateTimeType(Structure):
     """The DateTimeType struct (24 hour format)."""
     _pack_ = 1
     _fields_ = [
-        ('Sec', c_uint8),   # Seconds
-        ('Min', c_uint8),   # Minutes
-        ('Hour', c_uint8),  # Hours
-        ('Day', c_uint8),   # Days
-        ('Month', c_uint8), # Months
-        ('Year', c_uint8),  # Years
+        ('Sec', c_uint8),    # Seconds
+        ('Min', c_uint8),    # Minutes
+        ('Hour', c_uint8),   # Hours
+        ('Day', c_uint8),    # Days
+        ('Month', c_uint8),  # Months
+        ('Year', c_uint8),   # Years
     ]
 
 
@@ -281,13 +281,16 @@ class NKT(Connection):
 
         functions = {
             # Port functions
-            'getAllPorts': (None, _log_debug,
+            'getAllPorts': (
+                None, _log_debug,
                 [('portnames', POINTER(c_char)),
                  ('maxLen', POINTER(c_ushort))]),
-            'getOpenPorts': (None, _log_debug,
+            'getOpenPorts': (
+                None, _log_debug,
                 [('portnames', POINTER(c_char)),
                  ('maxLen', POINTER(c_ushort))]),
-            'pointToPointPortAdd': (c_ubyte, _check_p2p_result,
+            'pointToPointPortAdd': (
+                c_ubyte, _check_p2p_result,
                 [('portname', c_char_p),
                  ('hostAddress', c_char_p),
                  ('hostPort', c_ushort),
@@ -295,7 +298,8 @@ class NKT(Connection):
                  ('clientPort', c_ushort),
                  ('protocol', c_ubyte),
                  ('msTimeout', c_ubyte)]),
-            'pointToPointPortGet': (c_ubyte, _check_p2p_result,
+            'pointToPointPortGet': (
+                c_ubyte, _check_p2p_result,
                 [('portname', c_char_p),
                  ('hostAddress', POINTER(c_char)),
                  ('hostMaxLen', POINTER(c_ubyte)),
@@ -305,94 +309,111 @@ class NKT(Connection):
                  ('clientPort', POINTER(c_ushort)),
                  ('protocol', POINTER(c_ubyte)),
                  ('msTimeout', POINTER(c_ubyte))]),
-            'pointToPointPortDel': (c_ubyte, _check_p2p_result,
+            'pointToPointPortDel': (
+                c_ubyte, _check_p2p_result,
                 [('portname', c_char_p)]),
-            'openPorts': (c_ubyte, _check_port_result,
+            'openPorts': (
+                c_ubyte, _check_port_result,
                 [('portnames', c_char_p),
                  ('autoMode', c_ubyte),
                  ('liveMode', c_ubyte)]),
-            'closePorts': (c_ubyte, _check_port_result,
+            'closePorts': (
+                c_ubyte, _check_port_result,
                 [('portnames', c_char_p)]),
-            'setLegacyBusScanning': (None, _log_debug,
+            'setLegacyBusScanning': (
+                None, _log_debug,
                 [('legacyScanning', c_ubyte)]),
-            'getLegacyBusScanning': (c_ubyte, _log_debug,
-                []),
-            'getPortStatus': (c_ubyte, _check_port_result,
+            'getLegacyBusScanning': (c_ubyte, _log_debug, []),
+            'getPortStatus': (
+                c_ubyte, _check_port_result,
                 [('portname', c_char_p),
                  ('portStatus', POINTER(c_ubyte))]),
-            'getPortErrorMsg': (c_ubyte, _check_port_result,
+            'getPortErrorMsg': (
+                c_ubyte, _check_port_result,
                 [('portname', c_char_p),
                  ('errorMessage', POINTER(c_char)),
                  ('maxLen', POINTER(c_ushort))]),
             # Dedicated - Register read functions
-            'registerRead': (c_ubyte, _check_register_result,
+            'registerRead': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('readData', POINTER(c_char)),
                  ('readSize', POINTER(c_ubyte)),
                  ('index', c_short)]),
-            'registerReadU8': (c_ubyte, _check_register_result,
+            'registerReadU8': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', POINTER(c_ubyte)),
                  ('index', c_short)]),
-            'registerReadS8': (c_ubyte, _check_register_result,
+            'registerReadS8': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', POINTER(c_byte)),
                  ('index', c_short)]),
-            'registerReadU16': (c_ubyte, _check_register_result,
+            'registerReadU16': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', POINTER(c_ushort)),
                  ('index', c_short)]),
-            'registerReadS16': (c_ubyte, _check_register_result,
+            'registerReadS16': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', POINTER(c_short)),
                  ('index', c_short)]),
-            'registerReadU32': (c_ubyte, _check_register_result,
+            'registerReadU32': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', POINTER(c_ulong)),
                  ('index', c_short)]),
-            'registerReadS32': (c_ubyte, _check_register_result,
+            'registerReadS32': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', POINTER(c_long)),
                  ('index', c_short)]),
-            'registerReadU64': (c_ubyte, _check_register_result,
+            'registerReadU64': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', POINTER(c_ulonglong)),
                  ('index', c_short)]),
-            'registerReadS64': (c_ubyte, _check_register_result,
+            'registerReadS64': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', POINTER(c_longlong)),
                  ('index', c_short)]),
-            'registerReadF32': (c_ubyte, _check_register_result,
+            'registerReadF32': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', POINTER(c_float)),
                  ('index', c_short)]),
-            'registerReadF64': (c_ubyte, _check_register_result,
+            'registerReadF64': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', POINTER(c_double)),
                  ('index', c_short)]),
-            'registerReadAscii': (c_ubyte, _check_register_result,
+            'registerReadAscii': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
@@ -400,74 +421,86 @@ class NKT(Connection):
                  ('maxLen', POINTER(c_ubyte)),
                  ('index', c_short)]),
             # Dedicated - Register write functions
-            'registerWrite': (c_ubyte, _check_register_result,
+            'registerWrite': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('writeData', POINTER(c_char)),
                  ('writeSize', c_ubyte),
                  ('index', c_short)]),
-            'registerWriteU8': (c_ubyte, _check_register_result,
+            'registerWriteU8': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', c_ubyte),
                  ('index', c_short)]),
-            'registerWriteS8': (c_ubyte, _check_register_result,
+            'registerWriteS8': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', c_byte),
                  ('index', c_short)]),
-            'registerWriteU16': (c_ubyte, _check_register_result,
+            'registerWriteU16': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', c_ushort),
                  ('index', c_short)]),
-            'registerWriteS16': (c_ubyte, _check_register_result,
+            'registerWriteS16': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', c_short),
                  ('index', c_short)]),
-            'registerWriteU32': (c_ubyte, _check_register_result,
+            'registerWriteU32': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', c_ulong),
                  ('index', c_short)]),
-            'registerWriteS32': (c_ubyte, _check_register_result,
+            'registerWriteS32': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', c_long),
                  ('index', c_short)]),
-            'registerWriteU64': (c_ubyte, _check_register_result,
+            'registerWriteU64': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', c_ulonglong),
                  ('index', c_short)]),
-            'registerWriteS64': (c_ubyte, _check_register_result,
+            'registerWriteS64': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', c_longlong),
                  ('index', c_short)]),
-            'registerWriteF32': (c_ubyte, _check_register_result,
+            'registerWriteF32': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', c_float),
                  ('index', c_short)]),
-            'registerWriteF64': (c_ubyte, _check_register_result,
+            'registerWriteF64': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('value', c_double),
                  ('index', c_short)]),
-            'registerWriteAscii': (c_ubyte, _check_register_result,
+            'registerWriteAscii': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
@@ -475,7 +508,8 @@ class NKT(Connection):
                  ('writeEOL', c_ubyte),
                  ('index', c_short)]),
             # Dedicated - Register write/read functions (A write immediately followed by a read)
-            'registerWriteRead': (c_ubyte, _check_register_result,
+            'registerWriteRead': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
@@ -484,77 +518,88 @@ class NKT(Connection):
                  ('readData', POINTER(c_char)),
                  ('readSize', POINTER(c_ubyte)),
                  ('index', c_short)]),
-            'registerWriteReadU8': (c_ubyte, _check_register_result,
+            'registerWriteReadU8': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('writeValue', c_ubyte),
                  ('readValue', POINTER(c_ubyte)),
                  ('index', c_short)]),
-            'registerWriteReadS8': (c_ubyte, _check_register_result,
+            'registerWriteReadS8': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('writeValue', c_byte),
                  ('readValue', POINTER(c_byte)),
                  ('index', c_short)]),
-            'registerWriteReadU16': (c_ubyte, _check_register_result,
+            'registerWriteReadU16': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('writeValue', c_ushort),
                  ('readValue', POINTER(c_ushort)),
                  ('index', c_short)]),
-            'registerWriteReadS16': (c_ubyte, _check_register_result,
+            'registerWriteReadS16': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('writeValue', c_short),
                  ('readValue', POINTER(c_short)),
                  ('index', c_short)]),
-            'registerWriteReadU32': (c_ubyte, _check_register_result,
+            'registerWriteReadU32': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('writeValue', c_ulong),
                  ('readValue', POINTER(c_ulong)),
                  ('index', c_short)]),
-            'registerWriteReadS32': (c_ubyte, _check_register_result,
+            'registerWriteReadS32': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('writeValue', c_long),
                  ('readValue', POINTER(c_long)),
                  ('index', c_short)]),
-            'registerWriteReadU64': (c_ubyte, _check_register_result,
+            'registerWriteReadU64': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('writeValue', c_ulonglong),
                  ('readValue', POINTER(c_ulonglong)),
                  ('index', c_short)]),
-            'registerWriteReadS64': (c_ubyte, _check_register_result,
+            'registerWriteReadS64': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('writeValue', c_longlong),
                  ('readValue', POINTER(c_longlong)),
                  ('index', c_short)]),
-            'registerWriteReadF32': (c_ubyte, _check_register_result,
+            'registerWriteReadF32': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('writeValue', c_float),
                  ('readValue', POINTER(c_float)),
                  ('index', c_short)]),
-            'registerWriteReadF64': (c_ubyte, _check_register_result,
+            'registerWriteReadF64': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('writeValue', c_double),
                  ('readValue', POINTER(c_double)),
                  ('index', c_short)]),
-            'registerWriteReadAscii': (c_ubyte, _check_register_result,
+            'registerWriteReadAscii': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
@@ -564,115 +609,142 @@ class NKT(Connection):
                  ('maxLen', POINTER(c_ubyte)),
                  ('index', c_short)]),
             # Dedicated - Device functions
-            'deviceGetType': (c_ubyte, _check_device_result,
+            'deviceGetType': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('devType', POINTER(c_ubyte))]),
-            'deviceGetPartNumberStr': (c_ubyte, _check_device_result,
+            'deviceGetPartNumberStr': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('partnumber', POINTER(c_char)),
                  ('maxLen', POINTER(c_ubyte))]),
-            'deviceGetPCBVersion': (c_ubyte, _check_device_result,
+            'deviceGetPCBVersion': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('PCBVersion', POINTER(c_ubyte))]),
-            'deviceGetStatusBits': (c_ubyte, _check_device_result,
+            'deviceGetStatusBits': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('statusBits', POINTER(c_ushort))]),
-            'deviceGetErrorCode': (c_ubyte, _check_device_result,
+            'deviceGetErrorCode': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('errorCode', POINTER(c_ushort))]),
-            'deviceGetBootloaderVersion': (c_ubyte, _check_device_result,
+            'deviceGetBootloaderVersion': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('version', POINTER(c_ushort))]),
-            'deviceGetBootloaderVersionStr': (c_ubyte, _check_device_result,
+            'deviceGetBootloaderVersionStr': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('versionStr', POINTER(c_char)),
                  ('maxLen', POINTER(c_ubyte))]),
-            'deviceGetFirmwareVersion': (c_ubyte, _check_device_result,
+            'deviceGetFirmwareVersion': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('version', POINTER(c_ushort))]),
-            'deviceGetFirmwareVersionStr': (c_ubyte, _check_device_result,
+            'deviceGetFirmwareVersionStr': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('versionStr', POINTER(c_char)),
                  ('maxLen', POINTER(c_ubyte))]),
-            'deviceGetModuleSerialNumberStr': (c_ubyte, _check_device_result,
+            'deviceGetModuleSerialNumberStr': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('serialNumber', POINTER(c_char)),
                  ('maxLen', POINTER(c_ubyte))]),
-            'deviceGetPCBSerialNumberStr': (c_ubyte, _check_device_result,
+            'deviceGetPCBSerialNumberStr': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('serialNumber', POINTER(c_char)),
                  ('maxLen', POINTER(c_ubyte))]),
             # Callback - Device functions
-            'deviceCreate': (c_ubyte, _check_device_result,
+            'deviceCreate': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('waitReady', c_ubyte)]),
-            'deviceExists': (c_ubyte, _check_device_result,
+            'deviceExists': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('exists', POINTER(c_ubyte))]),
-            'deviceRemove': (c_ubyte, _check_device_result,
+            'deviceRemove': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte)]),
-            'deviceRemoveAll': (c_ubyte, _check_device_result,
+            'deviceRemoveAll': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p)]),
-            'deviceGetAllTypes': (c_ubyte, _check_device_result,
+            'deviceGetAllTypes': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('types', POINTER(c_char)),
                  ('maxTypes', POINTER(c_ubyte))]),
-            'deviceGetMode': (c_ubyte, _check_device_result,
+            'deviceGetMode': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('devMode', POINTER(c_ubyte))]),
-            'deviceGetLive': (c_ubyte, _check_device_result,
+            'deviceGetLive': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('liveMode', POINTER(c_ubyte))]),
-            'deviceSetLive': (c_ubyte, _check_device_result,
+            'deviceSetLive': (
+                c_ubyte, _check_device_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('liveMode', c_ubyte)]),
             # Callback - Register functions
-            'registerCreate': (c_ubyte, _check_register_result,
+            'registerCreate': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('priority', c_ubyte),
                  ('dataType', c_ubyte)]),
-            'registerExists': (c_ubyte, _check_register_result,
+            'registerExists': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte),
                  ('exists', POINTER(c_ubyte))]),
-            'registerRemove': (c_ubyte, _check_register_result,
+            'registerRemove': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regId', c_ubyte)]),
-            'registerRemoveAll': (c_ubyte, _check_register_result,
+            'registerRemoveAll': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte)]),
-            'registerGetAll': (c_ubyte, _check_register_result,
+            'registerGetAll': (
+                c_ubyte, _check_register_result,
                 [('portname', c_char_p),
                  ('devId', c_ubyte),
                  ('regs', POINTER(c_char)),
                  ('maxRegs', POINTER(c_ubyte))]),
             # Callback - Support functions
-            'setCallbackPtrPortInfo': (None, _log_debug,
+            'setCallbackPtrPortInfo': (
+                None, _log_debug,
                 [('callback', c_void_p)]),
-            'setCallbackPtrDeviceInfo': (None, _log_debug,
+            'setCallbackPtrDeviceInfo': (
+                None, _log_debug,
                 [('callback', c_void_p)]),
-            'setCallbackPtrRegisterInfo': (None, _log_debug,
+            'setCallbackPtrRegisterInfo': (
+                None, _log_debug,
                 [('callback', c_void_p)]),
         }
 
@@ -1430,7 +1502,7 @@ class NKT(Connection):
             If there was an error calling this method.
         """
         NKT._SDK.registerCreate(self._PORTNAME, device_id, reg_id,
-                                 RegisterPriorityTypes(priority), RegisterDataTypes(data_type))
+                                RegisterPriorityTypes(priority), RegisterDataTypes(data_type))
 
     def register_exists(self, device_id, reg_id):
         """Checks if a specific register already exists in the internal register list.
@@ -2010,7 +2082,7 @@ class NKT(Connection):
         size = c_ubyte(255)
         read = create_string_buffer(size.value)
         NKT._SDK.registerWriteReadAscii(self._PORTNAME, device_id, reg_id, ascii_value,
-                                         int(bool(write_eol)), read, size, index)
+                                        int(bool(write_eol)), read, size, index)
         return read.value.decode('ascii')
 
     def register_write_read_f32(self, device_id, reg_id, value, index=-1):
@@ -2671,7 +2743,8 @@ _device_errors = {
     1: ('DevResultWaitTimeout', 'The function device_create() timed out waiting for the device being ready'),
     2: ('DevResultFailed', 'The function device_create(), failed'),
     3: ('DevResultDeviceNotFound', 'The specified device could not be found in the internal device list'),
-    4: ('DevResultPortNotFound', 'The function device_create() failed due to not being able to find the specified port'),
+    4: ('DevResultPortNotFound', 'The function device_create() failed due to not '
+                                 'being able to find the specified port'),
     5: ('DevResultPortOpenError', 'The function device_create() failed due to port not being open'),
     6: ('DevResultApplicationBusy', 'The function is not allowed to be invoked from within a callback function')
 }
@@ -2680,18 +2753,22 @@ _register_errors = {
     0: ('RegResultSuccess', 'Successful operation'),
     1: ('RegResultReadError', 'Arises from a register write function with index > 0, if the pre-read fails'),
     2: ('RegResultFailed', 'The function register_create() has failed'),
-    3: ('RegResultBusy', 'The module has reported a BUSY error, the kernel automatically retries on busy but have given up'),
+    3: ('RegResultBusy', 'The module has reported a BUSY error, '
+                         'the kernel automatically retries on busy but have given up'),
     4: ('RegResultNacked', 'The module has Nacked the register, which typically means non existing register'),
     5: ('RegResultCRCErr', 'The module has reported a CRC error, which means the received message has CRC errors'),
     6: ('RegResultTimeout', 'The module has not responded in time. A module should respond in max. 75ms'),
     7: ('RegResultComError', 'The module has reported a COM error, which typically means out of sync or garbage error'),
     8: ('RegResultTypeError', 'The datatype does not seem to match the register datatype'),
     9: ('RegResultIndexError', 'The index seem to be out of range of the register length'),
-    10: ('RegResultPortClosed', 'The specified port is closed error. Could happen if the USB is unplugged in the middel of a sequence'),
-    11: ('RegResultRegisterNotFound', 'The specified register could not be found in the internal register list for the specified device'),
+    10: ('RegResultPortClosed', 'The specified port is closed error. Could happen if the '
+                                'USB is unplugged in the middel of a sequence'),
+    11: ('RegResultRegisterNotFound', 'The specified register could not be found in the '
+                                      'internal register list for the specified device'),
     12: ('RegResultDeviceNotFound', 'The specified device could not be found in the internal device list'),
     13: ('RegResultPortNotFound', 'The specified port name could not be found'),
-    14: ('RegResultPortOpenError', 'The specified port name could not be opened. The port might be in use by another application'),
+    14: ('RegResultPortOpenError', 'The specified port name could not be opened. The port '
+                                   'might be in use by another application'),
     15: ('RegResultApplicationBusy', 'The function is not allowed to be invoked from within a callback function')
 }
 

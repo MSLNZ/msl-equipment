@@ -1528,19 +1528,17 @@ class NKT(Connection):
         NKT._SDK.registerExists(self._PORTNAME, device_id, reg_id, exists)
         return bool(exists.value)
 
-    def register_get_all(self, device_id, reg_id):
+    def register_get_all(self, device_id):
         """Returns the register ids (register addresses) from the internal register list.
 
         Parameters
         ----------
         device_id : :class:`int`
             The device id (module address).
-        reg_id : :class:`int`
-            The register id (register address).
 
         Returns
         -------
-        :class:`bytes`
+        :class:`list` of :class:`int`
             The register ids.
 
         Raises
@@ -1550,8 +1548,8 @@ class NKT(Connection):
         """
         size = c_ubyte(255)
         regs = create_string_buffer(size.value)
-        NKT._SDK.registerGetAll(self._PORTNAME, device_id, reg_id, regs, size)
-        return regs.raw[:size.value]
+        NKT._SDK.registerGetAll(self._PORTNAME, device_id, regs, size)
+        return list(regs.value)
 
     def register_read_ascii(self, device_id, reg_id, index=-1):
         """Reads an ascii string from the register.

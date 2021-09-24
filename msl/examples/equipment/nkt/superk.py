@@ -1,6 +1,5 @@
 """
-Example showing how to communicate with a SuperK Fianium
-laser using the NKT SDK.
+Example showing how to communicate with a SuperK Fianium laser using the NKT SDK.
 """
 import time
 
@@ -9,6 +8,7 @@ from msl.equipment import (
     ConnectionRecord,
     Backend,
 )
+from msl.equipment.exceptions import NKTError
 
 record = EquipmentRecord(
     manufacturer='NKT',
@@ -23,6 +23,7 @@ record = EquipmentRecord(
     )
 )
 
+# Device ID of the SuperK Fianium mainboard
 DEVICE_ID = 15
 
 # Connect to the SuperK laser
@@ -34,11 +35,17 @@ print('The following modules are available in the device:')
 for module, DEVICE_ID in nkt.get_modules().items():
     print('  ModuleType={} DeviceID={}'.format(module, DEVICE_ID))
     print('    Status bits: {}'.format(nkt.device_get_status_bits(DEVICE_ID)))
-    print('    Type: {}'.format(nkt.device_get_type(DEVICE_ID)))
+    print('    Type: 0x{:04x}'.format(nkt.device_get_type(DEVICE_ID)))
     print('    Firmware Version#: {}'.format(nkt.device_get_firmware_version_str(DEVICE_ID)))
     print('    Serial#: {}'.format(nkt.device_get_module_serial_number_str(DEVICE_ID)))
-    print('    PCB Serial#: {}'.format(nkt.device_get_pcb_serial_number_str(DEVICE_ID)))
-    print('    PCB Version#: {}'.format(nkt.device_get_pcb_version(DEVICE_ID)))
+    try:
+        print('    PCB Serial#: {}'.format(nkt.device_get_pcb_serial_number_str(DEVICE_ID)))
+    except NKTError:
+        print('    PCB Serial#: Not Available')
+    try:
+        print('    PCB Version#: {}'.format(nkt.device_get_pcb_version(DEVICE_ID)))
+    except NKTError:
+        print('    PCB Version#: Not Available')
     print('    Is Live?: {}'.format(nkt.device_get_live(DEVICE_ID)))
 
 # Check the Interlock status
@@ -49,25 +56,28 @@ if ilock == 1:  # then requires an interlock reset
     print('Interlock OK? {}'.format(nkt.register_read_u16(DEVICE_ID, 0x32) == 2))
 
 # The documentation indicates that there is a scaling factor of 0.1
-print('Temperature: {} deg C'.format(nkt.register_read_u16(DEVICE_ID, 0x11) * 0.1))
-print('Power level {}%'.format(nkt.register_read_u16(DEVICE_ID, 0x37) * 0.1))
-print('Current level {}%'.format(nkt.register_read_u16(DEVICE_ID, 0x38) * 0.1))
+print('Temperature: {:.2f} deg C'.format(nkt.register_read_u16(DEVICE_ID, 0x11) * 0.1))
+print('Level {}%'.format(nkt.register_read_u16(DEVICE_ID, 0x37) * 0.1))
 
-# Set to Power mode and get the Power mode in a single function call
-print('Is in Power mode? {}'.format(bool(nkt.register_write_read_u16(DEVICE_ID, 0x31, 1))))
+# Set the operating mode and get the operating mode in a single function call
+print('Operating mode: {}'.format(nkt.register_write_read_u16(DEVICE_ID, 0x31, 1)))
 
-# Set the power level to 5.5% (the docs of the DLL indicate that there is a 0.1 scaling factor)
+# Set the output level to 5.5% (the docs of the DLL indicate that there is a 0.1 scaling factor)
+print('Set level to 5.5%')
 nkt.register_write_u16(DEVICE_ID, 0x37, 55)
 
-# Get the power level
-print('Power level {}%'.format(nkt.register_read_u16(DEVICE_ID, 0x37) * 0.1))
+# Get the output level
+print('Level {}%'.format(nkt.register_read_u16(DEVICE_ID, 0x37) * 0.1))
 
 # Turn on the laser
+print('Turn laser on')
 nkt.register_write_u8(DEVICE_ID, 0x30, 3)
 
+print('Sleep for 5 seconds')
 time.sleep(5)
 
 # Turn off the laser
+print('Turn laser off')
 nkt.register_write_u8(DEVICE_ID, 0x30, 0)
 
 # Disconnect from the laser

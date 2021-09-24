@@ -49,6 +49,7 @@ record = EquipmentRecord(
     )
 )
 
+# Device ID of the SuperK Fianium mainboard
 DEVICE_ID = 15
 
 # Connect to the laser
@@ -67,17 +68,17 @@ if ilock == 1:  # then requires an interlock reset
 
 # The documentation indicates that there is a scaling factor of 0.1
 print('Temperature: {} deg C'.format(nkt.register_read_u16(DEVICE_ID, 0x11) * 0.1))
-print('Power level {}%'.format(nkt.register_read_u16(DEVICE_ID, 0x37) * 0.1))
-print('Current level {}%'.format(nkt.register_read_u16(DEVICE_ID, 0x38) * 0.1))
+print('Level {}%'.format(nkt.register_read_u16(DEVICE_ID, 0x37) * 0.1))
 
 # Set to Power mode and get the Power mode in a single function call
 print('Is in Power mode? {}'.format(bool(nkt.register_write_read_u16(DEVICE_ID, 0x31, 1))))
 
 # Set the power level to 5.5% (the docs of the DLL indicate that there is a 0.1 scaling factor)
+print('Set level to 5.5%')
 nkt.register_write_u16(DEVICE_ID, 0x37, 55)
 
 # Get the power level
-print('Power level {} %'.format(nkt.register_read_u16(DEVICE_ID, 0x37) * 0.1))
+print('Level {} %'.format(nkt.register_read_u16(DEVICE_ID, 0x37) * 0.1))
 
 # Disconnect from the laser
 nkt.disconnect()

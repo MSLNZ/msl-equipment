@@ -59,7 +59,7 @@ def parse_pico_scope_api_header(path):
 
     fname = os.path.basename(path)[:-2]
     header_dict = {'enums': {}, 'defines': {}, 'functions': {}, 'structs': {}, 'functypes': {}}
-    with open(path, 'r') as fp:
+    with open(path, mode='rt') as fp:
         for line in fp:
 
             # the function definitions and the function-prototype definitions
@@ -162,7 +162,7 @@ def print_define_statements(header_dict):
 
 def create_picoscope_enums_file(header_dict, picostatus_h_path):
     """Creates the _picoscope_enums.py file"""
-    fp = open('_picoscope_enums.py', 'w')
+    fp = open('_picoscope_enums.py', mode='wt')
     fp.write('from enum import IntEnum\n\n')
 
     aliases = []
@@ -215,7 +215,7 @@ def create_picoscope_enums_file(header_dict, picostatus_h_path):
             fp.write('# This enum definition was found in PicoStatus.h\n')
             fp.write('# It is used by the ps4000aGetString function\n')
             ps4000a_enum = []
-            with open(picostatus_h_path, 'r') as ps:
+            with open(picostatus_h_path, mode='rt') as ps:
                 allow_writing = False
                 index = 0
                 n = 0
@@ -251,7 +251,7 @@ def create_picoscope_structs_file(header_dict):
     """Creates the _picoscope_structs.py file"""
     from msl.equipment.resources.picotech.picoscope.enums import ENUM_DATA_TYPE_NAMES
 
-    fp = open('_picoscope_structs.py', 'w')
+    fp = open('_picoscope_structs.py', mode='wt')
     fp.write('from ctypes import Structure, c_int16, c_uint16, c_uint32, c_int64, c_uint64\n\n')
     fp.write('from msl.equipment.resources.picotech import c_enum\n')
     fp.write('from msl.equipment.resources.picotech.errors import PICO_STATUS\n\n')
@@ -318,7 +318,7 @@ def check_enum_struct_names():
 def create_callbacks_file(header_dict):
     """Create the _picoscope_callbacks.py file"""
 
-    fp = open('_picoscope_callbacks.py', 'w')
+    fp = open('_picoscope_callbacks.py', mode='wt')
     fp.write('from ctypes import POINTER, c_int16, c_uint32, c_void_p, c_int32\n\n')
 
     fp.write('from msl.loadlib import IS_WINDOWS\n\n')
@@ -419,7 +419,7 @@ def create_picoscope_functions_file(header_dict):
     from msl.equipment.resources.picotech.picoscope.callbacks import CALLBACK_NAMES
     from msl.equipment.resources.picotech.picoscope.structs import STRUCT_DATA_TYPE_ALIASES
 
-    fp = open('_picoscope_functions.py', 'w')
+    fp = open('_picoscope_functions.py', mode='wt')
 
     fp.write('from ctypes import (c_int8, c_int16, c_uint16, c_int32, c_uint32, c_int64,\n')
     fp.write('                    c_uint64, c_float, c_double, c_void_p, POINTER)\n')

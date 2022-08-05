@@ -39,7 +39,7 @@ path = os.path.join(os.path.expanduser('~'), 'ithx-logger-example.csv')
 
 omega = record.connect()
 
-with open(path, mode='w') as fp:
+with open(path, mode='wt') as fp:
     while True:
         try:
             now = datetime.now()

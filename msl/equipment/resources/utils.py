@@ -106,7 +106,7 @@ def get_lines(path, remove_comments=True):
         The list of lines in the header file.
     """
     lines = []
-    with open(path, 'r') as fp:
+    with open(path, mode='rt') as fp:
         for line in fp.readlines():
             line_strip = line.strip()
             if not line_strip:

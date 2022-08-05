@@ -90,7 +90,7 @@ def test_equipment_record():
     assert a['user_defined'] == {}
     EquipmentRecord(**json.loads(json.dumps(a)))  # check that this does not raise an error
 
-    with open(temp, 'w') as fp:  # no unicode, use builtin open() function
+    with open(temp, mode='wt') as fp:  # no unicode, use builtin open() function
         fp.write(convert_to_xml_string(record.to_xml()))
     a = ElementTree().parse(temp)
     assert len(a) == len(record.__slots__)
@@ -726,7 +726,7 @@ def test_connection_record():
     assert a['serial'] == ''
     ConnectionRecord(**json.loads(json.dumps(a)))  # check that this does not raise an error
 
-    with open(temp, 'w') as fp:  # no unicode, use builtin open() function
+    with open(temp, mode='wt') as fp:  # no unicode, use builtin open() function
         fp.write(convert_to_xml_string(record.to_xml()))
     a = ElementTree().parse(temp)
     assert len(a) == 7

@@ -2,5 +2,5 @@
 Release Notes
 =============
 
-Version 0.1.0.dev0
-==================
+Version 0.1.0 (in development)
+==============================

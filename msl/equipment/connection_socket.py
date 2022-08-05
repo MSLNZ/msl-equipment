@@ -18,7 +18,7 @@ class ConnectionSocket(ConnectionMessageBased):
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a socket connection supports the following key-value pairs in the
-        :ref:`connections-database` (see also :func:`socket.socket` for more details)::
+        :ref:`connections-database` (see also :class:`~socket.socket` for more details)::
 
             'read_termination': str or None, read until this termination sequence is found [default: '\\n']
             'write_termination': str or None, termination sequence appended to write messages [default: '\\r\\n']
@@ -139,7 +139,7 @@ class ConnectionSocket(ConnectionMessageBased):
 
     @property
     def socket(self):
-        """:func:`socket.socket`: The reference to the socket."""
+        """:class:`~socket.socket`: The reference to the socket."""
         return self._socket
 
     @staticmethod

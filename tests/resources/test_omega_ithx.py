@@ -88,7 +88,7 @@ def test_temperature_humidity_dewpoint():
         thread.daemon = True
         thread.start()
 
-        time.sleep(1)
+        time.sleep(2)
 
         dev = record.connect(demo=False)
         assert isinstance(dev, iTHX)

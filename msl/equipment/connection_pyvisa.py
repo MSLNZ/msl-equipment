@@ -1,7 +1,7 @@
 """
 Uses PyVISA_ as the backend to communicate with the equipment.
 
-.. _PyVISA: https://pyvisa.readthedocs.io/en/latest/
+.. _PyVISA: https://pyvisa.readthedocs.io/en/stable/
 """
 try:
     import pyvisa
@@ -136,8 +136,8 @@ class ConnectionPyVISA(Connection):
 
                 * ``@ivi`` to use :ref:`IVI <intro-configuring>`
                 * ``@ni`` to use `NI-VISA <https://www.ni.com/visa/>`_ (only supported in PyVISA <1.12)
-                * ``@py`` to use `PyVISA-py <https://pyvisa-py.readthedocs.io/en/latest/>`_
-                * ``@sim`` to use `PyVISA-sim <https://pyvisa-sim.readthedocs.io/en/latest/>`_
+                * ``@py`` to use `PyVISA-py <https://pyvisa-py.readthedocs.io/en/stable/>`_
+                * ``@sim`` to use `PyVISA-sim <https://pyvisa-sim.readthedocs.io/en/stable/>`_
 
             If :data:`None` then :attr:`~.config.Config.PyVISA_LIBRARY` will be used.
 

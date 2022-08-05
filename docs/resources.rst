@@ -167,13 +167,13 @@ Please follow the `style guide`_.
     are located in the root directory of the **MSL-Equipment** package.
 12. If running the tests pass and building the docs show no errors/warnings then create a `pull request`_.
 
-.. _style guide: https://msl-package-manager.readthedocs.io/en/latest/developers_guide.html#edit-the-source-code-using-the-style-guide
+.. _style guide: https://msl-package-manager.readthedocs.io/en/stable/developers_guide.html#edit-the-source-code-using-the-style-guide
 .. _fork: https://help.github.com/articles/fork-a-repo/
 .. _repository: https://github.com/MSLNZ/msl-equipment
 .. _msl/equipment/resources: https://github.com/MSLNZ/msl-equipment/tree/main/msl/equipment/resources
 .. _msl/examples/equipment: https://github.com/MSLNZ/msl-equipment/tree/main/msl/examples/equipment
 .. _def test_find_resource_class(): https://github.com/MSLNZ/msl-equipment/blob/main/tests/resources/test_init.py
-.. _condatests.py: https://msl-package-manager.readthedocs.io/en/latest/new_package_readme.html#create-readme-condatests
+.. _condatests.py: https://msl-package-manager.readthedocs.io/en/stable/new_package_readme.html#create-readme-condatests
 .. _docs/_api: https://github.com/MSLNZ/msl-equipment/tree/main/docs/_api
 .. _docs/_api/msl.equipment.resources.rst: https://github.com/MSLNZ/msl-equipment/blob/main/docs/_api/msl.equipment.resources.rst
 .. _docs/resources.rst: https://github.com/MSLNZ/msl-equipment/blob/main/docs/resources.rst

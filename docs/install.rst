@@ -38,12 +38,12 @@ because the resource might depend on an external dependency (e.g., the SDK
 provided by a manufacturer) and this external dependency might not be
 available for your operating system.
 
-.. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/latest/
-.. _PyVISA: https://pyvisa.readthedocs.io/en/latest/
-.. _PyVISA-py: https://pyvisa-py.readthedocs.io/en/latest/
-.. _NI-DAQmx: https://nidaqmx-python.readthedocs.io/en/latest/
+.. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/stable/
+.. _PyVISA: https://pyvisa.readthedocs.io/en/stable/
+.. _PyVISA-py: https://pyvisa-py.readthedocs.io/en/stable/
+.. _NI-DAQmx: https://nidaqmx-python.readthedocs.io/en/stable/
 .. _numpy: https://www.numpy.org/
-.. _msl-loadlib: https://msl-loadlib.readthedocs.io/en/latest/
+.. _msl-loadlib: https://msl-loadlib.readthedocs.io/en/stable/
 .. _msl-io: https://msl-io.readthedocs.io/en/latest/
 .. _pyserial: https://pythonhosted.org/pyserial/
-.. _python-dateutil: https://dateutil.readthedocs.io/en/latest/
+.. _python-dateutil: https://dateutil.readthedocs.io/en/stable/

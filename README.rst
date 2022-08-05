@@ -49,5 +49,5 @@ The documentation for **MSL-Equipment** can be found
 .. |github tests| image:: https://github.com/MSLNZ/msl-equipment/actions/workflows/run-tests.yml/badge.svg
    :target: https://github.com/MSLNZ/msl-equipment/actions/workflows/run-tests.yml
 
-.. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/latest/
+.. _MSL Package Manager: https://msl-package-manager.readthedocs.io/en/stable/
 .. _resources: https://msl-equipment.readthedocs.io/en/latest/resources.html

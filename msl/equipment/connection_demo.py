@@ -38,7 +38,7 @@ class ConnectionDemo(Connection):
         in demo mode.
 
         .. _reStructuredText: https://www.python.org/dev/peps/pep-0287/
-        .. _Numpy: https://numpydoc.readthedocs.io/en/latest/
+        .. _Numpy: https://numpydoc.readthedocs.io/en/stable/
 
         Parameters
         ----------

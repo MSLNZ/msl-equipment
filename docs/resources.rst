@@ -190,7 +190,7 @@ Please follow the `style guide`_.
 .. _Kinesis: https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=Motion_Control&viewtab=0
 .. _OMEGA: https://www.omega.com/
 .. _OptoSigma: https://www.global-optosigma.com/en_jp/
-.. _Electron Dynamics Ltd: http://www.electrondynamics.co.uk/wp/
+.. _Electron Dynamics Ltd: https://www.electrondynamics.co.uk/wp/
 .. _Avantes: https://www.avantes.com/
 .. _AvaSpec SDK: https://www.avantes.com/support/software
 .. _NKT Photonics: https://www.nktphotonics.com/

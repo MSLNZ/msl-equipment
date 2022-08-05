@@ -50,7 +50,7 @@ class Database(object):
             for the same :class:`~.EquipmentRecord` or if the name of the Sheet in an Excel
             spreadsheet is invalid.
         """
-        logger.debug('Loading databases from {!r}'.format(path))
+        logger.debug('Loading databases from %s', path)
 
         try:
             root = cElementTree.parse(path).getroot()
@@ -118,8 +118,8 @@ class Database(object):
                         temp = [t.strip().lower().replace(' ', '_') for t in temp.split(',') if t.strip()]
                         for name in temp:
                             if name in EquipmentRecord.__slots__:
-                                logger.warning('The "user_defined" parameter {!r} is already an '
-                                               'EquipmentRecord attribute'.format(name))
+                                logger.warning('The "user_defined" parameter %r is already an '
+                                               'EquipmentRecord attribute', name)
                             else:
                                 user_defined.append(name)
                         if user_defined:
@@ -355,7 +355,7 @@ class Database(object):
             raise OSError('You must create a <path> </path> element in {!r} '
                           'specifying where to find the database'.format(self._config_path))
 
-        logger.debug('Reading database file {!r}'.format(path))
+        logger.debug('Reading database file %s', path)
         ext = os.path.splitext(path)[1].lower()
 
         # also check if the path is a relative path (relative to the XML file path)
@@ -483,23 +483,23 @@ class Database(object):
 
         key = '{}|{}|{}'.format(manufacturer, model, serial)
         if key in records:
-            logger.error('Manufacturer|Model|Serial is not unique -> {} in {!r}'
-                         .format(key, element.findtext('path')))
+            logger.error('Manufacturer|Model|Serial is not unique -> %s in %r',
+                         key, element.findtext('path'))
             return ''
         return key
 
     def _is_key_unique(self, key, dictionary, element):
         """Returns whether the dictionary key is unique"""
         if key in dictionary:
-            msg = 'Manufacturer|Model|Serial is not unique -> {} in {!r}'
-            logger.error(msg.format(key, element.findtext('path')))
+            logger.error('Manufacturer|Model|Serial is not unique -> %s in %r',
+                         key, element.findtext('path'))
             return False
         return True
 
     def _is_row_length_okay(self, row, header):
         """Check if the row and the header have the same length"""
         if not len(row) == len(header):
-            logger.error('len(row) [{}] != len(header) [{}] -> row: {}'.format(len(row), len(header), row))
+            logger.error('len(row) [%d] != len(header) [%d] -> row: %s', len(row), len(header), row)
             return False
         return True
 

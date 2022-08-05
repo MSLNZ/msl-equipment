@@ -144,7 +144,7 @@ class PT104(ConnectionSDK):
         """Disconnect from the PT-104 Data Logger."""
         if self._handle:
             self.sdk.UsbPt104CloseUnit(self._handle)
-            self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
+            self.log_debug('Disconnected from %s', self.equipment_record.connection)
             self._handle = None
 
     def get_ip_details(self):

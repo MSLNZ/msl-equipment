@@ -171,7 +171,7 @@ class ConnectionMessageBased(Connection):
             A message to append to the generic timeout message.
         """
         msg = 'Timeout occurred after {} seconds. {}'.format(self._timeout, append_msg)
-        self.log_error('{!r} {}'.format(self, msg))
+        self.log_error('%r %s', self, msg)
         raise MSLTimeoutError('{!r}\n{}'.format(self, msg))
 
     def read(self, size=None):
@@ -249,13 +249,13 @@ class ConnectionMessageBased(Connection):
             data = message.encode(encoding=self._encoding, errors=self.encoding_errors)
         if self._write_termination is not None and not data.endswith(self._write_termination):
             data += self._write_termination
-        self.log_debug('{}.write({!r})'.format(self, data))
+        self.log_debug('%s.write(%r)', self, data)
         return data
 
     def _decode(self, size, message):
         # convenience method for processing the message from a read operation
         if size is None:
-            self.log_debug('{}.read() -> {!r}'.format(self, message))
+            self.log_debug('%s.read() -> %r', self, message)
         else:
-            self.log_debug('{}.read({}) -> {!r}'.format(self, size, message))
+            self.log_debug('%s.read(%s) -> %r', self, size, message)
         return message.decode(encoding=self._encoding, errors=self.encoding_errors)

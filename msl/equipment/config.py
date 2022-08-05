@@ -64,7 +64,7 @@ class Config(object):
         OSError
             If `path` does not exist or if the :ref:`configuration-file` is invalid.
         """
-        logger.debug('Loading {}'.format(path))
+        logger.debug('Loading %s', path)
         try:
             self._root = cElementTree.parse(path).getroot()
             parse_err = ''
@@ -80,16 +80,16 @@ class Config(object):
         element = self._root.find('pyvisa_library')
         if element is not None:
             Config.PyVISA_LIBRARY = element.text
-            logger.debug('update Config.PyVISA_LIBRARY = {}'.format(Config.PyVISA_LIBRARY))
+            logger.debug('update Config.PyVISA_LIBRARY = %s', Config.PyVISA_LIBRARY)
 
         element = self._root.find('demo_mode')
         if element is not None:
             Config.DEMO_MODE = element.text.lower() == 'true'
-            logger.debug('update Config.DEMO_MODE = {}'.format(Config.DEMO_MODE))
+            logger.debug('update Config.DEMO_MODE = %s', Config.DEMO_MODE)
 
         for element in self._root.findall('path'):
             if not os.path.isdir(element.text):
-                logger.warning('Not a valid PATH ' + element.text)
+                logger.warning('Not a valid PATH %s', element.text)
                 continue
             if element.attrib.get('recursive', 'false').lower() == 'true':
                 for root, dirs, files in os.walk(element.text):

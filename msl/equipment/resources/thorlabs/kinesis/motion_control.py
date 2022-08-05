@@ -108,7 +108,7 @@ class MotionControl(ConnectionSDK):
             try:
                 func = getattr(self.sdk, item[0])
             except AttributeError as e:
-                self.log_debug('{0} {1}'.format(self, e))
+                self.log_debug('%s %s', self, e)
             else:
                 func.restype = item[1]
                 func.errcheck = getattr(self, item[2])
@@ -366,8 +366,8 @@ class MotionControl(ConnectionSDK):
             root = cElementTree.parse(cfg).getroot()
             element = root.find('.//Device[@Name="{}"]'.format(self.equipment_record.serial))
             if element is None:
-                self.log_warning('Cannot find <Device Name="{}"> in '
-                                 'ThorlabsDeviceConfiguration.xml'.format(self.equipment_record.serial))
+                self.log_warning('Cannot find <Device Name="%s"> in ThorlabsDeviceConfiguration.xml',
+                                 self.equipment_record.serial)
                 return
             name = element.find('SettingsName').text
 
@@ -410,7 +410,7 @@ class MotionControl(ConnectionSDK):
                 element = root.find('.//DeviceSettingsDefinition[@Name="{}"]'.format(name))
 
         if element is None:
-            self.log_warning('Cannot find <DeviceSettingsDefinition Name="{}"> '.format(name))
+            self.log_warning('Cannot find <DeviceSettingsDefinition Name="%s">', name)
             return
 
         # populate the settings dict

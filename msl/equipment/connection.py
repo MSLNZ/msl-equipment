@@ -89,7 +89,7 @@ class Connection(object):
             :meth:`.set_exception_class`. If an :exc:`Exception` object then
             its string representation is used as the message.
         """
-        self.log_error('{!r} {}'.format(self, message))
+        self.log_error('%r %s', self, message)
         raise self._exception_handler('{!r}\n{}'.format(self, message))
 
     @staticmethod

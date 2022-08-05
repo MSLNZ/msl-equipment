@@ -72,7 +72,7 @@ class DataRayOCX64(Connection):
             self.disconnect()
             self.raise_exception('Error initializing the DataRay OCX library\n{}'.format(error))
 
-        self.log_debug('Connected to {}'.format(record.connection))
+        self.log_debug('Connected to %s', record.connection)
 
     def wait_to_configure(self):
         """Wait until the camera has been configured.
@@ -152,7 +152,7 @@ class DataRayOCX64(Connection):
         ~msl.equipment.exceptions.DataRayError
             If not successful.
         """
-        self.log_debug('DataRayOCX64.acquire(timeout={})'.format(timeout))
+        self.log_debug('DataRayOCX64.acquire(timeout=%s)', timeout)
 
         info = {}
         error = None
@@ -186,4 +186,4 @@ class DataRayOCX64(Connection):
             pass
 
         self._client = None
-        self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
+        self.log_debug('Disconnected from %s', self.equipment_record.connection)

@@ -13,7 +13,7 @@ from msl.equipment.exceptions import PrincetonInstrumentsError
 
 
 def _log_errcheck(result, func, arguments):
-    Connection.log_debug('PrincetonInstruments.{}{} -> {}'.format(func.__name__, arguments, result))
+    Connection.log_debug('PrincetonInstruments.%s%s -> %s', func.__name__, arguments, result)
     return result
 
 
@@ -79,7 +79,7 @@ class PrincetonInstruments(Connection):
                         except PrincetonInstrumentsError:
                             self.raise_exception('Could not open port {!r}'.format(port))
 
-        self.log_debug('Connected to {}'.format(record.connection))
+        self.log_debug('Connected to %s', record.connection)
 
     def disconnect(self):
         """Close all open connections."""

@@ -44,7 +44,7 @@ def register(manufacturer=None, model=None, flags=0):
     """
     def cls(obj):
         _registry.append(_Resource(manufacturer, model, flags, obj))
-        logger.debug('added {} to the registry'.format(obj))
+        logger.debug('added %s to the registry', obj)
         return obj
     return cls
 

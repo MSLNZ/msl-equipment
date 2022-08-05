@@ -54,7 +54,7 @@ class ConnectionSDK(Connection):
         self._assembly = self._lib.assembly
         self._gateway = self._lib.gateway
 
-        self.log_debug('Connected to {}'.format(record.connection))
+        self.log_debug('Connected to %s', record.connection)
 
     @property
     def assembly(self):
@@ -78,7 +78,7 @@ class ConnectionSDK(Connection):
 
     def log_errcheck(self, result, func, arguments):
         """Convenience method for logging an :attr:`~ctypes._FuncPtr.errcheck`"""
-        self.log_debug('{}.{}{} -> {}'.format(self.__class__.__name__, func.__name__, arguments, result))
+        self.log_debug('%s.%s%s -> %s', self.__class__.__name__, func.__name__, arguments, result)
         return result
 
     @staticmethod

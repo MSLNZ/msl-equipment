@@ -197,7 +197,7 @@ class PicoScope(ConnectionSDK):
         """Disconnect from the PicoScope."""
         if self._handle is not None:
             self.CloseUnit(self._handle)
-            self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
+            self.log_debug('Disconnected from %s', self.equipment_record.connection)
             self._handle = None
 
     def get_unit_info(self, info=None, include_name=True):
@@ -478,9 +478,8 @@ class PicoScope(ConnectionSDK):
         self._allocate_buffer_memory()
 
         if abs(dt - self._sampling_interval) / dt > 1e-6:
-            msg = 'The sampling interval is {0:.6e} seconds, requested {1:.6e} seconds'\
-                .format(self._sampling_interval, dt)
-            self.log_warning(msg)
+            self.log_warning('The sampling interval is %.6e seconds, requested %.6e seconds',
+                             self._sampling_interval, dt)
 
         return self._sampling_interval, self._num_samples
 

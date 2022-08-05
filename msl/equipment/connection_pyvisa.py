@@ -79,7 +79,7 @@ class ConnectionPyVISA(Connection):
             props['timeout'] = timeout * 1000
 
         self._resource = rm.open_resource(record.connection.address, **props)
-        self.log_debug('Connected to {}'.format(record.connection))
+        self.log_debug('Connected to %s', record.connection)
 
     def __getattr__(self, item):
         attr = getattr(self._resource, item)
@@ -122,7 +122,7 @@ class ConnectionPyVISA(Connection):
         """Calls :meth:`~pyvisa.resources.Resource.close`."""
         if self._resource is not None:
             self._resource.close()
-            self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
+            self.log_debug('Disconnected from %s', self.equipment_record.connection)
             self._resource = None
 
     @staticmethod

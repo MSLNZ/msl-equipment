@@ -81,7 +81,7 @@ def dmm_factory(connection_record, connection_class):
                     break
                 cmd += re.sub(curly, str(value), item)
             cmd = cmd.replace(']', '').rstrip()
-            self.log_debug('{} -> {}'.format(self, cmd))
+            self.log_debug('%s -> %s', self, cmd)
             return cmd
 
         def voltage_dc(self, range=None, resolution=None):

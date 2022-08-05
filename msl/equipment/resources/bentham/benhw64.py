@@ -49,7 +49,7 @@ class Bentham(Connection):
         path = record.connection.address[5:]
         head, tail = os.path.split(path)
         self._tail = tail
-        self.log_debug('Starting 32-bit server for {}'.format(tail))
+        self.log_debug('Starting 32-bit server for %s', tail)
 
         # the IEEE_32M.dll library must be available on PATH
         env_path = [head, os.path.join(head, 'IEEE', 'Dummy')]
@@ -95,14 +95,14 @@ class Bentham(Connection):
         """Disconnect from the SDK and from the 32-bit server."""
         if self._is_connected:
             self.errcheck(self._client.request32('close'))
-            self.log_debug('Stopping 32-bit server for {}'.format(self._tail))
+            self.log_debug('Stopping 32-bit server for %s', self._tail)
             self.shutdown_server32()
             self._is_connected = False
 
     def errcheck(self, result, *args, **kwargs):
         """Checks whether a function call to the SDK was successful."""
         frame = inspect.getouterframes(inspect.currentframe())[1]
-        self.log_debug('{}.{}{} -> {}'.format(self.__class__.__name__, frame.function, args, result))
+        self.log_debug('%s.%s%s -> %s', self.__class__.__name__, frame.function, args, result)
         if result != BI_OK:
             e, m = ERROR_CODES[result]
             try:
@@ -178,7 +178,7 @@ class Bentham(Connection):
     def version(self):
         """:class:`str`: The version number of the SDK."""
         version = self._client.request32('get_version')
-        self.log_debug('{}.version() -> {}'.format(self.__class__.__name__, version))
+        self.log_debug('%s.version() -> %s', self.__class__.__name__, version)
         return version
 
     def zero_calibration(self, start_wavelength, stop_wavelength):

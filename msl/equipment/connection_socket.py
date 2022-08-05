@@ -88,7 +88,7 @@ class ConnectionSocket(ConnectionMessageBased):
         self._host, self._port = info['host'], info['port']
 
         self._connect()
-        self.log_debug('Connected to {} '.format(record.connection))
+        self.log_debug('Connected to %s', record.connection)
 
     def _connect(self):
         # it is useful to make this method because some subclasses needed to a "reconnect"
@@ -176,7 +176,7 @@ class ConnectionSocket(ConnectionMessageBased):
         """Close the socket."""
         if self._socket is not None:
             self._socket.close()
-            self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
+            self.log_debug('Disconnected from %s', self.equipment_record.connection)
             self._socket = None
 
     def read(self, size=None):

@@ -59,7 +59,7 @@ class PicoScopeApi(PicoScope):
         """The SDK function returns PICO_OK if the function call was successful."""
         self.log_errcheck(result, func, args)
         if result == PICO_BUSY:
-            self.log_info(self._base_msg + ' is busy...')
+            self.log_info('%s is busy...', self._base_msg)
             return result
         if result != PICO_OK:
             conn = self.equipment_record.connection
@@ -522,7 +522,7 @@ class PicoScopeApi(PicoScope):
             and it is ignored for all other PicoScope Series.
         """
         if self._handle is not None:
-            self.log_warning(self._base_msg + ' is already open')
+            self.log_warning('%s is already open', self._base_msg)
             return
 
         handle = c_int16()
@@ -533,11 +533,11 @@ class PicoScopeApi(PicoScope):
             self._handle = handle
 
         if ret == PICO_OK:
-            self.log_debug('{}.open_unit{}'.format(self.__class__.__name__, args))
+            self.log_debug('%s.open_unit%s', self.__class__.__name__, args)
             return ret
 
         if auto_select_power and ret == PICO_POWER_SUPPLY_NOT_CONNECTED:
-            self.log_debug('{}.open_unit{}'.format(self.__class__.__name__, args))
+            self.log_debug('%s.open_unit%s', self.__class__.__name__, args)
             return self.change_power_source(ret)  # the ret value is the correct power_state value
 
         # raise the exception
@@ -561,7 +561,7 @@ class PicoScopeApi(PicoScope):
             and it is ignored for all other PicoScope Series.
         """
         if self._handle is not None:
-            self.log_warning(self._base_msg + ' is already open')
+            self.log_warning('%s is already open', self._base_msg)
             return
 
         status = c_int16()

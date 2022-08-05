@@ -314,7 +314,7 @@ class iTHX(ConnectionSocket):
         record_as_dict = self.equipment_record.to_dict()
 
         db = sqlite3.connect(path, timeout=db_timeout)
-        self.log_info('start logging to {}'.format(path))
+        self.log_info('start logging to %s', path)
 
         props = self.equipment_record.connection.properties
         if nprobes is None:
@@ -364,7 +364,7 @@ class iTHX(ConnectionSocket):
                         data += self.temperature_humidity_dewpoint(probe=2, celsius=celsius, nbytes=nbytes)
                     self.log_info(msg_format.format(*data, **record_as_dict))
                 except Exception as e:
-                    self.log_error('{}: {}'.format(e.__class__.__name__, e))
+                    self.log_error('%s: %s', e.__class__.__name__, e)
                     self.reconnect(max_attempts=-1)
                     continue
 
@@ -386,7 +386,7 @@ class iTHX(ConnectionSocket):
                     db.close()
                 except sqlite3.DatabaseError as e:
                     db.close()
-                    self.log_error('{}: {}'.format(e.__class__.__name__, e))
+                    self.log_error('%s: %s', e.__class__.__name__, e)
                 else:
                     time.sleep(max(0.0, wait - (time.time() - t0)))
 
@@ -394,7 +394,7 @@ class iTHX(ConnectionSocket):
             pass
 
         db.close()
-        self.log_info('stopped logging to {}'.format(path))
+        self.log_info('stopped logging to %s', path)
 
     @staticmethod
     def data(path, start=None, end=None, as_datetime=True, select='*'):

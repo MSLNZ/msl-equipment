@@ -113,7 +113,7 @@ class ConnectionSerial(ConnectionMessageBased):
         if error_msg:
             self.raise_exception(error_msg)
 
-        self.log_debug('Connected to {}'.format(record.connection))
+        self.log_debug('Connected to %s', record.connection)
 
     @property
     def serial(self):
@@ -151,7 +151,7 @@ class ConnectionSerial(ConnectionMessageBased):
             # the this class is initialized then self._serial won't exist
             if self._serial.is_open:
                 self._serial.close()
-                self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
+                self.log_debug('Disconnected from %s', self.equipment_record.connection)
         except AttributeError:
             pass
 

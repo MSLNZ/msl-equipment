@@ -69,12 +69,12 @@ class OL756(Connection):
                 'Is it turned on and connected to the computer?'
             )
 
-        self.log_debug('Connected to {}'.format(record.connection))
+        self.log_debug('Connected to %s', record.connection)
 
     def __getattr__(self, attr):
         def send(*args, **kwargs):
             try:
-                self.log_debug('{}.{}({}, {})'.format(self.__class__.__name__, attr, args, kwargs))
+                self.log_debug('%s.%s(%s, %s)', self.__class__.__name__, attr, args, kwargs)
                 return self._request32(attr, *args, **kwargs)
             except Server32Error as e:
                 error = e
@@ -99,4 +99,4 @@ class OL756(Connection):
             pass
 
         self._client = None
-        self.log_debug('Disconnected from {}'.format(self.equipment_record.connection))
+        self.log_debug('Disconnected from %s', self.equipment_record.connection)

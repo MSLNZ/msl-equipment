@@ -11,7 +11,7 @@ from msl.equipment import (
     ConnectionRecord,
     Backend,
 )
-from msl.equipment.resources.picotech.picoscope import callbacks
+from msl.equipment.resources.picotech import ps5000aDataReady
 
 record = EquipmentRecord(
     manufacturer='Pico Technology',
@@ -31,7 +31,7 @@ record = EquipmentRecord(
 os.environ['PATH'] += os.pathsep + r'C:\Program Files\Pico Technology\SDK\lib'
 
 
-@callbacks.ps5000aDataReady
+@ps5000aDataReady
 def my_data_ready(handle, status, num_samples, overflow, pointer):
     print('DataReady Callback: Data transfer is done! '
           'handle={}, status={}, num_samples={}, overflow={}, pointer={}'

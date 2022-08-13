@@ -86,3 +86,4 @@ for root, dirs, files in os.walk(os.path.dirname(__file__)):
 from .avantes import Avantes
 from .nkt import NKT
 from .princeton_instruments import PrincetonInstruments
+from .dataray import DataRayOCX64

@@ -8,7 +8,7 @@ from msl.equipment import (
     ConnectionRecord,
     Backend,
 )
-from msl.equipment.resources.picotech.picoscope import callbacks
+from msl.equipment.resources.picotech import ps5000aStreamingReady
 
 record = EquipmentRecord(
     manufacturer='Pico Technology',
@@ -28,7 +28,7 @@ record = EquipmentRecord(
 os.environ['PATH'] += os.pathsep + r'C:\Program Files\Pico Technology\SDK\lib'
 
 
-@callbacks.ps5000aStreamingReady
+@ps5000aStreamingReady
 def my_streaming_ready(handle, num_samples, start_index, overflow, trigger_at, triggered, auto_stop, pointer):
     print('StreamingReady Callback: handle={}, num_samples={}, start_index={}, overflow={}, trigger_at={}, '
           'triggered={}, auto_stop={}, pointer={}'.format(handle, num_samples, start_index, overflow,

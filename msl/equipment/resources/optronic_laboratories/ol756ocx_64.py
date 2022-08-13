@@ -18,7 +18,7 @@ from msl.equipment.exceptions import OptronicLaboratoriesError
 class OL756(Connection):
 
     def __init__(self, record=None):
-        """A wrapper around the the ``OL756SDKActiveXCtrl`` library.
+        """A wrapper around the ``OL756SDKActiveXCtrl`` library.
 
         .. attention::
 

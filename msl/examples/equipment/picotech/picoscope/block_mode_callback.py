@@ -10,7 +10,7 @@ from msl.equipment import (
     ConnectionRecord,
     Backend,
 )
-from msl.equipment.resources.picotech.picoscope import callbacks
+from msl.equipment.resources.picotech import BlockReady
 
 record = EquipmentRecord(
     manufacturer='Pico Technology',
@@ -30,7 +30,7 @@ record = EquipmentRecord(
 os.environ['PATH'] += os.pathsep + r'C:\Program Files\Pico Technology\SDK\lib'
 
 
-@callbacks.BlockReady
+@BlockReady
 def my_block_ready(handle, status, pointer):
     print('BlockReady Callback: Data acquisition is done! '
           'handle={}, status={}, pointer={}'.format(handle, status, pointer))

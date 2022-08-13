@@ -1,4 +1,5 @@
 import os
+from io import BytesIO
 
 import pytest
 
@@ -72,3 +73,99 @@ def test_config_constants_reloaded():
     Config.DEMO_MODE = False
     assert Config.PyVISA_LIBRARY == '@ivi'
     assert not Config.DEMO_MODE
+
+
+def test_elements():
+    contents = BytesIO(
+        b"""<?xml version="1.0" encoding="utf-8" ?>
+    <msl>
+        <fruits>
+          <fruit colour="red">apple</fruit>
+          <fruit colour="orange">orange</fruit>
+          <fruit colour="yellow">mango</fruit>
+        </fruits>
+
+        <numbers i1="0" i2="-987" f1="1.234" f2="-9.2e-6" c1="7j" c2="-1-0.7j"/>
+        <cases n1="None" n2="none" b1="true" b2="TruE" b3="false" b4="FalSe"/>
+        <strings s1="value" s2="[1,2, 3]"/>
+
+        <veggie colour="orange">carrot</veggie>
+        <veggie colour="red">beet</veggie>
+        <veggie colour="green">asparagus</veggie>
+        
+        <n1>NONE</n1>
+        <n2>none</n2>
+        <b1>true</b1>
+        <b2>False</b2>
+        <i1>0</i1>
+        <i2>-99999</i2>
+        <f1>1.23</f1>
+        <f2>-1.712e-12</f2>
+        <c1>8.1j</c1>
+        <c2>-7e4+8e2j</c2>
+
+    </msl>"""
+    )
+
+    c = Config(contents)
+
+    assert c.root.tag == 'msl'
+    assert c.root.text.strip() == ''
+
+    assert c.value('invalid') is None
+    assert c.value('invalid', 7) == 7
+    assert c.find('invalid') is None
+    assert c.findall('invalid') == []
+    assert c.attrib('invalid') == {}
+
+    assert c.value('fruits').strip() == ''
+    assert c.find('fruits').text.strip() == ''
+    assert len(c.findall('fruits')) == 1
+    assert c.attrib('fruits') == {}
+
+    assert c.value('fruit') is None
+    assert c.value('fruit', False) is False
+    assert c.find('fruit') is None
+    assert c.findall('fruit') == []
+    assert c.attrib('fruit') == {}
+
+    assert c.value('fruits/fruit') == 'apple'
+    assert c.value('fruits/veggie', 1.2) == 1.2
+    assert c.find('fruits/fruit').text == 'apple'
+    assert len(c.findall('fruits/fruit')) == 3
+    assert c.attrib('fruits/fruit') == {'colour': 'red'}
+
+    assert c.value('veggie') == 'carrot'
+    assert c.find('veggie').text == 'carrot'
+    assert len(c.findall('veggie')) == 3
+    assert c.attrib('veggie') == {'colour': 'orange'}
+
+    assert c.value('numbers') is None
+    assert c.value('numbers', 0) is None
+    assert c.find('numbers').text is None
+    assert len(c.findall('numbers')) == 1
+    assert c.attrib('numbers') == {
+        'i1': 0, 'i2': -987, 'f1': 1.234,
+        'f2': -9.2e-6, 'c1': 7j, 'c2': -1 - 0.7j}
+
+    assert c.attrib('cases') == {
+        'n1': None, 'n2': None, 'b1': True,
+        'b2': True, 'b3': False, 'b4': False}
+
+    assert c.attrib('strings') == {'s1': 'value', 's2': '[1,2, 3]'}
+
+    assert c.value('n1') is None
+    assert c.value('n1', 1) is None
+    assert c.value('n2') is None
+    assert c.value('n2', 1) is None
+    assert c.value('n1') is None
+    assert c.value('b1') is True
+    assert c.value('b2') is False
+    assert c.value('i1') == 0
+    assert isinstance(c.value('i1'), int)
+    assert c.value('i2') == -99999
+    assert isinstance(c.value('i2'), int)
+    assert c.value('f1') == 1.23
+    assert c.value('f2') == -1.712e-12
+    assert c.value('c1') == 8.1j
+    assert c.value('c2') == -7e4 + 8e2j

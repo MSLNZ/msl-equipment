@@ -132,6 +132,8 @@ class Config(object):
     def value(self, tag, default=None):
         """Gets the value associated with the specified `tag` in the configuration file.
 
+        The first element with name `tag` (relative to the :obj:`root`) is used.
+
         The value is converted to the appropriate data type if possible. Otherwise,
         the value will be returned as a :class:`str`.
 
@@ -180,3 +182,28 @@ class Config(object):
             All matching elements in document order.
         """
         return self._root.findall(tag)
+
+    def attrib(self, tag):
+        """Get the attributes of an :class:`~xml.etree.ElementTree.Element` in the configuration file.
+
+        The first element with name `tag` (relative to the :obj:`root`) is used.
+
+        The values are converted to the appropriate data type if possible.
+        Otherwise, the value will be kept as a :class:`str`.
+
+        Parameters
+        ----------
+        tag : :class:`str`
+            The name of an XML element in the configuration file.
+
+        Returns
+        -------
+        :class:`dict`
+            The attributes of the :class:`~xml.etree.ElementTree.Element`.
+            If an element with the name `tag` does not exist, then an empty
+            :class:`dict` is returned.
+        """
+        element = self._root.find(tag)
+        if element is None:
+            return {}
+        return dict((k, convert_to_primitive(v)) for k, v in element.attrib.items())

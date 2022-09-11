@@ -172,3 +172,10 @@ def test_find_resource_class():
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)
             assert cls == resources.energetiq.eq99.EQ99
+
+    for man in ('Raicol', 'Raicol Crystals', 'Raicol Crystals Ltd.',
+                'Raicol Crystals Limited'):
+        for mod in ('TEC', 'TEC20-60', 'TEC 20 - 60'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.raicol.RaicolTEC

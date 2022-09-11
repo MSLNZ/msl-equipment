@@ -76,6 +76,10 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
   * :class:`~msl.equipment.resources.princeton_instruments.arc_instrument.PrincetonInstruments` -- Wrapper around the `ARC_Instrument.dll`_ library
 
+* `Raicol Crystals`_
+
+  * :class:`~msl.equipment.resources.raicol.raicol_tec.RaicolTEC` -- TEC (Peltier-based) oven
+
 * Thorlabs_
 
   * Wrapper around the Kinesis_ SDK.
@@ -203,3 +207,4 @@ Please follow the `style guide`_.
 .. _MKS Instruments: https://www.mksinst.com/
 .. _Optronic Laboratories: https://optroniclabs.com/
 .. _Energetiq: https://www.energetiq.com/
+.. _Raicol Crystals: https://raicol.com/

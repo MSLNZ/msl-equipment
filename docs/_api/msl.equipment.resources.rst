@@ -33,4 +33,5 @@ Subpackages
     msl.equipment.resources.optronic_laboratories
     msl.equipment.resources.picotech
     msl.equipment.resources.princeton_instruments
+    msl.equipment.resources.raicol
     msl.equipment.resources.thorlabs

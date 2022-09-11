@@ -75,5 +75,9 @@ class PrincetonInstrumentsError(MSLConnectionError):
     """Exception for equipment from Princeton Instruments."""
 
 
+class RaicolCrystalsError(MSLConnectionError):
+    """Exception for equipment from Raicol Crystals."""
+
+
 class ThorlabsError(MSLConnectionError):
     """Exception for equipment from Thorlabs."""

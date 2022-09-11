@@ -163,7 +163,7 @@ tests_require = [
     'pyvisa-py<0.5;python_version<="3.5"',
 ]
 
-docs_require = ['sphinx', 'sphinx_rtd_theme']
+docs_require = ['sphinx', 'sphinx-rtd-theme']
 
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if testing else []

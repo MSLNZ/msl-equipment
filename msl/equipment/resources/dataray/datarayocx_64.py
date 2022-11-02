@@ -82,13 +82,15 @@ class DataRayOCX64(Connection):
         self.log_debug('DataRayOCX64.wait_to_configure()')
         self._client.request32('wait_to_configure')
 
-    def capture(self, timeout=10):
+    def capture(self, timeout=10, restart=False):
         """Capture an image.
 
         Parameters
         ----------
         timeout : :class:`float`, optional
             The maximum number of seconds to wait to capture an image.
+        restart : :class:`bool`, optional
+            Whether to keep the camera running after the image is captured.
 
         Returns
         -------
@@ -152,7 +154,7 @@ class DataRayOCX64(Connection):
         ~msl.equipment.exceptions.DataRayError
             If not successful.
         """
-        self.log_debug('DataRayOCX64.acquire(timeout=%s)', timeout)
+        self.log_debug('DataRayOCX64.capture(timeout=%s)', timeout)
 
         info = {}
         error = None
@@ -171,6 +173,8 @@ class DataRayOCX64(Connection):
         info['image'] = np.asarray(info['image']).reshape(shape)
         info['profile_x'] = np.asarray(info['profile_x'])[:shape[1]]
         info['profile_y'] = np.asarray(info['profile_y'])[:shape[0]]
+        if restart:
+            self.start()
         return info
 
     def disconnect(self):
@@ -187,3 +191,21 @@ class DataRayOCX64(Connection):
 
         self._client = None
         self.log_debug('Disconnected from %s', self.equipment_record.connection)
+
+    def start(self):
+        """Start the camera."""
+        self.log_debug('DataRayOCX64.start()')
+        try:
+            return self._client.request32('start')
+        except Server32Error as err:
+            error = err  # TODO avoid raising nested exceptions in Python 2.7
+        self.raise_exception(error)
+
+    def stop(self):
+        """Stop the camera."""
+        self.log_debug('DataRayOCX64.stop()')
+        try:
+            return self._client.request32('stop')
+        except Server32Error as err:
+            error = err  # TODO avoid raising nested exceptions in Python 2.7
+        self.raise_exception(error)

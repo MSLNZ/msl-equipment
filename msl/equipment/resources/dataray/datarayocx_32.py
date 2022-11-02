@@ -62,6 +62,14 @@ class DataRayOCX32(Server32):
         """Capture an image."""
         return self.app.capture(timeout)
 
+    def start(self):
+        """Start the camera."""
+        return self.app.start_device()
+
+    def stop(self):
+        """Stop the camera."""
+        return self.app.stop_device()
+
     def shutdown_handler(self):
         """Stop the camera and close the application."""
         self.app.GetData.StopDevice()
@@ -453,7 +461,7 @@ if Server32.is_interpreter():
             Event fired every time new data becomes ready.
             """
             if self.capture_requested and self.num_captures == self.num_to_average:
-                self.GetData.StopDevice()
+                self.stop_device()
                 self.acquired = True
                 self.capture_requested = False
             self.num_captures += 1
@@ -471,12 +479,12 @@ if Server32.is_interpreter():
 
         def capture(self, timeout):
             """Capture an image."""
-            self.GetData.StopDevice()  # in case it was running from a Button click
+            self.stop_device()
             self.acquired = False
             self.capture_requested = True
             self.num_captures = 0
             self.num_to_average = self.GetData.GetAverageNumber()
-            self.GetData.StartDevice()
+            self.start_device()
             t0 = time.time()
             while not self.acquired:
                 time.sleep(0.01)
@@ -485,14 +493,14 @@ if Server32.is_interpreter():
                         text = '1 image'
                     else:
                         text = '{} images'.format(self.num_to_average)
-                    self.GetData.StopDevice()
+                    self.stop_device()
                     raise TimeoutError(
                         'TimeoutError: Could not capture {} in {} seconds.'.format(text, timeout)
                     )
 
             error = self.GetData.GetLastError()
             if error:
-                self.GetData.StopDevice()
+                self.stop_device()
                 raise RuntimeError(error)
 
             return {
@@ -643,3 +651,9 @@ if Server32.is_interpreter():
                     if not item.Text.startswith('Area'):
                         item.Checked = item == sender
                 self.GetData.FilterValue = float(sender.Name)
+
+        def start_device(self):
+            self.GetData.StartDevice()
+
+        def stop_device(self):
+            self.GetData.StopDevice()

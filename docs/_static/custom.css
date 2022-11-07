@@ -11,3 +11,11 @@
 .wy-table-responsive table th {
     white-space: normal;
 }
+
+/* fix rendering of @property methods on ReadTheDocs */
+.rst-content dl:not(.docutils) .property {
+    display: revert;
+}
+html.writer-html4 .rst-content dl:not(.docutils) .property, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) .property {
+    display: revert;
+}

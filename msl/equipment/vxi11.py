@@ -252,12 +252,15 @@ class RPCClient(object):
         :class:`int`
             The port number that corresponds to `prog`.
         """
-        self.connect(PMAP_PORT, timeout=timeout)
-        self.init(PMAP_PROG, PMAP_VERS, PMAPPROC_GETPORT)
-        self.append(pack('>4I', prog, vers, prot, 0))
-        self.write()
-        port, = unpack('>L', self.read())
-        self.close()
+        try:
+            self.connect(PMAP_PORT, timeout=timeout)
+            self.init(PMAP_PROG, PMAP_VERS, PMAPPROC_GETPORT)
+            self.append(pack('>4I', prog, vers, prot, 0))
+            self.write()
+            port, = unpack('>L', self.read())
+        finally:
+            self.close()
+
         if port == 0:
             raise RuntimeError(
                 'Could not determine the port from the Port Mapper procedure')

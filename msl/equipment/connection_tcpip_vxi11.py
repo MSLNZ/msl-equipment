@@ -54,6 +54,7 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
         self._core_client = None
         self._abort_client = None
         self._link_id = None
+        self._lock_timeout = 0
         super(ConnectionTCPIPVXI11, self).__init__(record)
 
         info = self.parse_address(record.connection.address)
@@ -125,12 +126,8 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
             # the socket is put in blocking mode
             timeout = None
         else:
-            # the socket timeout value must > io_timeout + lock_timeout
-            try:
-                timeout = 1 + self._timeout + self._lock_timeout
-            except AttributeError:
-                # Ignore -> object has no attribute '_lock_timeout'
-                timeout = 1 + self._timeout
+            # the socket timeout value must be > io_timeout + lock_timeout
+            timeout = 1 + self._timeout + self._lock_timeout
 
         if self._core_client is not None:
             self._core_client.set_timeout(timeout)

@@ -25,8 +25,12 @@ REGEX_SOCKET = re.compile(
     flags=re.IGNORECASE
 )
 
-REGEX_SOCKET_IVI = re.compile(
-    r'TCPIP::(?P<host>[^\s:]+)::(?P<port>\d+)',
+# TCPIP[board]::host address[::LAN device name][::INSTR]
+REGEX_TCPIP = re.compile(
+    r'TCPIP(?P<board>\d*)'
+    r'::(?P<host>[^\s:]+)'
+    r'(::(?P<name>([^\s:]+\d+(\[.+])?)))?'
+    r'(::INSTR)?$',
     flags=re.IGNORECASE
 )
 
@@ -65,6 +69,7 @@ class MSLInterface(enum.IntEnum):
     SERIAL = 2
     SOCKET = 3
     PROLOGIX = 4
+    TCPIP_VXI11 = 5
 
 
 class Parity(enum.Enum):

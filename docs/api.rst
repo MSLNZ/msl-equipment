@@ -89,6 +89,8 @@ with the equipment *(although you should never need to instantiate these classes
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_socket.ConnectionSocket`              | Equipment that is connected through a Socket                             |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :class:`~msl.equipment.connection_tcpip_vxi11.ConnectionTCPIPVXI11`     | Equipment that use the VXI-11 protocol                                   |
++-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 
 and the :class:`~msl.equipment.connection.Connection` classes that are available from external Python libraries are:
 
@@ -115,6 +117,7 @@ Package Structure
    msl.equipment.connection_sdk <_api/msl.equipment.connection_sdk>
    msl.equipment.connection_serial <_api/msl.equipment.connection_serial>
    msl.equipment.connection_socket <_api/msl.equipment.connection_socket>
+   msl.equipment.connection_tcpip_vxi11 <_api/msl.equipment.connection_tcpip_vxi11>
    msl.equipment.constants <_api/msl.equipment.constants>
    msl.equipment.database <_api/msl.equipment.database>
    msl.equipment.exceptions <_api/msl.equipment.exceptions>
@@ -122,6 +125,7 @@ Package Structure
    msl.equipment.record_types <_api/msl.equipment.record_types>
    msl.equipment.resources <_api/msl.equipment.resources>
    msl.equipment.utils <_api/msl.equipment.utils>
+   msl.equipment.vxi11 <_api/msl.equipment.vxi11>
 
 .. _PyVISA: https://pyvisa.readthedocs.io/en/stable/index.html
 .. _NI-DAQ: https://nidaqmx-python.readthedocs.io/en/stable/index.html

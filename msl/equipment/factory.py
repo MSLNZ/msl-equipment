@@ -17,6 +17,7 @@ from .connection_serial import ConnectionSerial
 from .connection_socket import ConnectionSocket
 from .connection_nidaq import ConnectionNIDAQ
 from .connection_prologix import ConnectionPrologix
+from .connection_tcpip_vxi11 import ConnectionTCPIPVXI11
 
 
 def connect(record, demo=None):
@@ -67,6 +68,8 @@ def connect(record, demo=None):
                     cls = ConnectionSocket
                 elif conn.interface == MSLInterface.PROLOGIX:
                     cls = ConnectionPrologix
+                elif conn.interface == MSLInterface.TCPIP_VXI11:
+                    cls = ConnectionTCPIPVXI11
                 else:
                     raise NotImplementedError('The {!r} interface has not be written yet'.format(conn.interface.name))
         elif conn.backend == Backend.PyVISA:
@@ -127,5 +130,8 @@ def find_interface(address):
 
     if ConnectionSocket.parse_address(address):
         return MSLInterface.SOCKET
+
+    if ConnectionTCPIPVXI11.parse_address(address):
+        return MSLInterface.TCPIP_VXI11
 
     raise ValueError('Cannot determine the MSLInterface from address {!r}'.format(address))

@@ -85,8 +85,14 @@ def rpc_program(address, prog_port):
     # 2. Queried "*IDN?"
     # 3. Destroyed the link
 
-    link_request = 'creating a link calls random.getrandbits(31) ' \
-                   'so this payload will always be different, so it is not used'
+    # creating a link calls random.getrandbits(31) for the client ID so the link
+    # request will always be different for 4 bytes in the middle of the message
+    link_request_prefix = b'\x80\x00\x00@\x00\x00\x00\x01\x00\x00\x00\x00\x00' \
+                          b'\x00\x00\x02\x00\x06\x07\xaf\x00\x00\x00\x01\x00' \
+                          b'\x00\x00\n\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
+                          b'\x00\x00\x00\x00\x00\x00'
+    link_request_suffix = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05' \
+                          b'inst0\x00\x00\x00'
 
     link_reply = b'\x80\x00\x00(\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00' \
                  b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
@@ -123,15 +129,13 @@ def rpc_program(address, prog_port):
                    b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
                    b'\x00\x00\x00\x00\x00\x00'
 
-    first_request = True
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((address, prog_port))
     s.listen(1)
     conn, _ = s.accept()
     while True:
         data = conn.recv(256)
-        if data and first_request:
-            first_request = False
+        if data.startswith(link_request_prefix) and data.endswith(link_request_suffix):
             conn.sendall(link_reply)
         elif data == idn_request:
             conn.sendall(idn_reply)

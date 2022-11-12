@@ -55,6 +55,7 @@ def test_tcp_socket_read():
     term = b'\r\n'
 
     t = threading.Thread(target=echo_server_tcp, args=(address, port, term))
+    t.daemon = True
     t.start()
 
     time.sleep(0.1)  # allow some time for the echo server to start
@@ -121,6 +122,7 @@ def test_tcp_socket_timeout():
     write_termination = b'\n'
 
     t = threading.Thread(target=echo_server_tcp, args=(address, port, write_termination))
+    t.daemon = True
     t.start()
 
     time.sleep(0.1)  # allow some time for the echo server to start
@@ -174,6 +176,7 @@ def test_udp_socket_read():
     term = b'\r\n'
 
     t = threading.Thread(target=echo_server_udp, args=(address, port, term))
+    t.daemon = True
     t.start()
 
     time.sleep(0.1)  # allow some time for the echo server to start
@@ -229,6 +232,7 @@ def test_wrong_socket_type():
     term = b'\r\n'
 
     t = threading.Thread(target=echo_server_udp, args=(address, port, term))
+    t.daemon = True
     t.start()
 
     time.sleep(0.1)  # allow some time for the echo server to start

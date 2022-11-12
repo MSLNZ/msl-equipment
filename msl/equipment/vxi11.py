@@ -15,6 +15,7 @@ References
 .. _RFC-1057: https://www.rfc-editor.org/rfc/rfc1057
 .. _RFC-1014: https://www.rfc-editor.org/rfc/rfc1014
 """
+import os
 import random
 import socket
 from enum import IntEnum
@@ -100,7 +101,11 @@ PMAPPROC_DUMP = 4
 PMAPPROC_CALLIT = 5
 
 # RPC constants
-PMAP_PORT = 111
+if os.getenv('GITHUB_ACTIONS'):
+    # running the tests on GitHub
+    PMAP_PORT = 11111
+else:
+    PMAP_PORT = 111
 
 
 # RPC enums

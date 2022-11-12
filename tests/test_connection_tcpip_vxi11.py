@@ -9,6 +9,7 @@ from msl.loadlib.utils import get_available_port
 from msl.equipment import ConnectionRecord
 from msl.equipment import EquipmentRecord
 from msl.equipment.connection_tcpip_vxi11 import ConnectionTCPIPVXI11
+from msl.equipment.vxi11 import PMAP_PORT
 
 
 @pytest.mark.parametrize(
@@ -47,7 +48,7 @@ def test_parse_address(address, expected):
         assert info['name'] == name
 
 
-def rpc_server(address, pmap_port, prog_port):
+def rpc_server(address, prog_port):
     # Simulate an RPC server for Port Mapping.
 
     # The payloads for the request/reply were determined when an instrument
@@ -62,7 +63,7 @@ def rpc_server(address, pmap_port, prog_port):
     reply += struct.pack('>L', prog_port)
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((address, pmap_port))
+    s.bind((address, PMAP_PORT))
     s.listen(1)
     conn, _ = s.accept()
     while True:
@@ -146,10 +147,9 @@ def rpc_program(address, prog_port):
 
 def test_protocol():
     address = '127.0.0.1'
-    pmap_port = 111
     prog_port = get_available_port()
 
-    t1 = threading.Thread(target=rpc_server, args=(address, pmap_port, prog_port))
+    t1 = threading.Thread(target=rpc_server, args=(address, prog_port))
     t1.daemon = True
     t2 = threading.Thread(target=rpc_program, args=(address, prog_port))
     t2.daemon = True

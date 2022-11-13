@@ -306,9 +306,9 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
                 )
 
             # decrease io_timeout before reading the next chunk so that the
-            # total time to fetch all data preserves what the user specified
-            if io_timeout is not None:
-                io_timeout = max(0, io_timeout - int((now() - t0) * 1000))
+            # total time to receive all data preserves what was specified
+            if self._io_timeout_ms > 0:
+                io_timeout = max(0, self._io_timeout_ms - int((now() - t0) * 1000))
 
         return self._decode(size, reply)
 

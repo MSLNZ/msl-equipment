@@ -210,7 +210,9 @@ class ConnectionSocket(ConnectionMessageBased):
             )
 
         t0 = time.time()
+        error = None
         timeout_error = False
+        original_timeout = self._socket.gettimeout()
         while True:
 
             if size is not None:
@@ -234,17 +236,32 @@ class ConnectionSocket(ConnectionMessageBased):
                     data, _ = self._socket.recvfrom(self._buffer_size)
             except socket.timeout:
                 timeout_error = True  # want to raise MSLTimeoutError not socket.timeout
+            except Exception as e:
+                error = e
             else:
                 self._byte_buffer.extend(data)
 
+            if error:
+                self._socket.settimeout(original_timeout)
+                self.raise_exception(error)
+
             if len(self._byte_buffer) > self._max_read_size:
+                self._socket.settimeout(original_timeout)
                 self.raise_exception('len(byte_buffer) [{}] > max_read_size [{}]'.format(
                     len(self._byte_buffer), self._max_read_size)
                 )
 
-            if timeout_error or (self._timeout and (time.time() - t0 > self._timeout)):
+            elapsed_time = time.time() - t0
+            if timeout_error or (self._timeout and (elapsed_time > self._timeout)):
+                self._socket.settimeout(original_timeout)
                 self.raise_timeout()
 
+            # decrease the timeout when reading each chunk so that the total
+            # time to receive all data preserves what was specified
+            if original_timeout is not None:
+                self._socket.settimeout(max(0, original_timeout - elapsed_time))
+
+        self._socket.settimeout(original_timeout)
         return self._decode(size, out)
 
     def reconnect(self, max_attempts=1):

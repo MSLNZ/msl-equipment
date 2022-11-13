@@ -166,7 +166,7 @@ class RPCClient(object):
 
         Parameters
         ----------
-        data : :class:`bytes`
+        data : :class:`bytes` or :class:`memoryview`
             The data to append.
         """
         self._buffer.extend(data)
@@ -185,9 +185,9 @@ class RPCClient(object):
             return
 
         if isinstance(text, bytes):
-            encoded = text
+            encoded = memoryview(text)
         else:
-            encoded = text.encode('ascii')  # must be an ASCII message
+            encoded = memoryview(text.encode('ascii'))  # must be an ASCII message
 
         n = len(encoded)
         self.append(pack('>L', n))
@@ -300,7 +300,7 @@ class RPCClient(object):
 
         Returns
         -------
-        :class:`bytearray`
+        :class:`memoryview`
             The procedure-specific data.
         """
         # RFC-1057, Section 10 describes that RPC messages are sent in fragments
@@ -321,7 +321,7 @@ class RPCClient(object):
                     raise EOFError('The RPC reply buffer is empty')
                 fragment.extend(buf)
             message.extend(fragment)
-        reply = self._check_reply(message)
+        reply = self._check_reply(memoryview(message))
         if reply is None:
             # Unexpected transaction id (xid), most likely from reading an interrupt.
             # Recursively read from the device until the corrected xid is received.
@@ -350,12 +350,12 @@ class RPCClient(object):
 
         Parameters
         ----------
-        data : :class:`bytes`
+        data : :class:`bytes`, :class:`bytearray` or :class:`memoryview`
             The data to unpack.
 
         Returns
         -------
-        :class:`bytes`
+        :class:`bytes`, :class:`bytearray` or :class:`memoryview`
             The unpacked data.
         """
         # mimic the builtin xdrlib.Unpacker class
@@ -385,12 +385,12 @@ class RPCClient(object):
 
         Parameters
         ----------
-        message : :class:`bytearray`
+        message : :class:`memoryview`
             The reply from an RPC message.
 
         Returns
         -------
-        :class:`bytearray` or :data:`None`
+        :class:`memoryview` or :data:`None`
             The reply or :data:`None` if the transaction id does not match the
             value that was used in the corresponding :meth:`.write` call.
         """
@@ -402,6 +402,7 @@ class RPCClient(object):
         if mtype != MessageType.REPLY:
             raise RuntimeError('RPC message type is not {!r}, got {}'.format(
                 MessageType.REPLY, mtype))
+
         if status == ReplyStatus.MSG_ACCEPTED:
             verf, status = unpack('>QI', message[12:24])
             assert verf == 0  # VXI-11 does not use authentication
@@ -448,7 +449,7 @@ class VXIClient(RPCClient):
 
         Returns
         -------
-        :class:`bytearray`
+        :class:`memoryview`
             The reply data.
         """
         reply = self.read()
@@ -550,8 +551,8 @@ class CoreClient(VXIClient):
         -------
         :class:`int`
             The reason(s) the read completed.
-        :class:`bytes`
-            The data that was read.
+        :class:`memoryview`
+            A view of the data (the RPC header is removed).
         """
         self.init(DEVICE_CORE, DEVICE_CORE_VERSION, DEVICE_READ)
         self.append(pack('>6l', lid, request_size, io_timeout, lock_timeout, flags, term_char))
@@ -746,7 +747,7 @@ class CoreClient(VXIClient):
         self.append(pack('>7l', lid, flags, io_timeout, lock_timeout, cmd, network_order, datasize))
         self.append_opaque(data_in)
         self.write()
-        return self.unpack_opaque(self.read_reply())
+        return bytes(self.unpack_opaque(self.read_reply()))
 
     def destroy_link(self, lid):
         """Destroy the link.

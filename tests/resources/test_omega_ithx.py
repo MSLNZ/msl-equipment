@@ -4,8 +4,6 @@ import socket
 import threading
 from datetime import datetime
 
-from msl.loadlib.utils import get_available_port
-
 from msl.equipment import EquipmentRecord, ConnectionRecord
 from msl.equipment.resources.omega import iTHX
 
@@ -46,7 +44,7 @@ def simulate_omega_iserver(address, port, term):
 
 def test_temperature_humidity_dewpoint():
     address = '127.0.0.1'
-    port = get_available_port()
+    ports = [32153, 47209]
     term = b'\r'
 
     t = 20.0
@@ -58,7 +56,7 @@ def test_temperature_humidity_dewpoint():
             manufacturer='OMEGA',
             model='iTHX-W3',
             connection=ConnectionRecord(
-                address='TCP::{}::{}'.format(address, port),
+                address='TCP::{}::{}'.format(address, ports[0]),
                 backend='MSL',
                 properties=dict(
                     termination=term,
@@ -73,7 +71,7 @@ def test_temperature_humidity_dewpoint():
             manufacturer='OMEGA',
             model='iTHX-2',
             connection=ConnectionRecord(
-                address='TCP::{}::{}'.format(address, port),
+                address='TCP::{}::{}'.format(address, ports[1]),
                 backend='MSL',
                 properties=dict(
                     termination=term,
@@ -84,11 +82,11 @@ def test_temperature_humidity_dewpoint():
     ]
 
     for index, record in enumerate(records):
-        thread = threading.Thread(target=simulate_omega_iserver, args=(address, port, term))
+        thread = threading.Thread(target=simulate_omega_iserver, args=(address, ports[index], term))
         thread.daemon = True
         thread.start()
 
-        time.sleep(2)
+        time.sleep(0.1)
 
         dev = record.connect(demo=False)
         assert isinstance(dev, iTHX)

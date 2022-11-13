@@ -116,7 +116,8 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
     def _set_backend_timeout(self):
         # Overrides method in ConnectionMessageBased
         if self._timeout is None:
-            self._io_timeout_ms = 0
+            # use 1 day as equivalent to a socket in blocking mode
+            self._io_timeout_ms = 86400000
         else:
             self._io_timeout_ms = int(self._timeout * 1000)
         self._set_socket_timeout()
@@ -399,8 +400,9 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
 
     @lock_timeout.setter
     def lock_timeout(self, value):
-        if value is None or value <= 0:
-            self._lock_timeout = 0.0
+        if value is None or value < 0:
+            # use 1 day as equivalent to "wait forever for a lock"
+            self._lock_timeout = 86400.0
         else:
             self._lock_timeout = float(value)
         self._lock_timeout_ms = int(self._lock_timeout * 1000)

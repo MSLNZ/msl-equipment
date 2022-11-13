@@ -179,16 +179,47 @@ def test_protocol():
                               b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
                               b'\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x13\x88' \
                               b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-    dev.disconnect()
+
+    dev.timeout = -1
+    assert dev._timeout is None
+    assert dev._io_timeout_ms == 86400000  # equivalent of blocking mode
+    assert dev.socket.gettimeout() is None
 
     dev.timeout = None
     assert dev._timeout is None
+    assert dev._io_timeout_ms == 86400000  # equivalent of blocking mode
+    assert dev.socket.gettimeout() is None
+
+    dev.timeout = 0
+    assert dev._timeout == 0.0
     assert dev._io_timeout_ms == 0
+    assert dev.socket.gettimeout() == 1.0 + 0.0 + 0.0  # 1 + io_timeout + lock_timeout
+
+    dev.timeout = 1.1
+    assert dev._timeout == 1.1
+    assert dev._io_timeout_ms == 1100
+    assert dev.socket.gettimeout() == 1.0 + 1.1 + 0.0  # 1 + io_timeout + lock_timeout
+
+    dev.lock_timeout = -2.1
+    assert dev._lock_timeout == 86400.0  # equivalent of "wait forever to acquire a lock"
+    assert dev._lock_timeout_ms == 86400000
+    assert dev.socket.gettimeout() == 1.0 + 1.1 + 86400.  # 1 + io_timeout + lock_timeout
 
     dev.lock_timeout = None
-    assert dev._lock_timeout == 0
+    assert dev._lock_timeout == 86400.0  # equivalent of "wait forever to acquire a lock"
+    assert dev._lock_timeout_ms == 86400000
+    assert dev.socket.gettimeout() == 1.0 + 1.1 + 86400.  # 1 + io_timeout + lock_timeout
+
+    dev.lock_timeout = 0
+    assert dev._lock_timeout == 0.0
     assert dev._lock_timeout_ms == 0
+    assert dev.socket.gettimeout() == 1.0 + 1.1 + 0.0  # 1 + io_timeout + lock_timeout
 
     dev.lock_timeout = 1.2
     assert dev._lock_timeout == 1.2
     assert dev._lock_timeout_ms == 1200
+    assert dev.socket.gettimeout() == 1.0 + 1.1 + 1.2  # 1 + io_timeout + lock_timeout
+
+    dev.disconnect()
+
+    assert dev.socket is None

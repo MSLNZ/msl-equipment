@@ -143,7 +143,7 @@ class ConnectionMessageBased(Connection):
     def timeout(self):
         r""":class:`float` or :data:`None`: The timeout, in seconds, for :meth:`read` and :meth:`write` operations.
 
-        A value :math:`\leq` 0 will set the timeout to be :data:`None`.
+        A value :math:`\lt` 0 will set the timeout to be :data:`None` (blocking mode).
         """
         return self._timeout
 
@@ -151,7 +151,7 @@ class ConnectionMessageBased(Connection):
     def timeout(self, value):
         if value is not None:
             self._timeout = float(value)
-            if self._timeout <= 0:
+            if self._timeout < 0:
                 self._timeout = None
         else:
             self._timeout = None

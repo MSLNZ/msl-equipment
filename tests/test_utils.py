@@ -1,5 +1,6 @@
 import enum
 import datetime
+import sys
 from xml.etree.cElementTree import Element, Comment
 
 import pytest
@@ -357,11 +358,6 @@ def test_to_bytes():
 
     assert to_bytes(range(123456), dtype='float64').startswith(b'#6987648')
 
-    assert to_bytes(b'abcxyz', dtype='b') == b'#16abcxyz'
-    assert to_bytes(b'abcdwxyz', dtype='B') == b'#18abcdwxyz'
-    assert to_bytes(bytearray(b'abcxyz'), dtype='b', header=None) == b'abcxyz'
-    assert to_bytes(b'acegikmoqsuwy', dtype='int8', header='') == b'acegikmoqsuwy'
-
     expected = b'#A(\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x03' \
                b'\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00\x06\x00\x00\x00' \
                b'\x07\x00\x00\x00\x08\x00\x00\x00\t\x00\x00\x00'
@@ -377,3 +373,11 @@ def test_to_bytes():
 
     with pytest.raises(OverflowError):
         to_bytes(range(0xffff), dtype='H', header='hp')
+
+
+@pytest.mark.skipif(sys.version_info.major == 2, reason='Python 2')
+def test_to_bytes_as_bytes():
+    assert to_bytes(b'abcxyz', dtype='b') == b'#16abcxyz'
+    assert to_bytes(b'abcdwxyz', dtype='B') == b'#18abcdwxyz'
+    assert to_bytes(bytearray(b'abcxyz'), dtype='b', header=None) == b'abcxyz'
+    assert to_bytes(b'acegikmoqsuwy', dtype='int8', header='') == b'acegikmoqsuwy'

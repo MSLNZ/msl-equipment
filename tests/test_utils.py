@@ -1,20 +1,20 @@
-import enum
 import datetime
+import enum
+import struct
 import sys
-from xml.etree.cElementTree import Element, Comment
+from xml.etree.cElementTree import Comment
+from xml.etree.cElementTree import Element
 
-import pytest
 import numpy as np
+import pytest
 
-from msl.equipment.utils import (
-    convert_to_enum,
-    convert_to_primitive,
-    convert_to_date,
-    convert_to_xml_string,
-    xml_comment,
-    xml_element,
-    to_bytes,
-)
+from msl.equipment.utils import convert_to_date
+from msl.equipment.utils import convert_to_enum
+from msl.equipment.utils import convert_to_primitive
+from msl.equipment.utils import convert_to_xml_string
+from msl.equipment.utils import to_bytes
+from msl.equipment.utils import xml_comment
+from msl.equipment.utils import xml_element
 
 
 def test_convert_to_enum():
@@ -361,21 +361,23 @@ def test_to_bytes():
     expected = b'#A(\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x03' \
                b'\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00\x06\x00\x00\x00' \
                b'\x07\x00\x00\x00\x08\x00\x00\x00\t\x00\x00\x00'
-    assert to_bytes(range(10), dtype='<l', header='hp') == expected
+    assert to_bytes(range(10), dtype='<i', header='hp') == expected
 
     expected = b'#A\x00(\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00' \
                b'\x00\x00\x03\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00\x06' \
                b'\x00\x00\x00\x07\x00\x00\x00\x08\x00\x00\x00\t'
-    assert to_bytes(range(10), dtype='>l', header='hp') == expected
+    assert to_bytes(range(10), dtype='>i', header='hp') == expected
 
     with pytest.raises(ValueError, match='Invalid header'):
         assert to_bytes([], header='raw')
 
-    with pytest.raises(OverflowError):
+    with pytest.raises(struct.error):
         to_bytes(range(0xffff), dtype='H', header='hp')
 
 
-@pytest.mark.skipif(sys.version_info.major == 2, reason='Python 2')
+@pytest.mark.skipif(
+    sys.version_info.major == 2,
+    reason='Python 2 cannot use np.fromiter with bytes')
 def test_to_bytes_as_bytes():
     assert to_bytes(b'abcxyz', dtype='b') == b'#16abcxyz'
     assert to_bytes(b'abcdwxyz', dtype='B') == b'#18abcdwxyz'

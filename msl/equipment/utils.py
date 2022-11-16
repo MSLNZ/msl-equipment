@@ -1,11 +1,11 @@
 """
 Common functions.
 """
-import logging
 import datetime
-import sys
-from xml.etree import cElementTree
+import logging
+from struct import pack
 from xml.dom import minidom
+from xml.etree import cElementTree
 
 import numpy as np
 
@@ -290,14 +290,7 @@ def to_bytes(iterable, dtype='<f', header='ieee'):
         return '#{}{}'.format(len_nbytes, nbytes).encode() + array.tobytes()
 
     if header == 'hp':
-        if array.dtype.byteorder == '=':
-            byteorder = sys.byteorder
-        else:
-            byteorder = 'big' if sys.byteorder == 'little' else 'little'
-
-        # int.to_bytes() will raise OverflowError if the length is too big
-        nbytes = array.nbytes.to_bytes(2, byteorder)
-        return b'#A' + nbytes + array.tobytes()
+        return b'#A' + pack(array.dtype.byteorder + 'H', array.nbytes) + array.tobytes()
 
     if not header:
         return array.tobytes()

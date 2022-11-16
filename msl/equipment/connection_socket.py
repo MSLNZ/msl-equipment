@@ -179,36 +179,8 @@ class ConnectionSocket(ConnectionMessageBased):
             self.log_debug('Disconnected from %s', self.equipment_record.connection)
             self._socket = None
 
-    def read(self, size=None):
-        """Read a message from the socket.
-
-        Parameters
-        ----------
-        size : :class:`int`, optional
-            The number of bytes to read. If `size` is :data:`None` then read until:
-
-            1. :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.read_termination`
-               characters are read (only if
-               :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.read_termination`
-               is not :data:`None`)
-            2. :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.max_read_size`
-               bytes have been read (raises :exc:`~msl.equipment.exceptions.MSLConnectionError` if occurs)
-            3. :exc:`~msl.equipment.exceptions.MSLTimeoutError` occurs
-               (only if :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.timeout`
-               is not :data:`None`)
-
-            This method will block until at least one of the above conditions is fulfilled.
-
-        Returns
-        -------
-        :class:`str`
-            The message from the socket.
-        """
-        if size is not None and size > self._max_read_size:
-            self.raise_exception('max_read_size is {} bytes, requesting {} bytes'.format(
-                self._max_read_size, size)
-            )
-
+    def _read(self, size):
+        """Overrides method in ConnectionMessageBased."""
         t0 = time.time()
         error = None
         timeout_error = False
@@ -217,15 +189,15 @@ class ConnectionSocket(ConnectionMessageBased):
 
             if size is not None:
                 if len(self._byte_buffer) >= size:
-                    out = self._byte_buffer[:size]
+                    msg = self._byte_buffer[:size]
                     self._byte_buffer = self._byte_buffer[size:]
                     break
 
             elif self._read_termination:
                 index = self._byte_buffer.find(self._read_termination)
-                if not index == -1:
-                    out = self._byte_buffer[:index]
+                if index != -1:
                     index += len(self._read_termination)
+                    msg = self._byte_buffer[:index]
                     self._byte_buffer = self._byte_buffer[index:]
                     break
 
@@ -247,7 +219,7 @@ class ConnectionSocket(ConnectionMessageBased):
 
             if len(self._byte_buffer) > self._max_read_size:
                 self._socket.settimeout(original_timeout)
-                self.raise_exception('len(byte_buffer) [{}] > max_read_size [{}]'.format(
+                self.raise_exception('len(message) [{}] > max_read_size [{}]'.format(
                     len(self._byte_buffer), self._max_read_size)
                 )
 
@@ -262,7 +234,7 @@ class ConnectionSocket(ConnectionMessageBased):
                 self._socket.settimeout(max(0, original_timeout - elapsed_time))
 
         self._socket.settimeout(original_timeout)
-        return self._decode(size, out)
+        return msg
 
     def reconnect(self, max_attempts=1):
         """Reconnect to the equipment.
@@ -287,32 +259,10 @@ class ConnectionSocket(ConnectionMessageBased):
                 if 0 < max_attempts <= attempt:
                     raise
 
-    def write(self, msg):
-        """Write the given message over the socket.
-
-        Parameters
-        ----------
-        msg : :class:`str`
-            The message to write.
-
-        Returns
-        -------
-        :class:`int`
-            The number of bytes sent over the socket.
-        """
-        data = self._encode(msg)
-
-        timeout_error = False
-        try:
-            if self._is_stream:
-                self._socket.sendall(data)
-            else:
-                self._socket.sendto(data, (self._host, self._port))
-        except socket.timeout:
-            # want to raise MSLTimeoutError not socket.timeout
-            timeout_error = True
-
-        if timeout_error:
-            self.raise_timeout()
-
-        return len(data)
+    def _write(self, message):
+        """Overrides method in ConnectionMessageBased."""
+        if self._is_stream:
+            self._socket.sendall(message)
+        else:
+            self._socket.sendto(message, (self._host, self._port))
+        return len(message)

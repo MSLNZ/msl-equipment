@@ -219,45 +219,18 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
             finally:
                 self._core_client = None
 
-    def read(self, size=None):
-        """Read a message from the socket.
-
-        Parameters
-        ----------
-        size : :class:`int`, optional
-            The number of bytes to read. If `size` is :data:`None` then read until:
-
-            1. :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.read_termination`
-               characters are read (only if
-               :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.read_termination`
-               is not :data:`None`)
-            2. :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.max_read_size`
-               bytes have been read (raises :exc:`~msl.equipment.exceptions.MSLConnectionError` if occurs)
-            3. :exc:`~msl.equipment.exceptions.MSLTimeoutError` occurs
-               (only if :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.timeout`
-               is not :data:`None`)
-
-            This method will block until at least one of the above conditions is fulfilled.
-
-        Returns
-        -------
-        :class:`str`
-            The message from the socket.
-        """
-        if size is not None:
-            if size > self._max_read_size:
-                self.raise_exception('max_read_size is {} bytes, requesting {} bytes'.format(
-                    self._max_read_size, size)
-                )
-            request_size = min(size, self._buffer_size)
-        else:
+    def _read(self, size):
+        """Overrides method in ConnectionMessageBased."""
+        if size is None:
             request_size = self._buffer_size
+        else:
+            request_size = min(size, self._buffer_size)
 
         term_char = 0
         flags = self._init_flag()
 
-        if self.read_termination is not None:
-            term_char = ord(self.read_termination)
+        if self._read_termination:
+            term_char = ord(self._read_termination)
             flags |= OperationFlag.TERMCHRSET
 
         now = time.time
@@ -266,7 +239,7 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
         error = None
         reason = 0
         done_flag = RX_END | RX_CHR
-        reply = bytearray()
+        msg = bytearray()
         t0 = now()
         while reason & done_flag == 0:
 
@@ -288,7 +261,7 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
                 else:
                     error = e
             else:
-                reply.extend(data)
+                msg.extend(data)
                 if size is not None:
                     size -= len(data)
                     if size <= 0:
@@ -301,9 +274,9 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
             if error:
                 self.raise_exception(error)
 
-            if len(reply) > self._max_read_size:
-                self.raise_exception('len(reply) [{}] > max_read_size [{}]'.format(
-                    len(reply), self._max_read_size)
+            if len(msg) > self._max_read_size:
+                self.raise_exception('len(message) [{}] > max_read_size [{}]'.format(
+                    len(msg), self._max_read_size)
                 )
 
             # decrease io_timeout before reading the next chunk so that the
@@ -311,7 +284,7 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
             if self._io_timeout_ms > 0:
                 io_timeout = max(0, self._io_timeout_ms - int((now() - t0) * 1000))
 
-        return self._decode(size, reply)
+        return msg
 
     def reconnect(self, max_attempts=1):
         """Reconnect to the equipment.
@@ -336,30 +309,16 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
                 if 0 < max_attempts <= attempt:
                     raise
 
-    def write(self, msg):
-        """Write the given message over the socket.
-
-        Parameters
-        ----------
-        msg : :class:`str`
-            The message to write.
-
-        Returns
-        -------
-        :class:`int`
-            The number of bytes sent over the socket.
-        """
+    def _write(self, message):
+        """Overrides method in ConnectionMessageBased."""
         flags = self._init_flag()
-        timeout_error = False
-        error = None
         offset = 0
-        data = self._encode(msg)
-        num = len(data)
+        num = len(message)
         while num > 0:
             if num <= self._max_recv_size:
                 flags |= OperationFlag.END
 
-            block = data[offset:offset+self._max_recv_size]
+            block = message[offset:offset+self._max_recv_size]
 
             try:
                 size = self._core_client.device_write(
@@ -369,27 +328,18 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
                     flags,
                     block
                 )
-            except socket.timeout:
-                # want to raise MSLTimeoutError not socket.timeout
-                timeout_error = True
             except Exception as e:
                 if VXI_ERROR_CODES[15] in str(e):
-                    timeout_error = True
-                else:
-                    error = e
+                    raise socket.timeout
+                raise
             else:
                 if size < len(block):
-                    self.raise_exception('The number of bytes written is '
-                                         'less than expected')
+                    # raise any error, the ConnectionMessageBased class will
+                    # handle the exception type
+                    raise RuntimeError('The number of bytes written is less than expected')
 
                 offset += size
                 num -= size
-
-            if timeout_error:
-                self.raise_timeout()
-
-            if error:
-                self.raise_exception(error)
 
         return offset
 

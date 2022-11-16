@@ -3,8 +3,11 @@ Common functions.
 """
 import logging
 import datetime
+import sys
 from xml.etree import cElementTree
 from xml.dom import minidom
+
+import numpy as np
 
 from .constants import DEFAULT_DATE
 
@@ -240,3 +243,63 @@ def xml_comment(text):
         A special element that is an XML comment.
     """
     return cElementTree.Comment(text)
+
+
+def to_bytes(iterable, dtype='<f', header='ieee'):
+    """Convert numbers into bytes and include the appropriate header.
+
+    Parameters
+    ----------
+    iterable
+        An object to convert to bytes. Must be a 1-dimensional iterable
+        (e.g., not a multidimensional array).
+    dtype : :class:`str` or :class:`numpy.dtype`, optional
+        The data type to cast each element in `iterable` to. For example,
+        ``H``, ``ushort`` and ``uint16`` are equivalent for casting each
+        value to an `unsigned short`. The default is little endian,
+        32-bit float.
+    header : :class:`str` or :data:`None`, optional
+        The style of header to include before the byte representation. Possible
+        values are :data:`None` (no header), ``ieee`` (the format that is valid
+        for the ``<DEFINITE LENGTH ARBITRARY BLOCK RESPONSE DATA>``
+        standard defined in Section 8.7.9,
+        `IEEE 488.2-1992 <https://standards.ieee.org/ieee/488.2/718/>`_),
+        or ``hp`` (the format that is valid for HP-IB data transfer standard,
+        i.e., the `FORM#` command option -- see the keyword dictionary for an
+        `HP 8530A <https://www.keysight.com/us/en/product/8530A/microwave-receiver.html#resources>`_
+        for more details).
+
+    Returns
+    -------
+    :class:`bytes`
+        The header with the byte representation of `numbers` appended.
+    """
+    if isinstance(iterable, np.ndarray):
+        array = iterable.astype(dtype=dtype)
+    else:
+        array = np.fromiter(iterable, dtype=dtype, count=len(iterable))
+
+    if header == 'ieee':
+        nbytes = str(array.nbytes)
+        len_nbytes = len(nbytes)
+        if len_nbytes > 9:
+            # The IEEE-488.2 format allows for 1 digit to specify the number
+            # of bytes in the array. This is extremely unlikely to occur in
+            # practice since the instrument would require > 1GB of memory.
+            raise OverflowError('length too big for IEEE-488.2 specification')
+        return '#{}{}'.format(len_nbytes, nbytes).encode() + array.tobytes()
+
+    if header == 'hp':
+        if array.dtype.byteorder == '=':
+            byteorder = sys.byteorder
+        else:
+            byteorder = 'big' if sys.byteorder == 'little' else 'little'
+
+        # int.to_bytes() will raise OverflowError if the length is too big
+        nbytes = array.nbytes.to_bytes(2, byteorder)
+        return b'#A' + nbytes + array.tobytes()
+
+    if not header:
+        return array.tobytes()
+
+    raise ValueError("Invalid header {!r} -- must be 'ieee', 'hp' or None".format(header))

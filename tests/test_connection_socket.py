@@ -77,36 +77,46 @@ def test_tcp_socket_read():
     assert dev.write_termination == term
 
     dev.write('hello')
-    assert dev.read() == 'hello'
+    assert dev.read() == 'hello\r\n'
 
     n = dev.write('hello')
-    assert dev.read(n) == 'hello' + term.decode()  # specified `size` so `term` is not removed
+    assert dev.read(n) == 'hello\r\n'
 
     n = dev.write(b'021.3' + term + b',054.2')
-    assert dev.read(n) == '021.3' + term.decode() + ',054.2' + term.decode()  # `term` is not removed
+    assert dev.read(n) == '021.3\r\n,054.2\r\n'
 
     dev.write(b'021.3' + term + b',054.2')
     assert dev.read(3) == '021'
-    assert dev.read(5) == '.3' + term.decode() + ','
-    assert dev.read() == '054.2'  # read the rest -- removes the `term` at the end
+    assert dev.read(5) == '.3\r\n,'
+    assert dev.read() == '054.2\r\n'
 
     dev.write(b'021.3' + term + b',054.2')
-    assert dev.read() == '021.3'  # read until first `term`
-    assert dev.read() == ',054.2'  # read until second `term`
+    assert dev.read() == '021.3\r\n'
+    assert dev.read() == ',054.2\r\n'
+
+    dev.write(b'021.3' + term + b',054.2' + term)
+    assert dev.read(1) == '0'
+    assert dev.read(3) == '21.'
+    assert dev.read(2) == '3\r'
+    assert dev.read(2) == '\n,'
+    assert dev.read(1) == '0'
+    assert dev.read(1) == '5'
+    assert dev.read(1) == '4'
+    assert dev.read() == '.2\r\n'
 
     n = dev.write('12345')
     assert n == 7
     with pytest.raises(MSLTimeoutError):
         dev.read(n+1)  # read more bytes than are available
-    assert dev.read(n) == '12345' + term.decode()
+    assert dev.read(n) == '12345\r\n'
     assert len(dev.byte_buffer) == 0
 
     msg = 'a' * (dev.max_read_size - len(term))
     dev.write(msg)
-    assert dev.read() == msg
+    assert dev.read() == msg + term.decode()
 
     dev.write(b'x'*1024 + term + b'y'*2048)
-    assert dev.read() == 'x'*1024  # read until `term`
+    assert dev.read() == 'x'*1024 + term.decode()  # read until `term`
     assert len(dev.byte_buffer) == 2048 + len(term)
     dev.max_read_size = 2000
     with pytest.raises(MSLConnectionError):
@@ -173,7 +183,7 @@ def test_udp_socket_read():
 
     address = '127.0.0.1'
     port = get_available_port()
-    term = b'\r\n'
+    term = b'^END'
 
     t = threading.Thread(target=echo_server_udp, args=(address, port, term))
     t.daemon = True
@@ -198,29 +208,29 @@ def test_udp_socket_read():
     assert dev.write_termination == term
 
     dev.write('hello')
-    assert dev.read() == 'hello'
+    assert dev.read() == 'hello^END'
 
     n = dev.write('hello')
-    assert dev.read(n) == 'hello' + term.decode()  # specified `size` so `term` is not removed
+    assert dev.read(n) == 'hello^END'
 
     n = dev.write(b'021.3' + term + b',054.2')
-    assert dev.read(n) == '021.3' + term.decode() + ',054.2' + term.decode()  # `term` is not removed
+    assert dev.read(n) == '021.3^END,054.2^END'
 
     dev.write(b'021.3' + term + b',054.2')
     assert dev.read(3) == '021'
-    assert dev.read(5) == '.3' + term.decode() + ','
-    assert dev.read() == '054.2'  # read the rest -- removes the `term` at the end
+    assert dev.read(5) == '.3^EN'
+    assert dev.read() == 'D,054.2^END'
 
     dev.write(b'021.3' + term + b',054.2')
-    assert dev.read() == '021.3'  # read until first `term`
-    assert dev.read() == ',054.2'  # read until second `term`
+    assert dev.read() == '021.3^END'
+    assert dev.read() == ',054.2^END'
 
     n = dev.write('12345')
-    assert n == 7
+    assert n == 9
     with pytest.raises(MSLTimeoutError):
         dev.read(n+1)  # read more bytes than are available
-    assert dev.read(n) == '12345' + term.decode()
-    assert len(dev.byte_buffer) == 0
+    assert dev.read(n) == '12345^END'  # still in buffer
+    assert len(dev.byte_buffer) == 0  # buffer empty
 
     dev.write('SHUTDOWN')
 
@@ -260,7 +270,7 @@ def test_wrong_socket_type():
         )
     )
 
-    # use the correct socket type to shutdown the server
+    # use the correct socket type to shut down the server
     dev = record.connect()
     dev.write('SHUTDOWN')
 

@@ -2,10 +2,12 @@
 Base class for equipment that use message-based communication.
 """
 import time
+import socket
 
 from .connection import Connection
 from .exceptions import MSLTimeoutError
 from .constants import LF, CR
+from .utils import to_bytes
 
 
 class ConnectionMessageBased(Connection):
@@ -175,60 +177,124 @@ class ConnectionMessageBased(Connection):
         raise MSLTimeoutError('{!r}\n{}'.format(self, msg))
 
     def read(self, size=None):
-        """Read the response from the equipment.
-
-        .. attention::
-           The subclass must override this method.
+        """Read a message from the equipment.
 
         Parameters
         ----------
         size : :class:`int`, optional
-            The number of bytes to read.
+            The number of bytes to read. This method will block until at least
+            one of the following conditions are fulfilled:
+
+            1. the :obj:`.read_termination` byte is received (only if
+               :obj:`.read_termination` is not :data:`None`).
+            2. a timeout occurs (only if :obj:`.timeout` is not :data:`None`). Raises
+               :exc:`~msl.equipment.exceptions.MSLTimeoutError` if this occurs.
+            3. `size` bytes have been received (only if `size` is not :data:`None`).
+            4. :obj:`.max_read_size` bytes have been received. Raises
+               :exc:`~msl.equipment.exceptions.MSLConnectionError` if this occurs.
 
         Returns
         -------
         :class:`str`
-            The response from the equipment.
+            The message from the equipment.
         """
+        if size is not None and size > self._max_read_size:
+            self.raise_exception('max_read_size is {} bytes, requesting {} bytes'.format(
+                self._max_read_size, size))
+
+        message = self._read(size)
+
+        if size is None:
+            self.log_debug('%s.read() -> %r', self, message)
+        else:
+            if len(message) != size:
+                self.raise_exception('received {} bytes, requested {} bytes'.format(
+                    len(message), size))
+            self.log_debug('%s.read(%s) -> %r', self, size, message)
+
+        return message.decode(encoding=self._encoding, errors=self.encoding_errors)
+
+    def _read(self, size):
+        """The subclass must override this method."""
         raise NotImplementedError
 
-    def write(self, msg):
+    def write(self, message, values=None, dtype='<f', header='ieee'):
         """Write a message to the equipment.
 
-        .. attention::
-           The subclass must override this method.
+        See :func:`~msl.equipment.utils.to_bytes` for more details about the
+        `value`, `dtype` and `header` parameters.
 
         Parameters
         ----------
-        msg : :class:`str`
+        message : :class:`str` or :class:`bytes`
             The message to write to the equipment.
+        values : :class:`list`, :class:`tuple` or :class:`numpy.ndarray`, optional
+            Command-dependent values to append to `message`. Typically, this
+            parameter is a 1-d array of numbers, and it is referred to as the
+            `block data` for a `SCPI` command.
+        dtype : :class:`str` or :class:`numpy.dtype`, optional
+            The data type to cast each element in `values` to bytes.
+        header : :class:`str`, optional
+            The style of header to include before the byte representation
+            of `values`.
 
         Returns
         -------
         :class:`int`
             The number of bytes written.
         """
+        if isinstance(message, str):
+            message = message.encode(encoding=self._encoding, errors=self._encoding_errors)
+
+        if values:
+            message += to_bytes(values, dtype=dtype, header=header)
+
+        if self._write_termination and not message.endswith(self._write_termination):
+            message += self._write_termination
+
+        self.log_debug('%s.write(%r)', self, message)
+
+        error = None
+        timeout_error = None
+        try:
+            return self._write(message)
+        except socket.timeout:
+            # TODO in 3.10 socket.timeout became a deprecated alias of TimeoutError
+            #  Want to raise MSLTimeoutError not socket.timeout
+            timeout_error = True
+        except Exception as e:
+            error = e  # avoid a nested exception traceback
+
+        if timeout_error:
+            self.raise_timeout()
+
+        self.raise_exception(error)
+
+    def _write(self, message):
+        """The subclass must override this method."""
         raise NotImplementedError
 
-    def query(self, msg, delay=0.0, size=None):
+    def query(self, message, delay=0.0, size=None, **kwargs):
         """Convenience method for performing a :meth:`write` followed by a :meth:`read`.
 
         Parameters
         ----------
-        msg : :class:`str`
+        message : :class:`str`
             The message to write to the equipment.
         delay : :class:`float`, optional
             The time delay, in seconds, to wait between :meth:`write` and
             :meth:`read` operations.
         size : :class:`int`, optional
             The number of bytes to read.
+        **kwargs
+            All additional keyword arguments are passed to :meth:`write`.
 
         Returns
         -------
         :class:`str`
             The response from the equipment.
         """
-        self.write(msg)
+        self.write(message, **kwargs)
         if delay > 0.0:
             time.sleep(delay)
         return self.read(size=size)
@@ -240,22 +306,3 @@ class ConnectionMessageBased(Connection):
                 return termination.encode(self._encoding)
             except AttributeError:
                 return termination  # `termination` is already encoded
-
-    def _encode(self, message):
-        # convenience method for preparing the message for a write operation
-        if isinstance(message, bytes):
-            data = message
-        else:
-            data = message.encode(encoding=self._encoding, errors=self.encoding_errors)
-        if self._write_termination is not None and not data.endswith(self._write_termination):
-            data += self._write_termination
-        self.log_debug('%s.write(%r)', self, data)
-        return data
-
-    def _decode(self, size, message):
-        # convenience method for processing the message from a read operation
-        if size is None:
-            self.log_debug('%s.read() -> %r', self, message)
-        else:
-            self.log_debug('%s.read(%s) -> %r', self, size, message)
-        return message.decode(encoding=self._encoding, errors=self.encoding_errors)

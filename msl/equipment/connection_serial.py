@@ -148,83 +148,36 @@ class ConnectionSerial(ConnectionMessageBased):
         """Close the serial port."""
         try:
             # if the subclass raised an error in the constructor before
-            # the this class is initialized then self._serial won't exist
+            # this class is initialized then self._serial won't exist
             if self._serial.is_open:
                 self._serial.close()
                 self.log_debug('Disconnected from %s', self.equipment_record.connection)
         except AttributeError:
             pass
 
-    def write(self, msg):
-        """Write a message over the serial port.
+    def _write(self, message):
+        """Overrides method in ConnectionMessageBased."""
+        return self._serial.write(message)
 
-        Parameters
-        ----------
-        msg : :class:`str`
-            The message to write.
+    def _read(self, size):
+        """Overrides method in ConnectionMessageBased."""
+        if size is not None:
+            return self._serial.read(size)
 
-        Returns
-        -------
-        :class:`int`
-            The number of bytes sent over the serial port.
-        """
-        data = self._encode(msg)
-        return self._serial.write(data)
+        t0 = time.time()
+        msg = bytearray()
+        while True:
+            msg.extend(self._serial.read(1))
 
-    def read(self, size=None):
-        """Read a message from the serial port.
+            if self._read_termination and msg.endswith(self._read_termination):
+                return msg
 
-        Parameters
-        ----------
-        size : :class:`int`, optional
-            The number of bytes to read. If `size` is :data:`None` then read until:
+            if len(msg) > self._max_read_size:
+                self.raise_exception('len(message) [{}] > max_read_size [{}]'.format(
+                    len(msg), self._max_read_size))
 
-            1. :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.read_termination`
-               characters are read (only if
-               :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.read_termination`
-               is not :data:`None`)
-            2. :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.max_read_size`
-               bytes have been read (raises :exc:`~msl.equipment.exceptions.MSLConnectionError` if occurs)
-            3. :exc:`~msl.equipment.exceptions.MSLTimeoutError` occurs
-               (only if :obj:`~msl.equipment.connection_message_based.ConnectionMessageBased.timeout`
-               is not :data:`None`)
-
-            This method will block until at least one of the above conditions is fulfilled.
-
-        Returns
-        -------
-        :class:`str`
-            The message from the serial port.
-        """
-        if size:
-            if size > self._max_read_size:
-                self.raise_exception('max_read_size is {} bytes, requesting {} bytes'.format(
-                    self._max_read_size, size)
-                )
-
-            out = self._serial.read(size)
-            if len(out) != size:
-                self.raise_exception('received {} bytes, requested {} bytes'.format(len(out), size))
-
-        else:
-            t0 = time.time()
-            out = bytearray()
-            while True:
-                out.extend(self._serial.read(1))
-
-                if self._read_termination and out.endswith(self._read_termination):
-                    out = out[:-len(self._read_termination)]
-                    break
-
-                if len(out) > self._max_read_size:
-                    self.raise_exception('len(bytes_read) [{}] > max_read_size [{}]'.format(
-                        len(out), self._max_read_size)
-                    )
-
-                if self._timeout and time.time() - t0 >= self._timeout:
-                    self.raise_timeout()
-
-        return self._decode(size, out)
+            if self._timeout and time.time() - t0 >= self._timeout:
+                self.raise_timeout()
 
     @staticmethod
     def parse_address(address):

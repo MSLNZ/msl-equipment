@@ -3,6 +3,7 @@ import datetime
 from xml.etree.cElementTree import Element, Comment
 
 import pytest
+import numpy as np
 
 from msl.equipment.utils import (
     convert_to_enum,
@@ -11,6 +12,7 @@ from msl.equipment.utils import (
     convert_to_xml_string,
     xml_comment,
     xml_element,
+    to_bytes,
 )
 
 
@@ -311,3 +313,67 @@ def test_convert_to_xml_string_v2():
     assert lines[14] == '    Bugger'
     assert lines[15] == '  </Housekeeping>'
     assert lines[16] == '</root>'
+
+
+def test_to_bytes():
+    assert to_bytes([]) == b'#10'
+    assert to_bytes(()) == b'#10'
+    assert to_bytes(np.ndarray((0,))) == b'#10'
+
+    expected = b'#240\x00\x00\x00\x00\x00\x00\x80?\x00\x00\x00@\x00\x00@@' \
+               b'\x00\x00\x80@\x00\x00\xa0@\x00\x00\xc0@\x00\x00\xe0@\x00' \
+               b'\x00\x00A\x00\x00\x10A'
+    assert to_bytes(range(10)) == expected
+    assert to_bytes(list(range(10))) == expected
+    assert to_bytes(np.array(range(10))) == expected
+    assert to_bytes(np.array(range(10)), header=None) == expected[4:]
+
+    expected = b'#240\x00\x00\x00\x00?\x80\x00\x00@\x00\x00\x00@@\x00\x00@' \
+               b'\x80\x00\x00@\xa0\x00\x00@\xc0\x00\x00@\xe0\x00\x00A\x00' \
+               b'\x00\x00A\x10\x00\x00'
+    assert to_bytes(range(10), dtype='>f') == expected
+    assert to_bytes(list(range(10)), dtype='>f') == expected
+    assert to_bytes(np.array(range(10)), dtype='>f') == expected
+
+    expected = b'#220\x00\x00\x01\x00\x02\x00\x03\x00\x04\x00\x05\x00\x06' \
+               b'\x00\x07\x00\x08\x00\t\x00'
+    assert to_bytes(range(10), dtype='uint16') == expected
+    assert to_bytes(list(range(10)), dtype='ushort') == expected
+    assert to_bytes(np.array(range(10)), dtype='H') == expected
+
+    expected = b'#15\x01\x00\x01\x01\x00'
+    assert to_bytes([True, False, True, True, False], dtype='B') == expected
+    assert to_bytes(np.array([True, False, True, True, False]), dtype='B') == expected
+
+    expected = b'#280\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
+               b'\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00' \
+               b'\x00\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x04\x00' \
+               b'\x00\x00\x00\x00\x00\x00\x05\x00\x00\x00\x00\x00\x00\x00' \
+               b'\x06\x00\x00\x00\x00\x00\x00\x00\x07\x00\x00\x00\x00\x00' \
+               b'\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\t'
+    assert to_bytes(range(10), dtype='>Q') == expected
+    assert to_bytes(list(range(10)), dtype='>Q') == expected
+    assert to_bytes(np.array(range(10)), dtype='>Q') == expected
+
+    assert to_bytes(range(123456), dtype='float64').startswith(b'#6987648')
+
+    assert to_bytes(b'abcxyz', dtype='b') == b'#16abcxyz'
+    assert to_bytes(b'abcdwxyz', dtype='B') == b'#18abcdwxyz'
+    assert to_bytes(bytearray(b'abcxyz'), dtype='b', header=None) == b'abcxyz'
+    assert to_bytes(b'acegikmoqsuwy', dtype='int8', header='') == b'acegikmoqsuwy'
+
+    expected = b'#A(\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x03' \
+               b'\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00\x06\x00\x00\x00' \
+               b'\x07\x00\x00\x00\x08\x00\x00\x00\t\x00\x00\x00'
+    assert to_bytes(range(10), dtype='<l', header='hp') == expected
+
+    expected = b'#A\x00(\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00' \
+               b'\x00\x00\x03\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00\x06' \
+               b'\x00\x00\x00\x07\x00\x00\x00\x08\x00\x00\x00\t'
+    assert to_bytes(range(10), dtype='>l', header='hp') == expected
+
+    with pytest.raises(ValueError, match='Invalid header'):
+        assert to_bytes([], header='raw')
+
+    with pytest.raises(OverflowError):
+        to_bytes(range(0xffff), dtype='H', header='hp')

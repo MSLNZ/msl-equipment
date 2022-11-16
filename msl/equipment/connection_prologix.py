@@ -171,6 +171,15 @@ class ConnectionPrologix(Connection):
         self._controller.timeout = value
 
     @property
+    def rstrip(self):
+        """:class:`bool`: Whether to remove trailing whitespace from :meth:`.read` messages."""
+        return self._controller.rstrip
+
+    @rstrip.setter
+    def rstrip(self, value):
+        self._controller.rstrip = value
+
+    @property
     def controller(self):
         """:class:`.ConnectionSerial` or :class:`.ConnectionSocket`:
         The connection to the Prologix_ Controller for this equipment.

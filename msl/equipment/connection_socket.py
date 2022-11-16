@@ -27,6 +27,7 @@ class ConnectionSocket(ConnectionMessageBased):
             'max_read_size': int, the maximum number of bytes that can be read [default: 2**16]
             'proto': int, the socket protocol number [default: 0]
             'read_termination': str or None, read until this termination sequence is found [default: '\\n']
+            'rstrip': bool, whether to remove trailing whitespace from "read" messages [default: False]
             'socket_type': str, the socket type, e.g. 'STREAM', 'DGRAM' [default: 'STREAM']
             'termination': shortcut for setting both 'read_termination' and 'write_termination' to this value
             'timeout': float or None, the timeout (in seconds) for read and write operations [default: None]

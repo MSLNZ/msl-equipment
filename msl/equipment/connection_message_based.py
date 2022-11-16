@@ -57,6 +57,8 @@ class ConnectionMessageBased(Connection):
 
         self.encoding_errors = p.get('encoding_errors', 'strict')
 
+        self.rstrip = p.get('rstrip', False)
+
     @property
     def encoding(self):
         """:class:`str`: The encoding that is used for :meth:`read` and :meth:`write` operations."""
@@ -77,7 +79,7 @@ class ConnectionMessageBased(Connection):
     def encoding_errors(self):
         """:class:`str`: The error handling scheme to use when encoding and decoding messages.
 
-        For example: 'strict', 'ignore', 'replace', 'xmlcharrefreplace', 'backslashreplace', ...
+        For example: `strict`, `ignore`, `replace`, `xmlcharrefreplace`, `backslashreplace`
         """
         return self._encoding_errors
 
@@ -164,6 +166,15 @@ class ConnectionMessageBased(Connection):
         # The connection subclass must override this method to notify the backend.
         pass
 
+    @property
+    def rstrip(self):
+        """:class:`bool`: Whether to remove trailing whitespace from :meth:`.read` messages."""
+        return self._rstrip
+
+    @rstrip.setter
+    def rstrip(self, value):
+        self._rstrip = bool(value)
+
     def raise_timeout(self, append_msg=''):
         """Raise a :exc:`~.exceptions.MSLTimeoutError`.
 
@@ -197,6 +208,10 @@ class ConnectionMessageBased(Connection):
         -------
         :class:`str`
             The message from the equipment.
+
+        See Also
+        --------
+        :attr:`.rstrip`
         """
         if size is not None and size > self._max_read_size:
             self.raise_exception('max_read_size is {} bytes, requesting {} bytes'.format(
@@ -211,6 +226,9 @@ class ConnectionMessageBased(Connection):
                 self.raise_exception('received {} bytes, requested {} bytes'.format(
                     len(message), size))
             self.log_debug('%s.read(%s) -> %r', self, size, message)
+
+        if self._rstrip:
+            message = message.rstrip()
 
         return message.decode(encoding=self._encoding, errors=self.encoding_errors)
 

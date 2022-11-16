@@ -33,6 +33,7 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
             'max_read_size': int, the maximum number of bytes that can be read [default: 2**16]
             'port': int, the port to use instead of calling the RPC Port Mapper function [default: None]
             'read_termination': str or None, read until this termination character is found [default: None]
+            'rstrip': bool, whether to remove trailing whitespace from "read" messages [default: False]
             'termination': alias for 'read_termination'
             'timeout': float or None, the timeout (in seconds) for read and write operations [default: None]
 

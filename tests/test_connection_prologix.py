@@ -173,6 +173,7 @@ def test_parse_address():
 
 
 def test_connection_message_based_attributes():
+    # ConnectionPrologix must have the same public attributes as ConnectionMessageBased
     cp = dir(ConnectionPrologix)
     for attr in dir(ConnectionMessageBased):
         if attr.startswith('_') or attr in ['CR', 'LF', 'raise_timeout']:

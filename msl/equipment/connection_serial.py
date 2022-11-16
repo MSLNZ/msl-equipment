@@ -34,6 +34,7 @@ class ConnectionSerial(ConnectionMessageBased):
             'max_read_size': int, the maximum number of bytes that can be read [default: 2**16]
             'parity': str or None, parity checking, e.g. 'even', 'odd' [default: None]
             'read_termination': str or None, read until this termination sequence is found [default: '\\n']
+            'rstrip': bool, whether to remove trailing whitespace from "read" messages [default: False]
             'rts_cts': bool, enable hardware (RTS/CTS) flow control [default: False]
             'stop_bits': int or float, the number of stop bits, e.g. 1, 1.5, 2 [default: 1]
             'termination': shortcut for setting both 'read_termination' and 'write_termination' to this value

@@ -236,25 +236,22 @@ class ConnectionMessageBased(Connection):
         """The subclass must override this method."""
         raise NotImplementedError
 
-    def write(self, message, values=None, dtype='<f', header='ieee'):
+    def write(self, message, data=None, fmt='ieee', dtype='<f'):
         """Write a message to the equipment.
 
         See :func:`~msl.equipment.utils.to_bytes` for more details about the
-        `value`, `dtype` and `header` parameters.
+        `data`, `fmt` and `dtype` arguments.
 
         Parameters
         ----------
         message : :class:`str` or :class:`bytes`
             The message to write to the equipment.
-        values : :class:`list`, :class:`tuple` or :class:`numpy.ndarray`, optional
-            Command-dependent values to append to `message`. Typically, this
-            parameter is a 1-d array of numbers, and it is referred to as the
-            `block data` for a `SCPI` command.
-        dtype : :class:`str` or :class:`numpy.dtype`, optional
-            The data type to cast each element in `values` to bytes.
-        header : :class:`str`, optional
-            The style of header to include before the byte representation
-            of `values`.
+        data : :class:`list`, :class:`tuple` or :class:`numpy.ndarray`, optional
+            Command-dependent data to append to `message`.
+        fmt : :class:`str`, optional
+            The format to use to convert `data` to bytes.
+        dtype : :class:`str` or :class:`numpy.number`, optional
+            The data type to cast each element in `data` to.
 
         Returns
         -------
@@ -264,8 +261,8 @@ class ConnectionMessageBased(Connection):
         if isinstance(message, str):
             message = message.encode(encoding=self._encoding, errors=self._encoding_errors)
 
-        if values:
-            message += to_bytes(values, dtype=dtype, header=header)
+        if data:
+            message += to_bytes(data, fmt=fmt, dtype=dtype)
 
         if self._write_termination and not message.endswith(self._write_termination):
             message += self._write_termination

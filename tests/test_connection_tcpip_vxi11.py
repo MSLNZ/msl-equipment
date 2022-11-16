@@ -1,5 +1,6 @@
 import socket
 import struct
+import sys
 import threading
 import time
 
@@ -253,7 +254,11 @@ def test_exceptions():
     )
 
     # server not running
-    with pytest.raises(MSLTimeoutError, match='Timeout occurred after 1.0 second(s)'):
+    if sys.platform == 'win32':
+        match = 'Timeout occurred after 1.0 second(s)'
+    else:
+        match = 'Connection refused'
+    with pytest.raises(MSLConnectionError, match=match):
         record.connect()
 
     # server running, but no program running

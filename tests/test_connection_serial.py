@@ -57,13 +57,13 @@ def test_connection_serial_read():
     assert dev.write_termination == term
 
     dev.write('hello')
-    assert dev.read() == 'hello'
+    assert dev.read() == 'hello\r\n'
 
     n = dev.write('hello')
-    assert dev.read(n) == 'hello' + term.decode()
+    assert dev.read(n) == 'hello\r\n'
 
     dev.write('x'*4096)
-    assert dev.read() == 'x'*4096
+    assert dev.read() == 'x'*4096 + term.decode()
 
     n = dev.write('123.456')
     with pytest.raises(MSLConnectionError):
@@ -74,11 +74,21 @@ def test_connection_serial_read():
 
     msg = 'a' * (dev.max_read_size - len(term))
     dev.write(msg)
-    assert dev.read() == msg
+    assert dev.read() == msg + term.decode()
 
     dev.write(b'021.3' + term + b',054.2')
-    assert dev.read() == '021.3'  # read until first `term`
-    assert dev.read() == ',054.2'  # read until second `term`
+    assert dev.read() == '021.3\r\n'  # read until first `term`
+    assert dev.read() == ',054.2\r\n'  # read until second `term`
+
+    dev.write(b'021.3' + term + b',054.2' + term)
+    assert dev.read(1) == '0'
+    assert dev.read(3) == '21.'
+    assert dev.read(2) == '3\r'
+    assert dev.read(2) == '\n,'
+    assert dev.read(1) == '0'
+    assert dev.read(1) == '5'
+    assert dev.read(1) == '4'
+    assert dev.read() == '.2\r\n'
 
     dev.write('SHUTDOWN')
 

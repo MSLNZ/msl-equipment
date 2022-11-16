@@ -266,7 +266,7 @@ def test_exceptions():
     t1.daemon = True
     t1.start()
     time.sleep(0.1)  # allow some time for the server to start
-    with pytest.raises(MSLTimeoutError, match='Timeout occurred after 1.0 seconds'):
+    with pytest.raises(MSLConnectionError, match=match):
         record.connect()
     t1.join()
     time.sleep(0.1)  # allow some time for the servers to close

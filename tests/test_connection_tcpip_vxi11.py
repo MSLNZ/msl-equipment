@@ -8,6 +8,8 @@ from msl.loadlib.utils import get_available_port
 
 from msl.equipment import ConnectionRecord
 from msl.equipment import EquipmentRecord
+from msl.equipment import MSLConnectionError
+from msl.equipment import MSLTimeoutError
 from msl.equipment.connection_tcpip_vxi11 import ConnectionTCPIPVXI11
 from msl.equipment.vxi11 import PMAP_PORT
 
@@ -63,6 +65,7 @@ def rpc_server(address, prog_port):
     reply += struct.pack('>L', prog_port)
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind((address, PMAP_PORT))
     s.listen(1)
     conn, _ = s.accept()
@@ -129,7 +132,15 @@ def rpc_program(address, prog_port):
                    b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
                    b'\x00\x00\x00\x00\x00\x00'
 
+    sleep_request = b'\x80\x00\x00D\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00' \
+                    b'\x00\x02\x00\x06\x07\xaf\x00\x00\x00\x01\x00\x00\x00' \
+                    b'\x0b\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
+                    b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
+                    b'\x00\x00\x00\x00\x00\x00\x08\x00\x00\x00\x05sleep\x00' \
+                    b'\x00\x00'
+
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind((address, prog_port))
     s.listen(1)
     conn, _ = s.accept()
@@ -143,6 +154,9 @@ def rpc_program(address, prog_port):
             conn.sendall(read_reply)
         elif data == unlink_request:
             conn.sendall(unlink_reply)
+        elif data == sleep_request:
+            time.sleep(1.2)  # must be >1
+            break
         else:
             break
     conn.close()
@@ -164,6 +178,8 @@ def test_protocol():
     record = EquipmentRecord(
         connection=ConnectionRecord(
             address='TCPIP::' + address,
+            # if the timeout is changed then the predefined byte streams
+            # in rpc_program() above must be updated -- do not change
             properties={'timeout': 5}
         )
     )
@@ -223,3 +239,70 @@ def test_protocol():
     dev.disconnect()
 
     assert dev.socket is None
+
+
+def test_exceptions():
+    address = '127.0.0.1'
+    prog_port = get_available_port()
+
+    record = EquipmentRecord(
+        connection=ConnectionRecord(
+            address='TCPIP::' + address,
+            properties={'timeout': 1}
+        )
+    )
+
+    # server not running
+    with pytest.raises(MSLTimeoutError, match='Timeout occurred after 1.0 second(s)'):
+        record.connect()
+
+    # server running, but no program running
+    t1 = threading.Thread(target=rpc_server, args=(address, prog_port))
+    t1.daemon = True
+    t1.start()
+    time.sleep(0.1)  # allow some time for the server to start
+    with pytest.raises(MSLTimeoutError, match='Timeout occurred after 1.0 seconds'):
+        record.connect()
+    t1.join()
+    time.sleep(0.1)  # allow some time for the servers to close
+
+    record = EquipmentRecord(
+        connection=ConnectionRecord(
+            address='TCPIP::' + address,
+            # if the timeout is changed then the predefined byte streams
+            # in rpc_program() above must be updated -- do not change
+            properties={'timeout': 5}
+        )
+    )
+
+    # both servers running, expect a timeout on the query()
+    t1 = threading.Thread(target=rpc_server, args=(address, prog_port))
+    t1.daemon = True
+    t2 = threading.Thread(target=rpc_program, args=(address, prog_port))
+    t2.daemon = True
+    t1.start()
+    t2.start()
+    time.sleep(0.1)  # allow some time for the servers to start
+    dev = record.connect()
+    assert dev.query('*IDN?') == 'Manufacturer of the Device,Model,Serial,dd.mm.yyyy  \n'
+    dev.timeout = 0  # the socket timeout value is 1 + io_timeout + lock_timeout
+    assert dev.socket.gettimeout() == 1
+    with pytest.raises(MSLTimeoutError, match='Timeout occurred after 0.0 seconds'):
+        dev.query('sleep')
+    t1.join()
+    t2.join()
+    time.sleep(0.1)  # allow some time for the servers to close
+
+    # both servers running, but, server closes abruptly
+    t1 = threading.Thread(target=rpc_server, args=(address, prog_port))
+    t1.daemon = True
+    t2 = threading.Thread(target=rpc_program, args=(address, prog_port))
+    t2.daemon = True
+    t1.start()
+    t2.start()
+    time.sleep(0.1)  # allow some time for the servers to start
+    dev = record.connect()
+    with pytest.raises(MSLConnectionError, match='The RPC reply header is < 4 bytes'):
+        dev.query('not-a-predefined-request')
+    t1.join()
+    t2.join()

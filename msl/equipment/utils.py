@@ -245,41 +245,60 @@ def xml_comment(text):
     return cElementTree.Comment(text)
 
 
-def to_bytes(iterable, dtype='<f', header='ieee'):
-    """Convert numbers into bytes and include the appropriate header.
+def to_bytes(iterable, fmt='ieee', dtype='<f'):
+    """Convert an iterable of numbers into bytes.
+
+    .. _IEEE 488.2-1992: https://standards.ieee.org/ieee/488.2/718/
+    .. _HP 8530A: https://www.keysight.com/us/en/product/8530A/microwave-receiver.html#resources
 
     Parameters
     ----------
     iterable
-        An object to convert to bytes. Must be a 1-dimensional iterable
-        (e.g., not a multidimensional array).
-    dtype : :class:`str` or :class:`numpy.dtype`, optional
-        The data type to cast each element in `iterable` to. For example,
-        ``H``, ``ushort`` and ``uint16`` are equivalent for casting each
-        value to an `unsigned short`. The default is little endian,
-        32-bit float.
-    header : :class:`str` or :data:`None`, optional
-        The style of header to include before the byte representation. Possible
-        values are :data:`None` (no header), ``ieee`` (the format that is valid
-        for the ``<DEFINITE LENGTH ARBITRARY BLOCK RESPONSE DATA>``
-        standard defined in Section 8.7.9,
-        `IEEE 488.2-1992 <https://standards.ieee.org/ieee/488.2/718/>`_),
-        or ``hp`` (the format that is valid for HP-IB data transfer standard,
-        i.e., the `FORM#` command option -- see the keyword dictionary for an
-        `HP 8530A <https://www.keysight.com/us/en/product/8530A/microwave-receiver.html#resources>`_
-        for more details).
+        An object to convert to bytes. Must be a 1-dimensional sequence of elements
+        (not a multidimensional array).
+    fmt : :class:`str` or :data:`None`, optional
+        The format to use to convert `iterable`. Possible values are:
+
+        * ``''`` (empty string or :data:`None`) -- convert `iterable` to bytes
+          without a header.
+        * ``'ascii'`` -- comma-separated ASCII characters, see the
+          `<PROGRAM DATA SEPARATOR>` standard that is defined in
+          Section 7.4.2.2, `IEEE 488.2-1992`_.
+        * ``'ieee'`` -- arbitrary block data for `SCPI` messages, see the
+          `<DEFINITE LENGTH ARBITRARY BLOCK RESPONSE DATA>` standard that
+          is defined in Section 8.7.9, `IEEE 488.2-1992`_.
+          Syntax, ``#<length of num bytes value><num bytes><byte><byte><byte>...``.
+        * ``'hp'`` -- the HP-IB data transfer standard, i.e., the `FORM#` command
+          option. See the programming guide for an `HP 8530A`_ for more details.
+          Syntax, ``#A<num bytes as uint16><byte><byte><byte>...``.
+
+    dtype : :class:`str` or :class:`numpy.number`, optional
+        The data type to cast each element in `iterable` to. If `fmt` is ``'ascii'``
+        then `dtype` is used in :func:`format` to first convert each element
+        in `iterable` to a string, and then it is encoded (e.g., ``'.2e'`` converts
+        each element to scientific notation with two digits after the decimal point).
+        If `dtype` includes a byte-order character, it is ignored. For all other
+        values of `fmt`, the `dtype` can be a C-type or Python-type specification,
+        for example, ``'H'``, ``'ushort'`` and ``numpy.uint16`` are equivalent
+        specifications to cast each element to an `unsigned short`. If a byte-order
+        character is specified then it is used, otherwise the native byte order
+        of the CPU architecture is used.
 
     Returns
     -------
     :class:`bytes`
-        The header with the byte representation of `numbers` appended.
+        The `iterable` converted to bytes.
     """
+    if fmt == 'ascii':
+        format_spec = dtype.lstrip('@=<>!')
+        return ','.join(format(item, format_spec) for item in iterable).encode('ascii')
+
     if isinstance(iterable, np.ndarray):
         array = iterable.astype(dtype=dtype)
     else:
         array = np.fromiter(iterable, dtype=dtype, count=len(iterable))
 
-    if header == 'ieee':
+    if fmt == 'ieee':
         nbytes = str(array.nbytes)
         len_nbytes = len(nbytes)
         if len_nbytes > 9:
@@ -289,10 +308,10 @@ def to_bytes(iterable, dtype='<f', header='ieee'):
             raise OverflowError('length too big for IEEE-488.2 specification')
         return '#{}{}'.format(len_nbytes, nbytes).encode() + array.tobytes()
 
-    if header == 'hp':
+    if fmt == 'hp':
         return b'#A' + pack(array.dtype.byteorder + 'H', array.nbytes) + array.tobytes()
 
-    if not header:
+    if not fmt:
         return array.tobytes()
 
-    raise ValueError("Invalid header {!r} -- must be 'ieee', 'hp' or None".format(header))
+    raise ValueError("Invalid format {!r} -- must be 'ascii', 'ieee', 'hp' or None".format(fmt))

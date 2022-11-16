@@ -316,7 +316,7 @@ def test_convert_to_xml_string_v2():
     assert lines[16] == '</root>'
 
 
-def test_to_bytes():
+def test_to_bytes_ieee():
     assert to_bytes([]) == b'#10'
     assert to_bytes(()) == b'#10'
     assert to_bytes(np.ndarray((0,))) == b'#10'
@@ -326,8 +326,6 @@ def test_to_bytes():
                b'\x00\x00A\x00\x00\x10A'
     assert to_bytes(range(10)) == expected
     assert to_bytes(list(range(10))) == expected
-    assert to_bytes(np.array(range(10))) == expected
-    assert to_bytes(np.array(range(10)), header=None) == expected[4:]
 
     expected = b'#240\x00\x00\x00\x00?\x80\x00\x00@\x00\x00\x00@@\x00\x00@' \
                b'\x80\x00\x00@\xa0\x00\x00@\xc0\x00\x00@\xe0\x00\x00A\x00' \
@@ -338,12 +336,12 @@ def test_to_bytes():
 
     expected = b'#220\x00\x00\x01\x00\x02\x00\x03\x00\x04\x00\x05\x00\x06' \
                b'\x00\x07\x00\x08\x00\t\x00'
-    assert to_bytes(range(10), dtype='uint16') == expected
+    assert to_bytes(range(10), dtype=np.uint16) == expected
     assert to_bytes(list(range(10)), dtype='ushort') == expected
     assert to_bytes(np.array(range(10)), dtype='H') == expected
 
     expected = b'#15\x01\x00\x01\x01\x00'
-    assert to_bytes([True, False, True, True, False], dtype='B') == expected
+    assert to_bytes([True, False, True, True, False], dtype=np.uint8) == expected
     assert to_bytes(np.array([True, False, True, True, False]), dtype='B') == expected
 
     expected = b'#280\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
@@ -358,21 +356,52 @@ def test_to_bytes():
 
     assert to_bytes(range(123456), dtype='float64').startswith(b'#6987648')
 
+
+def test_to_bytes_none():
+    expected = b'\x00\x00\x00\x00\x00\x00\x80?\x00\x00\x00@\x00\x00@@' \
+               b'\x00\x00\x80@\x00\x00\xa0@\x00\x00\xc0@\x00\x00\xe0@\x00' \
+               b'\x00\x00A\x00\x00\x10A'
+    assert to_bytes(range(10), fmt='') == expected
+    assert to_bytes(list(range(10)), fmt=False) == expected  # False is considered None
+    assert to_bytes(np.array(range(10)), fmt='') == expected
+    assert to_bytes(np.array(range(10)), fmt=None) == expected
+
+
+def test_to_bytes_hp():
     expected = b'#A(\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x03' \
                b'\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00\x06\x00\x00\x00' \
                b'\x07\x00\x00\x00\x08\x00\x00\x00\t\x00\x00\x00'
-    assert to_bytes(range(10), dtype='<i', header='hp') == expected
+    assert to_bytes(range(10), fmt='hp', dtype='<i') == expected
 
     expected = b'#A\x00(\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00' \
                b'\x00\x00\x03\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00\x06' \
                b'\x00\x00\x00\x07\x00\x00\x00\x08\x00\x00\x00\t'
-    assert to_bytes(range(10), dtype='>i', header='hp') == expected
+    assert to_bytes(range(10), fmt='hp', dtype='>i') == expected
 
-    with pytest.raises(ValueError, match='Invalid header'):
-        assert to_bytes([], header='raw')
+
+def test_to_bytes_exceptions():
+    with pytest.raises(ValueError, match='Invalid format'):
+        assert to_bytes([], fmt='raw')
 
     with pytest.raises(struct.error):
-        to_bytes(range(0xffff), dtype='H', header='hp')
+        to_bytes(range(0xffff), fmt='hp', dtype='H')
+
+    with pytest.raises(ValueError):
+        to_bytes(range(10), fmt='ascii', dtype='H')
+
+
+def test_to_bytes_ascii():
+    expected = b'0.000000,1.000000,2.000000,3.000000,4.000000,5.000000,6.000000,7.000000,8.000000,9.000000'
+    assert to_bytes(range(10), fmt='ascii') == expected
+
+    expected = b'0.000,1.000,2.000,3.000,4.000,5.000,6.000,7.000,8.000,9.000'
+    assert to_bytes(range(10), fmt='ascii', dtype='.3f') == expected
+
+    expected = b'0,1,2,3,4,5,6,7,8,9'
+    assert to_bytes(range(10), fmt='ascii', dtype='d') == expected
+
+    expected = b'+0.0E+00,+1.0E+00,+2.0E+00,+3.0E+00,+4.0E+00,+5.0E+00,+6.0E+00,+7.0E+00,+8.0E+00,+9.0E+00'
+    assert to_bytes(range(10), fmt='ascii', dtype='+.1E') == expected
 
 
 @pytest.mark.skipif(
@@ -381,5 +410,5 @@ def test_to_bytes():
 def test_to_bytes_as_bytes():
     assert to_bytes(b'abcxyz', dtype='b') == b'#16abcxyz'
     assert to_bytes(b'abcdwxyz', dtype='B') == b'#18abcdwxyz'
-    assert to_bytes(bytearray(b'abcxyz'), dtype='b', header=None) == b'abcxyz'
-    assert to_bytes(b'acegikmoqsuwy', dtype='int8', header='') == b'acegikmoqsuwy'
+    assert to_bytes(bytearray(b'abcxyz'), fmt=None, dtype='b') == b'abcxyz'
+    assert to_bytes(b'acegikmoqsuwy', fmt='', dtype='int8') == b'acegikmoqsuwy'

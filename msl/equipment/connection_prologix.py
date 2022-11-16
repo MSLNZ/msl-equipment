@@ -40,11 +40,11 @@ class ConnectionPrologix(Connection):
         :class:`.ConnectionSerial` or :class:`.ConnectionSocket` (depending on
         whether a GPIB-USB or a GPIB-ETHERNET Controller is used)::
 
-            'mode': int, 0 or 1 [default: 1]
             'eoi': int, 0 or 1
             'eos': int, 0, 1, 2 or 3
-            'eot_enable': int, 0 or 1
             'eot_char': int, an ASCII value less than 256
+            'eot_enable': int, 0 or 1
+            'mode': int, 0 or 1 [default: 1]
             'read_tmo_ms': int, a timeout value between 1 and 3000 milliseconds
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.backend`

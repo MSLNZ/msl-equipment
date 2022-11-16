@@ -25,20 +25,20 @@ class ConnectionSerial(ConnectionMessageBased):
         :ref:`connections-database` (see also :class:`serial.Serial` for more
         details about each parameter)::
 
-            'read_termination': str or None, read until this termination sequence is found [default: '\\n']
-            'write_termination': str or None, termination sequence appended to write messages [default: '\\r\\n']
-            'termination': shortcut for setting both 'read_termination' and 'write_termination' to this value
-            'max_read_size': int, the maximum number of bytes that can be read [default: 2**16]
+            'baud_rate': int, the baud rate [default: 9600]
+            'data_bits': int, the number of data bits, e.g. 5, 6, 7, 8 [default: 8]
+            'dsr_dtr': bool, enable hardware (DSR/DTR) flow control [default: False]
             'encoding': str, the encoding to use [default: 'utf-8']
             'encoding_errors': str, encoding error handling scheme, e.g. 'strict', 'ignore' [default: 'strict']
-            'timeout': float or None, the timeout (in seconds) for read and write operations [default: None]
-            'baud_rate': int, the baud rate [default: 9600]
-            'parity': str or None, parity checking, e.g. 'even', 'odd' [default: None]
-            'data_bits': int, the number of data bits, e.g. 5, 6, 7, 8 [default: 8]
-            'stop_bits': int or float, the number of stop bits, e.g. 1, 1.5, 2 [default: 1]
             'inter_byte_timeout': float or None, the inter-character timeout [default: None]
-            'dsr_dtr': bool, enable hardware (DSR/DTR) flow control [default: False]
+            'max_read_size': int, the maximum number of bytes that can be read [default: 2**16]
+            'parity': str or None, parity checking, e.g. 'even', 'odd' [default: None]
+            'read_termination': str or None, read until this termination sequence is found [default: '\\n']
             'rts_cts': bool, enable hardware (RTS/CTS) flow control [default: False]
+            'stop_bits': int or float, the number of stop bits, e.g. 1, 1.5, 2 [default: 1]
+            'termination': shortcut for setting both 'read_termination' and 'write_termination' to this value
+            'timeout': float or None, the timeout (in seconds) for read and write operations [default: None]
+            'write_termination': str or None, termination sequence appended to write messages [default: '\\r\\n']
             'xon_xoff': bool, enable software flow control [default: False]
 
         The :data:`~msl.equipment.record_types.ConnectionRecord.backend`

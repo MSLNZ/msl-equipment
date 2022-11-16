@@ -20,17 +20,17 @@ class ConnectionSocket(ConnectionMessageBased):
         for a socket connection supports the following key-value pairs in the
         :ref:`connections-database` (see also :class:`~socket.socket` for more details)::
 
-            'read_termination': str or None, read until this termination sequence is found [default: '\\n']
-            'write_termination': str or None, termination sequence appended to write messages [default: '\\r\\n']
-            'termination': shortcut for setting both 'read_termination' and 'write_termination' to this value
-            'max_read_size': int, the maximum number of bytes that can be read [default: 2**16]
+            'buffer_size': int, the maximum number of bytes to read at a time [default: 4096]
             'encoding': str, the encoding to use [default: 'utf-8']
             'encoding_errors': str, encoding error handling scheme, e.g. 'strict', 'ignore' [default: 'strict']
-            'timeout': float or None, the timeout (in seconds) for read and write operations [default: None]
             'family': str, the address family, e.g., 'INET', 'INET6', 'IPX' [default: 'INET']
-            'socket_type': str, the socket type, e.g. 'STREAM', 'DGRAM' [default: 'STREAM']
+            'max_read_size': int, the maximum number of bytes that can be read [default: 2**16]
             'proto': int, the socket protocol number [default: 0]
-            'buffer_size': int, the maximum number of bytes to read at a time [default: 4096]
+            'read_termination': str or None, read until this termination sequence is found [default: '\\n']
+            'socket_type': str, the socket type, e.g. 'STREAM', 'DGRAM' [default: 'STREAM']
+            'termination': shortcut for setting both 'read_termination' and 'write_termination' to this value
+            'timeout': float or None, the timeout (in seconds) for read and write operations [default: None]
+            'write_termination': str or None, termination sequence appended to write messages [default: '\\r\\n']
 
         The :data:`~msl.equipment.record_types.ConnectionRecord.backend`
         value must be equal to :data:`~msl.equipment.constants.Backend.MSL`

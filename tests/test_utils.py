@@ -523,6 +523,11 @@ def test_from_bytes_hp():
              b'\x00\x00\x00\x07\x00\x00\x00\x08\x00\x00\x00\t'
     assert np.array_equal(from_bytes(buffer, fmt='hp', dtype='>i'), list(range(10)))
 
+    buffer = b'#A(\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x03' \
+             b'\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00\x06\x00\x00\x00' \
+             b'\x07\x00\x00\x00\x08\x00\x00\x00\t\x00\x00\x00\r\n'  # append CR+LF
+    assert np.array_equal(from_bytes(buffer, fmt='hp', dtype='<i'), list(range(10)))
+
 
 def test_from_bytes_ascii():
     buffer = b'1,2,3,4,5'

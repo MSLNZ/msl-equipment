@@ -281,17 +281,19 @@ def to_bytes(iterable, fmt='ieee', dtype='<f'):
 
           .. centered:: hp: ``#A<num bytes as uint16><byte><byte><byte>...``
 
-    dtype : :class:`str` or :class:`numpy.number`, optional
-        The data type to cast each element in `iterable` to. If `fmt` is ``'ascii'``
-        then `dtype` is used in :func:`format` to first convert each element
-        in `iterable` to a string, and then it is encoded (e.g., ``'.2e'`` converts
-        each element to scientific notation with two digits after the decimal point).
-        If `dtype` includes a byte-order character, it is ignored. For all other
-        values of `fmt`, the `dtype` can be a C-type or Python-type specification,
-        for example, ``'H'``, ``'uint16'`` and :class:`numpy.ushort` are equivalent
-        specifications to cast each element to an `unsigned short`. If a byte-order
-        character is specified then it is used, otherwise the native byte order
-        of the CPU architecture is used.
+    dtype
+        The data type to use to convert each element in `iterable` to. If `fmt`
+        is ``'ascii'`` then `dtype` must be of type :class:`str` and it is used
+        as the `format_spec` argument in :func:`format` to first convert each
+        element in `iterable` to a string, and then it is encoded (e.g., ``'.2e'``
+        converts each element to scientific notation with two digits after the
+        decimal point). If `dtype` includes a byte-order character, it is
+        ignored. For all other values of `fmt`, the `dtype` can be any object
+        that :class:`numpy.dtype` supports (e.g., ``'H'``, ``'uint16'`` and
+        :class:`numpy.ushort` are equivalent values to convert each element
+        to an `unsigned short`). If a byte-order character is specified then it
+        is used, otherwise the native byte order of the CPU architecture is used.
+        See :ref:`struct-format-strings` for more details.
 
     Returns
     -------
@@ -337,14 +339,13 @@ def from_bytes(buffer, fmt='ieee', dtype='<f'):
     Parameters
     ----------
     buffer : :class:`bytes`, :class:`bytearray` or :class:`str`
-        A byte buffer. Can be of type :class:`str`, but only if `fmt`
-        equals ``'ascii'``.
+        A byte buffer. Can be an already-decoded buffer of type :class:`str`,
+        but only if `fmt` equals ``'ascii'``.
     fmt : :class:`str` or :data:`None`, optional
-        The format that `buffer` is in.
-        See :func:`.to_bytes` for more details.
-    dtype : :class:`str` or :class:`numpy.number`, optional
-        The data type of each element in `buffer`.
-        See :func:`.to_bytes` for more details.
+        The format that `buffer` is in. See :func:`.to_bytes` for more details.
+    dtype
+        The data type of each element in `buffer`. Can be any object that
+        :class:`numpy.dtype` supports. See :func:`.to_bytes` for more details.
 
     Returns
     -------
@@ -371,9 +372,8 @@ def from_bytes(buffer, fmt='ieee', dtype='<f'):
             # Section 8.7.10, IEEE 488.2-1992
             nbytes = len(buffer) - offset
 
-            # The standard states that the buffer must end in a NL (\n) character.
-            # Not sure if a manufacturer will always honor this requirement, or if
-            # it has already been stripped from the buffer
+            # The standard states that the buffer must end in a NL (\n) character,
+            # but it may have already been stripped from the buffer
             if buffer.endswith(b'\n'):
                 nbytes -= 1
         else:

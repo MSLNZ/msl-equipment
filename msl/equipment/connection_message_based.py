@@ -190,37 +190,40 @@ class ConnectionMessageBased(Connection):
         self.log_error('%r %s', self, msg)
         raise MSLTimeoutError('{!r}\n{}'.format(self, msg))
 
-    def read(self, size=None, fmt='ieee', dtype=None):
+    def read(self, size=None, fmt='ascii', dtype=None):
         """Read a message from the equipment.
 
-        See :func:`~msl.equipment.utils.from_bytes` for more details about the
-        `fmt` and `dtype` arguments.
+        This method will block until one of the following conditions is fulfilled:
+
+        1. the :obj:`.read_termination` byte(s) is(are) received -- only if
+           :obj:`.read_termination` is not :data:`None`.
+        2. `size` bytes have been received -- only if `size` is not :data:`None`.
+        3. a timeout occurs -- only if :obj:`.timeout` is not :data:`None`. An
+           :exc:`~msl.equipment.exceptions.MSLTimeoutError` is raised.
+        4. :obj:`.max_read_size` bytes have been received. An
+           :exc:`~msl.equipment.exceptions.MSLConnectionError` is raised.
 
         Parameters
         ----------
         size : :class:`int`, optional
-            The number of bytes to read. This method will block until at least
-            one of the following conditions are fulfilled:
-
-            1. the :obj:`.read_termination` byte is received (only if
-               :obj:`.read_termination` is not :data:`None`).
-            2. `size` bytes have been received (only if `size` is not :data:`None`).
-            3. a timeout occurs (only if :obj:`.timeout` is not :data:`None`), which
-               raises :exc:`~msl.equipment.exceptions.MSLTimeoutError`.
-            4. :obj:`.max_read_size` bytes have been received, which raises
-               :exc:`~msl.equipment.exceptions.MSLConnectionError`.
-
-        fmt : :class:`str`, optional
-            The format that the reply data is in. Only used if `dtype` is
-            not :data:`None`.
-        dtype : :class:`str` or :class:`numpy.number`, optional
-            The data type of the elements in the reply data.
+            The number of bytes to read. Ignored if it is :data:`None`.
+        fmt : :class:`str` or :data:`None`, optional
+            The format that the message data is in. Only used if `dtype` is
+            not :data:`None`. See :func:`~msl.equipment.utils.from_bytes`
+            for more details.
+        dtype
+            The data type of the elements in the message data. Can be any object
+            that :class:`numpy.dtype` supports. For messages that return a scalar
+            value (i.e., a single number) it is more efficient to not specify
+            `dtype` but to pass the message to the :class:`int` or :class:`float`
+            class to convert the message to the appropriate numeric type. See
+            :func:`~msl.equipment.utils.from_bytes` for more details.
 
         Returns
         -------
         :class:`str` or :class:`numpy.ndarray`
             The message from the equipment. If a value of `dtype` is specified,
-            then the message data is returned as an :class:`~numpy.ndarray`,
+            then the message is returned as an :class:`~numpy.ndarray`,
             otherwise the message is returned as a :class:`str`.
 
         See Also
@@ -256,19 +259,21 @@ class ConnectionMessageBased(Connection):
     def write(self, message, data=None, fmt='ieee', dtype='<f'):
         """Write a message to the equipment.
 
-        See :func:`~msl.equipment.utils.to_bytes` for more details about the
-        `data`, `fmt` and `dtype` arguments.
-
         Parameters
         ----------
         message : :class:`str` or :class:`bytes`
             The message to write to the equipment.
         data : :class:`list`, :class:`tuple` or :class:`numpy.ndarray`, optional
-            Command-dependent data to append to `message`.
-        fmt : :class:`str`, optional
-            The format to use to convert `data` to bytes.
-        dtype : :class:`str` or :class:`numpy.number`, optional
-            The data type to cast each element in `data` to.
+            The data to append to `message`.
+            See :func:`~msl.equipment.utils.to_bytes` for more details.
+        fmt : :class:`str` or :data:`None`, optional
+            The format to use to convert `data` to bytes. Ignored if `data` is
+            :data:`None`. See :func:`~msl.equipment.utils.to_bytes` for more
+            details.
+        dtype
+            The data type to use to convert each element in `data` to bytes. Ignored
+            if `data` is :data:`None`. See :func:`~msl.equipment.utils.to_bytes`
+            for more details.
 
         Returns
         -------

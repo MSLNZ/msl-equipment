@@ -261,16 +261,25 @@ def to_bytes(iterable, fmt='ieee', dtype='<f'):
 
         * ``''`` (empty string or :data:`None`) -- convert `iterable` to bytes
           without a header.
+
+          .. centered:: None: ``<byte><byte><byte>...``
+
         * ``'ascii'`` -- comma-separated ASCII characters, see the
-          `<PROGRAM DATA SEPARATOR>` standard that is defined in
-          Section 7.4.2.2, `IEEE 488.2-1992`_.
+          `<PROGRAM DATA SEPARATOR>` standard that is defined in Section 7.4.2.2,
+          `IEEE 488.2-1992`_.
+
+          .. centered:: ascii: ``<string>,<string>,<string>,...``
+
         * ``'ieee'`` -- arbitrary block data for `SCPI` messages, see the
           `<DEFINITE LENGTH ARBITRARY BLOCK RESPONSE DATA>` standard that
           is defined in Section 8.7.9, `IEEE 488.2-1992`_.
-          Syntax, ``#<length of num bytes value><num bytes><byte><byte><byte>...``.
+
+          .. centered:: ieee: ``#<length of num bytes value><num bytes><byte><byte><byte>...``
+
         * ``'hp'`` -- the HP-IB data transfer standard, i.e., the `FORM#` command
           option. See the programming guide for an `HP 8530A`_ for more details.
-          Syntax, ``#A<num bytes as uint16><byte><byte><byte>...``.
+
+          .. centered:: hp: ``#A<num bytes as uint16><byte><byte><byte>...``
 
     dtype : :class:`str` or :class:`numpy.number`, optional
         The data type to cast each element in `iterable` to. If `fmt` is ``'ascii'``
@@ -279,7 +288,7 @@ def to_bytes(iterable, fmt='ieee', dtype='<f'):
         each element to scientific notation with two digits after the decimal point).
         If `dtype` includes a byte-order character, it is ignored. For all other
         values of `fmt`, the `dtype` can be a C-type or Python-type specification,
-        for example, ``'H'``, ``'ushort'`` and ``numpy.uint16`` are equivalent
+        for example, ``'H'``, ``'uint16'`` and :class:`numpy.ushort` are equivalent
         specifications to cast each element to an `unsigned short`. If a byte-order
         character is specified then it is used, otherwise the native byte order
         of the CPU architecture is used.
@@ -327,8 +336,9 @@ def from_bytes(buffer, fmt='ieee', dtype='<f'):
 
     Parameters
     ----------
-    buffer : :class:`bytes` or :class:`bytearray`
-        A byte buffer.
+    buffer : :class:`bytes`, :class:`bytearray` or :class:`str`
+        A byte buffer. Can be of type :class:`str`, but only if `fmt`
+        equals ``'ascii'``.
     fmt : :class:`str` or :data:`None`, optional
         The format that `buffer` is in.
         See :func:`.to_bytes` for more details.

@@ -1,12 +1,14 @@
 """
 Base class for equipment that use message-based communication.
 """
-import time
 import socket
+import time
 
 from .connection import Connection
+from .constants import CR
+from .constants import LF
 from .exceptions import MSLTimeoutError
-from .constants import LF, CR
+from .utils import from_bytes
 from .utils import to_bytes
 
 
@@ -61,12 +63,12 @@ class ConnectionMessageBased(Connection):
 
     @property
     def encoding(self):
-        """:class:`str`: The encoding that is used for :meth:`read` and :meth:`write` operations."""
+        """:class:`str`: The encoding that is used for :meth:`.read` and :meth:`.write` operations."""
         return self._encoding
 
     @encoding.setter
     def encoding(self, encoding):
-        """Set the encoding to use for :meth:`read` and :meth:`write` operations."""
+        """Set the encoding to use for :meth:`.read` and :meth:`.write` operations."""
         if self._read_termination is None and self._write_termination is None:
             _ = 'test encoding'.encode(encoding).decode(encoding)
         self._encoding = encoding
@@ -104,7 +106,7 @@ class ConnectionMessageBased(Connection):
     @property
     def read_termination(self):
         """:class:`bytes` or :data:`None`: The termination character sequence
-        that is used for the :meth:`read` method.
+        that is used for the :meth:`.read` method.
 
         Reading stops when the equipment stops sending data or the `read_termination`
         character sequence is detected. If you set the `read_termination` to be equal
@@ -119,7 +121,7 @@ class ConnectionMessageBased(Connection):
     @property
     def write_termination(self):
         """:class:`bytes` or :data:`None`: The termination character sequence that
-        is appended to :meth:`write` messages.
+        is appended to :meth:`.write` messages.
 
         If you set the `write_termination` to be equal to a variable of type
         :class:`str` it will automatically be encoded.
@@ -132,12 +134,12 @@ class ConnectionMessageBased(Connection):
 
     @property
     def max_read_size(self):
-        """:class:`int`: The maximum number of bytes that can be :meth:`read`."""
+        """:class:`int`: The maximum number of bytes that can be :meth:`.read`."""
         return self._max_read_size
 
     @max_read_size.setter
     def max_read_size(self, size):
-        """The maximum number of bytes that can be :meth:`read`."""
+        """The maximum number of bytes that can be :meth:`.read`."""
         max_size = int(size)
         if max_size < 1:
             raise ValueError('The maximum number of bytes to read must be > 0, got {}'.format(size))
@@ -145,7 +147,8 @@ class ConnectionMessageBased(Connection):
 
     @property
     def timeout(self):
-        r""":class:`float` or :data:`None`: The timeout, in seconds, for :meth:`read` and :meth:`write` operations.
+        r""":class:`float` or :data:`None`: The timeout, in seconds, for
+        :meth:`.read` and :meth:`.write` operations.
 
         A value :math:`\lt` 0 will set the timeout to be :data:`None` (blocking mode).
         """

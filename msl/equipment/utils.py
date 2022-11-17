@@ -348,8 +348,8 @@ def from_bytes(buffer, fmt='ieee', dtype='<f'):
                              'cannot find # character')
 
         try:
-            len_nbytes = int(chr(buffer[offset+1]))
-        except (ValueError, IndexError):
+            len_nbytes = int(buffer[offset+1:offset+2])
+        except ValueError:
             len_nbytes = None
 
         if len_nbytes is None:
@@ -371,7 +371,7 @@ def from_bytes(buffer, fmt='ieee', dtype='<f'):
             # Section 8.7.9, IEEE 488.2-1992
             try:
                 nbytes = int(buffer[offset + 2:offset + 2 + len_nbytes])
-            except (ValueError, IndexError):
+            except ValueError:
                 nbytes = None
 
         if nbytes is None:

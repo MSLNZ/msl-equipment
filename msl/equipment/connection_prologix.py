@@ -227,41 +227,35 @@ class ConnectionPrologix(Connection):
             command += ' ' + ' '.join(str(a) for a in addresses)
         return self._controller.write(command)
 
-    def read(self, size=None):
-        """Read the response from the equipment.
+    def read(self, **kwargs):
+        """Read a message from the equipment.
 
         Parameters
         ----------
-        size : :class:`int`, optional
-            The number of bytes to read.
+        **kwargs
+            All keyword arguments are passed to
+            :meth:`~msl.equipment.connection_message_based.ConnectionMessageBased.read`.
 
         Returns
         -------
-        :class:`str`
-            The response from the equipment.
+        :class:`str` or :class:`numpy.ndarray`
+            The message from the equipment. If a value of `dtype` is specified,
+            then the message is returned as an :class:`~numpy.ndarray`,
+            otherwise the message is returned as a :class:`str`.
         """
         self._ensure_gpib_address_selected()
-        return self._controller.read(size=size)
+        return self._controller.read(**kwargs)
 
-    def write(self, message, values=None, dtype='<f', header='ieee'):
+    def write(self, message, **kwargs):
         """Write a message to the equipment.
-
-        See :func:`~msl.equipment.utils.to_bytes` for more details about the
-        `value`, `dtype` and `header` parameters.
 
         Parameters
         ----------
         message : :class:`str` or :class:`bytes`
             The message to write to the equipment.
-        values : :class:`list`, :class:`tuple` or :class:`numpy.ndarray`, optional
-            Command-dependent values to append to `message`. Typically, this
-            parameter is a 1-d array of numbers, and it is referred to as the
-            `block data` for a `SCPI` command.
-        dtype : :class:`str` or :class:`numpy.dtype`, optional
-            The data type to cast each element in `values` to bytes.
-        header : :class:`str`, optional
-            The style of header to include before the byte representation
-            of `values`.
+        **kwargs
+            All keyword arguments are passed to
+            :meth:`~msl.equipment.connection_message_based.ConnectionMessageBased.write`.
 
         Returns
         -------
@@ -269,32 +263,30 @@ class ConnectionPrologix(Connection):
             The number of bytes written.
         """
         self._ensure_gpib_address_selected()
-        return self._controller.write(message, values=values, dtype=dtype, header=header)
+        return self._controller.write(message, **kwargs)
 
-    def query(self, msg, delay=0.0, size=None, **kwargs):
+    def query(self, message, **kwargs):
         """Convenience method for performing a :meth:`.write` followed by a :meth:`.read`.
 
         Parameters
         ----------
-        msg : :class:`str`
+        message : :class:`str` or :class:`bytes`
             The message to write to the equipment.
-        delay : :class:`float`, optional
-            The time delay, in seconds, to wait between :meth:`.write` and
-            :meth:`.read` operations.
-        size : :class:`int`, optional
-            The number of bytes to read.
         **kwargs
-            All additional keyword arguments are passed to :meth:`.write`.
+            All keyword arguments are passed to
+            :meth:`~msl.equipment.connection_message_based.ConnectionMessageBased.query`.
 
         Returns
         -------
-        :class:`str`
-            The response from the equipment.
+        :class:`str` or :class:`numpy.ndarray`
+            The message from the equipment. If a `dtype` keyword argument is
+            specified, then the message is returned as an :class:`~numpy.ndarray`,
+            otherwise the message is returned as a :class:`str`.
         """
         if self._query_auto:
             self._controller.write(b'++auto 1')
 
-        reply = self._controller.query(msg, delay=delay, size=size, **kwargs)
+        reply = self._controller.query(message, **kwargs)
 
         if self._query_auto:
             self._controller.write(b'++auto 0')

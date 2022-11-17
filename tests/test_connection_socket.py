@@ -135,23 +135,33 @@ def test_tcp_socket_read():
 
     dev.rstrip = False  # the termination characters are okay for fmt = ieee, hp, ascii
 
-    fmt = 'ieee'
-    reply = dev.query(b'header', data=range(10), w_fmt=fmt, r_fmt=fmt, r_dtype='<f')
+    fmt, dtype = 'ieee', '<f'
+    dev.write(b'header', data=range(10), fmt=fmt, dtype=dtype)
+    reply = dev.read(fmt=fmt, dtype=dtype)
     assert np.array_equal(reply, [0., 1., 2., 3., 4., 5., 6., 7., 8., 9.])
 
-    fmt = 'hp'
-    reply = dev.query(b'header, ', data=range(5), w_fmt=fmt, w_dtype=int, r_fmt=fmt, r_dtype=int)
+    fmt, dtype = 'hp', int
+    dev.write(b'header, ', data=range(5), fmt=fmt, dtype=dtype)
+    reply = dev.read(fmt=fmt, dtype=dtype)
     assert np.array_equal(reply, [0, 1, 2, 3, 4])
 
     fmt = 'ascii'
-    reply = dev.query('', data=(-49, 1000, -5821, 0), w_fmt=fmt, w_dtype='d', r_fmt=fmt, r_dtype=int)
+    dev.write(b'', data=(-49, 1000, -5821, 0), fmt=fmt, dtype='d')
+    reply = dev.read(fmt=fmt, dtype=int)
     assert np.array_equal(reply, [-49, 1000, -5821, 0])
+
+    dev.write(b'', data=[1.23], fmt=fmt, dtype='.4e')
+    reply = dev.read(fmt=fmt, dtype=float)
+    assert reply.shape == (1,)
+    assert reply.size == 1
+    assert np.array_equal(reply, [1.23])
 
     dev.rstrip = True  # important, otherwise the read buffer has 2 extra bytes for fmt = None
 
-    fmt = None
-    reply = dev.query('', data=(-1.53, 2.34, 9.72, 3.46), w_fmt=fmt, w_dtype='>f', r_fmt=fmt, r_dtype='>f')
-    assert np.array_equal(reply, np.array([-1.53, 2.34, 9.72, 3.46], dtype='float32'))
+    fmt, dtype = None, '>f'
+    dev.write(b'', data=(-1.53, 2.34, 9.72, 3.46), fmt=fmt, dtype=dtype)
+    reply = dev.read(fmt=fmt, dtype=dtype)
+    assert np.array_equal(reply, np.array([-1.53, 2.34, 9.72, 3.46], dtype=dtype))
 
     dev.write('SHUTDOWN')
 

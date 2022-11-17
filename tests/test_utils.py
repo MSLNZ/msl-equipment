@@ -322,6 +322,8 @@ def test_to_bytes_ieee():
     assert to_bytes(()) == b'#10'
     assert to_bytes(np.ndarray((0,))) == b'#10'
 
+    assert to_bytes([9.8]) == b'#14\xcd\xcc\x1cA'
+
     expected = b'#240\x00\x00\x00\x00\x00\x00\x80?\x00\x00\x00@\x00\x00@@' \
                b'\x00\x00\x80@\x00\x00\xa0@\x00\x00\xc0@\x00\x00\xe0@\x00' \
                b'\x00\x00A\x00\x00\x10A'
@@ -367,6 +369,9 @@ def test_to_bytes_no_header():
     assert to_bytes(np.array(range(10)), fmt='') == expected
     assert to_bytes(np.array(range(10)), fmt=None) == expected
 
+    assert to_bytes([], fmt=None) == b''
+    assert to_bytes([0.1], fmt=None, dtype=np.float32) == b'\xcd\xcc\xcc='
+
 
 def test_to_bytes_hp():
     expected = b'#A(\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x03' \
@@ -378,6 +383,10 @@ def test_to_bytes_hp():
                b'\x00\x00\x03\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00\x06' \
                b'\x00\x00\x00\x07\x00\x00\x00\x08\x00\x00\x00\t'
     assert to_bytes(range(10), fmt='hp', dtype='>i') == expected
+
+    assert to_bytes([], fmt='hp') == b'#A\x00\x00'
+    assert to_bytes([-99], fmt='hp', dtype='d') == b'#A\x08\x00\x00\x00\x00\x00\x00\xc0X\xc0'
+    assert to_bytes([-99], fmt='hp', dtype='b') == b'#A\x01\x00\x9d'
 
 
 def test_to_bytes_exceptions():
@@ -407,6 +416,10 @@ def test_to_bytes_ascii():
     expected = b'0000,0001,0002,0003,0004,0005,0006,0007,0008,0009'
     assert to_bytes(range(10), fmt='ascii', dtype='04d') == expected
 
+    assert to_bytes([], fmt='ascii') == b''
+    assert to_bytes([0], fmt='ascii') == b'0.000000'
+    assert to_bytes([-1, 1], fmt='ascii', dtype='03d') == b'-01,001'
+
 
 @pytest.mark.skipif(
     sys.version_info.major == 2,
@@ -427,6 +440,14 @@ def test_from_bytes_no_header():
     array = np.arange(64, dtype=dtype)
     assert np.array_equal(from_bytes(array.tobytes(), fmt=None, dtype=dtype), array)
 
+    array = from_bytes(b'', fmt=None)
+    assert array.shape == (0,)
+    assert array.size == 0
+    assert array.ndim == 1
+
+    array = from_bytes(b'@\xe2\x01\x00\x00\x00\x00\x00', fmt=None, dtype='<Q')
+    assert np.array_equal(array, [123456])
+
 
 def test_from_bytes_ieee():
     array = from_bytes(b'#10')
@@ -443,6 +464,9 @@ def test_from_bytes_ieee():
     assert array.shape == (0,)
     assert array.size == 0
     assert array.ndim == 1
+
+    assert np.array_equal(from_bytes(b'#14E\x17\xf0\x00', dtype='>f'), [2431.0])
+    assert np.array_equal(from_bytes(b'#0E\x17\xf0\x00', dtype='>f'), [2431.0])
 
     buffer = b'#240\x00\x00\x00\x00\x00\x00\x80?\x00\x00\x00@\x00\x00@@' \
              b'\x00\x00\x80@\x00\x00\xa0@\x00\x00\xc0@\x00\x00\xe0@\x00' \
@@ -528,6 +552,17 @@ def test_from_bytes_hp():
              b'\x07\x00\x00\x00\x08\x00\x00\x00\t\x00\x00\x00\r\n'  # append CR+LF
     assert np.array_equal(from_bytes(buffer, fmt='hp', dtype='<i'), list(range(10)))
 
+    array = from_bytes(b'#A\x00\x00', fmt='hp')
+    assert array.shape == (0,)
+    assert array.size == 0
+    assert array.ndim == 1
+
+    buffer = b'#A\x02\x00\x00\x00'
+    assert np.array_equal(from_bytes(buffer, fmt='hp', dtype='<H'), [0])
+
+    buffer = b'#A\x04\x00\x00\x00\x00\x01'
+    assert np.array_equal(from_bytes(buffer, fmt='hp', dtype='<H'), [0, 256])
+
 
 def test_from_bytes_ascii():
     buffer = b'1,2,3,4,5'
@@ -540,10 +575,16 @@ def test_from_bytes_ascii():
     expected = np.array([1.1, 2.2, 3.3], dtype=np.float32)
     assert np.array_equal(from_bytes(buffer, fmt='ascii'), expected)
 
+    assert from_bytes('', fmt='ascii').size == 0
+    assert np.array_equal(from_bytes('1', fmt='ascii', dtype='i'), [1])
+    assert np.array_equal(from_bytes('1,2', fmt='ascii', dtype='i'), [1, 2])
+
 
 @pytest.mark.parametrize(
     'size,fmt,dtype',
-    [(1, None, int),
+    [(0, None, int),
+     (1, None, int),
+     (2, None, int),
      (12345, None, '>Q'),
      (6432, None, np.ushort),
      (54, None, 'b'),
@@ -552,7 +593,9 @@ def test_from_bytes_ascii():
      (100, None, 'l'),
      (1234, None, float),
      (123456, None, 'd'),
+     (0, 'ascii', 'd'),
      (1, 'ascii', 'd'),
+     (2, 'ascii', 'd'),
      (12, 'ascii', '.2E'),
      (64321, 'ascii', 'f'),
      (54, 'ascii', ' .3f'),
@@ -560,7 +603,9 @@ def test_from_bytes_ascii():
      (12, 'ascii', '+.5e'),
      (100, 'ascii', ''),
      (100, 'ascii', '05d'),
+     (0, 'ieee', int),
      (1, 'ieee', int),
+     (2, 'ieee', int),
      (12345, 'ieee', '>Q'),
      (6432, 'ieee', np.ushort),
      (54, 'ieee', 'b'),
@@ -569,7 +614,9 @@ def test_from_bytes_ascii():
      (100, 'ieee', 'l'),
      (1234, 'ieee', float),
      (123456, 'ieee', 'd'),
+     (0, 'hp', int),
      (1, 'hp', int),
+     (2, 'hp', int),
      (6432, 'hp', np.ushort),
      (54, 'hp', '>Q'),
      (8000, 'hp', '<i'),

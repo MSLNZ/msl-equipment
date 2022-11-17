@@ -13,10 +13,10 @@ from .utils import to_bytes
 class ConnectionMessageBased(Connection):
 
     CR = CR
-    """:class:`bytes`: The carriage-return character."""
+    """:class:`bytes`: The carriage-return character (hex: 0x0D, decimal: 13)."""
 
     LF = LF
-    """:class:`bytes`: The line-feed character."""
+    """:class:`bytes`: The line-feed character (hex: 0x0A, decimal: 10)."""
 
     def __init__(self, record):
         """Base class for equipment that use message-based communication.

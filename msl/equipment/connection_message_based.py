@@ -190,7 +190,7 @@ class ConnectionMessageBased(Connection):
         self.log_error('%r %s', self, msg)
         raise MSLTimeoutError('{!r}\n{}'.format(self, msg))
 
-    def read(self, size=None, fmt='ascii', dtype=None):
+    def read(self, size=None, fmt='ascii', dtype=None, decode=True):
         """Read a message from the equipment.
 
         This method will block until one of the following conditions is fulfilled:
@@ -208,24 +208,29 @@ class ConnectionMessageBased(Connection):
         size : :class:`int`, optional
             The number of bytes to read. Ignored if it is :data:`None`.
         fmt : :class:`str` or :data:`None`, optional
-            The format that the message data is in. Only used if `dtype` is
-            not :data:`None`. See :func:`~msl.equipment.utils.from_bytes`
+            The format that the message data is in. Ignored if `dtype` is
+            not specified. See :func:`~msl.equipment.utils.from_bytes`
             for more details.
         dtype
             The data type of the elements in the message data. Can be any object
             that :class:`numpy.dtype` supports. See
             :func:`~msl.equipment.utils.from_bytes` for more details. For messages
-            that are a scalar value (i.e., a single number) it is more efficient
+            that are of scalar type (i.e., a single number) it is more efficient
             to not specify `dtype` but to pass the message to the :class:`int` or
             :class:`float` class to convert the message to the appropriate numeric
             type.
+        decode : :class:`bool`, optional
+            Whether to decode the message (i.e., convert the message to a
+            :class:`str`) or keep the message as :class:`bytes`. Ignored if
+            `dtype` is specified.
 
         Returns
         -------
-        :class:`str` or :class:`numpy.ndarray`
-            The message from the equipment. If a value of `dtype` is specified,
-            then the message is returned as an :class:`~numpy.ndarray`,
-            otherwise the message is returned as a :class:`str`.
+        :class:`str`, :class:`bytes` or :class:`~numpy.ndarray`
+            The message from the equipment. If `dtype` is specified, then the
+            message is returned as an :class:`~numpy.ndarray`, if `decode` is
+            :data:`True` then the message is returned as a :class:`str`,
+            otherwise the message is returned as :class:`bytes`.
 
         See Also
         --------
@@ -251,7 +256,10 @@ class ConnectionMessageBased(Connection):
         if dtype:
             return from_bytes(message, fmt=fmt, dtype=dtype)
 
-        return message.decode(encoding=self._encoding, errors=self.encoding_errors)
+        if decode:
+            return message.decode(encoding=self._encoding, errors=self.encoding_errors)
+
+        return message
 
     def _read(self, size):
         """The subclass must override this method."""
@@ -327,10 +335,11 @@ class ConnectionMessageBased(Connection):
 
         Returns
         -------
-        :class:`str` or :class:`numpy.ndarray`
-            The message from the equipment. If a `dtype` keyword argument is
-            specified, then the message is returned as an :class:`~numpy.ndarray`,
-            otherwise the message is returned as a :class:`str`.
+        :class:`str`, :class:`bytes` or :class:`~numpy.ndarray`
+            The message from the equipment. If `dtype` is specified, then the
+            message is returned as an :class:`~numpy.ndarray`, if `decode` is
+            :data:`True` then the message is returned as a :class:`str`,
+            otherwise the message is returned as :class:`bytes`.
         """
         self.write(message)
         if delay > 0:

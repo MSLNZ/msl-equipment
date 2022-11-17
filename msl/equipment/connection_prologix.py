@@ -115,7 +115,7 @@ class ConnectionPrologix(Connection):
     def encoding_errors(self):
         """:class:`str`: The error handling scheme to use when encoding and decoding messages.
 
-        For example: 'strict', 'ignore', 'replace', 'xmlcharrefreplace', 'backslashreplace', ...
+        For example: `strict`, `ignore`, `replace`, `xmlcharrefreplace`, `backslashreplace`
         """
         return self._controller.encoding_errors
 
@@ -238,10 +238,11 @@ class ConnectionPrologix(Connection):
 
         Returns
         -------
-        :class:`str` or :class:`numpy.ndarray`
-            The message from the equipment. If a value of `dtype` is specified,
-            then the message is returned as an :class:`~numpy.ndarray`,
-            otherwise the message is returned as a :class:`str`.
+        :class:`str`, :class:`bytes` or :class:`~numpy.ndarray`
+            The message from the equipment. If `dtype` is specified, then the
+            message is returned as an :class:`~numpy.ndarray`, if `decode` is
+            :data:`True` then the message is returned as a :class:`str`,
+            otherwise the message is returned as :class:`bytes`.
         """
         self._ensure_gpib_address_selected()
         return self._controller.read(**kwargs)
@@ -278,10 +279,11 @@ class ConnectionPrologix(Connection):
 
         Returns
         -------
-        :class:`str` or :class:`numpy.ndarray`
-            The message from the equipment. If a `dtype` keyword argument is
-            specified, then the message is returned as an :class:`~numpy.ndarray`,
-            otherwise the message is returned as a :class:`str`.
+        :class:`str`, :class:`bytes` or :class:`~numpy.ndarray`
+            The message from the equipment. If `dtype` is specified, then the
+            message is returned as an :class:`~numpy.ndarray`, if `decode` is
+            :data:`True` then the message is returned as a :class:`str`,
+            otherwise the message is returned as :class:`bytes`.
         """
         if self._query_auto:
             self._controller.write(b'++auto 1')

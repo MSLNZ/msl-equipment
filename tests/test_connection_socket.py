@@ -163,6 +163,9 @@ def test_tcp_socket_read():
     reply = dev.read(fmt=fmt, dtype=dtype)
     assert np.array_equal(reply, np.array([-1.53, 2.34, 9.72, 3.46], dtype=dtype))
 
+    assert dev.query('message', decode=True) == 'message'
+    assert dev.query('message', decode=False) == b'message'
+
     dev.write('SHUTDOWN')
 
 

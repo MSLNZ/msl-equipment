@@ -3,7 +3,7 @@ Common functions.
 """
 import datetime
 import logging
-from struct import pack
+import struct
 from xml.dom import minidom
 from xml.etree import cElementTree
 
@@ -309,9 +309,112 @@ def to_bytes(iterable, fmt='ieee', dtype='<f'):
         return '#{}{}'.format(len_nbytes, nbytes).encode() + array.tobytes()
 
     if fmt == 'hp':
-        return b'#A' + pack(array.dtype.byteorder + 'H', array.nbytes) + array.tobytes()
+        byteorder = array.dtype.byteorder
+        if byteorder == '|':
+            # | means not applicable for the dtype specified, assign little endian
+            # this redefinition is also declared in from_bytes()
+            byteorder = '<'
+        return b'#A' + struct.pack(byteorder + 'H', array.nbytes) + array.tobytes()
 
     if not fmt:
         return array.tobytes()
+
+    raise ValueError("Invalid format {!r} -- must be 'ascii', 'ieee', 'hp' or None".format(fmt))
+
+
+def from_bytes(buffer, fmt='ieee', dtype='<f'):
+    """Convert bytes into an array.
+
+    Parameters
+    ----------
+    buffer : :class:`bytes` or :class:`bytearray`
+        A byte buffer.
+    fmt : :class:`str` or :data:`None`, optional
+        The format that `buffer` is in.
+        See :func:`.to_bytes` for more details.
+    dtype : :class:`str` or :class:`numpy.number`, optional
+        The data type of each element in `buffer`.
+        See :func:`.to_bytes` for more details.
+
+    Returns
+    -------
+    :class:`numpy.ndarray`
+        The array.
+    """
+    if fmt == 'ieee':
+        offset = buffer.find(b'#')
+        if offset == -1:
+            raise ValueError('Invalid IEEE-488.2 format, '
+                             'cannot find # character')
+
+        try:
+            len_nbytes = int(chr(buffer[offset+1]))
+        except (ValueError, IndexError):
+            len_nbytes = None
+
+        if len_nbytes is None:
+            raise ValueError('Invalid IEEE-488.2 format, '
+                             'character after # is not an integer')
+
+        if len_nbytes == 0:
+            # <INDEFINITE LENGTH ARBITRARY BLOCK RESPONSE DATA>
+            # Section 8.7.10, IEEE 488.2-1992
+            nbytes = len(buffer) - offset
+
+            # The standard states that the buffer must end in a NL (\n) character.
+            # Not sure if a manufacturer will always honor this requirement, or if
+            # it has already been stripped from the buffer
+            if buffer.endswith(b'\n'):
+                nbytes -= 1
+        else:
+            # <DEFINITE LENGTH ARBITRARY BLOCK RESPONSE DATA>
+            # Section 8.7.9, IEEE 488.2-1992
+            try:
+                nbytes = int(buffer[offset + 2:offset + 2 + len_nbytes])
+            except (ValueError, IndexError):
+                nbytes = None
+
+        if nbytes is None:
+            raise ValueError('Invalid IEEE-488.2 format, '
+                             'characters after #{} are not integers'.format(len_nbytes))
+
+        dtype = np.dtype(dtype)
+        offset += 2 + len_nbytes
+        count = nbytes // dtype.itemsize
+        return np.frombuffer(buffer, dtype=dtype, count=count, offset=offset)
+
+    if fmt == 'hp':
+        offset = buffer.find(b'#A')
+        if offset == -1:
+            raise ValueError('Invalid HP format, cannot find #A character')
+
+        dtype = np.dtype(dtype)
+        i, j = offset + 2, offset + 4
+
+        byteorder = dtype.byteorder
+        if byteorder == '|':
+            # | means not applicable for the dtype specified, assign little endian
+            # this redefinition is also declared in to_bytes()
+            byteorder = '<'
+
+        try:
+            nbytes, = struct.unpack(byteorder + 'H', buffer[i:j])
+        except struct.error:
+            nbytes = None
+
+        if nbytes is None:
+            raise ValueError('Invalid HP format, '
+                             'characters after #A are not an unsigned short integer')
+
+        count = nbytes // dtype.itemsize
+        return np.frombuffer(buffer, dtype=dtype, count=count, offset=j)
+
+    if fmt == 'ascii':
+        if isinstance(buffer, (bytes, bytearray)):
+            buffer = buffer.decode('ascii')
+        return np.fromstring(buffer, dtype=dtype, sep=',')
+
+    if not fmt:
+        return np.frombuffer(buffer, dtype=dtype)
 
     raise ValueError("Invalid format {!r} -- must be 'ascii', 'ieee', 'hp' or None".format(fmt))

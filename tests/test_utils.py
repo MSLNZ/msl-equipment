@@ -12,6 +12,7 @@ from msl.equipment.utils import convert_to_date
 from msl.equipment.utils import convert_to_enum
 from msl.equipment.utils import convert_to_primitive
 from msl.equipment.utils import convert_to_xml_string
+from msl.equipment.utils import from_bytes
 from msl.equipment.utils import to_bytes
 from msl.equipment.utils import xml_comment
 from msl.equipment.utils import xml_element
@@ -357,7 +358,7 @@ def test_to_bytes_ieee():
     assert to_bytes(range(123456), dtype='float64').startswith(b'#6987648')
 
 
-def test_to_bytes_none():
+def test_to_bytes_no_header():
     expected = b'\x00\x00\x00\x00\x00\x00\x80?\x00\x00\x00@\x00\x00@@' \
                b'\x00\x00\x80@\x00\x00\xa0@\x00\x00\xc0@\x00\x00\xe0@\x00' \
                b'\x00\x00A\x00\x00\x10A'
@@ -381,7 +382,7 @@ def test_to_bytes_hp():
 
 def test_to_bytes_exceptions():
     with pytest.raises(ValueError, match='Invalid format'):
-        assert to_bytes([], fmt='raw')
+        to_bytes([], fmt='raw')
 
     with pytest.raises(struct.error):
         to_bytes(range(0xffff), fmt='hp', dtype='H')
@@ -403,6 +404,9 @@ def test_to_bytes_ascii():
     expected = b'+0.0E+00,+1.0E+00,+2.0E+00,+3.0E+00,+4.0E+00,+5.0E+00,+6.0E+00,+7.0E+00,+8.0E+00,+9.0E+00'
     assert to_bytes(range(10), fmt='ascii', dtype='+.1E') == expected
 
+    expected = b'0000,0001,0002,0003,0004,0005,0006,0007,0008,0009'
+    assert to_bytes(range(10), fmt='ascii', dtype='04d') == expected
+
 
 @pytest.mark.skipif(
     sys.version_info.major == 2,
@@ -412,3 +416,171 @@ def test_to_bytes_as_bytes():
     assert to_bytes(b'abcdwxyz', dtype='B') == b'#18abcdwxyz'
     assert to_bytes(bytearray(b'abcxyz'), fmt=None, dtype='b') == b'abcxyz'
     assert to_bytes(b'acegikmoqsuwy', fmt='', dtype='int8') == b'acegikmoqsuwy'
+
+
+def test_from_bytes_no_header():
+    dtype = '<f'
+    array = np.arange(123, dtype=dtype)
+    assert np.array_equal(from_bytes(array.tobytes(), fmt=None), array)
+
+    dtype = 'ushort'
+    array = np.arange(64, dtype=dtype)
+    assert np.array_equal(from_bytes(array.tobytes(), fmt=None, dtype=dtype), array)
+
+
+def test_from_bytes_ieee():
+    array = from_bytes(b'#10')
+    assert array.shape == (0,)
+    assert array.size == 0
+    assert array.ndim == 1
+
+    array = from_bytes(b'#0')
+    assert array.shape == (0,)
+    assert array.size == 0
+    assert array.ndim == 1
+
+    array = from_bytes(b'#0\n')
+    assert array.shape == (0,)
+    assert array.size == 0
+    assert array.ndim == 1
+
+    buffer = b'#240\x00\x00\x00\x00\x00\x00\x80?\x00\x00\x00@\x00\x00@@' \
+             b'\x00\x00\x80@\x00\x00\xa0@\x00\x00\xc0@\x00\x00\xe0@\x00' \
+             b'\x00\x00A\x00\x00\x10A'
+    assert np.array_equal(from_bytes(buffer), list(range(10)))
+
+    buffer = b'c35de90ae*9a2-4932=bf1b!2312f1+46-af7f' + buffer
+    assert np.array_equal(from_bytes(buffer), list(range(10)))
+
+    buffer = b',#280\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
+             b'\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00' \
+             b'\x00\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x04\x00' \
+             b'\x00\x00\x00\x00\x00\x00\x05\x00\x00\x00\x00\x00\x00\x00' \
+             b'\x06\x00\x00\x00\x00\x00\x00\x00\x07\x00\x00\x00\x00\x00' \
+             b'\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\t'
+    assert np.array_equal(from_bytes(buffer, dtype='>Q'), list(range(10)))
+
+    buffer = b'#0\x00\x00\x00\x00\x00\x00\x80?\x00\x00\x00@\x00\x00@@' \
+             b'\x00\x00\x80@\x00\x00\xa0@\x00\x00\xc0@\x00\x00\xe0@\x00' \
+             b'\x00\x00A\x00\x00\x10A\n'  # ends in LF, this is what the IEEE standard requires
+    assert np.array_equal(from_bytes(buffer), list(range(10)))
+
+    buffer = b'c35de90ae*9a2-4932=bf1b!2312f1+46-af7f8qwy3v87yq2' + buffer
+    assert np.array_equal(from_bytes(buffer), list(range(10)))
+
+    buffer = b', #0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
+             b'\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00' \
+             b'\x00\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x04\x00' \
+             b'\x00\x00\x00\x00\x00\x00\x05\x00\x00\x00\x00\x00\x00\x00' \
+             b'\x06\x00\x00\x00\x00\x00\x00\x00\x07\x00\x00\x00\x00\x00' \
+             b'\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\t'  # does not end in LF, should still work
+    assert np.array_equal(from_bytes(buffer, dtype='>Q'), list(range(10)))
+
+
+def test_from_bytes_exceptions():
+    with pytest.raises(ValueError, match=r'cannot find # character'):
+        from_bytes(b'123')
+
+    with pytest.raises(ValueError, match=r'character after # is not an integer'):
+        from_bytes(b'#')
+
+    with pytest.raises(ValueError, match=r'character after # is not an integer'):
+        from_bytes(b'#A')
+
+    with pytest.raises(ValueError, match=r'character after # is not an integer'):
+        from_bytes(b'123#r')
+
+    with pytest.raises(ValueError, match=r'characters after #3 are not integers'):
+        from_bytes(b'#3a2')
+
+    with pytest.raises(ValueError, match=r'characters after #3 are not integers'):
+        from_bytes(b'#322a')
+
+    with pytest.raises(ValueError, match=r'buffer is smaller'):
+        from_bytes(b'#0\x00\x00\x00\x00\x00\x00\x80')
+
+    with pytest.raises(ValueError, match=r'buffer is smaller'):
+        from_bytes(b'#41024\x00\x00\x00\x00\x00\x00\x80')
+
+    with pytest.raises(ValueError, match=r'cannot find #A character'):
+        from_bytes(b'#22\x00\x00', fmt='hp')
+
+    with pytest.raises(ValueError, match=r'characters after #A are not an unsigned short integer'):
+        from_bytes(b'#A\x06', fmt='hp')
+
+    with pytest.raises(ValueError, match='Invalid format'):
+        from_bytes(b'', fmt='raw')
+
+
+def test_from_bytes_hp():
+    buffer = b'#A(\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x03' \
+             b'\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00\x06\x00\x00\x00' \
+             b'\x07\x00\x00\x00\x08\x00\x00\x00\t\x00\x00\x00'
+    assert np.array_equal(from_bytes(buffer, fmt='hp', dtype='<i'), list(range(10)))
+
+    buffer = b'#A\x00(\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00' \
+             b'\x00\x00\x03\x00\x00\x00\x04\x00\x00\x00\x05\x00\x00\x00\x06' \
+             b'\x00\x00\x00\x07\x00\x00\x00\x08\x00\x00\x00\t'
+    assert np.array_equal(from_bytes(buffer, fmt='hp', dtype='>i'), list(range(10)))
+
+
+def test_from_bytes_ascii():
+    buffer = b'1,2,3,4,5'
+    expected = np.array([1, 2, 3, 4, 5], dtype=int)
+    assert np.array_equal(from_bytes(buffer, fmt='ascii', dtype='<i'), expected)
+    assert np.array_equal(from_bytes(bytearray(buffer), fmt='ascii', dtype='<i'), expected)
+    assert np.array_equal(from_bytes(buffer.decode(), fmt='ascii', dtype='<i'), expected)
+
+    buffer = b'1.1,2.2,3.3\n'
+    expected = np.array([1.1, 2.2, 3.3], dtype=np.float32)
+    assert np.array_equal(from_bytes(buffer, fmt='ascii'), expected)
+
+
+@pytest.mark.parametrize(
+    'size,fmt,dtype',
+    [(1, None, int),
+     (12345, None, '>Q'),
+     (6432, None, np.ushort),
+     (54, None, 'b'),
+     (278, None, 'B'),
+     (12, None, '<i'),
+     (100, None, 'l'),
+     (1234, None, float),
+     (123456, None, 'd'),
+     (1, 'ascii', 'd'),
+     (12, 'ascii', '.2E'),
+     (64321, 'ascii', 'f'),
+     (54, 'ascii', ' .3f'),
+     (278, 'ascii', 'g'),
+     (12, 'ascii', '+.5e'),
+     (100, 'ascii', ''),
+     (100, 'ascii', '05d'),
+     (1, 'ieee', int),
+     (12345, 'ieee', '>Q'),
+     (6432, 'ieee', np.ushort),
+     (54, 'ieee', 'b'),
+     (278, 'ieee', 'B'),
+     (12, 'ieee', '<i'),
+     (100, 'ieee', 'l'),
+     (1234, 'ieee', float),
+     (123456, 'ieee', 'd'),
+     (1, 'hp', int),
+     (6432, 'hp', np.ushort),
+     (54, 'hp', '>Q'),
+     (8000, 'hp', '<i'),
+     (100, 'hp', 'l'),
+     (100, 'hp', 'b'),
+     (256, 'hp', '>l'),
+     (1234, 'hp', float),
+     (731, 'hp', 'B'),
+     (128, 'hp', 'd')])
+def test_to_bytes_from_bytes(size, fmt, dtype):
+    if fmt == 'ascii':
+        t = 'i' if 'd' in dtype else 'f'
+        array = np.arange(size, dtype=t)
+        buffer = to_bytes(array, fmt=fmt, dtype=dtype)
+        assert np.array_equal(from_bytes(buffer, fmt=fmt, dtype=t), array)
+    else:
+        array = np.arange(size, dtype=dtype)
+        buffer = to_bytes(array, fmt=fmt, dtype=dtype)
+        assert np.array_equal(from_bytes(buffer, fmt=fmt, dtype=dtype), array)

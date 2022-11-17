@@ -1,12 +1,16 @@
-import time
 import socket
 import threading
+import time
 
+import numpy as np
 import pytest
-
 from msl.loadlib.utils import get_available_port
 
-from msl.equipment import EquipmentRecord, ConnectionRecord, Backend, MSLTimeoutError, MSLConnectionError
+from msl.equipment import Backend
+from msl.equipment import ConnectionRecord
+from msl.equipment import EquipmentRecord
+from msl.equipment import MSLConnectionError
+from msl.equipment import MSLTimeoutError
 from msl.equipment.connection_socket import ConnectionSocket
 
 
@@ -128,6 +132,26 @@ def test_tcp_socket_read():
     dev.write(b'abc' + term + b'defghi j   ' + term)
     assert dev.read() == 'abc'
     assert dev.read() == 'defghi j'
+
+    dev.rstrip = False  # the termination characters are okay for fmt = ieee, hp, ascii
+
+    fmt = 'ieee'
+    reply = dev.query(b'header', data=range(10), w_fmt=fmt, r_fmt=fmt, r_dtype='<f')
+    assert np.array_equal(reply, [0., 1., 2., 3., 4., 5., 6., 7., 8., 9.])
+
+    fmt = 'hp'
+    reply = dev.query(b'header, ', data=range(5), w_fmt=fmt, w_dtype=int, r_fmt=fmt, r_dtype=int)
+    assert np.array_equal(reply, [0, 1, 2, 3, 4])
+
+    fmt = 'ascii'
+    reply = dev.query('', data=(-49, 1000, -5821, 0), w_fmt=fmt, w_dtype='d', r_fmt=fmt, r_dtype=int)
+    assert np.array_equal(reply, [-49, 1000, -5821, 0])
+
+    dev.rstrip = True  # important, otherwise the read buffer has 2 extra bytes for fmt = None
+
+    fmt = None
+    reply = dev.query('', data=(-1.53, 2.34, 9.72, 3.46), w_fmt=fmt, w_dtype='>f', r_fmt=fmt, r_dtype='>f')
+    assert np.array_equal(reply, np.array([-1.53, 2.34, 9.72, 3.46], dtype='float32'))
 
     dev.write('SHUTDOWN')
 

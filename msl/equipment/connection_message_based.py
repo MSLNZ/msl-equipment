@@ -190,8 +190,11 @@ class ConnectionMessageBased(Connection):
         self.log_error('%r %s', self, msg)
         raise MSLTimeoutError('{!r}\n{}'.format(self, msg))
 
-    def read(self, size=None):
+    def read(self, size=None, fmt='ieee', dtype=None):
         """Read a message from the equipment.
+
+        See :func:`~msl.equipment.utils.from_bytes` for more details about the
+        `fmt` and `dtype` arguments.
 
         Parameters
         ----------
@@ -201,16 +204,24 @@ class ConnectionMessageBased(Connection):
 
             1. the :obj:`.read_termination` byte is received (only if
                :obj:`.read_termination` is not :data:`None`).
-            2. a timeout occurs (only if :obj:`.timeout` is not :data:`None`). Raises
-               :exc:`~msl.equipment.exceptions.MSLTimeoutError` if this occurs.
-            3. `size` bytes have been received (only if `size` is not :data:`None`).
-            4. :obj:`.max_read_size` bytes have been received. Raises
-               :exc:`~msl.equipment.exceptions.MSLConnectionError` if this occurs.
+            2. `size` bytes have been received (only if `size` is not :data:`None`).
+            3. a timeout occurs (only if :obj:`.timeout` is not :data:`None`), which
+               raises :exc:`~msl.equipment.exceptions.MSLTimeoutError`.
+            4. :obj:`.max_read_size` bytes have been received, which raises
+               :exc:`~msl.equipment.exceptions.MSLConnectionError`.
+
+        fmt : :class:`str`, optional
+            The format that the reply data is in. Only used if `dtype` is
+            not :data:`None`.
+        dtype : :class:`str` or :class:`numpy.number`, optional
+            The data type of the elements in the reply data.
 
         Returns
         -------
-        :class:`str`
-            The message from the equipment.
+        :class:`str` or :class:`numpy.ndarray`
+            The message from the equipment. If a value of `dtype` is specified,
+            then the message data is returned as an :class:`~numpy.ndarray`,
+            otherwise the message is returned as a :class:`str`.
 
         See Also
         --------
@@ -232,6 +243,9 @@ class ConnectionMessageBased(Connection):
 
         if self._rstrip:
             message = message.rstrip()
+
+        if dtype:
+            return from_bytes(message, fmt=fmt, dtype=dtype)
 
         return message.decode(encoding=self._encoding, errors=self.encoding_errors)
 
@@ -264,7 +278,7 @@ class ConnectionMessageBased(Connection):
         if isinstance(message, str):
             message = message.encode(encoding=self._encoding, errors=self._encoding_errors)
 
-        if data:
+        if data is not None:
             message += to_bytes(data, fmt=fmt, dtype=dtype)
 
         if self._write_termination and not message.endswith(self._write_termination):
@@ -292,30 +306,42 @@ class ConnectionMessageBased(Connection):
         """The subclass must override this method."""
         raise NotImplementedError
 
-    def query(self, message, delay=0.0, size=None, **kwargs):
-        """Convenience method for performing a :meth:`write` followed by a :meth:`read`.
+    def query(self, message, data=None, w_fmt='ieee', w_dtype='<f',
+              delay=0.0, size=None, r_fmt='ieee', r_dtype=None):
+        """Convenience method for performing a :meth:`.write` followed by a :meth:`.read`.
 
         Parameters
         ----------
         message : :class:`str`
             The message to write to the equipment.
+        data : :class:`list`, :class:`tuple` or :class:`numpy.ndarray`, optional
+            Command-dependent data to append to `message` (used by :meth:`.write`).
+        w_fmt : :class:`str`, optional
+            The format to use to convert `data` to bytes (used by :meth:`.write`).
+        w_dtype : :class:`str` or :class:`numpy.number`, optional
+            The data type to cast each element in `data` to (used by :meth:`.write`).
         delay : :class:`float`, optional
-            The time delay, in seconds, to wait between :meth:`write` and
-            :meth:`read` operations.
+            The time delay, in seconds, to wait between :meth:`.write` and
+            :meth:`.read` operations.
         size : :class:`int`, optional
-            The number of bytes to read.
-        **kwargs
-            All additional keyword arguments are passed to :meth:`write`.
+            The number of bytes to read (used by :meth:`.read`).
+        r_fmt : :class:`str`, optional
+            The format that the reply data is in. Only used if `r_dtype` is
+            not :data:`None` (used by :meth:`.read`).
+        r_dtype : :class:`str` or :class:`numpy.number`, optional
+            The data type of the elements in the reply data (used by :meth:`.read`).
 
         Returns
         -------
-        :class:`str`
-            The response from the equipment.
+        :class:`str` or :class:`numpy.ndarray`
+            The message from the equipment. If a value of `r_dtype` is specified,
+            then the message data is returned as an :class:`~numpy.ndarray`,
+            otherwise the message is returned as a :class:`str`.
         """
-        self.write(message, **kwargs)
+        self.write(message, data=data, fmt=w_fmt, dtype=w_dtype)
         if delay > 0.0:
             time.sleep(delay)
-        return self.read(size=size)
+        return self.read(size=size, fmt=r_fmt, dtype=r_dtype)
 
     def _encode_termination(self, termination):
         # convenience method for setting a termination encoding

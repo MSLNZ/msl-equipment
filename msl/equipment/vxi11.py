@@ -205,7 +205,7 @@ class RPCClient(object):
             self._sock = None
 
     def connect(self, port, timeout=10):
-        """Connect to specific port on the device.
+        """Connect to a specific port on the device.
 
         Parameters
         ----------

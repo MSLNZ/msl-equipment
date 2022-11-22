@@ -173,7 +173,8 @@ class ConnectionTCPIPHiSLIP(ConnectionMessageBased):
 
     @property
     def max_read_size(self):
-        """:class:`int`: The maximum number of bytes that can be :meth:`.read`."""
+        """:class:`int`: The maximum number of bytes that can be
+        :meth:`~msl.equipment.connection_message_based.ConnectionMessageBased.read`."""
         # Overrides property in ConnectionMessageBased.
         return self._max_read_size
 

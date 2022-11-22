@@ -24,7 +24,7 @@ class ConnectionSocket(ConnectionMessageBased):
             'encoding': str, the encoding to use [default: 'utf-8']
             'encoding_errors': str, encoding error handling scheme, e.g. 'strict', 'ignore' [default: 'strict']
             'family': str, the address family, e.g., 'INET', 'INET6', 'IPX' [default: 'INET']
-            'max_read_size': int, the maximum number of bytes that can be read [default: 2**16]
+            'max_read_size': int, the maximum number of bytes that can be read [default: 1 MB]
             'proto': int, the socket protocol number [default: 0]
             'read_termination': str or None, read until this termination sequence is found [default: '\\n']
             'rstrip': bool, whether to remove trailing whitespace from "read" messages [default: False]

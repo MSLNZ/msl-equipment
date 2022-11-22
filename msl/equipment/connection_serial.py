@@ -31,7 +31,7 @@ class ConnectionSerial(ConnectionMessageBased):
             'encoding': str, the encoding to use [default: 'utf-8']
             'encoding_errors': str, encoding error handling scheme, e.g. 'strict', 'ignore' [default: 'strict']
             'inter_byte_timeout': float or None, the inter-character timeout [default: None]
-            'max_read_size': int, the maximum number of bytes that can be read [default: 2**16]
+            'max_read_size': int, the maximum number of bytes that can be read [default: 1 MB]
             'parity': str or None, parity checking, e.g. 'even', 'odd' [default: None]
             'read_termination': str or None, read until this termination sequence is found [default: '\\n']
             'rstrip': bool, whether to remove trailing whitespace from "read" messages [default: False]

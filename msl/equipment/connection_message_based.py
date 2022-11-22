@@ -51,7 +51,7 @@ class ConnectionMessageBased(Connection):
             self.read_termination = termination
             self.write_termination = termination
 
-        self.max_read_size = p.get('max_read_size', 2 ** 16)
+        self.max_read_size = p.get('max_read_size', 1 << 20)  # 1 MB
 
         self.timeout = p.get('timeout', None)
 

@@ -91,6 +91,8 @@ with the equipment *(although you should never need to instantiate these classes
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_tcpip_vxi11.ConnectionTCPIPVXI11`     | Equipment that use the VXI-11 protocol                                   |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :class:`~msl.equipment.connection_tcpip_hislip.ConnectionTCPIPHiSLIP`   | Equipment that use the HiSLIP protocol                                   |
++-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 
 and the :class:`~msl.equipment.connection.Connection` classes that are available from external Python libraries are:
 
@@ -117,11 +119,13 @@ Package Structure
    msl.equipment.connection_sdk <_api/msl.equipment.connection_sdk>
    msl.equipment.connection_serial <_api/msl.equipment.connection_serial>
    msl.equipment.connection_socket <_api/msl.equipment.connection_socket>
+   msl.equipment.connection_tcpip_hislip <_api/msl.equipment.connection_tcpip_hislip>
    msl.equipment.connection_tcpip_vxi11 <_api/msl.equipment.connection_tcpip_vxi11>
    msl.equipment.constants <_api/msl.equipment.constants>
    msl.equipment.database <_api/msl.equipment.database>
    msl.equipment.exceptions <_api/msl.equipment.exceptions>
    msl.equipment.factory <_api/msl.equipment.factory>
+   msl.equipment.hislip <_api/msl.equipment.hislip>
    msl.equipment.record_types <_api/msl.equipment.record_types>
    msl.equipment.resources <_api/msl.equipment.resources>
    msl.equipment.utils <_api/msl.equipment.utils>

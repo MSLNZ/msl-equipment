@@ -3,10 +3,8 @@ Establish a connection to the equipment.
 """
 from .utils import logger
 from .config import Config
-from .constants import (
-    Backend,
-    MSLInterface
-)
+from .constants import Backend
+from .constants import MSLInterface
 from .exceptions import ResourceClassNotFound
 from .resources import find_resource_class
 from .resources.dmm import dmm_factory
@@ -18,6 +16,7 @@ from .connection_socket import ConnectionSocket
 from .connection_nidaq import ConnectionNIDAQ
 from .connection_prologix import ConnectionPrologix
 from .connection_tcpip_vxi11 import ConnectionTCPIPVXI11
+from .connection_tcpip_hislip import ConnectionTCPIPHiSLIP
 
 
 def connect(record, demo=None):
@@ -70,6 +69,8 @@ def connect(record, demo=None):
                     cls = ConnectionPrologix
                 elif conn.interface == MSLInterface.TCPIP_VXI11:
                     cls = ConnectionTCPIPVXI11
+                elif conn.interface == MSLInterface.TCPIP_HISLIP:
+                    cls = ConnectionTCPIPHiSLIP
                 else:
                     raise NotImplementedError('The {!r} interface has not be written yet'.format(conn.interface.name))
         elif conn.backend == Backend.PyVISA:
@@ -133,5 +134,8 @@ def find_interface(address):
 
     if ConnectionTCPIPVXI11.parse_address(address):
         return MSLInterface.TCPIP_VXI11
+
+    if ConnectionTCPIPHiSLIP.parse_address(address):
+        return MSLInterface.TCPIP_HISLIP
 
     raise ValueError('Cannot determine the MSLInterface from address {!r}'.format(address))

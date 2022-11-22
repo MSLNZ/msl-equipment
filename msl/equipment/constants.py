@@ -70,6 +70,7 @@ class MSLInterface(enum.IntEnum):
     SOCKET = 3
     PROLOGIX = 4
     TCPIP_VXI11 = 5
+    TCPIP_HISLIP = 6
 
 
 class Parity(enum.Enum):

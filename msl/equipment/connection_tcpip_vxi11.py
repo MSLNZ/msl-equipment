@@ -315,11 +315,12 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
         flags = self._init_flag()
         offset = 0
         num = len(message)
+        view = memoryview(message)  # avoids unnecessarily copying of slices
         while num > 0:
             if num <= self._max_recv_size:
                 flags |= OperationFlag.END
 
-            block = message[offset:offset+self._max_recv_size]
+            block = view[offset:offset+self._max_recv_size]
 
             try:
                 size = self._core_client.device_write(

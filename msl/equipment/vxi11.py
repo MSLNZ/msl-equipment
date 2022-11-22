@@ -176,7 +176,7 @@ class RPCClient(object):
 
         Parameters
         ----------
-        text : :class:`bytes` or :class:`str`
+        text : :class:`memoryview`, :class:`bytes` or :class:`str`
             The data to append.
         """
         # mimic the builtin xdrlib.Packer class
@@ -184,7 +184,9 @@ class RPCClient(object):
         if not text:
             return
 
-        if isinstance(text, bytes):
+        if isinstance(text, memoryview):
+            encoded = text
+        elif isinstance(text, bytes):
             encoded = memoryview(text)
         else:
             encoded = memoryview(text.encode('ascii'))  # must be an ASCII message
@@ -512,7 +514,7 @@ class CoreClient(VXIClient):
             Time, in milliseconds, to wait on a lock.
         flags : :class:`int` or :class:`OperationFlag`
             Operation flags to use.
-        data : :class:`bytes` or :class:`str`
+        data : :class:`memoryview`, :class:`bytes` or :class:`str`
             The data to write.
 
         Returns

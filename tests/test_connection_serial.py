@@ -47,6 +47,7 @@ def test_connection_serial_read():
                 'read_termination': term,
                 'write_termination': term,
                 'timeout': 25,
+                'max_read_size': 1 << 16,
             },
         )
     )

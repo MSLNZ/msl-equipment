@@ -278,9 +278,8 @@ class RPCClient(object):
         proc : :class:`int`
             The procedure number within the program to be called.
         """
-        xid = self._xid + 1
-        if xid > 0xFFFFFFFF:
-            xid = 0  # reset to avoid a uint32 overflow error
+        # increment and wrap to 0 on uint32 overflow
+        xid = (self._xid + 1) & 0xFFFFFFFF
 
         # The VXI-11 document, Section B.4.5 (Security Control), states
         # that authentication is not used. That is where the two 0's come from

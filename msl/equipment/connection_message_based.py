@@ -2,7 +2,9 @@
 Base class for equipment that use message-based communication.
 """
 import socket
+import sys
 import time
+import traceback
 
 from .connection import Connection
 from .constants import CR
@@ -240,7 +242,7 @@ class ConnectionMessageBased(Connection):
             self.raise_exception('max_read_size is {} bytes, requesting {} bytes'.format(
                 self._max_read_size, size))
 
-        message = self._read(size)
+        message = self._process(self._read, size)
 
         if size is None:
             self.log_debug('%s.read() -> %r', self, message)
@@ -299,17 +301,21 @@ class ConnectionMessageBased(Connection):
             message += self._write_termination
 
         self.log_debug('%s.write(%r)', self, message)
+        return self._process(self._write, message)
 
-        error = None
-        timeout_error = None
+    def _process(self, method, arg):
+        """Want to always raise a subclass of MSLConnectionError for a write/read."""
+        error, timeout_error = None, None
         try:
-            return self._write(message)
+            return method(arg)
         except socket.timeout:
             # TODO in 3.10 socket.timeout became a deprecated alias of TimeoutError
             #  Want to raise MSLTimeoutError not socket.timeout
             timeout_error = True
-        except Exception as e:
-            error = e  # avoid a nested exception traceback
+        except MSLTimeoutError:
+            raise
+        except:
+            error = '\n' + ''.join(traceback.format_exception(*sys.exc_info()))
 
         if timeout_error:
             self.raise_timeout()

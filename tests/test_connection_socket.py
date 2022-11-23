@@ -123,10 +123,17 @@ def test_tcp_socket_read():
     assert dev.read() == 'x'*1024 + term.decode()  # read until `term`
     assert len(dev.byte_buffer) == 2048 + len(term)
     dev.max_read_size = 2000
-    with pytest.raises(MSLConnectionError):
+    with pytest.raises(MSLConnectionError, match=r'max_read_size is 2000 bytes, requesting 2048 bytes'):
         dev.read(2048)  # requesting more bytes than are maximally allowed
     dev.max_read_size = 3000  # allow for reading the buffer to clear it
     assert dev.read() == 'y'*2048 + term.decode()
+
+    dev.max_read_size = 10
+    dev.write(b'a'*999)
+    with pytest.raises(MSLConnectionError, match=r'RuntimeError: len\(message\) \[1001\] > max_read_size \[10\]'):
+        dev.read()  # requesting more bytes than are maximally allowed
+    dev.max_read_size = 1 << 16
+    assert dev.read() == ('a' * 999) + term.decode()  # clear the buffer
 
     dev.rstrip = True
     dev.write(b'abc' + term + b'defghi j   ' + term)

@@ -75,7 +75,7 @@ def test_connection_serial_read():
 
     dev.max_read_size = 10
     dev.write(b'a'*999)
-    with pytest.raises(MSLConnectionError, match=r'RuntimeError: len\(message\) \[1001\] > max_read_size \[10\]'):
+    with pytest.raises(MSLConnectionError, match=r'RuntimeError: len\(message\) \[11\] > max_read_size \[10\]'):
         dev.read()  # requesting more bytes than are maximally allowed
     dev.max_read_size = 1 << 16
     assert dev.read() == ('a' * 999) + term.decode()  # clear the buffer

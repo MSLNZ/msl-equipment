@@ -1072,8 +1072,8 @@ class SyncClient(HiSLIPClient):
     def read_authentication_exchange(self):
         """Receive exchange data during the authentication transaction.
 
-        Parameters
-        ----------
+        Returns
+        -------
         :class:`AuthenticationExchange`
             The exchange.
         """

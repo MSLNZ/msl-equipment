@@ -183,8 +183,6 @@ class ConnectionSocket(ConnectionMessageBased):
     def _read(self, size):
         """Overrides method in ConnectionMessageBased."""
         t0 = time.time()
-        error = None
-        timeout_error = False
         original_timeout = self._socket.gettimeout()
         while True:
 
@@ -207,25 +205,20 @@ class ConnectionSocket(ConnectionMessageBased):
                     data = self._socket.recv(self._buffer_size)
                 else:
                     data, _ = self._socket.recvfrom(self._buffer_size)
-            except socket.timeout:
-                timeout_error = True  # want to raise MSLTimeoutError not socket.timeout
-            except Exception as e:
-                error = e
+            except:
+                self._socket.settimeout(original_timeout)
+                raise
             else:
                 self._byte_buffer.extend(data)
 
-            if error:
-                self._socket.settimeout(original_timeout)
-                self.raise_exception(error)
-
             if len(self._byte_buffer) > self._max_read_size:
                 self._socket.settimeout(original_timeout)
-                self.raise_exception('len(message) [{}] > max_read_size [{}]'.format(
+                raise RuntimeError('len(message) [{}] > max_read_size [{}]'.format(
                     len(self._byte_buffer), self._max_read_size)
                 )
 
             elapsed_time = time.time() - t0
-            if timeout_error or (self._timeout and (elapsed_time > self._timeout)):
+            if self._timeout and (elapsed_time > self._timeout):
                 self._socket.settimeout(original_timeout)
                 self.raise_timeout()
 

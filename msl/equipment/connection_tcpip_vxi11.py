@@ -236,8 +236,6 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
 
         now = time.time
         io_timeout = self._io_timeout_ms
-        timeout_error = False
-        error = None
         reason = 0
         done_flag = RX_END | RX_CHR
         msg = bytearray()
@@ -253,14 +251,10 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
                     flags,
                     term_char
                 )
-            except socket.timeout:
-                # want to raise MSLTimeoutError not socket.timeout
-                timeout_error = True
             except Exception as e:
                 if VXI_ERROR_CODES[15] in str(e):
-                    timeout_error = True
-                else:
-                    error = e
+                    self.raise_timeout()
+                raise
             else:
                 msg.extend(data)
                 if size is not None:
@@ -269,16 +263,9 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
                         break
                     request_size = min(size, self._buffer_size)
 
-            if timeout_error:
-                self.raise_timeout()
-
-            if error:
-                self.raise_exception(error)
-
             if len(msg) > self._max_read_size:
-                self.raise_exception('len(message) [{}] > max_read_size [{}]'.format(
-                    len(msg), self._max_read_size)
-                )
+                raise RuntimeError('len(message) [{}] > max_read_size [{}]'.format(
+                    len(msg), self._max_read_size))
 
             # decrease io_timeout before reading the next chunk so that the
             # total time to receive all data preserves what was specified

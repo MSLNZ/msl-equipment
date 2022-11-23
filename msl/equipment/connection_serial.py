@@ -165,19 +165,24 @@ class ConnectionSerial(ConnectionMessageBased):
         if size is not None:
             return self._serial.read(size)
 
-        t0 = time.time()
         msg = bytearray()
+        now = time.time
+        read = self._serial.read
+        r_term = self._read_termination
+        timeout = self._timeout
+        max_read_size = self._max_read_size
+        t0 = now()
         while True:
-            msg.extend(self._serial.read(1))
+            msg.extend(read(1))
 
-            if self._read_termination and msg.endswith(self._read_termination):
+            if r_term and msg.endswith(r_term):
                 return msg
 
-            if len(msg) > self._max_read_size:
-                self.raise_exception('len(message) [{}] > max_read_size [{}]'.format(
-                    len(msg), self._max_read_size))
+            if len(msg) > max_read_size:
+                raise RuntimeError('len(message) [{}] > max_read_size [{}]'.format(
+                    len(msg), max_read_size))
 
-            if self._timeout and time.time() - t0 >= self._timeout:
+            if timeout and now() - t0 > timeout:
                 self.raise_timeout()
 
     @staticmethod

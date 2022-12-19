@@ -13,6 +13,7 @@ from msl.equipment import MSLConnectionError
 from msl.equipment import MSLTimeoutError
 from msl.equipment.connection_tcpip_vxi11 import ConnectionTCPIPVXI11
 from msl.equipment.vxi11 import PMAP_PORT
+from msl.equipment.vxi11 import find_vxi11
 
 
 @pytest.mark.parametrize(
@@ -311,3 +312,9 @@ def test_exceptions():
         dev.query('not-a-predefined-request')
     t1.join()
     t2.join()
+
+
+def test_find_vxi11():
+    for device in find_vxi11():
+        assert device['address'].startswith('TCPIP0::')
+        assert device['address'].endswith('::inst0::INSTR')

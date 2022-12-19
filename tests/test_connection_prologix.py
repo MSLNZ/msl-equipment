@@ -1,7 +1,8 @@
+from msl.equipment.connection_message_based import ConnectionMessageBased
 from msl.equipment.connection_prologix import ConnectionPrologix
+from msl.equipment.connection_prologix import find_prologix
 from msl.equipment.connection_serial import ConnectionSerial
 from msl.equipment.connection_socket import ConnectionSocket
-from msl.equipment.connection_message_based import ConnectionMessageBased
 
 
 def test_parse_address():
@@ -179,3 +180,9 @@ def test_connection_message_based_attributes():
         if attr.startswith('_') or attr in ['CR', 'LF', 'raise_timeout']:
             continue
         assert attr in cp
+
+
+def test_find_prologix():
+    for device in find_prologix():
+        assert device['address'].startswith('Prologix::')
+        assert device['address'].endswith('::1234::<GPIB address>')

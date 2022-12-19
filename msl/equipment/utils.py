@@ -3,6 +3,7 @@ Common functions.
 """
 import datetime
 import logging
+import socket
 import struct
 from xml.dom import minidom
 from xml.etree import cElementTree
@@ -428,3 +429,15 @@ def from_bytes(buffer, fmt='ieee', dtype='<f'):
         return np.frombuffer(buffer, dtype=dtype)
 
     raise ValueError("Invalid format {!r} -- must be 'ascii', 'ieee', 'hp' or None".format(fmt))
+
+
+def ip_addresses():
+    """Get the IP addresses of the computer.
+
+    Returns
+    -------
+    :class:`set` of :class:`str`
+        All IP addresses on all network interfaces.
+    """
+    interfaces = socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET)
+    return set(ip[-1][0] for ip in interfaces)

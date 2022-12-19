@@ -4,8 +4,8 @@ Uses Prologix_ hardware to establish a connection to the equipment.
 .. _Prologix: https://prologix.biz/
 """
 from .connection import Connection
-from .connection_socket import ConnectionSocket
 from .connection_serial import ConnectionSerial
+from .connection_socket import ConnectionSocket
 from .constants import REGEX_PROLOGIX
 
 
@@ -367,3 +367,103 @@ class ConnectionPrologix(Connection):
         """
         ConnectionPrologix.selected_addresses[self._controller_name] = self._addr
         self._controller.write(self._addr)
+
+
+def find_prologix(hosts=None, timeout=1):
+    """Find all Prologix ENET-GPIB devices that are on the network.
+
+    To resolve the MAC address, the ``arp`` program must be installed. On linux,
+    install ``net-tools``. On Windows and macOS, ``arp`` should already be installed.
+
+    Parameters
+    ----------
+    hosts : :class:`list` of :class:`str`, optional
+        The IP address(es) on the computer to use to look for Prologix
+        ENET-GPIB devices. If not specified, then use all network interfaces.
+    timeout : :class:`float`, optional
+        The maximum number of seconds to wait for a reply.
+
+    Returns
+    -------
+    :class:`list` of :class:`dict`
+        The information about the Prologix ENET-GPIB devices that were found.
+    """
+    import re
+    import socket
+    import subprocess
+    import sys
+    import threading
+
+    if not hosts:
+        from .utils import ip_addresses
+        all_ips = ip_addresses()
+    else:
+        all_ips = hosts
+
+    if sys.platform == 'win32':
+        separator = '-'
+        arp_option = ['-a']
+    else:
+        separator = ':'
+        arp_option = ['-n']
+
+    version_regex = re.compile(r'(\d{2}(?:\.\d{2}){3})')
+    mac_regex = re.compile(r'([0-9a-fA-F]{2}(?:%s[0-9a-fA-F]{2}){5})' % separator)
+
+    def check(host):
+        host_str = '{}.{}.{}.{}'.format(*host)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
+        sock.settimeout(timeout)
+        if sock.connect_ex((host_str, 1234)) != 0:
+            sock.close()
+            return
+
+        sock.sendall(b'++ver\r\n')
+        try:
+            reply = sock.recv(256)
+        except socket.timeout:
+            sock.close()
+            return
+
+        if not reply.startswith(b'Prologix'):
+            sock.close()
+            return
+
+        info = {'address': u'Prologix::{}::1234::<GPIB address>'.format(host_str)}
+
+        # determine the firmware version number
+        match = version_regex.search(reply.decode())
+        info['firmware_version'] = match.groups()[0] if match else None
+
+        # determine the MAC address
+        mac = None
+        try:
+            pid = subprocess.Popen(['arp'] + arp_option + [host_str],
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except OSError:
+            pass
+        else:
+            stdout, stderr = pid.communicate()
+            match = mac_regex.search(stdout.decode())
+            if match:
+                mac = match.groups()[0]
+        info['mac_address'] = mac
+
+        devices[host] = info
+        sock.close()
+
+    ips = []
+    for ip in all_ips:
+        ip_split = ip.split('.')
+        subnet = list(int(item) for item in ip_split[:3])
+        ips.extend(tuple(subnet + [i]) for i in range(2, 255))
+
+    # TODO use asyncio instead of threading when dropping Python 2.7 support
+
+    devices = {}
+    threads = [threading.Thread(target=check, args=(ip,)) for ip in ips]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    return [devices[d] for d in sorted(devices)]

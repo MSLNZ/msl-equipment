@@ -321,7 +321,7 @@ class RPCClient(object):
                     raise EOFError('The RPC reply buffer is empty')
                 fragment.extend(buf)
             message.extend(fragment)
-        reply = self._check_reply(memoryview(message))
+        reply = self.check_reply(memoryview(message))
         if reply is None:
             # Unexpected transaction id (xid), most likely from reading an interrupt.
             # Recursively read from the device until the corrected xid is received.
@@ -380,7 +380,7 @@ class RPCClient(object):
             sendall(data)
             message = message[fragment_size:]
 
-    def _check_reply(self, message):
+    def check_reply(self, message):
         """Checks the message for errors and returns the procedure-specific data.
 
         Parameters
@@ -815,3 +815,78 @@ class AsyncClient(VXIClient):
         self.append(pack('>l', lid))
         self.write()
         self.read_reply()
+
+
+def find_vxi11(hosts=None, timeout=1):
+    """Find all VXI-11 devices that are on the network.
+
+    The RPC port-mapper protocol (RFC-1057_, Appendix A) broadcasts a message
+    via UDP to port 111 for VXI-11 device discovery.
+
+    Parameters
+    ----------
+    hosts : :class:`list` of :class:`str`, optional
+        The IP address(es) on the computer to use to broadcast the message.
+        If not specified, then broadcast on all network interfaces.
+    timeout : :class:`float`, optional
+        The maximum number of seconds to wait for a reply.
+
+    Returns
+    -------
+    :class:`list` of :class:`dict`
+        The information about the VXI-11 devices that were found.
+    """
+    import select
+    import threading
+
+    if not hosts:
+        from .utils import ip_addresses
+        all_ips = ip_addresses()
+    else:
+        all_ips = hosts
+
+    def broadcast(host):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        sock.bind((host, 0))
+        sock.sendto(broadcast_msg, ('255.255.255.255', PMAP_PORT))
+        while True:
+            r, w, x = select.select([sock], [], [], timeout)
+            if not r:
+                break
+
+            reply, address = sock.recvfrom(1024)
+
+            try:
+                port, = unpack('>L', client.check_reply(memoryview(reply)))
+                assert port > 0
+            except:
+                continue
+
+            # TODO Python 2.7 does not have the builtin ipaddress module, which
+            #  is useful for sorting IP addresses. Since VXI-11 does not support
+            #  IPv6 addresses, cast the IPv4 address to integers for sorting
+            #  (e.g., for strings '2' > '10', but, for integers 2 < 10)
+            addr = tuple(int(s) for s in address[0].split('.'))
+            devices[addr] = {
+                'address': u'TCPIP0::{}::inst0::INSTR'.format(host),
+                'port': port
+            }
+
+        sock.close()
+
+    # construct the broadcast message
+    client = RPCClient('')
+    client.init(PMAP_PROG, PMAP_VERS, PMAPPROC_GETPORT)
+    client.append(pack('>4I', DEVICE_CORE, DEVICE_CORE_VERSION, socket.IPPROTO_TCP, 0))
+    broadcast_msg = client.get_buffer()
+
+    # TODO use asyncio instead of threading when dropping Python 2.7 support
+
+    devices = {}
+    threads = [threading.Thread(target=broadcast, args=(ip,)) for ip in all_ips]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    return [devices[d] for d in sorted(devices)]

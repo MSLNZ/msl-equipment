@@ -101,8 +101,7 @@ PMAPPROC_DUMP = 4
 PMAPPROC_CALLIT = 5
 
 # RPC constants
-if os.getenv('GITHUB_ACTIONS'):
-    # running the tests on GitHub
+if os.getenv('MSL_EQUIPMENT_TESTING'):
     PMAP_PORT = 11111
 else:
     PMAP_PORT = 111

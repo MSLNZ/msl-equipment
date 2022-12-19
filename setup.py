@@ -155,7 +155,7 @@ install_requires = [
 ]
 
 tests_require = [
-    'pytest',
+    'pytest>=4.4',  # >=4.4 to support the "-p conftest" option
     'pytest-cov',
     'nidaqmx',
     'pyvisa>=1.6',

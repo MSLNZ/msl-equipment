@@ -10,6 +10,7 @@ from msl.equipment.resources.omega import iTHX
 
 def simulate_omega_iserver(address, port, term):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind((address, port))
     s.listen(10)
     conn, _ = s.accept()

@@ -869,7 +869,7 @@ def find_vxi11(hosts=None, timeout=1):
             #  (e.g., for strings '2' > '10', but, for integers 2 < 10)
             addr = tuple(int(s) for s in address[0].split('.'))
             devices[addr] = {
-                'address': u'TCPIP0::{}::inst0::INSTR'.format(host),
+                'address': u'TCPIP0::{}::inst0::INSTR'.format(address[0]),
                 'port': port
             }
 

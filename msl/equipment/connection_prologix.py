@@ -395,8 +395,8 @@ def find_prologix(hosts=None, timeout=1):
     import threading
 
     if not hosts:
-        from .utils import ip_addresses
-        all_ips = ip_addresses()
+        from .utils import ipv4_addresses
+        all_ips = ipv4_addresses()
     else:
         all_ips = hosts
 

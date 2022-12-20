@@ -13,6 +13,7 @@ from msl.equipment.utils import convert_to_enum
 from msl.equipment.utils import convert_to_primitive
 from msl.equipment.utils import convert_to_xml_string
 from msl.equipment.utils import from_bytes
+from msl.equipment.utils import ipv4_addresses
 from msl.equipment.utils import to_bytes
 from msl.equipment.utils import xml_comment
 from msl.equipment.utils import xml_element
@@ -636,3 +637,7 @@ def test_to_bytes_from_bytes(size, fmt, dtype):
         array = np.arange(size, dtype=dtype)
         buffer = to_bytes(array, fmt=fmt, dtype=dtype)
         assert np.array_equal(from_bytes(buffer, fmt=fmt, dtype=dtype), array)
+
+
+def test_ipv4_addresses():
+    assert len(ipv4_addresses()) >= 1

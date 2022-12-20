@@ -5,6 +5,8 @@ import datetime
 import logging
 import socket
 import struct
+import subprocess
+import sys
 from xml.dom import minidom
 from xml.etree import cElementTree
 
@@ -431,13 +433,20 @@ def from_bytes(buffer, fmt='ieee', dtype='<f'):
     raise ValueError("Invalid format {!r} -- must be 'ascii', 'ieee', 'hp' or None".format(fmt))
 
 
-def ip_addresses():
-    """Get the IP addresses of the computer.
+def ipv4_addresses():
+    """Get the IPv4 addresses of the computer.
 
     Returns
     -------
     :class:`set` of :class:`str`
-        All IP addresses on all network interfaces.
+        All IPv4 addresses on all network interfaces.
     """
-    interfaces = socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET)
-    return set(ip[-1][0] for ip in interfaces)
+    if sys.platform.startswith('linux'):
+        p = subprocess.Popen(['hostname', '--all-ip-addresses'], stdout=subprocess.PIPE)
+        stdout, _ = p.communicate()
+        addresses = set(stdout.decode().split())
+    else:
+        interfaces = socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET)
+        addresses = set(ip[-1][0] for ip in interfaces)
+    addresses.discard('127.0.0.1')
+    return addresses

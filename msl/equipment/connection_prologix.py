@@ -441,6 +441,7 @@ def find_prologix(hosts=None, timeout=1):
 
         # determine the MAC address
         mac = None
+        hostname = None
         try:
             pid = subprocess.Popen(['arp'] + arp_option + [host_str],
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -462,7 +463,10 @@ def find_prologix(hosts=None, timeout=1):
                             bits.append(bit)
                     mac = ':'.join(bits)
 
+                hostname = 'prologix-' + mac.replace(':', '-')
+
         info['mac_address'] = mac
+        info['hostname'] = hostname
 
         devices[host] = info
         sock.close()

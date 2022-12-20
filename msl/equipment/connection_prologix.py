@@ -404,6 +404,8 @@ def find_prologix(hosts=None, timeout=1):
         mac_regex = re.compile(r'([0-9a-fA-F]{2}(?:-[0-9a-fA-F]{2}){5})')
         arp_option = ['-a']
     elif sys.platform == 'darwin':
+        # the 'arp' command on macOS prints the MAC address
+        # using %x instead of %02x, so leading 0's are missing
         mac_regex = re.compile(r'([0-9a-fA-F]{1,2}(?::[0-9a-fA-F]{1,2}){5})')
         arp_option = ['-n']
     else:
@@ -449,6 +451,17 @@ def find_prologix(hosts=None, timeout=1):
             match = mac_regex.search(stdout.decode())
             if match:
                 mac = match.groups()[0]
+                if sys.platform == 'darwin':
+                    # the 'arp' command on macOS prints the MAC address
+                    # using %x instead of %02x, so leading 0's are missing
+                    bits = []
+                    for bit in mac.split(':'):
+                        if len(bit) == 1:
+                            bits.append('0'+bit)
+                        else:
+                            bits.append(bit)
+                    mac = ':'.join(bits)
+
         info['mac_address'] = mac
 
         devices[host] = info

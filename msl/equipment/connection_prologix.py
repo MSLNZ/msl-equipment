@@ -401,14 +401,16 @@ def find_prologix(hosts=None, timeout=1):
         all_ips = hosts
 
     if sys.platform == 'win32':
-        separator = '-'
+        mac_regex = re.compile(r'([0-9a-fA-F]{2}(?:-[0-9a-fA-F]{2}){5})')
         arp_option = ['-a']
+    elif sys.platform == 'darwin':
+        mac_regex = re.compile(r'([0-9a-fA-F]{1,2}(?::[0-9a-fA-F]{1,2}){5})')
+        arp_option = ['-n']
     else:
-        separator = ':'
+        mac_regex = re.compile(r'([0-9a-fA-F]{2}(?::[0-9a-fA-F]{2}){5})')
         arp_option = ['-n']
 
     version_regex = re.compile(r'(\d{2}(?:\.\d{2}){3})')
-    mac_regex = re.compile(r'([0-9a-fA-F]{2}(?:%s[0-9a-fA-F]{2}){5})' % separator)
 
     def check(host):
         host_str = '{}.{}.{}.{}'.format(*host)

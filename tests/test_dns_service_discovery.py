@@ -108,7 +108,6 @@ def test_dns_record2():
 
 
 def test_find_lxi():
-    assert len(find_lxi()) > 0
     for ipv4, device in find_lxi().items():
         assert isinstance(ipv4, tuple)
         assert device['description']

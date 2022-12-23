@@ -183,6 +183,10 @@ def test_connection_message_based_attributes():
 
 
 def test_find_prologix():
-    for device in find_prologix():
-        assert device['address'].startswith('Prologix::')
-        assert device['address'].endswith('::1234::<GPIB address>')
+    for ipv4, device in find_prologix().items():
+        assert isinstance(ipv4, tuple)
+        assert device['description']
+        for address in device['addresses']:
+            assert address.startswith('Prologix::')
+            assert address.endswith('::1234::<GPIB address>')
+

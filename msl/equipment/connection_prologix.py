@@ -372,8 +372,9 @@ class ConnectionPrologix(Connection):
 def find_prologix(hosts=None, timeout=1):
     """Find all Prologix ENET-GPIB devices that are on the network.
 
-    To resolve the MAC address, the ``arp`` program must be installed. On linux,
-    install ``net-tools``. On Windows and macOS, ``arp`` should already be installed.
+    To resolve the MAC address of a Prologix device, the ``arp`` program
+    must be installed. On Linux, install ``net-tools``. On Windows and macOS,
+    ``arp`` should already be installed.
 
     Parameters
     ----------
@@ -385,7 +386,7 @@ def find_prologix(hosts=None, timeout=1):
 
     Returns
     -------
-    :class:`list` of :class:`dict`
+    :class:`dict`
         The information about the Prologix ENET-GPIB devices that were found.
     """
     import re
@@ -433,15 +434,17 @@ def find_prologix(hosts=None, timeout=1):
             sock.close()
             return
 
-        info = {'address': u'Prologix::{}::1234::<GPIB address>'.format(host_str)}
+        description = 'Prologix ENET-GPIB'
+
+        addresses = set()
+        addresses.add(host_str)
 
         # determine the firmware version number
         match = version_regex.search(reply.decode())
-        info['firmware_version'] = match.groups()[0] if match else None
+        if match:
+            description += ', version={}'.format(match.group(1))
 
         # determine the MAC address
-        mac = None
-        hostname = None
         try:
             pid = subprocess.Popen(['arp'] + arp_option + [host_str],
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -463,12 +466,14 @@ def find_prologix(hosts=None, timeout=1):
                             bits.append(bit)
                     mac = ':'.join(bits)
 
-                hostname = 'prologix-' + mac.replace(':', '-')
+                description += ', MAC address={}'.format(mac)
+                addresses.add('prologix-' + mac.replace(':', '-'))
 
-        info['mac_address'] = mac
-        info['hostname'] = hostname
+        devices[host] = {
+            'description': description,
+            'addresses': ['Prologix::{}::1234::<GPIB address>'.format(a) for a in sorted(addresses)]
+        }
 
-        devices[host] = info
         sock.close()
 
     ips = []
@@ -485,4 +490,4 @@ def find_prologix(hosts=None, timeout=1):
         thread.start()
     for thread in threads:
         thread.join()
-    return [devices[d] for d in sorted(devices)]
+    return dict((k, devices[k]) for k in sorted(devices))

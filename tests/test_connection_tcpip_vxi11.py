@@ -315,6 +315,12 @@ def test_exceptions():
 
 
 def test_find_vxi11():
-    for device in find_vxi11():
-        assert device['address'].startswith('TCPIP0::')
-        assert device['address'].endswith('::inst0::INSTR')
+    for ipv4, device in find_vxi11().items():
+        assert isinstance(ipv4, tuple)
+        assert device['description']
+        assert device['webserver']
+        for address in device['addresses']:
+            assert address.startswith('TCPIP::')
+            assert address.endswith('::inst0::INSTR') or \
+                   address.endswith('::SOCKET') or \
+                   address.endswith('::hislip0::INSTR')

@@ -22,6 +22,8 @@ from enum import IntEnum
 from struct import pack
 from struct import unpack
 
+from .utils import parse_lxi_webserver
+
 # VXI-11 program numbers
 DEVICE_ASYNC = 0x0607B0
 DEVICE_CORE = 0x0607AF
@@ -833,7 +835,7 @@ def find_vxi11(hosts=None, timeout=1):
 
     Returns
     -------
-    :class:`list` of :class:`dict`
+    :class:`dict`
         The information about the VXI-11 devices that were found.
     """
     import select
@@ -855,23 +857,50 @@ def find_vxi11(hosts=None, timeout=1):
             if not r:
                 break
 
-            reply, address = sock.recvfrom(1024)
-
+            reply, (ip_address, port) = sock.recvfrom(1024)
             try:
+                assert port == 111
                 port, = unpack('>L', client.check_reply(memoryview(reply)))
                 assert port > 0
             except:
                 continue
 
-            # TODO Python 2.7 does not have the builtin ipaddress module, which
-            #  is useful for sorting IP addresses. Since VXI-11 does not support
-            #  IPv6 addresses, cast the IPv4 address to integers for sorting
-            #  (e.g., for strings '2' > '10', but, for integers 2 < 10)
-            addr = tuple(int(s) for s in address[0].split('.'))
-            devices[addr] = {
-                'address': u'TCPIP0::{}::inst0::INSTR'.format(address[0]),
-                'port': port
-            }
+            try:
+                lxi = parse_lxi_webserver(ip_address, timeout=timeout)
+            except:
+                lxi = {}
+
+            device = {}
+            addresses = set()
+            addresses.add('TCPIP::{}::inst0::INSTR'.format(ip_address))
+
+            if 'title' in lxi:
+                # The XML document does not exist, the homepage was parsed
+                device['description'] = lxi['title']
+            elif 'Manufacturer' in lxi:
+                # The XML document exists
+                md = lxi['ManufacturerDescription']
+                description = []
+                for item in ('Manufacturer', 'Model', 'SerialNumber'):
+                    if lxi[item] not in md:
+                        description.append(lxi[item])
+                description.append(md)
+                device['description'] = ', '.join(description)
+
+                for interface in lxi['Interfaces']:
+                    if interface['InterfaceType'] != 'LXI':
+                        continue
+                    for address in interface['InstrumentAddressStrings']:
+                        addresses.add(address)
+                    addresses.add('TCPIP::{}::inst0::INSTR'.format(interface['Hostname']))
+            else:
+                device['description'] = 'Unknown LXI device'
+
+            device['webserver'] = 'http://{}'.format(ip_address)
+            device['addresses'] = sorted(addresses)
+
+            key = tuple(int(s) for s in ip_address.split('.'))
+            devices[key] = device
 
         sock.close()
 
@@ -889,4 +918,4 @@ def find_vxi11(hosts=None, timeout=1):
         thread.start()
     for thread in threads:
         thread.join()
-    return [devices[d] for d in sorted(devices)]
+    return dict((k, devices[k]) for k in sorted(devices))

@@ -159,8 +159,9 @@ tests_require = [
     'pytest-cov',
     'nidaqmx',
     'pyvisa>=1.6',
-    'pyvisa-py;python_version>"3.5"',
+    'pyvisa-py;python_version>"3.7"',
     'pyvisa-py<0.5;python_version<="3.5"',
+    'pyvisa-py<0.6;python_version<="3.7"',
 ]
 
 docs_require = ['sphinx', 'sphinx-rtd-theme']

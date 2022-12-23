@@ -182,11 +182,11 @@ class ConnectionPyVISA(Connection):
         try:
             return pyvisa.ResourceManager(visa_library)
         except ValueError as err:
-            # as of PyVISA 1.11 the @ni backend became deprecated and it is planned
+            # as of PyVISA 1.11 the @ni backend became deprecated, and it is planned
             # to be removed in 1.12, which is when the @ivi value must be used instead
-            if str(err).endswith('pyvisa-ivi'):
-                Config.PyVISA_LIBRARY = '@ni'
-                return pyvisa.ResourceManager()
+            if str(err).endswith('pyvisa_ni'):
+                Config.PyVISA_LIBRARY = '@ivi'
+                return pyvisa.ResourceManager('@ivi')
             raise
 
     @staticmethod

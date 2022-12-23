@@ -101,6 +101,7 @@ def test_timeout_and_termination():
     term = b'xyz'
 
     t = threading.Thread(target=echo_server_tcp, args=(address, port, term))
+    t.daemon = True
     t.start()
 
     time.sleep(0.1)  # allow some time for the echo server to start

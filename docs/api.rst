@@ -123,6 +123,7 @@ Package Structure
    msl.equipment.connection_tcpip_vxi11 <_api/msl.equipment.connection_tcpip_vxi11>
    msl.equipment.constants <_api/msl.equipment.constants>
    msl.equipment.database <_api/msl.equipment.database>
+   msl.equipment.dns_service_discovery <_api/msl.equipment.dns_service_discovery>
    msl.equipment.exceptions <_api/msl.equipment.exceptions>
    msl.equipment.factory <_api/msl.equipment.factory>
    msl.equipment.hislip <_api/msl.equipment.hislip>

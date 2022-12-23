@@ -8,6 +8,8 @@ from xml.etree.cElementTree import Element
 import numpy as np
 import pytest
 
+from msl.equipment.utils import _parse_lxi_html
+from msl.equipment.utils import _parse_lxi_xml
 from msl.equipment.utils import convert_to_date
 from msl.equipment.utils import convert_to_enum
 from msl.equipment.utils import convert_to_primitive
@@ -641,3 +643,296 @@ def test_to_bytes_from_bytes(size, fmt, dtype):
 
 def test_ipv4_addresses():
     assert len(ipv4_addresses()) >= 1
+
+
+def test_parse_lxi_html1():
+    string = """<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN">
+<html>
+  <head>
+    <title>
+Manufacturer Model <SerialNo.>  </title>
+    <meta http-equiv="Content-Type" content= "text/html; charset=iso-8859-1">
+  </head>
+</html>
+"""
+    info = _parse_lxi_html(string)
+    assert info['title'] == 'Manufacturer Model <SerialNo.>'
+
+
+def test_parse_lxi_html2():
+    string = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="defultcss.css" rel="stylesheet" type="text/css">
+<title>Company-Product Welcome Page    </title>
+<style type="text/css">
+<!--
+-->
+</style></head></html>
+"""
+    info = _parse_lxi_html(string)
+    assert info['title'] == 'Company-Product Welcome Page'
+
+
+def test_parse_lxi_html3():
+    # no <title> tag
+    string = '<html><body><h1>Hello, world!</h1></body></html>'
+    info = _parse_lxi_html(string)
+    assert info == {}
+
+
+def test_parse_lxi_xml1():
+    string = """<?xml version="1.0" encoding="UTF-8"?>
+<LXIDevice xmlns="http://www.lxistandard.org/InstrumentIdentification/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.lxistandard.org/InstrumentIdentification/1.0 http://hostname/Lxi/Identification/LxiIdentification.xsd">
+  <Manufacturer>abcdefg</Manufacturer>
+  <Model>xyz</Model>
+  <SerialNumber>01234</SerialNumber>
+  <FirmwareRevision>52.04.03</FirmwareRevision>
+  <ManufacturerDescription>Our product</ManufacturerDescription>
+  <HomepageURL>http://www.company.com/</HomepageURL>
+  <DriverURL>http://www.company.com/drivers</DriverURL>
+  <UserDescription>Buy our stuff</UserDescription>
+  <IdentificationURL>http://hostname/Lxi/Identification</IdentificationURL>
+  <Interface xsi:type="NetworkInformation" InterfaceType="LXI" IPType="IPv4">
+    <InstrumentAddressString>TCPIP::hostname::hislip0::INSTR</InstrumentAddressString>
+    <InstrumentAddressString>TCPIP::hostname::inst0::INSTR</InstrumentAddressString>
+    <InstrumentAddressString>TCPIP::hostname::5025::SOCKET</InstrumentAddressString>
+    <Hostname>hostname</Hostname>
+    <IPAddress>192.168.1.100</IPAddress>
+    <SubnetMask>255.255.255.0</SubnetMask>
+    <MACAddress>00-00-00-00-00-00</MACAddress>
+    <Gateway>192.168.1.1</Gateway>
+    <DHCPEnabled>true</DHCPEnabled>
+    <AutoIPEnabled>true</AutoIPEnabled>
+  </Interface>
+  <IVISoftwareModuleName>Device</IVISoftwareModuleName>
+  <LXIVersion>1.4 LXI Core 2011</LXIVersion>
+  <LXIExtendedFunctions>
+    <Function FunctionName="LXI Wired Trigger Bus" Version="1.0" />
+    <Function FunctionName="LXI Event Messaging" Version="1.0" />
+    <Function FunctionName="LXI Clock Synchronization" Version="1.0" />
+    <Function FunctionName="LXI Timestamped Data" Version="1.0" />
+    <Function FunctionName="LXI Event Logs" Version="1.0" />
+    <Function FunctionName="LXI IPv6" Version="1.0" />
+    <Function FunctionName="LXI VXI-11" Version="1.0" />
+    <Function FunctionName="LXI HiSLIP" Version="1.0">
+      <Port>4880</Port>
+    </Function>
+  </LXIExtendedFunctions>
+</LXIDevice>
+"""
+    info = _parse_lxi_xml(string)
+    assert info == {
+        'Manufacturer': 'abcdefg',
+        'Model': 'xyz',
+        'SerialNumber': '01234',
+        'FirmwareRevision': '52.04.03',
+        'ManufacturerDescription': 'Our product',
+        'HomepageURL': 'http://www.company.com/',
+        'DriverURL': 'http://www.company.com/drivers',
+        'UserDescription': 'Buy our stuff',
+        'IdentificationURL': 'http://hostname/Lxi/Identification',
+        'Interfaces': [
+            {
+                'InterfaceType': 'LXI',
+                'IPType': 'IPv4',
+                'xsi:type': 'NetworkInformation',
+                'InstrumentAddressStrings': [
+                    'TCPIP::hostname::hislip0::INSTR',
+                    'TCPIP::hostname::inst0::INSTR',
+                    'TCPIP::hostname::5025::SOCKET'
+                ],
+                'Hostname': 'hostname',
+                'IPAddress': '192.168.1.100',
+                'SubnetMask': '255.255.255.0',
+                'MACAddress': '00-00-00-00-00-00',
+                'Gateway': '192.168.1.1',
+                'DHCPEnabled': 'true',
+                'AutoIPEnabled': 'true'
+            }
+        ],
+        'IVISoftwareModuleName': 'Device',
+        'LXIVersion': '1.4 LXI Core 2011',
+        'LXIExtendedFunctions': [
+            {'FunctionName': 'LXI Wired Trigger Bus', 'Version': '1.0'},
+            {'FunctionName': 'LXI Event Messaging', 'Version': '1.0'},
+            {'FunctionName': 'LXI Clock Synchronization', 'Version': '1.0'},
+            {'FunctionName': 'LXI Timestamped Data', 'Version': '1.0'},
+            {'FunctionName': 'LXI Event Logs', 'Version': '1.0'},
+            {'FunctionName': 'LXI IPv6', 'Version': '1.0'},
+            {'FunctionName': 'LXI VXI-11', 'Version': '1.0'},
+            {'FunctionName': 'LXI HiSLIP', 'Version': '1.0', 'Port': '4880'}
+        ]}
+
+
+def test_parse_lxi_xml2():
+    # change the LXI namespace and create a custom Interface
+    string = """<?xml version="1.0" encoding="UTF-8"?>
+<LXIDevice xmlns="http://www.lxistandard.org/InstrumentId/2.17" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.lxistandard.org/InstrumentId/2.17  http://169.254.100.2/Lxi/LxiIdentification.xsd">
+  <Manufacturer>Company</Manufacturer>
+  <Model>Product</Model>
+  <SerialNumber>xxxx</SerialNumber>
+  <FirmwareRevision>1.06</FirmwareRevision>
+  <ManufacturerDescription>Oscilloscope</ManufacturerDescription>
+  <HomepageURL>http://www.company.com/</HomepageURL>
+  <DriverURL>http://www.company.com/drivers</DriverURL>
+  <UserDescription>Our best product</UserDescription>
+  <IdentificationURL>http://hostname.local/lxi/identification</IdentificationURL>
+  <Interface xsi:type="NetworkInformation" InterfaceType="LXI" IPType="IPv4" InterfaceName="eth0">
+    <InstrumentAddressString>TCPIP::hostname::5555::SOCKET</InstrumentAddressString>
+    <Hostname>hostname</Hostname>
+    <IPAddress>169.254.100.2</IPAddress>
+    <SubnetMask>255.255.255.0</SubnetMask>
+    <MACAddress>00:00:00:00:11:ab</MACAddress>
+    <Gateway>169.254.100.1</Gateway>
+    <DHCPEnabled>false</DHCPEnabled>
+    <AutoIPEnabled>true</AutoIPEnabled>
+  </Interface>
+  <Interface InterfaceType="MyInterface" InterfaceName="MyName">
+    <InstrumentAddressString>hostname:1234</InstrumentAddressString>
+  </Interface>
+  <Domain>1</Domain>
+  <LXIVersion>1.5</LXIVersion>
+</LXIDevice>
+"""
+    info = _parse_lxi_xml(string)
+    assert info == {
+        'Manufacturer': 'Company',
+        'Model': 'Product',
+        'SerialNumber': 'xxxx',
+        'FirmwareRevision': '1.06',
+        'ManufacturerDescription': 'Oscilloscope',
+        'HomepageURL': 'http://www.company.com/',
+        'DriverURL': 'http://www.company.com/drivers',
+        'UserDescription': 'Our best product',
+        'IdentificationURL': 'http://hostname.local/lxi/identification',
+        'Interfaces': [
+            {
+                'InterfaceType': 'LXI',
+                'IPType': 'IPv4',
+                'xsi:type': 'NetworkInformation',
+                'InterfaceName': 'eth0',
+                'InstrumentAddressStrings': ['TCPIP::hostname::5555::SOCKET'],
+                'Hostname': 'hostname',
+                'IPAddress': '169.254.100.2',
+                'SubnetMask': '255.255.255.0',
+                'MACAddress': '00:00:00:00:11:ab',
+                'Gateway': '169.254.100.1',
+                'DHCPEnabled': 'false',
+                'AutoIPEnabled': 'true'
+            },
+            {
+                'InterfaceType': 'MyInterface',
+                'InterfaceName': 'MyName',
+                'InstrumentAddressStrings': ['hostname:1234']
+            }
+        ],
+        'Domain': '1',
+        'LXIVersion': '1.5'}
+
+
+def test_parse_lxi_xml3():
+    string = """<?xml version="1.0" encoding="UTF-8"?>
+<LXIDevice xmlns="http://www.lxistandard.org/InstrumentIdentification/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.lxistandard.org/InstrumentIdentification/1.0 http://10.12.102.2/Lxi/Identification/LxiIdentification.xsd">
+  <Manufacturer>Manufacturer</Manufacturer>
+  <Model>Model</Model>
+  <SerialNumber>SerialNumber</SerialNumber>
+  <FirmwareRevision>0.0.1</FirmwareRevision>
+  <ManufacturerDescription>Manufacturer Description</ManufacturerDescription>
+  <HomepageURL>http://www.home.page/</HomepageURL>
+  <DriverURL>http://www.home.page/find/drivers</DriverURL>
+  <UserDescription>User Description</UserDescription>
+  <IdentificationURL>http://ip.address/Lxi/Identification</IdentificationURL>
+  <Interface xsi:type="NetworkInformation" InterfaceType="LXI" IPType="IPv4">
+    <InstrumentAddressString>TCPIP::ip.address::hislip0::INSTR</InstrumentAddressString>
+    <InstrumentAddressString>TCPIP::ip.address::inst0::INSTR</InstrumentAddressString>
+    <InstrumentAddressString>TCPIP::ip.address::5025::SOCKET</InstrumentAddressString>
+    <Hostname>ip.address</Hostname>
+    <IPAddress>10.12.102.2</IPAddress>
+    <SubnetMask>255.255.255.128</SubnetMask>
+    <MACAddress>00-01-02-03-04-05</MACAddress>
+    <Gateway>10.12.102.1</Gateway>
+    <DHCPEnabled>true</DHCPEnabled>
+    <AutoIPEnabled>true</AutoIPEnabled>
+  </Interface>
+  <Interface xsi:type="NetworkInformation" InterfaceType="LXI" IPType="IPv6">
+    <InstrumentAddressString>TCPIP::ip.address::hislip0::INSTR</InstrumentAddressString>
+    <InstrumentAddressString>TCPIP::ip.address::5025::SOCKET</InstrumentAddressString>
+    <Hostname>ip.address</Hostname>
+    <IPAddress>ab01::1234:2cd:ef03:0123a</IPAddress>
+    <SubnetMask />
+    <MACAddress>00-01-02-03-04-05</MACAddress>
+    <Gateway />
+    <DHCPEnabled>true</DHCPEnabled>
+    <AutoIPEnabled>true</AutoIPEnabled>
+  </Interface>
+  <IVISoftwareModuleName>Xx1234x</IVISoftwareModuleName>
+  <LXIVersion>1.4 LXI Core 2011</LXIVersion>
+  <LXIExtendedFunctions>
+    <Function FunctionName="LXI HiSLIP" Version="1.0">
+      <Port>4880</Port>
+    </Function>
+    <Function FunctionName="LXI IPv6" Version="1.0" />
+  </LXIExtendedFunctions>
+</LXIDevice>
+"""
+    info = _parse_lxi_xml(string)
+    assert info == {
+        'Manufacturer': 'Manufacturer',
+        'Model': 'Model',
+        'SerialNumber': 'SerialNumber',
+        'FirmwareRevision': '0.0.1',
+        'ManufacturerDescription': 'Manufacturer Description',
+        'HomepageURL': 'http://www.home.page/',
+        'DriverURL': 'http://www.home.page/find/drivers',
+        'UserDescription': 'User Description',
+        'IdentificationURL': 'http://ip.address/Lxi/Identification',
+        'Interfaces': [
+            {
+                'InterfaceType': 'LXI',
+                'IPType': 'IPv4',
+                'xsi:type': 'NetworkInformation',
+                'InstrumentAddressStrings': [
+                    'TCPIP::ip.address::hislip0::INSTR',
+                    'TCPIP::ip.address::inst0::INSTR',
+                    'TCPIP::ip.address::5025::SOCKET'
+                ],
+                'Hostname': 'ip.address',
+                'IPAddress': '10.12.102.2',
+                'SubnetMask': '255.255.255.128',
+                'MACAddress': '00-01-02-03-04-05',
+                'Gateway': '10.12.102.1',
+                'DHCPEnabled': 'true',
+                'AutoIPEnabled': 'true'
+            },
+            {
+                'InterfaceType': 'LXI',
+                'IPType': 'IPv6',
+                'xsi:type': 'NetworkInformation',
+                'InstrumentAddressStrings': [
+                    'TCPIP::ip.address::hislip0::INSTR',
+                    'TCPIP::ip.address::5025::SOCKET',
+                ],
+                'Hostname': 'ip.address',
+                'IPAddress': 'ab01::1234:2cd:ef03:0123a',
+                'SubnetMask': None,
+                'MACAddress': '00-01-02-03-04-05',
+                'Gateway': None,
+                'DHCPEnabled': 'true',
+                'AutoIPEnabled': 'true'
+            }
+        ],
+        'IVISoftwareModuleName': 'Xx1234x',
+        'LXIVersion': '1.4 LXI Core 2011',
+        'LXIExtendedFunctions': [
+            {'FunctionName': 'LXI HiSLIP', 'Version': '1.0', 'Port': '4880'},
+            {'FunctionName': 'LXI IPv6', 'Version': '1.0'}
+        ]
+    }
+
+
+def test_parse_lxi_xml4():
+    string = """<?xml version="1.0" encoding="UTF-8"?><Fruit><Apple/></Fruit>"""
+    assert _parse_lxi_xml(string) == {}

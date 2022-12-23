@@ -3,12 +3,19 @@ Common functions.
 """
 import datetime
 import logging
+import re
 import socket
 import struct
 import subprocess
 import sys
 from xml.dom import minidom
 from xml.etree import cElementTree
+try:
+    from urllib.request import HTTPError
+    from urllib.request import urlopen
+except ImportError:  # then Python 2
+    from urllib2 import HTTPError
+    from urllib2 import urlopen
 
 import numpy as np
 
@@ -450,3 +457,118 @@ def ipv4_addresses():
         addresses = set(ip[-1][0] for ip in interfaces)
     addresses.discard('127.0.0.1')
     return addresses
+
+
+def parse_lxi_webserver(host, port=80, timeout=1):
+    """Get the information about an LXI device from the device's webserver.
+
+    Parameters
+    ----------
+    host : :class:`str`
+        The IP address or hostname of the LXI device.
+    port : :class:`int`, optional
+        The port number of the device's webservice.
+    timeout : :class:`float`, optional
+        The maximum number of seconds to wait for a reply.
+
+    Returns
+    -------
+    :class:`dict`
+        The information about the LXI device.
+    """
+    http = 'https' if port == 443 else 'http'
+    port_str = '' if port == 80 else ':%d' % port
+    base_url = '{}://{}{}'.format(http, host, port_str)
+    try:
+        # Check for the XML document
+        # LXI Device Specification 2022 (Revision 1.6), Section 10.2
+        response = urlopen(base_url + '/lxi/identification/', timeout=timeout)
+    except HTTPError as e:
+        if e.getcode() == 404:
+            # The URL for the XML document does not exist,
+            # parse the webserver's homepage
+            response = urlopen(base_url, timeout=timeout)
+            return _parse_lxi_html(response.read().decode('utf-8'))
+        raise
+    else:
+        content = response.read().decode('utf-8')
+        try:
+            return _parse_lxi_xml(content)
+        except cElementTree.ParseError:
+            # Some LXI webservers redirect all invalid URLs to the
+            # webserver's homepage instead of raising an HTTPError
+            return _parse_lxi_html(content)
+
+
+def _parse_lxi_html(string):
+    """Parse an HTML document from an LXI-device webpage.
+
+    Parameters
+    ----------
+    string : :class:`str`
+        The string representation of an HTML document.
+
+    Returns
+    -------
+    :class:`dict`
+        Currently, only the `<title>` tag is parsed.
+    """
+    info = {}
+    title = re.search(r'<title>(.+)</title>', string, flags=re.S)
+    if title:
+        info['title'] = title.group(1).strip()
+    return info
+
+
+def _parse_lxi_xml(string):
+    """Parse an XML document from an LXI-device webpage.
+
+    Parameters
+    ----------
+    string : :class:`str`
+        The string representation of an XML document.
+
+    Returns
+    -------
+    :class:`dict`
+        The information about the LXI device.
+    """
+    root = cElementTree.fromstring(string)
+    if not root.tag.endswith('LXIDevice'):
+        return {}
+
+    xsi_type = '{http://www.w3.org/2001/XMLSchema-instance}type'
+    ns_offset = root.tag.find('}') + 1  # namespace offset
+    info = {}
+    interfaces = []
+    for element in root:
+        tag = element.tag[ns_offset:]
+        if tag == 'Interface':
+            interface = dict(element.attrib)
+            if xsi_type in interface:
+                # cleans up one of the keys with a namespace in it
+                interface['xsi:type'] = interface.pop(xsi_type)
+            interface['InstrumentAddressStrings'] = []
+            for sub_element in element:
+                sub_tag = sub_element.tag[ns_offset:]
+                if sub_tag == 'InstrumentAddressString':
+                    interface['InstrumentAddressStrings'].append(sub_element.text)
+                else:
+                    interface[sub_tag] = sub_element.text
+            interfaces.append(interface)
+        elif tag == 'LXIExtendedFunctions':
+            functions = []
+            for sub_element in element:
+                function = {
+                    'FunctionName': sub_element.get('FunctionName'),
+                    'Version': sub_element.get('Version')
+                }
+                for sub_sub_element in sub_element:
+                    sub_sub_tag = sub_sub_element.tag[ns_offset:]
+                    function[sub_sub_tag] = sub_sub_element.text
+                functions.append(function)
+            info[tag] = functions
+        else:
+            info[tag] = element.text
+    info['Interfaces'] = interfaces
+    return info

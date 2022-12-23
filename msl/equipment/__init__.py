@@ -83,12 +83,14 @@ def list_resources(hosts=None, timeout=2):
                     devices[ipv4]['addresses'].add(address)
 
     for port, desc, _ in sorted(comports()):
-        addresses = {port}
+        addresses = set()
         if port.startswith('COM'):
+            addresses.add(port)
             match = re.search(r'(\d+)', port)
             if match:
                 addresses.add('ASRL{}::INSTR'.format(match.group(1)))
         elif port.startswith('/dev/'):
+            addresses.add('ASRL{}'.format(port))
             addresses.add('ASRL{}::INSTR'.format(port))
 
         devices[port] = {}

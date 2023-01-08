@@ -8,7 +8,6 @@ MSL Resources are specific classes that are used to communicate with the equipme
 * `Aim and Thurlby Thandar Instruments`_
 
   * :class:`~msl.equipment.resources.aim_tti.mx_series.MXSeries` -- MX100QP, MX100TP, MX180TP
-    *(could be re-implemented to support other Series of DC Power Supplies)*
 
 * Avantes_
 

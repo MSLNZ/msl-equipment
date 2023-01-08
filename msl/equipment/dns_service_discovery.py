@@ -279,7 +279,11 @@ def find_lxi(hosts=None, timeout=1):
                     description.append(info[item])
             if md:
                 description.append(md)
-            device['description'] = ', '.join(description)
+
+            if description:
+                device['description'] = ', '.join(description)
+            else:
+                device['description'] = 'Unknown LXI device'
 
             device['addresses'] = sorted(addresses)
 

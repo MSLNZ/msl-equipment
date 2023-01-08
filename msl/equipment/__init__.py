@@ -71,14 +71,16 @@ def list_resources(hosts=None, timeout=2):
     devices = {}
     for thread in threads:
         for ipv4, device in thread.devices.items():
+            description = device.get('description', 'Unknown device')
             if ipv4 not in devices:
                 devices[ipv4] = {}
                 devices[ipv4]['addresses'] = set(device['addresses'])
-                devices[ipv4]['description'] = device['description']
-                devices[ipv4]['webserver'] = device['webserver']
+                devices[ipv4]['description'] = description
+                if not description.startswith('Prologix'):
+                    # Prologix ENET-GPIB does not have a webserver
+                    devices[ipv4]['webserver'] = device['webserver']
             else:
-                if not devices[ipv4]['description']:
-                    devices[ipv4]['description'] = devices['description']
+                devices[ipv4]['description'] = description
                 for address in device['addresses']:
                     devices[ipv4]['addresses'].add(address)
 

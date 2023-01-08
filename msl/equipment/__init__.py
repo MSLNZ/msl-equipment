@@ -100,18 +100,15 @@ def list_resources(hosts=None, timeout=2):
     return devices.values()
 
 
-def print_resources(hosts=None, timeout=2):
+def print_resources(**kwargs):
     """Print the information about the devices that were found.
 
     Parameters
     ----------
-    hosts : :class:`list` of :class:`str`, optional
-        The IP address(es) on the computer to use to find network devices.
-        If not specified, then find devices on all network interfaces.
-    timeout : :class:`float`, optional
-        The maximum number of seconds to wait for a reply from a network device.
+    kwargs
+        All keyword arguments are passed to :func:`.list_resources`.
     """
-    devices = list_resources(hosts=hosts, timeout=timeout)
+    devices = list_resources(**kwargs)
     for item in sorted(devices, key=lambda v: v['description']):
         print(item['description'])
         if 'webserver' in item:

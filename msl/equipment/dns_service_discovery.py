@@ -14,6 +14,7 @@ References
 import socket
 import struct
 import threading
+import time
 
 import select
 
@@ -218,10 +219,14 @@ def find_lxi(hosts=None, timeout=1):
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 255)
         sock.bind((host, 0))
         sock.sendto(message, (MDNS_ADDR, MDNS_PORT))
+        select_timeout = min(timeout*0.1, 0.1)
+        t0 = time.time()
         while True:
-            r, w, x = select.select([sock], [], [], timeout)
-            if not r:
+            r, w, x = select.select([sock], [], [], select_timeout)
+            if time.time() - t0 > timeout:
                 break
+            if not r:
+                continue
 
             reply, (ip_address, _) = sock.recvfrom(8192)
             try:

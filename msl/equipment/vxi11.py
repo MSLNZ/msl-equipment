@@ -840,6 +840,7 @@ def find_vxi11(hosts=None, timeout=1):
     """
     import select
     import threading
+    import time
 
     if not hosts:
         from .utils import ipv4_addresses
@@ -852,10 +853,14 @@ def find_vxi11(hosts=None, timeout=1):
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         sock.bind((host, 0))
         sock.sendto(broadcast_msg, ('255.255.255.255', PMAP_PORT))
+        select_timeout = min(timeout*0.1, 0.1)
+        t0 = time.time()
         while True:
-            r, w, x = select.select([sock], [], [], timeout)
-            if not r:
+            r, w, x = select.select([sock], [], [], select_timeout)
+            if time.time() - t0 > timeout:
                 break
+            if not r:
+                continue
 
             reply, (ip_address, port) = sock.recvfrom(1024)
             try:

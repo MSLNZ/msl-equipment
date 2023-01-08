@@ -4,8 +4,9 @@
 API Documentation
 =================
 
-The main entryway in to **MSL-Equipment** is achieved by loading a :ref:`configuration-file` and that is achieved by
-creating a :class:`~msl.equipment.config.Config` object. This example loads the `example.xml`_ file.
+The main entryway in to **MSL-Equipment** is achieved by loading a
+:ref:`configuration-file` and that is achieved by creating a
+:class:`~msl.equipment.config.Config` object.
 
 .. code-block:: pycon
 
@@ -134,5 +135,4 @@ Package Structure
 
 .. _PyVISA: https://pyvisa.readthedocs.io/en/stable/index.html
 .. _NI-DAQ: https://nidaqmx-python.readthedocs.io/en/stable/index.html
-.. _example.xml: https://github.com/MSLNZ/msl-equipment/blob/main/msl/examples/equipment/example.xml
 .. _Prologix: https://prologix.biz/

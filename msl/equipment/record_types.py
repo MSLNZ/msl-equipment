@@ -589,15 +589,17 @@ class ConnectionRecord(Record):
         self.backend = convert_to_enum(backend, Backend)
         """:class:`.Backend`: The backend to use to communicate with the equipment."""
 
-        if interface:
-            self.interface = convert_to_enum(interface, MSLInterface, to_upper=True)
-        elif not address or self.backend != Backend.MSL:
-            self.interface = MSLInterface.NONE
-        else:
-            self.interface = find_interface(address)
+        self.interface = MSLInterface.NONE
         """:class:`.MSLInterface`: The interface that is used for the communication system that
         transfers data between a computer and the equipment (only used if the :attr:`.backend`
         is equal to :attr:`~.Backend.MSL`)."""
+
+        if interface:
+            self.interface = convert_to_enum(interface, MSLInterface, to_upper=True)
+        elif not address or self.backend != Backend.MSL:
+            pass
+        else:
+            self.interface = find_interface(address)
 
         self.manufacturer = '{}'.format(manufacturer)
         """:class:`str`: The name of the manufacturer of the equipment."""

@@ -4,8 +4,8 @@ Two-axis stage controller (SHOT-702) from OptoSigma.
 import re
 import time
 
-from msl.equipment.exceptions import OptoSigmaError
 from msl.equipment.connection_serial import ConnectionSerial
+from msl.equipment.exceptions import OptoSigmaError
 from msl.equipment.resources import register
 
 
@@ -132,7 +132,8 @@ class SHOT702(ConnectionSerial):
         ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
-        if self.query('H:{}'.format(stage)) != 'OK':
+        reply = self.query('H:{}'.format(stage))
+        if not reply.startswith('OK'):
             self.raise_exception('cannot home stage {}'.format(stage))
 
     def is_moving(self):
@@ -171,8 +172,8 @@ class SHOT702(ConnectionSerial):
         ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
-        ret = self.query('J:{}{}'.format(stage, direction))
-        if ret != 'OK' or self.query('G:') != 'OK':
+        reply = self.query('J:{}{}'.format(stage, direction))
+        if not reply.startswith('OK') or not self.query('G:').startswith('OK'):
             self.raise_exception('cannot move stage {} in direction={}'.format(stage, direction))
 
     def move_absolute(self, stage, *position):
@@ -259,7 +260,8 @@ class SHOT702(ConnectionSerial):
         ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
-        if self.query('C:{}{}'.format(stage, mode)) != 'OK':
+        reply = self.query('C:{}{}'.format(stage, mode))
+        if not reply.startswith('OK'):
             self.raise_exception('cannot set stage {} to mode={}'.format(stage, mode))
 
     def set_origin(self, stage):
@@ -279,7 +281,8 @@ class SHOT702(ConnectionSerial):
         ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
-        if self.query('R:{}'.format(stage)) != 'OK':
+        reply = self.query('R:{}'.format(stage))
+        if not reply.startswith('OK'):
             self.raise_exception('cannot set the origin for stage {}'.format(stage))
 
     def set_output_status(self, status):
@@ -295,7 +298,8 @@ class SHOT702(ConnectionSerial):
         ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
-        if self.query('O:{}'.format(status)) != 'OK':
+        reply = self.query('O:{}'.format(status))
+        if not reply.startswith('OK'):
             self.raise_exception('cannot set the output status to {}'.format(status))
 
     def set_speed(self, stage, minimum, maximum, acceleration):
@@ -397,7 +401,8 @@ class SHOT702(ConnectionSerial):
         ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
-        if self.query('S:{}{}'.format(stage, num_steps)) != 'OK':
+        reply = self.query('S:{}{}'.format(stage, num_steps))
+        if not reply.startswith('OK'):
             self.raise_exception('cannot set stage {} to #steps={}'.format(stage, num_steps))
 
     def status(self):
@@ -443,7 +448,8 @@ class SHOT702(ConnectionSerial):
         ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
-        if self.query('L:E') != 'OK':
+        reply = self.query('L:E')
+        if not reply.startswith('OK'):
             self.raise_exception('cannot stop the stages')
 
     def stop_slowly(self, stage):
@@ -463,7 +469,8 @@ class SHOT702(ConnectionSerial):
         ~msl.equipment.exceptions.OptoSigmaError
             If there was an error processing the command.
         """
-        if self.query('L:{}'.format(stage)) != 'OK':
+        reply = self.query('L:{}'.format(stage))
+        if not reply.startswith('OK'):
             self.raise_exception('cannot slowly stop stage {}'.format(stage))
 
     def wait(self, callback=None, sleep=0.05):
@@ -496,8 +503,8 @@ class SHOT702(ConnectionSerial):
             else:
                 cmd += '+P{}'.format(val)
 
-        ret = self.query(cmd)
-        if ret != 'OK' or self.query('G:') != 'OK':
+        reply = self.query(cmd)
+        if not reply.startswith('OK') or not self.query('G:').startswith('OK'):
             preposition = 'by' if letter == 'M' else 'to'
             if stage == 'W':
                 self.raise_exception('cannot move stages {} {}'.format(preposition, n_pulses))
@@ -512,6 +519,6 @@ class SHOT702(ConnectionSerial):
         else:
             cmd += 'S{}F{}R{}'.format(minimum, maximum, acceleration)
 
-        if self.query(cmd) != 'OK':
+        if not self.query(cmd).startswith('OK'):
             self.raise_exception('cannot set stage {} to (min, max, acc) = '
                                  '({}, {}, {})'.format(stage, minimum, maximum, acceleration))

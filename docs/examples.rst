@@ -3,9 +3,7 @@
 ========
 Examples
 ========
-Some example scripts that illustrate how to use **MSL-Equipment**
-can be found in the GitHub repository_.
-
-See also the documentation for :ref:`configuration-file`\s and :ref:`database-formats`.
+Some example scripts that illustrate how to use MSL-Equipment to communicate
+with equipment can be found in the repository_.
 
 .. _repository: https://github.com/MSLNZ/msl-equipment/tree/main/msl/examples/equipment

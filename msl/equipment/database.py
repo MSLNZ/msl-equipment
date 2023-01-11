@@ -276,7 +276,7 @@ class Database(object):
           a list of all ConnectionRecord's that have Agilent as the manufacturer
           and a model number beginning with '34'
 
-        * `connections(interface=MSLInterface.SERIAL)` :math:`\\rightarrow`
+        * `connections(interface=Interface.SERIAL)` :math:`\\rightarrow`
           a list of all ConnectionRecord's that use SERIAL for the connection bus
 
         * `connections(interface='SDK')` :math:`\\rightarrow`
@@ -527,7 +527,7 @@ class Database(object):
         """Check if the kwargs match a database record"""
         for key, value in kwargs.items():
             if key == 'backend' or key == 'interface':
-                enum = constants.Backend if key == 'backend' else constants.MSLInterface
+                enum = constants.Backend if key == 'backend' else constants.Interface
                 val = getattr(record, key)
                 if isinstance(value, int):
                     if convert_to_enum(value, enum) != val:

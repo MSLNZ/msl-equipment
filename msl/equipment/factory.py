@@ -4,7 +4,7 @@ Establish a connection to the equipment.
 from .utils import logger
 from .config import Config
 from .constants import Backend
-from .constants import MSLInterface
+from .constants import Interface
 from .exceptions import ResourceClassNotFound
 from .resources import find_resource_class
 from .resources.dmm import dmm_factory
@@ -55,21 +55,21 @@ def connect(record, demo=None):
 
         cls = None
         if conn.backend == Backend.MSL:
-            if conn.interface == MSLInterface.NONE:
+            if conn.interface == Interface.NONE:
                 _raise('interface')
             cls = find_resource_class(conn)
             if cls is None:
-                if conn.interface == MSLInterface.SDK:
+                if conn.interface == Interface.SDK:
                     raise ResourceClassNotFound(record)
-                elif conn.interface == MSLInterface.SERIAL:
+                elif conn.interface == Interface.SERIAL:
                     cls = ConnectionSerial
-                elif conn.interface == MSLInterface.SOCKET:
+                elif conn.interface == Interface.SOCKET:
                     cls = ConnectionSocket
-                elif conn.interface == MSLInterface.PROLOGIX:
+                elif conn.interface == Interface.PROLOGIX:
                     cls = ConnectionPrologix
-                elif conn.interface == MSLInterface.TCPIP_VXI11:
+                elif conn.interface == Interface.TCPIP_VXI11:
                     cls = ConnectionTCPIPVXI11
-                elif conn.interface == MSLInterface.TCPIP_HISLIP:
+                elif conn.interface == Interface.TCPIP_HISLIP:
                     cls = ConnectionTCPIPHiSLIP
                 else:
                     raise NotImplementedError('The {!r} interface has not be written yet'.format(conn.interface.name))
@@ -116,26 +116,26 @@ def find_interface(address):
 
     Returns
     -------
-    :class:`.constants.MSLInterface`
+    :class:`.constants.Interface`
         The interface to use for `address`.
     """
     if ConnectionSDK.parse_address(address):
-        return MSLInterface.SDK
+        return Interface.SDK
 
     # this check must come before the SERIAL and SOCKET checks
     if ConnectionPrologix.parse_address(address):
-        return MSLInterface.PROLOGIX
+        return Interface.PROLOGIX
 
     if ConnectionSerial.parse_address(address):
-        return MSLInterface.SERIAL
+        return Interface.SERIAL
 
     if ConnectionSocket.parse_address(address):
-        return MSLInterface.SOCKET
+        return Interface.SOCKET
 
     if ConnectionTCPIPVXI11.parse_address(address):
-        return MSLInterface.TCPIP_VXI11
+        return Interface.TCPIP_VXI11
 
     if ConnectionTCPIPHiSLIP.parse_address(address):
-        return MSLInterface.TCPIP_HISLIP
+        return Interface.TCPIP_HISLIP
 
-    raise ValueError('Cannot determine the MSLInterface from address {!r}'.format(address))
+    raise ValueError('Cannot determine the Interface from address {!r}'.format(address))

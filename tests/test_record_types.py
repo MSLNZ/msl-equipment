@@ -19,7 +19,7 @@ from msl.equipment import (
     Backend,
 )
 from msl.equipment.record_types import RecordDict
-from msl.equipment.constants import MSLInterface, DataBits, Parity, StopBits, LF, CR
+from msl.equipment.constants import Interface, DataBits, Parity, StopBits, LF, CR
 from msl.equipment.utils import convert_to_xml_string
 
 PY2 = sys.version_info.major == 2
@@ -195,7 +195,7 @@ def test_equipment_record():
     assert record.category == 'DMM'
     assert record.connection.address == 'GPIB::15'
     assert record.connection.backend == Backend.PyVISA
-    assert record.connection.interface == MSLInterface.NONE  # using PyVISA as the backend
+    assert record.connection.interface == Interface.NONE  # using PyVISA as the backend
     assert record.connection.manufacturer == u'uñicödé'
     assert record.connection.model == 'XYZ'
     assert record.connection.properties['none'] is None
@@ -245,7 +245,7 @@ def test_equipment_record():
     assert a['category'] == 'DMM'
     assert a['connection']['address'] == 'GPIB::15'
     assert a['connection']['backend'] == Backend.PyVISA
-    assert a['connection']['interface'] == MSLInterface.NONE  # using PyVISA as the backend
+    assert a['connection']['interface'] == Interface.NONE  # using PyVISA as the backend
     assert a['connection']['manufacturer'] == u'uñicödé'
     assert a['connection']['model'] == 'XYZ'
     assert a['connection']['properties']['none'] is None
@@ -406,7 +406,7 @@ def test_equipment_record():
         assert rec.category == 'DMM'
         assert rec.connection.address == 'GPIB::15'
         assert rec.connection.backend == Backend.PyVISA
-        assert rec.connection.interface == MSLInterface.NONE  # using PyVISA as the backend
+        assert rec.connection.interface == Interface.NONE  # using PyVISA as the backend
         assert rec.connection.manufacturer == u'uñicödé'
         assert rec.connection.model == 'XYZ'
         assert rec.connection.properties['none'] is None
@@ -476,7 +476,7 @@ def test_equipment_record():
     assert a[26] == '    ConnectionRecord'
     assert a[27] == '      address: {}'.format("u'GPIB::15'" if PY2 else "'GPIB::15'")
     assert a[28] == '      backend: <Backend.PyVISA: 2>'
-    assert a[29] == '      interface: <MSLInterface.NONE: 0>'
+    assert a[29] == '      interface: <Interface.NONE: 0>'
     assert a[30] == '      manufacturer: {}'.format("u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "'uñicödé'")
     assert a[31] == '      model: {}'.format("u'XYZ'" if PY2 else "'XYZ'")
     assert a[32] == '      properties: '
@@ -699,7 +699,7 @@ def test_connection_record():
     print(repr(record))
     assert record.address == ''
     assert record.backend == Backend.MSL
-    assert record.interface == MSLInterface.NONE
+    assert record.interface == Interface.NONE
     assert record.manufacturer == ''
     assert record.model == ''
     assert record.properties == {}
@@ -709,7 +709,7 @@ def test_connection_record():
     assert len(a) == 7
     assert a['address'] == ''
     assert a['backend'] == Backend.MSL
-    assert a['interface'] == MSLInterface.NONE
+    assert a['interface'] == Interface.NONE
     assert a['manufacturer'] == ''
     assert a['model'] == ''
     assert a['properties'] == {}
@@ -743,7 +743,7 @@ def test_connection_record():
     assert a[0] == 'ConnectionRecord'
     assert a[1] == '  address: {!r}'.format(u'' if PY2 else '')
     assert a[2] == '  backend: <Backend.MSL: 1>'
-    assert a[3] == '  interface: <MSLInterface.NONE: 0>'
+    assert a[3] == '  interface: <Interface.NONE: 0>'
     assert a[4] == '  manufacturer: {!r}'.format(u'' if PY2 else '')
     assert a[5] == '  model: {!r}'.format(u'' if PY2 else '')
     assert a[6] == '  properties: None'
@@ -773,7 +773,7 @@ def test_connection_record():
     print(unicode(repr(record)))
     assert record.address == 'GPIB::15'
     assert record.backend == Backend.PyVISA
-    assert record.interface == MSLInterface.NONE  # using PyVISA as the backend
+    assert record.interface == Interface.NONE  # using PyVISA as the backend
     assert record.manufacturer == u'uñicödé'
     assert record.model == 'XYZ'
     assert record.properties['none'] is None
@@ -792,7 +792,7 @@ def test_connection_record():
     assert len(a) == 7
     assert a['address'] == 'GPIB::15'
     assert a['backend'] == Backend.PyVISA
-    assert a['interface'] == MSLInterface.NONE  # using PyVISA as the backend
+    assert a['interface'] == Interface.NONE  # using PyVISA as the backend
     assert a['manufacturer'] == u'uñicödé'
     assert a['model'] == 'XYZ'
     assert a['properties']['none'] is None
@@ -854,7 +854,7 @@ def test_connection_record():
         print(unicode(repr(rec)))
         assert rec.address == 'GPIB::15'
         assert rec.backend == Backend.PyVISA
-        assert rec.interface == MSLInterface.NONE  # using PyVISA as the backend
+        assert rec.interface == Interface.NONE  # using PyVISA as the backend
         assert rec.manufacturer == u'uñicödé'
         assert rec.model == 'XYZ'
         assert rec.properties['none'] is None
@@ -881,7 +881,7 @@ def test_connection_record():
     assert a[0] == 'ConnectionRecord'
     assert a[1] == '  address: {}'.format("u'GPIB::15'" if PY2 else "'GPIB::15'")
     assert a[2] == '  backend: <Backend.PyVISA: 2>'
-    assert a[3] == '  interface: <MSLInterface.NONE: 0>'
+    assert a[3] == '  interface: <Interface.NONE: 0>'
     assert a[4] == '  manufacturer: {}'.format("u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "'uñicödé'")
     assert a[5] == '  model: {}'.format("u'XYZ'" if PY2 else "'XYZ'")
     assert a[6] == '  properties: '
@@ -904,93 +904,93 @@ def test_connection_record_interface():
 
     # an invalid `address` does not raise an exception because the backend is not MSL
     c = ConnectionRecord(address='XXXXXX', backend='UNKNOWN')
-    assert c.interface == MSLInterface.NONE
+    assert c.interface == Interface.NONE
 
-    # invalid `address` using the MSL Backend -> cannot determine the MSLInterface
-    with pytest.raises(ValueError, match='Cannot determine the MSLInterface'):
+    # invalid `address` using the MSL Backend -> cannot determine the Interface
+    with pytest.raises(ValueError, match='Cannot determine the Interface'):
         ConnectionRecord(address='XXXXXX')
 
     # if the user specifies the interface then this interface is used regardless of the value of address
-    for interface in [MSLInterface.SDK, 'SDK', u'SDK', 'sDk', 1]:
+    for interface in [Interface.SDK, 'SDK', u'SDK', 'sDk', 1]:
         c = ConnectionRecord(address='XXXXXX', interface=interface)
-        assert c.interface == MSLInterface.SDK
-    for interface in [MSLInterface.SOCKET, 'SOCKET', u'SOCKET', 'soCKet', 3]:
+        assert c.interface == Interface.SDK
+    for interface in [Interface.SOCKET, 'SOCKET', u'SOCKET', 'soCKet', 3]:
         c = ConnectionRecord(address='XXXXXX', interface=interface)
-        assert c.interface == MSLInterface.SOCKET
+        assert c.interface == Interface.SOCKET
 
-    # setting the interface to something that cannot be converted to an MSLInterface
+    # setting the interface to something that cannot be converted to an Interface
     for interface in [-1, -9.9, 'XXXXX']:
         with pytest.raises(ValueError, match='Cannot create'):
             ConnectionRecord(address='COM1', interface=interface)
 
-    # MSLInterface.SDK
+    # Interface.SDK
     record = ConnectionRecord(address='SDK::file.dll')
-    assert record.interface == MSLInterface.SDK
+    assert record.interface == Interface.SDK
 
     record = ConnectionRecord(address='SDK::/path/to/file.so')
-    assert record.interface == MSLInterface.SDK
+    assert record.interface == Interface.SDK
 
     record = ConnectionRecord(address='SDK::C:\\path\\to\\file.dll')
-    assert record.interface == MSLInterface.SDK
+    assert record.interface == Interface.SDK
 
     record = ConnectionRecord(address=r'SDK::C:\path\to\file.dll')
-    assert record.interface == MSLInterface.SDK
+    assert record.interface == Interface.SDK
 
-    # MSLInterface.SERIAL
+    # Interface.SERIAL
     record = ConnectionRecord(address='COM4')
-    assert record.interface == MSLInterface.SERIAL
+    assert record.interface == Interface.SERIAL
 
     record = ConnectionRecord(address='ASRLCOM4')
-    assert record.interface == MSLInterface.SERIAL   # ASRLCOM is used by PyVISA
+    assert record.interface == Interface.SERIAL   # ASRLCOM is used by PyVISA
 
     record = ConnectionRecord(address='ASRL4')
-    assert record.interface == MSLInterface.SERIAL  # ASRL is an alias
+    assert record.interface == Interface.SERIAL  # ASRL is an alias
 
     record = ConnectionRecord(address='ASRL4::INSTR')
-    assert record.interface == MSLInterface.SERIAL
+    assert record.interface == Interface.SERIAL
 
     record = ConnectionRecord(address='ASRL/dev/ttyS1')
-    assert record.interface == MSLInterface.SERIAL
+    assert record.interface == Interface.SERIAL
 
     record = ConnectionRecord(address='ASRL/dev/ttyUSB0::INSTR')
-    assert record.interface == MSLInterface.SERIAL
+    assert record.interface == Interface.SERIAL
 
-    # MSLInterface.SOCKET
+    # Interface.SOCKET
     record = ConnectionRecord(address='SOCKET::127.0.0.1::1234')
-    assert record.interface == MSLInterface.SOCKET
+    assert record.interface == Interface.SOCKET
 
     record = ConnectionRecord(address='TCPIP::127.0.0.1::1234::SOCKET')
-    assert record.interface == MSLInterface.SOCKET  # PyVISA naming scheme
+    assert record.interface == Interface.SOCKET  # PyVISA naming scheme
 
     record = ConnectionRecord(address='TCPIP0::127.0.0.1::1234::SOCKET')
-    assert record.interface == MSLInterface.SOCKET  # PyVISA naming scheme
+    assert record.interface == Interface.SOCKET  # PyVISA naming scheme
 
     record = ConnectionRecord(address='TCP::127.0.0.1::1234')
-    assert record.interface == MSLInterface.SOCKET  # TCP is an alias for SOCKET
+    assert record.interface == Interface.SOCKET  # TCP is an alias for SOCKET
 
     record = ConnectionRecord(address='UDP::127.0.0.1::1234', properties=dict(x=1))
-    assert record.interface == MSLInterface.SOCKET  # UDP is an alias for SOCKET
+    assert record.interface == Interface.SOCKET  # UDP is an alias for SOCKET
     assert record.properties['socket_type'] == 'SOCK_DGRAM'  # gets set automatically
     assert record.properties['x'] == 1  # does not get overwritten
 
-    # MSLInterface.PROLOGIX
+    # Interface.PROLOGIX
     record = ConnectionRecord(address='Prologix::192.168.1.110::1234::6')
-    assert record.interface == MSLInterface.PROLOGIX
+    assert record.interface == Interface.PROLOGIX
 
     record = ConnectionRecord(address='Prologix::domain.name::1234::6')
-    assert record.interface == MSLInterface.PROLOGIX
+    assert record.interface == Interface.PROLOGIX
 
     record = ConnectionRecord(address='PROLOGIX::/dev/ttyS0::16::100')
-    assert record.interface == MSLInterface.PROLOGIX
+    assert record.interface == Interface.PROLOGIX
 
     record = ConnectionRecord(address='Prologix::COM4::1')
-    assert record.interface == MSLInterface.PROLOGIX
+    assert record.interface == Interface.PROLOGIX
 
     record = ConnectionRecord(address='Prologix::ASRL4::1')
-    assert record.interface == MSLInterface.PROLOGIX
+    assert record.interface == Interface.PROLOGIX
 
     record = ConnectionRecord(address='Prologix::ASRLCOM4::1')
-    assert record.interface == MSLInterface.PROLOGIX
+    assert record.interface == Interface.PROLOGIX
 
 
 def test_connection_record_backend():
@@ -1112,7 +1112,7 @@ def test_dbase():
     assert c.serial == 'A00024'
     assert c.address == 'ASRL1::INSTR'
     assert c.backend == Backend.MSL
-    assert c.interface == MSLInterface.SERIAL
+    assert c.interface == Interface.SERIAL
     assert c.properties['baud_rate'] == 9600
     assert c.properties['read_termination'] == CR + LF
     assert c.properties['write_termination'] == LF
@@ -1132,7 +1132,7 @@ def test_dbase():
                         if k == 'backend':
                             assert isinstance(v, Backend)
                         elif k == 'interface':
-                            assert isinstance(v, MSLInterface)
+                            assert isinstance(v, Interface)
                         elif k == 'properties':
                             assert isinstance(v, dict)
                         else:

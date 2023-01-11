@@ -57,12 +57,12 @@ class Backend(enum.IntEnum):
     NIDAQ = 3
 
 
-class MSLInterface(enum.IntEnum):
+class Interface(enum.IntEnum):
     """
     The interface to use for the communication system that transfers data between
     a computer and the equipment. Only used if
     :data:`Backend.MSL <msl.equipment.constants.Backend.MSL>` is chosen
-    as the communication system.
+    as the backend.
     """
     NONE = 0
     SDK = 1

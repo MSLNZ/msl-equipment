@@ -23,7 +23,7 @@ from .constants import (
     StopBits,
     DataBits,
     Backend,
-    MSLInterface,
+    Interface,
     LF,
     CR,
 )
@@ -570,10 +570,10 @@ class ConnectionRecord(Record):
         backend : :class:`str`, :class:`int`, or :class:`.Backend`
             The backend to use to communicate with the equipment. The value must be able to
             be converted to a :class:`.Backend` enum.
-        interface : :class:`str`, :class:`int`, or :class:`.MSLInterface`
+        interface : :class:`str`, :class:`int`, or :class:`.Interface`
             The interface to use to communicate with the equipment. If :data:`None` then
             determines the `interface` based on the value of `address`. If specified then
-            the value must be able to be converted to a :class:`.MSLInterface` enum.
+            the value must be able to be converted to a :class:`.Interface` enum.
         manufacturer : :class:`str`
             The name of the manufacturer of the equipment.
         model : :class:`str`
@@ -589,13 +589,13 @@ class ConnectionRecord(Record):
         self.backend = convert_to_enum(backend, Backend)
         """:class:`.Backend`: The backend to use to communicate with the equipment."""
 
-        self.interface = MSLInterface.NONE
-        """:class:`.MSLInterface`: The interface that is used for the communication system that
+        self.interface = Interface.NONE
+        """:class:`.Interface`: The interface that is used for the communication system that
         transfers data between a computer and the equipment (only used if the :attr:`.backend`
         is equal to :attr:`~.Backend.MSL`)."""
 
         if interface:
-            self.interface = convert_to_enum(interface, MSLInterface, to_upper=True)
+            self.interface = convert_to_enum(interface, Interface, to_upper=True)
         elif not address or self.backend != Backend.MSL:
             pass
         else:
@@ -715,7 +715,7 @@ class ConnectionRecord(Record):
         if self.address.startswith('UDP'):
             properties['socket_type'] = 'SOCK_DGRAM'
 
-        is_serial = self.interface == MSLInterface.SERIAL
+        is_serial = self.interface == Interface.SERIAL
         if not is_serial and self.backend == Backend.PyVISA:
             for alias in ('COM', 'ASRL', 'ASRLCOM'):
                 if self.address.startswith(alias):

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<msl>
+
+    <!-- User-defined constants -->
+    <max_voltage unit="V">3.3</max_voltage>
+
+    <!-- The digital multimeter that is being used to perform the measurement -->
+    <equipment alias="dmm" model="34401A"/>
+
+    <!-- The Equipment-Register database(s) -->
+    <registers>
+        <register>
+            <path>equipment-register.csv</path>
+        </register>
+    </registers>
+
+    <!-- The Connections database(s) -->
+    <connections>
+        <connection>
+            <path>connections.csv</path>
+        </connection>
+    </connections>
+
+</msl>

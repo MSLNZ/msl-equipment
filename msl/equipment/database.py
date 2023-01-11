@@ -259,26 +259,39 @@ class Database(object):
 
         Examples
         --------
-        >>> connections()
-        a list of all ConnectionRecords
-        >>> connections(manufacturer='Keysight')
-        a list of all ConnectionRecords that have Keysight as the manufacturer
-        >>> records(manufacturer='Agilent|Keysight')
-        a list of all ConnectionRecords that are from Agilent OR Keysight
-        >>> connections(manufacturer=r'H.*P')
-        a list of all ConnectionRecords that have Hewlett Packard (or HP) as the manufacturer
-        >>> connections(manufacturer='Agilent', model='^34')
-        a list of all ConnectionRecords that have Agilent as the manufacturer AND a model number beginning with '34'
-        >>> connections(interface=MSLInterface.SERIAL)
-        a list of all ConnectionRecords that use SERIAL for the connection bus
-        >>> connections(interface='USB')
-        a list of all ConnectionRecords that use USB for the connection bus
-        >>> connections(backend=Backend.PyVISA)
-        a list of all ConnectionRecords that use PyVISA as the backend
-        >>> connections(backend='MSL')
-        a list of all ConnectionRecords that use MSL as the backend
-        >>> connections(properties={'baud_rate': 115200})
-        a list of all ConnectionRecords that specify a baud rate equal to 115200 in the Properties field
+        * `connections()` :math:`\\rightarrow`
+          a list of all ConnectionRecord's
+
+        * `connections(manufacturer='Keysight')` :math:`\\rightarrow`
+          a list of all ConnectionRecord's that have Keysight as the manufacturer
+
+        * `connections(manufacturer='Agilent|Keysight')` :math:`\\rightarrow`
+          a list of all ConnectionRecord's that are from Agilent or Keysight
+
+        * `connections(manufacturer='H.*P')` :math:`\\rightarrow`
+          a list of all ConnectionRecord's that have Hewlett Packard (or HP) as
+          the manufacturer
+
+        * `connections(manufacturer='Agilent', model='^34')` :math:`\\rightarrow`
+          a list of all ConnectionRecord's that have Agilent as the manufacturer
+          and a model number beginning with '34'
+
+        * `connections(interface=MSLInterface.SERIAL)` :math:`\\rightarrow`
+          a list of all ConnectionRecord's that use SERIAL for the connection bus
+
+        * `connections(interface='SDK')` :math:`\\rightarrow`
+          a list of all ConnectionRecord's that use the manufacturers SDK to
+          control the equipment
+
+        * `connections(backend=Backend.PyVISA)` :math:`\\rightarrow`
+          a list of all ConnectionRecord's that use PyVISA as the backend
+
+        * `connections(backend='MSL')` :math:`\\rightarrow`
+          a list of all ConnectionRecord's that use MSL as the backend
+
+        * `connections(properties={'baud_rate': 115200})` :math:`\\rightarrow`
+          a list of all ConnectionRecord's that specify a baud rate equal to
+          115200 in the Properties field
 
         Returns
         -------
@@ -314,22 +327,29 @@ class Database(object):
 
         Examples
         --------
-        >>> records()
-        a list of all EquipmentRecords
-        >>> records(manufacturer='Agilent')
-        a list of all EquipmentRecords that are from Agilent
-        >>> records(manufacturer='Agilent|Keysight')
-        a list of all EquipmentRecords that are from Agilent OR Keysight
-        >>> records(manufacturer='Agilent', model='3458A')
-        a list of all EquipmentRecords that are from Agilent AND that have the model number 3458A
-        >>> records(manufacturer='Agilent', model='3458A', serial='MY45046470')
-        a list of only one EquipmentRecord (if the equipment record exists, otherwise an empty list)
-        >>> records(manufacturer=r'H.*P')
-        a list of all EquipmentRecords that have Hewlett Packard (or HP) as the manufacturer
-        >>> records(description='I-V Converter')
-        a list of all EquipmentRecords that contain 'I-V Converter' in the description field
-        >>> records(connection=True)
-        a list of all EquipmentRecords that can be connected to
+        * `records()` :math:`\\rightarrow`
+          a list of all EquipmentRecord's
+
+        * `records(manufacturer='Agilent')` :math:`\\rightarrow`
+          a list of all EquipmentRecord's that are from Agilent
+
+        * `records(manufacturer='Agilent|Keysight')` :math:`\\rightarrow`
+          a list of all EquipmentRecord's that are from Agilent or Keysight
+
+        * `records(manufacturer='Agilent', model='3458A')` :math:`\\rightarrow`
+          a list of all EquipmentRecords that are from Agilent and that have the model number 3458A
+
+        * `records(manufacturer='Agilent', model='3458A', serial='MY45046470')` :math:`\\rightarrow`
+          a list of only one EquipmentRecord (if the equipment record exists, otherwise an empty list)
+
+        * `records(manufacturer=r'H.*P')` :math:`\\rightarrow`
+          a list of all EquipmentRecord's that have Hewlett Packard (or HP) as the manufacturer
+
+        * `records(description='I-V Converter')` :math:`\\rightarrow`
+          a list of all EquipmentRecords that contain 'I-V Converter' in the description field
+
+        * `records(connection=True)` :math:`\\rightarrow`
+          a list of all EquipmentRecords that can be connected to
 
         Returns
         -------

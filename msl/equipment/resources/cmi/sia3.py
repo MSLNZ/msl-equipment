@@ -72,7 +72,7 @@ class SIA3(ConnectionSerial):
         """Set the timer pre-scale value.
 
         The timer pre-scale value divides the microprocessor internal frequency
-        by something similar to 2^PS. Therefore, to reach a 2 second integration time
+        by something similar to 2^PS. Therefore, to reach a 2-second integration time
         the `ps` value must be set to the maximum value of 7.
 
         Parameters

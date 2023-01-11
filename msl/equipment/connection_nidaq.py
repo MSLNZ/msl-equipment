@@ -23,27 +23,21 @@ class ConnectionNIDAQ(Connection):
         See the `nidaqmx examples`_ for how to use NI-DAQ_.
 
         The returned object from the :meth:`~.EquipmentRecord.connect` method
-        is equivalent to importing the NI-DAQ_ package in your code. For example, this:
+        is equivalent to importing the NI-DAQ_ package.
 
-        .. code-block:: pycon
+        For example::
 
-           >>> nidaqmx = record.connect()
-           >>> with nidaqmx.Task() as task:
-           ...     task.ai_channels.add_ai_voltage_chan('Dev1/ai0')
-           ...     task.read()
-           ...
-           -0.07476920729381246
+           nidaqmx = record.connect()
+           with nidaqmx.Task() as task:
+               task.ai_channels.add_ai_voltage_chan('Dev1/ai0')
+               voltage = task.read()
 
-        is equivalent to:
+        is equivalent to::
 
-        .. code-block:: pycon
-
-           >>> import nidaqmx
-           >>> with nidaqmx.Task() as task:
-           ...     task.ai_channels.add_ai_voltage_chan('Dev1/ai0')
-           ...     task.read()
-           ...
-           -0.07476920729381246
+           import nidaqmx
+           with nidaqmx.Task() as task:
+               task.ai_channels.add_ai_voltage_chan('Dev1/ai0')
+               voltage = task.read()
 
         The :data:`~msl.equipment.record_types.ConnectionRecord.backend`
         value must be equal to :data:`~msl.equipment.constants.Backend.NIDAQ`

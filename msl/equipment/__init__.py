@@ -26,7 +26,7 @@ version_info = namedtuple('version_info', 'major minor micro releaselevel')(int(
 
 
 def list_resources(hosts=None, timeout=2):
-    """Returns a dictionary of all devices that were found.
+    """Returns a dictionary of all equipment that are available to connect to.
 
     Parameters
     ----------
@@ -103,7 +103,7 @@ def list_resources(hosts=None, timeout=2):
 
 
 def print_resources(**kwargs):
-    """Print the information about the devices that were found.
+    """Print a summary of all equipment that are available to connect to.
 
     Parameters
     ----------

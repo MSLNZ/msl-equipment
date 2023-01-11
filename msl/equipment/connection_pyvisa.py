@@ -112,8 +112,8 @@ class ConnectionPyVISA(Connection):
         been returned if you did the following in a script::
 
             import pyvisa
-            rm = visa.ResourceManager()
-            resource = rm.open_resource('COM6')
+            rm = pyvisa.ResourceManager()
+            resource = rm.open_resource('ASRL3::INSTR')
 
         """
         return self._resource
@@ -135,7 +135,7 @@ class ConnectionPyVISA(Connection):
             The library to use for PyVISA_. For example:
 
                 * ``@ivi`` to use :ref:`IVI <intro-configuring>`
-                * ``@ni`` to use `NI-VISA <https://www.ni.com/visa/>`_ (only supported in PyVISA <1.12)
+                * ``@ni`` to use `NI-VISA <https://www.ni.com/visa/>`_ (only supported in PyVISA <1.11)
                 * ``@py`` to use `PyVISA-py <https://pyvisa-py.readthedocs.io/en/stable/>`_
                 * ``@sim`` to use `PyVISA-sim <https://pyvisa-sim.readthedocs.io/en/stable/>`_
 
@@ -182,11 +182,14 @@ class ConnectionPyVISA(Connection):
         try:
             return pyvisa.ResourceManager(visa_library)
         except ValueError as err:
-            # as of PyVISA 1.11 the @ni backend became deprecated, and it is planned
-            # to be removed in 1.12, which is when the @ivi value must be used instead
-            if str(err).endswith('pyvisa_ni'):
+            # as of PyVISA 1.11 the @ni backend was renamed to @ivi
+            msg = str(err)
+            if msg.endswith('ni'):
                 Config.PyVISA_LIBRARY = '@ivi'
                 return pyvisa.ResourceManager('@ivi')
+            if msg.endswith('ivi'):
+                Config.PyVISA_LIBRARY = '@ni'
+                return pyvisa.ResourceManager('@ni')
             raise
 
     @staticmethod

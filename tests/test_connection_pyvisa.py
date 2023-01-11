@@ -32,6 +32,9 @@ def teardown_module():
 @pytest.mark.skipif(not HAS_NI_VISA, reason='NI-VISA is not installed')
 def test_resource_manager():
     assert isinstance(ConnectionPyVISA.resource_manager(), pyvisa.ResourceManager)
+    assert isinstance(ConnectionPyVISA.resource_manager('@ni'), pyvisa.ResourceManager)
+    assert isinstance(ConnectionPyVISA.resource_manager('@ivi'), pyvisa.ResourceManager)
+    assert isinstance(ConnectionPyVISA.resource_manager('@py'), pyvisa.ResourceManager)
 
 
 def test_resource_class():

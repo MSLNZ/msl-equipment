@@ -3,77 +3,23 @@
 =================
 API Documentation
 =================
-
-The main entryway in to **MSL-Equipment** is achieved by loading a
-:ref:`configuration-file` and that is achieved by creating a
-:class:`~msl.equipment.config.Config` object.
-
-.. code-block:: pycon
-
-    >>> from msl.equipment import Config
-    >>> cfg = Config('config.xml')
-
-Once a :class:`~msl.equipment.config.Config` object exists you can access of all the
-:class:`~msl.equipment.record_types.EquipmentRecord`\'s and :class:`~msl.equipment.record_types.ConnectionRecord`\'s
-that are contained within the :ref:`Databases <database-formats>` as well as all of the
-:attr:`~msl.equipment.database.Database.equipment` that is being used to perform the measurement by calling the
-:meth:`~msl.equipment.config.Config.database` method to create an instance of the
-:class:`~msl.equipment.database.Database`.
-
-.. code-block:: pycon
-
-    >>> db = cfg.database()
-    >>> for record in db.records():
-    ...    print(record)
-    ...
-    EquipmentRecord<Fluke|8506A|A10008>
-    EquipmentRecord<Oriel|66087|B10009>
-    EquipmentRecord<Kepco|JQE|C10010>
-    EquipmentRecord<Hewlett Packard|34401A|D10011>
-    EquipmentRecord<Arlunya|Milli Gauss|E10012>
-    EquipmentRecord<Toledo|1000|F10013>
-    EquipmentRecord<Stanford Research Systems|SR850 DSP|G10014>
-    EquipmentRecord<Hewlett Packard|3478A|D10015>
-    >>> for record in db.records(manufacturer='H.*P'):
-    ...    print(record)
-    ...
-    EquipmentRecord<Hewlett Packard|34401A|D10011>
-    EquipmentRecord<Hewlett Packard|3478A|D10015>
-    >>> for conn in db.connections():
-    ...    print(conn)
-    ...
-    ConnectionRecord<Fluke|8506A|A10008>
-    ConnectionRecord<Hewlett Packard|34401A|D10011>
-    ConnectionRecord<Stanford Research Systems|SR850 DSP|G10014>
-    ConnectionRecord<Hewlett Packard|3478A|D10011>
-    >>> for conn in db.connections(address='GPIB'):
-    ...     print(conn)
-    ...
-    ConnectionRecord<Fluke|8506A|A10008>
-    ConnectionRecord<Hewlett Packard|3478A|D10011>
-    >>> db.equipment
-    {'dmm': EquipmentRecord<Hewlett Packard|34401A|D10011>}
-    >>> db.equipment['dmm'].connection
-    ConnectionRecord<Hewlett Packard|34401A|D10011>
-
-Establishing a connection to the equipment is achieved by calling the
-:meth:`~msl.equipment.record_types.EquipmentRecord.connect` method of an
-:class:`~msl.equipment.record_types.EquipmentRecord`. This call will return a specific
-:class:`~msl.equipment.connection.Connection` subclass that contains the necessary properties and methods for
-communicating with the equipment.
-
-.. code-block:: pycon
-
-    >>> dmm = db.equipment['dmm'].connect()
-    >>> dmm.query('*IDN?')
-    'Hewlett Packard,34401A,D10011,A.02.14-02.40-02.14-00.49-03-01'
-
-In addition, the :mod:`~msl.equipment.constants` module contains the package constants.
+Although this package contains many classes and functions, the only object
+that you must initialize in your application is :class:`~msl.equipment.config.Config`
+and perhaps :class:`~msl.equipment.record_types.EquipmentRecord`'s (depending on the
+format that is chosen to store the :ref:`Databases <database-formats>`).
 
 .. _connection-classes:
 
 Connection Classes
 ------------------
+Use the following functions to find equipment that are connected to a computer or that are on the network
+
++---------------------------------------------------------+----------------------------------------------------------------------------+
+| :func:`~msl.equipment.list_resources`                   | A :class:`dict` of all equipment that are available to connect to          |
++---------------------------------------------------------+----------------------------------------------------------------------------+
+| :func:`~msl.equipment.print_resources`                  | Print a summary of all equipment that are available to connect to          |
++---------------------------------------------------------+----------------------------------------------------------------------------+
+
 The following :class:`~msl.equipment.connection.Connection` classes are available to communicate
 with the equipment *(although you should never need to instantiate these classes directly):*
 

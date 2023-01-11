@@ -3,12 +3,22 @@
 ================
 Database Formats
 ================
-Databases are used by **MSL-Equipment** to store :class:`~msl.equipment.record_types.EquipmentRecord`\'s in an
-:ref:`equipment-database` and :class:`~msl.equipment.record_types.ConnectionRecord`\'s in a
-:ref:`connections-database`. The database file formats that are currently supported are **.txt** (``\t`` delimited),
-**.csv** (``,`` delimited) and **.xls[x]**.
+Databases are used by MSL-Equipment to store
+:class:`~msl.equipment.record_types.EquipmentRecord`\'s in an
+:ref:`equipment-database` and :class:`~msl.equipment.record_types.ConnectionRecord`\'s
+in a :ref:`connections-database`. The database file formats that are currently
+supported are **xml**, **json**, **txt** (``\t`` delimited),
+**csv** (``,`` delimited) and **xls[x]**.
 
-A database is composed of *fields* (columns) and *records* (rows).
+The **txt**, **csv** and **xls[x]** formats are simple databases that are
+composed of *fields* (columns) and *records* (rows). The **xml** and **json**
+formats allow for storing more complex data structures, such as
+:class:`~msl.equipment.record_types.MaintenanceRecord`\'s
+:class:`~msl.equipment.record_types.CalibrationRecord`\'s and
+:class:`~msl.equipment.record_types.MeasurandRecord`\'s for each
+:class:`~msl.equipment.record_types.EquipmentRecord`. For example **xml**
+and **json** formats, see `equipment_register.xml`_ and `equipment_register.json`_
+respectively.
 
 .. _equipment-database:
 
@@ -17,15 +27,15 @@ Equipment-Register Database
 
 .. attention::
 
-   The design of the Equipment-Register database is in active development and it can be unstable
+   The design of the Equipment-Register database is in active development and it will be unstable
    until an official release of MSL-Equipment is made.
 
 The information about the equipment that is used to perform a measurement must be known and it must be kept up to date.
 Keeping a central and official (hence the word *Register*) database of the equipment that is available in the laboratory
 allows for easily managing this information and for helping to ensure that the equipment that is being used for a
-task meets the calibration requirements needed to obtain the desired measurement uncertainty.
+measurement meets the calibration requirements needed to obtain the desired measurement uncertainty.
 
-**MSL-Equipment** does not require that a *single* database is used for all equipment records. However, it is vital
+MSL-Equipment does not require that a *single* database is used for all equipment records. However, it is vital
 that each equipment record can only be uniquely found in one :ref:`equipment-database`. The records in a database must
 never be copied from one database to another database *(keeping a backup copy of the database is encouraged)*.
 Rather, if you are borrowing equipment from another team you simply specify the path to that teams
@@ -40,16 +50,16 @@ Each record in an :ref:`equipment-database` is converted into an :class:`~msl.eq
 The following is an example of an :ref:`equipment-database` (additional *fields* can also be added to a database,
 see :ref:`register-field-names`).
 
-+-----------------+---------+--------+--------------+---------------+---------------------------------------+
-| Manufacturer    | Model   | Serial | Date         | Calibration   | Description                           |
-|                 | Number  | Number | Calibrated   | Cycle [Years] |                                       |
-+=================+=========+========+==============+===============+=======================================+
-| Keysight        | 34465A  | MY5450 | 4 April 2014 | 5             | 6.5 digital multimeter                |
-+-----------------+---------+--------+--------------+---------------+---------------------------------------+
-| Hewlett Packard | HP8478B | BCD024 | 17 June 2017 | 3             | Dual element thermistor power sensors |
-+-----------------+---------+--------+--------------+---------------+---------------------------------------+
-| Agilent         | 53230A  | 49e39f | 9 Sept 2015  | 7             | Universal counter/timer               |
-+-----------------+---------+--------+--------------+---------------+---------------------------------------+
++-----------------+---------+--------+---------------------------------------+
+| Manufacturer    | Model   | Serial | Description                           |
+|                 | Number  | Number |                                       |
++=================+=========+========+=======================================+
+| Keysight        | 34465A  | MY5450 | 6.5 digit digital multimeter          |
++-----------------+---------+--------+---------------------------------------+
+| Hewlett Packard | HP8478B | BCD024 | Dual element thermistor power sensors |
++-----------------+---------+--------+---------------------------------------+
+| Agilent         | 53230A  | 49e39f | Universal counter/timer               |
++-----------------+---------+--------+---------------------------------------+
 
 .. tip::
    Not all records in the :ref:`equipment-database` need to have the ability to be interfaced with a computer. For
@@ -61,16 +71,13 @@ see :ref:`register-field-names`).
 
 Field Names
 +++++++++++
-The supported *fields* for an :ref:`equipment-database` are:
+Some of the supported *fields* for an :ref:`equipment-database` are:
 
-* **Calibration Cycle** -- The number of years that can pass before the equipment must be re-calibrated.
 * **Category** -- The category (e.g., Laser, DMM) that the equipment belongs to.
-* **Date Calibrated** -- The date that the equipment was last calibrated.
 * **Description** -- A description of the equipment.
 * **Location** -- The location where the equipment can usually be found.
 * **Manufacturer** -- The name of the manufacturer of the equipment.
 * **Model** -- The model number of the equipment.
-* **Latest Report Number** -- The report number for the last time that the equipment was calibrated.
 * **Serial** -- The serial number, or engraved unique ID, of the equipment.
 
 The text in the header of each *field* is not too particular for what it must be. The header text is parsed for one
@@ -114,10 +121,9 @@ For example, the following headers are valid (the :blue:`blue` text is what is i
 * If the header does not contain any of the specific *field* names that are being searched for then the values
   in that column are silently ignored.
 
-Equipment records should be defined in a properly-managed :ref:`equipment-database` (especially if the equipment is
-used within a Quality Management System, such as `ISO/IEC 17025`_) and accessed via the
-:meth:`~msl.equipment.config.Config.database` method; however, for those not bound to a rigorous Quality Management
-System you can also store your equipment records in a Python module, for example:
+Equipment records should be defined in an :ref:`equipment-database` and accessed via the
+:meth:`~msl.equipment.config.Config.database` method; however, you can also define equipment
+records in a Python module, for example:
 
 .. code-block:: python
 
@@ -129,9 +135,7 @@ System you can also store your equipment records in a Python module, for example
             EquipmentRecord(
                 manufacturer='HP',
                 model='34401A',
-                serial='3146A34467',
-                date_calibrated=date(2016, 7, 12),
-                calibration_cycle=5,
+                serial='123456789',
                 connection=ConnectionRecord(
                     backend=Backend.MSL,
                     address='COM3',
@@ -144,7 +148,7 @@ System you can also store your equipment records in a Python module, for example
             EquipmentRecord(
                 manufacturer='Pico Technology',
                 model='5244B',
-                serial='DY135/055',
+                serial='XY135/001',
                 description='Oscilloscope -- 2 Channel, 200 MHz, 1 GSPS, 512 Mpts, 5.8 ns',
                 connection=ConnectionRecord(
                     backend=Backend.MSL,
@@ -158,10 +162,8 @@ System you can also store your equipment records in a Python module, for example
             EquipmentRecord(
                 manufacturer='Tinsley',
                 model='64750',
-                serial='03246836',
+                serial='5672413',
                 description='1.0 Ohm Resistor 3A',
-                date_calibrated=date(2018, 8, 2),
-                calibration_cycle=5,
             ),
     }
 
@@ -244,13 +246,13 @@ The following are examples of an **Address** syntax (see more examples from `Nat
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
 | SDK                                            | SDK::filename.dll                                   | Specify only the filename if the path to where the SDK file is located has been added as a ``<path>`` element in the :ref:`configuration-file` |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| SERIAL                                         | COM2                                                |                                                                                                                                                |
+| SERIAL                                         | COM2                                                | A serial port on Windows                                                                                                                       |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| SERIAL                                         | ASRL7::INSTR                                        | Compatible with `National Instruments`_ syntax                                                                                                 |
+| SERIAL                                         | ASRL/dev/ttyS1                                      | A serial port on Linux                                                                                                                         |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| SERIAL                                         | ASRLCOM4                                            | Compatible with PyVISA-py_ syntax                                                                                                              |
+| SERIAL                                         | ASRL2::INSTR                                        | Compatible with `National Instruments`_ syntax                                                                                                 |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| SERIAL                                         | ASRL/dev/ttyS1                                      |                                                                                                                                                |
+| SERIAL                                         | ASRLCOM2                                            | Compatible with PyVISA-py_ syntax                                                                                                              |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
 | SOCKET                                         | \TCP::192.168.1.100::5000                           | Creates the connection as a :data:`socket.SOCK_STREAM` to the IP address **192.168.1.100** at port **5000**                                    |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -262,15 +264,16 @@ The following are examples of an **Address** syntax (see more examples from `Nat
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
 | TCPIP HiSLIP                                   | TCPIP::dev.company.com::hislip0                     | A HiSLIP LAN instrument at the hostname **dev.company.com**.                                                                                   |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| TCPIP HiSLIP                                   | TCPIP0::10.12.114.50::hislip0,5000::INSTR           | A HiSLIP LAN instrument whose IP address is **10.12.114.50** with the server listening at port **5000**                                        |
+| TCPIP HiSLIP                                   | TCPIP::10.12.114.50::hislip0,5000::INSTR            | A HiSLIP LAN instrument whose IP address is **10.12.114.50** with the server listening at port **5000**                                        |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| TCPIP VXI-11                                   | TCPIP0::dev.company.com::INSTR                      | A VXI-11.3 LAN instrument at the hostname **dev.company.com**. This uses the default LAN Device Name **inst0**                                 |
+| TCPIP VXI-11                                   | TCPIP::dev.company.com::INSTR                       | A VXI-11.3 LAN instrument at the hostname **dev.company.com**. This uses the default LAN Device Name **inst0**                                 |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| TCPIP VXI-11                                   | TCPIP0::10.6.56.21::gpib0,2::INSTR                  | A VXI-11.2 GPIB device whose IP address is **10.6.56.21**                                                                                      |
+| TCPIP VXI-11                                   | TCPIP::10.6.56.21::gpib0,2::INSTR                   | A VXI-11.2 GPIB device whose IP address is **10.6.56.21**                                                                                      |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
 | TCPIP VXI-11                                   | TCPIP::192.168.1.100                                | A VXI-11.3 LAN instrument at IP address **192.168.1.100**. Note that default values for board **0** and LAN device name **inst0** will be used |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
 
-.. _National Instruments: https://zone.ni.com/reference/en-XX/help/370131S-01/ni-visa/visaresourcesyntaxandexamples/
-.. _PyVISA-py: https://pyvisa-py.readthedocs.io/en/stable/
-.. _ISO/IEC 17025: https://www.iso.org/standard/66912.html
+.. _National Instruments: https://www.ni.com/docs/en-US/bundle/ni-visa/page/ni-visa/visaresourcesyntaxandexamples.html
+.. _PyVISA-py: https://pyvisa.readthedocs.io/projects/pyvisa-py/en/stable/
+.. _equipment_register.json: https://github.com/MSLNZ/msl-equipment/blob/main/tests/db_files/equipment_register.json
+.. _equipment_register.xml: https://github.com/MSLNZ/msl-equipment/blob/main/tests/db_files/equipment_register.xml

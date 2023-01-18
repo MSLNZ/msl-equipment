@@ -488,10 +488,13 @@ def parse_lxi_webserver(host, port=80, timeout=1):
             # The URL for the XML document does not exist,
             # parse the webserver's homepage
             response = urlopen(base_url, timeout=timeout)
-            return _parse_lxi_html(response.read().decode('utf-8'))
+            content = response.fp.read().decode('utf-8')
+            response.close()
+            return _parse_lxi_html(content)
         raise
     else:
-        content = response.read().decode('utf-8')
+        content = response.fp.read().decode('utf-8')
+        response.close()
         try:
             return _parse_lxi_xml(content)
         except cElementTree.ParseError:

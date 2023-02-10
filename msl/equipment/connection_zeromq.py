@@ -23,6 +23,7 @@ class ConnectionZeroMQ(ConnectionMessageBased):
             'max_read_size': int, the maximum number of bytes that can be read [default: 1 MB]
             'protocol': str, the ZeroMQ protocol [default: 'tcp']
             'rstrip': bool, whether to remove trailing whitespace from "read" messages [default: False]
+            'socket_type': str, the ZeroMQ socket type [default: 'REQ']
             'timeout': float or None, the timeout (in seconds) for read and write operations [default: None]
 
         The :data:`~msl.equipment.record_types.ConnectionRecord.backend`
@@ -46,7 +47,17 @@ class ConnectionZeroMQ(ConnectionMessageBased):
         """
         # the following must be defined before calling super()
         self._context = zmq.Context()
-        self._socket = self._context.socket(zmq.REQ)
+
+        props = record.connection.properties
+
+        try:
+            socket_type = props.get('socket_type', 'REQ').upper()
+            self._socket = self._context.socket(getattr(zmq, socket_type))
+        except (AttributeError, zmq.ZMQError):
+            self._context.destroy()
+            self._context = None
+            raise
+
         super(ConnectionZeroMQ, self).__init__(record)
 
         info = self.parse_address(record.connection.address)
@@ -60,7 +71,7 @@ class ConnectionZeroMQ(ConnectionMessageBased):
         self.write_termination = None
         self.read_termination = None
 
-        self._protocol = record.connection.properties.get('protocol', 'tcp')
+        self._protocol = props.get('protocol', 'tcp')
 
         self._connect()
         self.log_debug('Connected to %s', record.connection)
@@ -122,6 +133,8 @@ class ConnectionZeroMQ(ConnectionMessageBased):
 
     def disconnect(self):
         """Close the connection."""
+        if self._context is None:
+            return
         self._context.destroy()
         self.log_debug('Disconnected from %s', self.equipment_record.connection)
 

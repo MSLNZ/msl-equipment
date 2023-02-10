@@ -117,3 +117,19 @@ def test_write_read():
     dev.disconnect()
     time.sleep(0.1)
     assert not t.is_alive()
+
+
+@pytest.mark.parametrize(
+    ('socket_type', 'error_type'),
+    [('invalid', AttributeError),
+     ('MAXMSGSIZE', zmq.ZMQError)])
+def test_bad_socket_type(socket_type, error_type):
+    record = EquipmentRecord(
+        connection=ConnectionRecord(
+            address='ZMQ::hostname::1234',
+            properties={'socket_type': socket_type},
+        )
+    )
+
+    with pytest.raises(error_type):
+        record.connect()

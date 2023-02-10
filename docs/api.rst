@@ -40,6 +40,8 @@ with the equipment *(although you should never need to instantiate these classes
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_tcpip_hislip.ConnectionTCPIPHiSLIP`   | Equipment that use the HiSLIP protocol                                   |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :class:`~msl.equipment.connection_zeromq.ConnectionZeroMQ`              | Equipment that use the ZeroMQ_ protocol                                  |
++-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 
 and the :class:`~msl.equipment.connection.Connection` classes that are available from external Python libraries are:
 
@@ -68,6 +70,7 @@ Package Structure
    msl.equipment.connection_socket <_api/msl.equipment.connection_socket>
    msl.equipment.connection_tcpip_hislip <_api/msl.equipment.connection_tcpip_hislip>
    msl.equipment.connection_tcpip_vxi11 <_api/msl.equipment.connection_tcpip_vxi11>
+   msl.equipment.connection_zeromq <_api/msl.equipment.connection_zeromq>
    msl.equipment.constants <_api/msl.equipment.constants>
    msl.equipment.database <_api/msl.equipment.database>
    msl.equipment.dns_service_discovery <_api/msl.equipment.dns_service_discovery>
@@ -82,3 +85,4 @@ Package Structure
 .. _PyVISA: https://pyvisa.readthedocs.io/en/stable/index.html
 .. _NI-DAQ: https://nidaqmx-python.readthedocs.io/en/stable/index.html
 .. _Prologix: https://prologix.biz/
+.. _ZeroMQ: https://zeromq.org/

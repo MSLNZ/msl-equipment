@@ -272,8 +272,11 @@ The following are examples of an **Address** syntax (see more examples from `Nat
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
 | TCPIP VXI-11                                   | TCPIP::192.168.1.100                                | A VXI-11.3 LAN instrument at IP address **192.168.1.100**. Note that default values for board **0** and LAN device name **inst0** will be used |
 +------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
+| ZMQ                                            | ZMQ::192.168.20.90::5555                            | Use the ZeroMQ_ messaging library to connect to a device at IP address **192.168.1.100** and port **5555**                                     |
++------------------------------------------------+-----------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------+
 
 .. _National Instruments: https://www.ni.com/docs/en-US/bundle/ni-visa/page/ni-visa/visaresourcesyntaxandexamples.html
 .. _PyVISA-py: https://pyvisa.readthedocs.io/projects/pyvisa-py/en/stable/
 .. _equipment_register.json: https://github.com/MSLNZ/msl-equipment/blob/main/tests/db_files/equipment_register.json
 .. _equipment_register.xml: https://github.com/MSLNZ/msl-equipment/blob/main/tests/db_files/equipment_register.xml
+.. _ZeroMQ: https://zeromq.org/

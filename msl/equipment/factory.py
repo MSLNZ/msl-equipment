@@ -1,22 +1,23 @@
 """
 Establish a connection to the equipment.
 """
-from .utils import logger
 from .config import Config
+from .connection_demo import ConnectionDemo
+from .connection_nidaq import ConnectionNIDAQ
+from .connection_prologix import ConnectionPrologix
+from .connection_pyvisa import ConnectionPyVISA
+from .connection_sdk import ConnectionSDK
+from .connection_serial import ConnectionSerial
+from .connection_socket import ConnectionSocket
+from .connection_tcpip_hislip import ConnectionTCPIPHiSLIP
+from .connection_tcpip_vxi11 import ConnectionTCPIPVXI11
+from .connection_zeromq import ConnectionZeroMQ
 from .constants import Backend
 from .constants import Interface
 from .exceptions import ResourceClassNotFound
 from .resources import find_resource_class
 from .resources.dmm import dmm_factory
-from .connection_demo import ConnectionDemo
-from .connection_pyvisa import ConnectionPyVISA
-from .connection_sdk import ConnectionSDK
-from .connection_serial import ConnectionSerial
-from .connection_socket import ConnectionSocket
-from .connection_nidaq import ConnectionNIDAQ
-from .connection_prologix import ConnectionPrologix
-from .connection_tcpip_vxi11 import ConnectionTCPIPVXI11
-from .connection_tcpip_hislip import ConnectionTCPIPHiSLIP
+from .utils import logger
 
 
 def connect(record, demo=None):
@@ -71,6 +72,8 @@ def connect(record, demo=None):
                     cls = ConnectionTCPIPVXI11
                 elif conn.interface == Interface.TCPIP_HISLIP:
                     cls = ConnectionTCPIPHiSLIP
+                elif conn.interface == Interface.ZMQ:
+                    cls = ConnectionZeroMQ
                 else:
                     raise NotImplementedError('The {!r} interface has not be written yet'.format(conn.interface.name))
         elif conn.backend == Backend.PyVISA:
@@ -137,5 +140,8 @@ def find_interface(address):
 
     if ConnectionTCPIPHiSLIP.parse_address(address):
         return Interface.TCPIP_HISLIP
+
+    if ConnectionZeroMQ.parse_address(address):
+        return Interface.ZMQ
 
     raise ValueError('Cannot determine the Interface from address {!r}'.format(address))

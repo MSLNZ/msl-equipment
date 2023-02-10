@@ -44,6 +44,11 @@ REGEX_PROLOGIX = re.compile(
     flags=re.IGNORECASE
 )
 
+REGEX_ZMQ = re.compile(
+    r'ZMQ::(?P<host>[^\s:]+)::(?P<port>\d+)',
+    flags=re.IGNORECASE
+)
+
 DEFAULT_DATE = datetime.date(datetime.MINYEAR, 1, 1)
 
 
@@ -71,6 +76,7 @@ class Interface(enum.IntEnum):
     PROLOGIX = 4
     TCPIP_VXI11 = 5
     TCPIP_HISLIP = 6
+    ZMQ = 7
 
 
 class Parity(enum.Enum):

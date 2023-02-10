@@ -152,6 +152,7 @@ install_requires = [
     'pyserial>=3.0',
     'python-dateutil',
     'enum34;python_version<"3.4"',
+    'pyzmq',
 ]
 
 tests_require = [

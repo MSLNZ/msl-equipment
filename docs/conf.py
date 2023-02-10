@@ -215,6 +215,7 @@ intersphinx_mapping = {
     'pyserial': ('https://pyserial.readthedocs.io/en/stable/', None),
     'nidaqmx': ('https://nidaqmx-python.readthedocs.io/en/stable/', None),
     'msl.io': ('https://msl-io.readthedocs.io/en/latest/', None),  # TODO replace latest with stable after releasing
+    'zmq': ('https://pyzmq.readthedocs.io/en/stable/', None),
 }
 
 # warn about all broken links

@@ -1,3 +1,4 @@
+import sys
 import threading
 import time
 
@@ -8,7 +9,6 @@ from msl.loadlib.utils import get_available_port
 from msl.equipment import ConnectionRecord
 from msl.equipment import EquipmentRecord
 from msl.equipment import MSLConnectionError
-from msl.equipment import MSLTimeoutError
 from msl.equipment.connection_zeromq import ConnectionZeroMQ
 
 PORT = get_available_port()
@@ -57,7 +57,11 @@ def test_connect_raises():
     )
 
     # no server running
-    with pytest.raises(MSLTimeoutError, match='1.0 seconds'):
+    if sys.platform == 'win32':
+        match = 'Timeout occurred after 1.0 second(s)'
+    else:
+        match = 'Connection refused'
+    with pytest.raises(MSLConnectionError, match=match):
         record.connect()
 
     # start the ZMQ server

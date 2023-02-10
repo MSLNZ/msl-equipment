@@ -331,7 +331,7 @@ class ConnectionMessageBased(Connection):
 
         Parameters
         ----------
-        message : :class:`str`
+        message : :class:`str` or :class:`bytes`
             The message to write to the equipment.
         delay : :class:`float`, optional
             The time delay, in seconds, to wait between :meth:`.write` and

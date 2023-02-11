@@ -44,11 +44,17 @@ print('done')
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE)
 
-    s = socket.socket()
-    s.settimeout(0.1)
-    while s.connect_ex(('127.0.0.1', PORT)) != 0:
-        pass
-    s.close()
+    while True:
+        s = socket.socket()
+        try:
+            s.settimeout(0.1)
+            s.connect(('127.0.0.1', PORT))
+        except:
+            pass
+        else:
+            break
+        finally:
+            s.close()
 
     return p, path
 

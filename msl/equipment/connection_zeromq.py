@@ -52,7 +52,8 @@ class ConnectionZeroMQ(ConnectionMessageBased):
 
         try:
             socket_type = props.get('socket_type', 'REQ').upper()
-            self._socket = self._context.socket(getattr(zmq, socket_type))
+            self._socket_type = getattr(zmq, socket_type)
+            self._socket = self._context.socket(self._socket_type)
         except (AttributeError, zmq.ZMQError):
             self._context.destroy()
             self._context = None
@@ -198,6 +199,10 @@ class ConnectionZeroMQ(ConnectionMessageBased):
         """
         if max_attempts is None:
             max_attempts = -1
+
+        self._context.destroy()
+        self._context = zmq.Context()
+        self._socket = self._context.socket(self._socket_type)
 
         attempt = 0
         while True:

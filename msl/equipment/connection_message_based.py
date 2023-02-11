@@ -188,7 +188,7 @@ class ConnectionMessageBased(Connection):
         append_msg : :class:`str`, optional
             A message to append to the generic timeout message.
         """
-        msg = 'Timeout occurred after {} seconds. {}'.format(self._timeout, append_msg)
+        msg = 'Timeout occurred after {} second(s). {}'.format(self._timeout, append_msg)
         self.log_error('%r %s', self, msg)
         raise MSLTimeoutError('{!r}\n{}'.format(self, msg))
 

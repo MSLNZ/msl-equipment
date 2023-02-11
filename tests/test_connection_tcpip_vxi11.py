@@ -256,7 +256,7 @@ def test_exceptions():
 
     # server not running
     if sys.platform == 'win32':
-        match = 'Timeout occurred after 1.0 second(s)'
+        match = r'Timeout occurred after 1.0 second\(s\)'
     else:
         match = 'Connection refused'
     with pytest.raises(MSLConnectionError, match=match):
@@ -293,7 +293,7 @@ def test_exceptions():
     assert dev.query('*IDN?') == 'Manufacturer of the Device,Model,Serial,dd.mm.yyyy  \n'
     dev.timeout = 0  # the socket timeout value is 1 + io_timeout + lock_timeout
     assert dev.socket.gettimeout() == 1
-    with pytest.raises(MSLTimeoutError, match='Timeout occurred after 0.0 seconds'):
+    with pytest.raises(MSLTimeoutError, match=r'Timeout occurred after 0.0 second\(s\)'):
         dev.query('sleep')
     t1.join()
     t2.join()

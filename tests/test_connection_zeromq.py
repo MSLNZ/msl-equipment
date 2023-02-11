@@ -58,7 +58,7 @@ def test_connect_raises():
 
     # no server running
     if sys.platform == 'win32':
-        match = 'Timeout occurred after 1.0 second(s)'
+        match = r'Timeout occurred after 1.0 second\(s\)'
     else:
         match = 'Connection refused'
     with pytest.raises(MSLConnectionError, match=match):

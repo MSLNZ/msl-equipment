@@ -198,7 +198,7 @@ def test_exceptions():
         )
     )
     if sys.platform == 'win32':
-        match = 'Timeout occurred after 1.0 second(s)'
+        match = r'Timeout occurred after 1.0 second\(s\)'
     else:
         match = 'Connection refused'
     with pytest.raises(MSLConnectionError, match=match):
@@ -217,7 +217,7 @@ def test_exceptions():
     t.start()
     time.sleep(0.1)  # allow some time for the server to start
     dev = record.connect()
-    with pytest.raises(MSLTimeoutError, match='Timeout occurred after 1.0 seconds'):
+    with pytest.raises(MSLTimeoutError, match=r'Timeout occurred after 1.0 second\(s\)'):
         dev.query('sleep')
     t.join()
 

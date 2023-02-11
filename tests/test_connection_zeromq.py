@@ -1,13 +1,12 @@
 import os
+import socket
 import subprocess
 import sys
 import tempfile
-import time
 
 import pytest
 import zmq
 from msl.loadlib.utils import get_available_port
-from msl.loadlib.utils import is_port_in_use
 
 from msl.equipment import ConnectionRecord
 from msl.equipment import EquipmentRecord
@@ -45,8 +44,11 @@ print('done')
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE)
 
-    while not is_port_in_use(PORT):
-        time.sleep(0.1)
+    s = socket.socket()
+    s.settimeout(0.1)
+    while s.connect_ex(('127.0.0.1', PORT)) != 0:
+        pass
+    s.close()
 
     return p, path
 

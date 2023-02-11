@@ -1,10 +1,13 @@
+import os
+import subprocess
 import sys
-import threading
+import tempfile
 import time
 
 import pytest
 import zmq
 from msl.loadlib.utils import get_available_port
+from msl.loadlib.utils import is_port_in_use
 
 from msl.equipment import ConnectionRecord
 from msl.equipment import EquipmentRecord
@@ -14,18 +17,45 @@ from msl.equipment.connection_zeromq import ConnectionZeroMQ
 PORT = get_available_port()
 
 
-def zmq_server():
-    context = zmq.Context()
-    socket = context.socket(zmq.REP)
-    socket.bind('tcp://127.0.0.1:{}'.format(PORT))
-    while True:
-        message = socket.recv()
-        if message == b'SHUTDOWN':
-            break
-        if message == b'sleep':
-            time.sleep(1)
-        socket.send(message)
-    context.destroy()
+def start_zmq_server():
+    code = """import time
+import zmq
+PORT = %d
+context = zmq.Context()
+socket = context.socket(zmq.REP)
+socket.bind('tcp://127.0.0.1:{}'.format(PORT))
+while True:
+    message = socket.recv()
+    if message == b'SHUTDOWN':
+        break
+    if message == b'sleep':
+        time.sleep(0.5)
+    socket.send(message)
+socket.unbind('tcp://127.0.0.1:{}'.format(PORT))
+context.destroy()
+print('done')
+""" % PORT
+
+    path = os.path.join(tempfile.gettempdir(), 'msl_equipment_zeromq_server.py')
+    with open(path, mode='wt') as f:
+        f.write(code)
+
+    p = subprocess.Popen(
+        [sys.executable, path],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE)
+
+    while not is_port_in_use(PORT):
+        time.sleep(0.1)
+
+    return p, path
+
+
+def cleanup_zmq_server(proc, filename):
+    stdout, stderr = proc.communicate()
+    assert stdout.rstrip().decode() == 'done'
+    assert not stderr
+    os.remove(filename)
 
 
 @pytest.mark.parametrize(
@@ -65,10 +95,7 @@ def test_connect_raises():
         record.connect()
 
     # start the ZMQ server
-    t = threading.Thread(target=zmq_server)
-    t.daemon = True
-    t.start()
-    time.sleep(0.1)  # allow some time for the server to start
+    p, filename = start_zmq_server()
 
     # invalid protocol
     record.connection.properties['protocol'] = 'invalid'
@@ -82,8 +109,7 @@ def test_connect_raises():
     dev.disconnect()
     dev.disconnect()  # can disconnect multiple times
     dev.disconnect()
-    time.sleep(0.1)
-    assert not t.is_alive()
+    cleanup_zmq_server(p, filename)
 
 
 def test_write_read():
@@ -95,10 +121,7 @@ def test_write_read():
     )
 
     # start the ZMQ server
-    t = threading.Thread(target=zmq_server)
-    t.daemon = True
-    t.start()
-    time.sleep(0.1)  # allow some time for the server to start
+    p, filename = start_zmq_server()
 
     dev = record.connect()
     assert dev.query('hello') == 'hello'
@@ -112,11 +135,13 @@ def test_write_read():
     dev.timeout = 1
     assert dev.read() == 'sleep'
 
+    dev.disconnect()
+    dev.reconnect()
+
     # shut down the ZMQ server
     dev.write('SHUTDOWN')
     dev.disconnect()
-    time.sleep(0.1)
-    assert not t.is_alive()
+    cleanup_zmq_server(p, filename)
 
 
 @pytest.mark.parametrize(

@@ -1,5 +1,7 @@
 """
-Base class for equipment that use the ZeroMQ communication protocol.
+Base class for equipment that use the ZeroMQ_ communication protocol.
+
+.. _ZeroMQ: https://zeromq.org/
 """
 import socket
 
@@ -12,7 +14,7 @@ from .constants import REGEX_ZMQ
 class ConnectionZeroMQ(ConnectionMessageBased):
 
     def __init__(self, record):
-        """Base class for equipment that use the ZeroMQ communication protocol.
+        """Base class for equipment that use the ZeroMQ_ communication protocol.
 
         The :attr:`~msl.equipment.record_types.ConnectionRecord.properties`
         for a ZeroMQ connection supports the following key-value pairs in the

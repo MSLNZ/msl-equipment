@@ -36,9 +36,9 @@ with the equipment *(although you should never need to instantiate these classes
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_socket.ConnectionSocket`              | Equipment that is connected through a Socket                             |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_tcpip_vxi11.ConnectionTCPIPVXI11`     | Equipment that use the VXI-11_ protocol                                   |
+| :class:`~msl.equipment.connection_tcpip_vxi11.ConnectionTCPIPVXI11`     | Equipment that use the VXI-11_ protocol                                  |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_tcpip_hislip.ConnectionTCPIPHiSLIP`   | Equipment that use the HiSLIP_ protocol                                   |
+| :class:`~msl.equipment.connection_tcpip_hislip.ConnectionTCPIPHiSLIP`   | Equipment that use the HiSLIP_ protocol                                  |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_zeromq.ConnectionZeroMQ`              | Equipment that use the ZeroMQ_ protocol                                  |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+

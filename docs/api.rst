@@ -36,9 +36,9 @@ with the equipment *(although you should never need to instantiate these classes
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_socket.ConnectionSocket`              | Equipment that is connected through a Socket                             |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_tcpip_vxi11.ConnectionTCPIPVXI11`     | Equipment that use the VXI-11 protocol                                   |
+| :class:`~msl.equipment.connection_tcpip_vxi11.ConnectionTCPIPVXI11`     | Equipment that use the VXI-11_ protocol                                   |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
-| :class:`~msl.equipment.connection_tcpip_hislip.ConnectionTCPIPHiSLIP`   | Equipment that use the HiSLIP protocol                                   |
+| :class:`~msl.equipment.connection_tcpip_hislip.ConnectionTCPIPHiSLIP`   | Equipment that use the HiSLIP_ protocol                                   |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_zeromq.ConnectionZeroMQ`              | Equipment that use the ZeroMQ_ protocol                                  |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
@@ -86,3 +86,5 @@ Package Structure
 .. _NI-DAQ: https://nidaqmx-python.readthedocs.io/en/stable/index.html
 .. _Prologix: https://prologix.biz/
 .. _ZeroMQ: https://zeromq.org/
+.. _VXI-11: https://www.vxibus.org/specifications.html
+.. _HiSLIP: https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf

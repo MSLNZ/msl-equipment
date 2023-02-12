@@ -191,9 +191,9 @@ The supported *fields* for a :ref:`connections-database` are:
   pairs separated by a semi-colon. For example, for a :class:`~msl.equipment.connection_serial.ConnectionSerial`
   connection the baud rate and parity might need to be defined -- ``baud_rate=11920; parity=even``. The value (as in a
   key-*value* pair) gets cast to the appropriate data type (e.g., :class:`int`, :class:`float`, :class:`str`) so the
-  baud rate value would be ``11920`` as an :class:`int` and the parity value would be
+  baud rate value would be ``11920`` as an :class:`int` and the parity value becomes
   :data:`Parity.EVEN <msl.equipment.constants.Parity.EVEN>`.
-* **Serial** -- The serial number, or engraved unique ID, of the equipment.
+* **Serial** -- The serial number, or unique ID, of the equipment.
 
 A record in a :ref:`connections-database` gets matched with the appropriate record in an :ref:`equipment-database`
 by the unique combination of the ``manufacturer + model + serial`` values, which when combined act as the primary key

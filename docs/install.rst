@@ -26,6 +26,7 @@ Dependencies
 * numpy_
 * pyserial_
 * python-dateutil_
+* pyzmq_
 
 Optional Dependencies
 ---------------------
@@ -47,3 +48,4 @@ available for your operating system.
 .. _msl-io: https://msl-io.readthedocs.io/en/latest/
 .. _pyserial: https://pythonhosted.org/pyserial/
 .. _python-dateutil: https://dateutil.readthedocs.io/en/stable/
+.. _pyzmq: https://pyzmq.readthedocs.io/en/stable/

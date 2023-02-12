@@ -127,7 +127,6 @@ records in a Python module, for example:
 
 .. code-block:: python
 
-    from datetime import date
     from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
 
     equipment = {

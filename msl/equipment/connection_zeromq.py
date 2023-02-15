@@ -138,7 +138,11 @@ class ConnectionZeroMQ(ConnectionMessageBased):
         """Close the connection."""
         if self._context is None:
             return
-        self._context.destroy()
+        # Calling self._context.destroy() caused the interpreter to hang
+        # if an exception occurred prior to calling disconnect(). Explicitly
+        # closing the socket and terminating the context seems to be better.
+        self._socket.close()
+        self._context.term()
         self.log_debug('Disconnected from %s', self.equipment_record.connection)
 
     @property

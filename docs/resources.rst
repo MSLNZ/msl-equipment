@@ -52,6 +52,7 @@ MSL Resources are specific classes that are used to communicate with the equipme
 * `Optronic Laboratories`_
 
   * :class:`~msl.equipment.resources.optronic_laboratories.ol756ocx_64.OL756` -- UV-VIS spectroradiometer
+  * :class:`~msl.equipment.resources.optronic_laboratories.ol_current_source.OLCurrentSource` -- DC Current Source (16A, 65A, 83A)
 
 * `Pico Technology`_ --  Wrapper around the `Pico Technology SDK`_
 

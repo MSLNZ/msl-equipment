@@ -180,3 +180,10 @@ def test_find_resource_class():
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)
             assert cls == resources.raicol.RaicolTEC
+
+    for man in ('Optronic Laboratories', 'Optronic Laboratories, Inc.',
+                'Optronic Laboratories Inc', 'Optronic', 'optroniclabs'):
+        for mod in ('OL 83a', '16a', 'OL65A'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.optronic_laboratories.OLCurrentSource

@@ -14,3 +14,4 @@ Submodules
 
    msl.equipment.resources.optronic_laboratories.ol756ocx_32
    msl.equipment.resources.optronic_laboratories.ol756ocx_64
+   msl.equipment.resources.optronic_laboratories.ol_current_source

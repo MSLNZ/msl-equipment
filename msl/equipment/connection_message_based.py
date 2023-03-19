@@ -291,7 +291,7 @@ class ConnectionMessageBased(Connection):
         :class:`int`
             The number of bytes written.
         """
-        if isinstance(message, str):
+        if not isinstance(message, bytes):
             message = message.encode(encoding=self._encoding, errors=self._encoding_errors)
 
         if data is not None:

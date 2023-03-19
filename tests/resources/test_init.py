@@ -160,11 +160,12 @@ def test_find_resource_class():
             cls = resources.find_resource_class(record)
             assert cls == resources.mks_instruments.pr4000b.PR4000B
 
-    for man in ('Optronic Laboratories', 'Optronic Laboratories, Inc.', 'Optronic Laboratories Inc'):
-        for mod in ('756', 'OL756'):
+    for man in ('Optronic Laboratories', 'Optronic Laboratories, Inc.',
+                'Optronic Laboratories Inc', 'Optronic', 'optroniclabs'):
+        for mod in ('756', 'OL756', 'OL 756'):
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)
-            assert cls == resources.optronic_laboratories.ol756ocx_64.OL756
+            assert cls == resources.optronic_laboratories.OL756
 
     for man in ('Energetiq', 'ENERGETIQ', 'Energetiq Technology, Inc.',
                 'Energetiq Technology Inc', 'Energetiq Technology'):

@@ -2,19 +2,18 @@
 Load the 32-bit ``OL756SDKActiveXCtrl`` library using :ref:`msl-loadlib-welcome`.
 """
 import os
+import re
 
-from msl.loadlib import (
-    Client64,
-    Server32Error,
-    ConnectionTimeoutError,
-)
+from msl.loadlib import Client64
+from msl.loadlib import ConnectionTimeoutError
+from msl.loadlib import Server32Error
 
-from msl.equipment.resources import register
 from msl.equipment.connection import Connection
 from msl.equipment.exceptions import OptronicLaboratoriesError
+from msl.equipment.resources import register
 
 
-@register(manufacturer=r'Optronic Laboratories', model=r'756')
+@register(manufacturer=r'Optronic', model=r'(OL)?\s*756', flags=re.IGNORECASE)
 class OL756(Connection):
 
     def __init__(self, record=None):

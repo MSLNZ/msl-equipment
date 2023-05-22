@@ -98,6 +98,7 @@ class ConnectionTCPIPVXI11(ConnectionMessageBased):
                     socket.IPPROTO_TCP, timeout=self.timeout)
 
             self._core_client = CoreClient(self._host)
+            self._core_client.chunk_size = self._buffer_size
             self._core_client.connect(self._core_port, timeout=self.timeout)
 
             params = self._core_client.create_link(self._name, False, self._lock_timeout_ms)

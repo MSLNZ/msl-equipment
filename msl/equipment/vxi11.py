@@ -161,6 +161,7 @@ class RPCClient(object):
         self._sock = None
         self._xid = 0  # transaction identifier
         self._buffer = bytearray()
+        self._chunk_size = 4096
 
     def append(self, data):
         """Append data to the body of the current RPC message.
@@ -200,6 +201,15 @@ class RPCClient(object):
 
         n = ((n + 3) // 4) * 4
         self.append((n - len(data)) * b'\0')
+
+    @property
+    def chunk_size(self):
+        """:class:`int`: The maximum number of bytes to receive at a time from the socket."""
+        return self._chunk_size
+
+    @chunk_size.setter
+    def chunk_size(self, size):
+        self._chunk_size = int(size)
 
     def close(self):
         """Close the RPC socket, if one is open."""
@@ -309,6 +319,8 @@ class RPCClient(object):
         last_fragment = False
         message = bytearray()
         recv = self._sock.recv
+        recv_into = self._sock.recv_into
+        chunk_size = self._chunk_size
         while not last_fragment:
             header = recv(4)
             if len(header) < 4:
@@ -316,12 +328,14 @@ class RPCClient(object):
             h, = unpack('>I', header)
             last_fragment = (h & 0x80000000) != 0
             fragment_size = h & 0x7FFFFFFF
-            fragment = bytearray()
-            while len(fragment) < fragment_size:
-                buf = recv(fragment_size - len(fragment))
-                if not buf:
-                    raise EOFError('The RPC reply buffer is empty')
-                fragment.extend(buf)
+            fragment = bytearray(fragment_size)  # preallocate
+            view = memoryview(fragment)  # avoids unnecessarily copying of slices
+            size = 0
+            while size < fragment_size:
+                request_size = min(chunk_size, fragment_size - size)
+                received_size = recv_into(view, request_size)
+                view = view[received_size:]
+                size += received_size
             message.extend(fragment)
         reply = self.check_reply(memoryview(message))
         if reply is None:

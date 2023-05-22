@@ -666,10 +666,10 @@ class HiSLIPClient(object):
         view = memoryview(payload)  # avoids unnecessarily copying of slices
         recv_into = self._socket.recv_into
         while size < length:
-            nbytes = min(chunk_size, length - size)
-            recv_into(view, nbytes)
-            view = view[nbytes:]
-            size += nbytes
+            request_size = min(chunk_size, length - size)
+            received_size = recv_into(view, request_size)
+            view = view[received_size:]
+            size += received_size
         message.payload = payload
 
         if typ == MessageType.FatalError:

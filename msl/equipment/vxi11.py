@@ -385,16 +385,17 @@ class RPCClient(object):
         """Write the RPC message that is in the buffer."""
         # RFC-1057, Section 10 describes that RPC messages are sent in fragments
         fragment_size = 0x7FFFFFFF  # (2**31) - 1
-        message = self._buffer
+        remaining = len(self._buffer)
+        view = memoryview(self._buffer)
         sendall = self._sock.sendall
-        while message:
-            remaining = len(message)
+        while remaining > 0:
             if remaining <= fragment_size:  # then it is the last fragment
                 fragment_size = remaining | 0x80000000
             data = bytearray(pack('>I', fragment_size))
-            data.extend(message[:fragment_size])
+            data.extend(view[:fragment_size])
             sendall(data)
-            message = message[fragment_size:]
+            view = view[fragment_size:]
+            remaining -= fragment_size
 
     def check_reply(self, message):
         """Checks the message for errors and returns the procedure-specific data.

@@ -146,7 +146,7 @@ def get_version():
 
 install_requires = [
     'msl-loadlib',
-    'msl-io @ https://github.com/MSLNZ/msl-io/archive/main.tar.gz',
+    'msl-io',
     'numpy',
     'pyserial>=3.0',
     'python-dateutil',

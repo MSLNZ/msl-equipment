@@ -24,7 +24,7 @@ Alternatively, using the `MSL Package Manager`_ run:
 
 Compatibility
 -------------
-**MSL-Equipment** is tested with Python 2.7, 3.5+ on Windows, Linux and macOS.
+**MSL-Equipment** is tested with Python 3.8+ on Windows, Linux and macOS.
 However, some of the resources_ might not work for your application because the
 resource may depend on an external dependency (e.g., the SDK provided by a
 manufacturer) and this external dependency might not be available for your

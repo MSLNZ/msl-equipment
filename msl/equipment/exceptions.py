@@ -46,9 +46,12 @@ class EnergetiqError(MSLConnectionError):
     """Exception for equipment from Energetiq."""
 
 
+class GreisingerError(MSLConnectionError):
+    """Exception for equipment from Greisinger."""
+
+
 class MKSInstrumentsError(MSLConnectionError):
     """Exception for equipment from MKS Instruments."""
-    pass
 
 
 class NKTError(MSLConnectionError):

@@ -187,3 +187,9 @@ def test_find_resource_class():
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)
             assert cls == resources.optronic_laboratories.OLCurrentSource
+
+    for man in ('Greisinger', 'Greisinger, GHM Group', 'GHM GROUP - Greisinger'):
+        for mod in ('GMH3710', 'GMH3710-GE', 'GMH 3710', 'GMH 3710-GE'):
+            record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
+            cls = resources.find_resource_class(record)
+            assert cls == resources.greisinger.GMH3000

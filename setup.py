@@ -164,7 +164,6 @@ tests_require = [
 docs_require = ['sphinx', 'sphinx-rtd-theme']
 
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
-pytest_runner = ['pytest-runner'] if testing else []
 
 needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
 sphinx = docs_require + install_requires if needs_sphinx else []
@@ -198,7 +197,6 @@ setup(
         'Topic :: Software Development',
         'Topic :: Scientific/Engineering',
     ],
-    setup_requires=sphinx + pytest_runner,
     tests_require=tests_require,
     install_requires=install_requires,
     extras_require={

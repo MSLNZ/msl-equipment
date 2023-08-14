@@ -150,7 +150,6 @@ install_requires = [
     'numpy',
     'pyserial>=3.0',
     'python-dateutil',
-    'enum34;python_version<"3.4"',
     'pyzmq',
 ]
 
@@ -159,9 +158,7 @@ tests_require = [
     'pytest-cov',
     'nidaqmx',
     'pyvisa>=1.6',
-    'pyvisa-py;python_version>"3.7"',
-    'pyvisa-py<0.5;python_version<="3.5"',
-    'pyvisa-py<0.6;python_version<="3.7"',
+    'pyvisa-py',
 ]
 
 docs_require = ['sphinx', 'sphinx-rtd-theme']
@@ -193,12 +190,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
@@ -214,6 +206,7 @@ setup(
         'docs': docs_require,
         'dev': tests_require + docs_require,
     },
+    python_requires='>=3.8',
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),
     include_package_data=True,

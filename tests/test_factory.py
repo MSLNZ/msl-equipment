@@ -14,6 +14,7 @@ ROOT_DIR = os.path.join(os.path.dirname(__file__), 'db_files')
 def teardown_module():
     import cleanup_os_environ
     cleanup_os_environ.cleanup()
+    Config.DEMO_MODE = False
 
 
 def test_exceptions():

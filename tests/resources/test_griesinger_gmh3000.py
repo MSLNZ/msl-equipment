@@ -8,7 +8,8 @@ except ImportError:
 
 import pytest
 
-from msl.equipment import EquipmentRecord, ConnectionRecord
+from msl.equipment import ConnectionRecord
+from msl.equipment import EquipmentRecord
 from msl.equipment.exceptions import GreisingerError
 
 
@@ -16,7 +17,7 @@ def easybus_server(port):
     os.read(port, 3)  # value() request
     os.write(port, b'\xfe\x05&q\x00H\xf7\x80\t')  # 21.76
     os.read(port, 3)  # value() request
-    os.write(port, b'\xFE\x0F\x10\x72\xFF\x84\x00\xFC\x05')  # -0.04
+    os.write(port, b'\xFE\x05&\x72\xFF\x84\x00\xFC\x05')  # -0.04
     os.read(port, 6)  # min measurement range request
     os.write(port, b'\xfe\xf5\xf8O\x00g\xbf0\xe3')  # -200.0
     os.read(port, 6)  # max measurement range request
@@ -36,6 +37,8 @@ def test_easybus():
     time.sleep(0.5)  # allow some time for the easybus server to start
 
     record = EquipmentRecord(
+        manufacturer='Greisinger',
+        model='GMH3710-GE',
         connection=ConnectionRecord(
             address='ASRL' + os.ttyname(secondary),
             properties={'timeout': 5},

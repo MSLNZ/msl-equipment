@@ -1,7 +1,6 @@
 import time
 import math
 import threading
-from pkg_resources import parse_version
 
 import pytest
 import pyvisa
@@ -14,7 +13,8 @@ from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
 
 from test_connection_socket import echo_server_tcp, get_available_port
 
-VISA_LIBRARY = '@ni' if parse_version(pyvisa.__version__) < parse_version('1.11') else '@ivi'
+pyvisa_version = tuple(map(int, pyvisa.__version__.split('.')))
+VISA_LIBRARY = '@ni' if pyvisa_version < (1, 11) else '@ivi'
 
 try:
     pyvisa.ResourceManager(VISA_LIBRARY)

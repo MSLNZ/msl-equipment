@@ -482,7 +482,7 @@ def parse_lxi_webserver(host, port=80, timeout=1):
     try:
         # Check for the XML document
         # LXI Device Specification 2022 (Revision 1.6), Section 10.2
-        response = urlopen(base_url + '/lxi/identification/', timeout=timeout)
+        response = urlopen(base_url + '/lxi/identification', timeout=timeout)
     except HTTPError as e:
         if e.getcode() == 404:
             # The URL for the XML document does not exist,

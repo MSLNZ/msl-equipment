@@ -198,14 +198,14 @@ def find_lxi(hosts=None, timeout=1):
             return {}, set()
 
         description = {
-            'Manufacturer': lxi['Manufacturer'],
-            'Model': lxi['Model'],
-            'SerialNumber': lxi['SerialNumber'],
-            'ManufacturerDescription': lxi['ManufacturerDescription'],
+            'Manufacturer': lxi.get('Manufacturer', 'Unknown'),
+            'Model': lxi.get('Model', 'Unknown'),
+            'SerialNumber': lxi.get('SerialNumber', 'Unknown'),
+            'ManufacturerDescription': lxi.get('ManufacturerDescription', lxi.get('title', 'Unknown')),
         }
 
         addresses = set()
-        for interface in lxi['Interfaces']:
+        for interface in lxi.get('Interfaces', []):
             if interface['InterfaceType'] != 'LXI':
                 continue
             for address in interface['InstrumentAddressStrings']:

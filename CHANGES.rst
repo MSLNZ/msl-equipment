@@ -9,6 +9,11 @@ Version 0.2.0 (in development)
 
   - The :class:`~msl.equipment.resources.greisinger.gmh3000.GMH3000` resource.
 
+* Fixed
+
+  - issue `#8 <https://github.com/MSLNZ/msl-equipment/issues/8>`_ - Invalid URL
+    for LXI XML identification document
+
 * Removed
 
   - Support Python 2.7, 3.5, 3.6 and 3.7

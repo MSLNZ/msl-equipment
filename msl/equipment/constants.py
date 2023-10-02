@@ -16,7 +16,7 @@ REGEX_SDK = re.compile(
 )
 
 REGEX_SERIAL = re.compile(
-    r'(COM|ASRL|ASRLCOM)(?P<dev>/dev/[a-z/]+)?(?P<number>\d+)',
+    r'(COM|ASRL|ASRLCOM)((?P<dev>/dev/[^\s:]+)|(?P<number>\d+))',
     flags=re.IGNORECASE
 )
 

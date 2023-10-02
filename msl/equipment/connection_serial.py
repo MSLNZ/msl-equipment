@@ -202,12 +202,12 @@ class ConnectionSerial(ConnectionMessageBased):
         """
         match = REGEX_SERIAL.match(address)
         if match:
-            d = match.groupdict()
-            prefix = 'COM' if d['dev'] is None else d['dev']
-            return {'port': prefix + d['number']}
+            if match['number']:
+                return {'port': f"COM{match['number']}"}
+            if match['dev']:
+                return {'port': match['dev']}
 
         match = REGEX_PROLOGIX.match(address)
         if match:
-            d = match.groupdict()
-            prefix = 'ASRL' if d['name'].startswith('/') else ''
-            return ConnectionSerial.parse_address(prefix + d['name'])
+            prefix = 'ASRL' if match['name'].startswith('/') else ''
+            return ConnectionSerial.parse_address(prefix + match['name'])

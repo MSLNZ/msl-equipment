@@ -168,9 +168,6 @@ docs_require = [
 
 testing = {'test', 'tests', 'pytest'}.intersection(sys.argv)
 
-needs_sphinx = {'doc', 'docs', 'apidoc', 'apidocs', 'build_sphinx'}.intersection(sys.argv)
-sphinx = docs_require + install_requires if needs_sphinx else []
-
 init_original = 'msl/equipment/__init__.py'
 init_backup = init_original + '.backup'
 version = get_version()

@@ -89,9 +89,6 @@ def connect(record, demo=None):
 
         assert cls is not None, 'The Connection class is None'
 
-        if _record.category == 'DMM':
-            cls = dmm_factory(conn, cls)
-
         logger.debug('Connecting to %s using %s', conn, conn.backend.name)
         if demo:
             return ConnectionDemo(_record, cls)

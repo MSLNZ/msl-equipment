@@ -145,7 +145,7 @@ def test_connection_serial_timeout():
     dev.write('SHUTDOWN')
 
 
-@ pytest.mark.parametrize(
+@pytest.mark.parametrize(
     'address',
     ['', 'ASRL', 'COM', 'LPT', 'ASRLCOM', 'XXXX4', 'ABC2', 'COMx', 'GPIB0::2',
      'SDK::filename.so', 'SOCKET::192.168.1.100::5000', 'Prologix::COM6'])
@@ -188,5 +188,5 @@ def test_parse_address_invalid(address):
         ('ProLOgix::/dev/pts/1::2', '/dev/pts/1'),
         ('Prologix::/dev/symlink_name::6', '/dev/symlink_name'),
     ])
-def test_parse_address_invalid(address, expected):
+def test_parse_address_valid(address, expected):
     assert ConnectionSerial.parse_address(address)['port'] == expected

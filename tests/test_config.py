@@ -17,6 +17,14 @@ def teardown_module():
     import cleanup_os_environ
     cleanup_os_environ.cleanup()
 
+    # reset the default Config values so that other tests can assume the default values
+    Config.GPIB_LIBRARY = ''
+    Config.PyVISA_LIBRARY = '@ivi'
+    Config.DEMO_MODE = False
+    assert Config.GPIB_LIBRARY == ''
+    assert Config.PyVISA_LIBRARY == '@ivi'
+    assert not Config.DEMO_MODE
+
 
 def test_config_io_errors():
 
@@ -76,14 +84,6 @@ def test_config_constants_reloaded():
     assert 'docs' in Config.PATH
 
     assert len(c.database().records()) == 7
-
-    # reset the default Config values so that other tests can assume the default values
-    Config.GPIB_LIBRARY = ''
-    Config.PyVISA_LIBRARY = '@ivi'
-    Config.DEMO_MODE = False
-    assert Config.GPIB_LIBRARY == ''
-    assert Config.PyVISA_LIBRARY == '@ivi'
-    assert not Config.DEMO_MODE
 
 
 def test_elements():

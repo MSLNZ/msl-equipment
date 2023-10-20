@@ -133,18 +133,24 @@ def list_resources(
     return devices.values()
 
 
-def print_resources(**kwargs):
+def print_resources(**kwargs) -> None:
     """Print a summary of all equipment that are available to connect to.
 
-    Parameters
-    ----------
-    kwargs
-        All keyword arguments are passed to :func:`.list_resources`.
+    All keyword arguments are passed to :func:`.list_resources`.
     """
-    devices = list_resources(**kwargs)
-    for item in sorted(devices, key=lambda v: v['description']):
-        print(item['description'])
-        if 'webserver' in item:
-            print('  webserver -> ' + item['webserver'])
-        print('  ' + '\n  '.join(sorted(item['addresses'])))
-        print('')
+    devices = sorted(list_resources(**kwargs), key=lambda v: v['description'])
+    types = sorted(set(d['type'] for d in devices))
+    for typ in types:
+        print(f'{typ} Devices')
+        for device in devices:
+            if device['type'] != typ:
+                continue
+            if typ == 'GPIB':
+                print('  ' + '\n  '.join(device['addresses']))
+            elif typ == 'ASRL':
+                print(f"  {device['addresses'][0]} [{device['description']}]")
+            elif typ == 'Network':
+                print(f"  {device['description']}")
+                print(f"    webserver {device['webserver']}")
+                if device['addresses']:
+                    print(f'    ' + '\n    '.join(sorted(device['addresses'])))

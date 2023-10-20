@@ -26,10 +26,6 @@ from msl.equipment.constants import StopBits
 from msl.equipment.record_types import RecordDict
 from msl.equipment.utils import convert_to_xml_string
 
-PY2 = sys.version_info.major == 2
-if not PY2:
-    unicode = str
-
 ROOT_DIR = os.path.join(os.path.dirname(__file__), 'db_files')
 
 
@@ -115,18 +111,18 @@ def test_equipment_record():
     a = repr(record).splitlines()
     assert len(a) == len(record.__slots__) + 1
     assert a[0] == 'EquipmentRecord'
-    assert a[1] == '  alias: {!r}'.format(u'' if PY2 else '')
+    assert a[1] == '  alias: {!r}'.format('')
     assert a[2] == '  calibrations: None'
-    assert a[3] == '  category: {!r}'.format(u'' if PY2 else '')
+    assert a[3] == '  category: {!r}'.format('')
     assert a[4] == '  connection: None'
-    assert a[5] == '  description: {!r}'.format(u'' if PY2 else '')
+    assert a[5] == '  description: {!r}'.format('')
     assert a[6] == '  is_operable: False'
     assert a[7] == '  maintenances: None'
-    assert a[8] == '  manufacturer: {!r}'.format(u'' if PY2 else '')
-    assert a[9] == '  model: {!r}'.format(u'' if PY2 else '')
-    assert a[10] == '  serial: {!r}'.format(u'' if PY2 else '')
-    assert a[11] == '  team: {!r}'.format(u'' if PY2 else '')
-    assert a[12] == '  unique_key: {!r}'.format(u'' if PY2 else '')
+    assert a[8] == '  manufacturer: {!r}'.format('')
+    assert a[9] == '  model: {!r}'.format('')
+    assert a[10] == '  serial: {!r}'.format('')
+    assert a[11] == '  team: {!r}'.format('')
+    assert a[12] == '  unique_key: {!r}'.format('')
     assert a[13] == '  user_defined: None'
 
     # populate the EquipmentRecord
@@ -148,14 +144,14 @@ def test_equipment_record():
         connection=ConnectionRecord(
             address='GPIB::15',
             backend=Backend.PyVISA,
-            manufacturer=u'uñicödé',
+            manufacturer='uñicödé',
             model='XYZ',
             serial='ABC123',
             properties={
                 'none': None,
                 'bytes': b'\x02\x19\x08',
                 'string': 'string',
-                'unicode': u'uñicödé',
+                'unicode': 'uñicödé',
                 'termination': '\r\n',
                 'boolean': True,
                 'integer': 77,
@@ -164,12 +160,12 @@ def test_equipment_record():
                 'enum': StopBits.ONE_POINT_FIVE,
             },
         ),
-        description=u'Sométhing uséful',
+        description='Sométhing uséful',
         is_operable=True,
         maintenances=[
             MaintenanceRecord(date='2019-01-01', comment='fixed it'),
         ],
-        manufacturer=u'uñicödé',
+        manufacturer='uñicödé',
         model='XYZ',
         serial='ABC123',
         team='P&R',
@@ -178,8 +174,8 @@ def test_equipment_record():
         b=8,  # goes into the user_defined dict
         c=[1, 2, 3],  # goes into the user_defined dict
     )
-    print(unicode(record))  # make sure it is printable
-    print(unicode(repr(record)))
+    print(str(record))  # make sure it is printable
+    print(str(repr(record)))
     assert record.alias == 'my alias'
     assert len(record.calibrations) == 1
     assert record.calibrations[0].calibration_cycle == 2
@@ -200,12 +196,12 @@ def test_equipment_record():
     assert record.connection.address == 'GPIB::15'
     assert record.connection.backend == Backend.PyVISA
     assert record.connection.interface == Interface.NONE  # using PyVISA as the backend
-    assert record.connection.manufacturer == u'uñicödé'
+    assert record.connection.manufacturer == 'uñicödé'
     assert record.connection.model == 'XYZ'
     assert record.connection.properties['none'] is None
     assert record.connection.properties['bytes'] == b'\x02\x19\x08'
     assert record.connection.properties['string'] == 'string'
-    assert record.connection.properties['unicode'] == u'uñicödé'
+    assert record.connection.properties['unicode'] == 'uñicödé'
     assert record.connection.properties['termination'] == b'\r\n'
     assert record.connection.properties['boolean'] is True
     assert record.connection.properties['integer'] == 77
@@ -213,12 +209,12 @@ def test_equipment_record():
     assert record.connection.properties['complex'] == -2-3j
     assert record.connection.properties['enum'] == StopBits.ONE_POINT_FIVE
     assert record.connection.serial == 'ABC123'
-    assert record.description == u'Sométhing uséful'
+    assert record.description == 'Sométhing uséful'
     assert record.is_operable
     assert len(record.maintenances) == 1
     assert record.maintenances[0].date == datetime.date(2019, 1, 1)
     assert record.maintenances[0].comment == 'fixed it'
-    assert record.manufacturer == u'uñicödé'
+    assert record.manufacturer == 'uñicödé'
     assert record.model == 'XYZ'
     assert record.serial == 'ABC123'
     assert record.team == 'P&R'
@@ -250,12 +246,12 @@ def test_equipment_record():
     assert a['connection']['address'] == 'GPIB::15'
     assert a['connection']['backend'] == Backend.PyVISA
     assert a['connection']['interface'] == Interface.NONE  # using PyVISA as the backend
-    assert a['connection']['manufacturer'] == u'uñicödé'
+    assert a['connection']['manufacturer'] == 'uñicödé'
     assert a['connection']['model'] == 'XYZ'
     assert a['connection']['properties']['none'] is None
     assert a['connection']['properties']['bytes'] == b'\x02\x19\x08'
     assert a['connection']['properties']['string'] == 'string'
-    assert a['connection']['properties']['unicode'] == u'uñicödé'
+    assert a['connection']['properties']['unicode'] == 'uñicödé'
     assert a['connection']['properties']['termination'] == b'\r\n'
     assert a['connection']['properties']['boolean'] is True
     assert a['connection']['properties']['integer'] == 77
@@ -263,12 +259,12 @@ def test_equipment_record():
     assert a['connection']['properties']['complex'] == -2-3j
     assert a['connection']['properties']['enum'] == StopBits.ONE_POINT_FIVE
     assert a['connection']['serial'] == 'ABC123'
-    assert a['description'] == u'Sométhing uséful'
+    assert a['description'] == 'Sométhing uséful'
     assert a['is_operable']
     assert len(a['maintenances']) == 1
     assert a['maintenances'][0]['date'] == datetime.date(2019, 1, 1)
     assert a['maintenances'][0]['comment'] == 'fixed it'
-    assert a['manufacturer'] == u'uñicödé'
+    assert a['manufacturer'] == 'uñicödé'
     assert a['model'] == 'XYZ'
     assert a['serial'] == 'ABC123'
     assert a['team'] == 'P&R'
@@ -299,25 +295,25 @@ def test_equipment_record():
     assert a['connection']['address'] == 'GPIB::15'
     assert a['connection']['backend'] == 'PyVISA'
     assert a['connection']['interface'] == 'NONE'  # using PyVISA as the backend
-    assert a['connection']['manufacturer'] == u'uñicödé'
+    assert a['connection']['manufacturer'] == 'uñicödé'
     assert a['connection']['model'] == 'XYZ'
     assert a['connection']['properties']['none'] is None
-    assert a['connection']['properties']['bytes'] == '\x02\x19\x08' if PY2 else "b'\\x02\\x19\\x08'"
+    assert a['connection']['properties']['bytes'] == "b'\\x02\\x19\\x08'"
     assert a['connection']['properties']['string'] == 'string'
-    assert a['connection']['properties']['unicode'] == u'uñicödé'
-    assert a['connection']['properties']['termination'] == '\r\n' if PY2 else "b'\\r\\n'"
+    assert a['connection']['properties']['unicode'] == 'uñicödé'
+    assert a['connection']['properties']['termination'] == "b'\\r\\n'"
     assert a['connection']['properties']['boolean'] is True
     assert a['connection']['properties']['integer'] == 77
     assert a['connection']['properties']['float'] == 12.34
     assert a['connection']['properties']['complex'] == '(-2-3j)'
     assert a['connection']['properties']['enum'] == 'ONE_POINT_FIVE'
     assert a['connection']['serial'] == 'ABC123'
-    assert a['description'] == u'Sométhing uséful'
+    assert a['description'] == 'Sométhing uséful'
     assert a['is_operable']
     assert len(a['maintenances']) == 1
     assert a['maintenances'][0]['date'] == '2019-01-01'
     assert a['maintenances'][0]['comment'] == 'fixed it'
-    assert a['manufacturer'] == u'uñicödé'
+    assert a['manufacturer'] == 'uñicödé'
     assert a['model'] == 'XYZ'
     assert a['serial'] == 'ABC123'
     assert a['team'] == 'P&R'
@@ -358,26 +354,26 @@ def test_equipment_record():
     assert a.find('connection/ConnectionRecord/address').text == 'GPIB::15'
     assert a.find('connection/ConnectionRecord/backend').text == 'PyVISA'
     assert a.find('connection/ConnectionRecord/interface').text == 'NONE'  # using PyVISA as the backend
-    assert a.find('connection/ConnectionRecord/manufacturer').text == u'uñicödé'
+    assert a.find('connection/ConnectionRecord/manufacturer').text == 'uñicödé'
     assert a.find('connection/ConnectionRecord/model').text == 'XYZ'
     assert len(a.find('connection/ConnectionRecord/properties').text.strip()) == 0
     assert a.find('connection/ConnectionRecord/properties/none').text == 'None'
-    assert a.find('connection/ConnectionRecord/properties/bytes').text == "'\\x02\\x19\\x08'" if PY2 else "b'\x02\x19\x08'"
-    assert a.find('connection/ConnectionRecord/properties/string').text == "'string'" if PY2 else 'string'
-    assert a.find('connection/ConnectionRecord/properties/unicode').text == u'u\xf1ic\xf6d\xe9' if PY2 else 'uñicödé'
-    assert a.find('connection/ConnectionRecord/properties/termination').text == "'\\r\\n'" if PY2 else "b'\\r\\n'"
+    assert a.find('connection/ConnectionRecord/properties/bytes').text == "b'\\x02\\x19\\x08'"
+    assert a.find('connection/ConnectionRecord/properties/string').text == 'string'
+    assert a.find('connection/ConnectionRecord/properties/unicode').text == 'uñicödé'
+    assert a.find('connection/ConnectionRecord/properties/termination').text == "b'\\r\\n'"
     assert a.find('connection/ConnectionRecord/properties/boolean').text == 'True'
     assert a.find('connection/ConnectionRecord/properties/integer').text == '77'
     assert a.find('connection/ConnectionRecord/properties/float').text == '12.34'
     assert a.find('connection/ConnectionRecord/properties/complex').text == '(-2-3j)'
     assert a.find('connection/ConnectionRecord/properties/enum').text == 'ONE_POINT_FIVE'
     assert a.find('connection/ConnectionRecord/serial').text == 'ABC123'
-    assert a.find('description').text == u'Sométhing uséful'
+    assert a.find('description').text == 'Sométhing uséful'
     assert a.find('is_operable').text == 'True'
     assert len(a.find('maintenances')) == 1
     assert a.find('maintenances/MaintenanceRecord/date').text == '2019-01-01'
     assert a.find('maintenances/MaintenanceRecord/comment').text == 'fixed it'
-    assert a.find('manufacturer').text == u'u\xf1ic\xf6d\xe9' if PY2 else 'uñicödé'
+    assert a.find('manufacturer').text == 'uñicödé'
     assert a.find('model').text == 'XYZ'
     assert a.find('serial').text == 'ABC123'
     assert a.find('team').text == 'P&R'
@@ -389,8 +385,8 @@ def test_equipment_record():
 
     # The JSON-dumps-loads process should return the same EquipmentRecord object
     for rec in [record, json_record]:
-        print(unicode(rec))  # make sure it is printable
-        print(unicode(repr(rec)))
+        print(str(rec))  # make sure it is printable
+        print(str(repr(rec)))
         assert rec.alias == 'my alias'
         assert len(rec.calibrations) == 1
         assert rec.calibrations[0].calibration_cycle == 2
@@ -411,16 +407,16 @@ def test_equipment_record():
         assert rec.connection.address == 'GPIB::15'
         assert rec.connection.backend == Backend.PyVISA
         assert rec.connection.interface == Interface.NONE  # using PyVISA as the backend
-        assert rec.connection.manufacturer == u'uñicödé'
+        assert rec.connection.manufacturer == 'uñicödé'
         assert rec.connection.model == 'XYZ'
         assert rec.connection.properties['none'] is None
-        if rec is json_record and not PY2:
+        if rec is json_record:
             assert rec.connection.properties['bytes'] == "b'\\x02\\x19\\x08'"
         else:
             assert rec.connection.properties['bytes'] == b'\x02\x19\x08'
         assert rec.connection.properties['string'] == 'string'
         assert rec.connection.properties['termination'] == b'\r\n'
-        assert rec.connection.properties['unicode'] == u'uñicödé'
+        assert rec.connection.properties['unicode'] == 'uñicödé'
         assert rec.connection.properties['boolean'] is True
         assert rec.connection.properties['integer'] == 77
         assert rec.connection.properties['float'] == 12.34
@@ -434,12 +430,12 @@ def test_equipment_record():
             assert rec.connection.properties['complex'] == -2 - 3j
             assert rec.connection.properties['enum'] == StopBits.ONE_POINT_FIVE
         assert rec.connection.serial == 'ABC123'
-        assert rec.description == u'Sométhing uséful'
+        assert rec.description == 'Sométhing uséful'
         assert rec.is_operable
         assert len(rec.maintenances) == 1
         assert rec.maintenances[0].date == datetime.date(2019, 1, 1)
         assert rec.maintenances[0].comment == 'fixed it'
-        assert rec.manufacturer == u'uñicödé'
+        assert rec.manufacturer == 'uñicödé'
         assert rec.model == 'XYZ'
         assert rec.serial == 'ABC123'
         assert rec.team == 'P&R'
@@ -464,48 +460,48 @@ def test_equipment_record():
     assert a[10] == '            max: 10'
     assert a[11] == '            min: 0'
     assert a[12] == '          conditions: None'
-    assert a[13] == '          type: {}'.format("u'A'" if PY2 else "'A'")
-    assert a[14] == '          unit: {}'.format("u'B'" if PY2 else "'B'")
+    assert a[13] == '          type: {}'.format("'A'")
+    assert a[14] == '          unit: {}'.format("'B'")
     assert a[15] == '        MeasurandRecord'
     assert a[16] == '          calibration: '
     assert a[17] == '            coeff: (0.2, 11)'
     assert a[18] == '            range: (0, 10)'
     assert a[19] == '          conditions: None'
-    assert a[20] == '          type: {}'.format("u'X'" if PY2 else "'X'")
-    assert a[21] == '          unit: {}'.format("u'Y'" if PY2 else "'Y'")
+    assert a[20] == '          type: {}'.format("'X'")
+    assert a[21] == '          unit: {}'.format("'Y'")
     assert a[22] == '      report_date: 2018-08-20'
-    assert a[23] == '      report_number: {}'.format("u'Report:12-3/4'" if PY2 else "'Report:12-3/4'")
-    assert a[24] == '  category: {}'.format("u'DMM'" if PY2 else "'DMM'")
+    assert a[23] == '      report_number: {}'.format("'Report:12-3/4'")
+    assert a[24] == '  category: {}'.format("'DMM'")
     assert a[25] == '  connection: '
     assert a[26] == '    ConnectionRecord'
-    assert a[27] == '      address: {}'.format("u'GPIB::15'" if PY2 else "'GPIB::15'")
+    assert a[27] == '      address: {}'.format("'GPIB::15'")
     assert a[28] == '      backend: <Backend.PyVISA: 2>'
     assert a[29] == '      interface: <Interface.NONE: 0>'
-    assert a[30] == '      manufacturer: {}'.format("u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "'uñicödé'")
-    assert a[31] == '      model: {}'.format("u'XYZ'" if PY2 else "'XYZ'")
+    assert a[30] == '      manufacturer: {}'.format("'uñicödé'")
+    assert a[31] == '      model: {}'.format("'XYZ'")
     assert a[32] == '      properties: '
     assert a[33] == '        boolean: True'
-    assert a[34] == '        bytes: {}'.format("'\\x02\\x19\\x08'" if PY2 else "b'\\x02\\x19\\x08'")
+    assert a[34] == '        bytes: {}'.format("b'\\x02\\x19\\x08'")
     assert a[35] == '        complex: (-2-3j)'
     assert a[36] == '        enum: <StopBits.ONE_POINT_FIVE: 1.5>'
     assert a[37] == '        float: 12.34'
     assert a[38] == '        integer: 77'
     assert a[39] == '        none: None'
     assert a[40] == "        string: 'string'"
-    assert a[41] == '        termination: {}'.format("'\\r\\n'" if PY2 else "b'\\r\\n'")
-    assert a[42] == '        unicode: {}'.format("u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "'uñicödé'")
-    assert a[43] == '      serial: {}'.format("u'ABC123'" if PY2 else "'ABC123'")
-    assert a[44] == '  description: {}'.format("u'Som\\xe9thing us\\xe9ful'" if PY2 else "'Sométhing uséful'")
+    assert a[41] == '        termination: {}'.format("b'\\r\\n'")
+    assert a[42] == '        unicode: {}'.format("'uñicödé'")
+    assert a[43] == '      serial: {}'.format("'ABC123'")
+    assert a[44] == '  description: {}'.format("'Sométhing uséful'")
     assert a[45] == '  is_operable: True'
     assert a[46] == '  maintenances: '
     assert a[47] == '    MaintenanceRecord'
-    assert a[48] == '      comment: {}'.format("u'fixed it'" if PY2 else "'fixed it'")
+    assert a[48] == '      comment: {}'.format("'fixed it'")
     assert a[49] == '      date: 2019-01-01'
-    assert a[50] == '  manufacturer: {}'.format("u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "'uñicödé'")
-    assert a[51] == '  model: {}'.format("u'XYZ'" if PY2 else "'XYZ'")
-    assert a[52] == '  serial: {}'.format("u'ABC123'" if PY2 else "'ABC123'")
-    assert a[53] == '  team: {}'.format("u'P&R'" if PY2 else "'P&R'")
-    assert a[54] == '  unique_key: {}'.format("u'keykeykey'" if PY2 else "'keykeykey'")
+    assert a[50] == '  manufacturer: {}'.format("'uñicödé'")
+    assert a[51] == '  model: {}'.format("'XYZ'")
+    assert a[52] == '  serial: {}'.format("'ABC123'")
+    assert a[53] == '  team: {}'.format("'P&R'")
+    assert a[54] == '  unique_key: {}'.format("'keykeykey'")
     assert a[55] == '  user_defined: '
     assert a[56] == "    a: 'a'"
     assert a[57] == '    b: 8'
@@ -745,26 +741,26 @@ def test_connection_record():
     a = repr(ConnectionRecord()).splitlines()
     assert len(a) == 8
     assert a[0] == 'ConnectionRecord'
-    assert a[1] == '  address: {!r}'.format(u'' if PY2 else '')
+    assert a[1] == '  address: {!r}'.format('')
     assert a[2] == '  backend: <Backend.MSL: 1>'
     assert a[3] == '  interface: <Interface.NONE: 0>'
-    assert a[4] == '  manufacturer: {!r}'.format(u'' if PY2 else '')
-    assert a[5] == '  model: {!r}'.format(u'' if PY2 else '')
+    assert a[4] == '  manufacturer: {!r}'.format('')
+    assert a[5] == '  model: {!r}'.format('')
     assert a[6] == '  properties: None'
-    assert a[7] == '  serial: {!r}'.format(u'' if PY2 else '')
+    assert a[7] == '  serial: {!r}'.format('')
 
     # create a new ConnectionRecord
     record = ConnectionRecord(
         address='GPIB::15',
         backend=Backend.PyVISA,
-        manufacturer=u'uñicödé',
+        manufacturer='uñicödé',
         model='XYZ',
         serial='ABC123',
         properties={
             'none': None,
             'bytes': b'\x02\x19\x08',
             'string': 'string',
-            'unicode': u'uñicödé',
+            'unicode': 'uñicödé',
             'termination': '\r\n',
             'boolean': True,
             'integer': 77,
@@ -773,17 +769,17 @@ def test_connection_record():
             'enum': StopBits.ONE_POINT_FIVE,
         },
     )
-    print(unicode(record))  # make sure it is printable
-    print(unicode(repr(record)))
+    print(str(record))  # make sure it is printable
+    print(str(repr(record)))
     assert record.address == 'GPIB::15'
     assert record.backend == Backend.PyVISA
     assert record.interface == Interface.NONE  # using PyVISA as the backend
-    assert record.manufacturer == u'uñicödé'
+    assert record.manufacturer == 'uñicödé'
     assert record.model == 'XYZ'
     assert record.properties['none'] is None
     assert record.properties['bytes'] == b'\x02\x19\x08'
     assert record.properties['string'] == 'string'
-    assert record.properties['unicode'] == u'uñicödé'
+    assert record.properties['unicode'] == 'uñicödé'
     assert record.properties['termination'] == b'\r\n'
     assert record.properties['boolean'] is True
     assert record.properties['integer'] == 77
@@ -797,12 +793,12 @@ def test_connection_record():
     assert a['address'] == 'GPIB::15'
     assert a['backend'] == Backend.PyVISA
     assert a['interface'] == Interface.NONE  # using PyVISA as the backend
-    assert a['manufacturer'] == u'uñicödé'
+    assert a['manufacturer'] == 'uñicödé'
     assert a['model'] == 'XYZ'
     assert a['properties']['none'] is None
     assert a['properties']['bytes'] == b'\x02\x19\x08'
     assert a['properties']['string'] == 'string'
-    assert a['properties']['unicode'] == u'uñicödé'
+    assert a['properties']['unicode'] == 'uñicödé'
     assert a['properties']['termination'] == b'\r\n'
     assert a['properties']['boolean'] is True
     assert a['properties']['integer'] == 77
@@ -816,13 +812,13 @@ def test_connection_record():
     assert a['address'] == 'GPIB::15'
     assert a['backend'] == 'PyVISA'
     assert a['interface'] == 'NONE'  # using PyVISA as the backend
-    assert a['manufacturer'] == u'uñicödé'
+    assert a['manufacturer'] == 'uñicödé'
     assert a['model'] == 'XYZ'
     assert a['properties']['none'] is None
-    assert a['properties']['bytes'] == '\x02\x19\x08' if PY2 else "b'\\x02\\x19\\x08'"
+    assert a['properties']['bytes'] == "b'\\x02\\x19\\x08'"
     assert a['properties']['string'] == 'string'
-    assert a['properties']['unicode'] == u'uñicödé'
-    assert a['properties']['termination'] == '\r\n' if PY2 else "b'\\r\\n'"
+    assert a['properties']['unicode'] == 'uñicödé'
+    assert a['properties']['termination'] == "b'\\r\\n'"
     assert a['properties']['boolean'] is True
     assert a['properties']['integer'] == 77
     assert a['properties']['float'] == 12.34
@@ -838,14 +834,14 @@ def test_connection_record():
     assert a.find('address').text == 'GPIB::15'
     assert a.find('backend').text == 'PyVISA'
     assert a.find('interface').text == 'NONE'
-    assert a.find('manufacturer').text == u'uñicödé'
+    assert a.find('manufacturer').text == 'uñicödé'
     assert a.find('model').text == 'XYZ'
     props = a.find('properties')
     assert props.find('none').text == 'None'
-    assert props.find('bytes').text == "'\\x02\\x19\\x08'" if PY2 else "b'\x02\x19\x08'"
-    assert props.find('string').text == "'string'" if PY2 else 'string'
-    assert props.find('unicode').text == u'u\xf1ic\xf6d\xe9' if PY2 else 'uñicödé'
-    assert props.find('termination').text == "'\\r\\n'" if PY2 else "b'\\r\\n'"
+    assert props.find('bytes').text == "b'\\x02\\x19\\x08'"
+    assert props.find('string').text == 'string'
+    assert props.find('unicode').text == 'uñicödé'
+    assert props.find('termination').text == "b'\\r\\n'"
     assert props.find('boolean').text == 'True'
     assert props.find('integer').text == '77'
     assert props.find('float').text == '12.34'
@@ -854,15 +850,15 @@ def test_connection_record():
     assert a.find('serial').text == 'ABC123'
 
     for rec in [record, json_record]:
-        print(unicode(rec))  # make sure it is printable
-        print(unicode(repr(rec)))
+        print(str(rec))  # make sure it is printable
+        print(str(repr(rec)))
         assert rec.address == 'GPIB::15'
         assert rec.backend == Backend.PyVISA
         assert rec.interface == Interface.NONE  # using PyVISA as the backend
-        assert rec.manufacturer == u'uñicödé'
+        assert rec.manufacturer == 'uñicödé'
         assert rec.model == 'XYZ'
         assert rec.properties['none'] is None
-        if rec is json_record and not PY2:
+        if rec is json_record:
             assert rec.properties['bytes'] == "b'\\x02\\x19\\x08'"
         else:
             assert rec.properties['bytes'] == b'\x02\x19\x08'
@@ -873,7 +869,7 @@ def test_connection_record():
             assert rec.properties['enum'] == StopBits.ONE_POINT_FIVE
             assert rec.properties['complex'] == -2 - 3j
         assert rec.properties['string'] == 'string'
-        assert rec.properties['unicode'] == u'uñicödé'
+        assert rec.properties['unicode'] == 'uñicödé'
         assert rec.properties['termination'] == b'\r\n'
         assert rec.properties['boolean'] is True
         assert rec.properties['integer'] == 77
@@ -883,23 +879,23 @@ def test_connection_record():
     a = repr(record).splitlines()
     assert len(a) == 18
     assert a[0] == 'ConnectionRecord'
-    assert a[1] == '  address: {}'.format("u'GPIB::15'" if PY2 else "'GPIB::15'")
+    assert a[1] == '  address: {}'.format("'GPIB::15'")
     assert a[2] == '  backend: <Backend.PyVISA: 2>'
     assert a[3] == '  interface: <Interface.NONE: 0>'
-    assert a[4] == '  manufacturer: {}'.format("u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "'uñicödé'")
-    assert a[5] == '  model: {}'.format("u'XYZ'" if PY2 else "'XYZ'")
+    assert a[4] == '  manufacturer: {}'.format("'uñicödé'")
+    assert a[5] == '  model: {}'.format("'XYZ'")
     assert a[6] == '  properties: '
     assert a[7] == '    boolean: True'
-    assert a[8] == '    bytes: {}'.format("'\\x02\\x19\\x08'" if PY2 else "b'\\x02\\x19\\x08'")
+    assert a[8] == '    bytes: {}'.format("b'\\x02\\x19\\x08'")
     assert a[9] == '    complex: (-2-3j)'
     assert a[10] == '    enum: <StopBits.ONE_POINT_FIVE: 1.5>'
     assert a[11] == '    float: 12.34'
     assert a[12] == '    integer: 77'
     assert a[13] == '    none: None'
     assert a[14] == "    string: 'string'"
-    assert a[15] == '    termination: {}'.format("'\\r\\n'" if PY2 else "b'\\r\\n'")
-    assert a[16] == '    unicode: {}'.format("u'u\\xf1ic\\xf6d\\xe9'" if PY2 else "'uñicödé'")
-    assert a[17] == '  serial: {}'.format("u'ABC123'" if PY2 else "'ABC123'")
+    assert a[15] == '    termination: {}'.format("b'\\r\\n'")
+    assert a[16] == '    unicode: {}'.format("'uñicödé'")
+    assert a[17] == '  serial: {}'.format("'ABC123'")
 
     os.remove(temp)
 
@@ -915,10 +911,10 @@ def test_connection_record_interface():
         ConnectionRecord(address='XXXXXX')
 
     # if the user specifies the interface then this interface is used regardless of the value of address
-    for interface in [Interface.SDK, 'SDK', u'SDK', 'sDk', 1]:
+    for interface in [Interface.SDK, 'SDK', 'SDK', 'sDk', 1]:
         c = ConnectionRecord(address='XXXXXX', interface=interface)
         assert c.interface == Interface.SDK
-    for interface in [Interface.SOCKET, 'SOCKET', u'SOCKET', 'soCKet', 3]:
+    for interface in [Interface.SOCKET, 'SOCKET', 'SOCKET', 'soCKet', 3]:
         c = ConnectionRecord(address='XXXXXX', interface=interface)
         assert c.interface == Interface.SOCKET
 
@@ -1000,7 +996,7 @@ def test_connection_record_interface():
 def test_connection_record_backend():
 
     # equivalent ways to define a Backend
-    for backend in [Backend.MSL, 'MSL', u'MSL', 1]:
+    for backend in [Backend.MSL, 'MSL', 1]:
         c = ConnectionRecord(backend=backend)
         assert c.backend == Backend.MSL
 
@@ -1121,11 +1117,6 @@ def test_dbase():
     assert c.properties['read_termination'] == CR + LF
     assert c.properties['write_termination'] == LF
 
-    if PY2:
-        string = (str, unicode)
-    else:
-        string = str
-
     for r in dbase.records():
         for key, value in r.to_dict().items():
             if key == 'user_defined':
@@ -1140,7 +1131,7 @@ def test_dbase():
                         elif k == 'properties':
                             assert isinstance(v, dict)
                         else:
-                            assert isinstance(v, string)
+                            assert isinstance(v, str)
                 else:
                     assert value is None
             elif key == 'calibrations' or key == 'maintenances':
@@ -1148,7 +1139,7 @@ def test_dbase():
             elif key == 'is_operable':
                 assert isinstance(value, bool)
             else:
-                assert isinstance(value, string)
+                assert isinstance(value, str)
 
 
 def test_asrl():
@@ -1434,7 +1425,7 @@ def test_maintenance_record():
 
     s = repr(mr).splitlines()
     assert s[0] == 'MaintenanceRecord'
-    assert s[1] == '  comment: {}'.format("u'my comment'" if PY2 else "'my comment'")
+    assert s[1] == '  comment: {}'.format("'my comment'")
     assert s[2] == '  date: 2019-04-23'
 
 
@@ -1492,8 +1483,8 @@ def test_measurand_record():
     assert s[4] == '  conditions: '
     assert s[5] == '    c: 2'
     assert s[6] == '    d: 3'
-    assert s[7] == '  type: {}'.format("u'Humidity'" if PY2 else "'Humidity'")
-    assert s[8] == '  unit: {}'.format("u'%rh'" if PY2 else "'%rh'")
+    assert s[7] == '  type: {}'.format("'Humidity'")
+    assert s[8] == '  unit: {}'.format("'%rh'")
 
     d = mr.to_dict()
     assert d['calibration']['a'] == 0
@@ -1670,20 +1661,20 @@ def test_calibration_record():
     assert s[4] == '    MeasurandRecord'
     assert s[5] == '      calibration: None'
     assert s[6] == '      conditions: None'
-    assert s[7] == '      type: {}'.format("u'a'" if PY2 else "'a'")
-    assert s[8] == '      unit: {}'.format("u''" if PY2 else "''")
+    assert s[7] == '      type: {}'.format("'a'")
+    assert s[8] == '      unit: {}'.format("''")
     assert s[9] == '    MeasurandRecord'
     assert s[10] == '      calibration: None'
     assert s[11] == '      conditions: None'
-    assert s[12] == '      type: {}'.format("u'b'" if PY2 else "'b'")
-    assert s[13] == '      unit: {}'.format("u''" if PY2 else "''")
+    assert s[12] == '      type: {}'.format("'b'")
+    assert s[13] == '      unit: {}'.format("''")
     assert s[14] == '    MeasurandRecord'
     assert s[15] == '      calibration: None'
     assert s[16] == '      conditions: None'
-    assert s[17] == '      type: {}'.format("u'c'" if PY2 else "'c'")
-    assert s[18] == '      unit: {}'.format("u''" if PY2 else "''")
+    assert s[17] == '      type: {}'.format("'c'")
+    assert s[18] == '      unit: {}'.format("''")
     assert s[19] == '  report_date: 2010-12-13'
-    assert s[20] == '  report_number: {}'.format("u'ABC123'" if PY2 else "'ABC123'")
+    assert s[20] == '  report_number: {}'.format("'ABC123'")
 
     for rec in [cr, json_record]:
         assert rec.calibration_cycle == 5.0

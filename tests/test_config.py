@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import os
 from io import BytesIO
+from io import StringIO
+from pathlib import Path
 from xml.etree.ElementTree import ParseError
 
 import pytest
@@ -179,3 +181,14 @@ def test_elements():
     assert c.value('f2') == -1.712e-12
     assert c.value('c1') == 8.1j
     assert c.value('c2') == -7e4 + 8e2j
+
+
+def test_source_types():
+    path = os.path.join(ROOT_DIR, 'config1.xml')
+    assert Config(path).path == path
+    assert Config(path.encode()).path == path
+    assert Config(Path(path)).path == path
+    assert Config(BytesIO(b'<?xml version="1.0"?><msl></msl>')).path == '<BytesIO>'
+    assert Config(StringIO('<?xml version="1.0"?><msl></msl>')).path == '<StringIO>'
+    assert Config(open(path, mode='rt')).path == '<TextIOWrapper>'
+    assert Config(open(path, mode='rb')).path == '<BufferedReader>'

@@ -147,14 +147,12 @@ class Config:
         return self._root.findall(tag_or_path)
 
     @property
-    def path(self) -> AnyStr | os.PathLike[AnyStr]:
+    def path(self) -> str:
         """The path to the configuration file."""
         try:
-            os.path.isfile(self._source)
-        except TypeError:  # raised if self._source is IO[AnyStr]
+            return os.fsdecode(self._source)
+        except TypeError:
             return f'<{self._source.__class__.__name__}>'
-        else:
-            return self._source
 
     @property
     def root(self) -> Element:

@@ -415,3 +415,33 @@ def test_parse_address():
     assert info['port'] == 1234
 
     assert ConnectionSocket.parse_address('Prologics::192.168.1.70::1234::6') is None
+
+
+@pytest.mark.parametrize(
+    'term', ['\r', '\n', '\0', '\r\n', '\n\0', '\r\0', '\r\n\0', 'anything'])
+def test_terminator(term):
+    address = '127.0.0.1'
+    port = get_available_port()
+
+    t = threading.Thread(
+        target=echo_server_tcp,
+        args=(address, port, term.encode()),
+        daemon=True
+    )
+    t.start()
+
+    time.sleep(0.1)  # allow some time for the echo server to start
+
+    record = EquipmentRecord(
+        connection=ConnectionRecord(
+            address=f'SOCKET::{address}::{port}',
+            termination=term,
+            timeout=2,
+        )
+    )
+
+    dev = record.connect()
+    assert dev.read_termination == term.encode()
+    assert dev.write_termination == term.encode()
+    assert dev.query('hello') == f'hello{term}'
+    dev.write('SHUTDOWN')

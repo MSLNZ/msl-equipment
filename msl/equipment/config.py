@@ -5,9 +5,9 @@ from __future__ import annotations
 
 import os
 from typing import Any
-from typing import AnyStr
-from typing import IO
+from typing import BinaryIO
 from typing import TYPE_CHECKING
+from typing import TextIO
 from typing import Union
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from .database import Database
 
 
-XMLType = Union[AnyStr, os.PathLike[AnyStr], IO[AnyStr]]
+XMLType = Union[str, bytes, os.PathLike, BinaryIO, TextIO]
 """An XML-document type that can be parsed."""
 
 

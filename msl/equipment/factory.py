@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from .config import Config
 from .connection_demo import ConnectionDemo
+from .connection_gpib import ConnectionGPIB
 from .connection_nidaq import ConnectionNIDAQ
 from .connection_prologix import ConnectionPrologix
 from .connection_pyvisa import ConnectionPyVISA
@@ -19,6 +20,16 @@ from .constants import Interface
 from .exceptions import ResourceClassNotFound
 from .resources import find_resource_class
 from .utils import logger
+
+_interface_map = {
+    Interface.SERIAL: ConnectionSerial,
+    Interface.SOCKET: ConnectionSocket,
+    Interface.PROLOGIX: ConnectionPrologix,
+    Interface.TCPIP_VXI11: ConnectionTCPIPVXI11,
+    Interface.TCPIP_HISLIP: ConnectionTCPIPHiSLIP,
+    Interface.ZMQ: ConnectionZeroMQ,
+    Interface.GPIB: ConnectionGPIB,
+}
 
 
 def connect(record, demo=None):
@@ -44,7 +55,7 @@ def connect(record, demo=None):
     def _connect(_record):
         """Processes a single EquipmentRecord object"""
         def _raise(name):
-            raise ValueError('The connection {} has not been set for {}'.format(name, _record))
+            raise ValueError(f'The connection {name} has not been set for {_record}')
 
         conn = _record.connection
 
@@ -63,20 +74,10 @@ def connect(record, demo=None):
             if cls is None:
                 if conn.interface == Interface.SDK:
                     raise ResourceClassNotFound(record)
-                elif conn.interface == Interface.SERIAL:
-                    cls = ConnectionSerial
-                elif conn.interface == Interface.SOCKET:
-                    cls = ConnectionSocket
-                elif conn.interface == Interface.PROLOGIX:
-                    cls = ConnectionPrologix
-                elif conn.interface == Interface.TCPIP_VXI11:
-                    cls = ConnectionTCPIPVXI11
-                elif conn.interface == Interface.TCPIP_HISLIP:
-                    cls = ConnectionTCPIPHiSLIP
-                elif conn.interface == Interface.ZMQ:
-                    cls = ConnectionZeroMQ
-                else:
-                    raise NotImplementedError('The {!r} interface has not be written yet'.format(conn.interface.name))
+                cls = _interface_map.get(conn.interface, None)
+                if cls is None:
+                    raise NotImplementedError(f'The {conn.interface.name!r} interface '
+                                              f'has not be implemented yet')
         elif conn.backend == Backend.PyVISA:
             if demo:
                 cls = ConnectionPyVISA.resource_class(conn)
@@ -107,18 +108,11 @@ def connect(record, demo=None):
     return _connect(record)
 
 
-def find_interface(address):
-    """Find the interface enum.
+def find_interface(address: str) -> Interface:
+    """Find the interface for `address`.
 
-    Parameters
-    ----------
-    address : :class:`str`
+    :param address:
         The address of a :class:`~msl.equipment.record_types.ConnectionRecord`.
-
-    Returns
-    -------
-    :class:`.constants.Interface`
-        The interface to use for `address`.
     """
     if ConnectionSDK.parse_address(address):
         return Interface.SDK
@@ -139,7 +133,10 @@ def find_interface(address):
     if ConnectionTCPIPHiSLIP.parse_address(address):
         return Interface.TCPIP_HISLIP
 
+    if ConnectionGPIB.parse_address(address):
+        return Interface.GPIB
+
     if ConnectionZeroMQ.parse_address(address):
         return Interface.ZMQ
 
-    raise ValueError('Cannot determine the Interface from address {!r}'.format(address))
+    raise ValueError(f'Cannot determine the Interface from address {address!r}')

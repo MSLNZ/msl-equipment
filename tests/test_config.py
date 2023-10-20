@@ -29,6 +29,7 @@ def test_config_io_errors():
 def test_config_constants():
 
     # the default Config values
+    assert Config.GPIB_LIBRARY == ''
     assert Config.PyVISA_LIBRARY == '@ivi'
     assert not Config.DEMO_MODE
     assert len(Config.PATH) == 0
@@ -39,6 +40,7 @@ def test_config_constants():
     # the new Config values
     assert path == c.path
     assert c.root.tag == 'msl'
+    assert Config.GPIB_LIBRARY == r'C:\gpib\ni4822.dll'
     assert Config.PyVISA_LIBRARY == '@py'
     assert Config.DEMO_MODE
     assert len(Config.PATH) > 0
@@ -47,6 +49,7 @@ def test_config_constants():
     assert os.path.join('docs', '_static') in os.environ['PATH']
     assert os.path.join('docs', '_templates') in os.environ['PATH']
     assert c.value('some_value') == 1.2345
+    assert c.value('gpib_library') == r'C:\gpib\ni4822.dll'
     assert c.value('pyvisa_library') == '@py'
     assert c.value('demo_mode') is True
 
@@ -64,6 +67,7 @@ def test_config_constants_reloaded():
     c = Config(path)
 
     assert path == c.path
+    assert Config.GPIB_LIBRARY == r'C:\gpib\ni4822.dll'
     assert Config.PyVISA_LIBRARY == '@py'
     assert Config.DEMO_MODE
     assert 'docs' in Config.PATH
@@ -71,8 +75,10 @@ def test_config_constants_reloaded():
     assert len(c.database().records()) == 7
 
     # reset the default Config values so that other tests can assume the default values
+    Config.GPIB_LIBRARY = ''
     Config.PyVISA_LIBRARY = '@ivi'
     Config.DEMO_MODE = False
+    assert Config.GPIB_LIBRARY == ''
     assert Config.PyVISA_LIBRARY == '@ivi'
     assert not Config.DEMO_MODE
 

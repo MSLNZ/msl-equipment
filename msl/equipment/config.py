@@ -14,18 +14,21 @@ from .utils import (
 
 class Config(object):
 
-    PyVISA_LIBRARY = '@ivi'
-    """:class:`str`: The PyVISA backend :ref:`library <intro-configuring>` to use."""
+    GPIB_LIBRARY: str = ''
+    """The path to a GPIB library file."""
 
-    DEMO_MODE = False
-    """:class:`bool`: Whether to open connections in demo mode. 
+    PyVISA_LIBRARY: str = '@ivi'
+    """The PyVISA backend :ref:`library <intro-configuring>` to use."""
+
+    DEMO_MODE: bool = False
+    """Whether to open connections in demo mode. 
     
-    If enabled then the equipment does not need to be physically connected to a computer
-    and the connection is simulated.
+    If enabled then the equipment does not need to be physically connected
+    to a computer and the connection is simulated.
     """
 
-    PATH = []
-    """:class:`list` of :class:`str`: Paths are also appended to :data:`os.environ['PATH'] <os.environ>`."""
+    PATH: list[str] = []
+    """Paths are also appended to :data:`os.environ['PATH'] <os.environ>`."""
 
     def __init__(self, path):
         """Load an XML :ref:`configuration-file`.
@@ -37,24 +40,23 @@ class Config(object):
         The following table summarizes the XML elements that are used by **MSL-Equipment**
         and can be defined in a :ref:`configuration-file`:
 
-        +----------------+----------------------------------------+-----------------------------------------------+
-        |    XML Tag     |           Example Values               |               Description                     |
-        +================+========================================+===============================================+
-        | pyvisa_library | @ivi, @py, @sim, /path/to/libvisa.so.7 | The PyVISA :ref:`library <intro-configuring>` |
-        |                |                                        | to use.                                       |
-        +----------------+----------------------------------------+-----------------------------------------------+
-        |   demo_mode    | true, false, True, False               | Whether to open connections in demo           |
-        |                |                                        | mode.                                         |
-        +----------------+----------------------------------------+-----------------------------------------------+
-        |     path       | /path/to/SDKs, D:/images               | A path that contains external resources.      |
-        |                |                                        | Accepts a *recursive="true"* attribute.       |
-        |                |                                        | The path(s) are appended to                   |
-        |                |                                        | :data:`os.environ['PATH'] <os.environ>`       |
-        |                |                                        | and to :attr:`.PATH`                          |
-        +----------------+----------------------------------------+-----------------------------------------------+
-
-        The user is also encouraged to define their own application-specific elements within the
-        :ref:`configuration-file`.
+        +----------------+--------------------------+-----------------------------------------------+
+        |    XML Tag     |      Example Values      |               Description                     |
+        +================+==========================+===============================================+
+        |   demo_mode    | true, false, True, False | Whether to open connections in demo mode.     |
+        +----------------+--------------------------+-----------------------------------------------+
+        |  gpib_library  | /opt/gpib/libgpib.so.0   | The path to a GPIB library file.              |
+        |                | C:\gpib\ni4882.dll       |                                               |
+        +----------------+--------------------------+-----------------------------------------------+
+        | pyvisa_library | @ivi, @py, @sim          | The PyVISA :ref:`library <intro-configuring>` |
+        |                | /path/to/libvisa.so.7    | to use.                                       |
+        +----------------+--------------------------+-----------------------------------------------+
+        |     path       | /path/to/lib             | A path that contains external resources.      |
+        |                | D:\SDKs                  | Accepts a *recursive="true"* attribute.       |
+        |                |                          | The path(s) are appended to                   |
+        |                |                          | :data:`os.environ['PATH'] <os.environ>`       |
+        |                |                          | and to :attr:`.PATH`                          |
+        +----------------+--------------------------+-----------------------------------------------+
 
         Parameters
         ----------
@@ -73,8 +75,10 @@ class Config(object):
         except cElementTree.ParseError as err:
             parse_err = str(err)
 
-        if parse_err:
-            raise OSError(parse_err)
+        element = self.find('gpib_library')
+        if element is not None:
+            Config.GPIB_LIBRARY = element.text
+            logger.debug('update Config.GPIB_LIBRARY = %s', Config.GPIB_LIBRARY)
 
         self._path = path
         self._database = None

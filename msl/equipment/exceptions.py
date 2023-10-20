@@ -48,6 +48,28 @@ class EnergetiqError(MSLConnectionError):
     """Exception for equipment from Energetiq."""
 
 
+class GPIBError(MSLConnectionError):
+
+    def __init__(self,
+                 message: str,
+                 *,
+                 name: str = '',
+                 ibsta: int = -1,
+                 iberr: int = -1) -> None:
+        """Exception for equipment that use the GPIB interface.
+
+        :param message: The error message.
+        :param name: The GPIB function name.
+        :param ibsta: The status value.
+        :param iberr: The error code.
+        """
+        if name:
+            msg = f'{message} [{name}(), ibsta:{hex(ibsta)}, iberr:{hex(iberr)}]'
+        else:
+            msg = message
+        super().__init__(msg)
+
+
 class GreisingerError(MSLConnectionError):
     """Exception for equipment from Greisinger."""
 

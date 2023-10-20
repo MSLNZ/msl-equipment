@@ -26,6 +26,8 @@ with the equipment *(although you should never need to instantiate these classes
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_demo.ConnectionDemo`                  | Simulate a connection to the equipment                                   |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
+| :class:`~msl.equipment.connection_gpib.ConnectionGPIB`                  | Equipment that use the IEEE-488 bus (GPIB)                               |
++-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_message_based.ConnectionMessageBased` | Equipment that use message-based communication                           |
 +-------------------------------------------------------------------------+--------------------------------------------------------------------------+
 | :class:`~msl.equipment.connection_prologix.ConnectionPrologix`          | Equipment that is connected through a Prologix_ Controller               |
@@ -61,6 +63,7 @@ Package Structure
    msl.equipment.config <_api/msl.equipment.config>
    msl.equipment.connection <_api/msl.equipment.connection>
    msl.equipment.connection_demo <_api/msl.equipment.connection_demo>
+   msl.equipment.connection_gpib <_api/msl.equipment.connection_gpib>
    msl.equipment.connection_message_based <_api/msl.equipment.connection_message_based>
    msl.equipment.connection_nidaq <_api/msl.equipment.connection_nidaq>
    msl.equipment.connection_prologix <_api/msl.equipment.connection_prologix>

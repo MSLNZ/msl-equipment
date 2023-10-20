@@ -51,6 +51,11 @@ REGEX_ZMQ = re.compile(
     flags=re.IGNORECASE
 )
 
+REGEX_GPIB = re.compile(
+    r'GPIB(?P<board>\d{0,2})(::((?P<pad>\d+)|(?P<name>[^\s:]+)))?(::(?P<sad>\d+))?',
+    flags=re.IGNORECASE
+)
+
 DEFAULT_DATE = datetime.date(datetime.MINYEAR, 1, 1)
 
 
@@ -79,6 +84,7 @@ class Interface(enum.IntEnum):
     TCPIP_VXI11 = 5
     TCPIP_HISLIP = 6
     ZMQ = 7
+    GPIB = 8
 
 
 class Parity(enum.Enum):

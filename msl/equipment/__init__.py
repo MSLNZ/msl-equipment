@@ -28,25 +28,36 @@ version_info = namedtuple('version_info', 'major minor micro releaselevel')(int(
 """:obj:`~collections.namedtuple`: Contains the version information as a (major, minor, micro, releaselevel) tuple."""
 
 
-def list_resources(hosts=None, timeout=2):
-    """Returns a dictionary of all equipment that are available to connect to.
+def list_resources(
+        *,
+        hosts: list[str] | None = None,
+        timeout: float = 2,
+        include_sad: bool = True,
+        gpib_library: str = '') -> ValuesView:
+    """Returns information about equipment that are available.
 
-    Parameters
-    ----------
-    hosts : :class:`list` of :class:`str`, optional
+    :param hosts:
         The IP address(es) on the computer to use to find network devices.
         If not specified, then find devices on all network interfaces.
-    timeout : :class:`float`, optional
+
+    :param timeout:
         The maximum number of seconds to wait for a reply from a network device.
 
-    Returns
-    -------
-    :class:`dict`
-        The information about the devices that were found.
+    :param include_sad:
+        Whether to scan all secondary GPIB addresses.
+
+    :param gpib_library:
+        The path to a GPIB library file. The default file that is loaded is
+        platform dependent. If a library cannot be loaded, GPIB devices cannot
+        be found.
+
+    :return: The information about the devices that were found.
     """
     from threading import Thread
+    from msl.equipment.connection_gpib import find_listeners
     from msl.equipment.connection_prologix import find_prologix
     from msl.equipment.dns_service_discovery import find_lxi
+    from msl.equipment.utils import logger
     from msl.equipment.vxi11 import find_vxi11
     from serial.tools.list_ports import comports
 
@@ -61,6 +72,9 @@ def list_resources(hosts=None, timeout=2):
 
             super(NetworkThread, self).__init__(target=function)
 
+    logger.debug('start finding devices')
+    devices = {}
+
     threads = [
         NetworkThread(target=find_lxi),
         NetworkThread(target=find_vxi11),
@@ -68,17 +82,45 @@ def list_resources(hosts=None, timeout=2):
     ]
     for thread in threads:
         thread.start()
+
+    num_found = 0
+
+    logger.debug('find ASRL ports')
+    for port, desc, _ in sorted(comports()):
+        num_found += 1
+        addresses = []
+        if port.startswith('COM'):
+            addresses.append(port)
+        elif port.startswith('/dev/'):
+            addresses.append(f'ASRL{port}')
+        devices[port] = {
+            'type': 'ASRL',
+            'addresses': addresses,
+            'description': desc
+        }
+
+    Config.GPIB_LIBRARY = gpib_library
+    gpib = find_listeners(include_sad=include_sad)
+    if gpib:
+        num_found += len(gpib)
+        devices['gpib'] = {
+            'type': 'GPIB',
+            'addresses': gpib,
+            'description': ''
+        }
+
     for thread in threads:
         thread.join()
-
-    devices = {}
     for thread in threads:
         for ipv4, device in thread.devices.items():
             description = device.get('description', 'Unknown device')
             if ipv4 not in devices:
-                devices[ipv4] = {}
-                devices[ipv4]['addresses'] = set(device['addresses'])
-                devices[ipv4]['description'] = description
+                num_found += 1
+                devices[ipv4] = {
+                    'type': 'Network',
+                    'addresses': set(device['addresses']),
+                    'description': description,
+                }
                 if not description.startswith('Prologix'):
                     # Prologix ENET-GPIB does not have a webserver
                     devices[ipv4]['webserver'] = device['webserver']
@@ -87,21 +129,7 @@ def list_resources(hosts=None, timeout=2):
                 for address in device['addresses']:
                     devices[ipv4]['addresses'].add(address)
 
-    for port, desc, _ in sorted(comports()):
-        addresses = set()
-        if port.startswith('COM'):
-            addresses.add(port)
-            match = re.search(r'(\d+)', port)
-            if match:
-                addresses.add('ASRL{}::INSTR'.format(match.group(1)))
-        elif port.startswith('/dev/'):
-            addresses.add('ASRL{}'.format(port))
-            addresses.add('ASRL{}::INSTR'.format(port))
-
-        devices[port] = {}
-        devices[port]['addresses'] = addresses
-        devices[port]['description'] = desc
-
+    logger.debug('found %d devices', num_found)
     return devices.values()
 
 

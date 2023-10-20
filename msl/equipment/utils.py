@@ -438,21 +438,19 @@ def from_bytes(buffer, fmt='ieee', dtype='<f'):
     raise ValueError("Invalid format {!r} -- must be 'ascii', 'ieee', 'hp' or None".format(fmt))
 
 
-def ipv4_addresses():
-    """Get the IPv4 addresses of the computer.
-
-    Returns
-    -------
-    :class:`set` of :class:`str`
-        All IPv4 addresses on all network interfaces.
-    """
-    if sys.platform.startswith('linux'):
-        p = subprocess.Popen(['hostname', '--all-ip-addresses'], stdout=subprocess.PIPE)
-        stdout, _ = p.communicate()
-        addresses = set(stdout.decode().split())
-    else:
+def ipv4_addresses() -> set[str]:
+    """Get all IPv4 addresses on all network interfaces."""
+    if sys.platform == 'win32':
         interfaces = socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET)
         addresses = set(ip[-1][0] for ip in interfaces)
+    elif sys.platform == 'linux':
+        out = subprocess.check_output(['hostname', '--all-ip-addresses'])
+        addresses = set(out.decode().split())
+    else:
+        ps = subprocess.Popen('ifconfig', stdout=subprocess.PIPE)
+        output = subprocess.check_output(('grep', 'inet '), stdin=ps.stdout)
+        ps.wait()
+        addresses = set(line.split()[1] for line in output.decode().splitlines())
     addresses.discard('127.0.0.1')
     return addresses
 

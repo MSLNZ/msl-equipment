@@ -859,11 +859,15 @@ def find_vxi11(hosts=None, timeout=1):
     import threading
     import time
 
+    from .utils import logger
+
     if not hosts:
         from .utils import ipv4_addresses
         all_ips = ipv4_addresses()
     else:
         all_ips = hosts
+
+    logger.debug('find VXI-11 devices on the following interfaces: %s', all_ips)
 
     def broadcast(host):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)

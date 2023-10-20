@@ -397,11 +397,15 @@ def find_prologix(hosts=None, timeout=1):
     import sys
     import threading
 
+    from .utils import logger
+
     if not hosts:
         from .utils import ipv4_addresses
         all_ips = ipv4_addresses()
     else:
         all_ips = hosts
+
+    logger.debug('find Prologix ENET-GPIB devices on the following interfaces: %s', all_ips)
 
     if sys.platform == 'win32':
         mac_regex = re.compile(r'([0-9a-fA-F]{2}(?:-[0-9a-fA-F]{2}){5})')

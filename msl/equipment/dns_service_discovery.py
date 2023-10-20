@@ -154,11 +154,14 @@ def find_lxi(hosts=None, timeout=1):
         The information about the HiSLIP, VXI-11 and SCPI-RAW devices
         that were found.
     """
+    from .utils import logger
     if not hosts:
         from .utils import ipv4_addresses
         all_ips = ipv4_addresses()
     else:
         all_ips = hosts
+
+    logger.debug('find LXI devices on the following interfaces: %s', all_ips)
 
     services = [
         # VXI-11 Discovery and Identification Extended Function (Revision 1.1), Section 10.1.5

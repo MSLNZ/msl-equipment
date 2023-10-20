@@ -354,10 +354,12 @@ class ConnectionMessageBased(Connection):
             time.sleep(delay)
         return self.read(**kwargs)
 
-    def _encode_termination(self, termination):
+    def _encode_termination(self, termination: str | bytes | None) -> bytes | None:
         # convenience method for setting a termination encoding
-        if termination is not None:
-            try:
-                return termination.encode(self._encoding)
-            except AttributeError:
-                return termination  # `termination` is already encoded
+        if termination is None:
+            return
+
+        try:
+            return termination.encode(self._encoding)
+        except AttributeError:
+            return termination  # already encoded

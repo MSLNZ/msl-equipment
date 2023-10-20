@@ -57,14 +57,14 @@ class Config:
         +================+==========================+===============================================+
         |   demo_mode    | true, false, True, False | Whether to open connections in demo mode.     |
         +----------------+--------------------------+-----------------------------------------------+
-        |  gpib_library  | /opt/gpib/libgpib.so.0   | The path to a GPIB library file.              |
+        |  gpib_library  | /opt/gpib/libgpib.so.0,  | The path to a GPIB library file.              |
         |                | C:\gpib\ni4882.dll       |                                               |
         +----------------+--------------------------+-----------------------------------------------+
-        | pyvisa_library | @ivi, @py, @sim          | The PyVISA :ref:`library <intro-configuring>` |
+        | pyvisa_library | @ivi, @py, @sim,         | The PyVISA :ref:`library <intro-configuring>` |
         |                | /path/to/libvisa.so.7    | to use.                                       |
         +----------------+--------------------------+-----------------------------------------------+
-        |     path       | /path/to/lib             | A path that contains external resources.      |
-        |                | D:\SDKs                  | Accepts a *recursive="true"* attribute.       |
+        |     path       | /path/to/lib, D:/SDKs    | A path that contains external resources.      |
+        |                |                          | Accepts a *recursive="true"* attribute.       |
         |                |                          | The path(s) are appended to                   |
         |                |                          | :data:`os.environ['PATH'] <os.environ>`       |
         |                |                          | and to :attr:`.PATH`                          |

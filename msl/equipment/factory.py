@@ -16,7 +16,6 @@ from .constants import Backend
 from .constants import Interface
 from .exceptions import ResourceClassNotFound
 from .resources import find_resource_class
-from .resources.dmm import dmm_factory
 from .utils import logger
 
 

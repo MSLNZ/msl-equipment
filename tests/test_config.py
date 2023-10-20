@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from io import BytesIO
+from xml.etree.ElementTree import ParseError
 
 import pytest
 
@@ -18,11 +19,11 @@ def teardown_module():
 def test_config_io_errors():
 
     # xml file does not exist
-    with pytest.raises((OSError, IOError)):
+    with pytest.raises(OSError):
         Config('does_not_exist.xml')
 
     # invalid xml file
-    with pytest.raises((OSError, IOError)):
+    with pytest.raises(ParseError):
         Config(os.path.join(ROOT_DIR, 'config0.xml'))
 
 
@@ -116,6 +117,7 @@ def test_elements():
     )
 
     c = Config(contents)
+    assert c.path == '<BytesIO>'
 
     assert c.root.tag == 'msl'
     assert c.root.text.strip() == ''

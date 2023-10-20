@@ -4,15 +4,26 @@ Load an XML :ref:`configuration-file`.
 from __future__ import annotations
 
 import os
-from xml.etree import cElementTree
+from typing import Any
+from typing import AnyStr
+from typing import IO
+from typing import TYPE_CHECKING
+from typing import Union
+from xml.etree import ElementTree
+from xml.etree.ElementTree import Element
 
-from .utils import (
-    logger,
-    convert_to_primitive,
-)
+from .utils import convert_to_primitive
+from .utils import logger
+
+if TYPE_CHECKING:
+    from .database import Database
 
 
-class Config(object):
+XMLType = Union[AnyStr, os.PathLike[AnyStr], IO[AnyStr]]
+"""An XML-document type that can be parsed."""
+
+
+class Config:
 
     GPIB_LIBRARY: str = ''
     """The path to a GPIB library file."""
@@ -30,15 +41,16 @@ class Config(object):
     PATH: list[str] = []
     """Paths are also appended to :data:`os.environ['PATH'] <os.environ>`."""
 
-    def __init__(self, path):
-        """Load an XML :ref:`configuration-file`.
+    def __init__(self, source: XMLType) -> None:
+        r"""Load an XML :ref:`configuration-file`.
 
-        This function is used to set the configuration constants to use for the Python runtime
-        and it allows you to access :class:`.EquipmentRecord`'s from an :ref:`equipment-database`
-        and :class:`.ConnectionRecord`'s from a :ref:`connections-database`.
+        The purpose of the :ref:`configuration-file` is to define parameters
+        that may be required during data acquisition and to access
+        :class:`.EquipmentRecord`'s from an :ref:`equipment-database` and
+        :class:`.ConnectionRecord`'s from a :ref:`connections-database`.
 
-        The following table summarizes the XML elements that are used by **MSL-Equipment**
-        and can be defined in a :ref:`configuration-file`:
+        The following table summarizes the XML elements that are used by
+        MSL-Equipment which may be defined in a :ref:`configuration-file`:
 
         +----------------+--------------------------+-----------------------------------------------+
         |    XML Tag     |      Example Values      |               Description                     |
@@ -58,47 +70,37 @@ class Config(object):
         |                |                          | and to :attr:`.PATH`                          |
         +----------------+--------------------------+-----------------------------------------------+
 
-        Parameters
-        ----------
-        path : :class:`str`
-            The path to an XML :ref:`configuration-file`.
+        You are also encouraged to define your own application-specific elements
+        within your :ref:`configuration-file`.
 
-        Raises
-        ------
-        OSError
-            If `path` does not exist or if the :ref:`configuration-file` is invalid.
+        :param source: A filename or file object containing XML data.
         """
-        logger.debug('Loading %s', path)
-        try:
-            self._root = cElementTree.parse(path).getroot()
-            parse_err = ''
-        except cElementTree.ParseError as err:
-            parse_err = str(err)
+        logger.debug('loading %s', source)
+        self._source = source
+        self._database: Database | None = None
+        self._root: Element = ElementTree.parse(source).getroot()
 
         element = self.find('gpib_library')
         if element is not None:
             Config.GPIB_LIBRARY = element.text
             logger.debug('update Config.GPIB_LIBRARY = %s', Config.GPIB_LIBRARY)
 
-        self._path = path
-        self._database = None
-
-        element = self._root.find('pyvisa_library')
+        element = self.find('pyvisa_library')
         if element is not None:
             Config.PyVISA_LIBRARY = element.text
             logger.debug('update Config.PyVISA_LIBRARY = %s', Config.PyVISA_LIBRARY)
 
-        element = self._root.find('demo_mode')
+        element = self.find('demo_mode')
         if element is not None:
             Config.DEMO_MODE = element.text.lower() == 'true'
             logger.debug('update Config.DEMO_MODE = %s', Config.DEMO_MODE)
 
-        for element in self._root.findall('path'):
+        for element in self.findall('path'):
             if not os.path.isdir(element.text):
-                logger.warning('Not a valid PATH %s', element.text)
+                logger.warning('not a valid PATH %s', element.text)
                 continue
             if element.attrib.get('recursive', 'false').lower() == 'true':
-                for root, dirs, files in os.walk(element.text):
+                for root, _, _ in os.walk(element.text):
                     Config.PATH.append(root)
             else:
                 Config.PATH.append(element.text)
@@ -106,110 +108,71 @@ class Config(object):
             os.environ['PATH'] += os.pathsep + p
             logger.debug('append Config.PATH %s', p)
 
-    @property
-    def path(self):
-        """:class:`str`: The path to the configuration file."""
-        return self._path
+    def attrib(self, tag_or_path: str) -> dict[str, Any]:
+        """Get the attributes of the first matching element by tag name or path.
 
-    @property
-    def root(self):
-        """Returns the root element (the first node) of the XML tree.
+        The values are converted to the appropriate data type if possible. For
+        example, if the text of the element is ``true`` it will be converted
+        to :data:`True`, otherwise the value will be kept as a :class:`str`.
 
-        Returns
-        -------
-        :class:`~xml.etree.ElementTree.Element`
-            The root element.
+        :param tag_or_path: Either an element tag name or an XPath.
+        :return: The attributes of the matching element.
         """
-        return self._root
-
-    def database(self):
-        """
-        Returns
-        -------
-        :class:`~.database.Database`
-            A reference to the equipment and connection records in the database(s)
-            that are specified in the configuration file.
-        """
-        if self._database is None:
-            from .database import Database  # import here to avoid circular import errors
-            self._database = Database(self._path)
-        return self._database
-
-    def value(self, tag, default=None):
-        """Gets the value associated with the specified `tag` in the configuration file.
-
-        The first element with name `tag` (relative to the :obj:`root`) is used.
-
-        The value is converted to the appropriate data type if possible. Otherwise,
-        the value will be returned as a :class:`str`.
-
-        Parameters
-        ----------
-        tag : :class:`str`
-            The name of an XML tag in the configuration file.
-        default
-            The default value if `tag` cannot be found.
-
-        Returns
-        -------
-        The value associated with `tag` or `default` if the tag cannot be found.
-        """
-        element = self._root.find(tag)
-        if element is not None:
-            return convert_to_primitive(element.text)
-        return default
-
-    def find(self, tag):
-        """Find the first sub-element (from the :obj:`root`) matching `tag` in the configuration file.
-
-        Parameters
-        ----------
-        tag : :class:`str`
-            The name of an XML tag in the configuration file.
-
-        Returns
-        -------
-        :class:`~xml.etree.ElementTree.Element` or :data:`None`
-            The first sub-element or :data:`None` if the tag cannot be found.
-        """
-        return self._root.find(tag)
-
-    def findall(self, tag):
-        """Find all matching sub-elements (from the :obj:`root`) matching `tag` in the configuration file.
-
-        Parameters
-        ----------
-        tag : :class:`str`
-            The name of an XML tag in the configuration file.
-
-        Returns
-        -------
-        :class:`list` of :class:`~xml.etree.ElementTree.Element`
-            All matching elements in document order.
-        """
-        return self._root.findall(tag)
-
-    def attrib(self, tag):
-        """Get the attributes of an :class:`~xml.etree.ElementTree.Element` in the configuration file.
-
-        The first element with name `tag` (relative to the :obj:`root`) is used.
-
-        The values are converted to the appropriate data type if possible.
-        Otherwise, the value will be kept as a :class:`str`.
-
-        Parameters
-        ----------
-        tag : :class:`str`
-            The name of an XML element in the configuration file.
-
-        Returns
-        -------
-        :class:`dict`
-            The attributes of the :class:`~xml.etree.ElementTree.Element`.
-            If an element with the name `tag` does not exist, then an empty
-            :class:`dict` is returned.
-        """
-        element = self._root.find(tag)
+        element = self.find(tag_or_path)
         if element is None:
             return {}
         return dict((k, convert_to_primitive(v)) for k, v in element.attrib.items())
+
+    def database(self) -> Database:
+        """A reference to the equipment and connection records in the database(s)."""
+        if self._database is None:
+            from .database import Database  # avoid circular import errors
+            self._database = Database(self._source)
+        return self._database
+
+    def find(self, tag_or_path: str) -> Element | None:
+        """Find the first matching element by tag name or path.
+
+        :param tag_or_path: Either an element tag name or an XPath.
+        :return: The element or :data:`None` if no element was found.
+        """
+        return self._root.find(tag_or_path)
+
+    def findall(self, tag_or_path: str) -> list[Element]:
+        """Find all matching sub-elements by tag name or path.
+
+        :param tag_or_path: Either an element tag name or an XPath.
+        :return: All matching elements in document order.
+        """
+        return self._root.findall(tag_or_path)
+
+    @property
+    def path(self) -> AnyStr | os.PathLike[AnyStr]:
+        """The path to the configuration file."""
+        try:
+            os.path.isfile(self._source)
+        except TypeError:  # raised if self._source is IO[AnyStr]
+            return f'<{self._source.__class__.__name__}>'
+        else:
+            return self._source
+
+    @property
+    def root(self) -> Element:
+        """The root element (the first node) in the XML document."""
+        return self._root
+
+    def value(self, tag_or_path: str, default: Any = None) -> Any:
+        """Gets the value (text) associated with the first matching element.
+
+        The value is converted to the appropriate data type if possible. For
+        example, if the text of the element is ``true`` it will be converted
+        to :data:`True`.
+
+        :param tag_or_path: Either an element tag name or an XPath.
+        :param default: The default value if an element cannot be found.
+        :return: The value of the element or `default` if no element was found.
+        """
+        element = self.find(tag_or_path)
+        if element is None:
+            return default
+        return convert_to_primitive(element.text)

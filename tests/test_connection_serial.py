@@ -192,6 +192,10 @@ def test_parse_address_invalid(address):
         ('PROLOGIX::/dev/ttyUSB1::1::96', '/dev/ttyUSB1'),
         ('ProLOgix::/dev/pts/1::2', '/dev/pts/1'),
         ('Prologix::/dev/symlink_name::6', '/dev/symlink_name'),
+        ('ASRL/dev/cu.Bluetooth-Incoming-Port::INSTR', '/dev/cu.Bluetooth-Incoming-Port'),
+        ('ASRL/dev/cu.usbmodemHIDPC1', '/dev/cu.usbmodemHIDPC1'),
+        ('ASRL/dev/cu.usbserial-FTE1XGBL::INSTR', '/dev/cu.usbserial-FTE1XGBL'),
+        ('ASRL/dev/cu.usbmodem1421401::INSTR', '/dev/cu.usbmodem1421401'),
     ])
 def test_parse_address_valid(address, expected):
     assert ConnectionSerial.parse_address(address)['port'] == expected

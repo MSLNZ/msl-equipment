@@ -149,7 +149,6 @@ install_requires = [
     'msl-io',
     'numpy',
     'pyserial>=3.0',
-    'python-dateutil',
     'pyzmq',
 ]
 

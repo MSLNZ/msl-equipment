@@ -4,7 +4,7 @@
 Install MSL-Equipment
 =====================
 
-To install **MSL-Equipment** run
+To install MSL-Equipment run
 
 .. code-block:: console
 
@@ -25,7 +25,6 @@ Dependencies
 * msl-io_
 * numpy_
 * pyserial_
-* python-dateutil_
 * pyzmq_
 
 Optional Dependencies
@@ -47,5 +46,4 @@ available for your operating system.
 .. _msl-loadlib: https://msl-loadlib.readthedocs.io/en/stable/
 .. _msl-io: https://msl-io.readthedocs.io/en/latest/
 .. _pyserial: https://pythonhosted.org/pyserial/
-.. _python-dateutil: https://dateutil.readthedocs.io/en/stable/
 .. _pyzmq: https://pyzmq.readthedocs.io/en/stable/

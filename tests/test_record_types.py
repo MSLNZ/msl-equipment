@@ -1686,3 +1686,23 @@ def test_calibration_record():
         assert 'c' in rec.measurands
         assert rec.report_date == datetime.date(2010, 12, 13)
         assert rec.report_number == 'ABC123'
+
+
+@pytest.mark.parametrize(
+    ('date_str', 'cycle', 'expected'),
+    [
+        ('2020-02-06', 2, datetime.date(2022, 2, 6)),
+        ('2020-02-06', 2.5, datetime.date(2022, 8, 6)),
+        ('2020-07-06', 0.8, datetime.date(2021, 4, 6)),
+        ('2020-07-06', 2.8, datetime.date(2023, 4, 6)),
+        ('2020-12-06', 1, datetime.date(2021, 12, 6)),
+        ('2020-12-06', 2, datetime.date(2022, 12, 6)),
+        ('2020-12-06', 2.3, datetime.date(2023, 3, 6)),
+        ('2020-07-06', 5.5, datetime.date(2026, 1, 6)),
+        ('2020-09-30', 3.9, datetime.date(2024, 7, 30)),
+        ('2023-04-23', 0, datetime.date(2023, 4, 23)),
+    ]
+)
+def test_get_future_date(date_str, cycle, expected):
+    date = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
+    assert EquipmentRecord._get_future_date(date, cycle) == expected

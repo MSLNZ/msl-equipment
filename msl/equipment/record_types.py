@@ -10,8 +10,6 @@ from collections.abc import Mapping
 from enum import Enum
 from xml.etree.ElementTree import Element
 
-from dateutil.relativedelta import relativedelta
-
 from .constants import Backend
 from .constants import CR
 from .constants import DataBits
@@ -343,20 +341,16 @@ class EquipmentRecord(Record):
         """
         return connect(self, demo=demo)
 
-    def is_calibration_due(self, months=0):
+    def is_calibration_due(self, months: int = 0) -> bool:
         """Whether the equipment needs to be re-calibrated.
 
-        Parameters
-        ----------
-        months : :class:`int`, optional
+        :param months:
             The number of months to add to today's date to determine if
             the equipment needs to be re-calibrated within a certain amount
             of time. For example, if ``months = 6`` then that is a way of
             asking *"is a re-calibration due within the next 6 months?"*.
 
-        Returns
-        -------
-        :class:`bool`
+        :return:
             :data:`True` if the equipment needs to be re-calibrated, :data:`False`
             if it does not need to be re-calibrated (or it has never been calibrated).
         """
@@ -364,8 +358,9 @@ class EquipmentRecord(Record):
         if next_date is None:
             return False
 
-        ask_date = datetime.date.today() + relativedelta(months=max(0, int(months)))
-        return ask_date > next_date
+        cycle = max(0.0, months/12.0)
+        ask_date = self._get_future_date(datetime.date.today(), cycle)
+        return ask_date >= next_date
 
     @property
     def latest_calibration(self):
@@ -383,21 +378,15 @@ class EquipmentRecord(Record):
                 latest = report
         return latest
 
-    def next_calibration_date(self):
-        """The date that the next calibration is due.
-
-        Returns
-        -------
-        :class:`datetime.date`
-            The next calibration date (or :data:`None` if the equipment has
-            never been calibrated or if it is no longer in operation).
-        """
+    def next_calibration_date(self) -> datetime.date | None:
+        """The next calibration date or :data:`None` if the equipment
+        has never been calibrated or if it is no longer in operation."""
         if not self.is_operable:
-            return None
+            return
 
         report = self.latest_calibration
         if report is None or report.calibration_cycle <= 0:
-            return None
+            return
 
         # the calibration date gets precedence over the report date
         if report.calibration_date.year != datetime.MINYEAR:
@@ -405,11 +394,22 @@ class EquipmentRecord(Record):
         elif report.report_date.year != datetime.MINYEAR:
             date = report.report_date
         else:
-            return None
+            return
 
-        years = int(report.calibration_cycle)
-        months = int(round(12 * (report.calibration_cycle - years)))
-        return date + relativedelta(years=years, months=months)
+        return self._get_future_date(date, report.calibration_cycle)
+
+    @staticmethod
+    def _get_future_date(date: datetime.date, cycle: float) -> datetime.date:
+        # cycle is in years
+        year, month_decimal = divmod(cycle, 1)
+        month = int(month_decimal * 12)  # round down so a calibration happens sooner
+        if date.month + month > 12:
+            year += 1
+            month = date.month + month - 12
+        else:
+            month = date.month + int(month)
+        year = date.year + int(year)
+        return date.replace(year=year, month=month)
 
     def to_dict(self):
         """Convert this :class:`EquipmentRecord` to a :class:`dict`.

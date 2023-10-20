@@ -13,14 +13,15 @@ class MSLTimeoutError(MSLConnectionError):
 
 
 class ResourceClassNotFound(MSLConnectionError):
-    """Exception if a resource class cannot be found to connect to the equipment."""
 
     def __init__(self, record):
-        msg = 'Cannot find a resource class for {}\n' \
-              'If you know that a resource class exists then define a ' \
-              '"resource_class_name" property\nin the Connection Database ' \
-              'with the name of the resource class as the property value '.format(record)
-        super(ResourceClassNotFound, self).__init__(msg)
+        """Exception if a resource class cannot be found to connect to the equipment."""
+        super().__init__(
+            f'Cannot find a resource class for {record}\n'
+            f'If you know that a resource class exists, define a '
+            f'"resource_class_name" property\nin the Connection '
+            f'Database with the name of the resource class as the '
+            f'property value.')
 
 
 class AimTTiError(MSLConnectionError):

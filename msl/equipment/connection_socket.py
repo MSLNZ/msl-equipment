@@ -1,14 +1,14 @@
 """
 Base classes for equipment that is connected through a socket.
 """
-import time
+from __future__ import annotations
+
 import socket
+import time
 
 from .connection_message_based import ConnectionMessageBased
-from .constants import (
-    REGEX_SOCKET,
-    REGEX_PROLOGIX,
-)
+from .constants import REGEX_PROLOGIX
+from .constants import REGEX_SOCKET
 
 
 class ConnectionSocket(ConnectionMessageBased):

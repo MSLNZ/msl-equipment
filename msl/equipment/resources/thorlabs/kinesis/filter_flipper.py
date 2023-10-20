@@ -2,14 +2,19 @@
 This module provides all the functionality required to control a
 Filter Flipper (MFF101, MFF102).
 """
-from ctypes import byref, c_int64
+from __future__ import annotations
+
+from ctypes import byref
+from ctypes import c_int64
 
 from msl.equipment.resources import register
-from msl.equipment.resources.utils import WORD, DWORD
-from msl.equipment.resources.thorlabs.kinesis.motion_control import MotionControl
-from msl.equipment.resources.thorlabs.kinesis.api_functions import FilterFlipper_FCNS
-from msl.equipment.resources.thorlabs.kinesis.structs import FF_IOSettings
-from msl.equipment.resources.thorlabs.kinesis.enums import FF_IOModes, FF_SignalModes
+from .api_functions import FilterFlipper_FCNS
+from .enums import FF_IOModes
+from .enums import FF_SignalModes
+from .motion_control import MotionControl
+from .structs import FF_IOSettings
+from ...utils import DWORD
+from ...utils import WORD
 
 
 @register(manufacturer=r'Thorlabs', model=r'MFF10[1|2]')

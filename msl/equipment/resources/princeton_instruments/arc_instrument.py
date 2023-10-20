@@ -3,13 +3,21 @@ Wrapper around the ``ARC_Instrument.dll`` SDK from Princeton Instruments.
 
 The wrapper was written using v2.0.3 of the SDK.
 """
-from ctypes import c_bool, c_long, c_double, c_void_p, c_char_p, create_string_buffer, POINTER
+from __future__ import annotations
+
+from ctypes import POINTER
+from ctypes import c_bool
+from ctypes import c_char_p
+from ctypes import c_double
+from ctypes import c_long
+from ctypes import c_void_p
+from ctypes import create_string_buffer
 
 from msl.loadlib import LoadLibrary
 
 from msl.equipment.connection_sdk import Connection
-from msl.equipment.resources import register
 from msl.equipment.exceptions import PrincetonInstrumentsError
+from msl.equipment.resources import register
 
 
 def _log_errcheck(result, func, arguments):

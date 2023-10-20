@@ -4,6 +4,8 @@ Establishes a connection to the Switched Integrator Amplifier
 
 .. _Czech Metrology Institute: https://www.cmi.cz/?language=en
 """
+from __future__ import annotations
+
 from enum import IntEnum
 
 from msl.equipment.connection_serial import ConnectionSerial

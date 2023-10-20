@@ -1,6 +1,8 @@
 """
 Two-axis stage controller (SHOT-702) from OptoSigma.
 """
+from __future__ import annotations
+
 import re
 import time
 

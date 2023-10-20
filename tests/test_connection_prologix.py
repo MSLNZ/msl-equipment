@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from msl.equipment.connection_message_based import ConnectionMessageBased
 from msl.equipment.connection_prologix import ConnectionPrologix
 from msl.equipment.connection_prologix import find_prologix

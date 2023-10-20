@@ -1,10 +1,12 @@
 """
 Simulate a connection to the equipment.
 """
-import os
-import re
-import random
+from __future__ import annotations
+
 import importlib
+import os
+import random
+import re
 
 from .connection import Connection
 from .utils import logger

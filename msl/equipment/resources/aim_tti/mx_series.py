@@ -4,15 +4,17 @@ from `Aim and Thurlby Thandar Instruments`_
 
 .. _Aim and Thurlby Thandar Instruments: https://www.aimtti.com/
 """
+from __future__ import annotations
+
 import re
 import time
 
+from msl.equipment.connection_prologix import ConnectionPrologix
+from msl.equipment.connection_serial import ConnectionSerial
+from msl.equipment.connection_socket import ConnectionSocket
 from msl.equipment.constants import Interface
 from msl.equipment.exceptions import AimTTiError
 from msl.equipment.resources import register
-from msl.equipment.connection_socket import ConnectionSocket
-from msl.equipment.connection_serial import ConnectionSerial
-from msl.equipment.connection_prologix import ConnectionPrologix
 
 EXECUTION_ERROR_CODES = {
     0: ('OK',

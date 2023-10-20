@@ -1,7 +1,15 @@
 """
 A wrapper around the 32-bit Bentham ``benhw32_cdecl`` SDK.
 """
-from ctypes import c_char_p, c_short, c_int, c_long, c_double, POINTER, create_string_buffer
+from __future__ import annotations
+
+from ctypes import POINTER
+from ctypes import c_char_p
+from ctypes import c_double
+from ctypes import c_int
+from ctypes import c_long
+from ctypes import c_short
+from ctypes import create_string_buffer
 
 from msl.loadlib import Server32
 

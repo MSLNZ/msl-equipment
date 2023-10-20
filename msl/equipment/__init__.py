@@ -1,8 +1,11 @@
 """
 Manage and connect to equipment in the laboratory.
 """
+from __future__ import annotations
+
 import re
 from collections import namedtuple
+from typing import ValuesView
 
 from msl.equipment import resources
 from msl.equipment.config import Config

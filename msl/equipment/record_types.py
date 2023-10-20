@@ -1,36 +1,28 @@
 """
 Records from :ref:`equipment-database`\'s or :ref:`connections-database`\'s.
 """
-from __future__ import unicode_literals
-import json
+from __future__ import annotations
+
 import datetime
-from enum import Enum
-from xml.etree.cElementTree import Element
+import json
 from collections import OrderedDict
-try:
-    from collections.abc import Mapping
-except ImportError:
-    from collections import Mapping  # Python 2.7
+from collections.abc import Mapping
+from enum import Enum
+from xml.etree.ElementTree import Element
 
 from dateutil.relativedelta import relativedelta
 
-from .utils import (
-    convert_to_enum,
-    convert_to_date,
-)
-from .constants import (
-    Parity,
-    StopBits,
-    DataBits,
-    Backend,
-    Interface,
-    LF,
-    CR,
-)
-from .factory import (
-    connect,
-    find_interface,
-)
+from .constants import Backend
+from .constants import CR
+from .constants import DataBits
+from .constants import Interface
+from .constants import LF
+from .constants import Parity
+from .constants import StopBits
+from .factory import connect
+from .factory import find_interface
+from .utils import convert_to_date
+from .utils import convert_to_enum
 
 
 class RecordDict(Mapping):

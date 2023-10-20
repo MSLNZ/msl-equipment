@@ -1,6 +1,8 @@
 """
 Load the 32-bit ``OL756SDKActiveXCtrl`` library using :ref:`msl-loadlib-welcome`.
 """
+from __future__ import annotations
+
 import os
 import re
 

@@ -11,6 +11,8 @@ References
 .. _RFC-6762: https://www.rfc-editor.org/rfc/rfc6762
 .. _RFC-6763: https://www.rfc-editor.org/rfc/rfc6763
 """
+from __future__ import annotations
+
 import socket
 import struct
 import threading

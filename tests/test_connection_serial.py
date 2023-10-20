@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import os
-import time
 import threading
+import time
 
 try:
     import pty
@@ -9,7 +11,10 @@ except ImportError:
 
 import pytest
 
-from msl.equipment import EquipmentRecord, ConnectionRecord, Backend, MSLConnectionError
+from msl.equipment import Backend
+from msl.equipment import ConnectionRecord
+from msl.equipment import EquipmentRecord
+from msl.equipment import MSLConnectionError
 from msl.equipment.connection_serial import ConnectionSerial
 
 

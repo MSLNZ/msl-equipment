@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from msl.equipment.connection import Connection
 from msl.equipment.connection_demo import ConnectionDemo
 from msl.equipment.record_types import EquipmentRecord
-from msl.equipment.resources.picotech.picoscope.picoscope import PicoScope
 from msl.equipment.resources.picotech.picoscope.channel import PicoScopeChannel
+from msl.equipment.resources.picotech.picoscope.picoscope import PicoScope
 
 
 class MyConnection(Connection):

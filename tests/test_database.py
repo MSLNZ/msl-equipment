@@ -1,10 +1,14 @@
+from __future__ import annotations
+
+import datetime
 import os
 import sys
-import datetime
 
 import pytest
 
-from msl.equipment import Config, constants, Backend
+from msl.equipment import Backend
+from msl.equipment import Config
+from msl.equipment import constants
 from msl.equipment.record_types import RecordDict
 
 ROOT_DIR = os.path.join(os.path.dirname(__file__), 'db_files')

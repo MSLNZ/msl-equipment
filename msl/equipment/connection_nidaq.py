@@ -3,6 +3,8 @@ Uses NI-DAQ_ as the backend to communicate with the equipment.
 
 .. _NI-DAQ: https://nidaqmx-python.readthedocs.io/en/stable/index.html
 """
+from __future__ import annotations
+
 try:
     import nidaqmx
     import nidaqmx.stream_readers as stream_readers

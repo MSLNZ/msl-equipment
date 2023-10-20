@@ -1,6 +1,7 @@
 """
 Device and Low Level Error Codes defined in Thorlabs Kinesis v1.14.10
 """
+from __future__ import annotations
 
 FT_OK                         = 0x00
 FT_InvalidHandle              = 0x01

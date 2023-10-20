@@ -1,6 +1,7 @@
 """
 Exceptions used by MSL-Equipment.
 """
+from __future__ import annotations
 
 
 class MSLConnectionError(OSError):

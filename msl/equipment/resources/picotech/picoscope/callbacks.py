@@ -1,13 +1,18 @@
 """
 Callback functions in the Pico Technology SDK v10.6.10.24
 """
-from ctypes import POINTER, c_int16, c_uint32, c_void_p, c_int32
+from __future__ import annotations
 
-from msl.loadlib import IS_WINDOWS
+import sys
+from ctypes import POINTER
+from ctypes import c_int16
+from ctypes import c_int32
+from ctypes import c_uint32
+from ctypes import c_void_p
 
-from msl.equipment.resources.picotech.errors import PICO_STATUS
+from ..errors import PICO_STATUS
 
-if IS_WINDOWS:
+if sys.platform == 'win32':
     from ctypes import WINFUNCTYPE
     FUNCTYPE = WINFUNCTYPE
 else:

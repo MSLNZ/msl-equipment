@@ -1,18 +1,26 @@
 """
 Base ``Thorlabs.MotionControl`` class.
 """
+from __future__ import annotations
+
 import os
-from xml.etree import cElementTree
-from ctypes import c_int, byref, create_string_buffer
+from ctypes import byref
+from ctypes import c_int
+from ctypes import create_string_buffer
+from xml.etree import ElementTree
 
 from msl.loadlib import LoadLibrary
 
-from msl.equipment.exceptions import ThorlabsError
-from msl.equipment.resources.utils import WORD, DWORD
 from msl.equipment.connection_sdk import ConnectionSDK
-from .errors import ERROR_CODES, FT_OK
-from .structs import TLI_DeviceInfo, TLI_HardwareInformation
-from .messages import MessageTypes, MessageID
+from msl.equipment.exceptions import ThorlabsError
+from .errors import ERROR_CODES
+from .errors import FT_OK
+from .messages import MessageID
+from .messages import MessageTypes
+from .structs import TLI_DeviceInfo
+from .structs import TLI_HardwareInformation
+from ...utils import DWORD
+from ...utils import WORD
 
 _motion_control_device_manager = None
 
@@ -363,7 +371,7 @@ class MotionControl(ConnectionSDK):
             if not os.path.isfile(cfg):
                 self.log_warning('Cannot find ThorlabsDeviceConfiguration.xml')
                 return
-            root = cElementTree.parse(cfg).getroot()
+            root = ElementTree.parse(cfg).getroot()
             element = root.find('.//Device[@Name="{}"]'.format(self.equipment_record.serial))
             if element is None:
                 self.log_warning('Cannot find <Device Name="%s"> in ThorlabsDeviceConfiguration.xml',
@@ -387,7 +395,7 @@ class MotionControl(ConnectionSDK):
                 return
 
         # get the XML element that refers to this device name
-        root = cElementTree.parse(path).getroot()
+        root = ElementTree.parse(path).getroot()
         element = root.find('.//DeviceSettingsType[@Name="{}"]'.format(name))
         if element is not None:
             # check if the device name refers to another device name
@@ -406,7 +414,7 @@ class MotionControl(ConnectionSDK):
             # some devices are specified in ThorlabsCustomSettings.xml
             cfg = 'C:/ProgramData/Thorlabs/MotionControl/ThorlabsCustomSettings.xml'
             if os.path.isfile(cfg):
-                root = cElementTree.parse(cfg).getroot()
+                root = ElementTree.parse(cfg).getroot()
                 element = root.find('.//DeviceSettingsDefinition[@Name="{}"]'.format(name))
 
         if element is None:

@@ -1,8 +1,9 @@
 """
 Exceptions and error codes defined in the Pico Technology SDK.
 """
-from ctypes import c_uint32
+from __future__ import annotations
 
+from ctypes import c_uint32
 from enum import IntEnum
 
 PICO_MAC_ADDRESS                                 = 0x0000000B

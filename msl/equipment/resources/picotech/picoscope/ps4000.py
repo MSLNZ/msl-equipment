@@ -1,11 +1,19 @@
 """
 A wrapper around the PicoScope ps4000 SDK.
 """
-from ctypes import c_int8, c_int16, c_uint32, c_int64, byref, string_at, addressof
+from __future__ import annotations
+
+from ctypes import addressof
+from ctypes import byref
+from ctypes import c_int16
+from ctypes import c_int64
+from ctypes import c_int8
+from ctypes import c_uint32
+from ctypes import string_at
 
 from msl.equipment.resources import register
-from .picoscope_api import PicoScopeApi
 from .functions import ps4000Api_funcptrs
+from .picoscope_api import PicoScopeApi
 from .. import c_enum
 
 

@@ -1,25 +1,29 @@
 # -*- coding: utf8 -*-
-import os
-import sys
-import json
-import datetime
-import tempfile
+from __future__ import annotations
+
 import codecs
-from xml.etree.cElementTree import ElementTree
+import datetime
+import json
+import os
+import tempfile
+from xml.etree.ElementTree import ElementTree
 
 import pytest
 
+from msl.equipment import Backend
+from msl.equipment import CalibrationRecord
+from msl.equipment import ConnectionRecord
+from msl.equipment import EquipmentRecord
+from msl.equipment import MaintenanceRecord
+from msl.equipment import MeasurandRecord
 from msl.equipment.config import Config
-from msl.equipment import (
-    EquipmentRecord,
-    ConnectionRecord,
-    CalibrationRecord,
-    MeasurandRecord,
-    MaintenanceRecord,
-    Backend,
-)
+from msl.equipment.constants import CR
+from msl.equipment.constants import DataBits
+from msl.equipment.constants import Interface
+from msl.equipment.constants import LF
+from msl.equipment.constants import Parity
+from msl.equipment.constants import StopBits
 from msl.equipment.record_types import RecordDict
-from msl.equipment.constants import Interface, DataBits, Parity, StopBits, LF, CR
 from msl.equipment.utils import convert_to_xml_string
 
 PY2 = sys.version_info.major == 2

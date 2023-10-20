@@ -1,29 +1,26 @@
 """
 Load equipment and connection records from :ref:`Databases <database-formats>`.
 """
-from __future__ import unicode_literals
+from __future__ import annotations
+
+import ast
+import codecs
+import json
 import os
 import re
-import ast
-import json
-import codecs
-from xml.etree import cElementTree
+from xml.etree import ElementTree
 
 from msl.io import read_table_excel
 
 from . import constants
-from .record_types import (
-    EquipmentRecord,
-    ConnectionRecord,
-)
-from .utils import (
-    logger,
-    convert_to_primitive,
-    convert_to_enum,
-)
+from .record_types import ConnectionRecord
+from .record_types import EquipmentRecord
+from .utils import convert_to_enum
+from .utils import convert_to_primitive
+from .utils import logger
 
 
-class Database(object):
+class Database:
 
     def __init__(self, path):
         """Create :class:`.EquipmentRecord`'s and :class:`.ConnectionRecord`'s
@@ -53,8 +50,8 @@ class Database(object):
         logger.debug('Loading databases from %s', path)
 
         try:
-            root = cElementTree.parse(path).getroot()
-        except cElementTree.ParseError as err:
+            root = ElementTree.parse(path).getroot()
+        except ElementTree.ParseError as err:
             parse_err = str(err)  # want to raise OSError not ParseError
         else:
             parse_err = None
@@ -427,7 +424,7 @@ class Database(object):
                 return default if e.text is None else value(e)
             return dict((item.tag, get(item, None) if len(item) > 0 else value(item)) for item in e)
 
-        root = cElementTree.parse(path).getroot()
+        root = ElementTree.parse(path).getroot()
         _dict = {'team': get(root, 'team', default='')}
         equipment_records = []
         for er in root.iterfind('.//EquipmentRecord'):

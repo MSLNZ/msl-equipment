@@ -15,6 +15,8 @@ References
 .. _RFC-1057: https://www.rfc-editor.org/rfc/rfc1057
 .. _RFC-1014: https://www.rfc-editor.org/rfc/rfc1014
 """
+from __future__ import annotations
+
 import os
 import random
 import socket

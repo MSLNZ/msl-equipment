@@ -10,19 +10,16 @@ This class is compatible with the following model numbers:
 * iTHX-W
 * iTHX-2
 """
+from __future__ import annotations
+
 import os
 import re
-import time
-import socket
 import sqlite3
+import time
 from datetime import datetime
-try:
-    ConnectionResetError
-except NameError:
-    ConnectionResetError = socket.error  # for Python 2.7
 
-from msl.equipment.exceptions import OmegaError
 from msl.equipment.connection_socket import ConnectionSocket
+from msl.equipment.exceptions import OmegaError
 from msl.equipment.resources import register
 
 

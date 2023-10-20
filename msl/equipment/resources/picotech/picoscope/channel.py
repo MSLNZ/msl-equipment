@@ -1,6 +1,8 @@
 """
 Contains the information about a PicoScope channel.
 """
+from __future__ import annotations
+
 import numpy as np
 
 

@@ -1,11 +1,14 @@
 """
 A wrapper around the PicoScope ps3000a SDK.
 """
-from ctypes import c_int16, byref
+from __future__ import annotations
+
+from ctypes import byref
+from ctypes import c_int16
 
 from msl.equipment.resources import register
-from .picoscope_api import PicoScopeApi
 from .functions import ps3000aApi_funcptrs
+from .picoscope_api import PicoScopeApi
 from .structs import PS3000ATriggerInfo
 
 

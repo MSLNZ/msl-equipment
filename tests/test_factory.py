@@ -1,12 +1,15 @@
+from __future__ import annotations
+
 import os
 
 import pytest
 
-from msl.equipment.factory import connect
 from msl.equipment.config import Config
-from msl.equipment.constants import Backend
-from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
 from msl.equipment.connection_demo import ConnectionDemo
+from msl.equipment.constants import Backend
+from msl.equipment.factory import connect
+from msl.equipment.record_types import ConnectionRecord
+from msl.equipment.record_types import EquipmentRecord
 
 ROOT_DIR = os.path.join(os.path.dirname(__file__), 'db_files')
 

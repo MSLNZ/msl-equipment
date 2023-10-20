@@ -3,6 +3,8 @@ Wrapper around the ``NKTPDLL.dll`` SDK from NKT Photonics.
 
 The wrapper was written using v2.1.2.766 of the SDK.
 """
+from __future__ import annotations
+
 import os
 from ctypes import *
 from enum import IntEnum
@@ -10,8 +12,8 @@ from enum import IntEnum
 from msl.loadlib import LoadLibrary
 
 from msl.equipment.connection import Connection
-from msl.equipment.resources import register
 from msl.equipment.exceptions import NKTError
+from msl.equipment.resources import register
 
 _PATH = os.environ.get('NKTP_SDK_PATH')
 if _PATH is not None:

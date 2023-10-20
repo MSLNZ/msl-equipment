@@ -1,11 +1,15 @@
 """
 A wrapper around the PicoScope ps3000 SDK.
 """
-from ctypes import c_int16, c_uint32, byref
+from __future__ import annotations
+
+from ctypes import byref
+from ctypes import c_int16
+from ctypes import c_uint32
 
 from msl.equipment.resources import register
-from .picoscope_2k3k import PicoScope2k3k
 from .functions import ps3000_funcptrs
+from .picoscope_2k3k import PicoScope2k3k
 
 
 @register(manufacturer=r'Pico\s*Tech', model=r'3[24][02][456](?<! MSO)$')

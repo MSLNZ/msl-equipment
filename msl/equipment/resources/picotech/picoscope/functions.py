@@ -1,70 +1,76 @@
 """
 Functions defined in the Pico Technology SDK v10.6.10.24
 """
-from ctypes import (c_int8, c_int16, c_uint16, c_int32, c_uint32, c_int64,
-                    c_uint64, c_float, c_double, c_void_p, POINTER)
+from __future__ import annotations
+
+from ctypes import POINTER
+from ctypes import c_double
+from ctypes import c_float
+from ctypes import c_int16
+from ctypes import c_int32
+from ctypes import c_int64
+from ctypes import c_int8
+from ctypes import c_uint16
+from ctypes import c_uint32
+from ctypes import c_uint64
+from ctypes import c_void_p
+
 from numpy.ctypeslib import ndpointer
 
-from ...picotech import c_enum
+from .callbacks import BlockReady
+from .callbacks import GetOverviewBuffersMaxMin
+from .callbacks import PS3000_CALLBACK_FUNC
+from .callbacks import ps2000aDataReady
+from .callbacks import ps2000aStreamingReady
+from .callbacks import ps3000aDataReady
+from .callbacks import ps3000aStreamingReady
+from .callbacks import ps4000DataReady
+from .callbacks import ps4000StreamingReady
+from .callbacks import ps4000aDataReady
+from .callbacks import ps4000aStreamingReady
+from .callbacks import ps5000DataReady
+from .callbacks import ps5000StreamingReady
+from .callbacks import ps5000aDataReady
+from .callbacks import ps5000aStreamingReady
+from .callbacks import ps6000DataReady
+from .callbacks import ps6000StreamingReady
+from .structs import PS2000ADigitalChannelDirections
+from .structs import PS2000APwqConditions
+from .structs import PS2000ATriggerChannelProperties
+from .structs import PS2000ATriggerConditions
+from .structs import PS2000PwqConditions
+from .structs import PS2000TriggerChannelProperties
+from .structs import PS2000TriggerConditions
+from .structs import PS3000ADigitalChannelDirections
+from .structs import PS3000APwqConditions
+from .structs import PS3000APwqConditionsV2
+from .structs import PS3000ATriggerChannelProperties
+from .structs import PS3000ATriggerConditions
+from .structs import PS3000ATriggerConditionsV2
+from .structs import PS3000ATriggerInfo
+from .structs import PS3000PwqConditions
+from .structs import PS3000TriggerChannelProperties
+from .structs import PS3000TriggerConditions
+from .structs import PS4000AChannelLedSetting
+from .structs import PS4000ACondition
+from .structs import PS4000AConnectDetect
+from .structs import PS4000ADirection
+from .structs import PS4000ATriggerChannelProperties
+from .structs import PS4000PwqConditions
+from .structs import PS4000TriggerChannelProperties
+from .structs import PS4000TriggerConditions
+from .structs import PS5000APwqConditions
+from .structs import PS5000ATriggerChannelProperties
+from .structs import PS5000ATriggerConditions
+from .structs import PS5000ATriggerInfo
+from .structs import PS5000PwqConditions
+from .structs import PS5000TriggerChannelProperties
+from .structs import PS5000TriggerConditions
+from .structs import PS6000PwqConditions
+from .structs import PS6000TriggerChannelProperties
+from .structs import PS6000TriggerConditions
 from ..errors import PICO_STATUS, PICO_INFO
-
-from .callbacks import (
-    GetOverviewBuffersMaxMin,
-    BlockReady,
-    ps2000aDataReady,
-    ps2000aStreamingReady,
-    PS3000_CALLBACK_FUNC,
-    ps3000aDataReady,
-    ps3000aStreamingReady,
-    ps4000DataReady,
-    ps4000StreamingReady,
-    ps4000aDataReady,
-    ps4000aStreamingReady,
-    ps5000DataReady,
-    ps5000StreamingReady,
-    ps5000aDataReady,
-    ps5000aStreamingReady,
-    ps6000DataReady,
-    ps6000StreamingReady,
-)
-
-from .structs import (
-    PS2000ADigitalChannelDirections,
-    PS2000APwqConditions,
-    PS2000ATriggerChannelProperties,
-    PS2000ATriggerConditions,
-    PS2000PwqConditions,
-    PS2000TriggerChannelProperties,
-    PS2000TriggerConditions,
-    PS3000ADigitalChannelDirections,
-    PS3000APwqConditions,
-    PS3000APwqConditionsV2,
-    PS3000ATriggerChannelProperties,
-    PS3000ATriggerConditions,
-    PS3000ATriggerConditionsV2,
-    PS3000ATriggerInfo,
-    PS3000PwqConditions,
-    PS3000TriggerChannelProperties,
-    PS3000TriggerConditions,
-    PS4000AChannelLedSetting,
-    PS4000ACondition,
-    PS4000AConnectDetect,
-    PS4000ADirection,
-    PS4000ATriggerChannelProperties,
-    PS4000PwqConditions,
-    PS4000TriggerChannelProperties,
-    PS4000TriggerConditions,
-    PS5000APwqConditions,
-    PS5000ATriggerChannelProperties,
-    PS5000ATriggerConditions,
-    PS5000ATriggerInfo,
-    PS5000PwqConditions,
-    PS5000TriggerChannelProperties,
-    PS5000TriggerConditions,
-    PS6000PwqConditions,
-    PS6000TriggerChannelProperties,
-    PS6000TriggerConditions
-)
+from ...picotech import c_enum
 
 # The structure for each item in a *_funcptrs list is:
 #

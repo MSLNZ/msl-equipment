@@ -1,11 +1,13 @@
 """
 Flow and Pressure controller, PR4000B, from MKS Instruments.
 """
+from __future__ import annotations
+
 import re
 
-from msl.equipment.resources import register
 from msl.equipment.connection_serial import ConnectionSerial
 from msl.equipment.exceptions import MKSInstrumentsError
+from msl.equipment.resources import register
 
 
 @register(manufacturer=r'^MKS', model=r'PR4000B', flags=re.IGNORECASE)

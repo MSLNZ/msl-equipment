@@ -1,6 +1,8 @@
 """
 Base class for equipment that use the VXI-11 communication protocol.
 """
+from __future__ import annotations
+
 import socket
 import time
 from struct import Struct

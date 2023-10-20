@@ -1,14 +1,14 @@
 """
 Load the 32-bit ``OL756SDKActiveXCtrl`` library using :ref:`msl-loadlib-welcome`.
 """
+from __future__ import annotations
+
+from ctypes import byref
+from ctypes import c_double
+from ctypes import c_float
+from ctypes import c_long
+from ctypes import c_short
 from enum import Enum
-from ctypes import (
-    byref,
-    c_double,
-    c_long,
-    c_float,
-    c_short,
-)
 
 from msl.loadlib import Server32
 

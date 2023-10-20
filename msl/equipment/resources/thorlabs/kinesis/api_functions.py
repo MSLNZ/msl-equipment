@@ -1,91 +1,102 @@
 """
 C Functions defined in Thorlabs Kinesis v1.14.10
 """
-from ctypes import c_char, c_byte, c_bool, c_short, c_ushort, c_int16, c_uint16, \
-    c_int, c_uint, c_int32, c_int64, c_double, c_long, c_float, c_char_p, POINTER
+from __future__ import annotations
 
-from msl.equipment.resources.utils import BYTE, WORD, DWORD
+from ctypes import POINTER
+from ctypes import c_bool
+from ctypes import c_byte
+from ctypes import c_char
+from ctypes import c_char_p
+from ctypes import c_double
+from ctypes import c_float
+from ctypes import c_int
+from ctypes import c_int16
+from ctypes import c_int32
+from ctypes import c_int64
+from ctypes import c_long
+from ctypes import c_short
+from ctypes import c_uint
+from ctypes import c_uint16
+from ctypes import c_ushort
 
 from .callbacks import MotionControlCallback
-
-from .structs import (
-    BNT_IO_Settings,
-    FF_IOSettings,
-    KIM_DriveOPParameters,
-    KIM_FeedbackSigParams,
-    KIM_HomeParameters,
-    KIM_JogParameters,
-    KIM_LimitSwitchParameters,
-    KIM_MMIChannelParameters,
-    KIM_MMIParameters,
-    KIM_TrigIOConfig,
-    KIM_TrigParamsParameters,
-    KLD_MMIParams,
-    KLD_TrigIOParams,
-    KLS_MMIParams,
-    KLS_TrigIOParams,
-    KMOT_MMIParams,
-    KMOT_TriggerConfig,
-    KMOT_TriggerParams,
-    KNA_FeedbackLoopConstants,
-    KNA_IOSettings,
-    KNA_MMIParams,
-    KNA_TIARangeParameters,
-    KNA_TIAReading,
-    KNA_TriggerConfig,
-    KPZ_MMIParams,
-    KPZ_TriggerConfig,
-    KSC_MMIParams,
-    KSC_TriggerConfig,
-    KSG_MMIParams,
-    KSG_TriggerConfig,
-    MOT_BrushlessCurrentLoopParameters,
-    MOT_BrushlessElectricOutputParameters,
-    MOT_BrushlessPositionLoopParameters,
-    MOT_BrushlessTrackSettleParameters,
-    MOT_ButtonParameters,
-    MOT_DC_PIDParameters,
-    MOT_HomingParameters,
-    MOT_JogParameters,
-    MOT_JoystickParameters,
-    MOT_LimitSwitchParameters,
-    MOT_PIDLoopEncoderParams,
-    MOT_PotentiometerSteps,
-    MOT_PowerParameters,
-    MOT_StageAxisParameters,
-    MOT_VelocityParameters,
-    MOT_VelocityProfileParameters,
-    NT_CircleDiameterLUT,
-    NT_CircleParameters,
-    NT_HVComponent,
-    NT_IOSettings,
-    NT_LowPassFilterParameters,
-    NT_TIARangeParameters,
-    NT_TIAReading,
-    PPC_IOSettings,
-    PPC_NotchParams,
-    PPC_PIDConsts,
-    PZ_FeedbackLoopConstants,
-    PZ_LUTWaveParameters,
-    QD_KPA_DigitalIO,
-    QD_KPA_TrigIOConfig,
-    QD_LoopParameters,
-    QD_LowPassFilterParameters,
-    QD_NotchFilterParameters,
-    QD_PIDParameters,
-    QD_Position,
-    QD_PositionDemandParameters,
-    QD_Readings,
-    SC_CycleParameters,
-    TC_LoopParameters,
-    TIM_ButtonParameters,
-    TIM_DriveOPParameters,
-    TIM_JogParameters,
-    TLI_DeviceInfo,
-    TLI_HardwareInformation,
-    TPZ_IOSettings,
-    TSG_IOSettings,
-)
+from .structs import BNT_IO_Settings
+from .structs import FF_IOSettings
+from .structs import KIM_DriveOPParameters
+from .structs import KIM_FeedbackSigParams
+from .structs import KIM_HomeParameters
+from .structs import KIM_JogParameters
+from .structs import KIM_LimitSwitchParameters
+from .structs import KIM_MMIChannelParameters
+from .structs import KIM_MMIParameters
+from .structs import KIM_TrigIOConfig
+from .structs import KIM_TrigParamsParameters
+from .structs import KLD_MMIParams
+from .structs import KLD_TrigIOParams
+from .structs import KLS_MMIParams
+from .structs import KLS_TrigIOParams
+from .structs import KMOT_MMIParams
+from .structs import KMOT_TriggerConfig
+from .structs import KMOT_TriggerParams
+from .structs import KNA_FeedbackLoopConstants
+from .structs import KNA_IOSettings
+from .structs import KNA_MMIParams
+from .structs import KNA_TIARangeParameters
+from .structs import KNA_TIAReading
+from .structs import KNA_TriggerConfig
+from .structs import KPZ_MMIParams
+from .structs import KPZ_TriggerConfig
+from .structs import KSC_MMIParams
+from .structs import KSC_TriggerConfig
+from .structs import KSG_MMIParams
+from .structs import KSG_TriggerConfig
+from .structs import MOT_BrushlessCurrentLoopParameters
+from .structs import MOT_BrushlessElectricOutputParameters
+from .structs import MOT_BrushlessPositionLoopParameters
+from .structs import MOT_BrushlessTrackSettleParameters
+from .structs import MOT_ButtonParameters
+from .structs import MOT_DC_PIDParameters
+from .structs import MOT_HomingParameters
+from .structs import MOT_JogParameters
+from .structs import MOT_JoystickParameters
+from .structs import MOT_LimitSwitchParameters
+from .structs import MOT_PIDLoopEncoderParams
+from .structs import MOT_PotentiometerSteps
+from .structs import MOT_PowerParameters
+from .structs import MOT_StageAxisParameters
+from .structs import MOT_VelocityParameters
+from .structs import MOT_VelocityProfileParameters
+from .structs import NT_CircleDiameterLUT
+from .structs import NT_CircleParameters
+from .structs import NT_HVComponent
+from .structs import NT_IOSettings
+from .structs import NT_LowPassFilterParameters
+from .structs import NT_TIARangeParameters
+from .structs import NT_TIAReading
+from .structs import PPC_IOSettings
+from .structs import PPC_NotchParams
+from .structs import PPC_PIDConsts
+from .structs import PZ_FeedbackLoopConstants
+from .structs import PZ_LUTWaveParameters
+from .structs import QD_KPA_DigitalIO
+from .structs import QD_KPA_TrigIOConfig
+from .structs import QD_LoopParameters
+from .structs import QD_LowPassFilterParameters
+from .structs import QD_NotchFilterParameters
+from .structs import QD_PIDParameters
+from .structs import QD_Position
+from .structs import QD_PositionDemandParameters
+from .structs import QD_Readings
+from .structs import SC_CycleParameters
+from .structs import TC_LoopParameters
+from .structs import TIM_ButtonParameters
+from .structs import TIM_DriveOPParameters
+from .structs import TIM_JogParameters
+from .structs import TLI_HardwareInformation
+from .structs import TPZ_IOSettings
+from .structs import TSG_IOSettings
+from ...utils import BYTE, WORD, DWORD
 
 Benchtop_BrushlessMotor_FCNS = [
     ('BMC_Open', c_short, 'errcheck_api',

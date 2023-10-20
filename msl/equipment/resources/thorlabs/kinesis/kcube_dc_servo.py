@@ -2,40 +2,46 @@
 This module provides all the functionality required to control a
 KCube DC Servo (KDC101).
 """
-from ctypes import c_int16, c_short, c_int, c_uint, c_int32, c_int64, c_double, byref
+from __future__ import annotations
+
+from ctypes import byref
+from ctypes import c_double
+from ctypes import c_int
+from ctypes import c_int16
+from ctypes import c_int32
+from ctypes import c_int64
+from ctypes import c_short
+from ctypes import c_uint
 
 from msl.equipment.resources import register
-from msl.equipment.resources.utils import WORD, DWORD
-from msl.equipment.resources.thorlabs.kinesis.motion_control import MotionControl
-from msl.equipment.resources.thorlabs.kinesis.api_functions import KCube_DCServo_FCNS
-from msl.equipment.resources.thorlabs.kinesis.structs import (
-    TLI_HardwareInformation,
-    MOT_VelocityParameters,
-    MOT_HomingParameters,
-    MOT_JogParameters,
-    MOT_LimitSwitchParameters,
-    MOT_DC_PIDParameters,
-    KMOT_MMIParams,
-    KMOT_TriggerConfig,
-    KMOT_TriggerParams,
-)
-from msl.equipment.resources.thorlabs.kinesis.enums import (
-    MOT_JogModes,
-    MOT_StopModes,
-    MOT_TravelDirection,
-    MOT_LimitSwitchModes,
-    MOT_LimitSwitchSWModes,
-    MOT_LimitsSoftwareApproachPolicy,
-    MOT_HomeLimitSwitchDirection,
-    MOT_TravelModes,
-    UnitType,
-    KMOT_WheelMode,
-    KMOT_WheelDirectionSense,
-    KMOT_TriggerPortMode,
-    KMOT_TriggerPortPolarity,
-    MOT_MovementModes,
-    MOT_MovementDirections,
-)
+from .api_functions import KCube_DCServo_FCNS
+from .enums import KMOT_TriggerPortMode
+from .enums import KMOT_TriggerPortPolarity
+from .enums import KMOT_WheelDirectionSense
+from .enums import KMOT_WheelMode
+from .enums import MOT_HomeLimitSwitchDirection
+from .enums import MOT_JogModes
+from .enums import MOT_LimitSwitchModes
+from .enums import MOT_LimitSwitchSWModes
+from .enums import MOT_LimitsSoftwareApproachPolicy
+from .enums import MOT_MovementDirections
+from .enums import MOT_MovementModes
+from .enums import MOT_StopModes
+from .enums import MOT_TravelDirection
+from .enums import MOT_TravelModes
+from .enums import UnitType
+from .motion_control import MotionControl
+from .structs import KMOT_MMIParams
+from .structs import KMOT_TriggerConfig
+from .structs import KMOT_TriggerParams
+from .structs import MOT_DC_PIDParameters
+from .structs import MOT_HomingParameters
+from .structs import MOT_JogParameters
+from .structs import MOT_LimitSwitchParameters
+from .structs import MOT_VelocityParameters
+from .structs import TLI_HardwareInformation
+from ...utils import DWORD
+from ...utils import WORD
 
 
 @register(manufacturer=r'Thorlabs', model=r'KDC101')

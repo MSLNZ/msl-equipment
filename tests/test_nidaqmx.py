@@ -1,9 +1,13 @@
-import pytest
+from __future__ import annotations
+
 import nidaqmx
+import pytest
 from nidaqmx import stream_readers
 from nidaqmx import stream_writers
 
-from msl.equipment import EquipmentRecord, ConnectionRecord, Backend
+from msl.equipment import Backend
+from msl.equipment import ConnectionRecord
+from msl.equipment import EquipmentRecord
 
 try:
     with nidaqmx.Task() as task:

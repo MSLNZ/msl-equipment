@@ -1,18 +1,18 @@
 """
 Base class for equipment that is connected through a serial port.
 """
+from __future__ import annotations
+
 import time
 
 import serial
 
 from .connection_message_based import ConnectionMessageBased
-from .constants import (
-    Parity,
-    StopBits,
-    DataBits,
-    REGEX_SERIAL,
-    REGEX_PROLOGIX,
-)
+from .constants import DataBits
+from .constants import Parity
+from .constants import REGEX_PROLOGIX
+from .constants import REGEX_SERIAL
+from .constants import StopBits
 
 
 class ConnectionSerial(ConnectionMessageBased):

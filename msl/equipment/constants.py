@@ -1,9 +1,11 @@
 """
 MSL-Equipment constants.
 """
-import re
-import enum
+from __future__ import annotations
+
 import datetime
+import enum
+import re
 
 import serial
 

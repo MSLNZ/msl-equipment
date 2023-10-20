@@ -3,6 +3,8 @@ Wrapper around the ``avaspec.dll`` SDK from Avantes.
 
 The wrapper was written using v9.7.0.0 of the SDK.
 """
+from __future__ import annotations
+
 from ctypes import *
 from enum import IntEnum
 
@@ -12,7 +14,6 @@ from msl.loadlib import IS_WINDOWS, LoadLibrary
 from msl.equipment.connection_sdk import ConnectionSDK
 from msl.equipment.exceptions import AvantesError
 from msl.equipment.resources import register
-
 
 WM_MEAS_READY = 0x8001
 SETTINGS_RESERVED_LEN = 9720

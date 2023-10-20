@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import socket
 import sys
 import threading
@@ -11,9 +13,9 @@ from msl.equipment import EquipmentRecord
 from msl.equipment import MSLConnectionError
 from msl.equipment import MSLTimeoutError
 from msl.equipment.connection_tcpip_hislip import ConnectionTCPIPHiSLIP
-from msl.equipment.hislip import PORT
-from msl.equipment.hislip import Message
 from msl.equipment.hislip import AsyncInitialize
+from msl.equipment.hislip import Message
+from msl.equipment.hislip import PORT
 
 
 @pytest.mark.parametrize(

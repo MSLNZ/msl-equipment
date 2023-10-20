@@ -1,10 +1,12 @@
 """
 Establishes a connection to a TC Series Temperature Controller from Electron Dynamics Ltd.
 """
+from __future__ import annotations
+
 import re
 
-from msl.equipment.resources import register
 from msl.equipment.connection_serial import ConnectionSerial
+from msl.equipment.resources import register
 
 
 @register(manufacturer=r'Electron Dynamics', model=r'TC\s*[M|L]', flags=re.IGNORECASE)

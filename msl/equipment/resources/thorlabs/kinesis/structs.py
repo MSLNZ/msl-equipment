@@ -1,10 +1,25 @@
 """
 Structs defined in Thorlabs Kinesis v1.14.10
 """
-from ctypes import c_byte, c_bool, c_char, c_ushort, c_uint16, c_short, \
-    c_int16, c_uint, c_int, c_int32, c_uint32, c_float, Structure
+from __future__ import annotations
 
-from msl.equipment.resources.utils import BYTE, WORD, DWORD
+from ctypes import Structure
+from ctypes import c_bool
+from ctypes import c_byte
+from ctypes import c_char
+from ctypes import c_float
+from ctypes import c_int
+from ctypes import c_int16
+from ctypes import c_int32
+from ctypes import c_short
+from ctypes import c_uint
+from ctypes import c_uint16
+from ctypes import c_uint32
+from ctypes import c_ushort
+
+from ...utils import BYTE
+from ...utils import DWORD
+from ...utils import WORD
 
 NUM_TIA_RANGES = 16
 

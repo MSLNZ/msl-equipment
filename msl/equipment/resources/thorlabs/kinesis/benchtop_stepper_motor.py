@@ -9,37 +9,42 @@ This module provides all the functionality required to control a
 * BSC202
 * BSC203
 """
+from __future__ import annotations
+
 import os
-from ctypes import c_short, c_int, c_uint, c_int64, c_double, byref, create_string_buffer
+from ctypes import byref
+from ctypes import c_double
+from ctypes import c_int
+from ctypes import c_int64
+from ctypes import c_short
+from ctypes import c_uint
+from ctypes import create_string_buffer
 
 from msl.equipment.resources import register
-from msl.equipment.resources.utils import WORD, DWORD
-from msl.equipment.resources.thorlabs.kinesis.motion_control import MotionControl
-from msl.equipment.resources.thorlabs.kinesis.api_functions import Benchtop_StepperMotor_FCNS
-from msl.equipment.resources.thorlabs.kinesis.structs import (
-    TLI_HardwareInformation,
-    MOT_HomingParameters,
-    MOT_JogParameters,
-    MOT_JoystickParameters,
-    MOT_LimitSwitchParameters,
-    MOT_PIDLoopEncoderParams,
-    MOT_PowerParameters,
-    MOT_VelocityParameters,
-)
-from msl.equipment.resources.thorlabs.kinesis.enums import (
-    UnitType,
-    MOT_JogModes,
-    MOT_StopModes,
-    MOT_LimitSwitchModes,
-    MOT_LimitSwitchSWModes,
-    MOT_TravelModes,
-    MOT_LimitsSoftwareApproachPolicy,
-    MOT_TravelDirection,
-    MOT_HomeLimitSwitchDirection,
-    MOT_PID_LoopMode,
-    MOT_MovementModes,
-    MOT_MovementDirections,
-)
+from .api_functions import Benchtop_StepperMotor_FCNS
+from .enums import MOT_HomeLimitSwitchDirection
+from .enums import MOT_JogModes
+from .enums import MOT_LimitSwitchModes
+from .enums import MOT_LimitSwitchSWModes
+from .enums import MOT_LimitsSoftwareApproachPolicy
+from .enums import MOT_MovementDirections
+from .enums import MOT_MovementModes
+from .enums import MOT_PID_LoopMode
+from .enums import MOT_StopModes
+from .enums import MOT_TravelDirection
+from .enums import MOT_TravelModes
+from .enums import UnitType
+from .motion_control import MotionControl
+from .structs import MOT_HomingParameters
+from .structs import MOT_JogParameters
+from .structs import MOT_JoystickParameters
+from .structs import MOT_LimitSwitchParameters
+from .structs import MOT_PIDLoopEncoderParams
+from .structs import MOT_PowerParameters
+from .structs import MOT_VelocityParameters
+from .structs import TLI_HardwareInformation
+from ...utils import DWORD
+from ...utils import WORD
 
 
 @register(manufacturer=r'Thorlabs', model=r'BSC(101|102|103|201|202|203)')

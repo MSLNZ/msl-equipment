@@ -1,6 +1,8 @@
 """
 Load an XML :ref:`configuration-file`.
 """
+from __future__ import annotations
+
 import os
 from xml.etree import cElementTree
 

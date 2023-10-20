@@ -1,17 +1,20 @@
-import time
+from __future__ import annotations
+
 import math
 import threading
+import time
 
 import pytest
 import pyvisa
-from pyvisa.resources.tcpip import TCPIPSocket
 from pyvisa.attributes import AttrVI_ATTR_TMO_VALUE
+from pyvisa.resources.tcpip import TCPIPSocket
 
 from msl.equipment.config import Config
 from msl.equipment.connection_pyvisa import ConnectionPyVISA
-from msl.equipment.record_types import EquipmentRecord, ConnectionRecord
-
-from test_connection_socket import echo_server_tcp, get_available_port
+from msl.equipment.record_types import ConnectionRecord
+from msl.equipment.record_types import EquipmentRecord
+from test_connection_socket import echo_server_tcp
+from test_connection_socket import get_available_port
 
 pyvisa_version = tuple(map(int, pyvisa.__version__.split('.')))
 VISA_LIBRARY = '@ni' if pyvisa_version < (1, 11) else '@ivi'

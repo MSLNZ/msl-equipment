@@ -1,9 +1,11 @@
 """
 Control a TEC (Peltier-based) oven from Raicol Crystals.
 """
-from msl.equipment.resources import register
+from __future__ import annotations
+
 from msl.equipment.connection_serial import ConnectionSerial
 from msl.equipment.exceptions import RaicolCrystalsError
+from msl.equipment.resources import register
 
 
 @register(manufacturer=r'Raicol', model=r'TEC')

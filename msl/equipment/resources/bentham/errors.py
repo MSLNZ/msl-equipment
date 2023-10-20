@@ -1,6 +1,7 @@
 """
 Error code definition file for Bentham Instruments Spectroradiometer Control DLL
 """
+from __future__ import annotations
 
 BI_OK = 0
 BI_error = -1

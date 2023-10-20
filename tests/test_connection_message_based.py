@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 import sys
 
 import pytest
 
-from msl.equipment import EquipmentRecord, ConnectionRecord, MSLConnectionError
+from msl.equipment import ConnectionRecord
+from msl.equipment import EquipmentRecord
+from msl.equipment import MSLConnectionError
 from msl.equipment.connection_message_based import ConnectionMessageBased
 
 

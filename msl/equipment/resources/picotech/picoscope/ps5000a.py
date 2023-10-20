@@ -1,12 +1,14 @@
 """
 A wrapper around the PicoScope ps5000a SDK.
 """
+from __future__ import annotations
+
 import math
 from ctypes import byref
 
 from msl.equipment.resources import register
-from .picoscope_api import PicoScopeApi
 from .functions import ps5000aApi_funcptrs
+from .picoscope_api import PicoScopeApi
 from .structs import PS5000ATriggerInfo
 from .. import c_enum
 

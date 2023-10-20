@@ -2,6 +2,7 @@
 Attribute token definition file for Bentham Instruments Spectroradiometer 
 Control DLL.
 """
+from __future__ import annotations
 
 # -----------------------------------------------------------------------------
 # Monochromator attributes

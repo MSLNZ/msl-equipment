@@ -6,6 +6,7 @@ The Kinesis software can be downloaded from the `Thorlabs website`_
 .. _Thorlabs website:
     https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=Motion_Control
 """
+from __future__ import annotations
 
 
 def _print(cls, fcns, header_filename):

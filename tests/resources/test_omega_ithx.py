@@ -1,10 +1,13 @@
+from __future__ import annotations
+
 import os
-import time
 import socket
 import threading
+import time
 from datetime import datetime
 
-from msl.equipment import EquipmentRecord, ConnectionRecord
+from msl.equipment import ConnectionRecord
+from msl.equipment import EquipmentRecord
 from msl.equipment.resources.omega import iTHX
 
 

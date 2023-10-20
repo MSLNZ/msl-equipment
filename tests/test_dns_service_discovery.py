@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from msl.equipment.dns_service_discovery import _DNSRecord
 from msl.equipment.dns_service_discovery import find_lxi
 

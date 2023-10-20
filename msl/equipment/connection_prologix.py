@@ -3,6 +3,8 @@ Uses Prologix_ hardware to establish a connection to the equipment.
 
 .. _Prologix: https://prologix.biz/
 """
+from __future__ import annotations
+
 from .connection import Connection
 from .connection_serial import ConnectionSerial
 from .connection_socket import ConnectionSocket

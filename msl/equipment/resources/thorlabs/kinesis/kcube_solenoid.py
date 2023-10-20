@@ -2,25 +2,27 @@
 This module provides all the functionality required to control a
 KCube Solenoid (KSC101).
 """
-from ctypes import c_int16, c_uint, c_int64, byref
+from __future__ import annotations
+
+from ctypes import byref
+from ctypes import c_int16
+from ctypes import c_int64
+from ctypes import c_uint
 
 from msl.equipment.resources import register
-from msl.equipment.resources.utils import WORD, DWORD
-from msl.equipment.resources.thorlabs.kinesis.motion_control import MotionControl
-from msl.equipment.resources.thorlabs.kinesis.api_functions import KCube_Solenoid_FCNS
-from msl.equipment.resources.thorlabs.kinesis.structs import (
-    SC_CycleParameters,
-    TLI_HardwareInformation,
-    KSC_MMIParams,
-    KSC_TriggerConfig,
-)
-from msl.equipment.resources.thorlabs.kinesis.enums import (
-    SC_OperatingModes,
-    SC_OperatingStates,
-    SC_SolenoidStates,
-    KSC_TriggerPortMode,
-    KSC_TriggerPortPolarity
-)
+from .api_functions import KCube_Solenoid_FCNS
+from .enums import KSC_TriggerPortMode
+from .enums import KSC_TriggerPortPolarity
+from .enums import SC_OperatingModes
+from .enums import SC_OperatingStates
+from .enums import SC_SolenoidStates
+from .motion_control import MotionControl
+from .structs import KSC_MMIParams
+from .structs import KSC_TriggerConfig
+from .structs import SC_CycleParameters
+from .structs import TLI_HardwareInformation
+from ...utils import DWORD
+from ...utils import WORD
 
 
 @register(manufacturer=r'Thorlabs', model=r'KSC101')

@@ -1,6 +1,8 @@
 """
 Base class for equipment that use the HiSLIP communication protocol.
 """
+from __future__ import annotations
+
 import socket
 
 from .connection_message_based import ConnectionMessageBased

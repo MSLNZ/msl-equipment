@@ -1,18 +1,18 @@
 """
 Establishes a connection to the ``DATARAYOCX`` library developed by DataRay Inc.
 """
+from __future__ import annotations
+
 import os
 
 import numpy as np
-from msl.loadlib import (
-    Client64,
-    Server32Error,
-    ConnectionTimeoutError,
-)
+from msl.loadlib import Client64
+from msl.loadlib import ConnectionTimeoutError
+from msl.loadlib import Server32Error
 
 from msl.equipment.connection import Connection
-from msl.equipment.resources import register
 from msl.equipment.exceptions import DataRayError
+from msl.equipment.resources import register
 
 
 @register(manufacturer=r'Data\s*Ray', model=r'.')

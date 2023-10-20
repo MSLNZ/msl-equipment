@@ -19,6 +19,8 @@ Create the following files
     * picoscope_function_pointers.py
     
 """
+from __future__ import annotations
+
 import os
 import re
 

@@ -1,11 +1,13 @@
 """
 Communicate with the EQ-99 Manager from Energetiq.
 """
+from __future__ import annotations
+
 import re
 
-from msl.equipment.resources import register
-from msl.equipment.exceptions import EnergetiqError
 from msl.equipment.connection_serial import ConnectionSerial
+from msl.equipment.exceptions import EnergetiqError
+from msl.equipment.resources import register
 
 
 @register(manufacturer=r'Energetiq', model=r'EQ-99(-MGR)?', flags=re.IGNORECASE)

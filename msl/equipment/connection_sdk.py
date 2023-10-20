@@ -1,6 +1,8 @@
 """
 Base class for equipment that use the SDK provided by the manufacturer for the connection.
 """
+from __future__ import annotations
+
 from msl.loadlib import LoadLibrary
 
 from .connection import Connection

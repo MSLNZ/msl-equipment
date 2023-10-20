@@ -1,22 +1,35 @@
 """
 Base class for a PicoScope from Pico Technology.
 """
+from __future__ import annotations
+
 import os
 import re
+import sys
 import time
-from ctypes import c_int8, c_int16, c_int32, byref, c_void_p, string_at, addressof
+from ctypes import addressof
+from ctypes import byref
+from ctypes import c_int16
+from ctypes import c_int32
+from ctypes import c_int8
+from ctypes import c_void_p
+from ctypes import string_at
 
-from msl.loadlib import IS_WINDOWS, LoadLibrary
+from msl.loadlib import LoadLibrary
 
 from msl.equipment.connection_sdk import ConnectionSDK
 from msl.equipment.exceptions import PicoTechError
-from .channel import PicoScopeChannel
-from . import structs
-from . import enums
 from . import callbacks
-from ..errors import ERROR_CODES_API, PICO_OK, PICO_NOT_FOUND
+from . import enums
+from . import structs
+from .channel import PicoScopeChannel
+from ..errors import ERROR_CODES_API
+from ..errors import PICO_NOT_FOUND
+from ..errors import PICO_OK
 
 ALLOWED_SDKs = ('ps2000', 'ps2000a', 'ps3000', 'ps3000a', 'ps4000', 'ps4000a', 'ps5000', 'ps5000a', 'ps6000')
+
+IS_WINDOWS = sys.platform == 'win32'
 
 
 def enumerate_units():

@@ -1,10 +1,17 @@
 """
 Enums defined in Thorlabs Kinesis v1.14.10
 """
-from enum import IntEnum
-from ctypes import c_byte, c_ushort, c_short, c_int16, c_uint16, c_int
+from __future__ import annotations
 
-from msl.equipment.resources.utils import WORD
+from ctypes import c_byte
+from ctypes import c_int
+from ctypes import c_int16
+from ctypes import c_short
+from ctypes import c_uint16
+from ctypes import c_ushort
+from enum import IntEnum
+
+from ...utils import WORD
 
 
 class FT_Status(IntEnum):

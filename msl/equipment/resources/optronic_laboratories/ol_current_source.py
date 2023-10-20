@@ -1,6 +1,8 @@
 """
 Communicate with a DC current source from Optronic Laboratories.
 """
+from __future__ import annotations
+
 import re
 import struct
 import time

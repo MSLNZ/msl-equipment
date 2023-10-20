@@ -1,6 +1,8 @@
 """
 Base class for equipment that use message-based communication.
 """
+from __future__ import annotations
+
 import socket
 import sys
 import time

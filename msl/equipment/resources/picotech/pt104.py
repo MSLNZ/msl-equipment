@@ -1,8 +1,17 @@
 """
 Pico Technology PT-104 Platinum Resistance Data Logger.
 """
-from ctypes import c_int8, c_int16, c_uint16, c_int32, c_uint32, byref, string_at, addressof, POINTER
+from __future__ import annotations
 
+from ctypes import POINTER
+from ctypes import addressof
+from ctypes import byref
+from ctypes import c_int16
+from ctypes import c_int32
+from ctypes import c_int8
+from ctypes import c_uint16
+from ctypes import c_uint32
+from ctypes import string_at
 from enum import IntEnum
 
 from msl.loadlib import IS_WINDOWS, LoadLibrary
@@ -10,9 +19,11 @@ from msl.loadlib import IS_WINDOWS, LoadLibrary
 from msl.equipment.connection_sdk import ConnectionSDK
 from msl.equipment.exceptions import PicoTechError
 from msl.equipment.resources import register
-
 from . import c_enum
-from .errors import ERROR_CODES_API, PICO_OK, PICO_INFO, PICO_NOT_FOUND
+from .errors import ERROR_CODES_API
+from .errors import PICO_INFO
+from .errors import PICO_NOT_FOUND
+from .errors import PICO_OK
 from .picoscope.enums import PicoScopeInfoApi
 
 

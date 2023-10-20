@@ -7,13 +7,14 @@ This module implements the following IVI Protocol Specification:
 
 .. _HiSLIP: https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf
 """
+from __future__ import annotations
+
 import socket
 import time
+from enum import IntEnum
 from struct import Struct
 from struct import pack
 from struct import unpack
-
-from enum import IntEnum
 
 PORT = 4880
 

@@ -1,7 +1,14 @@
 """
 Structures defined in the Pico Technology SDK v10.6.10.24
 """
-from ctypes import Structure, c_int16, c_uint16, c_uint32, c_int64, c_uint64
+from __future__ import annotations
+
+from ctypes import Structure
+from ctypes import c_int16
+from ctypes import c_int64
+from ctypes import c_uint16
+from ctypes import c_uint32
+from ctypes import c_uint64
 
 from .. import c_enum
 from ..errors import PICO_STATUS

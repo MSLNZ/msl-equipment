@@ -1,13 +1,11 @@
 """
 Base class for establishing a connection to the equipment.
 """
-from __future__ import unicode_literals
+from __future__ import annotations
 
 from .exceptions import MSLConnectionError
-from .utils import (
-    logger,
-    convert_to_enum
-)
+from .utils import convert_to_enum
+from .utils import logger
 
 
 class Connection(object):

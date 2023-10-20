@@ -1,6 +1,8 @@
 """
 Common functions.
 """
+from __future__ import annotations
+
 import datetime
 import logging
 import re
@@ -8,14 +10,10 @@ import socket
 import struct
 import subprocess
 import sys
+from urllib.request import HTTPError
+from urllib.request import urlopen
 from xml.dom import minidom
-from xml.etree import cElementTree
-try:
-    from urllib.request import HTTPError
-    from urllib.request import urlopen
-except ImportError:  # then Python 2
-    from urllib2 import HTTPError
-    from urllib2 import urlopen
+from xml.etree import ElementTree
 
 import numpy as np
 
@@ -206,7 +204,7 @@ def convert_to_xml_string(element, indent='  ', encoding='utf-8', fix_newlines=T
             fp.write(convert_to_xml_string(element))
 
     """
-    parsed = minidom.parseString(cElementTree.tostring(element))
+    parsed = minidom.parseString(ElementTree.tostring(element))
     pretty = parsed.toprettyxml(indent=indent, encoding=encoding).decode(encoding)
     if fix_newlines:
         return '\n'.join(s for s in pretty.splitlines() if s.strip())
@@ -233,7 +231,7 @@ def xml_element(tag, text=None, tail=None, **attributes):
     :class:`~xml.etree.ElementTree.Element`
         The new XML element.
     """
-    element = cElementTree.Element(tag, **attributes)
+    element = ElementTree.Element(tag, **attributes)
     element.text = text
     element.tail = tail
     return element
@@ -252,7 +250,7 @@ def xml_comment(text):
     :func:`~xml.etree.ElementTree.Comment`
         A special element that is an XML comment.
     """
-    return cElementTree.Comment(text)
+    return ElementTree.Comment(text)
 
 
 def to_bytes(iterable, fmt='ieee', dtype='<f'):
@@ -497,7 +495,7 @@ def parse_lxi_webserver(host, port=80, timeout=1):
         response.close()
         try:
             return _parse_lxi_xml(content)
-        except cElementTree.ParseError:
+        except ElementTree.ParseError:
             # Some LXI webservers redirect all invalid URLs to the
             # webserver's homepage instead of raising an HTTPError
             return _parse_lxi_html(content)
@@ -536,7 +534,7 @@ def _parse_lxi_xml(string):
     :class:`dict`
         The information about the LXI device.
     """
-    root = cElementTree.fromstring(string)
+    root = ElementTree.fromstring(string)
     if not root.tag.endswith('LXIDevice'):
         return {}
 

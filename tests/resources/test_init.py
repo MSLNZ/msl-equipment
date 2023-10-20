@@ -1,4 +1,8 @@
-from msl.equipment import resources, Backend, ConnectionRecord
+from __future__ import annotations
+
+from msl.equipment import Backend
+from msl.equipment import ConnectionRecord
+from msl.equipment import resources
 
 
 def test_find_resource_class():

@@ -1,11 +1,17 @@
 """
 A wrapper around the PicoScope ps4000a SDK.
 """
-from ctypes import c_int8, c_int16, c_uint16, c_int32, byref
+from __future__ import annotations
+
+from ctypes import byref
+from ctypes import c_int16
+from ctypes import c_int32
+from ctypes import c_int8
+from ctypes import c_uint16
 
 from msl.equipment.resources import register
-from .picoscope_api import PicoScopeApi
 from .functions import ps4000aApi_funcptrs
+from .picoscope_api import PicoScopeApi
 
 
 @register(manufacturer=r'Pico\s*Tech', model=r'4(44|82)4')

@@ -1,6 +1,8 @@
 """
 Establish a connection to the equipment.
 """
+from __future__ import annotations
+
 from .config import Config
 from .connection_demo import ConnectionDemo
 from .connection_nidaq import ConnectionNIDAQ

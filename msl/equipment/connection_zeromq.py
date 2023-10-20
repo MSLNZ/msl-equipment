@@ -3,6 +3,8 @@ Base class for equipment that use the ZeroMQ_ communication protocol.
 
 .. _ZeroMQ: https://zeromq.org/
 """
+from __future__ import annotations
+
 import socket
 
 import zmq

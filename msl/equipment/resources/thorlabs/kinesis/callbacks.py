@@ -22,9 +22,11 @@ message queue.
    # ... do stuff with the `flipper` ...
 
 """
-from msl.loadlib import IS_WINDOWS
+from __future__ import annotations
 
-if IS_WINDOWS:
+import sys
+
+if sys.platform == 'win32':
     from ctypes import WINFUNCTYPE
     FUNCTYPE = WINFUNCTYPE
 else:

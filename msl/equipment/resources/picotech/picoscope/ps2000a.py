@@ -1,11 +1,13 @@
 """
 A wrapper around the PicoScope ps2000a SDK.
 """
+from __future__ import annotations
+
 from ctypes import byref
 
 from msl.equipment.resources import register
-from .picoscope_api import PicoScopeApi
 from .functions import ps2000aApi_funcptrs
+from .picoscope_api import PicoScopeApi
 
 
 @register(manufacturer=r'Pico\s*Tech', model=r'240[5678][AB]|220(5A MSO|5 MSO|6|7|8)')

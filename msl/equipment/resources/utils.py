@@ -1,8 +1,10 @@
 """
 Utility functions/classes to help create modules in the **msl.equipment.resources** package.
 """
-import re
+from __future__ import annotations
+
 import ctypes
+import re
 
 BYTE = ctypes.c_byte
 WORD = ctypes.c_ushort

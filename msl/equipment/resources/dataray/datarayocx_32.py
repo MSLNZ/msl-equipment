@@ -1,9 +1,11 @@
 """
 Load the 32-bit ``DATARAYOCX`` library using :ref:`msl-loadlib-welcome`.
 """
+from __future__ import annotations
+
 import os
-import time
 import threading
+import time
 import traceback
 
 from msl.loadlib import Server32

@@ -1,11 +1,15 @@
 """
 A wrapper around the PicoScope ps6000 SDK.
 """
-from ctypes import c_int16, c_uint32, byref
+from __future__ import annotations
+
+from ctypes import byref
+from ctypes import c_int16
+from ctypes import c_uint32
 
 from msl.equipment.resources import register
-from .picoscope_api import PicoScopeApi
 from .functions import ps6000Api_funcptrs
+from .picoscope_api import PicoScopeApi
 
 
 @register(manufacturer=r'Pico\s*Tech', model=r'6\d{3}')

@@ -16,6 +16,7 @@ The message consists of 3 components, a messageType, a messageID and messageData
    WORD messageData
 
 """
+from __future__ import annotations
 
 #: MessageTypes
 MessageTypes = {

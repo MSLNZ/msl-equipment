@@ -3,6 +3,8 @@ Uses PyVISA_ as the backend to communicate with the equipment.
 
 .. _PyVISA: https://pyvisa.readthedocs.io/en/stable/
 """
+from __future__ import annotations
+
 try:
     import pyvisa
 except ImportError:

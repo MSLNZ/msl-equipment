@@ -3,12 +3,18 @@ Wrapper around Thorlabs ``FilterWheel102.dll``, v4.0.0.
 
 Thorlabs FW102C Series and FW212C Series Motorized Filter Wheels.
 """
-from ctypes import c_char_p, c_int, POINTER, byref, create_string_buffer
+from __future__ import annotations
+
+from ctypes import POINTER
+from ctypes import byref
+from ctypes import c_char_p
+from ctypes import c_int
+from ctypes import create_string_buffer
 from enum import IntEnum
 
-from msl.equipment.resources import register
-from msl.equipment.exceptions import ThorlabsError
 from msl.equipment.connection_sdk import ConnectionSDK
+from msl.equipment.exceptions import ThorlabsError
+from msl.equipment.resources import register
 
 ERROR_CODES = {
     0x00: ('SUCCESS', 'Function call successful.'),

@@ -1,17 +1,19 @@
 """
 MSL resources for connecting to equipment.
 """
-import os
-import re
+from __future__ import annotations
+
 import fnmatch
 import importlib
+import os
+import re
 
 from ..utils import logger
 
 _registry = []
 
 
-class _Resource(object):
+class _Resource:
 
     def __init__(self, manufacturer, model, flags, cls):
         self.manufacturer = re.compile(manufacturer, flags=flags) if manufacturer else None

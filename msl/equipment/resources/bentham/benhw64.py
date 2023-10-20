@@ -1,16 +1,20 @@
 """
 A wrapper around the :class:`~.benhw32.Bentham32` class.
 """
-import os
+from __future__ import annotations
+
 import inspect
+import os
 
 from msl.loadlib import Client64
 
 from msl.equipment.connection import Connection
 from msl.equipment.exceptions import BenthamError
 from msl.equipment.resources import register
-from .errors import BI_OK, ERROR_CODES
-from .tokens import MonochromatorCurrentWL, BenMono
+from .errors import BI_OK
+from .errors import ERROR_CODES
+from .tokens import BenMono
+from .tokens import MonochromatorCurrentWL
 
 
 @register(manufacturer=r'Bentham', model=r'[D]*TMc300')

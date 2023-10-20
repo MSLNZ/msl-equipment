@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import datetime
 import enum
 import struct
 import sys
-from xml.etree.cElementTree import Comment
-from xml.etree.cElementTree import Element
+from xml.etree.ElementTree import Comment
+from xml.etree.ElementTree import Element
 
 import numpy as np
 import pytest

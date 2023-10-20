@@ -1,7 +1,13 @@
 """
 Base class for the ps2000 and ps3000 PicoScopes.
 """
-from ctypes import c_int16, c_int32, c_uint32, c_double, byref
+from __future__ import annotations
+
+from ctypes import byref
+from ctypes import c_double
+from ctypes import c_int16
+from ctypes import c_int32
+from ctypes import c_uint32
 
 from msl.equipment.exceptions import PicoTechError
 from .enums import PS2000Info

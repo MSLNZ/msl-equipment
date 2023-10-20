@@ -206,7 +206,6 @@ setup(
         'docs': docs_require,
         'dev': tests_require + docs_require,
     },
-    python_requires='>=3.8',
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
     packages=find_packages(include=('msl*',)),
     include_package_data=True,

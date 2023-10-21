@@ -18,25 +18,29 @@ The following illustrates an example configuration file.
 
   <?xml version="1.0" encoding="utf-8"?>
   <msl>
-    <!-- OPTIONAL: Use PyVISA-py as the PyVISA backend library.
-     Other values are:
-       @ivi (PyVISA >=1.11)
-       @ni (PyVISA <1.11)
-       @sim (PyVISA-sim) -->
-    <pyvisa_library>@py</pyvisa_library>
 
     <!-- OPTIONAL: Whether to open all connections in demo mode. -->
     <demo_mode>true</demo_mode>
 
-    <!-- OPTIONAL: Add paths to where external resource files are located. The
-     paths get appended to Config.PATH and os.environ['PATH']. If the recursive="true"
-     attribute is included then recursively adds all sub-directories starting from
-     the root directory (also includes the root directory). -->
-    <path>I:\Photometry\SDKs</path>
-    <path recursive="true">D:\code\resources\lib</path>
+    <!-- OPTIONAL: Set the path to the GPIB library file.
+     Specifying this element is necessary only if the file is not automatically
+     found or if you want to use a different file than the default file. -->
+    <gpib_library>/opt/gpib/libgpib.so.0</gpib_library>
 
-    <!-- OPTIONAL: The user can define their own elements. -->
-    <max_temperature units="C">60</max_temperature>
+    <!-- OPTIONAL: Add paths to where external resource files are located. The
+     paths get appended to Config.PATH and os.environ['PATH']. If a recursive="true"
+     attribute is included, then recursively adds all sub-directories starting from
+     the root directory (also includes the root directory). The <path> element may
+     be specified multiple times. -->
+    <path>D:\code\SDKs</path>
+    <path recursive="true">C:\Program Files\Manufacturer</path>
+
+    <!-- OPTIONAL: Set the PyVISA backend library.
+     @ivi (PyVISA >=1.11)
+     @ni (PyVISA <1.11)
+     @py (PyVISA-py)
+     @sim (PyVISA-sim) -->
+    <pyvisa_library>@py</pyvisa_library>
 
     <!-- OPTIONAL: Specify the equipment that is being used to perform the measurement
      and assign an "alias" that you want to use to associate for each equipment. You
@@ -112,6 +116,9 @@ The following illustrates an example configuration file.
         <path>data/my_connections.txt</path>
       </connection>
     </connections>
+
+    <!-- OPTIONAL: You may define your own elements. -->
+    <max_temperature units="C">60</max_temperature>
 
  </msl>
 

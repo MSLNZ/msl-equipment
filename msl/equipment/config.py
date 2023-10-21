@@ -96,17 +96,19 @@ class Config:
             logger.debug('update Config.DEMO_MODE = %s', Config.DEMO_MODE)
 
         for element in self.findall('path'):
-            if not os.path.isdir(element.text):
-                logger.warning('not a valid PATH %s', element.text)
-                continue
-            if element.attrib.get('recursive', 'false').lower() == 'true':
-                for root, _, _ in os.walk(element.text):
-                    Config.PATH.append(root)
-            else:
-                Config.PATH.append(element.text)
-        for p in Config.PATH:
-            os.environ['PATH'] += os.pathsep + p
-            logger.debug('append Config.PATH %s', p)
+            path = element.text
+            if not os.path.isdir(path):
+                logger.warning('cannot append to Config.PATH, %r is not a directory', path)
+            elif element.attrib.get('recursive', 'false').lower() == 'true':
+                for root, _, _ in os.walk(path):
+                    if root not in Config.PATH:
+                        Config.PATH.append(root)
+                        os.environ['PATH'] += os.pathsep + root
+                        logger.debug('append %r to Config.PATH', root)
+            elif path not in Config.PATH:
+                Config.PATH.append(path)
+                os.environ['PATH'] += os.pathsep + path
+                logger.debug('append %r to Config.PATH', path)
 
     def attrib(self, tag_or_path: str) -> dict[str, Any]:
         """Get the attributes of the first matching element by tag name or path.

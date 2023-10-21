@@ -7,19 +7,19 @@ import re
 from collections import namedtuple
 from typing import ValuesView
 
-from msl.equipment import resources
-from msl.equipment.config import Config
-from msl.equipment.constants import Backend
-from msl.equipment.exceptions import MSLConnectionError
-from msl.equipment.exceptions import MSLTimeoutError
-from msl.equipment.record_types import CalibrationRecord
-from msl.equipment.record_types import ConnectionRecord
-from msl.equipment.record_types import EquipmentRecord
-from msl.equipment.record_types import MaintenanceRecord
-from msl.equipment.record_types import MeasurandRecord
+from . import resources
+from .config import Config
+from .constants import Backend
+from .exceptions import MSLConnectionError
+from .exceptions import MSLTimeoutError
+from .record_types import CalibrationRecord
+from .record_types import ConnectionRecord
+from .record_types import EquipmentRecord
+from .record_types import MaintenanceRecord
+from .record_types import MeasurandRecord
 
 __author__ = 'Measurement Standards Laboratory of New Zealand'
-__copyright__ = '\xa9 2017 - 2023, ' + __author__
+__copyright__ = f'\xa9 2017 - 2023, {__author__}'
 __version__ = '0.2.0.dev0'
 
 _v = re.search(r'(\d+)\.(\d+)\.(\d+)[.-]?(.*)', __version__).groups()

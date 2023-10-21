@@ -199,3 +199,33 @@ def test_parse_address_invalid(address):
     ])
 def test_parse_address_valid(address, expected):
     assert ConnectionSerial.parse_address(address)['port'] == expected
+
+
+@pytest.mark.skipif(pty is None, reason='pty is not available')
+@pytest.mark.parametrize(
+    'term', ['\r', '\n', '\0', '\r\n', '\n\0', '\r\0', '\r\n\0', 'anything'])
+def test_terminator(term):
+    # simulate a Serial port
+    primary, secondary = pty.openpty()
+
+    thread = threading.Thread(
+        target=echo_server,
+        args=(primary, term.encode()),
+        daemon=True,
+    )
+    thread.start()
+
+    time.sleep(0.5)  # allow some time for the echo server to start
+
+    record = EquipmentRecord(
+        connection=ConnectionRecord(
+            address='ASRL' + os.ttyname(secondary),
+            termination=term,
+        )
+    )
+
+    dev = record.connect()
+    assert dev.read_termination == term.encode()
+    assert dev.write_termination == term.encode()
+    assert dev.query('hello') == f'hello{term}'
+    dev.write('SHUTDOWN')

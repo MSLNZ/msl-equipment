@@ -117,6 +117,9 @@ class Config:
                 os.environ['PATH'] += os.pathsep + path
                 logger.debug('append %r to Config.PATH', path)
 
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(path={self.path!r})'
+
     def attrib(self, tag_or_path: str) -> dict[str, Any]:
         """Get the attributes of the first matching element by tag name or path.
 

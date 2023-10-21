@@ -191,4 +191,7 @@ def test_source_types():
     assert Config(BytesIO(b'<?xml version="1.0"?><msl></msl>')).path == '<BytesIO>'
     assert Config(StringIO('<?xml version="1.0"?><msl></msl>')).path == '<StringIO>'
     assert Config(open(path, mode='rt')).path == '<TextIOWrapper>'
-    assert Config(open(path, mode='rb')).path == '<BufferedReader>'
+    c = Config(open(path, mode='rb'))
+    assert c.path == '<BufferedReader>'
+    assert str(c) == "Config(path='<BufferedReader>')"
+    assert repr(c) == "Config(path='<BufferedReader>')"

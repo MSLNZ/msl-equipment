@@ -26,7 +26,12 @@ XMLType = Union[str, bytes, os.PathLike, BinaryIO, TextIO]
 class Config:
 
     GPIB_LIBRARY: str = ''
-    """The path to a GPIB library file."""
+    """The path to a GPIB library file.
+    
+    Setting this attribute is necessary only if you want to communicate with
+    a GPIB device and the file is not automatically found or you want to
+    use a different file than the default file.
+    """
 
     PyVISA_LIBRARY: str = '@ivi'
     """The PyVISA backend :ref:`library <intro-configuring>` to use."""
@@ -52,23 +57,25 @@ class Config:
         The following table summarizes the XML elements that are used by
         MSL-Equipment which may be defined in a :ref:`configuration-file`:
 
-        +----------------+--------------------------+-----------------------------------------------+
-        |    XML Tag     |      Example Values      |               Description                     |
-        +================+==========================+===============================================+
-        |   demo_mode    | true, false, True, False | Whether to open connections in demo mode.     |
-        +----------------+--------------------------+-----------------------------------------------+
-        |  gpib_library  | /opt/gpib/libgpib.so.0,  | The path to a GPIB library file.              |
-        |                | C:\gpib\ni4882.dll       |                                               |
-        +----------------+--------------------------+-----------------------------------------------+
-        | pyvisa_library | @ivi, @py, @sim,         | The PyVISA :ref:`library <intro-configuring>` |
-        |                | /path/to/libvisa.so.7    | to use.                                       |
-        +----------------+--------------------------+-----------------------------------------------+
-        |     path       | /path/to/lib, D:/SDKs    | A path that contains external resources.      |
-        |                |                          | Accepts a *recursive="true"* attribute.       |
-        |                |                          | The path(s) are appended to                   |
-        |                |                          | :data:`os.environ['PATH'] <os.environ>`       |
-        |                |                          | and to :attr:`.PATH`                          |
-        +----------------+--------------------------+-----------------------------------------------+
+        +----------------+----------------------------+---------------------------------------------------+
+        |    XML Tag     |      Example Values        |               Description                         |
+        +================+============================+===================================================+
+        |   demo_mode    | true, false, True, False   | Whether to open connections in demo mode. The     |
+        |                |                            | value will set :attr:`.DEMO_MODE`.                |
+        +----------------+----------------------------+---------------------------------------------------+
+        |  gpib_library  | /opt/gpib/libgpib.so.0     | The path to a GPIB library file. Required only    |
+        |                |                            | if you want to use a specific file. The value     |
+        |                |                            | will set :attr:`.GPIB_LIBRARY`.                   |
+        +----------------+----------------------------+---------------------------------------------------+
+        |     path       | C:\\Program Files\\Company | A path that contains additional resources.        |
+        |                |                            | Accepts a *recursive="true"* attribute. The       |
+        |                |                            | path(s) are appended to :attr:`.PATH` and to      |
+        |                |                            | :data:`os.environ['PATH'] <os.environ>`. A        |
+        |                |                            | *<path>* element may be specified multiple times. |
+        +----------------+----------------------------+---------------------------------------------------+
+        | pyvisa_library | @ivi, @py,                 | The PyVISA :ref:`library <intro-configuring>` to  |
+        |                | /opt/ni/libvisa.so.7       | use. The value will set :attr:`.PyVISA_LIBRARY`.  |
+        +----------------+----------------------------+---------------------------------------------------+
 
         You are also encouraged to define your own application-specific elements
         within your :ref:`configuration-file`.

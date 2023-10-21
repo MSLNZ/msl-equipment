@@ -4,6 +4,7 @@ import pytest
 
 from msl.equipment.connection_gpib import ConnectionGPIB
 from msl.equipment.connection_gpib import _convert_timeout  # noqa
+from msl.equipment.connection_gpib import find_listeners
 
 
 @pytest.mark.parametrize(
@@ -81,3 +82,8 @@ def test_parse_address_valid(address, expected):
      ])
 def test_parse_address_valid(value, expected):
     assert _convert_timeout(value) == expected
+
+
+def test_find_listeners():
+    listeners = find_listeners(include_sad=False)
+    assert isinstance(listeners, list)

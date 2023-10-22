@@ -7,8 +7,10 @@ Version 0.2.0 (in development)
 
 * Added
 
-  - the :class:`~msl.equipment.connection_gpib.ConnectionGPIB` class
-  - the :class:`~msl.equipment.resources.greisinger.gmh3000.GMH3000` resource
+  - support for Python 3.12
+  - ``find-equipment`` console script
+  - :class:`~msl.equipment.connection_gpib.ConnectionGPIB` class
+  - :class:`~msl.equipment.resources.greisinger.gmh3000.GMH3000` resource
 
 * Fixed
 
@@ -17,10 +19,10 @@ Version 0.2.0 (in development)
 
 * Removed
 
-  - support for Python 2.7, 3.5, 3.6, 3.7 and 3.8
+  - support for Python 2.7, 3.5, 3.6 and 3.7
 
 Version 0.1.0 (2023-06-18)
 ==========================
 Initial release.
 
-It is also the last release to support Python 2.7, 3.5, 3.6, 3.7 and 3.8
+It is also the last release to support Python 2.7, 3.5, 3.6 and 3.7

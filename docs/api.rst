@@ -8,18 +8,25 @@ that you must initialize in your application is :class:`~msl.equipment.config.Co
 and perhaps :class:`~msl.equipment.record_types.EquipmentRecord`'s (depending on the
 format that is chosen to store the :ref:`Databases <database-formats>`).
 
+.. _find-equipment:
+
+Find Equipment
+--------------
+To find equipment that can be connected to, you may either call the
+:func:`~msl.equipment.find_equipment` function or run the ``find-equipment``
+executable from a terminal. To see the help for the executable, run
+
+.. code-block:: console
+
+    find-equipment --help
+
+Running either the function or the executable will return/display a description
+about the equipment and the address(es) that may be used to connect to the equipment.
+
 .. _connection-classes:
 
 Connection Classes
 ------------------
-Use the following functions to find equipment that are connected to a computer or that are on the network
-
-+---------------------------------------------------------+----------------------------------------------------------------------------+
-| :func:`~msl.equipment.list_resources`                   | A :class:`dict` of all equipment that are available to connect to          |
-+---------------------------------------------------------+----------------------------------------------------------------------------+
-| :func:`~msl.equipment.print_resources`                  | Print a summary of all equipment that are available to connect to          |
-+---------------------------------------------------------+----------------------------------------------------------------------------+
-
 The following :class:`~msl.equipment.connection.Connection` classes are available to communicate
 with the equipment *(although you should never need to instantiate these classes directly):*
 

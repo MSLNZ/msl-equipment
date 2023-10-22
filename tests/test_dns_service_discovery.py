@@ -111,7 +111,7 @@ def test_dns_record2():
 
 def test_find_lxi():
     for ipv4, device in find_lxi().items():
-        assert isinstance(ipv4, tuple)
+        assert isinstance(ipv4, str)
         assert device['description']
         assert device['webserver']
         for address in device['addresses']:

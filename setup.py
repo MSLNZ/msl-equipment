@@ -206,6 +206,11 @@ setup(
         'dev': tests_require + docs_require,
     },
     cmdclass={'docs': BuildDocs, 'apidocs': ApiDocs},
+    entry_points={
+        'console_scripts': [
+            'find-equipment = msl.equipment:_find_cli',
+        ],
+    },
     packages=find_packages(include=('msl*',)),
     include_package_data=True,
 )

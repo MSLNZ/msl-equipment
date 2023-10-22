@@ -28,28 +28,28 @@ version_info = namedtuple('version_info', 'major minor micro releaselevel')(int(
 """:obj:`~collections.namedtuple`: Contains the version information as a (major, minor, micro, releaselevel) tuple."""
 
 
-def list_resources(
+def find_equipment(
         *,
-        hosts: list[str] | None = None,
+        ip: list[str] | None = None,
         timeout: float = 2,
-        include_sad: bool = True,
-        gpib_library: str = '') -> ValuesView:
+        gpib_library: str = '',
+        include_sad: bool = True) -> ValuesView:
     """Returns information about equipment that are available.
 
-    :param hosts:
-        The IP address(es) on the computer to use to find network devices.
-        If not specified, then find devices on all network interfaces.
+    :param ip:
+        The IP address(es) on the local computer to use to search for network
+        devices. If not specified, uses all network interfaces.
 
     :param timeout:
         The maximum number of seconds to wait for a reply from a network device.
 
+    :param gpib_library:
+        The path to a GPIB library file. The default file that is used is
+        platform dependent. If a GPIB library cannot be found, GPIB devices
+        will not be searched for.
+
     :param include_sad:
         Whether to scan all secondary GPIB addresses.
-
-    :param gpib_library:
-        The path to a GPIB library file. The default file that is loaded is
-        platform dependent. If a library cannot be loaded, GPIB devices cannot
-        be found.
 
     :return: The information about the devices that were found.
     """
@@ -68,7 +68,7 @@ def list_resources(
             self.devices = {}
 
             def function():
-                self.devices = target(hosts=hosts, timeout=timeout)
+                self.devices = target(ip=ip, timeout=timeout)
 
             super(NetworkThread, self).__init__(target=function)
 
@@ -94,7 +94,7 @@ def list_resources(
         elif port.startswith('/dev/'):
             addresses.append(f'ASRL{port}')
         devices[port] = {
-            'type': 'ASRL',
+            'type': 'Serial',
             'addresses': addresses,
             'description': desc
         }
@@ -118,27 +118,26 @@ def list_resources(
                 num_found += 1
                 devices[ipv4] = {
                     'type': 'Network',
-                    'addresses': set(device['addresses']),
+                    'addresses': device['addresses'],
                     'description': description,
                 }
                 if not description.startswith('Prologix'):
                     # Prologix ENET-GPIB does not have a webserver
                     devices[ipv4]['webserver'] = device['webserver']
             else:
-                devices[ipv4]['description'] = description
+                if not devices[ipv4]['description']:
+                    devices[ipv4]['description'] = description
                 for address in device['addresses']:
-                    devices[ipv4]['addresses'].add(address)
+                    if address not in devices[ipv4]['addresses']:
+                        devices[ipv4]['addresses'].append(address)
 
     logger.debug('found %d devices', num_found)
     return devices.values()
 
 
-def print_resources(**kwargs) -> None:
-    """Print a summary of all equipment that are available to connect to.
-
-    All keyword arguments are passed to :func:`.list_resources`.
-    """
-    devices = sorted(list_resources(**kwargs), key=lambda v: v['description'])
+def _print_stdout(equipment: ValuesView) -> None:
+    """Print a summary of all equipment that are available to connect to."""
+    devices = sorted(equipment, key=lambda v: v['description'])
     types = sorted(set(d['type'] for d in devices))
     for typ in types:
         print(f'{typ} Devices')
@@ -147,10 +146,89 @@ def print_resources(**kwargs) -> None:
                 continue
             if typ == 'GPIB':
                 print('  ' + '\n  '.join(device['addresses']))
-            elif typ == 'ASRL':
+            elif typ == 'Serial':
                 print(f"  {device['addresses'][0]} [{device['description']}]")
             elif typ == 'Network':
                 print(f"  {device['description']}")
                 print(f"    webserver {device['webserver']}")
                 if device['addresses']:
                     print(f'    ' + '\n    '.join(sorted(device['addresses'])))
+
+
+def _find_cli() -> None:
+    """Console script entry point to find equipment."""
+    import argparse
+    import json
+    import sys
+
+    parser = argparse.ArgumentParser(
+        add_help=False,
+        description='Find equipment that can be connected to.',
+        formatter_class=argparse.RawTextHelpFormatter,
+    )
+    parser.add_argument(
+        '-h', '--help',
+        action='help',
+        help='Show this help message and exit.',
+        default=argparse.SUPPRESS,
+    )
+    parser.add_argument(
+        '--ip',
+        nargs='*',
+        help='The IP address(es) on the local computer to search for network\n'
+             'devices. If not specified, uses all network interfaces.'
+    )
+    parser.add_argument(
+        '-t', '--timeout',
+        type=float,
+        default=2,
+        help='Maximum number of seconds to wait for a reply from a network\n'
+             'device. Default is 2 seconds.'
+    )
+    parser.add_argument(
+        '-g', '--gpib-library',
+        default='',
+        help='The path to a GPIB library file. The default file that is used\n'
+             'is platform dependent. If a GPIB library cannot be found, GPIB\n'
+             'devices will not be searched for.'
+    )
+    parser.add_argument(
+        '--debug',
+        action='store_true',
+        default=False,
+        help='Whether to show DEBUG log messages.'
+    )
+    parser.add_argument(
+        '--ignore-sad',
+        action='store_true',
+        default=False,
+        help='Do not scan for secondary GPIB addresses.'
+    )
+    parser.add_argument(
+        '--json',
+        action='store_true',
+        default=False,
+        help='Print the results as a JSON string.'
+    )
+
+    parsed = parser.parse_args(sys.argv[1:])
+
+    if parsed.debug:
+        import logging
+        logging.basicConfig(
+            level=logging.DEBUG,
+            format='%(asctime)s.%(msecs)03d [%(levelname)s] %(name)s %(message)s',
+            datefmt='%H:%M:%S'
+        )
+
+    equipment = find_equipment(
+        ip=parsed.ip,
+        timeout=parsed.timeout,
+        gpib_library=parsed.gpib_library,
+        include_sad=not parsed.ignore_sad,
+    )
+
+    if parsed.json:
+        print(json.dumps(list(equipment), indent=2))
+    else:
+        _print_stdout(equipment)

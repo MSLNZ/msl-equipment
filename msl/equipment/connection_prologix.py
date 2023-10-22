@@ -371,25 +371,19 @@ class ConnectionPrologix(Connection):
         self._controller.write(self._addr)
 
 
-def find_prologix(hosts=None, timeout=1):
+def find_prologix(*,
+                  ip: list[str] | None = None,
+                  timeout: float = 1) -> dict[str, str | list[str]]:
     """Find all Prologix ENET-GPIB devices that are on the network.
 
     To resolve the MAC address of a Prologix device, the ``arp`` program
     must be installed. On Linux, install ``net-tools``. On Windows and macOS,
     ``arp`` should already be installed.
 
-    Parameters
-    ----------
-    hosts : :class:`list` of :class:`str`, optional
-        The IP address(es) on the computer to use to look for Prologix
-        ENET-GPIB devices. If not specified, then use all network interfaces.
-    timeout : :class:`float`, optional
-        The maximum number of seconds to wait for a reply.
-
-    Returns
-    -------
-    :class:`dict`
-        The information about the Prologix ENET-GPIB devices that were found.
+    :param ip: The IP address(es) on the local computer to use to search for
+        Prologix ENET-GPIB devices. If not specified, uses all network interfaces.
+    :param timeout: The maximum number of seconds to wait for a reply.
+    :return: The information about the Prologix ENET-GPIB devices that were found.
     """
     import re
     import socket
@@ -399,11 +393,11 @@ def find_prologix(hosts=None, timeout=1):
 
     from .utils import logger
 
-    if not hosts:
+    if not ip:
         from .utils import ipv4_addresses
         all_ips = ipv4_addresses()
     else:
-        all_ips = hosts
+        all_ips = ip
 
     logger.debug('find Prologix ENET-GPIB devices on the following interfaces: %s', all_ips)
 
@@ -477,7 +471,7 @@ def find_prologix(hosts=None, timeout=1):
 
         devices[host] = {
             'description': description,
-            'addresses': ['Prologix::{}::1234::<GPIB address>'.format(a) for a in sorted(addresses)]
+            'addresses': [f'Prologix::{a}::1234::<GPIB address>' for a in sorted(addresses)]
         }
 
         sock.close()

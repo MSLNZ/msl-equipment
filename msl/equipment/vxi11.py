@@ -836,24 +836,18 @@ class AsyncClient(VXIClient):
         self.read_reply()
 
 
-def find_vxi11(hosts=None, timeout=1):
+def find_vxi11(*,
+               ip: list[str] | None = None,
+               timeout: float = 1) -> dict[str, dict[str, str | list[str]]]:
     """Find all VXI-11 devices that are on the network.
 
     The RPC port-mapper protocol (RFC-1057_, Appendix A) broadcasts a message
     via UDP to port 111 for VXI-11 device discovery.
 
-    Parameters
-    ----------
-    hosts : :class:`list` of :class:`str`, optional
-        The IP address(es) on the computer to use to broadcast the message.
-        If not specified, then broadcast on all network interfaces.
-    timeout : :class:`float`, optional
-        The maximum number of seconds to wait for a reply.
-
-    Returns
-    -------
-    :class:`dict`
-        The information about the VXI-11 devices that were found.
+    :param ip: The IP address(es) on the local computer to use to broadcast the
+        discovery message. If not specified, broadcast on all network interfaces.
+    :param timeout: The maximum number of seconds to wait for a reply.
+    :return: The information about the VXI-11 devices that were found.
     """
     import select
     import threading
@@ -861,11 +855,11 @@ def find_vxi11(hosts=None, timeout=1):
 
     from .utils import logger
 
-    if not hosts:
+    if not ip:
         from .utils import ipv4_addresses
         all_ips = ipv4_addresses()
     else:
-        all_ips = hosts
+        all_ips = ip
 
     logger.debug('find VXI-11 devices on the following interfaces: %s', all_ips)
 
@@ -898,7 +892,7 @@ def find_vxi11(hosts=None, timeout=1):
 
             device = {}
             addresses = set()
-            addresses.add('TCPIP::{}::inst0::INSTR'.format(ip_address))
+            addresses.add(f'TCPIP::{ip_address}::inst0::INSTR')
 
             if 'title' in lxi:
                 # The XML document does not exist, the homepage was parsed
@@ -918,11 +912,11 @@ def find_vxi11(hosts=None, timeout=1):
                         continue
                     for address in interface['InstrumentAddressStrings']:
                         addresses.add(address)
-                    addresses.add('TCPIP::{}::inst0::INSTR'.format(interface['Hostname']))
+                    addresses.add(f"TCPIP::{interface['Hostname']}::inst0::INSTR")
             else:
                 device['description'] = 'Unknown LXI device'
 
-            device['webserver'] = 'http://{}'.format(ip_address)
+            device['webserver'] = f'http://{ip_address}'
             device['addresses'] = sorted(addresses)
 
             key = tuple(int(s) for s in ip_address.split('.'))
@@ -944,4 +938,4 @@ def find_vxi11(hosts=None, timeout=1):
         thread.start()
     for thread in threads:
         thread.join()
-    return dict((k, devices[k]) for k in sorted(devices))
+    return dict(('.'.join(str(v) for v in k), devices[k]) for k in sorted(devices))

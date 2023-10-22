@@ -137,29 +137,23 @@ class _DNSRecord(_Buffer):
         return {'name': r_name, 'type': r_type, 'class': r_class, 'ttl': ttl, 'data': r_data}
 
 
-def find_lxi(hosts=None, timeout=1):
+def find_lxi(*,
+             ip: list[str] | None = None,
+             timeout: float = 1) -> dict[str, dict[str, str | list[str]]]:
     """Find all LXI devices that support the mDNS and DNS Service Discovery protocols.
 
-    Parameters
-    ----------
-    hosts : :class:`list` of :class:`str`, optional
-        The IP address(es) on the computer to use to broadcast the message.
-        If not specified, then broadcast on all network interfaces.
-    timeout : :class:`float`, optional
-        The maximum number of seconds to wait for a reply.
-
-    Returns
-    -------
-    :class:`dict`
-        The information about the HiSLIP, VXI-11 and SCPI-RAW devices
+    :param ip: The IP address(es) on the local computer to use to broadcast the
+        discovery message. If not specified, broadcast on all network interfaces.
+    :param timeout: The maximum number of seconds to wait for a reply.
+    :return: The information about the HiSLIP, VXI-11 and SCPI-RAW devices
         that were found.
     """
     from .utils import logger
-    if not hosts:
+    if not ip:
         from .utils import ipv4_addresses
         all_ips = ipv4_addresses()
     else:
-        all_ips = hosts
+        all_ips = ip
 
     logger.debug('find LXI devices on the following interfaces: %s', all_ips)
 
@@ -251,17 +245,17 @@ def find_lxi(hosts=None, timeout=1):
                 elif a['type'] == SRV:
                     port = a['data']['port']
                     if a['name'].endswith('_scpi-raw._tcp.local.'):
-                        addresses.add('TCPIP::{}::{}::SOCKET'.format(ip_address, port))
+                        addresses.add(f'TCPIP::{ip_address}::{port}::SOCKET')
                     elif a['name'].endswith('_vxi-11._tcp.local.'):
-                        port_str = '' if port == 111 else ',{}'.format(port)
-                        addresses.add('TCPIP::{}::inst0{}::INSTR'.format(ip_address, port_str))
+                        port_str = '' if port == 111 else f',{port}'
+                        addresses.add(f'TCPIP::{ip_address}::inst0{port_str}::INSTR')
                     elif a['name'].endswith('_hislip._tcp.local.'):
-                        port_str = '' if port == 4880 else ',{}'.format(port)
-                        addresses.add('TCPIP::{}::hislip0{}::INSTR'.format(ip_address, port_str))
+                        port_str = '' if port == 4880 else f',{port}'
+                        addresses.add(f'TCPIP::{ip_address}::hislip0{port_str}::INSTR')
                     elif a['name'].endswith('_lxi._tcp.local.'):
                         found_lxi_srv = True
-                        port_str = '' if port == 80 else ':{}'.format(port)
-                        device['webserver'] = 'http://{}{}'.format(ip_address, port_str)
+                        port_str = '' if port == 80 else f':{port}'
+                        device['webserver'] = f'http://{ip_address}{port_str}'
                         description, address_strings = parse_xml(ip_address, port=port)
                         info.update(description)
                         for item in address_strings:
@@ -272,7 +266,7 @@ def find_lxi(hosts=None, timeout=1):
                 for a in record.answers:
                     if a['name'] in ('_lxi._tcp.local.', '_http._tcp.local.'):
                         description, address_strings = parse_xml(ip_address)
-                        device['webserver'] = 'http://{}'.format(ip_address)
+                        device['webserver'] = f'http://{ip_address}'
                         info.update(description)
                         for item in address_strings:
                             addresses.add(item)
@@ -305,4 +299,4 @@ def find_lxi(hosts=None, timeout=1):
         thread.start()
     for thread in threads:
         thread.join()
-    return dict((k, devices[k]) for k in sorted(devices))
+    return dict(('.'.join(str(v) for v in k), devices[k]) for k in sorted(devices))

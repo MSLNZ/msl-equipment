@@ -125,7 +125,8 @@ def find_equipment(
                     # Prologix ENET-GPIB does not have a webserver
                     devices[ipv4]['webserver'] = device['webserver']
             else:
-                if not devices[ipv4]['description']:
+                if (devices[ipv4]['description'] == 'Unknown device'
+                        and description != 'Unknown device'):
                     devices[ipv4]['description'] = description
                 for address in device['addresses']:
                     if address not in devices[ipv4]['addresses']:

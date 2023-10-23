@@ -5,15 +5,33 @@ The wrapper was written using v9.7.0.0 of the SDK.
 """
 from __future__ import annotations
 
-from ctypes import *
+import sys
+from ctypes import POINTER
+from ctypes import Structure
+from ctypes import c_bool
+from ctypes import c_char
+from ctypes import c_char_p
+from ctypes import c_double
+from ctypes import c_float
+from ctypes import c_int16
+from ctypes import c_int32
+from ctypes import c_ubyte
+from ctypes import c_uint16
+from ctypes import c_uint32
+from ctypes import c_ulong
+from ctypes import c_void_p
+from ctypes import create_string_buffer
+from ctypes import sizeof
 from enum import IntEnum
 
 import numpy as np
-from msl.loadlib import IS_WINDOWS, LoadLibrary
+from msl.loadlib import LoadLibrary
 
 from msl.equipment.connection_sdk import ConnectionSDK
 from msl.equipment.exceptions import AvantesError
 from msl.equipment.resources import register
+
+IS_WINDOWS = sys.platform == 'win32'
 
 WM_MEAS_READY = 0x8001
 SETTINGS_RESERVED_LEN = 9720
@@ -449,8 +467,10 @@ class DeviceConfigType(Structure):
 
 
 if IS_WINDOWS:
+    from ctypes import WINFUNCTYPE
     FUNCTYPE = WINFUNCTYPE
 else:
+    from ctypes import CFUNCTYPE
     FUNCTYPE = CFUNCTYPE
 
 MeasureCallback = FUNCTYPE(None, POINTER(c_int32), POINTER(c_int32))

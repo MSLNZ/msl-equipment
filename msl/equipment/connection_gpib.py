@@ -150,6 +150,7 @@ def _load_library(errcheck: Callable[[int, Callable, tuple], int] | None = None)
             ])
         elif sys.platform == 'linux':
             files.extend([
+                'gpib',  # use ctypes.util.find_library in LoadLibrary
                 'libgpib.so.0',
                 '/usr/local/lib/libgpib.so.0',
                 'gpib-32.so',

@@ -321,11 +321,11 @@ def create_callbacks_file(header_dict):
     """Create the _picoscope_callbacks.py file"""
 
     fp = open('_picoscope_callbacks.py', mode='wt')
+    fp.write('import sys\n')
     fp.write('from ctypes import POINTER, c_int16, c_uint32, c_void_p, c_int32\n\n')
 
-    fp.write('from msl.loadlib import IS_WINDOWS\n\n')
-    fp.write('from msl.equipment.resources.picotech.errors import PICO_STATUS\n\n')
-    fp.write("if IS_WINDOWS:\n")
+    fp.write('from ..errors import PICO_STATUS\n\n')
+    fp.write("if sys.platform == 'win32':\n")
     fp.write('    from ctypes import WINFUNCTYPE\n')
     fp.write('    FUNCTYPE = WINFUNCTYPE\n')
     fp.write('else:\n')

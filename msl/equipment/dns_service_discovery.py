@@ -155,7 +155,7 @@ def find_lxi(*,
     else:
         all_ips = ip
 
-    logger.debug('find LXI devices on the following interfaces: %s', all_ips)
+    logger.debug('find LXI devices: interfaces=%s, timeout=%s', all_ips, timeout)
 
     services = [
         # VXI-11 Discovery and Identification Extended Function (Revision 1.1), Section 10.1.5

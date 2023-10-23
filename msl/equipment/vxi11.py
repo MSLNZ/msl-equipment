@@ -861,7 +861,7 @@ def find_vxi11(*,
     else:
         all_ips = ip
 
-    logger.debug('find VXI-11 devices on the following interfaces: %s', all_ips)
+    logger.debug('find VXI-11 devices: interfaces:=%s, timeout=%s', all_ips, timeout)
 
     def broadcast(host):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)

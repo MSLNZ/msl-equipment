@@ -399,7 +399,8 @@ def find_prologix(*,
     else:
         all_ips = ip
 
-    logger.debug('find Prologix ENET-GPIB devices on the following interfaces: %s', all_ips)
+    logger.debug('find Prologix ENET-GPIB devices: '
+                 'interfaces=%s, timeout=%s', all_ips, timeout)
 
     if sys.platform == 'win32':
         mac_regex = re.compile(r'([0-9a-fA-F]{2}(?:-[0-9a-fA-F]{2}){5})')

@@ -163,8 +163,8 @@ def _load_library(errcheck: Callable[[int, Callable, tuple], int] | None = None)
         if _gpib_library is None:
             raise OSError(f'Cannot load a GPIB library: {", ".join(files)}\n'
                           f'If you have a GPIB library available, set '
-                          f'Config.GPIB_LIBRARY to be equal to the file '
-                          f'path to the library')
+                          f'Config.GPIB_LIBRARY to be equal to the path '
+                          f'to the library file')
 
     lib = _gpib_library.lib
 
@@ -260,7 +260,7 @@ def find_listeners(include_sad: bool = True) -> list[str]:
     :param include_sad: Whether to scan all secondary GPIB addresses.
     :return: The GPIB addresses that were found.
     """
-    logger.debug('find GPIB listeners')
+    logger.debug('find GPIB listeners: include_sad=%s', include_sad)
     devices: list[str] = []
 
     def error_check(result: int, func: Callable, arguments: tuple) -> int:
@@ -281,7 +281,7 @@ def find_listeners(include_sad: bool = True) -> list[str]:
     try:
         _load_library(error_check)
     except (OSError, AttributeError) as e:
-        logger.debug(e)
+        logger.debug(str(e).splitlines()[0])
         return devices
 
     lib = _gpib_library.lib

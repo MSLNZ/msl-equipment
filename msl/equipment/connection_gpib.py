@@ -144,12 +144,21 @@ def _load_library(errcheck: Callable[[int, Callable, tuple], int] | None = None)
     else:
         files: list[str] = []
         if sys.platform == 'win32':
-            files.extend(['ni4882.dll', 'gpib-32.dll'])
+            files.extend([
+                'ni4882.dll',
+                'gpib-32.dll',
+            ])
         elif sys.platform == 'linux':
-            files.extend(['libgpib.so.0', 'gpib-32.so'])
+            files.extend([
+                'libgpib.so.0',
+                '/usr/local/lib/libgpib.so.0',
+                'gpib-32.so',
+            ])
         elif sys.platform == 'darwin':
-            files.extend(['/Library/Frameworks/NI4882.framework/NI4882',
-                          'macosx_gpib_lib_1.0.3a.dylib'])
+            files.extend([
+                '/Library/Frameworks/NI4882.framework/NI4882',
+                'macosx_gpib_lib_1.0.3a.dylib',
+            ])
         else:
             raise OSError(f'GPIB is not yet implemented on platform {sys.platform!r}')
 

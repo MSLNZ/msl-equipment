@@ -607,11 +607,16 @@ class ConnectionGPIB(ConnectionMessageBased):
         """Close the GPIB connection."""
         if self._own and self._handle > 0:
             try:
-                self._lib.ibonl(self._handle, 0)
+                self.ibonl(self._handle, False)
             except GPIBError:
                 pass
             self._own = False
             self.log_debug('Disconnected from %s', self.equipment_record.connection)
+
+    @property
+    def handle(self) -> int:
+        """Returns the handle for this GPIB board or device."""
+        return self._handle
 
     def ibcnt(self) -> int:
         """Get the number of bytes sent or received."""
@@ -625,6 +630,22 @@ class ConnectionGPIB(ConnectionMessageBased):
         """
         # 'ibloc' is what the Gpib class in linux-gpib called the method, so keep it the same
         return self._lib.ibloc(self._handle)
+
+    def ibonl(self, ud: int, online: bool) -> int:
+        """Close or reinitialize descriptor (board or device).
+
+        If you want to close the connection for the GPIB board or device that
+        this class represents, use :meth:`.disconnect`.
+
+        :param ud: The board or device descriptor (handle).
+        :param online: If :data:`False`, closes the connection. If :data:`True`,
+            then all settings associated with the descriptor (GPIB address,
+            end-of-string mode, timeout, etc.) are reset to their *default*
+            values. The *default* values are the settings the descriptor had
+            when it was first obtained.
+        :return: The status value (ibsta).
+        """
+        return self._lib.ibonl(ud, int(online))
 
     def ibsta(self) -> int:
         """The status value (ibsta)."""
@@ -702,7 +723,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         :param board: Index of the GPIB interface board.
         :param pad: Primary address of the GPIB device.
         :param sad: Secondary address of the GPIB device.
-        :return: The status value (ibsta).
+        :return: The handle of the board or device that became CIC.
         """
         handle = None
 
@@ -714,7 +735,8 @@ class ConnectionGPIB(ConnectionMessageBased):
         if handle is None:
             self.raise_exception('Must specify either the name or the board and pad')
 
-        return self._lib.ibpct(handle)
+        self._lib.ibpct(handle)
+        return handle
 
     @property
     def read_termination(self) -> bytes | None:

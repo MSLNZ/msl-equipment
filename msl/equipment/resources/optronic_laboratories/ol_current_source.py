@@ -23,7 +23,7 @@ ETX = 0x03
 
 class OLCurrentSource:
 
-    def __init__(self, record: EquipmentRecord) -> None:
+    def __init__(self) -> None:
         """Communicate with a DC current source from Optronic Laboratories.
 
         .. attention::
@@ -37,8 +37,8 @@ class OLCurrentSource:
         for the connection supports the following key-value pairs in the
         :ref:`connections-database`::
 
-            'address': int, the internal address of the device [default: 1]
-            'delay': float, the number of seconds to wait between a write-read transaction [default: 0.1]
+            'address': int, the internal address of the device (RS-232 only) [default: 1]
+            'delay': float, the number of seconds to wait between a write-read transaction (RS-232 only) [default: 0.1]
 
         as well as the key-value pairs supported by
         :class:`~msl.equipment.connection_serial.ConnectionSerial` if using RS-232
@@ -47,16 +47,10 @@ class OLCurrentSource:
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.
-
-        :param record: A record from an :ref:`equipment-database`.
         """
         self._system_status_byte = 0
         self._options = (40, 50, 60, 70, 80, 90, 95)
         self._str_options = (60, 90, 95)
-
-        p = record.connection.properties
-        self._address = int(p.get('address', 1))
-        self._delay = float(p.get('delay', 0.1))
 
     def _check_lamp_number(self, lamp: int) -> None:
         if lamp < 0 or lamp > 9:
@@ -274,8 +268,13 @@ class OLCurrentSource:
 class OLCurrentSourceASRL(OLCurrentSource, ConnectionSerial):
 
     def __init__(self, record):
-        super(OLCurrentSourceASRL, self).__init__(record)
+        super(OLCurrentSourceASRL, self).__init__()
         super(OLCurrentSource, self).__init__(record)
+
+        p = record.connection.properties
+        self._address = int(p.get('address', 1))
+        self._delay = float(p.get('delay', 0.1))
+
         self.set_exception_class(OptronicLaboratoriesError)
         self.read_termination = struct.pack('B', ETX)
         self.write_termination = None
@@ -356,13 +355,13 @@ class OLCurrentSourceASRL(OLCurrentSource, ConnectionSerial):
 class OLCurrentSourceGPIB(OLCurrentSource, ConnectionGPIB):
 
     def __init__(self, record):
-        super(OLCurrentSourceGPIB, self).__init__(record)
+        super(OLCurrentSourceGPIB, self).__init__()
         super(OLCurrentSource, self).__init__(record)
         self.set_exception_class(OptronicLaboratoriesError)
 
     def _receive(self, expected: bytes, iteration: int = 0) -> bytes:
         """Receive a message."""
-        time.sleep(self._delay)
+        self.wait_for_srq(handle=self.board_handle)
 
         reply = self.read(decode=False).rstrip()
         values = reply[1:-1].split()

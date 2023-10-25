@@ -195,7 +195,7 @@ def _load_library(errcheck: Callable[[int, Callable, tuple], int] | None = None)
                 # mimic _SetGpibError in linux-gpib-user/language/python/gpibinter.c
                 iberr = lib.ThreadIberr()
                 if iberr == EDVR or iberr == EFSO:
-                    iberr = lib.num_transferred()
+                    iberr = lib.count()
                     try:
                         message = os.strerror(iberr)
                     except (OverflowError, ValueError):
@@ -452,7 +452,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         buffer = bytearray()
         while True:
             sta = self._lib.ibrd(self._handle, data, chunk_size)
-            buffer.extend(data[:self.num_transferred()])
+            buffer.extend(data[:self.count()])
             if len(buffer) > self._max_read_size:
                 self.raise_exception(
                     f'Maximum read size exceeded: '
@@ -482,7 +482,7 @@ class ConnectionGPIB(ConnectionMessageBased):
     def _write(self, message: bytes) -> int:
         """Overrides method in ConnectionMessageBased."""
         self._lib.ibwrt(self._handle, message, len(message))
-        return self.num_transferred()
+        return self.count()
 
     def ask(self, option: int, *, handle: int | None = None) -> int:
         """Get a configuration setting (board or device).
@@ -644,7 +644,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         """Returns the handle for the instantiated board or device."""
         return self._handle
 
-    def num_transferred(self) -> int:
+    def count(self) -> int:
         """Get the number of bytes sent or received.
 
         This method is the `ibcntl <https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibcnt.html>`_

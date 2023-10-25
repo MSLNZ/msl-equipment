@@ -491,7 +491,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         function, it should not be confused with the :meth:`~.ConnectionMessageBased.query` method.
 
         :param option: A configuration setting to get the value of.
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: The value of the configuration setting.
         """
         if handle is None:
@@ -511,7 +511,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         This method is the `ibclr <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibclr.html>`_
         function.
 
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: The status value (ibsta).
         """
         if handle is None:
@@ -527,7 +527,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         :param data:
             The `commands <https://linux-gpib.sourceforge.io/doc_html/gpib-protocol.html#REFERENCE-COMMAND-BYTES>`_
             to write to the bus.
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: The status value (ibsta).
         """
         if handle is None:
@@ -542,7 +542,7 @@ class ConnectionGPIB(ConnectionMessageBased):
 
         :param option: A configuration setting to change the value of.
         :param value: The new configuration setting value.
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: The status value (ibsta).
         """
         if handle is None:
@@ -563,7 +563,7 @@ class ConnectionGPIB(ConnectionMessageBased):
                 * 2: ATN_DEASSERT_HANDSHAKE
                 * 3: ATN_ASSERT_IMMEDIATE
 
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: The status value (ibsta).
         """
         if handle is None:
@@ -598,7 +598,7 @@ class ConnectionGPIB(ConnectionMessageBased):
                 * 5: REN_ASSERT_ADDRESS_LLO
                 * 6: REN_ADDRESS_GTL
 
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: The status value (ibsta).
         """
         if handle is None:
@@ -649,7 +649,7 @@ class ConnectionGPIB(ConnectionMessageBased):
 
     @property
     def handle(self) -> int:
-        """Returns the handle for the instantiated board or device."""
+        """Returns the handle of the instantiated board or device."""
         return self._handle
 
     def interface_clear(self, *, handle: int | None = None) -> int:
@@ -661,7 +661,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         This method is the `ibsic <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibsic.html>`_
         function.
 
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: The status value (ibsta).
         """
         if handle is None:
@@ -679,7 +679,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         This method is the `iblines <https://linux-gpib.sourceforge.io/doc_html/reference-function-iblines.html>`_
         function.
 
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         """
         if handle is None:
             handle = self._handle
@@ -695,7 +695,7 @@ class ConnectionGPIB(ConnectionMessageBased):
 
         :param pad: Primary address of the GPIB device.
         :param sad: Secondary address of the GPIB device.
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: Whether a listener is present.
         """
         if handle is None:
@@ -710,7 +710,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         This method is the `ibloc <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibloc.html>`_
         function.
 
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: The status value (ibsta).
         """
         if handle is None:
@@ -731,7 +731,7 @@ class ConnectionGPIB(ConnectionMessageBased):
             end-of-string mode, timeout, etc.) are reset to their *default*
             values. The *default* values are the settings the descriptor had
             when it was first obtained.
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: The status value (ibsta).
         """
         if handle is None:
@@ -822,7 +822,7 @@ class ConnectionGPIB(ConnectionMessageBased):
 
         :param value: If :data:`True`, the board asserts the REN line. Otherwise, the REN line
             is unasserted. The board must be the system controller.
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: The status value (ibsta).
         """
         # ibsre was removed from ni4882.dll, use ibconfig instead (IbcSRE = 0xb)
@@ -834,7 +834,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         This method is the `ibrsp <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibrsp.html>`_
         function.
 
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: The status byte.
         """
         if handle is None:
@@ -849,7 +849,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         This method is the `ibspb <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibspb.html>`_
         function.
 
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         """
         if handle is None:
             handle = self._handle
@@ -868,7 +868,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         This method is the `ibtrg <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibtrg.html>`_
         function.
 
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: The status value (ibsta).
         """
         if handle is None:
@@ -891,7 +891,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         function.
 
         :param mask: Wait until one of the conditions specified in `mask` is true.
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: The status value (ibsta).
         """
         if handle is None:
@@ -901,7 +901,7 @@ class ConnectionGPIB(ConnectionMessageBased):
     def wait_for_srq(self, *, handle: int | None = None) -> int:
         """Wait for the SRQ line to be asserted (board or device).
 
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: The status value (ibsta).
         """
         return self.wait(0x1000, handle=handle)  # SRQI = 0x1000
@@ -913,7 +913,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         function.
 
         :param message: The data to send.
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :param handle: Board or device descriptor. Default is the handle of the instantiated class.
         :return: The status value (ibsta).
         """
         if handle is None:

@@ -5,7 +5,6 @@ The wrapper was written using v9.7.0.0 of the SDK.
 """
 from __future__ import annotations
 
-import sys
 from ctypes import POINTER
 from ctypes import Structure
 from ctypes import c_bool
@@ -28,10 +27,9 @@ import numpy as np
 from msl.loadlib import LoadLibrary
 
 from msl.equipment.connection_sdk import ConnectionSDK
+from msl.equipment.constants import IS_WINDOWS
 from msl.equipment.exceptions import AvantesError
 from msl.equipment.resources import register
-
-IS_WINDOWS = sys.platform == 'win32'
 
 WM_MEAS_READY = 0x8001
 SETTINGS_RESERVED_LEN = 9720

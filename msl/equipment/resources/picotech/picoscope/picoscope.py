@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import os
 import re
-import sys
 import time
 from ctypes import addressof
 from ctypes import byref
@@ -18,6 +17,7 @@ from ctypes import string_at
 from msl.loadlib import LoadLibrary
 
 from msl.equipment.connection_sdk import ConnectionSDK
+from msl.equipment.constants import IS_WINDOWS
 from msl.equipment.exceptions import PicoTechError
 from . import callbacks
 from . import enums
@@ -28,8 +28,6 @@ from ..errors import PICO_NOT_FOUND
 from ..errors import PICO_OK
 
 ALLOWED_SDKs = ('ps2000', 'ps2000a', 'ps3000', 'ps3000a', 'ps4000', 'ps4000a', 'ps5000', 'ps5000a', 'ps6000')
-
-IS_WINDOWS = sys.platform == 'win32'
 
 
 def enumerate_units():

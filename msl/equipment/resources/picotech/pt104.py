@@ -3,7 +3,6 @@ Pico Technology PT-104 Platinum Resistance Data Logger.
 """
 from __future__ import annotations
 
-import sys
 from ctypes import POINTER
 from ctypes import addressof
 from ctypes import byref
@@ -18,6 +17,7 @@ from enum import IntEnum
 from msl.loadlib import LoadLibrary
 
 from msl.equipment.connection_sdk import ConnectionSDK
+from msl.equipment.constants import IS_WINDOWS
 from msl.equipment.exceptions import PicoTechError
 from msl.equipment.resources import register
 from . import c_enum
@@ -26,8 +26,6 @@ from .errors import PICO_INFO
 from .errors import PICO_NOT_FOUND
 from .errors import PICO_OK
 from .picoscope.enums import PicoScopeInfoApi
-
-IS_WINDOWS = sys.platform == 'win32'
 
 
 class Pt104DataType(IntEnum):

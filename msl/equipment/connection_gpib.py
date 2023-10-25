@@ -75,8 +75,10 @@ NO_SEC_ADDR = 0xFFFF
 TIMO = 0x4000
 ERR = 0x8000
 
+IS_LINUX = sys.platform == 'linux'
+
 # linux-gpib-user/language/python/gpibinter.c
-_ERROR_CODES = {
+_ERRORS = {
     EDVR: 'A system call has failed; ibcnt/ibcntl will be set to the value of errno',
     ECIC: 'Your interface board needs to be controller-in-charge, but is not',
     ENOL: 'You have attempted to write data or command bytes, but there are no listeners currently addressed',
@@ -194,14 +196,14 @@ def _load_library(errcheck: Callable[[int, Callable, tuple], int] | None = None)
             if result & ERR:
                 # mimic _SetGpibError in linux-gpib-user/language/python/gpibinter.c
                 iberr = lib.ThreadIberr()
-                if iberr == EDVR or iberr == EFSO:
-                    iberr = lib.count()
+                if IS_LINUX and (iberr == EDVR or iberr == EFSO):
+                    iberr = lib.ibcntl()
                     try:
                         message = os.strerror(iberr)
                     except (OverflowError, ValueError):
                         message = 'Invalid os.strerror code'
                 else:
-                    message = _ERROR_CODES.get(iberr, 'Unknown error')
+                    message = _ERRORS.get(iberr, 'Unknown error')
                 raise GPIBError(message, name=func.__name__, ibsta=result, iberr=iberr)
 
             return result
@@ -276,8 +278,8 @@ def find_listeners(include_sad: bool = True) -> list[str]:
 
     def error_check(result: int, func: Callable, arguments: tuple) -> int:
         if result & ERR:
-            code = lib.ThreadIberr()
-            message = _ERROR_CODES.get(code, 'Unknown error')
+            iberr = lib.ThreadIberr()
+            message = _ERRORS.get(iberr, 'Unknown error')
             name = func.__name__
             if name == 'ibln':
                 arguments = arguments[:3]
@@ -286,7 +288,7 @@ def find_listeners(include_sad: bool = True) -> list[str]:
             elif name == 'ibpct':
                 arguments = arguments[:1]
             logger.debug('gpib.%s%s -> 0x%x | %s (iberr: 0x%x)',
-                         name, arguments, result, message, code)
+                         name, arguments, result, message, iberr)
         return result
 
     try:

@@ -354,6 +354,8 @@ class OLCurrentSourceASRL(OLCurrentSource, ConnectionSerial):
 
 class OLCurrentSourceGPIB(OLCurrentSource, ConnectionGPIB):
 
+    MAV = 0b00000001  # Bit 0: active high means Message AVailable
+
     def __init__(self, record):
         super(OLCurrentSourceGPIB, self).__init__()
         super(OLCurrentSource, self).__init__(record)
@@ -361,13 +363,17 @@ class OLCurrentSourceGPIB(OLCurrentSource, ConnectionGPIB):
 
     def _receive(self, expected: bytes, iteration: int = 0) -> bytes:
         """Receive a message."""
-        self.wait_for_srq(handle=self.board_handle)
+        while True:
+            self.wait_for_srq(handle=self.board)
+            if self.serial_poll() & self.MAV:
+                break
 
         reply = self.read(decode=False).rstrip()
         values = reply[1:-1].split()
 
-        # all replies start with the command character that was sent,
-        # sometimes the reply is from a previous request so read again
+        # all replies start with the command character that was sent, sometimes
+        # (for the RS-232 interface) the reply is from a previous request so
+        # read again ... did not observe this with GPIB, but keep it
         if values[0] != expected:
             msg = f'Invalid reply character, {bytes(values[0])} != {expected}'
             if iteration < 3:

@@ -6,11 +6,15 @@ from __future__ import annotations
 import datetime
 import enum
 import re
+import sys
 
 import serial
 
 CR = b'\r'
 LF = b'\n'
+
+IS_LINUX: bool = sys.platform == 'linux'
+IS_WINDOWS: bool = sys.platform == 'win32'
 
 REGEX_SDK = re.compile(
     r'SDK::(?P<path>.+)',

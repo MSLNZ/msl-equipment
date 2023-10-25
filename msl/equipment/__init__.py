@@ -151,7 +151,8 @@ def _print_stdout(equipment: ValuesView) -> None:
                 print(f"  {device['addresses'][0]} [{device['description']}]")
             elif typ == 'Network':
                 print(f"  {device['description']}")
-                print(f"    webserver {device['webserver']}")
+                if 'webserver' in device:
+                    print(f"    webserver {device['webserver']}")
                 if device['addresses']:
                     print(f'    ' + '\n    '.join(sorted(device['addresses'])))
 

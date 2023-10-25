@@ -117,5 +117,6 @@ def test_find_lxi():
         for address in device['addresses']:
             assert address.startswith('TCPIP::')
             assert address.endswith('::inst0::INSTR') or \
+                   address.endswith('::inst0,1024::INSTR') or \
                    address.endswith('::SOCKET') or \
                    address.endswith('::hislip0::INSTR')

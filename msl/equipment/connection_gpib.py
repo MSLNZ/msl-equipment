@@ -767,8 +767,9 @@ class ConnectionGPIB(ConnectionMessageBased):
 
     def pass_control(self,
                      *,
-                     board: int | None = None,
+                     handle: int | None = None,
                      name: str | None = None,
+                     board: int | None = None,
                      pad: int = 0,
                      sad: int = NO_SEC_ADDR) -> int:
         """Set a GPIB board or device to become the controller-in-charge (CIC).
@@ -778,14 +779,18 @@ class ConnectionGPIB(ConnectionMessageBased):
 
         If no arguments are specified, the instantiated class becomes the CIC.
 
-        :param name: The name of the GPIB board or device. If specified,
+        :param handle: Board or device descriptor. If specified, `name`,
+            `board`, `pad` and `sad` are ignored.
+        :param name: The name of a GPIB board or device. If specified,
             `board`, `pad` and `sad` are ignored.
         :param board: Index of the GPIB interface board.
         :param pad: Primary address of the GPIB device.
         :param sad: Secondary address of the GPIB device.
         :return: The handle of the board or device that became CIC.
         """
-        if name is not None:
+        if handle is not None:
+            pass
+        elif name is not None:
             handle = self._get_ibfind_handle(name)
         elif board is not None:
             handle = self._get_ibdev_handle(board, pad, sad, 13, 1, 0)  # T10s = 13

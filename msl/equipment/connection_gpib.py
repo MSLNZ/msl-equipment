@@ -437,7 +437,7 @@ class ConnectionGPIB(ConnectionMessageBased):
             # a device object
             send_eoi = int(props.get('send_eoi', True))
             eos_mode = int(props.get('eos_mode', 0))
-            sad = info['sad'] or 0
+            sad = 0 if info['sad'] is None else info['sad']
             if sad != 0 and sad < 0x60:
                 # NI's unfortunate convention of adding 0x60 to secondary addresses
                 sad += 0x60
@@ -449,7 +449,6 @@ class ConnectionGPIB(ConnectionMessageBased):
         # keep this reference assignment after the if/else condition since the
         # value of the secondary address may have been updated
         self._address_info = info
-        self._board_handle = info['board']
 
         # check if the handle corresponds to a system controller (INTFC)
         self._is_board: bool
@@ -537,9 +536,9 @@ class ConnectionGPIB(ConnectionMessageBased):
         return setting.value
 
     @property
-    def board_handle(self) -> int:
-        """Returns the handle of the board."""
-        return self._board_handle
+    def board(self) -> int:
+        """Returns the board index."""
+        return self._address_info['board']
 
     def clear(self, *, handle: int | None = None) -> int:
         """Send the clear command (device).
@@ -774,6 +773,12 @@ class ConnectionGPIB(ConnectionMessageBased):
             handle = self._handle
         return self._lib.ibonl(handle, int(value))
 
+    @property
+    def name(self) -> str | None:
+        """Returns the name of the board or device or :data:`None` if a name
+        was not specified in the :attr:`~.ConnectionRecord.address`."""
+        return self._address_info['name']
+
     @staticmethod
     def parse_address(address: str) -> dict | None:
         """Get the board, interface name, primary address and secondary address.
@@ -832,6 +837,12 @@ class ConnectionGPIB(ConnectionMessageBased):
         return handle
 
     @property
+    def primary_address(self) -> int | None:
+        """Returns the primary address of the GPIB device or :data:`None` if a
+        primary address was not specified in the :attr:`~.ConnectionRecord.address`."""
+        return self._address_info['pad']
+
+    @property
     def read_termination(self) -> bytes | None:
         """The termination character sequence that is used for the
         :meth:`~.ConnectionMessageBased.read` method.
@@ -864,6 +875,11 @@ class ConnectionGPIB(ConnectionMessageBased):
         # ibsre was removed from ni4882.dll, use ibconfig instead (IbcSRE = 0xb)
         return self.config(0xb, int(value), handle=handle)
 
+    @property
+    def secondary_address(self) -> int | None:
+        """Returns the secondary address of the GPIB device."""
+        return self._address_info['sad']
+
     def serial_poll(self, *, handle: int | None = None) -> int:
         """Read status byte / serial poll (device).
 
@@ -880,7 +896,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         return ord(status.value)
 
     def spoll_bytes(self, *, handle: int | None = None) -> int:
-        """Get the length of the status queue (device).
+        """Get the length of the serial poll bytes queue (device).
 
         This method is the `ibspb <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibspb.html>`_
         function.

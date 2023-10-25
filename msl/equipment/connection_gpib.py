@@ -629,6 +629,14 @@ class ConnectionGPIB(ConnectionMessageBased):
 
         return sta
 
+    def count(self) -> int:
+        """Get the number of bytes sent or received.
+
+        This method is the `ibcntl <https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibcnt.html>`_
+        function.
+        """
+        return self._lib.ibcntl()
+
     def disconnect(self) -> None:
         """Close the GPIB connection."""
         if self._own and self._handle > 0:
@@ -643,53 +651,6 @@ class ConnectionGPIB(ConnectionMessageBased):
     def handle(self) -> int:
         """Returns the handle for the instantiated board or device."""
         return self._handle
-
-    def count(self) -> int:
-        """Get the number of bytes sent or received.
-
-        This method is the `ibcntl <https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibcnt.html>`_
-        function.
-        """
-        return self._lib.ibcntl()
-
-    def local(self, *, handle: int | None = None) -> int:
-        """Go to local mode (board or device).
-
-        This method is the `ibloc <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibloc.html>`_
-        function.
-
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
-        :return: The status value (ibsta).
-        """
-        if handle is None:
-            handle = self._handle
-        return self._lib.ibloc(handle)
-
-    def online(self, value: bool, *, handle: int | None = None) -> int:
-        """Close or reinitialize descriptor (board or device).
-
-        This method is the `ibonl <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibonl.html>`_
-        function.
-
-        If you want to close the connection for the GPIB board or device that was
-        instantiated, use :meth:`.disconnect`.
-
-        :param value: If :data:`False`, closes the connection. If :data:`True`,
-            then all settings associated with the descriptor (GPIB address,
-            end-of-string mode, timeout, etc.) are reset to their *default*
-            values. The *default* values are the settings the descriptor had
-            when it was first obtained.
-        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
-        :return: The status value (ibsta).
-        """
-        if handle is None:
-            handle = self._handle
-        return self._lib.ibonl(handle, int(value))
-
-    def status(self) -> int:
-        """Returns the status value
-        (`ibsta <https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html>`_)."""
-        return self._lib.ThreadIbsta()
 
     def interface_clear(self, *, handle: int | None = None) -> int:
         """Perform interface clear (board).
@@ -742,6 +703,40 @@ class ConnectionGPIB(ConnectionMessageBased):
         listener = c_short()
         self._lib.ibln(handle, pad, sad, byref(listener))
         return bool(listener.value)
+
+    def local(self, *, handle: int | None = None) -> int:
+        """Go to local mode (board or device).
+
+        This method is the `ibloc <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibloc.html>`_
+        function.
+
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :return: The status value (ibsta).
+        """
+        if handle is None:
+            handle = self._handle
+        return self._lib.ibloc(handle)
+
+    def online(self, value: bool, *, handle: int | None = None) -> int:
+        """Close or reinitialize descriptor (board or device).
+
+        This method is the `ibonl <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibonl.html>`_
+        function.
+
+        If you want to close the connection for the GPIB board or device that was
+        instantiated, use :meth:`.disconnect`.
+
+        :param value: If :data:`False`, closes the connection. If :data:`True`,
+            then all settings associated with the descriptor (GPIB address,
+            end-of-string mode, timeout, etc.) are reset to their *default*
+            values. The *default* values are the settings the descriptor had
+            when it was first obtained.
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        :return: The status value (ibsta).
+        """
+        if handle is None:
+            handle = self._handle
+        return self._lib.ibonl(handle, int(value))
 
     @staticmethod
     def parse_address(address: str) -> dict | None:
@@ -861,6 +856,11 @@ class ConnectionGPIB(ConnectionMessageBased):
         length = c_short()
         self._lib.ibspb(handle, byref(length))
         return length.value
+
+    def status(self) -> int:
+        """Returns the status value
+        (`ibsta <https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html>`_)."""
+        return self._lib.ThreadIbsta()
 
     def trigger(self, *, handle: int | None = None) -> int:
         """Trigger device.

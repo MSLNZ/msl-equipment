@@ -71,6 +71,7 @@ EWIP = 26
 ERST = 27
 EPWR = 28
 
+NO_SEC_ADDR = 0xFFFF
 TIMO = 0x4000
 ERR = 0x8000
 
@@ -194,7 +195,7 @@ def _load_library(errcheck: Callable[[int, Callable, tuple], int] | None = None)
                 # mimic _SetGpibError in linux-gpib-user/language/python/gpibinter.c
                 iberr = lib.ThreadIberr()
                 if iberr == EDVR or iberr == EFSO:
-                    iberr = lib.ibcntl()
+                    iberr = lib.num_transferred()
                     try:
                         message = os.strerror(iberr)
                     except (OverflowError, ValueError):
@@ -412,6 +413,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         # keep this reference assignment after the if/else condition since the
         # value of the secondary address may have been updated
         self._address_info = info
+        self._board_handle = info['board']
 
         # check if the handle corresponds to a system controller (INTFC)
         self._is_board: bool
@@ -450,7 +452,7 @@ class ConnectionGPIB(ConnectionMessageBased):
         buffer = bytearray()
         while True:
             sta = self._lib.ibrd(self._handle, data, chunk_size)
-            buffer.extend(data[:self.ibcnt()])
+            buffer.extend(data[:self.num_transferred()])
             if len(buffer) > self._max_read_size:
                 self.raise_exception(
                     f'Maximum read size exceeded: '
@@ -480,54 +482,77 @@ class ConnectionGPIB(ConnectionMessageBased):
     def _write(self, message: bytes) -> int:
         """Overrides method in ConnectionMessageBased."""
         self._lib.ibwrt(self._handle, message, len(message))
-        return self.ibcnt()
+        return self.num_transferred()
 
-    def ask(self, option: int) -> int:
+    def ask(self, option: int, *, handle: int | None = None) -> int:
         """Get a configuration setting (board or device).
 
         This method is the `ibask <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibask.html>`_
         function, it should not be confused with the :meth:`~.ConnectionMessageBased.query` method.
 
         :param option: A configuration setting to get the value of.
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: The value of the configuration setting.
         """
-        # 'ask' is what the Gpib class in linux-gpib called the method, so keep it the same
+        if handle is None:
+            handle = self._handle
         setting = c_int()
-        self._lib.ibask(self._handle, option, byref(setting))
+        self._lib.ibask(handle, option, byref(setting))
         return setting.value
 
-    def clear(self) -> int:
+    @property
+    def board_handle(self) -> int:
+        """Returns the handle of the board."""
+        return self._board_handle
+
+    def clear(self, *, handle: int | None = None) -> int:
         """Send the clear command (device).
 
+        This method is the `ibclr <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibclr.html>`_
+        function.
+
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: The status value (ibsta).
         """
-        return self._lib.ibclr(self._handle)
+        if handle is None:
+            handle = self._handle
+        return self._lib.ibclr(handle)
 
-    def command(self, data: bytes) -> int:
+    def command(self, data: bytes, *, handle: int | None = None) -> int:
         """Write command bytes (board).
+
+        This method is the `ibcmd <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibcmd.html>`_
+        function.
 
         :param data:
             The `commands <https://linux-gpib.sourceforge.io/doc_html/gpib-protocol.html#REFERENCE-COMMAND-BYTES>`_
             to write to the bus.
-
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: The status value (ibsta).
         """
-        return self._lib.ibcmd(self._handle, data, len(data))
+        if handle is None:
+            handle = self._handle
+        return self._lib.ibcmd(handle, data, len(data))
 
-    def config(self, option: int, value: int) -> int:
+    def config(self, option: int, value: int, *, handle: int | None = None) -> int:
         """Change configuration settings (board or device).
 
-        See `ibconfig <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibconfig.html>`_
-        for more details.
+        This method is the `ibconfig <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibconfig.html>`_
+        function.
 
         :param option: A configuration setting to change the value of.
         :param value: The new configuration setting value.
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: The status value (ibsta).
         """
-        return self._lib.ibconfig(self._handle, option, value)
+        if handle is None:
+            handle = self._handle
+        return self._lib.ibconfig(handle, option, value)
 
-    def control_atn(self, state: int) -> int:
+    def control_atn(self, state: int, *, handle: int | None = None) -> int:
         """Set the state of the ATN line (board).
+
+        This method mimics the PyVISA-py implementation.
 
         :param state: The state of the ATN line or the active controller.
 
@@ -538,23 +563,27 @@ class ConnectionGPIB(ConnectionMessageBased):
                 * 2: ATN_DEASSERT_HANDSHAKE
                 * 3: ATN_ASSERT_IMMEDIATE
 
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: The status value (ibsta).
         """
-        # PyVISA-py implementation
+        if handle is None:
+            handle = self._handle
         if state == ATN_DEASSERT:
-            return self._lib.ibgts(self._handle, 0)
+            return self._lib.ibgts(handle, 0)
         if state == ATN_ASSERT:
-            return self._lib.ibcac(self._handle, 0)
+            return self._lib.ibcac(handle, 0)
         if state == ATN_DEASSERT_HANDSHAKE:
-            return self._lib.ibgts(self._handle, 1)
+            return self._lib.ibgts(handle, 1)
         if state == ATN_ASSERT_IMMEDIATE:
-            return self._lib.ibcac(self._handle, 1)
+            return self._lib.ibcac(handle, 1)
         self.raise_exception(f'Invalid ATN {state=}')
 
-    def control_ren(self, state: int) -> int:
+    def control_ren(self, state: int, *, handle: int | None = None) -> int:
         """Controls the state of the GPIB Remote Enable (REN) interface line.
 
         Optionally the remote/local state of the device is also controlled.
+
+        This method mimics the PyVISA-py implementation.
 
         :param state: Specifies the state of the REN line and optionally
             the device remote/local state.
@@ -569,45 +598,42 @@ class ConnectionGPIB(ConnectionMessageBased):
                 * 5: REN_ASSERT_ADDRESS_LLO
                 * 6: REN_ADDRESS_GTL
 
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: The status value (ibsta).
         """
-        # PyVISA-py implementation
+        if handle is None:
+            handle = self._handle
+
         sta = 0
         if self._is_board and state not in (REN_ASSERT, REN_DEASSERT, REN_ASSERT_LLO):
             self.raise_exception(f'Invalid REN {state=} for INTFC')
 
         if state == REN_DEASSERT_GTL:
-            sta = self.command(b'\x01')  # GTL = 0x1
+            sta = self.command(b'\x01', handle=handle)  # GTL = 0x1
 
         if state in (REN_DEASSERT, REN_DEASSERT_GTL):
-            sta = self.remote_enable(0)
+            sta = self.remote_enable(False, handle=handle)
 
         if state == REN_ASSERT_LLO:
-            sta = self.command(b'\x11')  # LLO = 0x11
+            sta = self.command(b'\x11', handle=handle)  # LLO = 0x11
         elif state == REN_ADDRESS_GTL:
-            sta = self.command(b'\x01')  # GTL = 0x1
+            sta = self.command(b'\x01', handle=handle)  # GTL = 0x1
         elif state == REN_ASSERT_ADDRESS_LLO:
             pass
         elif state in (REN_ASSERT, REN_ASSERT_ADDRESS):
-            sta = self.remote_enable(1)
+            sta = self.remote_enable(True, handle=handle)
             if not self._is_board and state == REN_ASSERT_ADDRESS:
                 sta = self.listener(self._address_info['pad'],
-                                    sad=self._address_info['sad'])
+                                    sad=self._address_info['sad'],
+                                    handle=handle)
 
         return sta
-
-    def controller_in_charge(self) -> int:
-        """Set this GPIB device to be the controller-in-charge (CIC).
-
-        :return: The status value (ibsta).
-        """
-        return self._lib.ibpct(self._handle)
 
     def disconnect(self) -> None:
         """Close the GPIB connection."""
         if self._own and self._handle > 0:
             try:
-                self.ibonl(self._handle, False)
+                self.online(False, handle=self._handle)
             except GPIBError:
                 pass
             self._own = False
@@ -615,77 +641,106 @@ class ConnectionGPIB(ConnectionMessageBased):
 
     @property
     def handle(self) -> int:
-        """Returns the handle for this GPIB board or device."""
+        """Returns the handle for the instantiated board or device."""
         return self._handle
 
-    def ibcnt(self) -> int:
-        """Get the number of bytes sent or received."""
-        # 'ibcnt' is what the Gpib class in linux-gpib called the method, so keep it the same
+    def num_transferred(self) -> int:
+        """Get the number of bytes sent or received.
+
+        This method is the `ibcntl <https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibcnt.html>`_
+        function.
+        """
         return self._lib.ibcntl()
 
-    def ibloc(self) -> int:
+    def local(self, *, handle: int | None = None) -> int:
         """Go to local mode (board or device).
 
+        This method is the `ibloc <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibloc.html>`_
+        function.
+
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: The status value (ibsta).
         """
-        # 'ibloc' is what the Gpib class in linux-gpib called the method, so keep it the same
-        return self._lib.ibloc(self._handle)
+        if handle is None:
+            handle = self._handle
+        return self._lib.ibloc(handle)
 
-    def ibonl(self, ud: int, online: bool) -> int:
+    def online(self, value: bool, *, handle: int | None = None) -> int:
         """Close or reinitialize descriptor (board or device).
 
-        If you want to close the connection for the GPIB board or device that
-        this class represents, use :meth:`.disconnect`.
+        This method is the `ibonl <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibonl.html>`_
+        function.
 
-        :param ud: The board or device descriptor (handle).
-        :param online: If :data:`False`, closes the connection. If :data:`True`,
+        If you want to close the connection for the GPIB board or device that was
+        instantiated, use :meth:`.disconnect`.
+
+        :param value: If :data:`False`, closes the connection. If :data:`True`,
             then all settings associated with the descriptor (GPIB address,
             end-of-string mode, timeout, etc.) are reset to their *default*
             values. The *default* values are the settings the descriptor had
             when it was first obtained.
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: The status value (ibsta).
         """
-        return self._lib.ibonl(ud, int(online))
+        if handle is None:
+            handle = self._handle
+        return self._lib.ibonl(handle, int(value))
 
-    def ibsta(self) -> int:
-        """The status value (ibsta)."""
-        # 'ibsta' is what the Gpib class in linux-gpib called the method, so keep it the same
+    def status(self) -> int:
+        """Returns the status value
+        (`ibsta <https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html>`_)."""
         return self._lib.ThreadIbsta()
 
-    def interface_clear(self) -> int:
+    def interface_clear(self, *, handle: int | None = None) -> int:
         """Perform interface clear (board).
 
         Resets the GPIB bus by asserting the *interface clear* (IFC) bus line
         for a duration of at least 100 microseconds.
 
+        This method is the `ibsic <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibsic.html>`_
+        function.
+
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: The status value (ibsta).
         """
-        return self._lib.ibsic(self._handle)
+        if handle is None:
+            handle = self._handle
+        return self._lib.ibsic(handle)
 
     @property
     def library_path(self) -> str:
         """Returns the path to the GPIB library."""
         return _gpib_library.path
 
-    def lines(self) -> int:
+    def lines(self, *, handle: int | None = None) -> int:
         """Returns the status of the control and handshaking bus lines (board).
 
-        See `iblines <https://linux-gpib.sourceforge.io/doc_html/reference-function-iblines.html>`_
-        for details about the returned value.
+        This method is the `iblines <https://linux-gpib.sourceforge.io/doc_html/reference-function-iblines.html>`_
+        function.
+
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         """
+        if handle is None:
+            handle = self._handle
         status = c_short()
-        self._lib.iblines(self._handle, byref(status))
+        self._lib.iblines(handle, byref(status))
         return status.value
 
-    def listener(self, pad: int, sad: int = 0) -> bool:
+    def listener(self, pad: int, sad: int = 0, *, handle: int | None = None) -> bool:
         """Check if a listener is present (board or device).
+
+        This method is the `ibln <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibln.html>`_
+        function.
 
         :param pad: Primary address of the GPIB device.
         :param sad: Secondary address of the GPIB device.
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: Whether a listener is present.
         """
+        if handle is None:
+            handle = self._handle
         listener = c_short()
-        self._lib.ibln(self._handle, pad, sad, byref(listener))
+        self._lib.ibln(handle, pad, sad, byref(listener))
         return bool(listener.value)
 
     @staticmethod
@@ -712,11 +767,16 @@ class ConnectionGPIB(ConnectionMessageBased):
 
     def pass_control(self,
                      *,
-                     name: str | None = None,
                      board: int | None = None,
-                     pad: int | None = None,
-                     sad: int = 0xFFFF) -> int:
+                     name: str | None = None,
+                     pad: int = 0,
+                     sad: int = NO_SEC_ADDR) -> int:
         """Set a GPIB board or device to become the controller-in-charge (CIC).
+
+        This method is the `ibpct <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibpct.html>`_
+        function.
+
+        If no arguments are specified, the instantiated class becomes the CIC.
 
         :param name: The name of the GPIB board or device. If specified,
             `board`, `pad` and `sad` are ignored.
@@ -725,15 +785,12 @@ class ConnectionGPIB(ConnectionMessageBased):
         :param sad: Secondary address of the GPIB device.
         :return: The handle of the board or device that became CIC.
         """
-        handle = None
-
-        if name:
+        if name is not None:
             handle = self._get_ibfind_handle(name)
-        elif board is not None and pad is not None:
-            handle = self._get_ibdev_handle(board, pad, sad, 9, 1, 0)  # T100ms = 9
-
-        if handle is None:
-            self.raise_exception('Must specify either the name or the board and pad')
+        elif board is not None:
+            handle = self._get_ibdev_handle(board, pad, sad, 13, 1, 0)  # T10s = 13
+        else:
+            handle = self._handle
 
         self._lib.ibpct(handle)
         return handle
@@ -754,40 +811,64 @@ class ConnectionGPIB(ConnectionMessageBased):
             # enable end-of-string character, IbcEOSrd = 0xc
             self.config(0xc, 1)
 
-            # set end-of-string character, REOS = 0x400
+            # set end-of-string character, IbcEOSchar = 0xf
             self.config(0xf, self._read_termination[-1])
 
-    def remote_enable(self, value: bool | int) -> int:
+    def remote_enable(self, value: bool, *, handle: int | None = None) -> int:
         """Set remote enable (board).
 
-        :param value: If nonzero, the board asserts the REN line, otherwise,
-            the REN line is unasserted. The board must be the system controller.
+        This method is the `ibsre <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibsre.html>`_
+        function.
+
+        :param value: If :data:`True`, the board asserts the REN line. Otherwise, the REN line
+            is unasserted. The board must be the system controller.
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: The status value (ibsta).
         """
         # ibsre was removed from ni4882.dll, use ibconfig instead (IbcSRE = 0xb)
-        return self.config(0xb, int(value))
+        return self.config(0xb, int(value), handle=handle)
 
-    def serial_poll(self) -> int:
+    def serial_poll(self, *, handle: int | None = None) -> int:
         """Read status byte / serial poll (device).
 
+        This method is the `ibrsp <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibrsp.html>`_
+        function.
+
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: The status byte.
         """
+        if handle is None:
+            handle = self._handle
         status = create_string_buffer(1)
-        self._lib.ibrsp(self._handle, status)
+        self._lib.ibrsp(handle, status)
         return ord(status.value)
 
-    def spoll_bytes(self) -> int:
-        """Get the length of the status byte queue (device)."""
+    def spoll_bytes(self, *, handle: int | None = None) -> int:
+        """Get the length of the status queue (device).
+
+        This method is the `ibspb <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibspb.html>`_
+        function.
+
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
+        """
+        if handle is None:
+            handle = self._handle
         length = c_short()
-        self._lib.ibspb(self._handle, byref(length))
+        self._lib.ibspb(handle, byref(length))
         return length.value
 
-    def trigger(self) -> int:
+    def trigger(self, *, handle: int | None = None) -> int:
         """Trigger device.
 
+        This method is the `ibtrg <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibtrg.html>`_
+        function.
+
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: The status value (ibsta).
         """
-        return self._lib.ibtrg(self._handle)
+        if handle is None:
+            handle = self._handle
+        return self._lib.ibtrg(handle)
 
     def version(self) -> str:
         """Returns the version of the GPIB library (linux)."""
@@ -798,29 +879,38 @@ class ConnectionGPIB(ConnectionMessageBased):
         except AttributeError:
             return ''
 
-    def wait(self, mask: int) -> int:
+    def wait(self, mask: int, *, handle: int | None = None) -> int:
         """Wait for an event (board or device).
 
-        :param mask:
-            Wait until one of the conditions specified in `mask` is true.
-            See `ibwait <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibwait.html>`_
-            for more details.
+        This method is the `ibwait <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibwait.html>`_
+        function.
 
+        :param mask: Wait until one of the conditions specified in `mask` is true.
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: The status value (ibsta).
         """
-        return self._lib.ibwait(self._handle, mask)
+        if handle is None:
+            handle = self._handle
+        return self._lib.ibwait(handle, mask)
 
-    def wait_for_srq(self) -> int:
+    def wait_for_srq(self, *, handle: int | None = None) -> int:
         """Wait for the SRQ line to be asserted (board or device).
 
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: The status value (ibsta).
         """
-        return self.wait(0x1000)  # SRQI = 0x1000
+        return self.wait(0x1000, handle=handle)  # SRQI = 0x1000
 
-    def write_async(self, message: bytes) -> int:
+    def write_async(self, message: bytes, *, handle: int | None = None) -> int:
         """Write a message asynchronously (board or device).
 
+        This method is the `ibwrta <https://linux-gpib.sourceforge.io/doc_html/reference-function-ibwrta.html>`_
+        function.
+
         :param message: The data to send.
+        :param handle: Board or device descriptor. Default is the handle for the instantiated class.
         :return: The status value (ibsta).
         """
-        return self._lib.ibwrta(self._handle, message, len(message))
+        if handle is None:
+            handle = self._handle
+        return self._lib.ibwrta(handle, message, len(message))

@@ -22,6 +22,7 @@ from msl.loadlib import LoadLibrary
 
 from .config import Config
 from .connection_message_based import ConnectionMessageBased
+from .constants import IS_LINUX
 from .constants import REGEX_GPIB
 from .exceptions import GPIBError
 from .exceptions import MSLConnectionError
@@ -64,7 +65,9 @@ EBUS = 14
 ESTB = 15
 ESRQ = 16
 ETAB = 20
-ELCK = 21  # error codes after ETAB are defined in ni4882.h
+
+# defined in ni4882.h
+ELCK = 21
 EARM = 22
 EHDL = 23
 EWIP = 26
@@ -75,10 +78,8 @@ NO_SEC_ADDR = 0xFFFF
 TIMO = 0x4000
 ERR = 0x8000
 
-IS_LINUX = sys.platform == 'linux'
-
-# linux-gpib-user/language/python/gpibinter.c
 _ERRORS = {
+    # linux-gpib-user/language/python/gpibinter.c
     EDVR: 'A system call has failed; ibcnt/ibcntl will be set to the value of errno',
     ECIC: 'Your interface board needs to be controller-in-charge, but is not',
     ENOL: 'You have attempted to write data or command bytes, but there are no listeners currently addressed',
@@ -100,12 +101,32 @@ _ERRORS = {
     ESRQ: 'The serial poll request service line is stuck on',
     ETAB: 'This error can be returned by ibevent(), FindLstn(), or FindRQS() '
           '(see their descriptions for more information)',
+
+    # ni4882.h
     ELCK: 'Address or board is locked',
     EARM: 'The ibnotify Callback failed to rearm',
     EHDL: 'The input handle is invalid for this operation',
     EWIP: 'Wait already in progress on input handle',
     ERST: 'The event notification was cancelled due to a reset of the interface',
     EPWR: 'The system or board has lost power or gone to standby',
+
+    # https://documentation.help/NI-488.2/trou4xyt.html
+    -535560148: 'The board number is within the range of allowed board numbers, '
+                'but it has not been assigned to a GPIB interface',
+    -535560155: 'The board number is not within the range of allowed board numbers',
+    -535560139: 'The device name is not listed in the logical device templates that '
+                'are part of Measurement & Automation Explorer',
+    -519569280: 'You are using a removable interface (for example, a GPIB-USB-HS) and you removed or '
+                'ejected the interface while the software is trying to communicate with it',
+    -519569279: 'You are using a removable interface (for example, a GPIB-USB-HS) and you removed or '
+                'ejected the interface while the software is trying to communicate with it',
+    -536215481: 'The driver encountered an access violation when attempting to access an '
+                'object supplied by the user',
+    -519897021: 'You have enabled DOS NI-488.2 support and attempted to run an existing DOS NI-488.2 '
+                'application that was compiled with an older, unsupported DOS application interface',
+    -519700363: 'The driver is unable to communicate with a GPIB-ENET/100 during an ibfind or ibdev call',
+    -519700360: 'You are using a GPIB-ENET/100 and the network link is broken between the host and the '
+                'GPIB-ENET/100 interface',
 }
 
 # linux-gpib-user/include/gpib/gpib_user.h
@@ -196,12 +217,15 @@ def _load_library(errcheck: Callable[[int, Callable, tuple], int] | None = None)
             if result & ERR:
                 # mimic _SetGpibError in linux-gpib-user/language/python/gpibinter.c
                 iberr = lib.ThreadIberr()
-                if IS_LINUX and (iberr == EDVR or iberr == EFSO):
+                if iberr == EDVR or iberr == EFSO:
                     iberr = lib.ibcntl()
-                    try:
-                        message = os.strerror(iberr)
-                    except (OverflowError, ValueError):
-                        message = 'Invalid os.strerror code'
+                    if IS_LINUX:
+                        try:
+                            message = os.strerror(iberr)
+                        except (OverflowError, ValueError):
+                            message = 'Invalid os.strerror code'
+                    else:
+                        message = _ERRORS.get(iberr, 'Unknown error')
                 else:
                     message = _ERRORS.get(iberr, 'Unknown error')
                 raise GPIBError(message, name=func.__name__, ibsta=result, iberr=iberr)
@@ -279,7 +303,17 @@ def find_listeners(include_sad: bool = True) -> list[str]:
     def error_check(result: int, func: Callable, arguments: tuple) -> int:
         if result & ERR:
             iberr = lib.ThreadIberr()
-            message = _ERRORS.get(iberr, 'Unknown error')
+            if iberr == EDVR or iberr == EFSO:
+                iberr = lib.ibcntl()
+                if IS_LINUX:
+                    try:
+                        message = os.strerror(iberr)
+                    except (OverflowError, ValueError):
+                        message = 'Invalid os.strerror code'
+                else:
+                    message = _ERRORS.get(iberr, 'Unknown error')
+            else:
+                message = _ERRORS.get(iberr, 'Unknown error')
             name = func.__name__
             if name == 'ibln':
                 arguments = arguments[:3]
@@ -287,8 +321,8 @@ def find_listeners(include_sad: bool = True) -> list[str]:
                 arguments = arguments[:2]
             elif name == 'ibpct':
                 arguments = arguments[:1]
-            logger.debug('gpib.%s%s -> 0x%x | %s (iberr: 0x%x)',
-                         name, arguments, result, message, iberr)
+            logger.debug('gpib.%s%s -> %s | %s (iberr: %s)',
+                         name, arguments, hex(result), message, hex(iberr))
         return result
 
     try:

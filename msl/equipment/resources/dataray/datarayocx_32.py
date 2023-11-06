@@ -475,7 +475,7 @@ if Server32.is_interpreter():
                 self.Text,  # the text in the titlebar
                 Forms.MessageBoxButtons.OK,  # buttons
                 Forms.MessageBoxIcon.Information,  # icon
-                Forms.MessageBoxButtons.OK,  # default button
+                Forms.MessageBoxDefaultButton.Button1,  # default button
                 Forms.MessageBoxOptions.ServiceNotification,  # bring the popup window to the front
             )
 

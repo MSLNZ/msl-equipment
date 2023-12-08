@@ -586,6 +586,7 @@ class Avantes(ConnectionSDK):
             A record from an :ref:`equipment-database`.
         """
         self._handle = None
+        self._sdk = None
         libtype = 'windll' if IS_WINDOWS else 'cdll'
         super(Avantes, self).__init__(record, libtype)
         self.set_exception_class(AvantesError)
@@ -779,7 +780,7 @@ class Avantes(ConnectionSDK):
 
     def deactivate(self):
         """Closes communication with the spectrometer."""
-        if self._handle != INVALID_AVS_HANDLE_VALUE:
+        if self._handle is not None and self._handle != INVALID_AVS_HANDLE_VALUE:
             self.sdk.AVS_Deactivate(self._handle)
             _handles.remove(self._handle)
             self._handle = None
@@ -1054,14 +1055,14 @@ class Avantes(ConnectionSDK):
 
     def done(self):
         """Closes communication and releases internal storage."""
-        self.sdk.AVS_Done()
+        if self._sdk is not None:
+            self.sdk.AVS_Done()
 
     def disconnect(self):
         """Closes communication with the spectrometer."""
-        if self._handle is not None:
-            self.deactivate()
-            if not _handles:
-                self.done()
+        self.deactivate()
+        if not _handles:
+            self.done()
 
     def get_ip_config(self):
         """Retrieve IP settings from the spectrometer.

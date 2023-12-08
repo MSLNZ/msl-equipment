@@ -471,6 +471,8 @@ else:
     from ctypes import CFUNCTYPE
     FUNCTYPE = CFUNCTYPE
 
+_handles: list[int] = []
+
 MeasureCallback = FUNCTYPE(None, POINTER(c_int32), POINTER(c_int32))
 """Used as a decorator for a callback function when a scan is available."""
 
@@ -768,14 +770,18 @@ class Avantes(ConnectionSDK):
         for item in out:
             if item.SerialNumber.decode() == self.equipment_record.serial:
                 self._handle = self.sdk.AVS_Activate(item)
+                if self._handle == INVALID_AVS_HANDLE_VALUE:
+                    self.raise_exception('Invalid handle')
+                _handles.append(self._handle)
                 return
         self.raise_exception('Did not find the Avantes serial number {!r}'
                              'in the list of devices.'.format(self.equipment_record.serial))
 
     def deactivate(self):
         """Closes communication with the spectrometer."""
-        if self._handle:
+        if self._handle != INVALID_AVS_HANDLE_VALUE:
             self.sdk.AVS_Deactivate(self._handle)
+            _handles.remove(self._handle)
             self._handle = None
 
     def get_analog_in(self, analog_id):
@@ -1054,7 +1060,8 @@ class Avantes(ConnectionSDK):
         """Closes communication with the spectrometer."""
         if self._handle is not None:
             self.deactivate()
-            self.done()
+            if not _handles:
+                self.done()
 
     def get_ip_config(self):
         """Retrieve IP settings from the spectrometer.

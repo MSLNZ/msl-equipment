@@ -14,6 +14,8 @@ Version 0.2.0 (in development)
 
 * Fixed
 
+  - issue `#9 <https://github.com/MSLNZ/msl-equipment/issues/9>`_ - Missing functions
+    from Avantes AvaSpec DLL
   - issue `#8 <https://github.com/MSLNZ/msl-equipment/issues/8>`_ - Invalid URL
     for LXI XML identification document
 

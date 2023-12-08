@@ -729,7 +729,11 @@ class Avantes(ConnectionSDK):
         }
 
         for key, value in functions.items():
-            attr = getattr(self.sdk, key)
+            try:
+                attr = getattr(self.sdk, key)
+            except AttributeError as e:
+                self.log_debug('%s: %s', self.__class__.__name__, e)
+                continue
             attr.restype, attr.errcheck = value[:2]
             attr.argtypes = [typ for _, typ in value[2]]
 

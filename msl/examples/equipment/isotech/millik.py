@@ -5,7 +5,7 @@ with any number of connected millisKanners.
 from msl.equipment import ConnectionRecord, EquipmentRecord
 
 record = EquipmentRecord(
-    manufacturer='Isotech',
+    manufacturer='IsoTech',
     model='milliK',
     connection=ConnectionRecord(
         address='COM9',  # change for your device

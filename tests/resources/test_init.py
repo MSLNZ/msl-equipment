@@ -200,7 +200,6 @@ def test_find_resource_class():
 
     for man in ('IsoTech', 'Isothermal Technology', 'Isothermal Technology Limited'):
         for mod in ('milliK', 'millisKanner'):
-            print(man, mod)
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)
             assert cls is resources.isotech.millik.MilliK

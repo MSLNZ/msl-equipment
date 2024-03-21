@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 
 from msl.equipment.resources import register
-from msl.equipment.exceptions import IsotechError
+from msl.equipment.exceptions import IsoTechError
 from msl.equipment.connection_serial import ConnectionSerial
 
 

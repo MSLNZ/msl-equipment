@@ -37,7 +37,7 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
   * :class:`~msl.equipment.resources.greisinger.gmh3000.GMH3000` -- GMH 3000 Series thermometer
 
-* Isotech_
+* IsoTech_
 
   * :class:`~msl.equipment.resources.isotech.millik.MilliK` -- IsoTech milliK Precision Thermometer
 
@@ -217,4 +217,4 @@ Please follow the `style guide`_.
 .. _Energetiq: https://www.energetiq.com/
 .. _Raicol Crystals: https://raicol.com/
 .. _Greisinger: https://www.greisinger.de/
-.. _Isotech: https://isotech.co.uk/
+.. _IsoTech: https://isotech.co.uk/

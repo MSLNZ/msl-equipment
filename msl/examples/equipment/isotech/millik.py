@@ -2,7 +2,11 @@
 Example showing how to communicate with an IsoTech milliK Precision Thermometer,
 with any number of connected millisKanners.
 """
+import logging
+logging.basicConfig(level=logging.INFO)
+
 from msl.equipment import ConnectionRecord, EquipmentRecord
+
 
 record = EquipmentRecord(
     manufacturer='IsoTech',
@@ -28,9 +32,16 @@ print('Number of devices connected:', thermometer.num_devices)
 print('Connected devices:', thermometer.connected_devices)
 print('Available channel numbers:', thermometer.channel_numbers)
 
-# Read the current resistance values using a resistance value for thermistors
-print('Current resistance value for Channel 1:', thermometer.resistance(1, resis=20000, current='norm', wire=4))
-print('Current resistance values for all channels:', thermometer.read_all_channels(resis=20000, current='norm', wire=4))
+# Read the current resistance values using approximate resistance values for each channel
+r = [100, 470, 220, 820, 3300, 100, 1800, 13000]
+for i in range(8):  # here the sensors are all on the first millisKanner only
+    thermometer.configure_resistance_measurement(range=r[i], norm=True, fourwire=True)
+    channel = i + 10
+    print(f'Current resistance value for Channel {channel}:', thermometer.read_channel(channel, n=2))
 
-# Disconnect from the device and return the device to LOCAL mode
-thermometer.close_connection()
+# If all sensors are the same type then you can use the same setting for all channels, e.g. here for thermistors:
+thermometer.configure_resistance_measurement(range=2e5)
+print('Current resistance values for all channels:', thermometer.read_all_channels())
+
+# Disconnect from the milliK device and return the device to LOCAL mode
+thermometer.disconnect()

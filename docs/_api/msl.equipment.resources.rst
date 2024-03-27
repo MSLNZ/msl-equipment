@@ -26,6 +26,7 @@ Subpackages
     msl.equipment.resources.electron_dynamics
     msl.equipment.resources.energetiq
     msl.equipment.resources.greisinger
+    msl.equipment.resources.isotech
     msl.equipment.resources.mks_instruments
     msl.equipment.resources.nkt
     msl.equipment.resources.omega

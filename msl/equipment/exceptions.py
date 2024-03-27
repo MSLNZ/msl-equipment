@@ -74,6 +74,10 @@ class GreisingerError(MSLConnectionError):
     """Exception for equipment from Greisinger."""
 
 
+class IsoTechError(MSLConnectionError):
+    """Exception for equipment from IsoTech."""
+
+
 class MKSInstrumentsError(MSLConnectionError):
     """Exception for equipment from MKS Instruments."""
 

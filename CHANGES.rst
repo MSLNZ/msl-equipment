@@ -11,6 +11,7 @@ Version 0.2.0 (in development)
   - ``find-equipment`` console script
   - :class:`~msl.equipment.connection_gpib.ConnectionGPIB` class
   - :class:`~msl.equipment.resources.greisinger.gmh3000.GMH3000` resource
+  - :class:`~msl.equipment.resources.isotech.millik.MilliK` resource
 
 * Fixed
 

@@ -34,10 +34,9 @@ print('Available channel numbers:', thermometer.channel_numbers)
 
 # Read the current resistance values using approximate resistance values for each channel
 r = [100, 470, 220, 820, 3300, 100, 1800, 13000]
-for i in range(8):  # here the sensors are all on the first millisKanner only
-    thermometer.configure_resistance_measurement(range=r[i], norm=True, fourwire=True)
-    channel = i + 10
-    print(f'Current resistance value for Channel {channel}:', thermometer.read_channel(channel, n=2))
+for i, res in enumerate(r, start=10):  # here the sensors are all on the first millisKanner only
+    thermometer.configure_resistance_measurement(range=res, norm=True, fourwire=True)
+    print(f'Current resistance value for Channel {i}:', thermometer.read_channel(i, n=2))
 
 # If all sensors are the same type then you can use the same setting for all channels, e.g. here for thermistors:
 thermometer.configure_resistance_measurement(range=2e5)

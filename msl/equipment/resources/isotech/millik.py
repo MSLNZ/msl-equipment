@@ -11,30 +11,43 @@ if TYPE_CHECKING:
 from msl.equipment.resources import register
 from msl.equipment.exceptions import IsoTechError
 from msl.equipment.connection_serial import ConnectionSerial
+from msl.equipment.connection_socket import ConnectionSocket
+from msl.equipment.constants import Interface
 
 
 @register(manufacturer=r'Iso.*Tech.*', model=r'milli.*K.*', flags=re.IGNORECASE)
-class MilliK(ConnectionSerial):
+class MilliK:
 
-    def __init__(self, record: EquipmentRecord) -> None:
-        """IsoTech MilliK Precision Thermometer.
+    def __new__(cls, record: EquipmentRecord) -> ConnectionSerial | ConnectionSocket:
+        """Establishes a connection to an IsoTech MilliK Precision Thermometer for different interfaces:
+
+        * :obj:`.Interface.SERIAL`
+        * :obj:`.Interface.SOCKET`
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.
 
         :param record: A record from an :ref:`equipment-database`.
         """
-        super(MilliK, self).__init__(record)
+        interface = record.connection.interface
+        if interface == Interface.SOCKET:
+            base = ConnectionSocket
+        elif interface == Interface.SERIAL:
+            base = ConnectionSerial
+        else:
+            raise IsoTechError(f"Unknown interface for connection for {record.connection.interface}")
 
-        self.set_exception_class(IsoTechError)
-        self.rstrip = True
+        dict_ = dict((k, v) for k, v in vars(cls).items() if not k.startswith('__'))
+        type_ = type(cls.__name__, (base,), dict_)
+        instance = type_(record)
+        instance.set_exception_class(IsoTechError)
 
-        self._connected_devices: list[str] = []
-        self._num_devices = 0
-        self._channel_numbers: list[int] = []
+        instance.rstrip = True
+        instance.write('millik:remote')  # use REMOTE mode to speed up communications
 
-        self.detect_channel_numbers()
-        self.write('millik:remote')  # use REMOTE mode to speed up communications
+        instance._connected_devices, instance._num_devices, instance._channel_numbers = _find_channel_numbers(instance)
+
+        return instance
 
     @property
     def connected_devices(self) -> list[str]:
@@ -56,43 +69,26 @@ class MilliK(ConnectionSerial):
         """
         return self._channel_numbers
 
-    def detect_channel_numbers(self) -> tuple[list[str], int, list[int]]:
-        """Find the number of millisKanners connected, if any, and hence the valid channel numbers.
-        Up to 4 millisKanners can be connected to a single milliK.
-        Returns a list of the :attr:`.connected_devices`, an integer for :attr:`.num_devices`,
-        and a list of the :attr:`.channel_numbers`.
-        """
-        num_devices = 1
-        channel_numbers = [1, 2]
-        connected_devices = [self.query('mill:list?')]  # returns only first line of string response
-        while 'milliK' not in connected_devices[-1].split(','):  # the last device will be the milliK
-            connected_devices.append(self.read())
-            channel_numbers += list(range(num_devices*10, num_devices*10+8))
-            num_devices += 1
-        if num_devices > 1:
-            channel_numbers.pop(1)  # removes channel 2 which is used to connect to the millisKanner daisy-chain
-
-        self._connected_devices = connected_devices
-        self._num_devices = num_devices
-        self._channel_numbers = channel_numbers
-
-        return connected_devices, num_devices, channel_numbers
-
-    def configure_resistance_measurement(self, range: float, *, norm: bool = True, fourwire: bool = True) \
+    def configure_resistance_measurement(self, channel: int, range: float, *, norm: bool = True, fourwire: bool = True) \
             -> tuple[float, float, int]:
-        """Configure the sense mode for the milliK to measure resistance.
+        r"""Configure the sense mode for the milliK to measure resistance.
 
         :param range: The measurement range in ohms. Selects from 115 Ohms, 460 Ohms and 500 kOhms.
         :param norm: The sense current to use for measurement. Defaults to use normal (1 mA) sense current,
             unless False in which case it uses root2*1 mA to determine self-heating effects.
-            Thermistors always use 2 :math:`\\mu`A.
+            Thermistors always use 2 μA.
         :param fourwire: The wiring arrangement eg 3 or 4 wire.
         :return: Returns the internal values set for range, current, and wiring.
         """
+        if channel not in self.channel_numbers:
+            self.raise_exception(f"Channel {channel} is not available in the current measurement setup")
         current = 'NORM' if norm else 'ROOT2'
         wire = 4 if fourwire else 3
-        message = f'sens:res:rang {range};sens:curr {current};sens:res:wir {wire};'
+        message = f'sens:chan {channel};sens:res:rang {range};sens:curr {current};sens:res:wir {wire};'
         self.write(message)
+
+        channel_set = self.query('sens:chan?')
+        assert int(channel_set) == channel
 
         range_set = self.query('sens:res:rang?')
         if range_set == 'Error: Invalid range':
@@ -104,7 +100,7 @@ class MilliK(ConnectionSerial):
         wire_set = int(self.query('sens:res:wir?'))
         assert wire_set == wire
 
-        self.log_info(f'milliK set to use {range_set} Ohms, {current_set} A, and {wire_set}-wire configuration')
+        self.log_info(f'milliK Channel {channel} set to use {range_set} Ohms, {current_set} A, and {wire_set}-wire configuration')
 
         return float(range_set), current_set, wire_set
 
@@ -150,7 +146,34 @@ class MilliK(ConnectionSerial):
         return results
 
     def disconnect(self) -> None:
-        """Return the milliK device to LOCAL mode."""
-        if self.serial.is_open:
-            self.write('millik:local')
-        super().disconnect()
+        """Return the milliK device to LOCAL mode before disconnecting from the device."""
+        try:
+            if self.serial.is_open:
+                self.write('millik:local')
+                self.serial.close()
+                self.log_debug('Disconnected from %s', self.equipment_record.connection)
+        except AttributeError:
+            if self.socket is not None:
+                self.write('millik:local')
+                self.socket.close()
+                self.log_debug('Disconnected from %s', self.equipment_record.connection)
+                self._socket = None
+
+
+def _find_channel_numbers(instance) -> tuple[list[str], int, list[int]]:
+    """Find the number of millisKanners connected, if any, and hence the valid channel numbers.
+    Up to 4 millisKanners can be connected to a single milliK.
+    Returns a list of the :attr:`.connected_devices`, an integer for :attr:`.num_devices`,
+    and a list of the :attr:`.channel_numbers`.
+    """
+    num_devices = 1
+    channel_numbers = [1, 2]
+    connected_devices = [instance.query('mill:list?')]  # returns only first line of string response
+    while 'milliK' not in connected_devices[-1].split(','):  # the last device will be the milliK
+        connected_devices.append(instance.read())
+        channel_numbers += list(range(num_devices*10, num_devices*10+8))
+        num_devices += 1
+    if num_devices > 1:
+        channel_numbers.pop(1)  # removes channel 2 which is used to connect to the millisKanner daisy-chain
+
+    return connected_devices, num_devices, channel_numbers

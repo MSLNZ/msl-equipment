@@ -27,19 +27,21 @@ record = EquipmentRecord(
 
 thermometer = record.connect()
 
-# Read information about the device
+# Print information about the device
 print('Number of devices connected:', thermometer.num_devices)
 print('Connected devices:', thermometer.connected_devices)
 print('Available channel numbers:', thermometer.channel_numbers)
 
-# Read the current resistance values using approximate resistance values for each channel
+# Configure channels using approximate resistance values for each channel
 r = [100, 470, 220, 820, 3300, 100, 1800, 13000]
 for i, res in enumerate(r, start=10):  # here the sensors are all on the first millisKanner only
-    thermometer.configure_resistance_measurement(range=res, norm=True, fourwire=True)
-    print(f'Current resistance value for Channel {i}:', thermometer.read_channel(i, n=2))
+    thermometer.configure_resistance_measurement(channel=i, range=res, norm=True, fourwire=True)
 
-# If all sensors are the same type then you can use the same setting for all channels, e.g. here for thermistors:
-thermometer.configure_resistance_measurement(range=2e5)
+# Read resistance for a specific channel, returning n readings
+i = 10
+print(f'Current resistance value for Channel {i}:', thermometer.read_channel(i, n=5))
+
+# If all channels have been configured, then you can read them all at once
 print('Current resistance values for all channels:', thermometer.read_all_channels())
 
 # Disconnect from the milliK device and return the device to LOCAL mode

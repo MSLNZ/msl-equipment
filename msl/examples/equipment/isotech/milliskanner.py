@@ -1,6 +1,6 @@
 """
 Example showing how to communicate with an IsoTech milliK Precision Thermometer,
-connected via ethernet.
+with any number of connected millisKanners.
 """
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -12,8 +12,15 @@ record = EquipmentRecord(
     manufacturer='IsoTech',
     model='milliK',
     connection=ConnectionRecord(
-        address='TCP::10.12.102.30::1000',
+        address='COM9',  # change for your device
         timeout=5,
+        properties={
+            'baud_rate': 9600,
+            'parity': None,
+            'start_bits': 1,
+            'stop_bits': 1,
+            'data_bits': 8,
+        }  # Optional: change for your device
     )
 )
 
@@ -25,16 +32,18 @@ print('Connected devices:', thermometer.connected_devices)
 print('Available channel numbers:', thermometer.channel_numbers)
 
 # Configure channels using approximate resistance values for each channel
-r = [130, 13000]
-for i, res in enumerate(r, start=1):
-    thermometer.configure_resistance_measurement(channel=i, meas_range=res, norm=True, fourwire=False)
+r = [13000, 470, 220, 820, 3300, 100, 1800, 100]
+for i, res in enumerate(r, start=10):  # here the sensors are all on the first millisKanner only
+    thermometer.configure_resistance_measurement(channel=i, meas_range=res, norm=True, fourwire=True)
 
 # Read resistance for a specific channel, returning n readings
-i = 2
+i = 13
 print(f'Current resistance value for Channel {i}:', thermometer.read_channel(i, n=5))
 
-# If all channels have been configured, then you can read them all at once
-print('Current resistance values for all channels:', thermometer.read_all_channels())
+# print(thermometer.channel_configuration)
+
+# Once the desired channels have been configured, then you can read them all at once
+print('Current resistance values for all configured channels:', thermometer.read_all_channels())
 
 # Disconnect from the milliK device and return the device to LOCAL mode
 thermometer.disconnect()

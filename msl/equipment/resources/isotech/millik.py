@@ -24,6 +24,8 @@ class MilliK:
         * :obj:`.Interface.SERIAL`
         * :obj:`.Interface.SOCKET`
 
+        Note that millisKanners only have an RS232 serial interface.
+
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.
 
@@ -43,9 +45,14 @@ class MilliK:
         instance.set_exception_class(IsoTechError)
 
         instance.rstrip = True
+        instance.read_termination = '\r'
+        instance.write_termination = '\r'
         instance.write('millik:remote')  # use REMOTE mode to speed up communications
 
         instance._connected_devices, instance._num_devices, instance._channel_numbers = _find_channel_numbers(instance)
+
+        instance.channel_configuration = {}
+        """A list of configured channel numbers with their measurement mode, range, current, and wiring settings."""
 
         return instance
 
@@ -69,11 +76,12 @@ class MilliK:
         """
         return self._channel_numbers
 
-    def configure_resistance_measurement(self, channel: int, range: float, *, norm: bool = True, fourwire: bool = True) \
-            -> tuple[float, float, int]:
-        r"""Configure the sense mode for the milliK to measure resistance.
+    def configure_resistance_measurement(self, channel: int, meas_range: float, *, norm: bool = True, fourwire: bool = True)\
+            -> None:
+        r"""Configure the milliK to measure resistance for the specified channel.
 
-        :param range: The measurement range in ohms. Selects from 115 Ohms, 460 Ohms and 500 kOhms.
+        :param channel: The channel to configure for resistance measurement.
+        :param meas_range: The measurement range in ohms. Selects from 115 Ohms, 460 Ohms and 500 kOhms.
         :param norm: The sense current to use for measurement. Defaults to use normal (1 mA) sense current,
             unless False in which case it uses root2*1 mA to determine self-heating effects.
             Thermistors always use 2 μA.
@@ -84,7 +92,7 @@ class MilliK:
             self.raise_exception(f"Channel {channel} is not available in the current measurement setup")
         current = 'NORM' if norm else 'ROOT2'
         wire = 4 if fourwire else 3
-        message = f'sens:chan {channel};sens:res:rang {range};sens:curr {current};sens:res:wir {wire};'
+        message = f'sens:chan {channel};sens:res:rang {meas_range};sens:curr {current};sens:res:wir {wire}'
         self.write(message)
 
         channel_set = self.query('sens:chan?')
@@ -93,7 +101,7 @@ class MilliK:
         range_set = self.query('sens:res:rang?')
         if range_set == 'Error: Invalid range':
             self.raise_exception(range_set)
-        assert float(range_set) >= float(range)
+        assert float(range_set) >= float(meas_range)
 
         current_set = float(self.query('sens:curr?'))
 
@@ -102,41 +110,37 @@ class MilliK:
 
         self.log_info(f'milliK Channel {channel} set to use {range_set} Ohms, {current_set} A, and {wire_set}-wire configuration')
 
-        return float(range_set), current_set, wire_set
+        self.channel_configuration[channel] = ['resistance', meas_range, current, wire]
 
     def read_channel(self, channel: int, n: int = 1) -> float | list[float]:
-        """Initiate and report a measurement using the conditions defined by previous sense commands.
+        """Initiate and report a measurement using the conditions defined by :meth:`.configure_resistance_measurement`.
 
         :param channel: The channel to read.
         :param n: The number of readings to make.
         :return: A list of n readings, or a single float value if only one reading is requested.
         """
-        if channel not in self.channel_numbers:
-            self.raise_exception(f"Channel {channel} is not available in the current measurement setup")
-        readings = []
-        # for some reason an extra value gets put into the buffer for each requested reading so two reads are necessary
-        r1 = float(self.query(f'sense:channel {channel};read:scal? {n}'))
-        r2 = float(self.read())
-        readings.append((r1 + r2)/2)
+        if channel not in self.channel_configuration:
+            self.raise_exception(f"Please first configure channel {channel} before attempting to read values")
 
-        for i in range(n - 1):
-            r1 = float(self.read())
-            r2 = float(self.read())
-            readings.append((r1 + r2) / 2)
+        # TODO assuming resistance for now; voltage or current measurement will need a different call.
+        mode, meas_range, current, wire = self.channel_configuration[channel]
+        assert mode == 'resistance'
+
+        readings = [float(self.query(f'meas:res{channel}? {meas_range},{current}, {wire}')) for _ in range(n)]
 
         if len(readings) == 1:
             return readings[0]
+
         return readings
 
     def read_all_channels(self, n: int = 1) -> list[float]:
-        """Read from all available channels using the conditions defined by previous sense commands.
-        Note that this method currently assumes the same sensor type (e.g. PRT or thermistor) for all channels.
+        """Read from all configured channels using the conditions defined by :meth:`.configure_resistance_measurement`.
 
         :param n: The number of readings to average for each returned value.
-        :return: A list of values from all channels (in the order they appear in :attr:`.channel_numbers`).
+        :return: A list of values from all configured channels (in ascending order).
         """
         results = []
-        for c in self.channel_numbers:
+        for c in sorted(self.channel_configuration):
             readings = self.read_channel(c, n)
             if n == 1:  # readings is a single float value
                 results.append(readings)

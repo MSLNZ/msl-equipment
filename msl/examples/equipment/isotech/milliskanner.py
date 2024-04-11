@@ -38,12 +38,14 @@ for i, res in enumerate(r, start=10):  # here the sensors are all on the first m
 
 # Read resistance for a specific channel, returning n readings
 i = 13
-print(f'Current resistance value for Channel {i}:', thermometer.read_channel(i, n=5))
+print(f'Resistance value for Channel {i}:', thermometer.read_channel(i, n=5))
 
 # print(thermometer.channel_configuration)
 
 # Once the desired channels have been configured, then you can read them all at once
-print('Current resistance values for all configured channels:', thermometer.read_all_channels())
+ch, res = thermometer.read_all_channels()
+print("Configured channels:", ch)
+print('Resistance values:', res)
 
 # Disconnect from the milliK device and return the device to LOCAL mode
 thermometer.disconnect()

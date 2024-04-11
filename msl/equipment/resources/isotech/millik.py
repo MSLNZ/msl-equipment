@@ -133,11 +133,11 @@ class MilliK:
 
         return readings
 
-    def read_all_channels(self, n: int = 1) -> list[float]:
+    def read_all_channels(self, n: int = 1) -> tuple[list[float], list[float]]:
         """Read from all configured channels using the conditions defined by :meth:`.configure_resistance_measurement`.
 
         :param n: The number of readings to average for each returned value.
-        :return: A list of values from all configured channels (in ascending order).
+        :return: A tuple of lists of channel numbers and readings from all configured channels.
         """
         results = []
         for c in sorted(self.channel_configuration):
@@ -147,7 +147,7 @@ class MilliK:
             else:       # average multiple readings
                 results.append(sum(readings)/len(readings))
 
-        return results
+        return sorted(self.channel_configuration), results
 
     def disconnect(self) -> None:
         """Return the milliK device to LOCAL mode before disconnecting from the device."""

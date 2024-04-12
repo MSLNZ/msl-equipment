@@ -86,7 +86,6 @@ class MilliK:
             unless False in which case it uses root2*1 mA to determine self-heating effects.
             Thermistors always use 2 μA.
         :param fourwire: The wiring arrangement eg 3 or 4 wire.
-        :return: Returns the internal values set for range, current, and wiring.
         """
         if channel not in self.channel_numbers:
             self.raise_exception(f"Channel {channel} is not available in the current measurement setup")

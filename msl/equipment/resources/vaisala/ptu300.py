@@ -37,6 +37,8 @@ class PTU300(ConnectionSerial):
         self.info = self.device_info(show=False)
         self.check_serial()
 
+        self._units = {}
+
     def check_serial(self) -> str:
         """Get the device ID (serial) number and check it agrees with the equipment record.
         """
@@ -75,36 +77,49 @@ class PTU300(ConnectionSerial):
 
         return info
 
-    def set_units(self, metric: bool = True, p_unit: str = 'hPa') -> None:
-        # todo separate out pressure units from other units?
-        """Set units to be metric or non-metric, and/or select the desired pressure unit
+    def set_units(self, *, celcius: bool = True, p_unit: tuple[str, str] = ('P', 'hPa')) -> None:
+        """Set units to be metric or non-metric, and/or set the desired pressure unit
 
-        :param metric: True for metric units (ºC), or False for non-metric (ºF)
-        :param p_unit: Select from
-            'hPa', 'psia', 'inHg', 'torr', 'bara', 'barg', 'psig', 'mbar', 'mmHg', 'kPa', 'Pa', 'mmH2O', 'inH2O'
+        :param celcius: True for metric units (ºC), or False for non-metric (ºF)
+        :param p_unit: a tuple of the pressure quantity (here P), and a unit from
+            ['hPa', 'psia', 'inHg', 'torr', 'bara', 'barg', 'psig', 'mbar', 'mmHg', 'kPa', 'Pa', 'mmH2O', 'inH2O']
         :return:
         """
-        # Temperature and humidity: metric or 'non metric'
-        if metric:
-            r_m = self.query("UNIT M")
-        else:
-            r_m = self.query("UNIT N")
-
-        check_string_m = "Output units   : metric"
-        if not (r_m == check_string_m) == metric:
-            self.check_for_errors()
-
         # Pressure
         allowed_units = [
             'hPa', 'psia', 'inHg', 'torr', 'bara', 'barg', 'psig', 'mbar', 'mmHg', 'kPa', 'Pa', 'mmH2O', 'inH2O'
         ]
-        if p_unit in allowed_units:
-            r_p = self.query(f"UNIT P {p_unit}")
-            check_string_p = f"P units        : {p_unit}"
-            if not r_p == check_string_p:
+        check_string_m = "Output units   : metric"
+        available_units = self.query("UNIT")
+        if available_units == check_string_m:  # device is of type PTU300
+            # Temperature and humidity: metric or 'non metric'
+            if celcius:
+                r_m = self.query("UNIT M")
+                self._units["T"] = "ºC"
+            else:
+                r_m = self.query("UNIT N")
+                self._units["T"] = "ºF"
+
+            if not (r_m == check_string_m) == celcius:
+                self._units["T"] = None
                 self.check_for_errors()
-        else:
-            self.log_error(f"{p_unit} is not an allowed unit {allowed_units}")
+            self._units["RH"] = "%RH"
+
+            if p_unit[1] in allowed_units:
+                r_p = self.query(f"UNIT P {p_unit[1]}")
+                check_string_p = f"P units        : {p_unit[1]}"
+                if not r_p == check_string_p:
+                    self.check_for_errors()
+                self._units["P"] = p_unit[1]
+            else:
+                self.log_error(f"{p_unit[1]} is not an allowed unit {allowed_units}")
+
+        else:  # device is of type PTB330
+            self.log_error("Incorrect device class")
+
+    @property
+    def units(self):
+        return self._units
 
     def set_format(self, format: str) -> bool:
         """Sets format of data output, e.g. 4.3 P " " 3.3 T " " 3.3 RH " " SN " " #r #n

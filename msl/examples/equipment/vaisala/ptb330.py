@@ -41,9 +41,11 @@ vaisala.device_info()
 
 vaisala.check_for_errors()
 
-vaisala.set_units(metric=True, p_unit='kPa')
+print(vaisala.units)
+vaisala.set_units(celcius=True, p_unit=("P3h", 'mbar'))
+print(vaisala.units)
 
-format = '4.3 P " " 3.3 T #r #n'
+format = '4.3 P " " 2.1 TP1 #r #n'
 vaisala.set_format(format=format)
 
 print(vaisala.get_format())

@@ -38,7 +38,14 @@ print(len(vaisala.pressure_modules))
 vaisala.check_for_errors()
 
 print(vaisala.units)
-vaisala.set_units(celcius=True, p_unit=("P3h", 'hPa'))
+desired_units = {
+    "P": 'hPa',
+    "P3h":  'mbar',
+    "T":    "ºC",
+    "RH":   "%RH",
+    "H20": "ppmv/ppmw",
+}
+vaisala.set_units(desired_units=desired_units)
 print(vaisala.units)
 
 # format = '4.3 P " " 3.3 T " " 3.3 RH " " SN " " #r #n'

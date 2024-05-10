@@ -77,45 +77,57 @@ class PTU300(ConnectionSerial):
 
         return info
 
-    def set_units(self, *, celcius: bool = True, p_unit: tuple[str, str] = ('P', 'hPa')) -> None:
-        """Set units to be metric or non-metric, and/or set the desired pressure unit
+    def set_units(self, desired_units: dict[str, str]) -> None:
+        """Set units of specified quantities. Note that only one pressure unit is used at a time for the PTU300 series.
 
-        :param celcius: True for metric units (ºC), or False for non-metric (ºF)
-        :param p_unit: a tuple of the pressure quantity (here P), and a unit from
-            ['hPa', 'psia', 'inHg', 'torr', 'bara', 'barg', 'psig', 'mbar', 'mmHg', 'kPa', 'Pa', 'mmH2O', 'inH2O']
-        :return:
+        :param desired_units: dictionary of quantities and units as specified in the instrument manual on page 22.
+            These may include the following (available options depend on the barometer components):
+            Pressure quantities: P, P3h, P1, P2, QNH, QFE, HCP, ...
+            Pressure units: hPa, psi, inHg, torr, bar, mbar, mmHg, kPa, Pa, mmH2O, inH2O
+            Temperature quantity: T
+            Temperature units: °C, °F
+            Humidity quantity: RH
+            Humidity unit: %RH
         """
-        # Pressure
-        allowed_units = [
+        celcius = True
+        allowed_units = [        # for pressure
             'hPa', 'psia', 'inHg', 'torr', 'bara', 'barg', 'psig', 'mbar', 'mmHg', 'kPa', 'Pa', 'mmH2O', 'inH2O'
         ]
         check_string_m = "Output units   : metric"
         available_units = self.query("UNIT")
-        if available_units == check_string_m:  # device is of type PTU300
-            # Temperature and humidity: metric or 'non metric'
-            if celcius:
-                r_m = self.query("UNIT M")
-                self._units["T"] = "ºC"
-            else:
-                r_m = self.query("UNIT N")
-                self._units["T"] = "ºF"
+        if not available_units == check_string_m:  # confirming device is of type PTU300
+            self.log_error("Check correct device connected")
+            return
 
-            if not (r_m == check_string_m) == celcius:
-                self._units["T"] = None
-                self.check_for_errors()
-            self._units["RH"] = "%RH"
+        for quantity, u in desired_units.items():
+            if quantity == "RH":  # only option is %RH
+                self._units["RH"] = "%RH"
 
-            if p_unit[1] in allowed_units:
-                r_p = self.query(f"UNIT P {p_unit[1]}")
-                check_string_p = f"P units        : {p_unit[1]}"
-                if not r_p == check_string_p:
+            elif "T" in quantity:   # options are °C, °F
+                if 'F' in u:        # Temperature and humidity setting is done via metric or 'non metric'
+                    celcius = False
+                if celcius:
+                    r_m = self.query("UNIT M")
+                    self._units["T"] = "ºC"
+                else:
+                    r_m = self.query("UNIT N")
+                    self._units["T"] = "ºF"
+
+                if not (r_m == check_string_m) == celcius:
+                    self._units["T"] = None
                     self.check_for_errors()
-                self._units["P"] = p_unit[1]
-            else:
-                self.log_error(f"{p_unit[1]} is not an allowed unit {allowed_units}")
 
-        else:  # device is of type PTB330
-            self.log_error("Incorrect device class")
+            elif u in allowed_units:  # assume this is a pressure quantity based on the unit
+                if not quantity == "P" and "P" in desired_units:
+                    self.log_info(f"Using pressure setting for P for quantity {quantity}")
+                else:
+                    r_p = self.query(f"UNIT P {u}")
+                    check_string_p = f"P units        : {u}"
+                    if not r_p == check_string_p:
+                        self.check_for_errors()
+                    self._units[quantity] = u
+            else:  # quantity is not pressure, temperature or humidity, so ask user to set the unit manually
+                self.log_error(f"{u} is not able to be set for {quantity}. Please set this unit manually.")
 
     @property
     def units(self):

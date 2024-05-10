@@ -34,16 +34,20 @@ vaisala = record.connect()
 
 # display information about the device and check serial number is consistent
 vaisala.device_info()
-# print(vaisala.pressure_modules)
-# print(len(vaisala.pressure_modules))
-# serial_number = vaisala.check_serial()
-# print(serial_number)
+print(vaisala.pressure_modules)
+print(len(vaisala.pressure_modules))
+serial_number = vaisala.check_serial()
+print(serial_number)
 
 vaisala.check_for_errors()
 
-print(vaisala.units)
-vaisala.set_units(celcius=True, p_unit=("P3h", 'mbar'))
-print(vaisala.units)
+desired_units = {
+    "P":    'hPa',
+    "P3h":  'mbar',
+    "TP1":    "'C",
+}
+vaisala.set_units(desired_units=desired_units)
+print("Units set:", vaisala.units)
 
 format = '4.3 P " " 2.1 TP1 #r #n'
 vaisala.set_format(format=format)

@@ -36,3 +36,4 @@ Subpackages
     msl.equipment.resources.princeton_instruments
     msl.equipment.resources.raicol
     msl.equipment.resources.thorlabs
+    msl.equipment.resources.vaisala

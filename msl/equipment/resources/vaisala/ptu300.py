@@ -18,6 +18,7 @@ class PTU300(ConnectionSerial):
 
     def __init__(self, record: EquipmentRecord) -> None:
         """Vaisala Barometer PTU300 series.
+        Device manual: https://docs.vaisala.com/v/u/M210855EN-D/en-US
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.
@@ -33,14 +34,15 @@ class PTU300(ConnectionSerial):
 
         self.stop_run_mode()
 
+        self._units = {}
         self.pressure_modules = set()
         self.info = self.device_info(show=False)
         self.check_serial()
 
-        self._units = {}
-
     def check_serial(self) -> str:
         """Get the device ID (serial) number and check it agrees with the equipment record.
+
+        :return: the serial number as a string
         """
         # can use reply = self.query("*9900SN") but the serial number is also in the device info
         sn = self.info["Serial number"]
@@ -49,19 +51,22 @@ class PTU300(ConnectionSerial):
         return sn
 
     def device_info(self, show: bool = True) -> dict:
-        """Prints information about the Vaisala device
+        """Prints information about the Vaisala device.
+
+        :param show: bool for whether to display the device info as log messages
+        :return: a dictionary of the device information
         """
         info = {}
-        break_keys = {  # TODO need a proper regex here to make sure all devices are covered
-            'PTU300': "module 2",
-            'PTB330': "module 4",
+        break_keys = {
+            'PTU30': "module 2",
+            'PTB33': "module 4",
         }
         break_key = "TBC"
         self.write("?")
         while True:
             ok = self.read()
             if show:
-                print(ok)
+                self.log_info(ok)
             try:
                 key, val = ok.split(': ')
                 info[key.strip()] = val.strip()
@@ -72,7 +77,7 @@ class PTU300(ConnectionSerial):
             except ValueError:
                 model, version = ok.split(" / ")
                 info['Model'] = model
-                break_key = break_keys[model]
+                break_key = break_keys[model[:-1]]
                 info['Version'] = version
 
         return info
@@ -100,7 +105,7 @@ class PTU300(ConnectionSerial):
             return
 
         for quantity, u in desired_units.items():
-            if quantity == "RH":  # only option is %RH
+            if quantity == "RH":    # only option is %RH
                 self._units["RH"] = "%RH"
 
             elif "T" in quantity:   # options are °C, °F
@@ -130,16 +135,20 @@ class PTU300(ConnectionSerial):
                 self.log_error(f"{u} is not able to be set for {quantity}. Please set this unit manually.")
 
     @property
-    def units(self):
+    def units(self) -> dict[str, str]:
+        """A dictionary of measured quantities and their associated units as set on the device."""
         return self._units
 
     def set_format(self, format: str) -> bool:
-        """Sets format of data output, e.g. 4.3 P " " 3.3 T " " 3.3 RH " " SN " " #r #n
-        where x.y shows the number of digits and decimal places of the returned value;
-        Here P, T, RH, and SN are placeholders for pressure, temperature, relative humidity, and serial number values;
-        and " ", #r, and #n represent a string constant, carriage-return, and line feed.
+        """Set the format of data output to follow the pattern in the format string.  For example, in the format string
+        '4.3 P " " 3.3 T " " 3.3 RH " " SN " " #r #n', x.y is the number of digits and decimal places of the values;
+        P, T, RH, and SN are placeholders for pressure, temperature, relative humidity, and serial number values;
+        and " ", #r, and #n represent a string constant, carriage-return, and line feed respectively.
         Additional allowed modifiers include ERR for error flags, U5 for unit field and (optional) length,
         TIME for time as [hh:mm:ss], and DATE for date as [yyyy-mm-dd]. For more options, refer to the manual.
+
+        :param format: string representing desired output format
+        :return: bool to indicate successful setting of format
         """
         self.write(f'FORM {format}')
         ok = self.read()
@@ -151,7 +160,7 @@ class PTU300(ConnectionSerial):
             self.raise_exception(ok)
             return False
 
-        if not form.lower() == format.lower(): # the format was not set successfully
+        if not form.lower() == format.lower():  # the format was not set successfully
             self.check_for_errors()
             self.log_warning(f"Format of output is {form}")
             return False
@@ -178,7 +187,7 @@ class PTU300(ConnectionSerial):
         """Output the reading once. The returned string follows the format set by self.set_format"""
         return self.query("SEND")
 
-    def check_for_errors(self):
+    def check_for_errors(self) -> None:
         """Raise an error if present"""
         err = self.query("ERRS")  # List present transmitter errors
         # a PASS or FAIL line is returned from PTB330 modules first

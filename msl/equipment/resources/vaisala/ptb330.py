@@ -19,6 +19,7 @@ class PTB330(PTU300):
 
     def __init__(self, record: EquipmentRecord) -> None:
         """Vaisala Barometer PTB330 series.
+        Device manual: https://docs.vaisala.com/v/u/M210796EN-J/en-US
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.
@@ -26,7 +27,6 @@ class PTB330(PTU300):
         :param record: A record from an :ref:`equipment-database`.
         """
         super(PTB330, self).__init__(record)
-        print("using PTB330 class")
 
     def set_units(self, desired_units: dict[str, str]) -> None:
         """Set units of specified quantities

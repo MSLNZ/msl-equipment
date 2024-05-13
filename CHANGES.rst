@@ -12,6 +12,8 @@ Version 0.2.0 (in development)
   - :class:`~msl.equipment.connection_gpib.ConnectionGPIB` class
   - :class:`~msl.equipment.resources.greisinger.gmh3000.GMH3000` resource
   - :class:`~msl.equipment.resources.isotech.millik.MilliK` resource
+  - :class:`~msl.equipment.resources.vaisala.ptu300.PTU300` resource
+  - :class:`~msl.equipment.resources.vaisala.ptb330.PTB330` resource
 
 * Fixed
 

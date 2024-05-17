@@ -12,49 +12,48 @@ from msl.equipment.resources import register
 from msl.equipment.exceptions import VaisalaError
 from msl.equipment.connection_serial import ConnectionSerial
 
+from msl.equipment.constants import (
+    Parity,
+    DataBits,
+)
+
 
 @register(manufacturer=r'Vaisala', model=r'PTU30*', flags=re.IGNORECASE)
 class PTU300(ConnectionSerial):
 
     def __init__(self, record: EquipmentRecord) -> None:
         """Vaisala Barometer PTU300 series.
-        Device manual: https://docs.vaisala.com/v/u/M210855EN-D/en-US
+        Device manual is available `here <https://docs.vaisala.com/v/u/M210796EN-J/en-US>`_.
+
+        .. note::
+            Ensure the device is in STOP or SEND mode before initiating a connection to a PC.
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.
 
         :param record: A record from an :ref:`equipment-database`.
         """
+        props = record.connection.properties
+        props.setdefault('baud_rate', 4800)
+        props.setdefault('data_bits', DataBits.SEVEN)
+        props.setdefault('parity', Parity.EVEN)
         super(PTU300, self).__init__(record)
 
         self.set_exception_class(VaisalaError)
         self.rstrip = True
 
-        self.ID = record.serial
-
-        self.stop_run_mode()
-
         self._units = {}
-        self.pressure_modules = set()
-        self.info = self.device_info(show=False)
-        self.check_serial()
+        self._pressure_modules = set()
+        self._info = self._device_info()
 
-    def check_serial(self) -> str:
-        """Get the device ID (serial) number and check it agrees with the equipment record.
+        # Get the device ID (serial) number and check it agrees with the equipment record.
+        # can use reply = self.query("*9900SN") but the serial number is also in device_info
+        sn = self._info["Serial number"]
+        if not sn == record.serial:
+            self.raise_exception(f"Inconsistent serial number: expected {record.serial} but received {sn}")
 
-        :return: the serial number as a string
-        """
-        # can use reply = self.query("*9900SN") but the serial number is also in the device info
-        sn = self.info["Serial number"]
-        if not sn == self.ID:
-            self.raise_exception(f"Inconsistent serial number: expected {self.ID} but received {sn}")
-        return sn
-
-    def device_info(self, show: bool = True) -> dict:
-        """Prints information about the Vaisala device.
-
-        :param show: bool for whether to display the device info as log messages
-        :return: a dictionary of the device information
+    def _device_info(self) -> dict[str, str]:
+        """Return a dictionary of information about the Vaisala device.
         """
         info = {}
         break_keys = {
@@ -65,13 +64,11 @@ class PTU300(ConnectionSerial):
         self.write("?")
         while True:
             ok = self.read()
-            if show:
-                self.log_info(ok)
             try:
                 key, val = ok.split(': ')
                 info[key.strip()] = val.strip()
                 if 'baro' in val.lower():
-                    self.pressure_modules.add(val)
+                    self._pressure_modules.add(val)
                 if break_key in key.lower():
                     break
             except ValueError:
@@ -82,66 +79,75 @@ class PTU300(ConnectionSerial):
 
         return info
 
+    @property
+    def device_info(self) -> dict[str, str]:
+        """Return a dictionary of information about the Vaisala device.
+        """
+        return self._info
+
     def set_units(self, desired_units: dict[str, str]) -> None:
         """Set units of specified quantities. Note that only one pressure unit is used at a time for the PTU300 series.
 
-        :param desired_units: dictionary of quantities and units as specified in the instrument manual on page 22.
+        :param desired_units: Dictionary of quantities (as keys) and their unit (their value)
+            as specified in the instrument manual on pages 22 and 106.
+
             These may include the following (available options depend on the barometer components):
-            Pressure quantities: P, P3h, P1, P2, QNH, QFE, HCP, ...
-            Pressure units: hPa, psi, inHg, torr, bar, mbar, mmHg, kPa, Pa, mmH2O, inH2O
-            Temperature quantity: T
-            Temperature units: °C, °F
-            Humidity quantity: RH
-            Humidity unit: %RH
+
+              * Pressure quantities: P, P3h, P1, P2, QNH, QFE, HCP, ...
+              * Pressure units: hPa, psi, inHg, torr, bar, mbar, mmHg, kPa, Pa, mmH2O, inH2O
+              * Temperature quantity: T
+              * Temperature units: C, F
+              * Humidity quantity: RH
+              * Humidity unit: %RH
         """
         celcius = True
+        p_units = []
         allowed_units = [        # for pressure
             'hPa', 'psia', 'inHg', 'torr', 'bara', 'barg', 'psig', 'mbar', 'mmHg', 'kPa', 'Pa', 'mmH2O', 'inH2O'
         ]
         check_string_m = "Output units   : metric"
         available_units = self.query("UNIT")
         if not available_units == check_string_m:  # confirming device is of type PTU300
-            self.log_error("Check correct device connected")
-            return
+            self.raise_exception("Check correct device connected")
 
         for quantity, u in desired_units.items():
             if quantity == "RH":    # only option is %RH
                 self._units["RH"] = "%RH"
 
-            elif "T" in quantity:   # options are °C, °F
+            elif "T" in quantity:   # options are 'C, 'F
                 if 'F' in u:        # Temperature and humidity setting is done via metric or 'non metric'
                     celcius = False
                 if celcius:
                     r_m = self.query("UNIT M")
-                    self._units["T"] = "ºC"
+                    self._units["T"] = "'C"
                 else:
                     r_m = self.query("UNIT N")
-                    self._units["T"] = "ºF"
+                    self._units["T"] = "'F"
 
                 if not (r_m == check_string_m) == celcius:
                     self._units["T"] = None
                     self.check_for_errors()
 
             elif u in allowed_units:  # assume this is a pressure quantity based on the unit
-                if not quantity == "P" and "P" in desired_units:
-                    self.log_info(f"Using pressure setting for P for quantity {quantity}")
-                else:
-                    r_p = self.query(f"UNIT P {u}")
-                    check_string_p = f"P units        : {u}"
-                    if not r_p == check_string_p:
-                        self.check_for_errors()
-                    self._units[quantity] = u
+                if p_units and u not in p_units:
+                    self.raise_exception("Only one pressure unit can be set for this barometer")
+                r_p = self.query(f"UNIT P {u}")
+                if not r_p.endswith(u):
+                    self.check_for_errors()
+                self._units[quantity] = u
+                p_units.append(u)
+
             else:  # quantity is not pressure, temperature or humidity, so ask user to set the unit manually
-                self.log_error(f"{u} is not able to be set for {quantity}. Please set this unit manually.")
+                self.raise_exception(f"{u} is not able to be set for {quantity}. Please set this unit manually.")
 
     @property
     def units(self) -> dict[str, str]:
-        """A dictionary of measured quantities and their associated units as set on the device."""
+        """A dictionary of measured quantities and their associated units as set on the device by :meth:`.set_units`."""
         return self._units
 
     def set_format(self, format: str) -> bool:
         """Set the format of data output to follow the pattern in the format string.  For example, in the format string
-        '4.3 P " " 3.3 T " " 3.3 RH " " SN " " #r #n', x.y is the number of digits and decimal places of the values;
+        ``4.3 P " " 3.3 T " " 3.3 RH " " SN " " #r #n``, x.y is the number of digits and decimal places of the values;
         P, T, RH, and SN are placeholders for pressure, temperature, relative humidity, and serial number values;
         and " ", #r, and #n represent a string constant, carriage-return, and line feed respectively.
         Additional allowed modifiers include ERR for error flags, U5 for unit field and (optional) length,
@@ -150,45 +156,34 @@ class PTU300(ConnectionSerial):
         :param format: string representing desired output format
         :return: bool to indicate successful setting of format
         """
-        self.write(f'FORM {format}')
-        ok = self.read()
-        if 'Output format  :' in ok:    # format is returned by some devices when set
-            form = ok.strip('Output format  :').replace("\\", "#")
-        elif "ok" in ok.lower():        # but if OK is returned then we need to ask for the format
+        ok = self.query(f'FORM {format}')
+        if ok.startswith('Output format  :'):    # format is returned by some devices when set
+            form = ok.lstrip('Output format  :').replace("\\", "#")
+        elif "ok" in ok.lower():        # if OK is returned then we need to ask for the format
             form = self.get_format()
         else:                           # this is not expected so raise an error
             self.raise_exception(ok)
-            return False
 
-        if not form.lower() == format.lower():  # the format was not set successfully
+        if not form.upper().replace(" ", "") == format.upper().replace(" ", ""):
+            # the format was not set as specified
             self.check_for_errors()
-            self.log_warning(f"Format of output is {form}")
-            return False
+            self.raise_exception(f"Could not set format of output. \nExpected: {format} \nReceived: {form}.")
 
+        self._info['Output format'] = form
         return True
 
     def get_format(self) -> str:
         """Return the currently active formatter string.
-        The hash symbol "#" is used to set the format, but then appears as a backslash "\" on the device.
+        The hash symbol "#" is used to set the format, but then appears as a backslash "\\" on the device.
         """
-        form = self.query("FORM ?").strip('Output format  :').replace("\\", "#")
-        self.log_debug(f"Format of output is {form}")
-        return form
-
-    def start_run_mode(self) -> None:
-        """Start continuous outputting of data (RUN mode)"""
-        self.write("R")
-
-    def stop_run_mode(self) -> None:
-        """Stop continuous outputting of data (STOP mode)"""
-        self.write("S")
+        return self.query("FORM ?").lstrip('Output format  :').replace("\\", "#")
 
     def get_reading_str(self) -> str:
-        """Output the reading once. The returned string follows the format set by self.set_format"""
+        """Output the reading once. The returned string follows the format set by :meth:`.set_format`."""
         return self.query("SEND")
 
     def check_for_errors(self) -> None:
-        """Raise an error if present"""
+        """Raise an error if present."""
         err = self.query("ERRS")  # List present transmitter errors
         # a PASS or FAIL line is returned from PTB330 modules first
         if err == "PASS":

@@ -103,8 +103,8 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
 * `Vaisala`_
 
-  * :class:`~msl.equipment.resources.vaisala.ptu300` -- Barometer of type PTU300
-  * :class:`~msl.equipment.resources.vaisala.ptb330` -- Barometer of type PTB330
+  * :class:`~msl.equipment.resources.vaisala.ptu300.PTU300` -- Barometer of type PTU300
+  * :class:`~msl.equipment.resources.vaisala.ptb330.PTB330` -- Barometer of type PTB330
 
 .. _new-equipment-resource:
 

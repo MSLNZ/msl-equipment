@@ -1,5 +1,6 @@
 """
-Vaisala Barometer which reads temperature, relative humidity, and pressure, e.g. of type PTU300
+Vaisala PTU300 series barometer which reads temperature, relative humidity, and pressure.
+Supports models PTU300, PTU301, PTU303, PTU307 and PTU30T.
 """
 from __future__ import annotations
 
@@ -22,11 +23,19 @@ from msl.equipment.constants import (
 class PTU300(ConnectionSerial):
 
     def __init__(self, record: EquipmentRecord) -> None:
-        """Vaisala Barometer PTU300 series.
-        Device manual is available `here <https://docs.vaisala.com/v/u/M210796EN-J/en-US>`_.
+        """Vaisala Barometer PTU300 series (models PTU300, PTU301, PTU303, PTU307 and PTU30T).
+        The device manual is available `here <https://docs.vaisala.com/v/u/M210796EN-J/en-US>`_.
 
         .. note::
             Ensure the device is in STOP or SEND mode before initiating a connection to a PC.
+
+        The default settings for the RS232 connection are:
+
+        * Baud rate = 4800
+        * Data bits = 7
+        * Stop bits = 1
+        * Parity = EVEN
+        * Flow control = None
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.

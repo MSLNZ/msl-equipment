@@ -19,10 +19,18 @@ class PTB330(PTU300):
 
     def __init__(self, record: EquipmentRecord) -> None:
         """Vaisala Barometer PTB330 series.
-        Device manual is available `here <https://docs.vaisala.com/v/u/M210855EN-D/en-US>`_.
+        THe device manual is available `here <https://docs.vaisala.com/v/u/M210855EN-D/en-US>`_.
 
         .. note::
             Ensure the device is in STOP or SEND mode before initiating a connection to a PC.
+
+        The default settings for the RS232 connection are:
+
+        * Baud rate = 4800
+        * Data bits = 7
+        * Stop bits = 1
+        * Parity = EVEN
+        * Flow control = None
 
         Do not instantiate this class directly. Use the :meth:`~.EquipmentRecord.connect`
         method to connect to the equipment.

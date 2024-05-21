@@ -205,7 +205,7 @@ def test_find_resource_class():
             assert cls is resources.isotech.millik.MilliK
 
     for man in ('Vaisala', ):
-        for mod in ('PTU300', 'PTU301', 'PTU303', 'PTU307', ):
+        for mod in ('PTU300', 'PTU301', 'PTU303', 'PTU307', 'PTU30T'):
             record = ConnectionRecord(manufacturer=man, model=mod, backend=Backend.MSL)
             cls = resources.find_resource_class(record)
             assert cls is resources.vaisala.ptu300.PTU300

@@ -18,7 +18,7 @@ from msl.equipment.constants import (
 )
 
 
-@register(manufacturer=r'Vaisala', model=r'PTU30*', flags=re.IGNORECASE)
+@register(manufacturer=r'Vaisala', model=r'^PTU30[0137T]$', flags=re.IGNORECASE)
 class PTU300(ConnectionSerial):
 
     def __init__(self, record: EquipmentRecord) -> None:
@@ -96,18 +96,16 @@ class PTU300(ConnectionSerial):
               * Pressure quantities: P, P3h, P1, P2, QNH, QFE, HCP, ...
               * Pressure units: hPa, psi, inHg, torr, bar, mbar, mmHg, kPa, Pa, mmH2O, inH2O
               * Temperature quantity: T
-              * Temperature units: C, F
+              * Temperature units: 'C, 'F (C and F are also supported but are returned as 'C or 'F)
               * Humidity quantity: RH
               * Humidity unit: %RH
         """
-        celcius = True
         p_units = []
         allowed_units = [        # for pressure
             'hPa', 'psia', 'inHg', 'torr', 'bara', 'barg', 'psig', 'mbar', 'mmHg', 'kPa', 'Pa', 'mmH2O', 'inH2O'
         ]
-        check_string_m = "Output units   : metric"
-        available_units = self.query("UNIT")
-        if not available_units == check_string_m:  # confirming device is of type PTU300
+        old_units = self.query("UNIT")
+        if not "Output units" in old_units:  # confirming device is of type PTU300
             self.raise_exception("Check correct device connected")
 
         for quantity, u in desired_units.items():
@@ -115,16 +113,18 @@ class PTU300(ConnectionSerial):
                 self._units["RH"] = "%RH"
 
             elif "T" in quantity:   # options are 'C, 'F
-                if 'F' in u:        # Temperature and humidity setting is done via metric or 'non metric'
-                    celcius = False
-                if celcius:
+                if "F" in u:        # Temperature and humidity setting is done via metric or 'non metric'
+                    r_m = self.query("UNIT N")
+                    if not 'non' in r_m:
+                        self.raise_exception("Error when setting non metric units")
+                    self._units["T"] = "'F"
+                elif "C" in u:
                     r_m = self.query("UNIT M")
                     self._units["T"] = "'C"
                 else:
-                    r_m = self.query("UNIT N")
-                    self._units["T"] = "'F"
+                    self.raise_exception(f"Unit {u} is not supported by this device. Please use 'C or 'F.")
 
-                if not (r_m == check_string_m) == celcius:
+                if not 'metric' in r_m:
                     self._units["T"] = None
                     self.check_for_errors()
 
@@ -145,7 +145,7 @@ class PTU300(ConnectionSerial):
         """A dictionary of measured quantities and their associated units as set on the device by :meth:`.set_units`."""
         return self._units
 
-    def set_format(self, format: str) -> bool:
+    def set_format(self, format: str) -> None:
         """Set the format of data output to follow the pattern in the format string.  For example, in the format string
         ``4.3 P " " 3.3 T " " 3.3 RH " " SN " " #r #n``, x.y is the number of digits and decimal places of the values;
         P, T, RH, and SN are placeholders for pressure, temperature, relative humidity, and serial number values;
@@ -154,7 +154,6 @@ class PTU300(ConnectionSerial):
         TIME for time as [hh:mm:ss], and DATE for date as [yyyy-mm-dd]. For more options, refer to the manual.
 
         :param format: string representing desired output format
-        :return: bool to indicate successful setting of format
         """
         ok = self.query(f'FORM {format}')
         if ok.startswith('Output format  :'):    # format is returned by some devices when set
@@ -170,7 +169,6 @@ class PTU300(ConnectionSerial):
             self.raise_exception(f"Could not set format of output. \nExpected: {format} \nReceived: {form}.")
 
         self._info['Output format'] = form
-        return True
 
     def get_format(self) -> str:
         """Return the currently active formatter string.

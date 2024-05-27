@@ -19,7 +19,7 @@ class PTB330(PTU300):
 
     def __init__(self, record: EquipmentRecord) -> None:
         """Vaisala Barometer PTB330 series.
-        THe device manual is available `here <https://docs.vaisala.com/v/u/M210855EN-D/en-US>`_.
+        The device manual is available `here <https://docs.vaisala.com/v/u/M210855EN-D/en-US>`_.
 
         .. note::
             Ensure the device is in STOP or SEND mode before initiating a connection to a PC.

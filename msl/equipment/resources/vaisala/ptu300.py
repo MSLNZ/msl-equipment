@@ -154,7 +154,7 @@ class PTU300(ConnectionSerial):
         """A dictionary of measured quantities and their associated units as set on the device by :meth:`.set_units`."""
         return self._units
 
-    def set_format(self, format: str) -> None:
+    def set_format(self, fmt: str) -> None:
         """Set the format of data output to follow the pattern in the format string.  For example, in the format string
         ``4.3 P " " 3.3 T " " 3.3 RH " " SN " " #r #n``, x.y is the number of digits and decimal places of the values;
         P, T, RH, and SN are placeholders for pressure, temperature, relative humidity, and serial number values;
@@ -162,9 +162,9 @@ class PTU300(ConnectionSerial):
         Additional allowed modifiers include ERR for error flags, U5 for unit field and (optional) length,
         TIME for time as [hh:mm:ss], and DATE for date as [yyyy-mm-dd]. For more options, refer to the manual.
 
-        :param format: string representing desired output format
+        :param fmt: string representing desired output format
         """
-        ok = self.query(f'FORM {format}')
+        ok = self.query(f'FORM {fmt}')
         if ok.startswith('Output format  :'):    # format is returned by some devices when set
             form = ok.lstrip('Output format  :').replace("\\", "#")
         elif "ok" in ok.lower():        # if OK is returned then we need to ask for the format
@@ -172,15 +172,15 @@ class PTU300(ConnectionSerial):
         else:                           # this is not expected so raise an error
             self.raise_exception(ok)
 
-        if not form.upper().replace(" ", "") == format.upper().replace(" ", ""):
+        if not form.upper().replace(" ", "") == fmt.upper().replace(" ", ""):
             # the format was not set as specified
             self.check_for_errors()
-            self.raise_exception(f"Could not set format of output. \nExpected: {format} \nReceived: {form}.")
+            self.raise_exception(f"Could not set format of output. \nExpected: {fmt} \nReceived: {form}.")
 
         self._info['Output format'] = form
 
     def get_format(self) -> str:
-        """Return the currently active formatter string.
+        r"""Return the currently active formatter string.
         The hash symbol "#" is used to set the format, but then appears as a backslash "\\" on the device.
         """
         return self.query("FORM ?").lstrip('Output format  :').replace("\\", "#")

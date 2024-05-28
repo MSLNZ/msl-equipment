@@ -112,3 +112,6 @@ class RaicolCrystalsError(MSLConnectionError):
 
 class ThorlabsError(MSLConnectionError):
     """Exception for equipment from Thorlabs."""
+
+class VaisalaError(MSLConnectionError):
+    """Exception for equipment from Vaisala."""

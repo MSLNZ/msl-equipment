@@ -101,6 +101,11 @@ MSL Resources are specific classes that are used to communicate with the equipme
 
   * :class:`~msl.equipment.resources.thorlabs.fwxx2c.FilterWheelXX2C` -- FW102C, FW212C
 
+* `Vaisala`_
+
+  * :class:`~msl.equipment.resources.vaisala.ptu300.PTU300` -- Barometer of type PTU300
+  * :class:`~msl.equipment.resources.vaisala.ptb330.PTB330` -- Barometer of type PTB330
+
 .. _new-equipment-resource:
 
 Creating a new MSL Resource
@@ -218,3 +223,4 @@ Please follow the `style guide`_.
 .. _Raicol Crystals: https://raicol.com/
 .. _Greisinger: https://www.greisinger.de/
 .. _IsoTech: https://isotech.co.uk/
+.. _Vaisala: https://www.vaisala.com/en

@@ -8,7 +8,7 @@ To install MSL-Equipment run
 
 .. code-block:: console
 
-   pip install https://github.com/MSLNZ/msl-equipment/releases/download/v0.1.0/msl_equipment-0.1.0-py2.py3-none-any.whl
+   pip install https://github.com/MSLNZ/msl-equipment/releases/download/v0.2.0/msl_equipment-0.2.0-py3-none-any.whl
 
 Alternatively, using the `MSL Package Manager`_ run
 

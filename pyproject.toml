@@ -1,0 +1,211 @@
+[project]
+name = "msl-equipment"
+dynamic = ["version"]
+requires-python = ">= 3.8"
+description = "Manage and interface with equipment in the laboratory"
+license = {file = "LICENSE.txt"}
+readme = "README.md"
+keywords = [
+    "MSL",
+    "equipment",
+    "measurement",
+    "acquisition",
+    "17025",
+]
+authors = [
+    {name = "Measurement Standards Laboratory of New Zealand", email = "info@measurement.govt.nz"},
+]
+maintainers = [
+    {name = "Joseph Borbely", email = "joseph.borbely@measurement.govt.nz"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development",
+]
+dependencies = [
+    "msl-loadlib",
+    "pyserial",
+    "pyzmq",
+]
+
+[project.urls]
+Changelog = "https://mslnz.github.io/msl-equipment/about/release-notes/"
+Documentation = "https://mslnz.github.io/msl-equipment/"
+Homepage = "https://mslnz.github.io/msl-equipment/"
+Issues = "https://github.com/MSLNZ/msl-equipment/issues"
+Source = "https://github.com/MSLNZ/msl-equipment"
+
+[project.optional-dependencies]
+resources = [
+    "msl-equipment-resources",
+]
+
+[dependency-groups]
+doc = [
+    "black>=24.8.0",
+    "mike>=2.1.3",
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.6.16",
+    "mkdocstrings-python>=1.11.1",
+]
+lint = [
+    "ruff>=0.12.5",
+]
+test = [
+    "nidaqmx>=1.0.2",
+    "pytest>=8.3.5",
+    "pytest-cov>=5.0.0",
+    "pyvisa>=1.14.1",
+    "pyvisa-py>=0.7.2",
+]
+type = [
+    "basedpyright>=1.31.0",
+    "mypy>=1.14.1",
+]
+dev = [
+    {include-group = "doc"},
+    {include-group = "lint"},
+    {include-group = "test"},
+    {include-group = "type"},
+]
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[tool.uv.sources]
+msl-equipment-resources = { workspace = true }
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/msl/equipment/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/msl"]
+
+[tool.hatch.version.raw-options]
+git_describe_command = ["git", "describe", "--dirty", "--tags", "--long", "--match", "v*"]
+
+[tool.pytest.ini_options]
+cache_dir = ".cache/pytest"
+consider_namespace_packages = true
+addopts = [
+    "--cov=src",
+    "--cov-report=html",
+    "--cov-config=pyproject.toml",
+    "--verbose",
+    "--doctest-modules",
+    "--doctest-glob=*.md",
+    "--import-mode=importlib",
+]
+doctest_optionflags = "ELLIPSIS"
+
+[tool.coverage.run]
+branch = true
+data_file = ".cache/coverage/.coverage"
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "pragma: no branch",
+  "if TYPE_CHECKING:",
+  "if __name__ == .__main__.:",
+]
+include_namespace_packages = true
+
+[tool.coverage.html]
+directory = ".cache/coverage"
+title = "MSL-Equipment coverage report"
+
+[tool.mypy]
+cache_dir = ".cache/mypy"
+strict = true
+strict_bytes = true
+
+# with the environment variable MYPYPATH=src defined, namespace_packages=true and
+# explicit_package_bases=true, the following error goes away
+#   Source file found twice under different module names: "equipment" and "msl.equipment"
+# https://mypy.readthedocs.io/en/stable/running_mypy.html#mapping-file-paths-to-modules
+namespace_packages = true
+explicit_package_bases = true
+
+allow_redefinition = false
+allow_untyped_globals = false
+disallow_any_decorated = true
+disallow_any_explicit = true
+disallow_any_expr = true
+disallow_any_unimported = true
+ignore_missing_imports = false
+implicit_optional = false
+local_partial_types = true
+scripts_are_modules = true
+warn_no_return = true
+warn_unreachable = true
+
+[tool.basedpyright]
+failOnWarnings = true
+pythonVersion = "3.8"
+typeCheckingMode = "recommended"
+useLibraryCodeForTypes = false
+exclude = [
+    "**/.*",
+    "**/__pycache__",
+    "**/_version.py",
+]
+
+[tool.ruff]
+cache-dir = ".cache/ruff"
+line-length = 120
+exclude = [
+    ".cache",
+    ".git",
+    ".github",
+    ".venv",
+    "build",
+    "dist",
+    "venv",
+    "**/_version.py",
+]
+namespace-packages = ["src/msl"]
+target-version = "py38"
+
+[tool.ruff.lint.isort]
+known-first-party = ["msl.equipment"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D203", # one-blank-line-before-class
+    "D213", # multi-line-summary-second-line
+    "COM812", # missing-trailing-comma
+    "ISC001", # single-line-implicit-string-concatenation
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = [
+    "D100", # Missing docstring in public module
+    "D103", # Missing docstring in public function
+    "S101", # Use of `assert` detected
+    "INP001", # implicit-namespace-package
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

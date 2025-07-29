@@ -11,4 +11,4 @@ def cleanup():
     This cleanup method avoids getting the following exception
       ValueError: the environment variable is longer than 32767 characters
     """
-    os.environ['PATH'] = os.pathsep.join(item for item in set(os.environ['PATH'].split(os.pathsep)))
+    os.environ["PATH"] = os.pathsep.join(item for item in set(os.environ["PATH"].split(os.pathsep)))

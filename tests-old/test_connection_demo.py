@@ -8,7 +8,6 @@ from msl.equipment.resources.picotech.picoscope.picoscope import PicoScope
 
 
 class MyConnection(Connection):
-
     def __init__(self, record):
         super(MyConnection, self).__init__(record)
 
@@ -307,41 +306,41 @@ def test_return_type_builtin():
     assert isinstance(x, list) and isinstance(x[0], float)
 
     x = demo.get_dict_of_bool1()
-    assert isinstance(x, dict) and isinstance(x['demo'], bool)
+    assert isinstance(x, dict) and isinstance(x["demo"], bool)
 
     x = demo.get_dict_of_bool2()
-    assert isinstance(x, dict) and isinstance(x['demo'], bool)
+    assert isinstance(x, dict) and isinstance(x["demo"], bool)
 
     x = demo.get_dict_of_str1()
-    assert isinstance(x, dict) and isinstance(x['demo'], str)
+    assert isinstance(x, dict) and isinstance(x["demo"], str)
 
     x = demo.get_dict_of_str2()
-    assert isinstance(x, dict) and isinstance(x['demo'], str)
+    assert isinstance(x, dict) and isinstance(x["demo"], str)
 
     x = demo.get_dict_of_bytes1()
-    assert isinstance(x, dict) and isinstance(x['demo'], bytes)
+    assert isinstance(x, dict) and isinstance(x["demo"], bytes)
 
     x = demo.get_dict_of_bytes2()
-    assert isinstance(x, dict) and isinstance(x['demo'], bytes)
+    assert isinstance(x, dict) and isinstance(x["demo"], bytes)
 
     x = demo.get_dict_of_int1()
-    assert isinstance(x, dict) and isinstance(x['demo'], int)
+    assert isinstance(x, dict) and isinstance(x["demo"], int)
 
     x = demo.get_dict_of_int2()
-    assert isinstance(x, dict) and isinstance(x['demo'], int)
+    assert isinstance(x, dict) and isinstance(x["demo"], int)
 
     x = demo.get_dict_of_float1()
-    assert isinstance(x, dict) and isinstance(x['demo'], float)
+    assert isinstance(x, dict) and isinstance(x["demo"], float)
 
     x = demo.get_dict_of_float2()
-    assert isinstance(x, dict) and isinstance(x['demo'], float)
+    assert isinstance(x, dict) and isinstance(x["demo"], float)
 
     x = demo.get_multiple1()
     assert len(x) == 5
     assert isinstance(x[0], str)
     assert isinstance(x[1], float)
     assert isinstance(x[2], float)
-    assert isinstance(x[3], dict) and isinstance(x[3]['demo'], int)
+    assert isinstance(x[3], dict) and isinstance(x[3]["demo"], int)
     assert isinstance(x[4], bytes)
 
 
@@ -349,4 +348,4 @@ def test_return_type_object():
     scope = ConnectionDemo(EquipmentRecord(), PicoScope)
 
     x = scope.channel()
-    assert isinstance(x, dict) and x['demo'] == PicoScopeChannel
+    assert isinstance(x, dict) and x["demo"] == PicoScopeChannel

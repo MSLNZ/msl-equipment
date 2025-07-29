@@ -115,6 +115,9 @@ addopts = [
     "--doctest-modules",
     "--doctest-glob=*.md",
     "--import-mode=importlib",
+    "--ignore=tests-old/",
+    "--ignore=packages/",
+    "--ignore=src/",
 ]
 doctest_optionflags = "ELLIPSIS"
 

@@ -16,8 +16,8 @@ from msl.equipment.record_types import EquipmentRecord
 from test_connection_socket import echo_server_tcp
 from test_connection_socket import get_available_port
 
-pyvisa_version = tuple(map(int, pyvisa.__version__.split('.')))
-VISA_LIBRARY = '@ni' if pyvisa_version < (1, 11) else '@ivi'
+pyvisa_version = tuple(map(int, pyvisa.__version__.split(".")))
+VISA_LIBRARY = "@ni" if pyvisa_version < (1, 11) else "@ivi"
 
 try:
     pyvisa.ResourceManager(VISA_LIBRARY)
@@ -29,82 +29,82 @@ else:
 
 def teardown_module():
     import cleanup_os_environ
+
     cleanup_os_environ.cleanup()
 
 
-@pytest.mark.skipif(not HAS_NI_VISA, reason='NI-VISA is not installed')
+@pytest.mark.skipif(not HAS_NI_VISA, reason="NI-VISA is not installed")
 def test_resource_manager():
     assert isinstance(ConnectionPyVISA.resource_manager(), pyvisa.ResourceManager)
-    assert isinstance(ConnectionPyVISA.resource_manager('@ni'), pyvisa.ResourceManager)
-    assert isinstance(ConnectionPyVISA.resource_manager('@ivi'), pyvisa.ResourceManager)
-    assert isinstance(ConnectionPyVISA.resource_manager('@py'), pyvisa.ResourceManager)
+    assert isinstance(ConnectionPyVISA.resource_manager("@ni"), pyvisa.ResourceManager)
+    assert isinstance(ConnectionPyVISA.resource_manager("@ivi"), pyvisa.ResourceManager)
+    assert isinstance(ConnectionPyVISA.resource_manager("@py"), pyvisa.ResourceManager)
 
 
 def test_resource_class():
-    backends = (VISA_LIBRARY, '@py') if HAS_NI_VISA else ('@py',)
+    backends = (VISA_LIBRARY, "@py") if HAS_NI_VISA else ("@py",)
 
     for backend in backends:
-
         Config.PyVISA_LIBRARY = backend
 
-        for item in ('ASRL1', 'ASRL1::INSTR', 'COM1', 'LPT1', 'ASRL::/dev/prt/1', 'ASRLCOM1'):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
+        for item in ("ASRL1", "ASRL1::INSTR", "COM1", "LPT1", "ASRL::/dev/prt/1", "ASRLCOM1"):
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend="PyVISA"))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.SerialInstrument
 
-        for item in ('GPIB::2', 'GPIB::1::0::INSTR'):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
+        for item in ("GPIB::2", "GPIB::1::0::INSTR"):
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend="PyVISA"))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.GPIBInstrument
 
-        for item in ('GPIB2::INTFC', ):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
+        for item in ("GPIB2::INTFC",):
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend="PyVISA"))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.GPIBInterface
 
-        for item in ('PXI::15::INSTR', 'PXI::CHASSIS1::SLOT3', 'PXI0::2-12.1::INSTR'):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
+        for item in ("PXI::15::INSTR", "PXI::CHASSIS1::SLOT3", "PXI0::2-12.1::INSTR"):
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend="PyVISA"))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.PXIInstrument
 
-        for item in ('PXI0::MEMACC',):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
+        for item in ("PXI0::MEMACC",):
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend="PyVISA"))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.PXIMemory
 
-        for item in ('TCPIP::dev.company.com::INSTR',):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
+        for item in ("TCPIP::dev.company.com::INSTR",):
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend="PyVISA"))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.TCPIPInstrument
 
-        for item in ('TCPIP0::1.2.3.4::999::SOCKET',):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
+        for item in ("TCPIP0::1.2.3.4::999::SOCKET",):
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend="PyVISA"))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.TCPIPSocket
 
-        for item in ('USB::0x1234::125::A22-5::INSTR',):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
+        for item in ("USB::0x1234::125::A22-5::INSTR",):
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend="PyVISA"))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.USBInstrument
 
-        for item in ('USB::0x5678::0x33::SN999::1::RAW',):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
+        for item in ("USB::0x5678::0x33::SN999::1::RAW",):
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend="PyVISA"))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.USBRaw
 
-        for item in ('VXI::1::BACKPLANE',):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
+        for item in ("VXI::1::BACKPLANE",):
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend="PyVISA"))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.VXIBackplane
 
-        for item in ('VXI::MEMACC',):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
+        for item in ("VXI::MEMACC",):
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend="PyVISA"))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.VXIMemory
 
-        for item in ('VXI0::1::INSTR', 'VXI0::SERVANT'):
-            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend='PyVISA'))
+        for item in ("VXI0::1::INSTR", "VXI0::SERVANT"):
+            record = EquipmentRecord(connection=ConnectionRecord(address=item, backend="PyVISA"))
             assert ConnectionPyVISA.resource_class(record) == pyvisa.resources.VXIInstrument
 
     with pytest.raises(ValueError):
-        ConnectionPyVISA.resource_manager('@invalid')
+        ConnectionPyVISA.resource_manager("@invalid")
 
 
 def test_timeout_and_termination():
-    Config.PyVISA_LIBRARY = '@py'
+    Config.PyVISA_LIBRARY = "@py"
 
-    address = '127.0.0.1'
+    address = "127.0.0.1"
     port = get_available_port()
-    term = b'xyz'
+    term = b"xyz"
 
     t = threading.Thread(target=echo_server_tcp, args=(address, port, term))
     t.daemon = True
@@ -114,28 +114,24 @@ def test_timeout_and_termination():
 
     record = EquipmentRecord(
         connection=ConnectionRecord(
-            address='TCPIP::{}::{}::SOCKET'.format(address, port),
-            backend='PyVISA',
-            properties={'termination': term, 'timeout': 10}
+            address="TCPIP::{}::{}::SOCKET".format(address, port),
+            backend="PyVISA",
+            properties={"termination": term, "timeout": 10},
         )
     )
 
     record2 = EquipmentRecord(
         connection=ConnectionRecord(
-            address='TCPIP::{}::{}::SOCKET'.format(address, port),
-            backend='PyVISA',
-            properties={
-                'write_termination': b'abc',
-                'read_termination': '123',
-                'timeout': 1000
-            }
+            address="TCPIP::{}::{}::SOCKET".format(address, port),
+            backend="PyVISA",
+            properties={"write_termination": b"abc", "read_termination": "123", "timeout": 1000},
         )
     )
 
     record3 = EquipmentRecord(
         connection=ConnectionRecord(
-            address='TCPIP::{}::{}::SOCKET'.format(address, port),
-            backend='PyVISA',
+            address="TCPIP::{}::{}::SOCKET".format(address, port),
+            backend="PyVISA",
         )
     )
 
@@ -151,9 +147,9 @@ def test_timeout_and_termination():
     dev2 = record2.connect()
     assert dev2.timeout == 1000  # >100 so does not get converted
     assert dev2.timeout == dev2.resource.timeout
-    assert dev2.write_termination == 'abc'
+    assert dev2.write_termination == "abc"
     assert dev2.write_termination == dev2.resource.write_termination
-    assert dev2.read_termination == '123'
+    assert dev2.read_termination == "123"
     assert dev2.read_termination == dev2.resource.read_termination
 
     dev3 = record3.connect()
@@ -166,13 +162,13 @@ def test_timeout_and_termination():
     assert dev3.read_termination == dev3.resource.read_termination
 
     dev.timeout = 1234
-    dev.write_termination = 'hello'
-    dev.read_termination = 'goodbye'
+    dev.write_termination = "hello"
+    dev.read_termination = "goodbye"
     assert dev.timeout == 1234
     assert dev.timeout == dev.resource.timeout
-    assert dev.write_termination == 'hello'
+    assert dev.write_termination == "hello"
     assert dev.write_termination == dev.resource.write_termination
-    assert dev.read_termination == 'goodbye'
+    assert dev.read_termination == "goodbye"
     assert dev.read_termination == dev.resource.read_termination
 
     del dev.timeout
@@ -199,9 +195,9 @@ def test_timeout_and_termination():
     assert math.isinf(dev.timeout)
     assert dev.timeout == dev.resource.timeout
 
-    assert dev.query('*IDN?') == '*IDN?'
+    assert dev.query("*IDN?") == "*IDN?"
 
-    dev.write('SHUTDOWN')
+    dev.write("SHUTDOWN")
     dev.disconnect()
     dev2.disconnect()
     dev3.disconnect()

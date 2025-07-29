@@ -1,0 +1,28 @@
+name: CI
+
+on: [push, pull_request]
+
+env:
+  PY_COLORS: 1
+  COLUMNS: 110
+
+jobs:
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, windows, macos]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: false
+      - name: Install packages and dependencies
+        run: uv sync --python ${{ matrix.python-version }} --extra resources --no-dev --group test
+      - name: Run tests
+        run: uv run --python ${{ matrix.python-version }} --extra resources --no-dev --group test -- pytest

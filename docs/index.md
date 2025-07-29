@@ -1,4 +1,4 @@
-# msl-equipment
+# Overview
 
 !!! info
     The docs are being rewritten. See [here](https://msl-equipment.readthedocs.io/en/latest/index.html) for the old docs.

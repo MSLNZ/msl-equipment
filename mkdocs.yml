@@ -56,8 +56,18 @@ nav:
     - license.md
   - Schema Classes:
     - schema/index.md
+    - schema/accessories.md
     - schema/alteration.md
     - schema/equipment.md
+    - schema/financial.md
+    - schema/firmware.md
+    - schema/maintenance.md
+    - schema/measurand.md
+    - schema/quality_manual.md
+    - schema/reference_materials.md
+    - schema/specifications.md
+    - schema/specified_requirements.md
+    - schema/status.md
 
 markdown_extensions:
   - admonition  # enables: !!! tip

@@ -17,11 +17,51 @@
          <lastmod>2025-07-29</lastmod>
     </url>
     <url>
+         <loc>https://github.com/MSLNZ/msl-equipment/dev/schema/accessories/</loc>
+         <lastmod>2025-07-29</lastmod>
+    </url>
+    <url>
          <loc>https://github.com/MSLNZ/msl-equipment/dev/schema/alteration/</loc>
          <lastmod>2025-07-29</lastmod>
     </url>
     <url>
          <loc>https://github.com/MSLNZ/msl-equipment/dev/schema/equipment/</loc>
+         <lastmod>2025-07-29</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/MSLNZ/msl-equipment/dev/schema/financial/</loc>
+         <lastmod>2025-07-29</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/MSLNZ/msl-equipment/dev/schema/firmware/</loc>
+         <lastmod>2025-07-29</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/MSLNZ/msl-equipment/dev/schema/maintenance/</loc>
+         <lastmod>2025-07-29</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/MSLNZ/msl-equipment/dev/schema/measurand/</loc>
+         <lastmod>2025-07-29</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/MSLNZ/msl-equipment/dev/schema/quality_manual/</loc>
+         <lastmod>2025-07-29</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/MSLNZ/msl-equipment/dev/schema/reference_materials/</loc>
+         <lastmod>2025-07-29</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/MSLNZ/msl-equipment/dev/schema/specifications/</loc>
+         <lastmod>2025-07-29</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/MSLNZ/msl-equipment/dev/schema/specified_requirements/</loc>
+         <lastmod>2025-07-29</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/MSLNZ/msl-equipment/dev/schema/status/</loc>
          <lastmod>2025-07-29</lastmod>
     </url>
 </urlset>

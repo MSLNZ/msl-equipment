@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://github.com/MSLNZ/msl-equipment/dev/schema/equipment/">
+        <link rel="canonical" href="https://github.com/MSLNZ/msl-equipment/dev/schema/quality_manual/">
       
       
-        <link rel="prev" href="../alteration/">
+        <link rel="prev" href="../measurand/">
       
       
-        <link rel="next" href="../financial/">
+        <link rel="next" href="../reference_materials/">
       
       
       <link rel="icon" href="../../assets/images/favicon.ico">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Equipment - MSL Equipment</title>
+        <title>QualityManual - MSL Equipment</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#msl.equipment.schema.Equipment" class="md-skip">
+        <a href="#msl.equipment.schema.QualityManual" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Equipment
+              QualityManual
             
           </span>
         </div>
@@ -580,19 +580,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../equipment/" class="md-nav__link">
         
   
   
@@ -603,7 +594,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -705,10 +695,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../quality_manual/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    QualityManual
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -719,6 +731,44 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#msl.equipment.schema.QualityManual.from_xml" class="md-nav__link">
+    <span class="md-ellipsis">
+      from_xml
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#msl.equipment.schema.QualityManual.to_xml" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_xml
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -843,6 +893,32 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#msl.equipment.schema.QualityManual.from_xml" class="md-nav__link">
+    <span class="md-ellipsis">
+      from_xml
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#msl.equipment.schema.QualityManual.to_xml" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_xml
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -860,7 +936,7 @@
   
 
 
-<h1 id="msl.equipment.schema.Equipment">Equipment<a class="headerlink" href="#msl.equipment.schema.Equipment" title="Permanent link">¤</a></h1>
+<h1 id="msl.equipment.schema.QualityManual">QualityManual<a class="headerlink" href="#msl.equipment.schema.QualityManual" title="Permanent link">¤</a></h1>
 
 
 <div class="doc doc-object doc-class">
@@ -871,7 +947,7 @@
     <div class="doc doc-contents first">
 
 
-        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_equipment" target="_blank">equipment</a> element in an equipment register.</p>
+        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_qualityManual" target="_blank">qualityManual</a> element in an equipment register.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -887,14 +963,30 @@
       <tbody>
           <tr class="doc-section-item">
             <td>
-                <code>alias</code>
+                <code>accessories</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="Accessories (msl.equipment.schema.Accessories)" href="../accessories/#msl.equipment.schema.Accessories">Accessories</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Additional accessories that may be required to use the equipment.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>documentation</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>An alternative name to associate with the equipment.</p>
+                <p>Information (such as URLs) about the manuals, datasheets, etc. for the equipment.</p>
               </div>
             </td>
             <td>
@@ -903,295 +995,67 @@
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>keywords</code>
+                <code>financial</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="Financial (msl.equipment.schema.Financial)" href="../financial/#msl.equipment.schema.Financial">Financial</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Financial information about the equipment.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>personnel_restrictions</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Information about the people (or team) who are qualified to use the equipment.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>service_agent</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Information about the people or company that are qualified to perform alterations and/or
+maintenance to the equipment.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>technical_procedures</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, ...]</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Keywords that describe the equipment.</p>
+                <p>The technical procedure(s) that depend on this equipment.</p>
               </div>
             </td>
             <td>
                   <code>()</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>id</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Identity in an equipment register.</p>
-              </div>
-            </td>
-            <td>
-                  <code>&#39;&#39;</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>manufacturer</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Name of manufacturer.</p>
-              </div>
-            </td>
-            <td>
-                  <code>&#39;&#39;</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>model</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Manufacturer's model number (or type identification).</p>
-              </div>
-            </td>
-            <td>
-                  <code>&#39;&#39;</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>serial</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Manufacturer's serial number (or other unique identification).</p>
-              </div>
-            </td>
-            <td>
-                  <code>&#39;&#39;</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>description</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>A short description about the equipment.</p>
-              </div>
-            </td>
-            <td>
-                  <code>&#39;&#39;</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>specifications</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-internal" title="Specifications (msl.equipment.schema.Specifications)" href="../specifications/#msl.equipment.schema.Specifications">Specifications</a> | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Specifications provided by the manufacturer of the equipment.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>location</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The usual location (laboratory) that the equipment is found in.</p>
-              </div>
-            </td>
-            <td>
-                  <code>&#39;&#39;</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>status</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-internal" title="Status (msl.equipment.schema.Status)" href="../status/#msl.equipment.schema.Status">Status</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The status of the equipment is an indication of whether the equipment is active (in use)
-or inactive (not in use).</p>
-              </div>
-            </td>
-            <td>
-                  <code><span title="msl.equipment.schema.Status.Active">Active</span></code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>loggable</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Whether measurements from the equipment should be logged. Equipment that monitor
-(for example) pressure, temperature or humidity of a laboratory environment are considered
-as loggable.</p>
-              </div>
-            </td>
-            <td>
-                  <code>False</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>traceable</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Whether the equipment is used for a traceable measurement.</p>
-              </div>
-            </td>
-            <td>
-                  <code>False</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>calibrations</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title="Measurand (msl.equipment.schema.Measurand)" href="../measurand/#msl.equipment.schema.Measurand">Measurand</a>, ...]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The calibration history.</p>
-              </div>
-            </td>
-            <td>
-                  <code>()</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>maintenance</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title="Maintenance (msl.equipment.schema.Maintenance)" href="../maintenance/#msl.equipment.schema.Maintenance">Maintenance</a>, ...]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The maintenance history and maintenance plan.</p>
-              </div>
-            </td>
-            <td>
-                  <code>()</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>alterations</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title="Alteration (msl.equipment.schema.Alteration)" href="../alteration/#msl.equipment.schema.Alteration">Alteration</a>, ...]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The alteration history.</p>
-              </div>
-            </td>
-            <td>
-                  <code>()</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>firmware</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title="Firmware (msl.equipment.schema.Firmware)" href="../firmware/#msl.equipment.schema.Firmware">Firmware</a>, ...]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The firmware version history.</p>
-              </div>
-            </td>
-            <td>
-                  <code>()</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>specified_requirements</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-internal" title="SpecifiedRequirements (msl.equipment.schema.SpecifiedRequirements)" href="../specified_requirements/#msl.equipment.schema.SpecifiedRequirements">SpecifiedRequirements</a> | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Verification that equipment conforms with specified requirements before
-being placed or returned into service.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>reference_materials</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-internal" title="ReferenceMaterials (msl.equipment.schema.ReferenceMaterials)" href="../reference_materials/#msl.equipment.schema.ReferenceMaterials">ReferenceMaterials</a> | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Documentation of reference materials, results, acceptance criteria, relevant
-dates and the period of validity.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>quality_manual</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-internal" title="QualityManual (msl.equipment.schema.QualityManual)" href="../quality_manual/#msl.equipment.schema.QualityManual">QualityManual</a> | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Information that is specified in Section 4.3.6 of the MSL Quality Manual.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
             </td>
           </tr>
       </tbody>
@@ -1215,6 +1079,104 @@ dates and the period of validity.</p>
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="msl.equipment.schema.QualityManual.from_xml" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">from_xml</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#msl.equipment.schema.QualityManual.from_xml" class="headerlink" title="Permanent link">¤</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="QualityManual (msl.equipment.schema.QualityManual)" href="#msl.equipment.schema.QualityManual">QualityManual</a></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Returns a <a class="autorefs autorefs-internal" href="#msl.equipment.schema.QualityManual">QualityManual</a> instance from an XML element.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>element</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_qualityManual" target="_blank">qualityManual</a> XML element from an equipment register.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="msl.equipment.schema.QualityManual.to_xml" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">to_xml</span>
+
+
+<a href="#msl.equipment.schema.QualityManual.to_xml" class="headerlink" title="Permanent link">¤</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">to_xml</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Convert the <a class="autorefs autorefs-internal" href="#msl.equipment.schema.QualityManual">QualityManual</a> class to an XML element.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The <a class="autorefs autorefs-internal" href="#msl.equipment.schema.QualityManual">QualityManual</a> as an XML element.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
 
 
 
@@ -1258,7 +1220,7 @@ dates and the period of validity.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../alteration/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Alteration">
+          <a href="../measurand/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Measurand">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1268,20 +1230,20 @@ dates and the period of validity.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Alteration
+                Measurand
               </div>
             </div>
           </a>
         
         
           
-          <a href="../financial/" class="md-footer__link md-footer__link--next" aria-label="Next: Financial">
+          <a href="../reference_materials/" class="md-footer__link md-footer__link--next" aria-label="Next: ReferenceMaterials">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Financial
+                ReferenceMaterials
               </div>
             </div>
             <div class="md-footer__button md-icon">

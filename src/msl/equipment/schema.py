@@ -5,7 +5,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date as _date
 from enum import Enum
+from typing import TYPE_CHECKING
 from xml.etree.ElementTree import Element, SubElement
+
+if TYPE_CHECKING:
+    from typing import TypeVar
+
+    C = TypeVar("C", bound="AnyElement")
 
 
 class Status(Enum):
@@ -31,7 +37,30 @@ class Status(Enum):
     Retired = "Retired"
 
 
-class Accessories(Element):
+class AnyElement(Element):
+    """Represents the [any][type_any]{:target="_blank"} type in the XML Schema Definition.
+
+    It is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"}.
+    """
+
+    @classmethod
+    def from_xml(cls: type[C], element: Element[str]) -> C:  # noqa: PYI019
+        """Copies an XML element.
+
+        Parameters:
+            element: An XML element from an equipment register.
+
+        Returns:
+            The sub-class instance.
+        """
+        c = cls(element.tag, attrib=element.attrib)
+        c.tail = element.tail
+        c.text = element.text
+        c.extend(element)
+        return c
+
+
+class Accessories(AnyElement):
     """Additional accessories that may be required to use the equipment.
 
     Since this class is currently represented by the [any][type_any]{:target="_blank"} type in the
@@ -56,10 +85,13 @@ class Alteration:
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Alteration:
-        """Returns an [Alteration][msl.equipment.schema.Alteration] instance from an XML element.
+        """Convert an XML element into an [Alteration][msl.equipment.schema.Alteration] instance.
 
         Parameters:
             element: An [alteration][type_alteration]{:target="_blank"} XML element from an equipment register.
+
+        Returns:
+            The [Alteration][msl.equipment.schema.Alteration] instance.
         """
         return cls(
             date=_date.fromisoformat(element.attrib["date"]),
@@ -68,7 +100,7 @@ class Alteration:
         )
 
     def to_xml(self) -> Element[str]:
-        """Convert the [Alteration][msl.equipment.schema.Alteration] class to an XML element.
+        """Convert the [Alteration][msl.equipment.schema.Alteration] class into an XML element.
 
         Returns:
             The [Alteration][msl.equipment.schema.Alteration] as an XML element.
@@ -94,21 +126,28 @@ class Financial:
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Financial:
-        """Returns a [Financial][msl.equipment.schema.Financial] instance from an XML element.
+        """Convert an XML element into an [Financial][msl.equipment.schema.Financial] instance.
 
         Parameters:
             element: A [financial][type_financial]{:target="_blank"} XML element from an equipment register.
+
+        Returns:
+            The [Financial][msl.equipment.schema.Financial] instance.
         """
-        wed = element.findtext("warrantyExpirationDate")
-        yp = element.findtext("yearPurchased")
-        return cls(
-            asset_number=element.findtext("assetNumber") or "",
-            warranty_expiration_date=wed if wed is None else _date.fromisoformat(wed),
-            year_purchased=0 if yp is None else int(yp),
-        )
+        # Schema defines <financial> using xsd:all, which allows sub-elements to appear (or not appear) in any order
+        # Using str.endswith() allows for ignoring XML namespaces that may be associated with each tag
+        asset, warranty, year = "", None, 0
+        for child in element:
+            if child.tag.endswith("assetNumber"):
+                asset = child.text or ""
+            elif child.tag.endswith("warrantyExpirationDate"):
+                warranty = _date.fromisoformat(child.text or "")
+            else:
+                year = int(child.text or 0)
+        return cls(asset_number=asset, warranty_expiration_date=warranty, year_purchased=year)
 
     def to_xml(self) -> Element[str]:
-        """Convert the [Financial][msl.equipment.schema.Financial] class to an XML element.
+        """Convert the [Financial][msl.equipment.schema.Financial] class into an XML element.
 
         Returns:
             The [Financial][msl.equipment.schema.Financial] as an XML element.
@@ -168,32 +207,43 @@ class QualityManual:
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> QualityManual:
-        """Returns a [QualityManual][msl.equipment.schema.QualityManual] instance from an XML element.
+        """Convert an XML element into an [QualityManual][msl.equipment.schema.QualityManual] instance.
 
         Parameters:
             element: A [qualityManual][type_qualityManual]{:target="_blank"} XML element from an equipment register.
-        """
-        a = element.find("accessories")
-        f = element.find("financial")
 
-        if a is not None:
-            tail, text, children = a.tail, a.text, tuple(a)
-            a = Accessories(a.tag, attrib=a.attrib)
-            a.tail = tail
-            a.text = text
-            a.extend(children)
+        Returns:
+            The [QualityManual][msl.equipment.schema.QualityManual] instance.
+        """
+        # Schema defines <qualityManual> using xsd:all, which allows sub-elements to appear (or not appear) in any order
+        # Using str.endswith() allows for ignoring XML namespaces that may be associated with each tag
+        tp: tuple[str, ...]
+        a, d, f, pr, sa, tp = None, "", None, "", "", ()
+        for child in element:
+            if child.tag.endswith("accessories"):
+                a = Accessories.from_xml(child)
+            elif child.tag.endswith("documentation"):
+                d = child.text or ""
+            elif child.tag.endswith("financial"):
+                f = Financial.from_xml(child)
+            elif child.tag.endswith("personnelRestrictions"):
+                pr = child.text or ""
+            elif child.tag.endswith("serviceAgent"):
+                sa = child.text or ""
+            else:
+                tp = tuple(i.text for i in child if i.text)
 
         return cls(
             accessories=a,
-            documentation=element.findtext("documentation", ""),
-            financial=None if f is None else Financial.from_xml(f),
-            personnel_restrictions=element.findtext("personnelRestrictions", ""),
-            service_agent=element.findtext("serviceAgent", ""),
-            technical_procedures=tuple(i.text for i in element.iterfind("technicalProcedures/id") if i.text),
+            documentation=d,
+            financial=f,
+            personnel_restrictions=pr,
+            service_agent=sa,
+            technical_procedures=tp,
         )
 
     def to_xml(self) -> Element[str]:
-        """Convert the [QualityManual][msl.equipment.schema.QualityManual] class to an XML element.
+        """Convert the [QualityManual][msl.equipment.schema.QualityManual] class into an XML element.
 
         Returns:
             The [QualityManual][msl.equipment.schema.QualityManual] as an XML element.
@@ -227,7 +277,7 @@ class QualityManual:
         return e
 
 
-class ReferenceMaterials(Element):
+class ReferenceMaterials(AnyElement):
     """Documentation of reference materials, results, acceptance criteria, relevant dates and the period of validity.
 
     Since this class is currently represented by the [any][type_any]{:target="_blank"} type in the
@@ -236,7 +286,7 @@ class ReferenceMaterials(Element):
     """
 
 
-class Specifications(Element):
+class Specifications(AnyElement):
     """Specifications provided by the manufacturer of the equipment.
 
     Typically, the specifications are specified on the website, datasheet and/or technical notes that a
@@ -248,7 +298,7 @@ class Specifications(Element):
     """
 
 
-class SpecifiedRequirements(Element):
+class SpecifiedRequirements(AnyElement):
     """Verification that equipment conforms with specified requirements before being placed or returned into service.
 
     Since this class is currently represented by the [any][type_any]{:target="_blank"} type in the

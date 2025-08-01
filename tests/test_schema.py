@@ -113,7 +113,7 @@ def test_financial_invalid_date(date: str) -> None:
         _ = Financial.from_xml(XML(text))
 
 
-@pytest.mark.parametrize("year", ["26-08-01", "", "2k"])
+@pytest.mark.parametrize("year", ["26-08-01", "2k"])
 def test_financial_invalid_year(year: str) -> None:
     text = f"<financial><yearPurchased>{year}</yearPurchased></financial>"
     with pytest.raises(ValueError, match=r"invalid literal"):

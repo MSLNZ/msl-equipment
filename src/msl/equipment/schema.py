@@ -126,7 +126,7 @@ class Financial:
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Financial:
-        """Convert an XML element into an [Financial][msl.equipment.schema.Financial] instance.
+        """Convert an XML element into a [Financial][msl.equipment.schema.Financial] instance.
 
         Parameters:
             element: A [financial][type_financial]{:target="_blank"} XML element from an equipment register.
@@ -171,7 +171,38 @@ class Financial:
 
 @dataclass(frozen=True)
 class Firmware:
-    """Represents the [firmware][type_firmware]{:target="_blank"} element in an equipment register."""
+    """Represents a [firmware][type_firmware]{:target="_blank"} `<version>` sub-element in an equipment register.
+
+    Parameters:
+        version: Firmware version number.
+        date: The date that the firmware was initially at or changed to `version`.
+    """
+
+    version: str
+    date: _date
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> Firmware:
+        """Convert an XML element into a [Firmware][msl.equipment.schema.Firmware] instance.
+
+        Parameters:
+            element: A [firmware][type_firmware]{:target="_blank"} `<version>` XML sub-element
+                from an equipment register.
+
+        Returns:
+            The [Firmware][msl.equipment.schema.Firmware] instance.
+        """
+        return cls(version=element.text or "", date=_date.fromisoformat(element.attrib["date"]))
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [Firmware][msl.equipment.schema.Firmware] class into a `<version>` XML element.
+
+        Returns:
+            The [Firmware][msl.equipment.schema.Firmware] as a `<version>` XML element.
+        """
+        e = Element("version", attrib={"date": self.date.isoformat()})
+        e.text = self.version
+        return e
 
 
 @dataclass(frozen=True)

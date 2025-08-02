@@ -3,7 +3,7 @@ from xml.etree.ElementTree import XML, Element, tostring
 
 import pytest
 
-from msl.equipment import Alteration, Financial, QualityManual, Status
+from msl.equipment import Alteration, Financial, Firmware, QualityManual, Status
 
 
 def test_alteration() -> None:
@@ -118,6 +118,25 @@ def test_financial_invalid_year(year: str) -> None:
     text = f"<financial><yearPurchased>{year}</yearPurchased></financial>"
     with pytest.raises(ValueError, match=r"invalid literal"):
         _ = Financial.from_xml(XML(text))
+
+
+def test_firmware() -> None:
+    text = b'<version date="2025-01-14">1.4.0b</version>'
+    f = Firmware.from_xml(XML(text))
+    assert f.version == "1.4.0b"
+    assert f.date == date(2025, 1, 14)
+    assert tostring(f.to_xml()) == text
+
+
+def test_firmware_from_xml_no_date() -> None:
+    with pytest.raises(KeyError, match=r"date"):
+        _ = Firmware.from_xml(Element("not used"))
+
+
+@pytest.mark.parametrize("date", ["26-08-01", "", "Sunday"])
+def test_firmware_from_xml_invalid_date(date: str) -> None:
+    with pytest.raises(ValueError, match=r"Invalid isoformat string"):
+        _ = Firmware.from_xml(Element("not used", date=date))
 
 
 def test_quality_manual_empty() -> None:

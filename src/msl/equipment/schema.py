@@ -206,8 +206,147 @@ class Firmware:
 
 
 @dataclass(frozen=True)
+class CompletedTask:
+    """Represents the [completedTask][type_completedTask]{:target="_blank"} element in an equipment register.
+
+    Parameters:
+        task: A description of the task that was completed.
+        due_date: The date that the maintenance task was due to be completed.
+        performed_by: The person or company that performed the maintenance task.
+        completed_date: The date that the maintenance task was completed.
+    """
+
+    task: str
+    due_date: _date
+    performed_by: str
+    completed_date: _date
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> CompletedTask:
+        """Convert an XML element into a [CompletedTask][msl.equipment.schema.CompletedTask] instance.
+
+        Parameters:
+            element: A [completedTask][type_completedTask]{:target="_blank"} XML element from an equipment register.
+
+        Returns:
+            The [CompletedTask][msl.equipment.schema.CompletedTask] instance.
+        """
+        return cls(
+            task=element.text or "",
+            due_date=_date.fromisoformat(element.attrib["dueDate"]),
+            performed_by=element.attrib["performedBy"],
+            completed_date=_date.fromisoformat(element.attrib["completedDate"]),
+        )
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [CompletedTask][msl.equipment.schema.CompletedTask] class into an XML element.
+
+        Returns:
+            The [CompletedTask][msl.equipment.schema.CompletedTask] as an XML element.
+        """
+        attrib = {
+            "dueDate": self.due_date.isoformat(),
+            "completedDate": self.completed_date.isoformat(),
+            "performedBy": self.performed_by,
+        }
+
+        e = Element("task", attrib=attrib)
+        e.text = self.task
+        return e
+
+
+@dataclass(frozen=True)
+class PlannedTask:
+    """Represents the [plannedTask][type_plannedTask]{:target="_blank"} element in an equipment register.
+
+    Parameters:
+        task: A description of the task that is planned.
+        due_date: The date that the planned maintenance task is due to be completed.
+        performed_by: The person or company that will perform the planned maintenance task.
+    """
+
+    task: str
+    due_date: _date
+    performed_by: str = ""
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> PlannedTask:
+        """Convert an XML element into a [PlannedTask][msl.equipment.schema.PlannedTask] instance.
+
+        Parameters:
+            element: A [plannedTask][type_plannedTask]{:target="_blank"} XML element from an equipment register.
+
+        Returns:
+            The [PlannedTask][msl.equipment.schema.PlannedTask] instance.
+        """
+        return cls(
+            task=element.text or "",
+            due_date=_date.fromisoformat(element.attrib["dueDate"]),
+            performed_by=element.get("performedBy", ""),
+        )
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [PlannedTask][msl.equipment.schema.PlannedTask] class into an XML element.
+
+        Returns:
+            The [PlannedTask][msl.equipment.schema.PlannedTask] as an XML element.
+        """
+        attrib = {"dueDate": self.due_date.isoformat()}
+        if self.performed_by:
+            attrib["performedBy"] = self.performed_by
+
+        e = Element("task", attrib=attrib)
+        e.text = self.task
+        return e
+
+
+@dataclass(frozen=True)
 class Maintenance:
-    """Represents the [maintenance][type_maintenance]{:target="_blank"} element in an equipment register."""
+    """Represents the [maintenance][type_maintenance]{:target="_blank"} element in an equipment register.
+
+    Parameters:
+        planned: Maintenance tasks that are planned to be performed.
+        completed: Maintenance tasks that have been completed.
+    """
+
+    planned: tuple[PlannedTask, ...] = ()
+    completed: tuple[CompletedTask, ...] = ()
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> Maintenance:
+        """Convert an XML element into a [Maintenance][msl.equipment.schema.Maintenance] instance.
+
+        Parameters:
+            element: A [maintenance][type_maintenance]{:target="_blank"} XML element from an equipment register.
+
+        Returns:
+            The [Maintenance][msl.equipment.schema.Maintenance] instance.
+        """
+        if len(element) == 0:
+            return cls()
+
+        # Schema forces order, planned tasks then completed tasks (and both sub-elements must exist)
+        return cls(
+            planned=tuple(PlannedTask.from_xml(e) for e in element[0]),
+            completed=tuple(CompletedTask.from_xml(e) for e in element[1]),
+        )
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [Maintenance][msl.equipment.schema.Maintenance] class into an XML element.
+
+        Returns:
+            The [Maintenance][msl.equipment.schema.Maintenance] as an XML element.
+        """
+        e = Element("maintenance")
+        if not (self.planned or self.completed):
+            return e  # no maintenance plan
+
+        # planned must come before completed
+        planned = SubElement(e, "planned")
+        planned.extend(p.to_xml() for p in self.planned)
+        completed = SubElement(e, "completed")
+        completed.extend(c.to_xml() for c in self.completed)
+        return e
 
 
 @dataclass(frozen=True)

@@ -3,13 +3,26 @@
 from __future__ import annotations
 
 from .__about__ import __version__, version_tuple
-from .schema import Accessories, Alteration, Financial, Firmware, QualityManual, Status
+from .schema import (
+    Accessories,
+    Alteration,
+    CompletedTask,
+    Financial,
+    Firmware,
+    Maintenance,
+    PlannedTask,
+    QualityManual,
+    Status,
+)
 
 __all__: list[str] = [
     "Accessories",
     "Alteration",
+    "CompletedTask",
     "Financial",
     "Firmware",
+    "Maintenance",
+    "PlannedTask",
     "QualityManual",
     "Status",
     "__version__",

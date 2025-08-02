@@ -3,7 +3,7 @@ from xml.etree.ElementTree import XML, Element, tostring
 
 import pytest
 
-from msl.equipment import Alteration, Financial, Firmware, QualityManual, Status
+from msl.equipment import Alteration, Financial, Firmware, Maintenance, QualityManual, Status
 
 
 def test_alteration() -> None:
@@ -137,6 +137,84 @@ def test_firmware_from_xml_no_date() -> None:
 def test_firmware_from_xml_invalid_date(date: str) -> None:
     with pytest.raises(ValueError, match=r"Invalid isoformat string"):
         _ = Firmware.from_xml(Element("not used", date=date))
+
+
+def test_maintenance_empty() -> None:
+    text = b"<maintenance />"
+    m = Maintenance.from_xml(XML(text))
+    assert len(m.planned) == 0
+    assert len(m.completed) == 0
+    assert tostring(m.to_xml()) == text
+
+
+def test_maintenance_two_planned_none_completed() -> None:
+    text = (
+        b"<maintenance>"
+        b"<planned>"
+        b'<task dueDate="2024-12-01">Refill helium gas</task>'
+        b'<task dueDate="2025-05-15" performedBy="Company X">Service laser</task>'
+        b"</planned>"
+        b"<completed />"
+        b"</maintenance>"
+    )
+    m = Maintenance.from_xml(XML(text))
+    assert len(m.planned) == 2  # noqa: PLR2004
+    assert m.planned[0].due_date == date(2024, 12, 1)
+    assert m.planned[0].performed_by == ""
+    assert m.planned[0].task == "Refill helium gas"
+    assert m.planned[1].due_date == date(2025, 5, 15)
+    assert m.planned[1].performed_by == "Company X"
+    assert m.planned[1].task == "Service laser"
+    assert len(m.completed) == 0
+    assert tostring(m.to_xml()) == text
+
+
+def test_maintenance_one_planned_one_completed() -> None:
+    text = (
+        b"<maintenance>"
+        b"<planned>"
+        b'<task dueDate="2025-05-15" performedBy="Company X">Service laser</task>'
+        b"</planned>"
+        b"<completed>"
+        b'<task dueDate="2024-12-01" completedDate="2024-12-02" performedBy="Tom, MSL">Refill helium gas</task>'
+        b"</completed>"
+        b"</maintenance>"
+    )
+    m = Maintenance.from_xml(XML(text))
+    assert len(m.planned) == 1
+    assert m.planned[0].due_date == date(2025, 5, 15)
+    assert m.planned[0].performed_by == "Company X"
+    assert m.planned[0].task == "Service laser"
+    assert len(m.completed) == 1
+    assert m.completed[0].due_date == date(2024, 12, 1)
+    assert m.completed[0].completed_date == date(2024, 12, 2)
+    assert m.completed[0].performed_by == "Tom, MSL"
+    assert m.completed[0].task == "Refill helium gas"
+    assert tostring(m.to_xml()) == text
+
+
+def test_maintenance_none_planned_two_completed() -> None:
+    text = (
+        b"<maintenance>"
+        b"<planned />"
+        b"<completed>"
+        b'<task dueDate="2025-05-15" completedDate="2025-05-15" performedBy="Company X">Service laser</task>'
+        b'<task dueDate="2024-12-01" completedDate="2024-12-02" performedBy="Tom, MSL">Refill helium gas</task>'
+        b"</completed>"
+        b"</maintenance>"
+    )
+    m = Maintenance.from_xml(XML(text))
+    assert len(m.planned) == 0
+    assert len(m.completed) == 2  # noqa: PLR2004
+    assert m.completed[0].due_date == date(2025, 5, 15)
+    assert m.completed[0].completed_date == date(2025, 5, 15)
+    assert m.completed[0].performed_by == "Company X"
+    assert m.completed[0].task == "Service laser"
+    assert m.completed[1].due_date == date(2024, 12, 1)
+    assert m.completed[1].completed_date == date(2024, 12, 2)
+    assert m.completed[1].performed_by == "Tom, MSL"
+    assert m.completed[1].task == "Refill helium gas"
+    assert tostring(m.to_xml()) == text
 
 
 def test_quality_manual_empty() -> None:

@@ -1,6 +1,4 @@
-"""Classes for the equipment-register schema."""
-
-from __future__ import annotations
+from __future__ import annotations  # noqa: D100
 
 from dataclasses import dataclass
 from datetime import date as _date
@@ -11,7 +9,7 @@ from xml.etree.ElementTree import Element, SubElement
 if TYPE_CHECKING:
     from typing import TypeVar
 
-    C = TypeVar("C", bound="AnyElement")
+    A = TypeVar("A", bound="Any")
 
 
 class Status(Enum):
@@ -37,57 +35,70 @@ class Status(Enum):
     Retired = "Retired"
 
 
-class AnyElement(Element):
-    """Represents the [any][type_any]{:target="_blank"} type in the XML Schema Definition.
+class Any(Element):
+    """Base class that represents the [any][type_any]{:target="_blank"} type in the XML Schema Definition."""
 
-    It is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"}.
-    """
+    def __init__(self, **attributes: str) -> None:
+        """Base class that represents the [any][type_any]{:target="_blank"} type in the XML Schema Definition.
+
+        Args:
+            attributes: All keyword arguments are used as the element's attributes.
+        """
+        super().__init__(self.tag, attrib={}, **attributes)
 
     @classmethod
-    def from_xml(cls: type[C], element: Element[str]) -> C:  # noqa: PYI019
-        """Copies an XML element.
+    def from_xml(cls: type[A], element: Element[str]) -> A:  # noqa: PYI019
+        """Copies an XML element into the [Any][msl.equipment.schema.Any] subclass.
 
-        Parameters:
+        Args:
             element: An XML element from an equipment register.
 
         Returns:
-            The sub-class instance.
+            The subclass instance.
         """
-        c = cls(element.tag, attrib=element.attrib)
+        c = cls(**element.attrib)
         c.tail = element.tail
         c.text = element.text
         c.extend(element)
         return c
 
 
-class Accessories(AnyElement):
+class Accessories(Any):
     """Additional accessories that may be required to use the equipment.
 
     Since this class is currently represented by the [any][type_any]{:target="_blank"} type in the
-    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"},
-    and it may be updated to be a more specific class at a later date.
+    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"}.
+    It may be updated to be a more specific class at a later date.
     """
+
+    tag: str = "accessories"
+    """The element's name."""
 
 
 @dataclass(frozen=True)
 class Alteration:
     """Represents the [alteration][type_alteration]{:target="_blank"} element in an equipment register.
 
-    Parameters:
+    Args:
         date: The date that the alteration was performed.
         details: The details of the alteration.
         performed_by: The person or company that performed the alteration.
     """
 
     date: _date
+    """The date that the alteration was performed."""
+
     details: str
-    performed_by: str = ""
+    """The details of the alteration."""
+
+    performed_by: str
+    """The person or company that performed the alteration."""
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Alteration:
         """Convert an XML element into an [Alteration][msl.equipment.schema.Alteration] instance.
 
-        Parameters:
+        Args:
             element: An [alteration][type_alteration]{:target="_blank"} XML element from an equipment register.
 
         Returns:
@@ -110,25 +121,55 @@ class Alteration:
         return e
 
 
+class AcceptanceCriteria(Any):
+    """Represents the acceptance criteria in a calibration [report][type_report]{:target="_blank"}.
+
+    Since this class is currently represented by the [any][type_any]{:target="_blank"} type in the
+    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"}.
+    It may be updated to be a more specific class at a later date.
+    """
+
+    tag: str = "acceptanceCriteria"
+    """The element's name."""
+
+
+class Conditions(Any):
+    """Conditions under which a [performance check][type_performanceCheck]{:target="_blank"} or calibration [report][type_report]{:target="_blank"} is valid.
+
+    Since this class is currently represented by the [any][type_any]{:target="_blank"} type in the
+    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"}.
+    It may be updated to be a more specific class at a later date.
+    """  # noqa: E501
+
+    tag: str = "conditions"
+    """The element's name."""
+
+
 @dataclass(frozen=True)
 class Financial:
     """Represents the [financial][type_financial]{:target="_blank"} element in an equipment register.
 
-    Parameters:
+    Args:
         asset_number: The asset number in the financial system.
         warranty_expiration_date: Approximate date that the warranty expires.
         year_purchased: Approximate year that the equipment was purchased.
+            A value of `0` represents that the year is unknown.
     """
 
     asset_number: str = ""
+    """The asset number in the financial system."""
+
     warranty_expiration_date: _date | None = None
+    """Approximate date that the warranty expires."""
+
     year_purchased: int = 0
+    """Approximate year that the equipment was purchased. A value of `0` represents that the year is unknown."""
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Financial:
         """Convert an XML element into a [Financial][msl.equipment.schema.Financial] instance.
 
-        Parameters:
+        Args:
             element: A [financial][type_financial]{:target="_blank"} XML element from an equipment register.
 
         Returns:
@@ -173,19 +214,22 @@ class Financial:
 class Firmware:
     """Represents a [firmware][type_firmware]{:target="_blank"} `<version>` sub-element in an equipment register.
 
-    Parameters:
+    Args:
         version: Firmware version number.
         date: The date that the firmware was initially at or changed to `version`.
     """
 
     version: str
+    """Firmware version number."""
+
     date: _date
+    """The date that the firmware was initially at or changed to `version`."""
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Firmware:
         """Convert an XML element into a [Firmware][msl.equipment.schema.Firmware] instance.
 
-        Parameters:
+        Args:
             element: A [firmware][type_firmware]{:target="_blank"} `<version>` XML sub-element
                 from an equipment register.
 
@@ -209,7 +253,7 @@ class Firmware:
 class CompletedTask:
     """Represents the [completedTask][type_completedTask]{:target="_blank"} element in an equipment register.
 
-    Parameters:
+    Args:
         task: A description of the task that was completed.
         due_date: The date that the maintenance task was due to be completed.
         performed_by: The person or company that performed the maintenance task.
@@ -217,15 +261,22 @@ class CompletedTask:
     """
 
     task: str
+    """A description of the task that was completed."""
+
     due_date: _date
+    """The date that the maintenance task was due to be completed."""
+
     performed_by: str
+    """The person or company that performed the maintenance task."""
+
     completed_date: _date
+    """The date that the maintenance task was completed."""
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> CompletedTask:
         """Convert an XML element into a [CompletedTask][msl.equipment.schema.CompletedTask] instance.
 
-        Parameters:
+        Args:
             element: A [completedTask][type_completedTask]{:target="_blank"} XML element from an equipment register.
 
         Returns:
@@ -259,21 +310,26 @@ class CompletedTask:
 class PlannedTask:
     """Represents the [plannedTask][type_plannedTask]{:target="_blank"} element in an equipment register.
 
-    Parameters:
+    Args:
         task: A description of the task that is planned.
         due_date: The date that the planned maintenance task is due to be completed.
         performed_by: The person or company that will perform the planned maintenance task.
     """
 
     task: str
+    """A description of the task that is planned."""
+
     due_date: _date
+    """The date that the planned maintenance task is due to be completed."""
+
     performed_by: str = ""
+    """The person or company that will perform the planned maintenance task."""
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> PlannedTask:
         """Convert an XML element into a [PlannedTask][msl.equipment.schema.PlannedTask] instance.
 
-        Parameters:
+        Args:
             element: A [plannedTask][type_plannedTask]{:target="_blank"} XML element from an equipment register.
 
         Returns:
@@ -304,19 +360,22 @@ class PlannedTask:
 class Maintenance:
     """Represents the [maintenance][type_maintenance]{:target="_blank"} element in an equipment register.
 
-    Parameters:
+    Args:
         planned: Maintenance tasks that are planned to be performed.
         completed: Maintenance tasks that have been completed.
     """
 
     planned: tuple[PlannedTask, ...] = ()
+    """Maintenance tasks that are planned to be performed."""
+
     completed: tuple[CompletedTask, ...] = ()
+    """Maintenance tasks that have been completed."""
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Maintenance:
         """Convert an XML element into a [Maintenance][msl.equipment.schema.Maintenance] instance.
 
-        Parameters:
+        Args:
             element: A [maintenance][type_maintenance]{:target="_blank"} XML element from an equipment register.
 
         Returns:
@@ -358,7 +417,7 @@ class Measurand:
 class QualityManual:
     """Represents the [qualityManual][type_qualityManual]{:target="_blank"} element in an equipment register.
 
-    Parameters:
+    Args:
         accessories: Additional accessories that may be required to use the equipment.
         documentation: Information (such as URLs) about the manuals, datasheets, etc. for the equipment.
         financial: Financial information about the equipment.
@@ -369,17 +428,29 @@ class QualityManual:
     """
 
     accessories: Accessories | None = None
+    """Additional accessories that may be required to use the equipment."""
+
     documentation: str = ""
+    """Information (such as URLs) about the manuals, datasheets, etc. for the equipment."""
+
     financial: Financial | None = None
+    """Financial information about the equipment."""
+
     personnel_restrictions: str = ""
+    """Information about the people (or team) who are qualified to use the equipment."""
+
     service_agent: str = ""
+    """Information about the people or company that are qualified to perform alterations
+    and/or maintenance to the equipment."""
+
     technical_procedures: tuple[str, ...] = ()
+    """The technical procedure(s) that depend on this equipment."""
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> QualityManual:
         """Convert an XML element into an [QualityManual][msl.equipment.schema.QualityManual] instance.
 
-        Parameters:
+        Args:
             element: A [qualityManual][type_qualityManual]{:target="_blank"} XML element from an equipment register.
 
         Returns:
@@ -387,8 +458,8 @@ class QualityManual:
         """
         # Schema defines <qualityManual> using xsd:all, which allows sub-elements to appear (or not appear) in any order
         # Using str.endswith() allows for ignoring XML namespaces that may be associated with each tag
-        tp: tuple[str, ...]
-        a, d, f, pr, sa, tp = None, "", None, "", "", ()
+        tp: tuple[str, ...] = ()
+        a, d, f, pr, sa = None, "", None, "", ""
         for child in element:
             if child.tag.endswith("accessories"):
                 a = Accessories.from_xml(child)
@@ -447,41 +518,50 @@ class QualityManual:
         return e
 
 
-class ReferenceMaterials(AnyElement):
+class ReferenceMaterials(Any):
     """Documentation of reference materials, results, acceptance criteria, relevant dates and the period of validity.
 
     Since this class is currently represented by the [any][type_any]{:target="_blank"} type in the
-    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"},
-    and it may be updated to be a more specific class at a later date.
+    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"}.
+    It may be updated to be a more specific class at a later date.
     """
 
+    tag: str = "referenceMaterials"
+    """The element's name."""
 
-class Specifications(AnyElement):
+
+class Specifications(Any):
     """Specifications provided by the manufacturer of the equipment.
 
     Typically, the specifications are specified on the website, datasheet and/or technical notes that a
     manufacturer provides.
 
     Since this class is currently represented by the [any][type_any]{:target="_blank"} type in the
-    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"},
-    and it may be updated to be a more specific class at a later date.
+    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"}.
+    It may be updated to be a more specific class at a later date.
     """
 
+    tag: str = "specifications"
+    """The element's name."""
 
-class SpecifiedRequirements(AnyElement):
+
+class SpecifiedRequirements(Any):
     """Verification that equipment conforms with specified requirements before being placed or returned into service.
 
     Since this class is currently represented by the [any][type_any]{:target="_blank"} type in the
-    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"},
-    and it may be updated to be a more specific class at a later date.
+    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"}.
+    It may be updated to be a more specific class at a later date.
     """
+
+    tag: str = "specifiedRequirements"
+    """The element's name."""
 
 
 @dataclass(frozen=True)
 class Equipment:
     """Represents the [equipment][type_equipment]{:target="_blank"} element in an equipment register.
 
-    Parameters:
+    Args:
         alias: An alternative name to associate with the equipment.
         keywords: Keywords that describe the equipment.
         id: Identity in an equipment register.

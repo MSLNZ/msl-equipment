@@ -1,9 +1,28 @@
+from __future__ import annotations
+
 from datetime import date
+from typing import TYPE_CHECKING
 from xml.etree.ElementTree import XML, Element, tostring
 
 import pytest
 
-from msl.equipment import Alteration, Financial, Firmware, Maintenance, QualityManual, Status
+from msl.equipment import (
+    AcceptanceCriteria,
+    Accessories,
+    Alteration,
+    Conditions,
+    Financial,
+    Firmware,
+    Maintenance,
+    QualityManual,
+    ReferenceMaterials,
+    Specifications,
+    SpecifiedRequirements,
+    Status,
+)
+
+if TYPE_CHECKING:
+    from msl.equipment.schema import Any
 
 
 def test_alteration() -> None:
@@ -52,6 +71,51 @@ def test_alteration_from_xml_date_missing() -> None:
 def test_alteration_from_xml_performed_by_missing() -> None:
     with pytest.raises(KeyError, match=r"performedBy"):
         _ = Alteration.from_xml(Element("alteration", date="2025-03-31"))
+
+
+@pytest.mark.parametrize(
+    ("cls", "tag"),
+    [
+        (Specifications, "specifications"),
+        (SpecifiedRequirements, "specifiedRequirements"),
+        (ReferenceMaterials, "referenceMaterials"),
+        (Accessories, "accessories"),
+        (Conditions, "conditions"),
+        (AcceptanceCriteria, "acceptanceCriteria"),
+    ],
+)
+def test_any_element_type_subclass(cls: type[Any], tag: str) -> None:
+    a = cls()
+    assert len(a) == 0
+    assert a.attrib == {}
+    assert a.tag == tag
+    assert a.tail is None
+    assert a.text is None
+
+    a = cls.from_xml(XML('<ignored one="1"/>'))
+    assert len(a) == 0
+    assert a.attrib == {"one": "1"}
+    assert a.tag == tag
+    assert a.tail is None
+    assert a.text is None
+
+    a = cls(foo="bar")
+    a.text = "baz"
+    a.append(XML('<a><notIgnored seven="7">7</notIgnored>tail</a>'))
+    assert len(a) == 1
+    assert a.attrib == {"foo": "bar"}
+    assert a.tag == tag
+    assert a.tail is None
+    assert a.text == "baz"
+    assert a[0].attrib == {}
+    assert a[0].tag == "a"
+    assert a[0].tail is None
+    assert a[0].text is None
+    assert len(a[0]) == 1
+    assert a[0][0].attrib == {"seven": "7"}
+    assert a[0][0].tag == "notIgnored"
+    assert a[0][0].tail == "tail"
+    assert a[0][0].text == "7"
 
 
 def test_financial_empty() -> None:

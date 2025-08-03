@@ -56,13 +56,18 @@ nav:
     - license.md
   - Schema Classes:
     - schema/index.md
+    - schema/acceptance_criteria.md
     - schema/accessories.md
     - schema/alteration.md
+    - schema/any.md
+    - schema/completed_task.md
+    - schema/conditions.md
     - schema/equipment.md
     - schema/financial.md
     - schema/firmware.md
     - schema/maintenance.md
     - schema/measurand.md
+    - schema/planned_task.md
     - schema/quality_manual.md
     - schema/reference_materials.md
     - schema/specifications.md

@@ -284,9 +284,10 @@ def test_maintenance_none_planned_two_completed() -> None:
 def test_quality_manual_empty() -> None:
     text = b"<qualityManual />"
     qm = QualityManual.from_xml(XML(text))
-    assert qm.accessories is None
+    assert len(qm.accessories) == 0
+    assert qm.accessories.attrib == {}
     assert qm.documentation == ""
-    assert qm.financial is None
+    assert qm.financial == Financial()
     assert qm.personnel_restrictions == ""
     assert qm.service_agent == ""
     assert len(qm.technical_procedures) == 0
@@ -304,7 +305,6 @@ def test_quality_manual_accessories() -> None:
         b"</qualityManual>"
     )
     qm = QualityManual.from_xml(XML(text))
-    assert qm.accessories is not None
     assert qm.accessories.tag == "accessories"
     assert qm.accessories.attrib == {"a": "a"}
     assert qm.accessories.text == "Any text"
@@ -323,7 +323,7 @@ def test_quality_manual_accessories() -> None:
     assert qm.accessories[1][0].text == "Text"
     assert qm.accessories[1][0].tail is None
     assert qm.documentation == ""
-    assert qm.financial is None
+    assert qm.financial == Financial()
     assert qm.personnel_restrictions == ""
     assert qm.service_agent == ""
     assert len(qm.technical_procedures) == 0
@@ -333,9 +333,10 @@ def test_quality_manual_accessories() -> None:
 def test_quality_manual_documentation() -> None:
     text = b"<qualityManual><documentation>https://link.com</documentation></qualityManual>"
     qm = QualityManual.from_xml(XML(text))
-    assert qm.accessories is None
+    assert len(qm.accessories) == 0
+    assert qm.accessories.attrib == {}
     assert qm.documentation == "https://link.com"
-    assert qm.financial is None
+    assert qm.financial == Financial()
     assert qm.personnel_restrictions == ""
     assert qm.service_agent == ""
     assert len(qm.technical_procedures) == 0
@@ -343,14 +344,18 @@ def test_quality_manual_documentation() -> None:
 
 
 def test_quality_manual_financial() -> None:
-    text = b"<qualityManual><financial><yearPurchased>1</yearPurchased></financial></qualityManual>"
+    text = (
+        b"<qualityManual>"
+        b"<financial><assetNumber>abc</assetNumber><yearPurchased>2000</yearPurchased></financial>"
+        b"</qualityManual>"
+    )
     qm = QualityManual.from_xml(XML(text))
-    assert qm.accessories is None
+    assert len(qm.accessories) == 0
+    assert qm.accessories.attrib == {}
     assert qm.documentation == ""
-    assert qm.financial is not None
-    assert qm.financial.asset_number == ""
+    assert qm.financial.asset_number == "abc"
     assert qm.financial.warranty_expiration_date is None
-    assert qm.financial.year_purchased == 1
+    assert qm.financial.year_purchased == 2000  # noqa: PLR2004
     assert qm.personnel_restrictions == ""
     assert qm.service_agent == ""
     assert len(qm.technical_procedures) == 0
@@ -360,9 +365,10 @@ def test_quality_manual_financial() -> None:
 def test_quality_manual_personnel_restrictions() -> None:
     text = b"<qualityManual><personnelRestrictions>Light team</personnelRestrictions></qualityManual>"
     qm = QualityManual.from_xml(XML(text))
-    assert qm.accessories is None
+    assert len(qm.accessories) == 0
+    assert qm.accessories.attrib == {}
     assert qm.documentation == ""
-    assert qm.financial is None
+    assert qm.financial == Financial()
     assert qm.personnel_restrictions == "Light team"
     assert qm.service_agent == ""
     assert len(qm.technical_procedures) == 0
@@ -372,9 +378,10 @@ def test_quality_manual_personnel_restrictions() -> None:
 def test_quality_manual_service_agent() -> None:
     text = b"<qualityManual><serviceAgent>MSL</serviceAgent></qualityManual>"
     qm = QualityManual.from_xml(XML(text))
-    assert qm.accessories is None
+    assert len(qm.accessories) == 0
+    assert qm.accessories.attrib == {}
     assert qm.documentation == ""
-    assert qm.financial is None
+    assert qm.financial == Financial()
     assert qm.personnel_restrictions == ""
     assert qm.service_agent == "MSL"
     assert len(qm.technical_procedures) == 0
@@ -384,9 +391,10 @@ def test_quality_manual_service_agent() -> None:
 def test_quality_manual_technical_procedures() -> None:
     text = b"<qualityManual><technicalProcedures><id>A</id><id>B</id><id>C.c</id></technicalProcedures></qualityManual>"
     qm = QualityManual.from_xml(XML(text))
-    assert qm.accessories is None
+    assert len(qm.accessories) == 0
+    assert qm.accessories.attrib == {}
     assert qm.documentation == ""
-    assert qm.financial is None
+    assert qm.financial == Financial()
     assert qm.personnel_restrictions == ""
     assert qm.service_agent == ""
     assert qm.technical_procedures == ("A", "B", "C.c")

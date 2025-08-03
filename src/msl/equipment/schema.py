@@ -1,6 +1,6 @@
 from __future__ import annotations  # noqa: D100
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date as _date
 from enum import Enum
 from typing import TYPE_CHECKING
@@ -427,13 +427,13 @@ class QualityManual:
         technical_procedures: The technical procedure(s) that depend on this equipment.
     """
 
-    accessories: Accessories | None = None
+    accessories: Accessories = field(default_factory=Accessories)
     """Additional accessories that may be required to use the equipment."""
 
     documentation: str = ""
     """Information (such as URLs) about the manuals, datasheets, etc. for the equipment."""
 
-    financial: Financial | None = None
+    financial: Financial = field(default_factory=Financial)
     """Financial information about the equipment."""
 
     personnel_restrictions: str = ""
@@ -459,7 +459,7 @@ class QualityManual:
         # Schema defines <qualityManual> using xsd:all, which allows sub-elements to appear (or not appear) in any order
         # Using str.endswith() allows for ignoring XML namespaces that may be associated with each tag
         tp: tuple[str, ...] = ()
-        a, d, f, pr, sa = None, "", None, "", ""
+        a, d, f, pr, sa = Accessories(), "", Financial(), "", ""
         for child in element:
             if child.tag.endswith("accessories"):
                 a = Accessories.from_xml(child)
@@ -491,14 +491,14 @@ class QualityManual:
         """
         e = Element("qualityManual")
 
-        if self.accessories is not None:
+        if len(self.accessories) or len(self.accessories.attrib):
             e.append(self.accessories)
 
         if self.documentation:
             d = SubElement(e, "documentation")
             d.text = self.documentation
 
-        if self.financial is not None:
+        if self.financial != Financial():
             e.append(self.financial.to_xml())
 
         if self.personnel_restrictions:
@@ -595,15 +595,15 @@ class Equipment:
     model: str = ""
     serial: str = ""
     description: str = ""
-    specifications: Specifications | None = None
+    specifications: Specifications = field(default_factory=Specifications)
     location: str = ""
     status: Status = Status.Active
     loggable: bool = False
     traceable: bool = False
     calibrations: tuple[Measurand, ...] = ()
-    maintenance: tuple[Maintenance, ...] = ()
+    maintenance: Maintenance = field(default_factory=Maintenance)
     alterations: tuple[Alteration, ...] = ()
     firmware: tuple[Firmware, ...] = ()
-    specified_requirements: SpecifiedRequirements | None = None
-    reference_materials: ReferenceMaterials | None = None
-    quality_manual: QualityManual | None = None
+    specified_requirements: SpecifiedRequirements = field(default_factory=SpecifiedRequirements)
+    reference_materials: ReferenceMaterials = field(default_factory=ReferenceMaterials)
+    quality_manual: QualityManual = field(default_factory=QualityManual)

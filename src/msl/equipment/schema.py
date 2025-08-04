@@ -3,13 +3,34 @@ from __future__ import annotations  # noqa: D100
 from dataclasses import dataclass, field
 from datetime import date as _date
 from enum import Enum
-from typing import TYPE_CHECKING
+from math import isinf
+from typing import TYPE_CHECKING, NamedTuple
 from xml.etree.ElementTree import Element, SubElement
 
+import numpy as np
+
 if TYPE_CHECKING:
+    from typing import Any as _Any
     from typing import TypeVar
 
+    from numpy.typing import ArrayLike, NDArray
+
     A = TypeVar("A", bound="Any")
+
+equation_map = {
+    "pi": np.pi,
+    "pow": np.pow,
+    "sqrt": np.sqrt,
+    "sin": np.sin,
+    "asin": np.asin,
+    "cos": np.cos,
+    "acos": np.acos,
+    "tan": np.tan,
+    "atan": np.atan,
+    "exp": np.exp,
+    "log": np.log,
+    "log10": np.log10,
+}
 
 
 class Status(Enum):
@@ -33,6 +54,18 @@ class Status(Enum):
     Dormant = "Dormant"
     Lost = "Lost"
     Retired = "Retired"
+
+
+class DigitalFormat(Enum):
+    """Represents the [digitalFormatEnumerationString][type_digitalFormatEnumerationString]{:target="_blank"} enumeration in an equipment register.
+
+    Attributes:
+        MSL_PDF (str): `"MSL PDF/A-3"` (MSL's PDF/A-3 format).
+        PTB_DCC (str): `"PTB DCC"` (PTB's Digital Calibration Certificate).
+    """  # noqa: E501
+
+    MSL_PDF = "MSL PDF/A-3"
+    PTB_DCC = "PTB DCC"
 
 
 class Any(Element):
@@ -408,9 +441,639 @@ class Maintenance:
         return e
 
 
+class Range(NamedTuple):
+    """The numeric range for each variable that an [equation][] is valid for.
+
+    Attributes: Parameters:
+        minimum (float): Minimum value in range.
+        maximum (float): Maximum value in range.
+    """
+
+    minimum: float
+    """Minimum value in range."""
+
+    maximum: float
+    """Maximum value in range."""
+
+    def check_within_range(self, value: float | ArrayLike) -> None:
+        """Check that the value(s) is(are) within the range.
+
+        Args:
+            value: The value(s) to check.
+
+        Raises:
+            ValueError: If `value` is not within the range.
+        """
+        if isinstance(value, (int, float)):
+            if value < self.minimum or value > self.maximum:
+                msg = f"The value {value} is not within the range [{self.minimum}, {self.maximum}]"
+                raise ValueError(msg)
+        elif np.any(np.less(value, self.minimum)) or np.any(np.greater(value, self.maximum)):
+            msg = f"A value in the sequence is not within the range [{self.minimum}, {self.maximum}]"
+            raise ValueError(msg)
+
+
+@dataclass(frozen=True)
+class Evaluable:
+    """Represents the `<value>` and `<uncertainty>` XML elements in an [equation][type_equation]{:target="_blank"}.
+
+    Args:
+        equation: The string representation of the equation to evaluate.
+        variables: The names of the variables in the equation.
+        ranges: The numeric range for each variable that the `equation` is valid for.
+            The *keys* are the variable names.
+    """
+
+    equation: str
+    """The string representation of the equation to evaluate."""
+
+    variables: tuple[str, ...]
+    """The names of the variables in the equation."""
+
+    ranges: dict[str, Range] = field(default_factory=dict)
+    """The numeric range for each variable that the `equation` is valid for. The *keys* are the variable names."""
+
+    def __call__(self, *, check_range: bool = True, **data: ArrayLike) -> NDArray[np.float64]:
+        """Evaluate the equation.
+
+        Args:
+            data: A mapping of variable names to value(s) to evaluate the equation with.
+            check_range: Whether to check that the data is within the allowed range(s).
+
+        Returns:
+            The equation evaluated.
+        """
+        if check_range:
+            for name, value in data.items():
+                r = self.ranges.get(name)
+                if r is not None:  # if None then assume [-INF, +INF] for this variable
+                    r.check_within_range(value)
+
+        _locals: dict[str, NDArray[np.float64]] = {k: np.asarray(v) for k, v in data.items()}
+        _locals.update(equation_map)  # type: ignore[arg-type]  # pyright: ignore[reportCallIssue, reportArgumentType]
+        return np.asarray(eval(self.equation, locals=_locals))  # noqa: S307
+
+
+@dataclass(frozen=True)
+class Equation:
+    """Represents the [equation][type_equation]{:target="_blank"} element in an equipment register.
+
+    Args:
+        value: The equation to evaluate to calculate the corrected value.
+        uncertainty: The equation to evaluate to calculate the standard uncertainty.
+        unit: The unit of the measured quantity.
+        degree_freedom: The degrees of freedom.
+        comment: A comment to associate with the equation.
+    """
+
+    value: Evaluable
+    """The equation to evaluate to calculate the corrected value."""
+
+    uncertainty: Evaluable
+    """The equation to evaluate to calculate the standard uncertainty."""
+
+    unit: str
+    """The unit of the measured quantity."""
+
+    degree_freedom: float = float("inf")
+    """The degrees of freedom."""
+
+    comment: str = ""
+    """A comment associated with the equation."""
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> Equation:
+        """Convert an XML element into an [Equation][msl.equipment.schema.Equation] instance.
+
+        Args:
+            element: An [equation][type_equation]{:target="_blank"} XML element from an equipment register.
+
+        Returns:
+            The [Equation][msl.equipment.schema.Equation] instance.
+        """
+        # Schema forces order
+        value = element[0]
+        uncertainty = element[1]
+        ranges = {
+            r.attrib["variable"]: Range(minimum=float(r[0].text or -np.inf), maximum=float(r[1].text or np.inf))
+            for r in element[3]
+        }
+
+        return cls(
+            value=Evaluable(
+                equation=value.text or "", variables=tuple(value.attrib["variables"].split()), ranges=ranges
+            ),
+            uncertainty=Evaluable(
+                equation=uncertainty.text or "", variables=tuple(uncertainty.attrib["variables"].split()), ranges=ranges
+            ),
+            unit=element[2].text or "",
+            degree_freedom=float(element[4].text or np.inf) if len(element) > 4 else np.inf,  # noqa: PLR2004
+            comment=element.attrib.get("comment", ""),
+        )
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [Equation][msl.equipment.schema.Equation] class into an XML element.
+
+        Returns:
+            The [Equation][msl.equipment.schema.Equation] as an XML element.
+        """
+        attrib = {"comment": self.comment} if self.comment else {}
+        e = Element("equation", attrib=attrib)
+        value = SubElement(e, "value", attrib={"variables": " ".join(self.value.variables)})
+        value.text = self.value.equation
+        uncertainty = SubElement(e, "uncertainty", attrib={"variables": " ".join(self.uncertainty.variables)})
+        uncertainty.text = self.uncertainty.equation
+        unit = SubElement(e, "unit")
+        unit.text = self.unit
+
+        ranges = SubElement(e, "ranges")
+        for name, _range in self.value.ranges.items():  # self.value.ranges and self.uncertainty.ranges are the same
+            rng = SubElement(ranges, "range", attrib={"variable": name})
+            mn = SubElement(rng, "minimum")
+            mn.text = str(_range.minimum)
+            mx = SubElement(rng, "maximum")
+            mx.text = str(_range.maximum)
+
+        if not isinf(self.degree_freedom):
+            dof = SubElement(e, "degreeFreedom")
+            dof.text = str(self.degree_freedom)
+
+        return e
+
+
+@dataclass(frozen=True)
+class Competency:
+    """Represents the [competency][type_competency]{:target="_blank"} element in an equipment register.
+
+    Args:
+        worker: The competent person who executed the technical procedure to accomplish the performance check.
+        checker: The competent person who reviewed the work done by the `worker`.
+        technical_procedure: The technical procedure that was executed to accomplish the performance check.
+    """
+
+    worker: str
+    """The competent person who executed the technical procedure to accomplish the performance check."""
+
+    checker: str
+    """The competent person who reviewed the work done by the `worker`."""
+
+    technical_procedure: str
+    """The technical procedure that was executed to accomplish the performance check."""
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> Competency:
+        """Convert an XML element into a [Competency][msl.equipment.schema.Competency] instance.
+
+        Args:
+            element: A [competency][type_competency]{:target="_blank"} XML element from an equipment register.
+
+        Returns:
+            The [Competency][msl.equipment.schema.Competency] instance.
+        """
+        # Schema forces order
+        return cls(
+            worker=element[0].text or "",
+            checker=element[1].text or "",
+            technical_procedure=element[2].text or "",
+        )
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [Competency][msl.equipment.schema.Competency] class into an XML element.
+
+        Returns:
+            The [Competency][msl.equipment.schema.Competency] as an XML element.
+        """
+        e = Element("competency")
+        worker = SubElement(e, "worker")
+        worker.text = self.worker
+        checker = SubElement(e, "checker")
+        checker.text = self.checker
+        tp = SubElement(e, "technicalProcedure")
+        tp.text = self.technical_procedure
+        return e
+
+
+@dataclass(frozen=True)
+class File:
+    """Represents the [file][type_file]{:target="_blank"} element in an equipment register.
+
+    Args:
+        url: The location of the file. The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738){:target="_blank"}
+            `scheme:scheme-specific-part`. If `scheme:` is not specified, it is assumed to be `file:`.
+        sha256: The SHA-256 checksum of the file.
+        attributes: XML attributes associated with the `<url>` element.
+        comment: A comment to associate with the file.
+    """
+
+    url: str
+    """The location of the file."""
+
+    sha256: str
+    """The SHA-256 checksum of the file."""
+
+    attributes: dict[str, str] = field(default_factory=dict)
+    """XML attributes associated with the `<url>` element."""
+
+    comment: str = ""
+    """A comment associated with the file."""
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> File:
+        """Convert an XML element into a [File][msl.equipment.schema.File] instance.
+
+        Args:
+            element: A [file][type_file]{:target="_blank"} XML element from an equipment register.
+
+        Returns:
+            The [File][msl.equipment.schema.File] instance.
+        """
+        # Schema forces order
+        return cls(
+            url=element[0].text or "",
+            sha256=element[1].text or "",
+            attributes=element[0].attrib,
+            comment=element.attrib.get("comment", ""),
+        )
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [File][msl.equipment.schema.File] class into an XML element.
+
+        Returns:
+            The [File][msl.equipment.schema.File] as an XML element.
+        """
+        attrib = {"comment": self.comment} if self.comment else {}
+        e = Element("file", attrib=attrib)
+        url = SubElement(e, "url", attrib=self.attributes)
+        url.text = self.url
+        sha256 = SubElement(e, "sha256")
+        sha256.text = self.sha256
+        return e
+
+
+@dataclass(frozen=True)
+class Serialised:
+    """Represents the [serialised][type_serialised]{:target="_blank"} element in an equipment register.
+
+    Args:
+        deserialised: The deserialised object.
+        comment: A comment to associate with the serialised object.
+    """
+
+    deserialised: _Any
+    """The deserialised object."""
+
+    comment: str = ""
+    """A comment associated with the serialised object."""
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> Serialised:
+        """Convert an XML element into a [Serialised][msl.equipment.schema.Serialised] instance.
+
+        Args:
+            element: A [serialised][type_serialised]{:target="_blank"} XML element from an equipment register.
+
+        Returns:
+            The [Serialised][msl.equipment.schema.Serialised] instance.
+        """
+        e = element[0]
+        comment = element.attrib.get("comment", "")
+
+        # GTC is not required for msl-equipment, so we import it here
+        if e.tag.endswith("gtcArchive"):
+            from GTC.xml_format import (  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]  # noqa: PLC0415
+                xml_to_archive,  # pyright: ignore[reportUnknownVariableType]
+            )
+
+            return cls(deserialised=xml_to_archive(e), comment=comment)
+
+        if e.tag.endswith("gtcArchiveJSON"):
+            from GTC import (  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]  # noqa: PLC0415
+                pr,  # pyright: ignore[reportUnknownVariableType]
+            )
+
+            return cls(deserialised=pr.loads_json(e.text), comment=comment)  # pyright: ignore[reportUnknownMemberType]
+
+        # Use the string object rather than raising an exception that the deserializer has not been implemented yet
+        return cls(deserialised=e.text, comment=comment)
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [Serialised][msl.equipment.schema.Serialised] class into an XML element.
+
+        Returns:
+            The [Serialised][msl.equipment.schema.Serialised] as an XML element.
+        """
+        attrib = {"comment": self.comment} if self.comment else {}
+        e = Element("serialised", attrib=attrib)
+
+        # deserializer not implemented
+        if isinstance(self.deserialised, str) or self.deserialised is None:  # element.text can be str | None
+            msg = f"Don't know how to convert an object of type {type(self.deserialised)} into an XML element"
+            raise ValueError(msg)
+
+        # Currently, only a GTC Archive is supported so we don't need to check how to serialise `obj`
+        # GTC is not required for msl-equipment, so we import it here
+        from GTC.persistence import (  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]  # noqa: PLC0415
+            Archive,  # pyright: ignore[reportUnknownVariableType]
+        )
+        from GTC.xml_format import (  # pyright: ignore[reportMissingTypeStubs]  # noqa: PLC0415
+            archive_to_xml,  # pyright: ignore[reportUnknownVariableType]
+        )
+
+        e.append(archive_to_xml(Archive.copy(self.deserialised)))  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
+        return e
+
+
+@dataclass(frozen=True)
+class Adjustment:
+    """An adjustment of the equipment.
+
+    An example of an adjustment is cleaning the equipment (e.g., a spectral filter) and then
+    performing another calibration measurement.
+
+    This XML element is found in [component][type_component]{:target="_blank"}.
+
+    Args:
+        details: The details of the adjustment that was performed.
+        date: The date that the adjustment was performed.
+    """
+
+    details: str
+    """The details of the adjustment that was performed."""
+
+    date: _date
+    """The date that the adjustment was performed."""
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> Adjustment:
+        """Convert an XML element into a [Adjustment][msl.equipment.schema.Adjustment] instance.
+
+        Args:
+            element: An `<adjustment>` XML element from an equipment register
+                (see [component][type_component]{:target="_blank"}).
+
+        Returns:
+            The [Adjustment][msl.equipment.schema.Adjustment] instance.
+        """
+        return cls(details=element.text or "", date=_date.fromisoformat(element.attrib["date"]))
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [Adjustment][msl.equipment.schema.Adjustment] class into an XML element.
+
+        Returns:
+            The [Adjustment][msl.equipment.schema.Adjustment] as an XML element.
+        """
+        e = Element("adjustment", attrib={"date": self.date.isoformat()})
+        e.text = self.details
+        return e
+
+
+@dataclass(frozen=True)
+class DigitalReport:
+    """Represents the [digitalReport][type_digitalReport]{:target="_blank"} element in an equipment register.
+
+    Args:
+        url: The location of the digital report. The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738){:target="_blank"}
+            `scheme:scheme-specific-part`. If `scheme:` is not specified, it is assumed to be `file:`.
+        format: The format of the digital calibration report.
+        id: The report identification number.
+        sha256: The SHA-256 checksum of the digital report.
+        attributes: XML attributes associated with the `<url>` element.
+        comment: A comment to associate with the digital report.
+    """
+
+    url: str
+    """The location of the digital report."""
+
+    format: DigitalFormat
+    """The format of the digital calibration report."""
+
+    id: str
+    """The report identification number."""
+
+    sha256: str
+    """The SHA-256 checksum of the digital report."""
+
+    attributes: dict[str, str] = field(default_factory=dict)
+    """XML attributes associated with the `<url>` element."""
+
+    comment: str = ""
+    """A comment associated with the digital report."""
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> DigitalReport:
+        """Convert an XML element into a [DigitalReport][msl.equipment.schema.DigitalReport] instance.
+
+        Args:
+            element: A [digitalReport][type_digitalReport]{:target="_blank"} XML element from an equipment register.
+
+        Returns:
+            The [DigitalReport][msl.equipment.schema.DigitalReport] instance.
+        """
+        # Schema forces order
+        return cls(
+            url=element[0].text or "",
+            format=DigitalFormat(element.attrib["format"]),
+            id=element.attrib["id"],
+            sha256=element[1].text or "",
+            attributes=element[0].attrib,
+            comment=element.attrib.get("comment", ""),
+        )
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [DigitalReport][msl.equipment.schema.DigitalReport] class into an XML element.
+
+        Returns:
+            The [DigitalReport][msl.equipment.schema.DigitalReport] as an XML element.
+        """
+        attrib = {"format": self.format.value, "id": self.id}
+        if self.comment:
+            attrib["comment"] = self.comment
+        e = Element("digitalReport", attrib=attrib)
+        url = SubElement(e, "url", attrib=self.attributes)
+        url.text = self.url
+        sha256 = SubElement(e, "sha256")
+        sha256.text = self.sha256
+        return e
+
+
+@dataclass(frozen=True)
+class PerformanceCheck:
+    """Represents the [performanceCheck][type_performanceCheck]{:target="_blank"} element in an equipment register."""
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> PerformanceCheck:
+        """Convert an XML element into a [PerformanceCheck][msl.equipment.schema.PerformanceCheck] instance.
+
+        Args:
+            element: A [performanceCheck][type_performanceCheck]{:target="_blank"} XML element from an
+                equipment register.
+
+        Returns:
+            The [PerformanceCheck][msl.equipment.schema.PerformanceCheck] instance.
+        """
+        return cls()
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [PerformanceCheck][msl.equipment.schema.PerformanceCheck] class into an XML element.
+
+        Returns:
+            The [PerformanceCheck][msl.equipment.schema.PerformanceCheck] as an XML element.
+        """
+        return Element("performanceCheck")
+
+
+@dataclass(frozen=True)
+class Report:
+    """Represents the [report][type_report]{:target="_blank"} element in an equipment register."""
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> Report:
+        """Convert an XML element into a [Report][msl.equipment.schema.Report] instance.
+
+        Args:
+            element: A [report][type_report]{:target="_blank"} XML element from an equipment register.
+
+        Returns:
+            The [Report][msl.equipment.schema.Report] instance.
+        """
+        return cls()
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [Report][msl.equipment.schema.Report] class into an XML element.
+
+        Returns:
+            The [Report][msl.equipment.schema.Report] as an XML element.
+        """
+        return Element("report")
+
+
+@dataclass(frozen=True)
+class Component:
+    """Represents the [component][type_component]{:target="_blank"} element in an equipment register.
+
+    Args:
+        name: The name to associate with this component. The value must be unique amongst the other
+            component elements within the same measurand element. An empty string is permitted.
+        adjustments: The history of adjustments.
+        digital_reports: The history of digital reports.
+        performance_checks: The history of performance checks.
+        reports: The history of reports.
+    """
+
+    name: str = ""
+    """The name associated with this component."""
+
+    adjustments: tuple[Adjustment, ...] = ()
+    """The history of adjustments."""
+
+    digital_reports: tuple[DigitalReport, ...] = ()
+    """The history of digital reports."""
+
+    performance_checks: tuple[PerformanceCheck, ...] = ()
+    """The history of performance checks."""
+
+    reports: tuple[Report, ...] = ()
+    """The history of reports."""
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> Component:
+        """Convert an XML element into a [Component][msl.equipment.schema.Component] instance.
+
+        Args:
+            element: A [component][type_component]{:target="_blank"} XML element from an equipment register.
+
+        Returns:
+            The [Component][msl.equipment.schema.Component] instance.
+        """
+        # Schema defines <component> using xsd:choice, which allows sub-elements to appear (or not appear) in any order
+        # Using str.endswith() allows for ignoring XML namespaces that may be associated with each tag
+        a: list[Adjustment] = []
+        dr: list[DigitalReport] = []
+        pc: list[PerformanceCheck] = []
+        r: list[Report] = []
+        for child in element:
+            if child.tag.endswith("report"):
+                r.append(Report.from_xml(child))
+            elif child.tag.endswith("performanceCheck"):
+                pc.append(PerformanceCheck.from_xml(child))
+            elif child.tag.endswith("adjustment"):
+                a.append(Adjustment.from_xml(child))
+            else:
+                dr.append(DigitalReport.from_xml(child))
+
+        return cls(
+            name=element.attrib["name"],
+            adjustments=tuple(a),
+            digital_reports=tuple(dr),
+            performance_checks=tuple(pc),
+            reports=tuple(r),
+        )
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [Component][msl.equipment.schema.Component] class into an XML element.
+
+        Returns:
+            The [Component][msl.equipment.schema.Component] as an XML element.
+        """
+        e = Element("component", attrib={"name": self.name})
+
+        # the order is not important since xsd:choice is used
+        e.extend(r.to_xml() for r in self.reports)
+        e.extend(p.to_xml() for p in self.performance_checks)
+        e.extend(a.to_xml() for a in self.adjustments)
+        e.extend(d.to_xml() for d in self.digital_reports)
+        return e
+
+
 @dataclass(frozen=True)
 class Measurand:
-    """Represents the [measurand][type_measurand]{:target="_blank"} element in an equipment register."""
+    """Represents the [measurand][type_measurand]{:target="_blank"} element in an equipment register.
+
+    Args:
+        quantity: The kind of quantity that is measured.
+        calibration_interval: The number of years that may pass between a calibration or a performance check.
+            For equipment that do not have a required and periodic interval, but are calibrated on demand,
+            use the value `0`.
+        components: The components of the equipment that measures the `quantity`.
+    """
+
+    quantity: str
+    """The kind of quantity that is measured."""
+
+    calibration_interval: float
+    """The number of years that may pass between a calibration or a performance check.
+
+    For equipment that do not have a required and periodic interval, but are calibrated on demand,
+    the value is `0`.
+    """
+
+    components: tuple[Component, ...] = ()
+    """The components of the equipment that measures the `quantity`."""
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> Measurand:
+        """Convert an XML element into a [Measurand][msl.equipment.schema.Measurand] instance.
+
+        Args:
+            element: A [measurand][type_measurand]{:target="_blank"} XML element from an equipment register.
+
+        Returns:
+            The [Measurand][msl.equipment.schema.Measurand] instance.
+        """
+        return cls(
+            quantity=element.attrib["quantity"], calibration_interval=float(element.attrib["calibrationInterval"])
+        )
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [Measurand][msl.equipment.schema.Measurand] class into an XML element.
+
+        Returns:
+            The [Measurand][msl.equipment.schema.Measurand] as an XML element.
+        """
+        attrib = {"quantity": self.quantity, "calibrationInterval": str(self.calibration_interval)}
+        e = Element("measurand", attrib=attrib)
+        e.extend(c.to_xml() for c in self.components)
+        return e
 
 
 @dataclass(frozen=True)

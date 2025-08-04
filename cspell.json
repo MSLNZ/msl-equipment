@@ -25,7 +25,9 @@
     "words": [
         "datasheet",
         "datasheets",
+        "deserialised",
         "loggable",
-        "Measurand"
+        "Measurand",
+        "ureal"
     ]
 }

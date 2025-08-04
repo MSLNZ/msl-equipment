@@ -58,11 +58,16 @@ nav:
     - schema/index.md
     - schema/acceptance_criteria.md
     - schema/accessories.md
+    - schema/adjustment.md
     - schema/alteration.md
     - schema/any.md
+    - schema/competency.md
     - schema/completed_task.md
     - schema/conditions.md
+    - schema/digital_report.md
+    - schema/equation.md
     - schema/equipment.md
+    - schema/file.md
     - schema/financial.md
     - schema/firmware.md
     - schema/maintenance.md
@@ -70,6 +75,7 @@ nav:
     - schema/planned_task.md
     - schema/quality_manual.md
     - schema/reference_materials.md
+    - schema/serialised.md
     - schema/specifications.md
     - schema/specified_requirements.md
     - schema/status.md
@@ -94,6 +100,8 @@ plugins:
           paths: [src]
           inventories:
             - url: https://docs.python.org/3/objects.inv
+              domains: [std, py]
+            - url: https://numpy.org/doc/stable/objects.inv
               domains: [std, py]
             - url: https://mslnz.github.io/equipment-register-schema/develop/objects.inv
               domains: [xsd]

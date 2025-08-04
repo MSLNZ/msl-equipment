@@ -65,6 +65,8 @@ lint = [
     "ruff>=0.12.5",
 ]
 test = [
+    "gtc>=1.5.1",
+    "lxml>=6.0.0",
     "nidaqmx>=1.0.2",
     "pytest>=8.3.5",
     "pytest-cov>=5.0.0",
@@ -74,6 +76,7 @@ test = [
 type = [
     "basedpyright>=1.31.0",
     "mypy>=1.14.1",
+    "types-lxml>=2025.3.30",
 ]
 dev = [
     {include-group = "doc"},
@@ -153,8 +156,8 @@ explicit_package_bases = true
 allow_redefinition = false
 allow_untyped_globals = false
 disallow_any_decorated = true
-disallow_any_explicit = true
-disallow_any_expr = true
+disallow_any_explicit = false  # true
+disallow_any_expr = false  # true
 disallow_any_unimported = true
 ignore_missing_imports = false
 implicit_optional = false
@@ -165,7 +168,6 @@ warn_unreachable = true
 
 [tool.basedpyright]
 failOnWarnings = true
-pythonVersion = "3.8"
 typeCheckingMode = "recommended"
 useLibraryCodeForTypes = false
 exclude = [
@@ -173,6 +175,8 @@ exclude = [
     "**/__pycache__",
     "**/_version.py",
 ]
+reportAny = false
+reportExplicitAny = false
 
 [tool.ruff]
 cache-dir = ".cache/ruff"

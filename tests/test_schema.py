@@ -4,24 +4,40 @@ from datetime import date
 from typing import TYPE_CHECKING
 from xml.etree.ElementTree import XML, Element, tostring
 
+import numpy as np
 import pytest
+from GTC import (  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
+    pr,  # pyright: ignore[reportUnknownVariableType]
+    ureal,  # pyright: ignore[reportUnknownVariableType]
+)
 
 from msl.equipment import (
     AcceptanceCriteria,
     Accessories,
+    Adjustment,
     Alteration,
+    Competency,
     Conditions,
+    DigitalFormat,
+    DigitalReport,
+    Equation,
+    Evaluable,
+    File,
     Financial,
     Firmware,
     Maintenance,
     QualityManual,
+    Range,
     ReferenceMaterials,
+    Serialised,
     Specifications,
     SpecifiedRequirements,
     Status,
 )
 
 if TYPE_CHECKING:
+    from numpy.typing import ArrayLike
+
     from msl.equipment.schema import Any
 
 
@@ -409,3 +425,274 @@ def test_status_valid() -> None:
 def test_status_invalid() -> None:
     with pytest.raises(ValueError, match=r"not a valid Status"):
         _ = Status("Nope")
+
+
+def test_digital_format_valid() -> None:
+    assert DigitalFormat("MSL PDF/A-3") == DigitalFormat.MSL_PDF
+    assert DigitalFormat["MSL_PDF"] == DigitalFormat.MSL_PDF
+
+
+def test_digital_format_invalid() -> None:
+    with pytest.raises(ValueError, match=r"not a valid DigitalFormat"):
+        _ = DigitalFormat("Nope")
+
+
+def test_competency() -> None:
+    text = (
+        b"<competency>"
+        b"<worker>Person A.</worker>"
+        b"<checker>B</checker>"
+        b"<technicalProcedure>value is not checked</technicalProcedure>"
+        b"</competency>"
+    )
+    c = Competency.from_xml(XML(text))
+    assert c.worker == "Person A."
+    assert c.checker == "B"
+    assert c.technical_procedure == "value is not checked"
+    assert tostring(c.to_xml()) == text
+
+
+def test_file_no_comment_nor_url_attributes() -> None:
+    text = b"<file><url>whatever</url><sha256>anything</sha256></file>"
+    f = File.from_xml(XML(text))
+    assert f.url == "whatever"
+    assert f.sha256 == "anything"
+    assert f.attributes == {}
+    assert f.comment == ""
+    assert tostring(f.to_xml()) == text
+
+
+def test_file() -> None:
+    text = b'<file comment="hi"><url foo="bar">whatever</url><sha256>anything</sha256></file>'
+    f = File.from_xml(XML(text))
+    assert f.url == "whatever"
+    assert f.sha256 == "anything"
+    assert f.attributes == {"foo": "bar"}
+    assert f.comment == "hi"
+    assert tostring(f.to_xml()) == text
+
+
+def test_digital_report_no_comment_nor_url_attributes() -> None:
+    text = (
+        b'<digitalReport format="MSL PDF/A-3" id="Pressure/2025/092">'
+        b"<url>reports/2025/job092.pdf</url>"
+        b"<sha256>76e4e036da8722b55362912396a01a07bb61e6260c7c4b6150d431e613529a54</sha256>"
+        b"</digitalReport>"
+    )
+    dr = DigitalReport.from_xml(XML(text))
+    assert dr.url == "reports/2025/job092.pdf"
+    assert dr.format == DigitalFormat.MSL_PDF
+    assert dr.id == "Pressure/2025/092"
+    assert dr.sha256 == "76e4e036da8722b55362912396a01a07bb61e6260c7c4b6150d431e613529a54"
+    assert dr.attributes == {}
+    assert dr.comment == ""
+    assert tostring(dr.to_xml()) == text
+
+
+def test_digital_report() -> None:
+    text = (
+        b'<digitalReport format="PTB DCC" id="Pressure/2025/092" comment="hi">'
+        b'<url foo="bar">reports/2025/job092.pdf</url>'
+        b"<sha256>76e4e036da8722b55362912396a01a07bb61e6260c7c4b6150d431e613529a54</sha256>"
+        b"</digitalReport>"
+    )
+    dr = DigitalReport.from_xml(XML(text))
+    assert dr.url == "reports/2025/job092.pdf"
+    assert dr.format == DigitalFormat.PTB_DCC
+    assert dr.id == "Pressure/2025/092"
+    assert dr.sha256 == "76e4e036da8722b55362912396a01a07bb61e6260c7c4b6150d431e613529a54"
+    assert dr.attributes == {"foo": "bar"}
+    assert dr.comment == "hi"
+    assert tostring(dr.to_xml()) == text
+
+
+def test_adjustment() -> None:
+    text = b'<adjustment date="2024-10-16">Did something</adjustment>'
+    a = Adjustment.from_xml(XML(text))
+    assert a.date == date(2024, 10, 16)
+    assert a.details == "Did something"
+    assert tostring(a.to_xml()) == text
+
+
+def test_adjustment_invalid_date() -> None:
+    e = Element("adjustment", attrib={"date": "31-03-2025"})
+    with pytest.raises(ValueError, match=r"Invalid isoformat string"):
+        _ = Adjustment.from_xml(e)
+
+
+def test_adjustment_date_missing() -> None:
+    with pytest.raises(KeyError, match=r"date"):
+        _ = Adjustment.from_xml(Element("adjustment"))
+
+
+@pytest.mark.parametrize("value", [-99, 99.9, [-1, 0, 1], (10, 9, 8), np.array([[11, -22], [-33, 44]])])
+def test_range_bounds_valid(value: float | ArrayLike) -> None:
+    r = Range(-100, 100)
+    assert r.minimum == -100  # noqa: PLR2004
+    assert r.maximum == 100  # noqa: PLR2004
+    assert r == (-100, 100)
+    assert r.check_within_range(value) is None
+
+
+@pytest.mark.parametrize("value", [-1, 2e6, [1.001, 2], np.array([[11, -22], [-33, 44]])])
+def test_range_bounds_invalid(value: float | ArrayLike) -> None:
+    r = Range(0, 1)
+    expect = str(value) if isinstance(value, (int, float)) else "sequence"
+    with pytest.raises(ValueError, match=f"{expect} is not within the range"):
+        r.check_within_range(value)
+
+
+def test_evaluatable_constant() -> None:
+    e = Evaluable("0.5/2", ())
+    assert e.equation == "0.5/2"
+    assert e.ranges == {}
+    assert e() == 0.5 / 2
+
+
+def test_evaluatable_1d_no_range() -> None:
+    e = Evaluable("2*pi*sin(x+0.1) - cos(x/2)", ("x",))
+    assert e(x=0.1) == 2 * np.pi * np.sin(0.1 + 0.1) - np.cos(0.1 / 2)
+
+
+def test_evaluatable_1d() -> None:
+    e = Evaluable("2*pi*sin(x+0.1) - cos(x/2)", ("x",), ranges={"x": Range(0, 1)})
+    assert e(x=0.1) == 2 * np.pi * np.sin(0.1 + 0.1) - np.cos(0.1 / 2)
+
+    # ok to include unused variables
+    assert e(x=0.1, y=9.1, z=-0.3) == 2 * np.pi * np.sin(0.1 + 0.1) - np.cos(0.1 / 2)
+
+    expected = 2 * np.pi * np.sin(np.array([0.1, 0.2]) + 0.1) - np.cos(np.array([0.1, 0.2]) / 2)
+    assert np.array_equal(e(x=[0.1, 0.2]), expected)
+
+    with pytest.raises(ValueError, match="-1 is not within the range"):
+        _ = e(x=-1)
+
+    with pytest.raises(NameError, match="'x' is not defined"):
+        _ = e()
+
+    x = -1
+    expect = 2 * np.pi * np.sin(x + 0.1) - np.cos(x / 2)
+    assert e(x=x, check_range=False) == expect
+    assert e(x=x, check_range=False, this_kwarg_is_ignored=np.nan) == expect
+
+
+def test_evaluatable_2d() -> None:
+    eqn = "rh - 7.131e-2 - 3.951e-2*rh + 3.412e-4*pow(rh,2) + 2.465e-3*t + 1.034e-3*rh*t - 5.297e-6*pow(rh,2)*t"
+    ranges = {"rh": Range(30, 80), "t": Range(15, 25)}
+    e = Evaluable(eqn, ("rh", "t"), ranges=ranges)
+    rh, t = 45, 21.3
+    expect = (
+        rh
+        - 7.131e-2
+        - 3.951e-2 * rh
+        + 3.412e-4 * pow(rh, 2)
+        + 2.465e-3 * t
+        + 1.034e-3 * rh * t
+        - 5.297e-6 * pow(rh, 2) * t
+    )
+    assert e(rh=rh, t=t) == expect
+
+    with pytest.raises(ValueError, match="-1 is not within the range"):
+        _ = e(rh=-1, t=20)
+    with pytest.raises(ValueError, match="200 is not within the range"):
+        _ = e(rh=50, t=200)
+
+
+def test_equation_value_uncertainty_unit() -> None:
+    text = (
+        b"<equation>"
+        b'<value variables="x">1+x</value>'
+        b'<uncertainty variables="">0.5/2</uncertainty>'
+        b"<unit>C</unit>"
+        b"<ranges />"
+        b"</equation>"
+    )
+    e = Equation.from_xml(XML(text))
+    assert e.value.equation == "1+x"
+    assert e.value.variables == ("x",)
+    assert e.value.ranges == {}
+    assert e.value(x=0) == 1
+    assert e.uncertainty.equation == "0.5/2"
+    assert e.uncertainty.variables == ()
+    assert e.uncertainty.ranges == {}
+    assert e.uncertainty() == 0.5 / 2
+    assert e.unit == "C"
+    assert np.isinf(e.degree_freedom)
+    assert e.comment == ""
+    assert tostring(e.to_xml()) == text
+
+
+def test_equation() -> None:
+    text = (
+        b'<equation comment="3D">'
+        b'<value variables="x y zebra">1 + x + y + zebra</value>'
+        b'<uncertainty variables="x y zebra">x/2 + y/2 + zebra/10</uncertainty>'
+        b"<unit>%rh</unit>"
+        b"<ranges>"
+        b'<range variable="x"><minimum>0.0</minimum><maximum>1.0</maximum></range>'
+        b'<range variable="y"><minimum>0.1</minimum><maximum>0.9</maximum></range>'
+        b'<range variable="zebra"><minimum>0.2</minimum><maximum>0.8</maximum></range>'
+        b"</ranges>"
+        b"<degreeFreedom>100.2</degreeFreedom>"
+        b"</equation>"
+    )
+    e = Equation.from_xml(XML(text))
+    assert e.value.equation == "1 + x + y + zebra"
+    assert e.value.variables == ("x", "y", "zebra")
+    assert e.value.ranges == {"x": Range(0, 1), "y": Range(0.1, 0.9), "zebra": Range(0.2, 0.8)}
+    assert e.value(x=0.1, y=0.2, zebra=0.3) == 1 + 0.1 + 0.2 + 0.3
+    assert e.uncertainty.equation == "x/2 + y/2 + zebra/10"
+    assert e.uncertainty.variables == ("x", "y", "zebra")
+    assert e.uncertainty.ranges == {"x": Range(0, 1), "y": Range(0.1, 0.9), "zebra": Range(0.2, 0.8)}
+    assert e.uncertainty(x=0.1, y=0.2, zebra=0.3) == 0.1 / 2 + 0.2 / 2 + 0.3 / 10
+    assert e.unit == "%rh"
+    assert e.degree_freedom == 100.2  # noqa: PLR2004
+    assert e.comment == "3D"
+    assert tostring(e.to_xml()) == text
+
+
+def test_serialised_gtc_xml() -> None:
+    ar = pr.Archive()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    ar.add(x=ureal(1, 0.1))  # pyright: ignore[reportUnknownMemberType]
+
+    dumped: str = pr.dumps_xml(ar, encoding="unicode")  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    text = f"<serialised>{dumped}</serialised>"
+
+    s = Serialised.from_xml(XML(text))
+    assert s.comment == ""
+    assert isinstance(s.deserialised, pr.Archive)  # pyright: ignore[reportUnknownMemberType]
+    assert s.deserialised["x"].x == 1
+    assert s.deserialised["x"].u == 0.1  # noqa: PLR2004
+    assert np.isinf(s.deserialised["x"].df)
+    assert tostring(s.to_xml()).decode() == text
+
+
+def test_serialised_gtc_json() -> None:
+    ar = pr.Archive()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    ar.add(x=ureal(1, 0.1))  # pyright: ignore[reportUnknownMemberType]
+
+    dumped_json: str = pr.dumps_json(ar)  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    text_json = f'<serialised comment="GTC 4ever"><gtcArchiveJSON>{dumped_json}</gtcArchiveJSON></serialised>'
+
+    s = Serialised.from_xml(XML(text_json))
+    assert s.comment == "GTC 4ever"
+    assert isinstance(s.deserialised, pr.Archive)  # pyright: ignore[reportUnknownMemberType]
+    assert s.deserialised["x"].x == 1
+    assert s.deserialised["x"].u == 0.1  # noqa: PLR2004
+    assert np.isinf(s.deserialised["x"].df)
+
+    dumped_xml: str = pr.dumps_xml(ar, encoding="unicode")  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    text_xml = f'<serialised comment="GTC 4ever">{dumped_xml}</serialised>'
+    assert tostring(s.to_xml()).decode() == text_xml
+
+
+def test_serialised_unhandled() -> None:
+    text = b'<serialised comment="Not handled"><unhandled>some serialised text</unhandled></serialised>'
+    s = Serialised.from_xml(XML(text))
+    assert s.comment == "Not handled"
+    assert s.deserialised == "some serialised text"
+    with pytest.raises(ValueError, match=r"Don't know how to convert"):
+        _ = s.to_xml()
+
+
+# test Measurand, Component, PerformanceCheck, Report

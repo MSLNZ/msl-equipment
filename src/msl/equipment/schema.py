@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 equation_map = {
     "pi": np.pi,
-    "pow": np.pow,
+    "pow": np.power,
     "sqrt": np.sqrt,
     "sin": np.sin,
     "asin": np.asin,

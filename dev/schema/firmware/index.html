@@ -10,28 +10,28 @@
       
       
       
-        <link rel="canonical" href="https://github.com/MSLNZ/msl-equipment/dev/release-notes.html">
+        <link rel="canonical" href="https://github.com/MSLNZ/msl-equipment/dev/schema/firmware/">
       
       
-        <link rel="prev" href="index.html">
+        <link rel="prev" href="../financial/">
       
       
-        <link rel="next" href="license.html">
+        <link rel="next" href="../maintenance/">
       
       
-      <link rel="icon" href="assets/images/favicon.ico">
+      <link rel="icon" href="../../assets/images/favicon.ico">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
     
     
       
-        <title>Release Notes - MSL Equipment</title>
+        <title>Firmware - MSL Equipment</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.7e37652d.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -50,9 +50,9 @@
       
     
     
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#release-notes" class="md-skip">
+        <a href="#msl.equipment.schema.Firmware" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +98,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="MSL Equipment" class="md-header__button md-logo" aria-label="MSL Equipment" data-md-component="logo">
+    <a href="../.." title="MSL Equipment" class="md-header__button md-logo" aria-label="MSL Equipment" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Release Notes
+              Firmware
             
           </span>
         </div>
@@ -233,13 +233,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="index.html" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
           
   
   
@@ -257,11 +255,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="schema/index.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -303,7 +303,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="MSL Equipment" class="md-nav__button md-logo" aria-label="MSL Equipment" data-md-component="logo">
+    <a href="../.." title="MSL Equipment" class="md-nav__button md-logo" aria-label="MSL Equipment" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -330,8 +330,6 @@
       
   
   
-    
-  
   
   
     
@@ -349,23 +347,22 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="index.html" class="md-nav__link ">
+            <a href="../.." class="md-nav__link ">
               
   
   
@@ -378,13 +375,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="">
+              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_1">
             <span class="md-nav__icon md-icon"></span>
             Overview
@@ -397,32 +394,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Release Notes
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="release-notes.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../release-notes/" class="md-nav__link">
         
   
   
@@ -433,44 +408,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#020-2025-03-28" class="md-nav__link">
-    <span class="md-ellipsis">
-      0.2.0 (2025-03-28)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#010-2023-06-18" class="md-nav__link">
-    <span class="md-ellipsis">
-      0.1.0 (2023-06-18)
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -483,7 +420,7 @@
   
   
     <li class="md-nav__item">
-      <a href="license.html" class="md-nav__link">
+      <a href="../../license/" class="md-nav__link">
         
   
   
@@ -510,6 +447,8 @@
       
   
   
+    
+  
   
   
     
@@ -543,26 +482,49 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="schema/index.html" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -575,13 +537,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Schema Classes
@@ -597,7 +559,30 @@
   
   
     <li class="md-nav__item">
-      <a href="schema/accessories.html" class="md-nav__link">
+      <a href="../acceptance_criteria/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AcceptanceCriteria
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../accessories/" class="md-nav__link">
         
   
   
@@ -620,7 +605,30 @@
   
   
     <li class="md-nav__item">
-      <a href="schema/alteration.html" class="md-nav__link">
+      <a href="../adjustment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Adjustment
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alteration/" class="md-nav__link">
         
   
   
@@ -643,7 +651,145 @@
   
   
     <li class="md-nav__item">
-      <a href="schema/equipment.html" class="md-nav__link">
+      <a href="../any/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Any
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../competency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Competency
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../completed_task/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CompletedTask
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conditions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Conditions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../digital_report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    DigitalReport
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../equation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Equation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../equipment/" class="md-nav__link">
         
   
   
@@ -666,7 +812,30 @@
   
   
     <li class="md-nav__item">
-      <a href="schema/financial.html" class="md-nav__link">
+      <a href="../file/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    File
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../financial/" class="md-nav__link">
         
   
   
@@ -686,10 +855,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="schema/firmware.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Firmware
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -700,6 +891,77 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Firmware" class="md-nav__link">
+    <span class="md-ellipsis">
+      Firmware
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Firmware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Firmware.date" class="md-nav__link">
+    <span class="md-ellipsis">
+      date
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Firmware.version" class="md-nav__link">
+    <span class="md-ellipsis">
+      version
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Firmware.from_xml" class="md-nav__link">
+    <span class="md-ellipsis">
+      from_xml
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Firmware.to_xml" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_xml
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -712,7 +974,7 @@
   
   
     <li class="md-nav__item">
-      <a href="schema/maintenance.html" class="md-nav__link">
+      <a href="../maintenance/" class="md-nav__link">
         
   
   
@@ -735,7 +997,7 @@
   
   
     <li class="md-nav__item">
-      <a href="schema/measurand.html" class="md-nav__link">
+      <a href="../measurand/" class="md-nav__link">
         
   
   
@@ -758,7 +1020,30 @@
   
   
     <li class="md-nav__item">
-      <a href="schema/quality_manual.html" class="md-nav__link">
+      <a href="../planned_task/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    PlannedTask
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quality_manual/" class="md-nav__link">
         
   
   
@@ -781,7 +1066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="schema/reference_materials.html" class="md-nav__link">
+      <a href="../reference_materials/" class="md-nav__link">
         
   
   
@@ -804,7 +1089,30 @@
   
   
     <li class="md-nav__item">
-      <a href="schema/specifications.html" class="md-nav__link">
+      <a href="../serialised/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Serialised
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../specifications/" class="md-nav__link">
         
   
   
@@ -827,7 +1135,7 @@
   
   
     <li class="md-nav__item">
-      <a href="schema/specified_requirements.html" class="md-nav__link">
+      <a href="../specified_requirements/" class="md-nav__link">
         
   
   
@@ -850,7 +1158,7 @@
   
   
     <li class="md-nav__item">
-      <a href="schema/status.html" class="md-nav__link">
+      <a href="../status/" class="md-nav__link">
         
   
   
@@ -900,20 +1208,53 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#020-2025-03-28" class="md-nav__link">
+  <a href="#msl.equipment.schema.Firmware" class="md-nav__link">
     <span class="md-ellipsis">
-      0.2.0 (2025-03-28)
+      Firmware
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Firmware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Firmware.date" class="md-nav__link">
+    <span class="md-ellipsis">
+      date
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#010-2023-06-18" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Firmware.version" class="md-nav__link">
     <span class="md-ellipsis">
-      0.1.0 (2023-06-18)
+      version
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Firmware.from_xml" class="md-nav__link">
+    <span class="md-ellipsis">
+      from_xml
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Firmware.to_xml" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_xml
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -936,31 +1277,336 @@
   
 
 
-<h1 id="release-notes">Release Notes<a class="headerlink" href="#release-notes" title="Permanent link">¤</a></h1>
-<hr />
-<h2 id="020-2025-03-28">0.2.0 (2025-03-28)<a class="headerlink" href="#020-2025-03-28" title="Permanent link">¤</a></h2>
-<p><strong><em>Added:</em></strong></p>
-<ul>
-<li>support for Python 3.12 and 3.13</li>
-<li><code>find-equipment</code> console script</li>
-<li><code>msl.equipment.connection_gpib.ConnectionGPIB</code> class</li>
-<li><code>msl.equipment.resources.greisinger.gmh3000.GMH3000</code> resource</li>
-<li><code>msl.equipment.resources.isotech.millik.MilliK</code> resource</li>
-<li><code>msl.equipment.resources.vaisala.ptu300.PTU300</code> resource</li>
-<li><code>msl.equipment.resources.vaisala.ptb330.PTB330</code> resource</li>
-</ul>
-<p><strong><em>Fixed:</em></strong></p>
-<ul>
-<li>issue <a href="https://github.com/MSLNZ/msl-equipment/issues/9">#9</a> &mdash; Missing functions from Avantes AvaSpec DLL</li>
-<li>issue <a href="https://github.com/MSLNZ/msl-equipment/issues/8">#8</a> &mdash; Invalid URL for LXI XML identification document</li>
-</ul>
-<p><strong><em>Removed:</em></strong></p>
-<ul>
-<li>support for Python 2.7, 3.5, 3.6 and 3.7</li>
-</ul>
-<h2 id="010-2023-06-18">0.1.0 (2023-06-18)<a class="headerlink" href="#010-2023-06-18" title="Permanent link">¤</a></h2>
-<p>Initial release.</p>
-<p>It is also the last release to support Python 2.7, 3.5, 3.6 and 3.7</p>
+<h1 id="msl.equipment.schema.Firmware">Firmware<a class="headerlink" href="#msl.equipment.schema.Firmware" title="Permanent link">¤</a></h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="msl.equipment.schema.Firmware" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">Firmware</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#msl.equipment.schema.Firmware" class="headerlink" title="Permanent link">¤</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">Firmware</span><span class="p">(</span><span class="n">version</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+        <p>Represents a <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_firmware" target="_blank">firmware</a> <code>&lt;version&gt;</code> sub-element in an equipment register.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>version</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Firmware version number.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>date</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The date that the firmware was initially at or changed to <code>version</code>.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="msl.equipment.schema.Firmware.date" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">date</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#msl.equipment.schema.Firmware.date" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>The date that the firmware was initially at or changed to <code>version</code>.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="msl.equipment.schema.Firmware.version" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">version</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#msl.equipment.schema.Firmware.version" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">version</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Firmware version number.</p>
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="msl.equipment.schema.Firmware.from_xml" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">from_xml</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#msl.equipment.schema.Firmware.from_xml" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="Firmware
+
+
+  
+      dataclass
+   (msl.equipment.schema.Firmware)" href="#msl.equipment.schema.Firmware">Firmware</a></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Convert an XML element into a <a class="autorefs autorefs-internal" title="Firmware
+
+
+  
+      dataclass
+  " href="#msl.equipment.schema.Firmware">Firmware</a> instance.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>element</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_firmware" target="_blank">firmware</a> <code>&lt;version&gt;</code> XML sub-element
+from an equipment register.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="Firmware
+
+
+  
+      dataclass
+   (msl.equipment.schema.Firmware)" href="#msl.equipment.schema.Firmware">Firmware</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The <a class="autorefs autorefs-internal" title="Firmware
+
+
+  
+      dataclass
+  " href="#msl.equipment.schema.Firmware">Firmware</a> instance.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="msl.equipment.schema.Firmware.to_xml" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">to_xml</span>
+
+
+<a href="#msl.equipment.schema.Firmware.to_xml" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">to_xml</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Convert the <a class="autorefs autorefs-internal" title="Firmware
+
+
+  
+      dataclass
+  " href="#msl.equipment.schema.Firmware">Firmware</a> class into a <code>&lt;version&gt;</code> XML element.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The <a class="autorefs autorefs-internal" title="Firmware
+
+
+  
+      dataclass
+  " href="#msl.equipment.schema.Firmware">Firmware</a> as a <code>&lt;version&gt;</code> XML element.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
 
 
 
@@ -996,7 +1642,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="index.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview">
+          <a href="../financial/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Financial">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1006,20 +1652,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Overview
+                Financial
               </div>
             </div>
           </a>
         
         
           
-          <a href="license.html" class="md-footer__link md-footer__link--next" aria-label="Next: License">
+          <a href="../maintenance/" class="md-footer__link md-footer__link--next" aria-label="Next: Maintenance">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                License
+                Maintenance
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1085,10 +1731,10 @@
     
     
       
-      <script id="__config" type="application/json">{"base": ".", "features": ["content.code.copy", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.50899def.min.js"></script>
+      <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
       
     
   </body>

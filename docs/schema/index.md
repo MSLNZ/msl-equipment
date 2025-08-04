@@ -12,6 +12,7 @@ The primary class is [Equipment][msl.equipment.schema.Equipment] which may conta
 * [Competency][msl.equipment.schema.Competency]
 * [CompletedTask][msl.equipment.schema.CompletedTask]
 * [Conditions][msl.equipment.schema.Conditions]
+* [Deserialised][msl.equipment.schema.Deserialised] (opposite of the [serialised][type_serialised]{:target="_blank"} XML element)
 * [DigitalReport][digitalreport]
 * [Equation][equation]
 * [File][msl.equipment.schema.File]
@@ -22,7 +23,6 @@ The primary class is [Equipment][msl.equipment.schema.Equipment] which may conta
 * [PlannedTask][msl.equipment.schema.PlannedTask]
 * [QualityManual][msl.equipment.schema.QualityManual]
 * [ReferenceMaterials][msl.equipment.schema.ReferenceMaterials]
-* [Serialised][msl.equipment.schema.Serialised]
 * [Specifications][msl.equipment.schema.Specifications]
 * [SpecifiedRequirements][msl.equipment.schema.SpecifiedRequirements]
 * [Status][msl.equipment.schema.Status]

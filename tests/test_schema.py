@@ -18,6 +18,7 @@ from msl.equipment import (
     Alteration,
     Competency,
     Conditions,
+    Deserialised,
     DigitalFormat,
     DigitalReport,
     Equation,
@@ -29,7 +30,6 @@ from msl.equipment import (
     QualityManual,
     Range,
     ReferenceMaterials,
-    Serialised,
     Specifications,
     SpecifiedRequirements,
     Status,
@@ -658,13 +658,13 @@ def test_serialised_gtc_xml() -> None:
     dumped: str = pr.dumps_xml(ar, encoding="unicode")  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
     text = f"<serialised>{dumped}</serialised>"
 
-    s = Serialised.from_xml(XML(text))
-    assert s.comment == ""
-    assert isinstance(s.deserialised, pr.Archive)  # pyright: ignore[reportUnknownMemberType]
-    assert s.deserialised["x"].x == 1
-    assert s.deserialised["x"].u == 0.1  # noqa: PLR2004
-    assert np.isinf(s.deserialised["x"].df)
-    assert tostring(s.to_xml()).decode() == text
+    d = Deserialised.from_xml(XML(text))
+    assert d.comment == ""
+    assert isinstance(d.value, pr.Archive)  # pyright: ignore[reportUnknownMemberType]
+    assert d.value["x"].x == 1
+    assert d.value["x"].u == 0.1  # noqa: PLR2004
+    assert np.isinf(d.value["x"].df)
+    assert tostring(d.to_xml()).decode() == text
 
 
 def test_serialised_gtc_json() -> None:
@@ -674,25 +674,24 @@ def test_serialised_gtc_json() -> None:
     dumped_json: str = pr.dumps_json(ar)  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
     text_json = f'<serialised comment="GTC 4ever"><gtcArchiveJSON>{dumped_json}</gtcArchiveJSON></serialised>'
 
-    s = Serialised.from_xml(XML(text_json))
-    assert s.comment == "GTC 4ever"
-    assert isinstance(s.deserialised, pr.Archive)  # pyright: ignore[reportUnknownMemberType]
-    assert s.deserialised["x"].x == 1
-    assert s.deserialised["x"].u == 0.1  # noqa: PLR2004
-    assert np.isinf(s.deserialised["x"].df)
+    d = Deserialised.from_xml(XML(text_json))
+    assert d.comment == "GTC 4ever"
+    assert isinstance(d.value, pr.Archive)  # pyright: ignore[reportUnknownMemberType]
+    assert d.value["x"].x == 1
+    assert d.value["x"].u == 0.1  # noqa: PLR2004
+    assert np.isinf(d.value["x"].df)
 
     dumped_xml: str = pr.dumps_xml(ar, encoding="unicode")  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
     text_xml = f'<serialised comment="GTC 4ever">{dumped_xml}</serialised>'
-    assert tostring(s.to_xml()).decode() == text_xml
+    assert tostring(d.to_xml()).decode() == text_xml
 
 
 def test_serialised_unhandled() -> None:
     text = b'<serialised comment="Not handled"><unhandled>some serialised text</unhandled></serialised>'
-    s = Serialised.from_xml(XML(text))
-    assert s.comment == "Not handled"
-    assert s.deserialised == "some serialised text"
-    with pytest.raises(ValueError, match=r"Don't know how to convert"):
-        _ = s.to_xml()
+    d = Deserialised.from_xml(XML(text))
+    assert d.comment == "Not handled"
+    assert isinstance(d.value, Element)
+    assert tostring(d.to_xml()) == text
 
 
 # test Measurand, Component, PerformanceCheck, Report

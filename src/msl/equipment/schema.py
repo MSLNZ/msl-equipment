@@ -711,30 +711,32 @@ class File:
 
 
 @dataclass(frozen=True)
-class Serialised:
-    """Represents the [serialised][type_serialised]{:target="_blank"} element in an equipment register.
+class Deserialised:
+    """Represents the opposite of the [serialised][type_serialised]{:target="_blank"} element in an equipment register.
 
     Args:
-        deserialised: The deserialised object.
-        comment: A comment to associate with the serialised object.
+        value: The value of the deserialised object.
+        comment: A comment to associate with the (de)serialised object.
     """
 
-    deserialised: _Any
-    """The deserialised object."""
+    value: _Any
+    """The value of the deserialised object. For example, an [Archive][persistence.Archive]{:target="_blank"}
+    object from [GTC](https://gtc.readthedocs.io/en/stable/){:target="_blank"}.
+    """
 
     comment: str = ""
-    """A comment associated with the serialised object."""
+    """The comment associated with the (de)serialised object."""
 
     @classmethod
-    def from_xml(cls, element: Element[str]) -> Serialised:
-        """Convert an XML element into a [Serialised][msl.equipment.schema.Serialised] instance.
+    def from_xml(cls, element: Element[str]) -> Deserialised:
+        """Convert a [serialised][type_serialised]{:target="_blank"} XML element into a [Deserialised][msl.equipment.schema.Deserialised] instance.
 
         Args:
             element: A [serialised][type_serialised]{:target="_blank"} XML element from an equipment register.
 
         Returns:
-            The [Serialised][msl.equipment.schema.Serialised] instance.
-        """
+            The [Deserialised][msl.equipment.schema.Deserialised] instance.
+        """  # noqa: E501
         e = element[0]
         comment = element.attrib.get("comment", "")
 
@@ -744,33 +746,32 @@ class Serialised:
                 xml_to_archive,  # pyright: ignore[reportUnknownVariableType]
             )
 
-            return cls(deserialised=xml_to_archive(e), comment=comment)
+            return cls(value=xml_to_archive(e), comment=comment)
 
         if e.tag.endswith("gtcArchiveJSON"):
             from GTC import (  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]  # noqa: PLC0415
                 pr,  # pyright: ignore[reportUnknownVariableType]
             )
 
-            return cls(deserialised=pr.loads_json(e.text), comment=comment)  # pyright: ignore[reportUnknownMemberType]
+            return cls(value=pr.loads_json(e.text), comment=comment)  # pyright: ignore[reportUnknownMemberType]
 
-        # Use the string object rather than raising an exception that the deserializer has not been implemented yet
-        return cls(deserialised=e.text, comment=comment)
+        # Use the Element object rather than raising an exception that the deserializer has not been implemented yet
+        return cls(value=e, comment=comment)
 
     def to_xml(self) -> Element[str]:
-        """Convert the [Serialised][msl.equipment.schema.Serialised] class into an XML element.
+        """Convert the [Deserialised][msl.equipment.schema.Deserialised] class into a [serialised][type_serialised]{:target="_blank"} XML element.
 
         Returns:
-            The [Serialised][msl.equipment.schema.Serialised] as an XML element.
-        """
+            The [serialised][type_serialised]{:target="_blank"} XML element.
+        """  # noqa: E501
         attrib = {"comment": self.comment} if self.comment else {}
         e = Element("serialised", attrib=attrib)
 
-        # deserializer not implemented
-        if isinstance(self.deserialised, str) or self.deserialised is None:  # element.text can be str | None
-            msg = f"Don't know how to convert an object of type {type(self.deserialised)} into an XML element"
-            raise ValueError(msg)
+        if isinstance(self.value, Element):
+            e.append(self.value)  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+            return e
 
-        # Currently, only a GTC Archive is supported so we don't need to check how to serialise `obj`
+        # Currently, only a GTC Archive is supported so we don't need to check how to serialise it
         # GTC is not required for msl-equipment, so we import it here
         from GTC.persistence import (  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]  # noqa: PLC0415
             Archive,  # pyright: ignore[reportUnknownVariableType]
@@ -779,7 +780,7 @@ class Serialised:
             archive_to_xml,  # pyright: ignore[reportUnknownVariableType]
         )
 
-        e.append(archive_to_xml(Archive.copy(self.deserialised)))  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
+        e.append(archive_to_xml(Archive.copy(self.value)))  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
         return e
 
 

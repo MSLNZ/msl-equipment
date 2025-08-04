@@ -511,7 +511,7 @@ class Evaluable:
 
         _locals: dict[str, NDArray[np.float64]] = {k: np.asarray(v) for k, v in data.items()}
         _locals.update(equation_map)  # type: ignore[arg-type]  # pyright: ignore[reportCallIssue, reportArgumentType]
-        return np.asarray(eval(self.equation, locals=_locals))  # noqa: S307
+        return np.asarray(eval(self.equation, None, _locals))  # noqa: S307
 
 
 @dataclass(frozen=True)

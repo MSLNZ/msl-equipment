@@ -43,6 +43,7 @@ schema_numpy_map = {
 numpy_schema_map = {
     "?": "bool",
     "q": "int",
+    "l": "int",
     "d": "double",
     "O": "string",
 }
@@ -1046,6 +1047,7 @@ class Table(np.ndarray):
         e = Element("table", attrib=attrib)
 
         types = SubElement(e, "type")
+        print(self.types)
         dtypes = [numpy_schema_map[t.char] for t in self.types]
         types.text = ",".join(dtypes)
 

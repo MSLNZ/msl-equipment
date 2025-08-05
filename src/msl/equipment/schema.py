@@ -1009,8 +1009,10 @@ class Table(np.ndarray):
                 [unstructured][msl.equipment.schema.Table.unstructured] on the returned object.
         """
 
-        def convert_bool(value: str) -> bool:
-            return value.strip() in {"true", "True", "TRUE", "1"}
+        def convert_bool(value: str | bytes) -> bool:
+            # the value is of type bytes for the latest version of numpy (1.24.4) that supports Python 3.8,
+            # in versions of numpy that support Python 3.9+ it is a string
+            return value.strip() in {"True", "true", "TRUE", "1", b"True", b"true", b"TRUE", b"1"}
 
         # Schema forces order
         _type = [s.strip() for s in (element[0].text or "").split(",")]
@@ -1047,7 +1049,6 @@ class Table(np.ndarray):
         e = Element("table", attrib=attrib)
 
         types = SubElement(e, "type")
-        print(self.types)
         dtypes = [numpy_schema_map[t.char] for t in self.types]
         types.text = ",".join(dtypes)
 
@@ -1057,17 +1058,8 @@ class Table(np.ndarray):
         header = SubElement(e, "header")
         header.text = ",".join(self.header)
 
-        fmt: list[str] = []
-        for t in dtypes:
-            if t == "d":
-                fmt.append("%.18e")
-            elif t in {"i", "?"}:
-                fmt.append("%d")
-            else:
-                fmt.append("%s")
-
         buffer = StringIO()
-        np.savetxt(buffer, self, fmt=fmt, delimiter=",")
+        np.savetxt(buffer, self, fmt="%s", delimiter=",")
         data = SubElement(e, "data")
         data.text = buffer.getvalue()
 

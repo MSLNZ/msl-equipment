@@ -8,7 +8,6 @@ The primary class is [Equipment][msl.equipment.schema.Equipment] which may conta
 * [Accessories][msl.equipment.schema.Accessories]
 * [Adjustment][msl.equipment.schema.Adjustment]
 * [Alteration][msl.equipment.schema.Alteration]
-* [Any][msl.equipment.schema.Any]
 * [Competency][msl.equipment.schema.Competency]
 * [CompletedTask][msl.equipment.schema.CompletedTask]
 * [Conditions][msl.equipment.schema.Conditions]
@@ -26,3 +25,6 @@ The primary class is [Equipment][msl.equipment.schema.Equipment] which may conta
 * [Specifications][msl.equipment.schema.Specifications]
 * [SpecifiedRequirements][msl.equipment.schema.SpecifiedRequirements]
 * [Status][msl.equipment.schema.Status]
+* [Table][msl.equipment.schema.Table]
+
+The [Any][msl.equipment.schema.Any] class is used as a base class for elements that are currently represented by the [any][type_any]{:target="_blank"} type in the XML Schema Definition.

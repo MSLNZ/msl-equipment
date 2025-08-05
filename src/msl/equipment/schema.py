@@ -3,17 +3,19 @@ from __future__ import annotations  # noqa: D100
 from dataclasses import dataclass, field
 from datetime import date as _date
 from enum import Enum
+from io import StringIO
 from math import isinf
 from typing import TYPE_CHECKING, NamedTuple
 from xml.etree.ElementTree import Element, SubElement
 
 import numpy as np
+from numpy.lib.recfunctions import structured_to_unstructured
 
 if TYPE_CHECKING:
     from typing import Any as _Any
-    from typing import TypeVar
+    from typing import Literal, TypeVar
 
-    from numpy.typing import ArrayLike, NDArray
+    from numpy.typing import ArrayLike, DTypeLike, NDArray
 
     A = TypeVar("A", bound="Any")
 
@@ -30,6 +32,19 @@ equation_map = {
     "exp": np.exp,
     "log": np.log,
     "log10": np.log10,
+}
+
+schema_numpy_map = {
+    "bool": bool,
+    "int": int,
+    "double": float,
+    "string": object,
+}
+numpy_schema_map = {
+    "?": "bool",
+    "q": "int",
+    "d": "double",
+    "O": "string",
 }
 
 
@@ -666,7 +681,8 @@ class File:
     """
 
     url: str
-    """The location of the file."""
+    """The location of the file. The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738){:target="_blank"}
+    `scheme:scheme-specific-part`. If `scheme:` is not specified, it is assumed to be `file:`."""
 
     sha256: str
     """The SHA-256 checksum of the file."""
@@ -725,7 +741,7 @@ class Deserialised:
     """
 
     comment: str = ""
-    """The comment associated with the (de)serialised object."""
+    """A comment associated with the (de)serialised object."""
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Deserialised:
@@ -843,7 +859,8 @@ class DigitalReport:
     """
 
     url: str
-    """The location of the digital report."""
+    """The location of the digital report. The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738){:target="_blank"}
+    `scheme:scheme-specific-part`. If `scheme:` is not specified, it is assumed to be `file:`."""
 
     format: DigitalFormat
     """The format of the digital calibration report."""
@@ -894,6 +911,164 @@ class DigitalReport:
         url.text = self.url
         sha256 = SubElement(e, "sha256")
         sha256.text = self.sha256
+        return e
+
+
+class Table(np.ndarray):
+    """Represents the [table][type_table]{:target="_blank"} element in an equipment register."""
+
+    comment: str = ""
+    """A comment that is associated with the table."""
+
+    header: NDArray[np.void] = np.empty(0, dtype=object)
+    """The header value of each column."""
+
+    types: NDArray[np.void] = np.empty(0, dtype=object)
+    """The data type of each column."""
+
+    units: NDArray[np.void] = np.empty(0, dtype=object)
+    """The unit of each column."""
+
+    def __new__(  # noqa: PYI034
+        cls,
+        *,
+        types: NDArray[np.void],
+        units: NDArray[np.void],
+        header: NDArray[np.void],
+        data: ArrayLike,
+        comment: str = "",
+    ) -> Table:
+        """Create a new [Table][msl.equipment.schema.Table] instance.
+
+        Args:
+            types: The data type of each column.
+            units: The unit of each column.
+            header: The header value of each column.
+            data: The table data.
+            comment: A comment that is associated with the table.
+        """
+        obj = np.asarray(data).view(cls)
+        obj.types = types
+        obj.units = units
+        obj.header = header
+        obj.comment = comment
+        return obj
+
+    def __array_finalize__(self, obj: None | NDArray[_Any]) -> None:  # pyright: ignore[reportImplicitOverride]
+        """Finalise the creation of the [Table][msl.equipment.schema.Table] by adding the metadata."""
+        if obj is None:
+            return
+        self.types = getattr(obj, "types", np.empty(0, dtype=object))
+        self.units = getattr(obj, "units", np.empty(0, dtype=object))
+        self.header = getattr(obj, "header", np.empty(0, dtype=object))
+        self.comment = getattr(obj, "comment", "")
+
+    def unstructured(
+        self,
+        *,
+        dtype: DTypeLike = None,
+        copy: bool = False,
+        casting: Literal["no", "equiv", "safe", "same_kind", "unsafe"] = "unsafe",
+    ) -> NDArray[_Any]:
+        """Converts the structured array into an unstructured array.
+
+        If the table contains both numbers and strings, you may find that this method will fail.
+
+        See [structured_to_unstructured][numpy.lib.recfunctions.structured_to_unstructured]{:target="_blank"}
+        for more details.
+
+        !!! warning
+            This returns a numpy [ndarray][numpy.ndarray]{:target="_blank"} instance (not a
+            [Table][msl.equipment.schema.Table] instance). The `header`, `types`, `units` and
+            `comment` attributes are not included with the returned array.
+
+        Args:
+            dtype: The dtype of the output unstructured array.
+            copy: If `True`, always return a copy. If `False`, a view is returned if possible.
+            casting: See casting argument of [numpy.ndarray.astype][]{:target="_blank"}.
+                Controls what kind of data casting may occur.
+
+        Returns:
+            The unstructured array.
+        """
+        return structured_to_unstructured(self, dtype=dtype, copy=copy, casting=casting)
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> Table:
+        """Convert an XML element into a [Table][msl.equipment.schema.Table] instance.
+
+        Args:
+            element: A [table][type_table]{:target="_blank"} XML element from an equipment register.
+
+        Returns:
+            A [Table][msl.equipment.schema.Table] is an subclass of a numpy
+                [structured array][structured_arrays]{:target="_blank"}, where the `header` is used as
+                the *field names*. This allows for accessing a column by the header value rather than by
+                the index of a column. If you prefer to work with unstructured data, call
+                [unstructured][msl.equipment.schema.Table.unstructured] on the returned object.
+        """
+
+        def convert_bool(value: str) -> bool:
+            return value.strip() in {"true", "True", "TRUE", "1"}
+
+        # Schema forces order
+        _type = [s.strip() for s in (element[0].text or "").split(",")]
+        _unit = [s.strip() for s in (element[1].text or "").split(",")]
+        _header = [s.strip() for s in (element[2].text or "").split(",")]
+        _file = StringIO((element[3].text or "").strip())
+
+        # must handle boolean column separately
+        conv = {i: convert_bool for i, v in enumerate(_type) if v == "bool"}
+
+        dtype = np.dtype([(h, schema_numpy_map[t]) for h, t in zip(_header, _type)])
+        data = np.loadtxt(_file, dtype=dtype, delimiter=",", converters=conv)  # type: ignore[arg-type]  # pyright: ignore[reportCallIssue, reportArgumentType, reportUnknownVariableType]
+        data.setflags(write=False)  # pyright: ignore[reportUnknownMemberType]
+
+        header = np.asarray(_header)
+        header.setflags(write=False)  # make it readonly by default
+
+        units = np.asarray(tuple(_unit), np.dtype([(h, object) for h in _header]))
+        units.setflags(write=False)  # make it readonly by default
+
+        assert data.dtype.fields is not None  # pyright: ignore[reportUnknownMemberType]  # noqa: S101
+        types = np.asarray([v[0] for v in data.dtype.fields.values()])  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType, reportUnknownVariableType]
+        types.setflags(write=False)  # make it readonly by default
+
+        return cls(types=types, units=units, header=header, data=data, comment=element.attrib.get("comment", ""))  # pyright: ignore[reportUnknownArgumentType]
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [Table][msl.equipment.schema.Table] class into an XML element.
+
+        Returns:
+            The [Table][msl.equipment.schema.Table] as an XML element.
+        """
+        attrib = {"comment": self.comment} if self.comment else {}
+        e = Element("table", attrib=attrib)
+
+        types = SubElement(e, "type")
+        dtypes = [numpy_schema_map[t.char] for t in self.types]
+        types.text = ",".join(dtypes)
+
+        units = SubElement(e, "unit")
+        units.text = ",".join(self.units.tolist())
+
+        header = SubElement(e, "header")
+        header.text = ",".join(self.header)
+
+        fmt: list[str] = []
+        for t in dtypes:
+            if t == "d":
+                fmt.append("%.18e")
+            elif t in {"i", "?"}:
+                fmt.append("%d")
+            else:
+                fmt.append("%s")
+
+        buffer = StringIO()
+        np.savetxt(buffer, self, fmt=fmt, delimiter=",")
+        data = SubElement(e, "data")
+        data.text = buffer.getvalue()
+
         return e
 
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 from xml.etree.ElementTree import XML, Element, tostring
 
 import numpy as np
@@ -33,6 +33,7 @@ from msl.equipment import (
     Specifications,
     SpecifiedRequirements,
     Status,
+    Table,
 )
 
 if TYPE_CHECKING:
@@ -692,6 +693,87 @@ def test_serialised_unhandled() -> None:
     assert d.comment == "Not handled"
     assert isinstance(d.value, Element)
     assert tostring(d.to_xml()) == text
+
+
+def test_table() -> None:
+    text = """
+    <table comment="Spectral Irradiance">
+        <type> int    , double,           double, bool, string </type>
+        <unit> nm,   W/m^2,      W/m^2, ,   </unit>
+        <header> Wavelength         , Irradiance     ,u(Irradiance), Is Good?, Letter</header>
+        <data>
+            250, 0.01818, 0.02033, True, A
+            300, 0.18478, 0.01755, true, B
+            350, 0.80845, 0.01606, 0, C
+            400, 2.21355, 0.01405, FALSE, D
+            450, 4.49004, 0.01250, 1, E
+            500, 7.45135, 0.01200, TRUE, F
+        </data>
+    </table>
+    """
+    t = Table.from_xml(XML(text))
+    assert t.comment == "Spectral Irradiance"
+    assert np.array_equal(t.units.tolist(), ["nm", "W/m^2", "W/m^2", "", ""])
+    assert t.units["Wavelength"] == "nm"
+    assert t.units["Irradiance"] == "W/m^2"
+    assert t.units["u(Irradiance)"] == "W/m^2"
+    assert t.units["Is Good?"] == ""
+    assert t.units["Letter"] == ""
+    assert np.array_equal(t.header, ["Wavelength", "Irradiance", "u(Irradiance)", "Is Good?", "Letter"])
+    assert np.array_equal(
+        t.types,
+        [
+            np.dtype(dtype=int),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+            np.dtype(dtype=float),
+            np.dtype(dtype=float),
+            np.dtype(dtype=bool),
+            np.dtype(dtype=object),
+        ],
+    )
+    assert np.array_equal(t["Wavelength"], [250, 300, 350, 400, 450, 500])
+    assert np.array_equal(t[1].tolist(), [300, 0.18478, 0.01755, True, " B"])  # type: ignore[arg-type]
+    assert t.dtype.names is not None
+    assert np.array_equal(t.dtype.names, t.header)
+    assert t.units.dtype.names is not None
+    assert np.array_equal(t.units.dtype.names, t.header)
+
+    # All arrays are initially read only
+    with pytest.raises(ValueError, match="read-only"):
+        t.types[0] = np.complex64
+    with pytest.raises(ValueError, match="read-only"):
+        t.units[0] = "degC"
+    with pytest.raises(ValueError, match="read-only"):
+        t.header[0] = "Something else"
+    with pytest.raises(ValueError, match="read-only"):
+        t[0][0] = 1
+
+    # Check that the metadata comes along, using cast() to improve type checking for the tests
+    slicer = cast("Table", t[:3])
+    assert slicer.comment == "Spectral Irradiance"
+
+    by_name = cast("Table", t["Wavelength"])
+    assert by_name.comment == "Spectral Irradiance"
+
+    by_names = cast("Table", t[["Wavelength", "Irradiance"]])
+    assert by_names.comment == "Spectral Irradiance"
+
+    cosine = cast("Table", np.cos(t["Irradiance"] + 0.5))
+    assert cosine.comment == "Spectral Irradiance"
+
+    assert tostring(t.to_xml()) == (
+        b'<table comment="Spectral Irradiance">'
+        b"<type>int,double,double,bool,string</type>"
+        b"<unit>nm,W/m^2,W/m^2,,</unit>"
+        b"<header>Wavelength,Irradiance,u(Irradiance),Is Good?,Letter</header>"
+        b"<data>250,0.01818,0.02033,True, A\n"
+        b"300,0.18478,0.01755,True, B\n"
+        b"350,0.80845,0.01606,False, C\n"
+        b"400,2.21355,0.01405,False, D\n"
+        b"450,4.49004,0.0125,True, E\n"
+        b"500,7.45135,0.012,True, F\n"
+        b"</data>"
+        b"</table>"
+    )
 
 
 # test Measurand, Component, PerformanceCheck, Report

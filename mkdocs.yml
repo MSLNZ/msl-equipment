@@ -79,6 +79,7 @@ nav:
     - schema/specifications.md
     - schema/specified_requirements.md
     - schema/status.md
+    - schema/table.md
 
 markdown_extensions:
   - admonition  # enables: !!! tip

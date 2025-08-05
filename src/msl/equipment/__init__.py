@@ -29,6 +29,7 @@ from .schema import (
     Specifications,
     SpecifiedRequirements,
     Status,
+    Table,
 )
 
 __all__: list[str] = [
@@ -57,6 +58,7 @@ __all__: list[str] = [
     "Specifications",
     "SpecifiedRequirements",
     "Status",
+    "Table",
     "__version__",
     "version_tuple",
 ]

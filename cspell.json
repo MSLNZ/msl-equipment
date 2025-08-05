@@ -26,8 +26,15 @@
         "datasheet",
         "datasheets",
         "deserialised",
+        "loadtxt",
         "loggable",
         "Measurand",
+        "memmap",
+        "ndarray",
+        "recarray",
+        "recfunctions",
+        "savetxt",
+        "setflags",
         "ureal"
     ]
 }

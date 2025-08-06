@@ -458,7 +458,7 @@ class Maintenance:
 
 
 class Range(NamedTuple):
-    """The numeric range for each variable that an [equation][] is valid for.
+    """The numeric range of a variable that an [equation][] is valid for.
 
     Attributes: Parameters:
         minimum (float): Minimum value in range.
@@ -496,14 +496,15 @@ class Evaluable:
     Args:
         equation: The string representation of the equation to evaluate.
         variables: The names of the variables in the equation.
-        ranges: The numeric range for each variable that the `equation` is valid for.
-            The *keys* are the variable names.
+        ranges: The numeric range for a variable that the `equation` is valid for.
+            The *keys* are the variable names. A range does not need to be defined for every variable.
+            If a range is not defined then a range of `[-INF, +INF]` is assumed.
     """
 
     equation: str
     """The string representation of the equation to evaluate."""
 
-    variables: tuple[str, ...]
+    variables: tuple[str, ...] = ()
     """The names of the variables in the equation."""
 
     ranges: dict[str, Range] = field(default_factory=dict)
@@ -535,18 +536,18 @@ class Equation:
     """Represents the [equation][type_equation]{:target="_blank"} element in an equipment register.
 
     Args:
-        value: The equation to evaluate to calculate the corrected value.
-        uncertainty: The equation to evaluate to calculate the standard uncertainty.
+        value: The equation to evaluate to calculate the *corrected* value.
+        uncertainty: The equation to evaluate to calculate the *standard* uncertainty.
         unit: The unit of the measured quantity.
         degree_freedom: The degrees of freedom.
         comment: A comment to associate with the equation.
     """
 
     value: Evaluable
-    """The equation to evaluate to calculate the corrected value."""
+    """The equation to evaluate to calculate the *corrected* value."""
 
     uncertainty: Evaluable
-    """The equation to evaluate to calculate the standard uncertainty."""
+    """The equation to evaluate to calculate the *standard* uncertainty."""
 
     unit: str
     """The unit of the measured quantity."""

@@ -31,6 +31,8 @@
         "Measurand",
         "memmap",
         "ndarray",
+        "numpy",
+        "pycon",
         "recarray",
         "recfunctions",
         "savetxt",

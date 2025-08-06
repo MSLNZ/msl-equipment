@@ -1543,6 +1543,94 @@
 
 
 <h1 id="equation">Equation<a class="headerlink" href="#equation" title="Permanent link">¤</a></h1>
+<!--
+>>> from msl.equipment import Equation, Evaluable, Range
+>>> equation = Equation(
+...     value=Evaluable(
+...         equation="r-0.71-0.04*r+3.4e-4*pow(r,2)+2.4e-3*t+1.3e-3*r*t",
+...         variables=("r", "t"),
+...         ranges={"r": Range(30, 80), "t": Range(15, 25)},
+...     ),
+...     uncertainty=Evaluable(equation="0.355"),
+...     unit="%rh",
+... )
+
+-->
+
+<p>Suppose you have a variable named <code>equation</code> (which is an instance of <a class="autorefs autorefs-internal" title="Equation
+
+
+  
+      dataclass
+  " href="#msl.equipment.schema.Equation">Equation</a>) that represents the following information in an equipment register for equipment that measures relative humidity. The corrected value depends on two variables (<code>r</code> and <code>t</code>) and the standard uncertainty is a constant.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;equation&gt;</span>
+<span class="w">  </span><span class="nt">&lt;value</span><span class="w"> </span><span class="na">variables=</span><span class="s">&quot;r t&quot;</span><span class="nt">&gt;</span>r-0.71-0.04*r+3.4e-4*pow(r,2)+2.4e-3*t+1.3e-3*r*t<span class="nt">&lt;/value&gt;</span>
+<span class="w">  </span><span class="nt">&lt;uncertainty</span><span class="w"> </span><span class="na">variables=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;</span>0.355<span class="nt">&lt;/uncertainty&gt;</span>
+<span class="w">  </span><span class="nt">&lt;unit&gt;</span>%rh<span class="nt">&lt;/unit&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ranges&gt;</span>
+<span class="w">    </span><span class="nt">&lt;range</span><span class="w"> </span><span class="na">variable=</span><span class="s">&quot;r&quot;</span><span class="nt">&gt;</span>
+<span class="w">      </span><span class="nt">&lt;minimum&gt;</span>30<span class="nt">&lt;/minimum&gt;</span>
+<span class="w">      </span><span class="nt">&lt;maximum&gt;</span>80<span class="nt">&lt;/maximum&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/range&gt;</span>
+<span class="w">    </span><span class="nt">&lt;range</span><span class="w"> </span><span class="na">variable=</span><span class="s">&quot;t&quot;</span><span class="nt">&gt;</span>
+<span class="w">      </span><span class="nt">&lt;minimum&gt;</span>15<span class="nt">&lt;/minimum&gt;</span>
+<span class="w">      </span><span class="nt">&lt;maximum&gt;</span>25<span class="nt">&lt;/maximum&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/range&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/ranges&gt;</span>
+<span class="nt">&lt;/equation&gt;</span>
+</code></pre></div>
+<p>You can access the <em>unit</em>, <em>degrees of freedom</em> and <em>comment</em> as attributes of <code>equation</code></p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">unit</span>
+<span class="go">&#39;%rh&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">degree_freedom</span>
+<span class="go">inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">comment</span>
+<span class="go">&#39;&#39;</span>
+</code></pre></div>
+<p>To evaluate an equation, call the appropriate attribute with the variable(s) that are required to evaluate the equation with</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">variables</span>
+<span class="go">(&#39;r&#39;, &#39;t&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">variables</span>
+<span class="go">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mf">50.3</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mf">20.4</span><span class="p">)</span> <span class="o">==</span> <span class="mf">49.8211466</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">equation</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.355</span>
+</code></pre></div>
+<p>A variable can have multiple values. Any sequence of numbers, i.e., a <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list" target="_blank">list</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple" target="_blank">tuple</a>, <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a>, etc., may be used <em>(tip: using <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> will improve performance since a copy of the values is not required)</em>,</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="p">[</span><span class="mf">50.3</span><span class="p">,</span> <span class="mf">52.1</span><span class="p">,</span> <span class="mf">48.7</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="p">[</span><span class="mf">20.4</span><span class="p">,</span> <span class="mf">19.7</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">])</span>
+<span class="go">array([49.8211466, 51.6104604, 48.1625746])</span>
+</code></pre></div>
+<p>the values of the variables do not need to be 1-dimensional arrays,</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="p">[(</span><span class="mf">50.3</span><span class="p">,</span> <span class="mf">52.1</span><span class="p">),</span> <span class="p">(</span><span class="mf">48.7</span><span class="p">,</span> <span class="mf">47.9</span><span class="p">)],</span> <span class="n">t</span><span class="o">=</span><span class="p">[(</span><span class="mf">20.4</span><span class="p">,</span> <span class="mf">19.7</span><span class="p">),</span> <span class="p">(</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">19.6</span><span class="p">)])</span>
+<span class="go">array([[49.8211466, 51.6104604],</span>
+<span class="go">       [48.1625746, 47.3216314]])</span>
+</code></pre></div>
+<p>and the array broadcasting rules of numpy also apply, i.e., multiple <code>r</code> values and a single <code>t</code> value</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="p">(</span><span class="mf">50.3</span><span class="p">,</span> <span class="mf">52.1</span><span class="p">,</span> <span class="mf">48.7</span><span class="p">),</span> <span class="n">t</span><span class="o">=</span><span class="mf">20.4</span><span class="p">)</span>
+<span class="go">array([49.8211466, 51.6595514, 48.1888586])</span>
+</code></pre></div>
+<p>If you forget to specify a variable (in the following case, <code>t</code>) a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#NameError" target="_blank">NameError</a> will be raised,</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mf">50.3</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">NameError</span>: <span class="n">name &#39;t&#39; is not defined</span>
+</code></pre></div>
+<p>however, if you specify more variables than are required to evaluate the equation, the additional variables are ignored
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mf">50.3</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mf">20.4</span><span class="p">)</span>
+<span class="go">array(0.355)</span>
+</code></pre></div></p>
+<p>Notice in the last returned value that the result was printed as <code>array(0.355)</code> even though a single <code>r</code> and <code>t</code> value was specified <em>(although these variables were ignored in this particular example, since the standard uncertainty is a constant, the principle remains the same if they were not ignored)</em>. All evaluated returned types are an instance of a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> even if a single value is specified. These particular returned array instances are referred to as 0-dimensional <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#arrays-scalars" target="_blank">array scalars</a> in numpy terminology.</p>
+<p>When evaluating an equation, the value(s) of the input variables are checked to ensure that the value(s) are within the ranges that the equation is valid for. The XML data above shows that the temperature, <code>t</code>, value must be in the range <code>15</code> to <code>25</code>. If you evaluate the corrected value at <code>t=30</code> a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#ValueError" target="_blank">ValueError</a> is raised</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">ranges</span>
+<span class="go">{&#39;r&#39;: Range(minimum=30, maximum=80), &#39;t&#39;: Range(minimum=15, maximum=25)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mf">50.3</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">The value 30 is not within the range [15, 25]</span>
+</code></pre></div>
+<p>You can bypass range checking by including a <code>check_range=False</code> keyword argument</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mf">50.3</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">check_range</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">array(50.4719306)</span>
+</code></pre></div>
 
 
 <div class="doc doc-object doc-module">
@@ -1632,7 +1720,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The equation to evaluate to calculate the corrected value.</p>
+                <p>The equation to evaluate to calculate the <em>corrected</em> value.</p>
               </div>
             </td>
             <td>
@@ -1653,7 +1741,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The equation to evaluate to calculate the standard uncertainty.</p>
+                <p>The equation to evaluate to calculate the <em>standard</em> uncertainty.</p>
               </div>
             </td>
             <td>
@@ -1801,7 +1889,7 @@
 
     <div class="doc doc-contents ">
 
-        <p>The equation to evaluate to calculate the standard uncertainty.</p>
+        <p>The equation to evaluate to calculate the <em>standard</em> uncertainty.</p>
 
     </div>
 
@@ -1854,7 +1942,7 @@
 
     <div class="doc doc-contents ">
 
-        <p>The equation to evaluate to calculate the corrected value.</p>
+        <p>The equation to evaluate to calculate the <em>corrected</em> value.</p>
 
     </div>
 
@@ -2069,7 +2157,7 @@
 <a href="#msl.equipment.schema.Evaluable" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">Evaluable</span><span class="p">(</span>
     <span class="n">equation</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
-    <span class="n">variables</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">variables</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
     <span class="n">ranges</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="Range (msl.equipment.schema.Range)" href="#msl.equipment.schema.Range">Range</a></span><span class="p">]</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">(),</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2120,7 +2208,7 @@
               </div>
             </td>
             <td>
-                <em>required</em>
+                  <code>()</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -2132,8 +2220,9 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The numeric range for each variable that the <code>equation</code> is valid for.
-The <em>keys</em> are the variable names.</p>
+                <p>The numeric range for a variable that the <code>equation</code> is valid for.
+The <em>keys</em> are the variable names. A range does not need to be defined for every variable.
+If a range is not defined then a range of <code>[-INF, +INF]</code> is assumed.</p>
               </div>
             </td>
             <td>
@@ -2218,11 +2307,12 @@ The <em>keys</em> are the variable names.</p>
 
 
   <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#msl.equipment.schema.Evaluable.variables" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">variables</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">variables</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2384,7 +2474,7 @@ The <em>keys</em> are the variable names.</p>
               Bases: <code><a class="autorefs autorefs-external" title="typing.NamedTuple" href="https://docs.python.org/3/library/typing.html#typing.NamedTuple">NamedTuple</a></code></p>
 
 
-        <p>The numeric range for each variable that an <a class="autorefs autorefs-internal" title="Equation" href="#equation">equation</a> is valid for.</p>
+        <p>The numeric range of a variable that an <a class="autorefs autorefs-internal" title="Equation" href="#equation">equation</a> is valid for.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>

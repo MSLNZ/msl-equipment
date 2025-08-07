@@ -109,7 +109,7 @@ plugins:
             - url: https://gtc.readthedocs.io/en/stable/objects.inv
           options:
             # General
-            show_source: false
+            show_source: true
 
             # Headings
             show_root_toc_entry: false

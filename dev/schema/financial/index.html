@@ -1624,6 +1624,51 @@ A value of <code>0</code> represents that the year is unknown.</p>
     </table>
 
 
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Financial</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Financial][msl.equipment.schema.Financial] instance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        element: A [financial][type_financial]{:target=&quot;_blank&quot;} XML element from an equipment register.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The [Financial][msl.equipment.schema.Financial] instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Schema defines &lt;financial&gt; using xsd:all, which allows sub-elements to appear (or not appear) in any order</span>
+    <span class="c1"># Using str.endswith() allows for ignoring XML namespaces that may be associated with each tag</span>
+    <span class="n">asset</span><span class="p">,</span> <span class="n">warranty</span><span class="p">,</span> <span class="n">year</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">element</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;assetNumber&quot;</span><span class="p">):</span>
+            <span class="n">asset</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">elif</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;warrantyExpirationDate&quot;</span><span class="p">):</span>
+            <span class="n">warranty</span> <span class="o">=</span> <span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">asset_number</span><span class="o">=</span><span class="n">asset</span><span class="p">,</span> <span class="n">warranty_expiration_date</span><span class="o">=</span><span class="n">warranty</span><span class="p">,</span> <span class="n">year_purchased</span><span class="o">=</span><span class="n">year</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
     </div>
 
 </div>
@@ -1677,6 +1722,51 @@ A value of <code>0</code> represents that the year is unknown.</p>
     </table>
 
 
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Financial][msl.equipment.schema.Financial] class into an XML element.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The [Financial][msl.equipment.schema.Financial] as an XML element.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;financial&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">asset_number</span><span class="p">:</span>
+        <span class="n">an</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;assetNumber&quot;</span><span class="p">)</span>
+        <span class="n">an</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asset_number</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">warranty_expiration_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">wed</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;warrantyExpirationDate&quot;</span><span class="p">)</span>
+        <span class="n">wed</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">warranty_expiration_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">year_purchased</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">yp</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;yearPurchased&quot;</span><span class="p">)</span>
+        <span class="n">yp</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">year_purchased</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">e</span>
+</code></pre></div></td></tr></table></div>
+            </details>
     </div>
 
 </div>

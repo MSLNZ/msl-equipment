@@ -1560,6 +1560,69 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
     </table>
 
 
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">748</span>
+<span class="normal">749</span>
+<span class="normal">750</span>
+<span class="normal">751</span>
+<span class="normal">752</span>
+<span class="normal">753</span>
+<span class="normal">754</span>
+<span class="normal">755</span>
+<span class="normal">756</span>
+<span class="normal">757</span>
+<span class="normal">758</span>
+<span class="normal">759</span>
+<span class="normal">760</span>
+<span class="normal">761</span>
+<span class="normal">762</span>
+<span class="normal">763</span>
+<span class="normal">764</span>
+<span class="normal">765</span>
+<span class="normal">766</span>
+<span class="normal">767</span>
+<span class="normal">768</span>
+<span class="normal">769</span>
+<span class="normal">770</span>
+<span class="normal">771</span>
+<span class="normal">772</span>
+<span class="normal">773</span>
+<span class="normal">774</span>
+<span class="normal">775</span>
+<span class="normal">776</span>
+<span class="normal">777</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Deserialised</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a [serialised][type_serialised]{:target=&quot;_blank&quot;} XML element into a [Deserialised][msl.equipment.schema.Deserialised] instance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        element: A [serialised][type_serialised]{:target=&quot;_blank&quot;} XML element from an equipment register.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The [Deserialised][msl.equipment.schema.Deserialised] instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">comment</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;comment&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># GTC is not required for msl-equipment, so we import it here</span>
+    <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;gtcArchive&quot;</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">GTC.xml_format</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]  # noqa: PLC0415</span>
+            <span class="n">xml_to_archive</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">xml_to_archive</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;gtcArchiveJSON&quot;</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">GTC</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]  # noqa: PLC0415</span>
+            <span class="n">pr</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">pr</span><span class="o">.</span><span class="n">loads_json</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">text</span><span class="p">),</span> <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]</span>
+
+    <span class="c1"># Use the Element object rather than raising an exception that the deserializer has not been implemented yet</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">e</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
     </div>
 
 </div>
@@ -1608,6 +1671,57 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
     </table>
 
 
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">779</span>
+<span class="normal">780</span>
+<span class="normal">781</span>
+<span class="normal">782</span>
+<span class="normal">783</span>
+<span class="normal">784</span>
+<span class="normal">785</span>
+<span class="normal">786</span>
+<span class="normal">787</span>
+<span class="normal">788</span>
+<span class="normal">789</span>
+<span class="normal">790</span>
+<span class="normal">791</span>
+<span class="normal">792</span>
+<span class="normal">793</span>
+<span class="normal">794</span>
+<span class="normal">795</span>
+<span class="normal">796</span>
+<span class="normal">797</span>
+<span class="normal">798</span>
+<span class="normal">799</span>
+<span class="normal">800</span>
+<span class="normal">801</span>
+<span class="normal">802</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Deserialised][msl.equipment.schema.Deserialised] class into a [serialised][type_serialised]{:target=&quot;_blank&quot;} XML element.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The [serialised][type_serialised]{:target=&quot;_blank&quot;} XML element.</span>
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+    <span class="n">attrib</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">}</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="k">else</span> <span class="p">{}</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;serialised&quot;</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="n">attrib</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">Element</span><span class="p">):</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]</span>
+        <span class="k">return</span> <span class="n">e</span>
+
+    <span class="c1"># Currently, only a GTC Archive is supported so we don&#39;t need to check how to serialise it</span>
+    <span class="c1"># GTC is not required for msl-equipment, so we import it here</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">GTC.persistence</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]  # noqa: PLC0415</span>
+        <span class="n">Archive</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
+    <span class="p">)</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">GTC.xml_format</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># pyright: ignore[reportMissingTypeStubs]  # noqa: PLC0415</span>
+        <span class="n">archive_to_xml</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
+    <span class="p">)</span>
+
+    <span class="n">e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">archive_to_xml</span><span class="p">(</span><span class="n">Archive</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)))</span>  <span class="c1"># pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]</span>
+    <span class="k">return</span> <span class="n">e</span>
+</code></pre></div></td></tr></table></div>
+            </details>
     </div>
 
 </div>

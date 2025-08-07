@@ -1593,6 +1593,45 @@
     </table>
 
 
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span>
+<span class="normal">429</span>
+<span class="normal">430</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Maintenance</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Maintenance][msl.equipment.schema.Maintenance] instance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        element: A [maintenance][type_maintenance]{:target=&quot;_blank&quot;} XML element from an equipment register.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The [Maintenance][msl.equipment.schema.Maintenance] instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">element</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span>
+
+    <span class="c1"># Schema forces order, planned tasks then completed tasks (and both sub-elements must exist)</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+        <span class="n">planned</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">PlannedTask</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="n">completed</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">CompletedTask</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">element</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
     </div>
 
 </div>
@@ -1646,6 +1685,41 @@
     </table>
 
 
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span>
+<span class="normal">447</span>
+<span class="normal">448</span>
+<span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span>
+<span class="normal">452</span>
+<span class="normal">453</span>
+<span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span>
+<span class="normal">457</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Maintenance][msl.equipment.schema.Maintenance] class into an XML element.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The [Maintenance][msl.equipment.schema.Maintenance] as an XML element.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;maintenance&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">planned</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">completed</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">e</span>  <span class="c1"># no maintenance plan</span>
+
+    <span class="c1"># planned must come before completed</span>
+    <span class="n">planned</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;planned&quot;</span><span class="p">)</span>
+    <span class="n">planned</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">to_xml</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">planned</span><span class="p">)</span>
+    <span class="n">completed</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;completed&quot;</span><span class="p">)</span>
+    <span class="n">completed</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">to_xml</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">completed</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">e</span>
+</code></pre></div></td></tr></table></div>
+            </details>
     </div>
 
 </div>

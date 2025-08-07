@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#msl.equipment.schema.Table" class="md-skip">
+        <a href="#table" class="md-skip">
           Skip to content
         </a>
       
@@ -1372,7 +1372,98 @@
   
 
 
-<h1 id="msl.equipment.schema.Table">Table<a class="headerlink" href="#msl.equipment.schema.Table" title="Permanent link">¤</a></h1>
+<h1 id="table">Table<a class="headerlink" href="#table" title="Permanent link">¤</a></h1>
+<!--
+>>> from xml.etree.ElementTree import XML
+>>> import numpy as np
+>>> from msl.equipment import Table
+>>> text = """
+... <table comment="Spectral">
+...   <type>   int       ,    double ,    double     </type>
+...   <unit>   nm        ,    W/m^2  ,    W/m^2      </unit>
+...   <header> Wavelength, Irradiance, u(Irradiance) </header>
+...   <data>   250       ,    0.01818,   0.02033
+...            300       ,    0.18478,   0.01755
+...            350       ,    0.80845,   0.01606
+...            400       ,    2.21355,   0.01405
+...            450       ,    4.49004,   0.01250
+...            500       ,    7.45135,   0.01200
+...            550       ,   10.75753,   0.01152
+...            600       ,   14.03809,   0.01102
+...            650       ,   16.99469,   0.01103
+...            700       ,   19.44093,   0.01077
+...   </data>
+... </table>
+... """
+>>> table = Table.from_xml(XML(text))
+
+-->
+
+<p>Suppose you have a variable named <code>table</code> (which is an instance of <a class="autorefs autorefs-internal" title="Table" href="#msl.equipment.schema.Table">Table</a>) that represents the following information in an equipment register for equipment that measures spectral irradiance</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;table</span><span class="w"> </span><span class="na">comment=</span><span class="s">&quot;Spectral&quot;</span><span class="nt">&gt;</span>
+<span class="w">  </span><span class="nt">&lt;type&gt;</span><span class="w">   </span>int<span class="w">       </span>,<span class="w">    </span>double<span class="w"> </span>,<span class="w">    </span>double<span class="w">     </span><span class="nt">&lt;/type&gt;</span>
+<span class="w">  </span><span class="nt">&lt;unit&gt;</span><span class="w">   </span>nm<span class="w">        </span>,<span class="w">    </span>W/m^2<span class="w">  </span>,<span class="w">    </span>W/m^2<span class="w">      </span><span class="nt">&lt;/unit&gt;</span>
+<span class="w">  </span><span class="nt">&lt;header&gt;</span><span class="w"> </span>Wavelength,<span class="w"> </span>Irradiance,<span class="w"> </span>u(Irradiance)<span class="w"> </span><span class="nt">&lt;/header&gt;</span>
+<span class="w">  </span><span class="nt">&lt;data&gt;</span><span class="w">   </span>250<span class="w">       </span>,<span class="w">    </span>0.01818,<span class="w">   </span>0.02033
+<span class="w">           </span>300<span class="w">       </span>,<span class="w">    </span>0.18478,<span class="w">   </span>0.01755
+<span class="w">           </span>350<span class="w">       </span>,<span class="w">    </span>0.80845,<span class="w">   </span>0.01606
+<span class="w">           </span>400<span class="w">       </span>,<span class="w">    </span>2.21355,<span class="w">   </span>0.01405
+<span class="w">           </span>450<span class="w">       </span>,<span class="w">    </span>4.49004,<span class="w">   </span>0.01250
+<span class="w">           </span>500<span class="w">       </span>,<span class="w">    </span>7.45135,<span class="w">   </span>0.01200
+<span class="w">           </span>550<span class="w">       </span>,<span class="w">   </span>10.75753,<span class="w">   </span>0.01152
+<span class="w">           </span>600<span class="w">       </span>,<span class="w">   </span>14.03809,<span class="w">   </span>0.01102
+<span class="w">           </span>650<span class="w">       </span>,<span class="w">   </span>16.99469,<span class="w">   </span>0.01103
+<span class="w">           </span>700<span class="w">       </span>,<span class="w">   </span>19.44093,<span class="w">   </span>0.01077
+<span class="w">  </span><span class="nt">&lt;/data&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+</code></pre></div>
+<p>The <code>table</code> instance is a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/user/basics.rec.html#structured-arrays" target="_blank">structured array</a> that has the <em>header</em> values as the <em>field name</em> of each column</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">header</span>
+<span class="go">array([&#39;Wavelength&#39;, &#39;Irradiance&#39;, &#39;u(Irradiance)&#39;], dtype=&#39;&lt;U13&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;Wavelength&quot;</span><span class="p">]</span>
+<span class="go">Table([250, 300, 350, 400, 450, 500, 550, 600, 650, 700])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="s2">&quot;Wavelength&quot;</span><span class="p">]</span>
+<span class="go">array(dtype(&#39;int64&#39;), dtype=object)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">table</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;Wavelength&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;nm&quot;</span>
+</code></pre></div>
+<p>Since <code>table</code> is a numpy array, you can index it</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">(250, 0.01818, 0.02033)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sliced</span><span class="o">=</span><span class="n">table</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sliced</span>
+<span class="go">Table([(250, 0.01818, 0.02033), (300, 0.18478, 0.01755),</span>
+<span class="go">       (350, 0.80845, 0.01606)],</span>
+<span class="go">      dtype=[(&#39;Wavelength&#39;, &#39;&lt;i8&#39;), (&#39;Irradiance&#39;, &#39;&lt;f8&#39;), (&#39;u(Irradiance)&#39;, &#39;&lt;f8&#39;)])</span>
+</code></pre></div>
+<p>and notice that the returned instance fo <code>sliced</code> is another <a class="autorefs autorefs-internal" title="Table" href="#msl.equipment.schema.Table">Table</a> instance, so the attributes of <a class="autorefs autorefs-internal" title="Table" href="#msl.equipment.schema.Table">Table</a> are available</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">sliced</span><span class="o">.</span><span class="n">comment</span>
+<span class="go">&#39;Spectral&#39;</span>
+</code></pre></div>
+<p>as well as perform mathematical operations and call numpy functions directly with the <code>table</code> instance</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;Irradiance&quot;</span><span class="p">])</span>
+<span class="go">Table([ 0.52491592,  0.37650087, -0.2354229 , -0.99741219,  0.70160756,</span>
+<span class="go">       -0.56246854,  0.6903377 , -0.78390036,  0.65631968, -0.0205763 ])</span>
+</code></pre></div>
+<p>Suppose you wanted to get all Irradiance values in the table that are for UV light (i.e., wavelengths &lt; 400 nm)</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;Irradiance&quot;</span><span class="p">][</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;Wavelength&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">400</span> <span class="p">]</span>
+<span class="go">Table([0.01818, 0.18478, 0.80845])</span>
+</code></pre></div>
+<p>If you prefer to work with <em>unstructured</em> data, you can convert the <code>table</code> by calling the <a class="autorefs autorefs-internal" title="unstructured" href="#msl.equipment.schema.Table.unstructured">unstructured</a> method</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">unstructured</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">unstructured</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">unstructured</span>
+<span class="go">Table([[2.500000e+02, 1.818000e-02, 2.033000e-02],</span>
+<span class="go">       [3.000000e+02, 1.847800e-01, 1.755000e-02],</span>
+<span class="go">       [3.500000e+02, 8.084500e-01, 1.606000e-02],</span>
+<span class="go">       [4.000000e+02, 2.213550e+00, 1.405000e-02],</span>
+<span class="go">       [4.500000e+02, 4.490040e+00, 1.250000e-02],</span>
+<span class="go">       [5.000000e+02, 7.451350e+00, 1.200000e-02],</span>
+<span class="go">       [5.500000e+02, 1.075753e+01, 1.152000e-02],</span>
+<span class="go">       [6.000000e+02, 1.403809e+01, 1.102000e-02],</span>
+<span class="go">       [6.500000e+02, 1.699469e+01, 1.103000e-02],</span>
+<span class="go">       [7.000000e+02, 1.944093e+01, 1.077000e-02]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">unstructured</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="go">np.float64(250.0)</span>
+</code></pre></div>
 
 
 <div class="doc doc-object doc-module">
@@ -1654,6 +1745,57 @@
     </table>
 
 
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">934</span>
+<span class="normal">935</span>
+<span class="normal">936</span>
+<span class="normal">937</span>
+<span class="normal">938</span>
+<span class="normal">939</span>
+<span class="normal">940</span>
+<span class="normal">941</span>
+<span class="normal">942</span>
+<span class="normal">943</span>
+<span class="normal">944</span>
+<span class="normal">945</span>
+<span class="normal">946</span>
+<span class="normal">947</span>
+<span class="normal">948</span>
+<span class="normal">949</span>
+<span class="normal">950</span>
+<span class="normal">951</span>
+<span class="normal">952</span>
+<span class="normal">953</span>
+<span class="normal">954</span>
+<span class="normal">955</span>
+<span class="normal">956</span>
+<span class="normal">957</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span>  <span class="c1"># noqa: PYI034</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">types</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">void</span><span class="p">],</span>
+    <span class="n">units</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">void</span><span class="p">],</span>
+    <span class="n">header</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">void</span><span class="p">],</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new [Table][msl.equipment.schema.Table] instance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        types: The data type of each column.</span>
+<span class="sd">        units: The unit of each column.</span>
+<span class="sd">        header: The header value of each column.</span>
+<span class="sd">        data: The table data.</span>
+<span class="sd">        comment: A comment that is associated with the table.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">types</span> <span class="o">=</span> <span class="n">types</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">header</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">comment</span>
+    <span class="k">return</span> <span class="n">obj</span>
+</code></pre></div></td></tr></table></div>
+            </details>
     </div>
 
 </div>
@@ -1736,6 +1878,97 @@ the index of a column. If you prefer to work with unstructured data, call
     </table>
 
 
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 999</span>
+<span class="normal">1000</span>
+<span class="normal">1001</span>
+<span class="normal">1002</span>
+<span class="normal">1003</span>
+<span class="normal">1004</span>
+<span class="normal">1005</span>
+<span class="normal">1006</span>
+<span class="normal">1007</span>
+<span class="normal">1008</span>
+<span class="normal">1009</span>
+<span class="normal">1010</span>
+<span class="normal">1011</span>
+<span class="normal">1012</span>
+<span class="normal">1013</span>
+<span class="normal">1014</span>
+<span class="normal">1015</span>
+<span class="normal">1016</span>
+<span class="normal">1017</span>
+<span class="normal">1018</span>
+<span class="normal">1019</span>
+<span class="normal">1020</span>
+<span class="normal">1021</span>
+<span class="normal">1022</span>
+<span class="normal">1023</span>
+<span class="normal">1024</span>
+<span class="normal">1025</span>
+<span class="normal">1026</span>
+<span class="normal">1027</span>
+<span class="normal">1028</span>
+<span class="normal">1029</span>
+<span class="normal">1030</span>
+<span class="normal">1031</span>
+<span class="normal">1032</span>
+<span class="normal">1033</span>
+<span class="normal">1034</span>
+<span class="normal">1035</span>
+<span class="normal">1036</span>
+<span class="normal">1037</span>
+<span class="normal">1038</span>
+<span class="normal">1039</span>
+<span class="normal">1040</span>
+<span class="normal">1041</span>
+<span class="normal">1042</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Table][msl.equipment.schema.Table] instance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        element: A [table][type_table]{:target=&quot;_blank&quot;} XML element from an equipment register.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A [Table][msl.equipment.schema.Table] is an subclass of a numpy</span>
+<span class="sd">            [structured array][structured_arrays]{:target=&quot;_blank&quot;}, where the `header` is used as</span>
+<span class="sd">            the *field names*. This allows for accessing a column by the header value rather than by</span>
+<span class="sd">            the index of a column. If you prefer to work with unstructured data, call</span>
+<span class="sd">            [unstructured][msl.equipment.schema.Table.unstructured] on the returned object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_bool</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># the value is of type bytes for the latest version of numpy (1.24.4) that supports Python 3.8,</span>
+        <span class="c1"># in versions of numpy that support Python 3.9+ it is a string</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;True&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;TRUE&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;True&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;TRUE&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;1&quot;</span><span class="p">}</span>
+
+    <span class="c1"># Schema forces order</span>
+    <span class="n">_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+    <span class="n">_unit</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+    <span class="n">_header</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+    <span class="n">_file</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">((</span><span class="n">element</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+    <span class="c1"># must handle boolean column separately</span>
+    <span class="n">conv</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">convert_bool</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_type</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;bool&quot;</span><span class="p">}</span>
+
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="n">h</span><span class="p">,</span> <span class="n">schema_numpy_map</span><span class="p">[</span><span class="n">t</span><span class="p">])</span> <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">_header</span><span class="p">,</span> <span class="n">_type</span><span class="p">)])</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">_file</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">converters</span><span class="o">=</span><span class="n">conv</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]  # pyright: ignore[reportCallIssue, reportArgumentType, reportUnknownVariableType]</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]</span>
+
+    <span class="n">header</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">_header</span><span class="p">)</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># make it readonly by default</span>
+
+    <span class="n">units</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">_unit</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="n">h</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">_header</span><span class="p">]))</span>
+    <span class="n">units</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># make it readonly by default</span>
+
+    <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">fields</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]  # noqa: S101</span>
+    <span class="n">types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="n">h</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">_header</span><span class="p">])</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportUnknownArgumentType]</span>
+    <span class="n">types</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># make it readonly by default</span>
+
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">types</span><span class="o">=</span><span class="n">types</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;comment&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>  <span class="c1"># pyright: ignore[reportUnknownArgumentType]</span>
+</code></pre></div></td></tr></table></div>
+            </details>
     </div>
 
 </div>
@@ -1779,6 +2012,59 @@ the index of a column. If you prefer to work with unstructured data, call
     </table>
 
 
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1044</span>
+<span class="normal">1045</span>
+<span class="normal">1046</span>
+<span class="normal">1047</span>
+<span class="normal">1048</span>
+<span class="normal">1049</span>
+<span class="normal">1050</span>
+<span class="normal">1051</span>
+<span class="normal">1052</span>
+<span class="normal">1053</span>
+<span class="normal">1054</span>
+<span class="normal">1055</span>
+<span class="normal">1056</span>
+<span class="normal">1057</span>
+<span class="normal">1058</span>
+<span class="normal">1059</span>
+<span class="normal">1060</span>
+<span class="normal">1061</span>
+<span class="normal">1062</span>
+<span class="normal">1063</span>
+<span class="normal">1064</span>
+<span class="normal">1065</span>
+<span class="normal">1066</span>
+<span class="normal">1067</span>
+<span class="normal">1068</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Table][msl.equipment.schema.Table] class into an XML element.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The [Table][msl.equipment.schema.Table] as an XML element.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">attrib</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">}</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="k">else</span> <span class="p">{}</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;table&quot;</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="n">attrib</span><span class="p">)</span>
+
+    <span class="n">types</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">)</span>
+    <span class="n">dtypes</span> <span class="o">=</span> <span class="p">[</span><span class="n">numpy_schema_map</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">char</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
+    <span class="n">types</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dtypes</span><span class="p">)</span>
+
+    <span class="n">units</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">)</span>
+    <span class="n">units</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+
+    <span class="n">header</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;header&quot;</span><span class="p">)</span>
+    <span class="n">header</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
+
+    <span class="n">buffer</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">e</span>
+</code></pre></div></td></tr></table></div>
+            </details>
     </div>
 
 </div>
@@ -1804,7 +2090,6 @@ the index of a column. If you prefer to work with unstructured data, call
     <div class="doc doc-contents ">
 
         <p>Converts the structured array into an unstructured array.</p>
-<p>If the table contains both numbers and strings, you may find that this method will fail.</p>
 <p>See <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/user/basics.rec.html#numpy.lib.recfunctions.structured_to_unstructured" target="_blank">structured_to_unstructured</a>
 for more details.</p>
 <div class="admonition warning">
@@ -1867,8 +2152,8 @@ for more details.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>See casting argument of <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.astype.html#numpy.ndarray.astype" target="_blank">numpy.ndarray.astype</a>.
-Controls what kind of data casting may occur.</p>
+                <p>Controls what kind of data casting may occur. See the <em>casting</em> argument of
+<a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.astype.html#numpy.ndarray.astype" target="_blank">numpy.ndarray.astype</a> for more details.</p>
               </div>
             </td>
             <td>
@@ -1902,6 +2187,69 @@ Controls what kind of data casting may occur.</p>
     </table>
 
 
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">968</span>
+<span class="normal">969</span>
+<span class="normal">970</span>
+<span class="normal">971</span>
+<span class="normal">972</span>
+<span class="normal">973</span>
+<span class="normal">974</span>
+<span class="normal">975</span>
+<span class="normal">976</span>
+<span class="normal">977</span>
+<span class="normal">978</span>
+<span class="normal">979</span>
+<span class="normal">980</span>
+<span class="normal">981</span>
+<span class="normal">982</span>
+<span class="normal">983</span>
+<span class="normal">984</span>
+<span class="normal">985</span>
+<span class="normal">986</span>
+<span class="normal">987</span>
+<span class="normal">988</span>
+<span class="normal">989</span>
+<span class="normal">990</span>
+<span class="normal">991</span>
+<span class="normal">992</span>
+<span class="normal">993</span>
+<span class="normal">994</span>
+<span class="normal">995</span>
+<span class="normal">996</span>
+<span class="normal">997</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unstructured</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">casting</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="s2">&quot;equiv&quot;</span><span class="p">,</span> <span class="s2">&quot;safe&quot;</span><span class="p">,</span> <span class="s2">&quot;same_kind&quot;</span><span class="p">,</span> <span class="s2">&quot;unsafe&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;unsafe&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">_Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts the structured array into an unstructured array.</span>
+
+<span class="sd">    See [structured_to_unstructured][numpy.lib.recfunctions.structured_to_unstructured]{:target=&quot;_blank&quot;}</span>
+<span class="sd">    for more details.</span>
+
+<span class="sd">    !!! warning</span>
+<span class="sd">        This returns a numpy [ndarray][numpy.ndarray]{:target=&quot;_blank&quot;} instance (not a</span>
+<span class="sd">        [Table][msl.equipment.schema.Table] instance). The `header`, `types`, `units` and</span>
+<span class="sd">        `comment` attributes are not included with the returned array.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dtype: The dtype of the output unstructured array.</span>
+<span class="sd">        copy: If `True`, always return a copy. If `False`, a view is returned if possible.</span>
+<span class="sd">        casting: Controls what kind of data casting may occur. See the *casting* argument of</span>
+<span class="sd">            [numpy.ndarray.astype][]{:target=&quot;_blank&quot;} for more details.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The unstructured array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">structured_to_unstructured</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="n">casting</span><span class="o">=</span><span class="n">casting</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
     </div>
 
 </div>

@@ -25,6 +25,6 @@ The primary class is [Equipment][msl.equipment.schema.Equipment] which may conta
 * [Specifications][msl.equipment.schema.Specifications]
 * [SpecifiedRequirements][msl.equipment.schema.SpecifiedRequirements]
 * [Status][msl.equipment.schema.Status]
-* [Table][msl.equipment.schema.Table]
+* [Table][table]
 
 The [Any][msl.equipment.schema.Any] class is used as a base class for elements that are currently represented by the [any][type_any]{:target="_blank"} type in the XML Schema Definition.

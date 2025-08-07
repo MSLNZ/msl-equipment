@@ -974,8 +974,6 @@ class Table(np.ndarray):
     ) -> NDArray[_Any]:
         """Converts the structured array into an unstructured array.
 
-        If the table contains both numbers and strings, you may find that this method will fail.
-
         See [structured_to_unstructured][numpy.lib.recfunctions.structured_to_unstructured]{:target="_blank"}
         for more details.
 
@@ -987,13 +985,16 @@ class Table(np.ndarray):
         Args:
             dtype: The dtype of the output unstructured array.
             copy: If `True`, always return a copy. If `False`, a view is returned if possible.
-            casting: See casting argument of [numpy.ndarray.astype][]{:target="_blank"}.
-                Controls what kind of data casting may occur.
+            casting: Controls what kind of data casting may occur. See the *casting* argument of
+                [numpy.ndarray.astype][]{:target="_blank"} for more details.
 
         Returns:
             The unstructured array.
         """
-        return structured_to_unstructured(self, dtype=dtype, copy=copy, casting=casting)
+        try:
+            return structured_to_unstructured(self, dtype=dtype, copy=copy, casting=casting)
+        except TypeError:
+            return np.array(self.tolist(), dtype=object)
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Table:
@@ -1035,7 +1036,7 @@ class Table(np.ndarray):
         units.setflags(write=False)  # make it readonly by default
 
         assert data.dtype.fields is not None  # pyright: ignore[reportUnknownMemberType]  # noqa: S101
-        types = np.asarray([v[0] for v in data.dtype.fields.values()])  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType, reportUnknownVariableType]
+        types = np.asarray(tuple(v[0] for v in data.dtype.fields.values()), dtype=[(h, object) for h in _header])  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType, reportUnknownArgumentType]
         types.setflags(write=False)  # make it readonly by default
 
         return cls(types=types, units=units, header=header, data=data, comment=element.attrib.get("comment", ""))  # pyright: ignore[reportUnknownArgumentType]
@@ -1050,7 +1051,7 @@ class Table(np.ndarray):
         e = Element("table", attrib=attrib)
 
         types = SubElement(e, "type")
-        dtypes = [numpy_schema_map[t.char] for t in self.types]
+        dtypes = [numpy_schema_map[t.char] for t in self.types.tolist()]
         types.text = ",".join(dtypes)
 
         units = SubElement(e, "unit")

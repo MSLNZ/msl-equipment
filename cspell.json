@@ -26,6 +26,8 @@
         "datasheet",
         "datasheets",
         "deserialised",
+        "dtype",
+        "etree",
         "loadtxt",
         "loggable",
         "Measurand",

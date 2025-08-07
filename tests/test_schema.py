@@ -720,16 +720,11 @@ def test_table() -> None:
     assert t.units["Is Good?"] == ""
     assert t.units["Letter"] == ""
     assert np.array_equal(t.header, ["Wavelength", "Irradiance", "u(Irradiance)", "Is Good?", "Letter"])
-    assert np.array_equal(
-        t.types,
-        [
-            np.dtype(dtype=int),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
-            np.dtype(dtype=float),
-            np.dtype(dtype=float),
-            np.dtype(dtype=bool),
-            np.dtype(dtype=object),
-        ],
-    )
+    assert t.types["Wavelength"] == np.dtype(dtype=int)
+    assert t.types["Irradiance"] == np.dtype(dtype=float)
+    assert t.types["u(Irradiance)"] == np.dtype(dtype=float)
+    assert t.types["Is Good?"] == np.dtype(dtype=bool)
+    assert t.types["Letter"] == np.dtype(dtype=object)
     assert np.array_equal(t["Wavelength"], [250, 300, 350, 400, 450, 500])
     assert np.array_equal(t[1].tolist(), [300, 0.18478, 0.01755, True, " B"])  # type: ignore[arg-type]
     assert t.dtype.names is not None
@@ -773,6 +768,24 @@ def test_table() -> None:
         b"500,7.45135,0.012,True, F\n"
         b"</data>"
         b"</table>"
+    )
+
+    # creating an unstructured array from a structured array that contains numerics and strings
+    un = t.unstructured()
+    assert un.dtype == np.object_
+    assert np.array_equal(
+        un,
+        np.array(
+            [
+                [250, 0.01818, 0.02033, True, " A"],
+                [300, 0.18478, 0.01755, True, " B"],
+                [350, 0.80845, 0.01606, False, " C"],
+                [400, 2.21355, 0.01405, False, " D"],
+                [450, 4.49004, 0.01250, True, " E"],
+                [500, 7.45135, 0.01200, True, " F"],
+            ],
+            dtype=object,
+        ),
     )
 
 

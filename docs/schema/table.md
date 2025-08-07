@@ -54,9 +54,9 @@ The `table` instance is a numpy [structured array][structured_arrays]{:target="_
 array(['Wavelength', 'Irradiance', 'u(Irradiance)'], dtype='<U13')
 >>> table["Wavelength"]
 Table([250, 300, 350, 400, 450, 500, 550, 600, 650, 700])
->>> table.types["Wavelength"]
-array(dtype('int64'), dtype=object)
->>> assert table.units["Wavelength"] == "nm"
+>>> table.types["Irradiance"]
+array(dtype('float64'), dtype=object)
+>>> assert table.units["u(Irradiance)"] == "W/m^2"
 
 ```
 
@@ -66,10 +66,8 @@ Since `table` is a numpy array, you can index it
 >>> print(table[0])
 (250, 0.01818, 0.02033)
 >>> sliced=table[:3]
->>> sliced
-Table([(250, 0.01818, 0.02033), (300, 0.18478, 0.01755),
-       (350, 0.80845, 0.01606)],
-      dtype=[('Wavelength', '<i8'), ('Irradiance', '<f8'), ('u(Irradiance)', '<f8')])
+>>> print(sliced)
+[(250, 0.01818, 0.02033) (300, 0.18478, 0.01755) (350, 0.80845, 0.01606)]
 
 ```
 
@@ -90,7 +88,7 @@ Table([ 0.52491592,  0.37650087, -0.2354229 , -0.99741219,  0.70160756,
 
 ```
 
-Suppose you wanted to get all Irradiance values in the table that are for UV light (i.e., wavelengths &lt; 400 nm)
+Suppose you wanted to get all *Irradiance* values in the table that are for UV light (i.e., wavelengths &lt; 400 nm)
 
 ```pycon
 >>> table["Irradiance"][ table["Wavelength"] < 400 ]

@@ -1422,18 +1422,16 @@
 <span class="go">array([&#39;Wavelength&#39;, &#39;Irradiance&#39;, &#39;u(Irradiance)&#39;], dtype=&#39;&lt;U13&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;Wavelength&quot;</span><span class="p">]</span>
 <span class="go">Table([250, 300, 350, 400, 450, 500, 550, 600, 650, 700])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="s2">&quot;Wavelength&quot;</span><span class="p">]</span>
-<span class="go">array(dtype(&#39;int64&#39;), dtype=object)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">table</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;Wavelength&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;nm&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="s2">&quot;Irradiance&quot;</span><span class="p">]</span>
+<span class="go">array(dtype(&#39;float64&#39;), dtype=object)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">table</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s2">&quot;u(Irradiance)&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;W/m^2&quot;</span>
 </code></pre></div>
 <p>Since <code>table</code> is a numpy array, you can index it</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="go">(250, 0.01818, 0.02033)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sliced</span><span class="o">=</span><span class="n">table</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sliced</span>
-<span class="go">Table([(250, 0.01818, 0.02033), (300, 0.18478, 0.01755),</span>
-<span class="go">       (350, 0.80845, 0.01606)],</span>
-<span class="go">      dtype=[(&#39;Wavelength&#39;, &#39;&lt;i8&#39;), (&#39;Irradiance&#39;, &#39;&lt;f8&#39;), (&#39;u(Irradiance)&#39;, &#39;&lt;f8&#39;)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sliced</span><span class="p">)</span>
+<span class="go">[(250, 0.01818, 0.02033) (300, 0.18478, 0.01755) (350, 0.80845, 0.01606)]</span>
 </code></pre></div>
 <p>and notice that the returned instance fo <code>sliced</code> is another <a class="autorefs autorefs-internal" title="Table" href="#msl.equipment.schema.Table">Table</a> instance, so the attributes of <a class="autorefs autorefs-internal" title="Table" href="#msl.equipment.schema.Table">Table</a> are available</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">sliced</span><span class="o">.</span><span class="n">comment</span>
@@ -1444,7 +1442,7 @@
 <span class="go">Table([ 0.52491592,  0.37650087, -0.2354229 , -0.99741219,  0.70160756,</span>
 <span class="go">       -0.56246854,  0.6903377 , -0.78390036,  0.65631968, -0.0205763 ])</span>
 </code></pre></div>
-<p>Suppose you wanted to get all Irradiance values in the table that are for UV light (i.e., wavelengths &lt; 400 nm)</p>
+<p>Suppose you wanted to get all <em>Irradiance</em> values in the table that are for UV light (i.e., wavelengths &lt; 400 nm)</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;Irradiance&quot;</span><span class="p">][</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;Wavelength&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">400</span> <span class="p">]</span>
 <span class="go">Table([0.01818, 0.18478, 0.80845])</span>
 </code></pre></div>

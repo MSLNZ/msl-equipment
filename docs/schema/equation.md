@@ -110,7 +110,7 @@ When evaluating an equation, the value(s) of the input variables are checked to 
 >>> equation.value(r=50.3, t=30)
 Traceback (most recent call last):
 ...
-ValueError: The value 30 is not within the range [15, 25]
+ValueError: The value 30.0 is not within the range [15, 25]
 
 ```
 
@@ -124,7 +124,7 @@ array(50.4719306)
 
 ::: msl.equipment.schema
     options:
-        filters: ["Equation", "from_xml", "to_xml", "value", "uncertainty", "unit", "degree_freedom", "comment"]
+        filters: ["^Equation$", "from_xml", "to_xml", "value", "uncertainty", "unit", "degree_freedom", "comment"]
 
 ::: msl.equipment.schema
     options:

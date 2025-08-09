@@ -18,6 +18,7 @@ from msl.equipment import (
     Alteration,
     Competency,
     Conditions,
+    CVDEquation,
     Deserialised,
     DigitalFormat,
     DigitalReport,
@@ -565,7 +566,7 @@ def test_evaluatable_1d() -> None:
     expected = 2 * np.pi * np.sin(np.array([0.1, 0.2]) + 0.1) - np.cos(np.array([0.1, 0.2]) / 2)
     assert np.array_equal(e(x=[0.1, 0.2]), expected)
 
-    with pytest.raises(ValueError, match="-1 is not within the range"):
+    with pytest.raises(ValueError, match="-1.0 is not within the range"):
         _ = e(x=-1)
 
     with pytest.raises(NameError, match="'x' is not defined"):
@@ -593,9 +594,9 @@ def test_evaluatable_2d() -> None:
     )
     assert e(rh=rh, t=t) == expect
 
-    with pytest.raises(ValueError, match="-1 is not within the range"):
+    with pytest.raises(ValueError, match="-1.0 is not within the range"):
         _ = e(rh=-1, t=20)
-    with pytest.raises(ValueError, match="200 is not within the range"):
+    with pytest.raises(ValueError, match="200.0 is not within the range"):
         _ = e(rh=50, t=200)
 
 
@@ -787,6 +788,222 @@ def test_table() -> None:
             dtype=object,
         ),
     )
+
+
+def test_cvd() -> None:
+    text = """
+        <cvdCoefficients comment="My favourite PRT">
+        <R0>100.0188885</R0>
+        <A>0.00390969</A>
+        <B>-0.000000606</B>
+        <C>0.000000000001372</C>
+        <uncertainty variables="">0.0056/2</uncertainty>
+        <range>
+            <minimum>-10</minimum>
+            <maximum>70.02</maximum>
+        </range>
+        <degreeFreedom>99.9</degreeFreedom>
+        </cvdCoefficients>
+    """
+    cvd = CVDEquation.from_xml(XML(text))
+    assert cvd.R0 == 100.0188885  # noqa: PLR2004
+    assert cvd.A == 0.00390969  # noqa: PLR2004
+    assert cvd.B == -6.06e-7  # noqa: PLR2004
+    assert cvd.C == 1.372e-12  # noqa: PLR2004
+    assert cvd.uncertainty.equation == "0.0056/2"
+    assert cvd.uncertainty.variables == ()
+    assert cvd.uncertainty.ranges == {"t": Range(-10, 70.02), "r": Range(96.102, 127.103)}
+    assert cvd.uncertainty() == 0.0056/2
+    assert cvd.ranges == cvd.uncertainty.ranges
+    assert cvd.degree_freedom == 99.9  # noqa: PLR2004
+    assert cvd.comment == "My favourite PRT"
+    assert tostring(cvd.to_xml()) == (
+        b'<cvdCoefficients comment="My favourite PRT">'
+        b"<R0>100.0188885</R0>"
+        b"<A>0.00390969</A>"
+        b"<B>-6.06e-07</B>"
+        b"<C>1.372e-12</C>"
+        b'<uncertainty variables="">0.0056/2</uncertainty>'
+        b"<range>"
+        b"<minimum>-10.0</minimum>"
+        b"<maximum>70.02</maximum>"
+        b"</range>"
+        b"<degreeFreedom>99.9</degreeFreedom>"
+        b"</cvdCoefficients>"
+    )
+
+    with pytest.raises(ValueError, match="-10.1 is not within the range"):
+        _ = cvd.resistance(-10.1)
+    with pytest.raises(ValueError, match="in the sequence is not within the range"):
+        _ = cvd.resistance([0, 1, -10.1, -1])
+
+    assert pytest.approx(cvd.resistance(-10.1, check_range=False)) == 96.0631883261  # pyright: ignore[reportUnknownMemberType]  # noqa: PLR2004
+
+    with pytest.raises(ValueError, match="96.0 is not within the range"):
+        _ = cvd.temperature(96)
+    with pytest.raises(ValueError, match="in the sequence is not within the range"):
+        _ = cvd.temperature([100, 101, 96, 102])
+
+    assert pytest.approx(cvd.temperature(96, check_range=False)) == -10.26108289  # pyright: ignore[reportUnknownMemberType]  # noqa: PLR2004
+
+    assert cvd.resistance(0) == 100.0188885  # noqa: PLR2004
+    assert cvd.temperature(100.0188885) == 0
+
+    # values from Humidity Standards
+    temperatures = [
+        -9.752602907,
+        0.127375257,
+        10.08530398,
+        20.00161345,
+        30.04545999,
+        40.01462788,
+        50.02514365,
+        59.83624842,
+        70.01948947,
+    ]
+    resistances = [
+        96.1994519,
+        100.0686967,
+        103.9565095,
+        107.8161279,
+        111.7132350,
+        115.5692733,
+        119.4291821,
+        123.2004137,
+        127.1023476,
+    ]
+    assert np.allclose(cvd.resistance(temperatures), resistances, rtol=2e-11, atol=0)
+    assert np.allclose(cvd.temperature(resistances), temperatures, rtol=3e-9, atol=0)
+
+
+def test_cvd_from_to_xml_no_comment_nor_dof() -> None:
+    text = """
+        <cvdCoefficients>
+        <R0>100.02</R0>
+        <A>0.0321</A>
+        <B>-5e-7</B>
+        <C>0</C>
+        <uncertainty variables="">0.0035</uncertainty>
+        <range>
+            <minimum>0</minimum>
+            <maximum>100</maximum>
+        </range>
+        </cvdCoefficients>
+    """
+    cvd = CVDEquation.from_xml(XML(text))
+    assert cvd.R0 == 100.02  # noqa: PLR2004
+    assert cvd.A == 0.0321  # noqa: PLR2004
+    assert cvd.B == -5.0e-7  # noqa: PLR2004
+    assert cvd.C == 0
+    assert cvd.uncertainty.equation == "0.0035"
+    assert cvd.uncertainty.variables == ()
+    assert cvd.uncertainty.ranges == {"t": Range(0, 100), "r": Range(100.02, 420.584)}
+    assert cvd.ranges == cvd.uncertainty.ranges
+    assert np.isinf(cvd.degree_freedom)
+    assert cvd.comment == ""
+    assert tostring(cvd.to_xml()) == (
+        b"<cvdCoefficients>"
+        b"<R0>100.02</R0>"
+        b"<A>0.0321</A>"
+        b"<B>-5e-07</B>"
+        b"<C>0.0</C>"
+        b'<uncertainty variables="">0.0035</uncertainty>'
+        b"<range>"
+        b"<minimum>0.0</minimum>"
+        b"<maximum>100.0</maximum>"
+        b"</range>"
+        b"</cvdCoefficients>"
+    )
+
+
+def test_cvd_round_trip() -> None:
+    text = """
+        <cvdCoefficients>
+        <R0>100.0188885</R0>
+        <A>0.00390969</A>
+        <B>-0.000000606</B>
+        <C>0.000000000001372</C>
+        <uncertainty variables="">0.0056/2</uncertainty>
+        <range>
+            <minimum>-200</minimum>
+            <maximum>661</maximum>
+        </range>
+        </cvdCoefficients>
+    """
+    cvd = CVDEquation.from_xml(XML(text))
+    t = np.linspace(-200, 661, num=1_000_000)  # 0.000861 degC step size over entire temperature range
+    assert np.allclose(cvd.temperature(cvd.resistance(t)), t, rtol=7e-10, atol=0)
+
+
+def test_cvd_iec60751() -> None:
+    # https://cdn.standards.iteh.ai/samples/14059/7d8443be42764357a50e53e55222996d/IEC-60751-2008.pdf
+    # Table 1 in IEC60751
+    data = np.array([
+        [-200, 18.52],
+        [-190, 22.83],
+        [-185, 24.97],
+        [-180, 27.10],
+        [-177, 28.37],
+        [-170, 31.34],
+        [-163, 34.28],
+        [-160, 35.54],
+        [-156, 37.22],
+        [-146, 41.39],
+        [-140, 43.88],
+        [-135, 45.94],
+        [-130, 48.00],
+        [-127, 49.24],
+        [-119, 52.52],
+        [-107, 57.41],
+        [-100, 60.26],
+        [-92, 63.49],
+        [-84, 66.72],
+        [-77, 69.53],
+        [-63, 75.13],
+        [-55, 78.32],
+        [-46, 81.89],
+        [-39, 84.67],
+        [-27, 89.40],
+        [-20, 92.16],
+        [-15, 94.12],
+        [-11, 95.69],
+        [-7, 97.26],
+        [-1, 99.61],
+        [0, 100.00],
+        [100, 138.51],
+        [172, 165.51],
+        [203, 176.96],
+        [330, 222.68],
+        [361, 233.56],
+        [380, 240.18],
+        [409, 250.19],
+        [432, 258.06],
+        [449, 263.84],
+        [455, 265.87],
+        [493, 278.64],
+        [604, 314.99],
+        [658, 332.16],
+        [718, 350.84],
+        [805, 377.19],
+        [822, 382.24],
+        [850, 390.48],
+    ])
+    text = """
+        <cvdCoefficients>
+        <R0>100</R0>
+        <A>3.9083e-3</A>
+        <B>-5.775e-7</B>
+        <C>-4.183e-12</C>
+        <uncertainty variables="">1</uncertainty>
+        <range>
+            <minimum>-200</minimum>
+            <maximum>850</maximum>
+        </range>
+        </cvdCoefficients>
+    """
+    cvd = CVDEquation.from_xml(XML(text))
+    assert np.allclose(cvd.resistance(data[:,0]), data[:,1], rtol=1e-4, atol=0.005)
+    assert np.allclose(cvd.temperature(data[:,1]), data[:,0], rtol=5e-4, atol=0.005)
 
 
 # test Measurand, Component, PerformanceCheck, Report

@@ -64,6 +64,7 @@ nav:
     - schema/competency.md
     - schema/completed_task.md
     - schema/conditions.md
+    - schema/cvd_equation.md
     - schema/deserialised.md
     - schema/digital_report.md
     - schema/equation.md

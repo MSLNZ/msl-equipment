@@ -23,10 +23,14 @@
         "CHANGELOG.md"
     ],
     "words": [
+        "allclose",
+        "Callendar",
+        "cbrt",
         "datasheet",
         "datasheets",
         "deserialised",
         "dtype",
+        "Dusen",
         "etree",
         "loadtxt",
         "loggable",
@@ -37,6 +41,7 @@
         "pycon",
         "recarray",
         "recfunctions",
+        "rtol",
         "savetxt",
         "setflags",
         "ureal"

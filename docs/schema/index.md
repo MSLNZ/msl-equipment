@@ -11,7 +11,8 @@ The primary class is [Equipment][msl.equipment.schema.Equipment] which may conta
 * [Competency][msl.equipment.schema.Competency]
 * [CompletedTask][msl.equipment.schema.CompletedTask]
 * [Conditions][msl.equipment.schema.Conditions]
-* [Deserialised][msl.equipment.schema.Deserialised] (opposite of the [serialised][type_serialised]{:target="_blank"} XML element)
+* [CVDEquation][cvdequation] (uses the [cvdCoefficients][type_callendarVanDusenCoefficients]{:target="_blank"})
+* [Deserialised][msl.equipment.schema.Deserialised] (opposite of [serialised][type_serialised]{:target="_blank"})
 * [DigitalReport][digitalreport]
 * [Equation][equation]
 * [File][msl.equipment.schema.File]

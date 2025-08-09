@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING, NamedTuple
 from xml.etree.ElementTree import Element, SubElement
 
 import numpy as np
-from numpy.lib.recfunctions import structured_to_unstructured
 
 if TYPE_CHECKING:
     from typing import Any as _Any
@@ -480,11 +479,11 @@ class Range(NamedTuple):
         Raises:
             ValueError: If `value` is not within the range.
         """
-        if isinstance(value, (int, float)):
+        if isinstance(value, (int, float)) or (isinstance(value, np.ndarray) and value.ndim == 0):
             if value < self.minimum or value > self.maximum:
                 msg = f"The value {value} is not within the range [{self.minimum}, {self.maximum}]"
                 raise ValueError(msg)
-        elif np.any(np.less(value, self.minimum)) or np.any(np.greater(value, self.maximum)):
+        elif np.any(np.less(value, self.minimum)) or np.any(np.greater(value, self.maximum)):  # pyright: ignore[reportUnknownArgumentType]
             msg = f"A value in the sequence is not within the range [{self.minimum}, {self.maximum}]"
             raise ValueError(msg)
 
@@ -520,15 +519,15 @@ class Evaluable:
         Returns:
             The equation evaluated.
         """
+        data = {k: np.asarray(v, dtype=float) for k, v in data.items()}
         if check_range:
             for name, value in data.items():
                 r = self.ranges.get(name)
                 if r is not None:  # if None then assume [-INF, +INF] for this variable
                     r.check_within_range(value)
 
-        _locals: dict[str, NDArray[np.float64]] = {k: np.asarray(v) for k, v in data.items()}
-        _locals.update(equation_map)  # type: ignore[arg-type]  # pyright: ignore[reportCallIssue, reportArgumentType]
-        return np.asarray(eval(self.equation, None, _locals))  # noqa: S307
+        data.update(equation_map)  # type: ignore[arg-type]  # pyright: ignore[reportCallIssue, reportArgumentType]
+        return np.asarray(eval(self.equation, None, data))  # noqa: S307
 
 
 @dataclass(frozen=True)
@@ -916,6 +915,209 @@ class DigitalReport:
         return e
 
 
+def _cvd_resistance(array: float | np.ndarray, r0: float, a: float, b: float, c: float) -> NDArray[np.float64]:
+    """Calculate resistance from CVD coefficients."""
+    return np.piecewise(
+        array,
+        [array < 0, array >= 0],
+        [
+            lambda t: r0 * (1.0 + a * t + b * t**2 + c * (t - 100.0) * t**3),
+            lambda t: r0 * (1.0 + a * t + b * t**2),
+        ],
+    )
+
+
+@dataclass(frozen=True)
+class CVDEquation:
+    """The Callendar-Van Dusen (CVD) equation based on the [cvdCoefficients][type_callendarVanDusenCoefficients]{:target="_blank"} element in an equipment register.
+
+    Args:
+        R0: The value of the resistance at 0 °C.
+        A: The value of the A coefficient, `A⋅T` [unit: 1/°C].
+        B: The value of the B coefficient, `B⋅T²` [unit: 1/°C²].
+        C: The value of the C coefficient, `C⋅(T-100)⋅T³` [unit: 1/°C⁴].
+        uncertainty:  The equation to evaluate to calculate the *standard* uncertainty.
+        ranges: The temperature range, in °C, and the resistance range that the CVD coefficients are valid.
+            The temperature key must be `"t"` and the resistance key `"r"`.
+        degree_freedom: The degrees of freedom.
+        comment: A comment to associate with the CVD equation.
+    """  # noqa: E501
+
+    R0: float
+    """The value of the resistance at 0 °C."""
+
+    A: float
+    """The value of the A coefficient, `A⋅T` [unit: 1/°C]."""
+
+    B: float
+    """The value of the B coefficient, `B⋅T²` [unit: 1/°C²]."""
+
+    C: float
+    """The value of the C coefficient, `C⋅(T-100)⋅T³` [unit: 1/°C⁴]."""
+
+    uncertainty: Evaluable
+    """The equation to evaluate to calculate the *standard* uncertainty."""
+
+    ranges: dict[str, Range] = field(default_factory=dict)
+    """The temperature range, in °C, and the resistance range that the Callendar-Van Dusen coefficients are valid."""
+
+    degree_freedom: float = float("inf")
+    """The degrees of freedom."""
+
+    comment: str = ""
+    """A comment associated with the Callendar-Van Dusen equation."""
+
+    def resistance(self, temperature: ArrayLike, *, check_range: bool = True) -> NDArray[np.float64]:
+        """Calculate resistance from temperature.
+
+        Args:
+            temperature: The temperature value(s), in °C.
+            check_range: Whether to check that the temperature value(s) is(are) within the allowed range.
+
+        Returns:
+            The resistance value(s).
+        """
+        array = np.asarray(temperature, dtype=float)
+        if check_range and self.ranges["t"].check_within_range(array):
+            pass  # check_within_range() will raise an error, if one occurred
+
+        return _cvd_resistance(array, self.R0, self.A, self.B, self.C)
+
+    def temperature(self, resistance: ArrayLike, *, check_range: bool = True) -> NDArray[np.float64]:
+        """Calculate temperature from resistance.
+
+        Args:
+            resistance: The resistance value(s), in Ω.
+            check_range: Whether to check that the resistance value(s) is(are) within the allowed range.
+
+        Returns:
+            The temperature value(s).
+        """
+        array: NDArray[np.float64] = np.asarray(resistance, dtype=float)
+        if check_range and self.ranges["r"].check_within_range(array):
+            pass  # check_within_range raised an error, if one occurred
+
+        def positive(r: NDArray[np.float64]) -> NDArray[np.float64]:
+            # rearrange CVD equation to be: a*x^2 + b*x + c = 0
+            #   a -> B, b -> A, c -> 1 - R/R0
+            # then use the quadratic formula
+            return (-self.A + np.sqrt(self.A**2 - 4.0 * self.B * (1.0 - r / self.R0))) / (2.0 * self.B)
+
+        def negative(r: NDArray[np.float64]) -> NDArray[np.float64]:
+            # rearrange CVD equation to be: a*x^4 + b*x^3 + c*x^2 + d*x + e = 0
+            a = self.C
+            b = -100.0 * self.C
+            c = self.B
+            d = self.A
+            e = 1.0 - (r / self.R0)
+
+            # https://en.wikipedia.org/wiki/Quartic_function#Solving_a_quartic_equation]
+            # See Section "General formula for roots" for the definitions of these variables
+            p = (8 * a * c - 3 * b**2) / (8 * a**2)
+            q = (b**3 - 4 * a * b * c + 8 * a**2 * d) / (8 * a**3)
+            delta_0 = c**2 - 3 * b * d + 12 * a * e
+            delta_1 = 2 * c**3 - 9 * b * c * d + 27 * b**2 * e + 27 * a * d**2 - 72 * a * c * e
+            Q = np.cbrt((delta_1 + np.sqrt(delta_1**2 - 4 * delta_0**3)) / 2)  # noqa: N806
+            S = 0.5 * np.sqrt(-2 * p / 3 + 1 / (3 * a) * (Q + delta_0 / Q))  # noqa: N806
+
+            # decide which root of the quartic to use by looking at the value under the
+            # square root in the x1,2 and x3,4 equations
+            t1 = -4 * S**2 - 2 * p
+            t2 = q / S
+            t3 = t1 - t2
+            return np.piecewise(
+                t3,
+                [t3 >= 0, t3 < 0],
+                [
+                    lambda x: -b / (4.0 * a) + S - 0.5 * np.sqrt(x),  # x4 equation
+                    lambda x: -b / (4.0 * a) - S + 0.5 * np.sqrt(x + 2.0 * t2),  # x1 equation
+                ],
+            )
+
+        return np.piecewise(array, [array < self.R0, array >= self.R0], [negative, positive])
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> CVDEquation:
+        """Convert an XML element into a [CVDEquation][msl.equipment.schema.CVDEquation] instance.
+
+        Args:
+            element: A [cvdCoefficients][type_callendarVanDusenCoefficients]{:target="_blank"} XML element
+                from an equipment register.
+
+        Returns:
+            The [CVDEquation][msl.equipment.schema.CVDEquation] instance.
+        """
+        # Schema forces order
+        r0 = float(element[0].text or 0)
+        a = float(element[1].text or 0)
+        b = float(element[2].text or 0)
+        c = float(element[3].text or 0)
+
+        r = element[5]
+        _range = Range(float(r[0].text or -200), float(r[1].text or 661))
+        ranges = {
+            "t": _range,
+            "r": Range(
+                minimum=round(float(_cvd_resistance(_range.minimum, r0, a, b, c)), 3),
+                maximum=round(float(_cvd_resistance(_range.maximum, r0, a, b, c)), 3),
+            ),
+        }
+
+        u = element[4]
+        uncertainty = Evaluable(
+            equation=u.text or "",
+            variables=tuple(u.attrib["variables"].split()),
+            ranges=ranges,
+        )
+
+        return cls(
+            R0=r0,
+            A=a,
+            B=b,
+            C=c,
+            uncertainty=uncertainty,
+            ranges=ranges,
+            degree_freedom=float(element[6].text or np.inf) if len(element) > 6 else np.inf,  # noqa: PLR2004
+            comment=element.attrib.get("comment", ""),
+        )
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [CVDEquation][msl.equipment.schema.CVDEquation] class into an XML element.
+
+        Returns:
+            The [CVDEquation][msl.equipment.schema.CVDEquation] as an XML element.
+        """
+        attrib = {"comment": self.comment} if self.comment else {}
+        e = Element("cvdCoefficients", attrib=attrib)
+
+        r0 = SubElement(e, "R0")
+        r0.text = str(self.R0)
+
+        a = SubElement(e, "A")
+        a.text = str(self.A)
+
+        b = SubElement(e, "B")
+        b.text = str(self.B)
+
+        c = SubElement(e, "C")
+        c.text = str(self.C)
+
+        u = SubElement(e, "uncertainty", attrib={"variables": " ".join(self.uncertainty.variables)})
+        u.text = str(self.uncertainty.equation)
+
+        rng = SubElement(e, "range")
+        mn = SubElement(rng, "minimum")
+        mn.text = str(self.ranges["t"].minimum)
+        mx = SubElement(rng, "maximum")
+        mx.text = str(self.ranges["t"].maximum)
+
+        if not isinf(self.degree_freedom):
+            dof = SubElement(e, "degreeFreedom")
+            dof.text = str(self.degree_freedom)
+
+        return e
+
+
 class Table(np.ndarray):
     """Represents the [table][type_table]{:target="_blank"} element in an equipment register."""
 
@@ -977,11 +1179,6 @@ class Table(np.ndarray):
         See [structured_to_unstructured][numpy.lib.recfunctions.structured_to_unstructured]{:target="_blank"}
         for more details.
 
-        !!! warning
-            This returns a numpy [ndarray][numpy.ndarray]{:target="_blank"} instance (not a
-            [Table][msl.equipment.schema.Table] instance). The `header`, `types`, `units` and
-            `comment` attributes are not included with the returned array.
-
         Args:
             dtype: The dtype of the output unstructured array.
             copy: If `True`, always return a copy. If `False`, a view is returned if possible.
@@ -989,11 +1186,15 @@ class Table(np.ndarray):
                 [numpy.ndarray.astype][]{:target="_blank"} for more details.
 
         Returns:
-            The unstructured array.
+            The unstructured array. This method may return a numpy [ndarray][numpy.ndarray]{:target="_blank"}
+                instance instead of a [Table][msl.equipment.schema.Table] instance if the table consists of
+                numbers and strings and the appropriate `dtype` is not specified.
         """
+        from numpy.lib.recfunctions import structured_to_unstructured  # noqa: PLC0415
+
         try:
             return structured_to_unstructured(self, dtype=dtype, copy=copy, casting=casting)
-        except TypeError:
+        except (TypeError, ValueError):
             return np.array(self.tolist(), dtype=object)
 
     @classmethod

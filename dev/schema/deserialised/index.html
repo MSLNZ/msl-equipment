@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://github.com/MSLNZ/msl-equipment/dev/schema/deserialised/">
       
       
-        <link rel="prev" href="../conditions/">
+        <link rel="prev" href="../cvd_equation/">
       
       
         <link rel="next" href="../digital_report/">
@@ -506,6 +506,8 @@
       
         
       
+        
+      
     
     
     
@@ -728,6 +730,29 @@
   
   <span class="md-ellipsis">
     Conditions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cvd_equation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CVDEquation
     
   </span>
   
@@ -1562,7 +1587,8 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">748</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">747</span>
+<span class="normal">748</span>
 <span class="normal">749</span>
 <span class="normal">750</span>
 <span class="normal">751</span>
@@ -1590,8 +1616,7 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
 <span class="normal">773</span>
 <span class="normal">774</span>
 <span class="normal">775</span>
-<span class="normal">776</span>
-<span class="normal">777</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">776</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Deserialised</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a [serialised][type_serialised]{:target=&quot;_blank&quot;} XML element into a [Deserialised][msl.equipment.schema.Deserialised] instance.</span>
 
@@ -1673,7 +1698,8 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">779</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">778</span>
+<span class="normal">779</span>
 <span class="normal">780</span>
 <span class="normal">781</span>
 <span class="normal">782</span>
@@ -1695,8 +1721,7 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
 <span class="normal">798</span>
 <span class="normal">799</span>
 <span class="normal">800</span>
-<span class="normal">801</span>
-<span class="normal">802</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">801</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Deserialised][msl.equipment.schema.Deserialised] class into a [serialised][type_serialised]{:target=&quot;_blank&quot;} XML element.</span>
 
 <span class="sd">    Returns:</span>
@@ -1777,7 +1802,7 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../conditions/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Conditions">
+          <a href="../cvd_equation/" class="md-footer__link md-footer__link--prev" aria-label="Previous: CVDEquation">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1787,7 +1812,7 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
                 Previous
               </span>
               <div class="md-ellipsis">
-                Conditions
+                CVDEquation
               </div>
             </div>
           </a>

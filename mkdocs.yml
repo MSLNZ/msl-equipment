@@ -110,6 +110,7 @@ plugins:
             - url: https://mslnz.github.io/equipment-register-schema/develop/objects.inv
               domains: [xsd]
             - url: https://gtc.readthedocs.io/en/stable/objects.inv
+            - url: https://mslnz.github.io/msl-io/latest/objects.inv
           options:
             # General
             show_source: true

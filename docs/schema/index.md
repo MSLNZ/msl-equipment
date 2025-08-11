@@ -15,7 +15,7 @@ The primary class is [Equipment][msl.equipment.schema.Equipment] which may conta
 * [Deserialised][msl.equipment.schema.Deserialised] (opposite of [serialised][type_serialised]{:target="_blank"})
 * [DigitalReport][digitalreport]
 * [Equation][equation]
-* [File][msl.equipment.schema.File]
+* [File][file]
 * [Financial][msl.equipment.schema.Financial]
 * [Firmware][msl.equipment.schema.Firmware]
 * [Maintenance][msl.equipment.schema.Maintenance]

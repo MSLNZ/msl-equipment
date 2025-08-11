@@ -519,15 +519,25 @@ class Evaluable:
         Returns:
             The equation evaluated.
         """
-        data = {k: np.asarray(v, dtype=float) for k, v in data.items()}
+        _locals = {k: np.asarray(v, dtype=float) for k, v in data.items()}
         if check_range:
-            for name, value in data.items():
+            for name, value in _locals.items():
                 r = self.ranges.get(name)
                 if r is not None:  # if None then assume [-INF, +INF] for this variable
                     r.check_within_range(value)
 
-        data.update(equation_map)  # type: ignore[arg-type]  # pyright: ignore[reportCallIssue, reportArgumentType]
-        return np.asarray(eval(self.equation, None, data))  # noqa: S307
+        # If the same input data is used to evaluate the corrected value and the uncertainty
+        # then one would expect the returned array to have the same shape in both cases.
+        # If the equation is a constant (does not depend on variables) the input data is
+        # ignored during eval() and a scalar array would have been returned. We want to
+        # ensure that the output shape is always the same as the broadcasted input shape.
+        in_shape = np.broadcast_shapes(*tuple(v.shape for v in _locals.values()))
+
+        _locals.update(equation_map)  # type: ignore[arg-type]  # pyright: ignore[reportCallIssue, reportArgumentType]
+        out: NDArray[np.float64] = np.asarray(eval(self.equation, None, _locals))  # noqa: S307
+        if out.shape != in_shape:
+            return np.broadcast_to(out, in_shape)
+        return out
 
 
 @dataclass(frozen=True)

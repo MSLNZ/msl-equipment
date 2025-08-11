@@ -544,19 +544,35 @@ def test_range_bounds_invalid(value: float | ArrayLike) -> None:
         r.check_within_range(value)
 
 
-def test_evaluatable_constant() -> None:
+def test_evaluable_constant() -> None:
     e = Evaluable("0.5/2", ())
     assert e.equation == "0.5/2"
     assert e.ranges == {}
     assert e() == 0.5 / 2
 
 
-def test_evaluatable_1d_no_range() -> None:
+def test_evaluable_constant_broadcasted() -> None:
+    expect = 0.5 / 2
+    e = Evaluable("0.5/2", ())
+    assert e.equation == "0.5/2"
+    assert e.ranges == {}
+    assert e() == expect
+    assert e(x=1) == expect
+    assert np.array_equal(e(x=[1]), np.array([expect]))
+    assert np.array_equal(e(x=[1, 2, 3]), np.array([expect, expect, expect]))
+    assert np.array_equal(e(x=[1, 2, 3], y=8), np.array([expect, expect, expect]))
+    assert np.array_equal(e(x=[[1, 2, 3]], y=[[8, 1, 2]]), np.array([[expect, expect, expect]]))
+
+    shape = (5, 4, 3, 2, 1)
+    assert np.array_equal(e(x=np.empty(shape)), np.full(shape, fill_value=expect))
+
+
+def test_evaluable_1d_no_range() -> None:
     e = Evaluable("2*pi*sin(x+0.1) - cos(x/2)", ("x",))
     assert e(x=0.1) == 2 * np.pi * np.sin(0.1 + 0.1) - np.cos(0.1 / 2)
 
 
-def test_evaluatable_1d() -> None:
+def test_evaluable_1d() -> None:
     e = Evaluable("2*pi*sin(x+0.1) - cos(x/2)", ("x",), ranges={"x": Range(0, 1)})
     assert e(x=0.1) == 2 * np.pi * np.sin(0.1 + 0.1) - np.cos(0.1 / 2)
 
@@ -578,7 +594,7 @@ def test_evaluatable_1d() -> None:
     assert e(x=x, check_range=False, this_kwarg_is_ignored=np.nan) == expect
 
 
-def test_evaluatable_2d() -> None:
+def test_evaluable_2d() -> None:
     eqn = "rh - 7.131e-2 - 3.951e-2*rh + 3.412e-4*pow(rh,2) + 2.465e-3*t + 1.034e-3*rh*t - 5.297e-6*pow(rh,2)*t"
     ranges = {"rh": Range(30, 80), "t": Range(15, 25)}
     e = Evaluable(eqn, ("rh", "t"), ranges=ranges)

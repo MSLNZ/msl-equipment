@@ -9,6 +9,8 @@ $$
 \end{cases}
 $$
 
+where, $R_0$ is the resistance at $T=0~^{\circ}\text{C}$ and $A$, $B$ and $C$ are the Callendar-Van Dusen coefficients.
+
 <!--
 >>> from msl.equipment import CVDEquation, Evaluable, Range
 >>> cvd = CVDEquation(
@@ -38,7 +40,7 @@ Suppose you have a variable named `cvd` (which is an instance of [CVDEquation][m
 </cvdCoefficients>
 ```
 
-You can access the *CVD coefficients*, *degrees of freedom* and *comment* as attributes of `cvd`
+You can access the *CVD coefficients*, *degrees of freedom* and *comment* as attributes of `cvd`,
 
 ```pycon
 >>> cvd.R0
@@ -56,7 +58,7 @@ inf
 
 ```
 
-You can evaluate the uncertainty,
+evaluate the uncertainty,
 
 ```pycon
 >>> print(cvd.uncertainty())

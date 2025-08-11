@@ -490,14 +490,14 @@ class Range(NamedTuple):
 
 @dataclass(frozen=True)
 class Evaluable:
-    """Represents the `<value>` and `<uncertainty>` XML elements in an [equation][type_equation]{:target="_blank"}.
+    r"""Represents the `<value>` and `<uncertainty>` XML elements in an [equation][type_equation]{:target="_blank"}.
 
     Args:
         equation: The string representation of the equation to evaluate.
         variables: The names of the variables in the equation.
         ranges: The numeric range for a variable that the `equation` is valid for.
             The *keys* are the variable names. A range does not need to be defined for every variable.
-            If a range is not defined then a range of `[-INF, +INF]` is assumed.
+            If a range is not defined then a range of $[-\infty, +\infty]$ is assumed.
     """
 
     equation: str

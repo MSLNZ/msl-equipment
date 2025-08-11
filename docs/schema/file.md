@@ -35,8 +35,8 @@ The *url* and *attributes* attributes of `file` can be used with the [read_table
 ```pycon
 >>> from msl.io import read_table
 >>> table = read_table(file.url, **file.attributes)
->>> table.metadata
-<Metadata 'irradiance.xlsx' {'header': ['Wavelength', 'Irradiance', 'u(Irradiance)']}>
+>>> print(table.metadata.header)
+['Wavelength' 'Irradiance' 'u(Irradiance)']
 >>> table
 <Dataset 'irradiance.xlsx' shape=(10, 3) dtype='<f8' (1 metadata)>
 >>> print(table)

@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#msl.equipment.schema.File" class="md-skip">
+        <a href="#file" class="md-skip">
           Skip to content
         </a>
       
@@ -1363,7 +1363,58 @@
   
 
 
-<h1 id="msl.equipment.schema.File">File<a class="headerlink" href="#msl.equipment.schema.File" title="Permanent link">¤</a></h1>
+<h1 id="file">File<a class="headerlink" href="#file" title="Permanent link">¤</a></h1>
+<!--
+>>> from msl.equipment import File
+>>> file = File(
+...     url="tests/resources/irradiance.xlsx",
+...     sha256="7a91267cfb529388a99762b891ee4b7a12463e83b5d55809f76a0c8e76c71886",
+...     attributes={"sheet": "2024-May", "cells": "A1:C11"},
+...     comment="FEL T647",
+... )
+
+-->
+
+<p>Suppose you have a variable named <code>file</code> (which is an instance of <a class="autorefs autorefs-internal" title="File
+
+
+  
+      dataclass
+  " href="#msl.equipment.schema.File">File</a>) that represents the following information in an equipment register for data that is stored in a Spreadsheet</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;file</span><span class="w"> </span><span class="na">comment=</span><span class="s">&quot;FEL T647&quot;</span><span class="nt">&gt;</span>
+<span class="w">  </span><span class="nt">&lt;url</span><span class="w"> </span><span class="na">sheet=</span><span class="s">&quot;2024-May&quot;</span><span class="w"> </span><span class="na">cells=</span><span class="s">&quot;A1:C11&quot;</span><span class="nt">&gt;</span>tests\resources\irradiance.xlsx<span class="nt">&lt;/url&gt;</span>
+<span class="w">  </span><span class="nt">&lt;sha256&gt;</span>7a91267cfb529388a99762b891ee4b7a12463e83b5d55809f76a0c8e76c71886<span class="nt">&lt;/sha256&gt;</span>
+<span class="nt">&lt;/file&gt;</span>
+</code></pre></div>
+<p>You can access <em>sha256</em> and <em>comment</em> as attributes of <code>file</code></p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">file</span><span class="o">.</span><span class="n">sha256</span>
+<span class="go">&#39;7a91267cfb529388a99762b891ee4b7a12463e83b5d55809f76a0c8e76c71886&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">file</span><span class="o">.</span><span class="n">comment</span>
+<span class="go">&#39;FEL T647&#39;</span>
+</code></pre></div>
+<p>The <em>url</em> and <em>attributes</em> attributes of <code>file</code> can be used with the <a class="autorefs autorefs-external" href="https://mslnz.github.io/msl-io/latest/api/tables/#msl.io.tables.read_table" target="_blank">read_table</a> function of <a href="https://mslnz.github.io/msl-io/latest/" target="_blank">msl-io</a> to read the Spreadsheet data</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_table</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">file</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="o">.</span><span class="n">metadata</span>
+<span class="go">&lt;Metadata &#39;irradiance.xlsx&#39; {&#39;header&#39;: [&#39;Wavelength&#39;, &#39;Irradiance&#39;, &#39;u(Irradiance)&#39;]}&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span>
+<span class="go">&lt;Dataset &#39;irradiance.xlsx&#39; shape=(10, 3) dtype=&#39;&lt;f8&#39; (1 metadata)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+<span class="go">array([[2.500000e+02, 1.818000e-02, 2.033000e-02],</span>
+<span class="go">       [3.000000e+02, 1.847800e-01, 1.755000e-02],</span>
+<span class="go">       [3.500000e+02, 8.084500e-01, 1.606000e-02],</span>
+<span class="go">       [4.000000e+02, 2.213550e+00, 1.405000e-02],</span>
+<span class="go">       [4.500000e+02, 4.490040e+00, 1.250000e-02],</span>
+<span class="go">       [5.000000e+02, 7.451350e+00, 1.200000e-02],</span>
+<span class="go">       [5.500000e+02, 1.075753e+01, 1.152000e-02],</span>
+<span class="go">       [6.000000e+02, 1.403809e+01, 1.102000e-02],</span>
+<span class="go">       [6.500000e+02, 1.699469e+01, 1.103000e-02],</span>
+<span class="go">       [7.000000e+02, 1.944093e+01, 1.077000e-02]])</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Passing <code>**file.attributes</code> to <a class="autorefs autorefs-external" href="https://mslnz.github.io/msl-io/latest/api/tables/#msl.io.tables.read_table" target="_blank">read_table</a> works as expected provided that the XML attributes of the <code>&lt;url&gt;</code> element are valid keyword arguments to <a class="autorefs autorefs-external" href="https://mslnz.github.io/msl-io/latest/api/tables/#msl.io.tables.read_table" target="_blank">read_table</a>. See <a href="https://mslnz.github.io/msl-io/latest/#read-a-table" target="_blank">Read a table</a> for more examples from <a href="https://mslnz.github.io/msl-io/latest/" target="_blank">msl-io</a>, in particular, specifying <code>dtype="header"</code> will return a structured dataset which would behave similar to the <a class="autorefs autorefs-internal" href="../table/#table">Table</a> example in <code>msl-equipment</code> (i.e., accessing columns by header name).</p>
+</div>
 
 
 <div class="doc doc-object doc-module">

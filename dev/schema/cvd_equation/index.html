@@ -879,6 +879,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#msl.equipment.schema.CVDEquation.resistance" class="md-nav__link">
+    <span class="md-ellipsis">
+      resistance
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.CVDEquation.temperature" class="md-nav__link">
+    <span class="md-ellipsis">
+      temperature
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msl.equipment.schema.CVDEquation.to_xml" class="md-nav__link">
     <span class="md-ellipsis">
       to_xml
@@ -1385,6 +1403,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#msl.equipment.schema.CVDEquation.resistance" class="md-nav__link">
+    <span class="md-ellipsis">
+      resistance
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.CVDEquation.temperature" class="md-nav__link">
+    <span class="md-ellipsis">
+      temperature
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msl.equipment.schema.CVDEquation.to_xml" class="md-nav__link">
     <span class="md-ellipsis">
       to_xml
@@ -1418,6 +1454,96 @@
 
 
 <h1 id="cvdequation">CVDEquation<a class="headerlink" href="#cvdequation" title="Permanent link">¤</a></h1>
+<p>The Callendar-Van Dusen (CVD) equation describes the relationship between resistance, <span class="arithmatex">\(R\)</span>, and temperature, <span class="arithmatex">\(T\)</span>, of platinum resistance thermometers (PRT). It is typically defined in two temperature ranges</p>
+<div class="arithmatex">\[
+\frac{R(T)}{R_0} = \begin{cases}
+    1 + A \cdot T + B \cdot T^2 &amp; 0~^{\circ}\text{C} \leq T \lt 661~^{\circ}\text{C} \\
+    1 + A \cdot T + B \cdot T^2 + C \cdot (T-100) \cdot T^3 &amp; -200~^{\circ}\text{C} \lt T \lt 0~^{\circ}\text{C} \\
+\end{cases}
+\]</div>
+<!--
+>>> from msl.equipment import CVDEquation, Evaluable, Range
+>>> cvd = CVDEquation(
+...     R0=100.0189,
+...     A=3.913e-3,
+...     B=-6.056e-7,
+...     C=1.372e-12,
+...     uncertainty=Evaluable(equation="0.0026"),
+...     ranges={"t": Range(-10, 70), "r": Range(96.099, 127.118)},
+... )
+
+-->
+
+<p>Suppose you have a variable named <code>cvd</code> (which is an instance of <a class="autorefs autorefs-internal" title="CVDEquation
+
+
+  
+      dataclass
+  " href="#msl.equipment.schema.CVDEquation">CVDEquation</a>) that represents the following information in an equipment register for a PRT</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;cvdCoefficients&gt;</span>
+<span class="w">  </span><span class="nt">&lt;R0&gt;</span>100.0189<span class="nt">&lt;/R0&gt;</span>
+<span class="w">  </span><span class="nt">&lt;A&gt;</span>3.913e-3<span class="nt">&lt;/A&gt;</span>
+<span class="w">  </span><span class="nt">&lt;B&gt;</span>-6.056e-7<span class="nt">&lt;/B&gt;</span>
+<span class="w">  </span><span class="nt">&lt;C&gt;</span>1.372e-12<span class="nt">&lt;/C&gt;</span>
+<span class="w">  </span><span class="nt">&lt;uncertainty</span><span class="w"> </span><span class="na">variables=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;</span>0.0056/2<span class="nt">&lt;/uncertainty&gt;</span>
+<span class="w">  </span><span class="nt">&lt;range&gt;</span>
+<span class="w">    </span><span class="nt">&lt;minimum&gt;</span>-10<span class="nt">&lt;/minimum&gt;</span>
+<span class="w">    </span><span class="nt">&lt;maximum&gt;</span>70<span class="nt">&lt;/maximum&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/range&gt;</span>
+<span class="nt">&lt;/cvdCoefficients&gt;</span>
+</code></pre></div>
+<p>You can access the <em>CVD coefficients</em>, <em>degrees of freedom</em> and <em>comment</em> as attributes of <code>cvd</code></p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">R0</span>
+<span class="go">100.0189</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">A</span>
+<span class="go">0.003913</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">B</span>
+<span class="go">-6.056e-07</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">C</span>
+<span class="go">1.372e-12</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">degree_freedom</span>
+<span class="go">inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">comment</span>
+<span class="go">&#39;&#39;</span>
+</code></pre></div>
+<p>You can evaluate the uncertainty,</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cvd</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">())</span>
+<span class="go">0.0026</span>
+</code></pre></div>
+<p>calculate resistance from temperature,</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cvd</span><span class="o">.</span><span class="n">resistance</span><span class="p">(</span><span class="mf">12.4</span><span class="p">))</span>
+<span class="go">104.86262358516764</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">resistance</span><span class="p">([</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">])</span>
+<span class="go">array([ 98.06051774, 100.0189    , 101.97425549, 103.92658241,</span>
+<span class="go">       105.87588076, 107.82215054, 109.76539174])</span>
+</code></pre></div>
+<p>and calculate temperature from resistance</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cvd</span><span class="o">.</span><span class="n">temperature</span><span class="p">(</span><span class="mf">109.1</span><span class="p">))</span>
+<span class="go">23.287055698724505</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">temperature</span><span class="p">([</span><span class="mf">98.7</span><span class="p">,</span> <span class="mf">99.2</span><span class="p">,</span> <span class="mf">100.4</span><span class="p">,</span> <span class="mf">101.7</span><span class="p">,</span> <span class="mf">103.8</span><span class="p">])</span>
+<span class="go">array([-3.36816839, -2.09169544,  0.9738958 ,  4.29823964,  9.67558125])</span>
+</code></pre></div>
+<p>Any sequence of numbers, i.e., a <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list" target="_blank">list</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple" target="_blank">tuple</a>, <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a>, etc., may be used to calculate the temperature or resistance <em>(tip: using <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> will improve performance since a copy of the values is not required)</em>.</p>
+<p>When calculating resistance or temperature, the value(s) of the inputs are checked to ensure that the value(s) are within the ranges that the CVD coefficients are valid for. The XML data above shows that the temperature must be in the range <span class="arithmatex">\(-10~^\circ\text{C}\)</span> to <span class="arithmatex">\(70~^\circ\text{C}\)</span>, which has a corresponding resistance range of <span class="arithmatex">\(96.099~\Omega\)</span> to <span class="arithmatex">\(127.118~\Omega\)</span> from the equation above. If you calculate resistance from <span class="arithmatex">\(T=-10.2~^\circ\text{C}\)</span> or temperature from <span class="arithmatex">\(R=96.0~\Omega\)</span> a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#ValueError" target="_blank">ValueError</a> is raised</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">ranges</span>
+<span class="go">{&#39;t&#39;: Range(minimum=-10, maximum=70), &#39;r&#39;: Range(minimum=96.099, maximum=127.118)}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">resistance</span><span class="p">(</span><span class="o">-</span><span class="mf">10.2</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">The value -10.2 is not within the range [-10, 70]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">temperature</span><span class="p">(</span><span class="mi">96</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">The value 96.0 is not within the range [96.099, 127.118]</span>
+</code></pre></div>
+<p>You can bypass range checking by including a <code>check_range=False</code> keyword argument</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cvd</span><span class="o">.</span><span class="n">resistance</span><span class="p">(</span><span class="o">-</span><span class="mf">10.2</span><span class="p">,</span> <span class="n">check_range</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="go">96.02059984653798</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cvd</span><span class="o">.</span><span class="n">temperature</span><span class="p">(</span><span class="mi">96</span><span class="p">,</span> <span class="n">check_range</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="go">-10.252469261526016</span>
+</code></pre></div>
 
 
 <div class="doc doc-object doc-module">
@@ -1477,7 +1603,7 @@
     <div class="doc doc-contents ">
 
 
-        <p>The Callendar-Van Dusen (CVD) equation based on the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_callendarVanDusenCoefficients" target="_blank">cvdCoefficients</a> element in an equipment register.</p>
+        <p>The Callendar-Van Dusen (CVD) equation based on the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_cvdCoefficients" target="_blank">cvdCoefficients</a> element in an equipment register.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1500,7 +1626,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The value of the resistance at 0 °C.</p>
+                <p>The value, in <span class="arithmatex">\(\Omega\)</span>, of the resistance at <span class="arithmatex">\(0~^\circ\text{C}\)</span>, <span class="arithmatex">\(R_0\)</span>.</p>
               </div>
             </td>
             <td>
@@ -1516,7 +1642,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The value of the A coefficient, <code>A⋅T</code> [unit: 1/°C].</p>
+                <p>The value, in <span class="arithmatex">\(^\circ\text{C}^{-1}\)</span>, of the A coefficient, <span class="arithmatex">\(A \cdot T\)</span>.</p>
               </div>
             </td>
             <td>
@@ -1532,7 +1658,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The value of the B coefficient, <code>B⋅T²</code> [unit: 1/°C²].</p>
+                <p>The value, in <span class="arithmatex">\(^\circ\text{C}^{-2}\)</span>, of the B coefficient, <span class="arithmatex">\(B \cdot T^2\)</span>.</p>
               </div>
             </td>
             <td>
@@ -1548,7 +1674,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The value of the C coefficient, <code>C⋅(T-100)⋅T³</code> [unit: 1/°C⁴].</p>
+                <p>The value, in <span class="arithmatex">\(^\circ\text{C}^{-4}\)</span>, of the C coefficient, <span class="arithmatex">\(C \cdot (T-100) \cdot T^3\)</span>.</p>
               </div>
             </td>
             <td>
@@ -1585,8 +1711,9 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The temperature range, in °C, and the resistance range that the CVD coefficients are valid.
-The temperature key must be <code>"t"</code> and the resistance key <code>"r"</code>.</p>
+                <p>The temperature range, in <span class="arithmatex">\(^\circ\text{C}\)</span>, and the resistance range, in <span class="arithmatex">\(\Omega\)</span>,
+that the CVD coefficients are valid. The temperature key must be <code>"t"</code> and the resistance
+key <code>"r"</code>.</p>
               </div>
             </td>
             <td>
@@ -1663,7 +1790,7 @@ The temperature key must be <code>"t"</code> and the resistance key <code>"r"</c
 
     <div class="doc doc-contents ">
 
-        <p>The value of the A coefficient, <code>A⋅T</code> [unit: 1/°C].</p>
+        <p>The value, in <span class="arithmatex">\(^\circ\text{C}^{-1}\)</span>, of the A coefficient, <span class="arithmatex">\(A \cdot T\)</span>.</p>
 
     </div>
 
@@ -1687,7 +1814,7 @@ The temperature key must be <code>"t"</code> and the resistance key <code>"r"</c
 
     <div class="doc doc-contents ">
 
-        <p>The value of the B coefficient, <code>B⋅T²</code> [unit: 1/°C²].</p>
+        <p>The value, in <span class="arithmatex">\(^\circ\text{C}^{-2}\)</span>, of the B coefficient, <span class="arithmatex">\(B \cdot T^2\)</span>.</p>
 
     </div>
 
@@ -1711,7 +1838,7 @@ The temperature key must be <code>"t"</code> and the resistance key <code>"r"</c
 
     <div class="doc doc-contents ">
 
-        <p>The value of the C coefficient, <code>C⋅(T-100)⋅T³</code> [unit: 1/°C⁴].</p>
+        <p>The value, in <span class="arithmatex">\(^\circ\text{C}^{-4}\)</span>, of the C coefficient, <span class="arithmatex">\(C \cdot (T-100) \cdot T^3\)</span>.</p>
 
     </div>
 
@@ -1735,7 +1862,7 @@ The temperature key must be <code>"t"</code> and the resistance key <code>"r"</c
 
     <div class="doc doc-contents ">
 
-        <p>The value of the resistance at 0 °C.</p>
+        <p>The value, in <span class="arithmatex">\(\Omega\)</span>, of the resistance at <span class="arithmatex">\(0~^\circ\text{C}\)</span>, <span class="arithmatex">\(R_0\)</span>.</p>
 
     </div>
 
@@ -1785,7 +1912,8 @@ The temperature key must be <code>"t"</code> and the resistance key <code>"r"</c
 
     <div class="doc doc-contents ">
 
-        <p>The temperature range, in °C, and the resistance range that the Callendar-Van Dusen coefficients are valid.</p>
+        <p>The temperature range, in <span class="arithmatex">\(^\circ\text{C}\)</span>, and the resistance range, in <span class="arithmatex">\(\Omega\)</span>, that
+the Callendar-Van Dusen coefficients are valid.</p>
 
     </div>
 
@@ -1872,7 +2000,7 @@ The temperature key must be <code>"t"</code> and the resistance key <code>"r"</c
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_callendarVanDusenCoefficients" target="_blank">cvdCoefficients</a> XML element
+                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_cvdCoefficients" target="_blank">cvdCoefficients</a> XML element
 from an equipment register.</p>
               </div>
             </td>
@@ -1919,9 +2047,7 @@ from an equipment register.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1039</span>
-<span class="normal">1040</span>
-<span class="normal">1041</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1041</span>
 <span class="normal">1042</span>
 <span class="normal">1043</span>
 <span class="normal">1044</span>
@@ -1962,12 +2088,14 @@ from an equipment register.</p>
 <span class="normal">1079</span>
 <span class="normal">1080</span>
 <span class="normal">1081</span>
-<span class="normal">1082</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1082</span>
+<span class="normal">1083</span>
+<span class="normal">1084</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">CVDEquation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [CVDEquation][msl.equipment.schema.CVDEquation] instance.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        element: A [cvdCoefficients][type_callendarVanDusenCoefficients]{:target=&quot;_blank&quot;} XML element</span>
+<span class="sd">        element: A [cvdCoefficients][type_cvdCoefficients]{:target=&quot;_blank&quot;} XML element</span>
 <span class="sd">            from an equipment register.</span>
 
 <span class="sd">    Returns:</span>
@@ -2006,6 +2134,330 @@ from an equipment register.</p>
         <span class="n">degree_freedom</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">element</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">6</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>  <span class="c1"># noqa: PLR2004</span>
         <span class="n">comment</span><span class="o">=</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;comment&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
     <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="msl.equipment.schema.CVDEquation.resistance" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">resistance</span>
+
+
+<a href="#msl.equipment.schema.CVDEquation.resistance" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">resistance</span><span class="p">(</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.ArrayLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.ArrayLike">ArrayLike</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.NDArray" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.NDArray">NDArray</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="numpy.float64" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64">float64</a></span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Calculate resistance from temperature.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>temperature</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="numpy.typing.ArrayLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.ArrayLike">ArrayLike</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The temperature value(s), in <span class="arithmatex">\(^\circ\text{C}\)</span>.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>check_range</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Whether to check that the temperature value(s) is(are) within the allowed range.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="numpy.typing.NDArray" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.NDArray">NDArray</a>[<a class="autorefs autorefs-external" title="numpy.float64" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64">float64</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The resistance value(s).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">972</span>
+<span class="normal">973</span>
+<span class="normal">974</span>
+<span class="normal">975</span>
+<span class="normal">976</span>
+<span class="normal">977</span>
+<span class="normal">978</span>
+<span class="normal">979</span>
+<span class="normal">980</span>
+<span class="normal">981</span>
+<span class="normal">982</span>
+<span class="normal">983</span>
+<span class="normal">984</span>
+<span class="normal">985</span>
+<span class="normal">986</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">resistance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperature</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate resistance from temperature.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        temperature: The temperature value(s), in $^\circ\text{C}$.</span>
+<span class="sd">        check_range: Whether to check that the temperature value(s) is(are) within the allowed range.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The resistance value(s).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">check_range</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ranges</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">check_within_range</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+        <span class="k">pass</span>  <span class="c1"># check_within_range() will raise an error, if one occurred</span>
+
+    <span class="k">return</span> <span class="n">_cvd_resistance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="msl.equipment.schema.CVDEquation.temperature" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">temperature</span>
+
+
+<a href="#msl.equipment.schema.CVDEquation.temperature" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">temperature</span><span class="p">(</span>
+    <span class="n">resistance</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.ArrayLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.ArrayLike">ArrayLike</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.NDArray" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.NDArray">NDArray</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="numpy.float64" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64">float64</a></span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Calculate temperature from resistance.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>resistance</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="numpy.typing.ArrayLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.ArrayLike">ArrayLike</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The resistance value(s), in <span class="arithmatex">\(\Omega\)</span>.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>check_range</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Whether to check that the resistance value(s) is(are) within the allowed range.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="numpy.typing.NDArray" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.NDArray">NDArray</a>[<a class="autorefs autorefs-external" title="numpy.float64" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64">float64</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The temperature value(s).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 988</span>
+<span class="normal"> 989</span>
+<span class="normal"> 990</span>
+<span class="normal"> 991</span>
+<span class="normal"> 992</span>
+<span class="normal"> 993</span>
+<span class="normal"> 994</span>
+<span class="normal"> 995</span>
+<span class="normal"> 996</span>
+<span class="normal"> 997</span>
+<span class="normal"> 998</span>
+<span class="normal"> 999</span>
+<span class="normal">1000</span>
+<span class="normal">1001</span>
+<span class="normal">1002</span>
+<span class="normal">1003</span>
+<span class="normal">1004</span>
+<span class="normal">1005</span>
+<span class="normal">1006</span>
+<span class="normal">1007</span>
+<span class="normal">1008</span>
+<span class="normal">1009</span>
+<span class="normal">1010</span>
+<span class="normal">1011</span>
+<span class="normal">1012</span>
+<span class="normal">1013</span>
+<span class="normal">1014</span>
+<span class="normal">1015</span>
+<span class="normal">1016</span>
+<span class="normal">1017</span>
+<span class="normal">1018</span>
+<span class="normal">1019</span>
+<span class="normal">1020</span>
+<span class="normal">1021</span>
+<span class="normal">1022</span>
+<span class="normal">1023</span>
+<span class="normal">1024</span>
+<span class="normal">1025</span>
+<span class="normal">1026</span>
+<span class="normal">1027</span>
+<span class="normal">1028</span>
+<span class="normal">1029</span>
+<span class="normal">1030</span>
+<span class="normal">1031</span>
+<span class="normal">1032</span>
+<span class="normal">1033</span>
+<span class="normal">1034</span>
+<span class="normal">1035</span>
+<span class="normal">1036</span>
+<span class="normal">1037</span>
+<span class="normal">1038</span>
+<span class="normal">1039</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resistance</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate temperature from resistance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        resistance: The resistance value(s), in $\Omega$.</span>
+<span class="sd">        check_range: Whether to check that the resistance value(s) is(are) within the allowed range.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The temperature value(s).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">resistance</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">check_range</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ranges</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">check_within_range</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+        <span class="k">pass</span>  <span class="c1"># check_within_range raised an error, if one occurred</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">positive</span><span class="p">(</span><span class="n">r</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+        <span class="c1"># rearrange CVD equation to be: a*x^2 + b*x + c = 0</span>
+        <span class="c1">#   a -&gt; B, b -&gt; A, c -&gt; 1 - R/R0</span>
+        <span class="c1"># then use the quadratic formula</span>
+        <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">r</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">R0</span><span class="p">)))</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">negative</span><span class="p">(</span><span class="n">r</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+        <span class="c1"># rearrange CVD equation to be: a*x^4 + b*x^3 + c*x^2 + d*x + e = 0</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="o">-</span><span class="mf">100.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">r</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">R0</span><span class="p">)</span>
+
+        <span class="c1"># https://en.wikipedia.org/wiki/Quartic_function#Solving_a_quartic_equation]</span>
+        <span class="c1"># See Section &quot;General formula for roots&quot; for the definitions of these variables</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">c</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">b</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">a</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">a</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">delta_0</span> <span class="o">=</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">b</span> <span class="o">*</span> <span class="n">d</span> <span class="o">+</span> <span class="mi">12</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">e</span>
+        <span class="n">delta_1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">c</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="mi">9</span> <span class="o">*</span> <span class="n">b</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="n">d</span> <span class="o">+</span> <span class="mi">27</span> <span class="o">*</span> <span class="n">b</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">e</span> <span class="o">+</span> <span class="mi">27</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">d</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">72</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="n">e</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">((</span><span class="n">delta_1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">delta_1</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">delta_0</span><span class="o">**</span><span class="mi">3</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># noqa: N806</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">p</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Q</span> <span class="o">+</span> <span class="n">delta_0</span> <span class="o">/</span> <span class="n">Q</span><span class="p">))</span>  <span class="c1"># noqa: N806</span>
+
+        <span class="c1"># decide which root of the quartic to use by looking at the value under the</span>
+        <span class="c1"># square root in the x1,2 and x3,4 equations</span>
+        <span class="n">t1</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span> <span class="o">*</span> <span class="n">S</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">p</span>
+        <span class="n">t2</span> <span class="o">=</span> <span class="n">q</span> <span class="o">/</span> <span class="n">S</span>
+        <span class="n">t3</span> <span class="o">=</span> <span class="n">t1</span> <span class="o">-</span> <span class="n">t2</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">piecewise</span><span class="p">(</span>
+            <span class="n">t3</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">t3</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">t3</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="n">b</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="n">S</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>  <span class="c1"># x4 equation</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="n">b</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">a</span><span class="p">)</span> <span class="o">-</span> <span class="n">S</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">t2</span><span class="p">),</span>  <span class="c1"># x1 equation</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">piecewise</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="n">array</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">R0</span><span class="p">,</span> <span class="n">array</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R0</span><span class="p">],</span> <span class="p">[</span><span class="n">negative</span><span class="p">,</span> <span class="n">positive</span><span class="p">])</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2063,9 +2515,7 @@ from an equipment register.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1084</span>
-<span class="normal">1085</span>
-<span class="normal">1086</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1086</span>
 <span class="normal">1087</span>
 <span class="normal">1088</span>
 <span class="normal">1089</span>
@@ -2097,7 +2547,9 @@ from an equipment register.</p>
 <span class="normal">1115</span>
 <span class="normal">1116</span>
 <span class="normal">1117</span>
-<span class="normal">1118</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">1118</span>
+<span class="normal">1119</span>
+<span class="normal">1120</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [CVDEquation][msl.equipment.schema.CVDEquation] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
@@ -2282,6 +2734,12 @@ from an equipment register.</p>
     
     
       <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
+      
+        <script src="../../javascripts/arithmatex.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>

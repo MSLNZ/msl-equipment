@@ -85,6 +85,8 @@ nav:
 markdown_extensions:
   - admonition  # enables: !!! tip
   - attr_list  # enables: [link](url){:target="_blank"} and {: #rename-permalink }
+  - pymdownx.arithmatex:  # enables MathJax, requires docs/javascripts/arithmatex.js and extra_javascript below
+      generic: true
   - pymdownx.details  # enables collapsable admonition
   - pymdownx.snippets  # enables: --8<--
   - pymdownx.superfences  # enables tabs in admonition
@@ -137,3 +139,8 @@ extra:
     link: https://github.com/MSLNZ/msl-equipment
   - icon: fontawesome/brands/python
     link: https://pypi.org/project/msl-equipment/
+
+extra_javascript:
+  - javascripts/arithmatex.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

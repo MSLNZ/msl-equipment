@@ -929,37 +929,39 @@ def _cvd_resistance(array: float | np.ndarray, r0: float, a: float, b: float, c:
 
 @dataclass(frozen=True)
 class CVDEquation:
-    """The Callendar-Van Dusen (CVD) equation based on the [cvdCoefficients][type_callendarVanDusenCoefficients]{:target="_blank"} element in an equipment register.
+    r"""The Callendar-Van Dusen (CVD) equation based on the [cvdCoefficients][type_cvdCoefficients]{:target="_blank"} element in an equipment register.
 
     Args:
-        R0: The value of the resistance at 0 °C.
-        A: The value of the A coefficient, `A⋅T` [unit: 1/°C].
-        B: The value of the B coefficient, `B⋅T²` [unit: 1/°C²].
-        C: The value of the C coefficient, `C⋅(T-100)⋅T³` [unit: 1/°C⁴].
+        R0: The value, in $\Omega$, of the resistance at $0~^\circ\text{C}$, $R_0$.
+        A: The value, in $^\circ\text{C}^{-1}$, of the A coefficient, $A \cdot T$.
+        B: The value, in $^\circ\text{C}^{-2}$, of the B coefficient, $B \cdot T^2$.
+        C: The value, in $^\circ\text{C}^{-4}$, of the C coefficient, $C \cdot (T-100) \cdot T^3$.
         uncertainty:  The equation to evaluate to calculate the *standard* uncertainty.
-        ranges: The temperature range, in °C, and the resistance range that the CVD coefficients are valid.
-            The temperature key must be `"t"` and the resistance key `"r"`.
+        ranges: The temperature range, in $^\circ\text{C}$, and the resistance range, in $\Omega$,
+            that the CVD coefficients are valid. The temperature key must be `"t"` and the resistance
+            key `"r"`.
         degree_freedom: The degrees of freedom.
         comment: A comment to associate with the CVD equation.
     """  # noqa: E501
 
     R0: float
-    """The value of the resistance at 0 °C."""
+    r"""The value, in $\Omega$, of the resistance at $0~^\circ\text{C}$, $R_0$."""
 
     A: float
-    """The value of the A coefficient, `A⋅T` [unit: 1/°C]."""
+    r"""The value, in $^\circ\text{C}^{-1}$, of the A coefficient, $A \cdot T$."""
 
     B: float
-    """The value of the B coefficient, `B⋅T²` [unit: 1/°C²]."""
+    r"""The value, in $^\circ\text{C}^{-2}$, of the B coefficient, $B \cdot T^2$."""
 
     C: float
-    """The value of the C coefficient, `C⋅(T-100)⋅T³` [unit: 1/°C⁴]."""
+    r"""The value, in $^\circ\text{C}^{-4}$, of the C coefficient, $C \cdot (T-100) \cdot T^3$."""
 
     uncertainty: Evaluable
     """The equation to evaluate to calculate the *standard* uncertainty."""
 
     ranges: dict[str, Range] = field(default_factory=dict)
-    """The temperature range, in °C, and the resistance range that the Callendar-Van Dusen coefficients are valid."""
+    r"""The temperature range, in $^\circ\text{C}$, and the resistance range, in $\Omega$, that
+    the Callendar-Van Dusen coefficients are valid."""
 
     degree_freedom: float = float("inf")
     """The degrees of freedom."""
@@ -968,10 +970,10 @@ class CVDEquation:
     """A comment associated with the Callendar-Van Dusen equation."""
 
     def resistance(self, temperature: ArrayLike, *, check_range: bool = True) -> NDArray[np.float64]:
-        """Calculate resistance from temperature.
+        r"""Calculate resistance from temperature.
 
         Args:
-            temperature: The temperature value(s), in °C.
+            temperature: The temperature value(s), in $^\circ\text{C}$.
             check_range: Whether to check that the temperature value(s) is(are) within the allowed range.
 
         Returns:
@@ -984,10 +986,10 @@ class CVDEquation:
         return _cvd_resistance(array, self.R0, self.A, self.B, self.C)
 
     def temperature(self, resistance: ArrayLike, *, check_range: bool = True) -> NDArray[np.float64]:
-        """Calculate temperature from resistance.
+        r"""Calculate temperature from resistance.
 
         Args:
-            resistance: The resistance value(s), in Ω.
+            resistance: The resistance value(s), in $\Omega$.
             check_range: Whether to check that the resistance value(s) is(are) within the allowed range.
 
         Returns:
@@ -1041,7 +1043,7 @@ class CVDEquation:
         """Convert an XML element into a [CVDEquation][msl.equipment.schema.CVDEquation] instance.
 
         Args:
-            element: A [cvdCoefficients][type_callendarVanDusenCoefficients]{:target="_blank"} XML element
+            element: A [cvdCoefficients][type_cvdCoefficients]{:target="_blank"} XML element
                 from an equipment register.
 
         Returns:

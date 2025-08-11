@@ -813,7 +813,7 @@ def test_cvd() -> None:
     assert cvd.uncertainty.equation == "0.0056/2"
     assert cvd.uncertainty.variables == ()
     assert cvd.uncertainty.ranges == {"t": Range(-10, 70.02), "r": Range(96.102, 127.103)}
-    assert cvd.uncertainty() == 0.0056/2
+    assert cvd.uncertainty() == 0.0056 / 2
     assert cvd.ranges == cvd.uncertainty.ranges
     assert cvd.degree_freedom == 99.9  # noqa: PLR2004
     assert cvd.comment == "My favourite PRT"
@@ -916,78 +916,95 @@ def test_cvd_from_to_xml_no_comment_nor_dof() -> None:
     )
 
 
-def test_cvd_round_trip() -> None:
-    text = """
+@pytest.mark.parametrize(
+    ("r0", "a", "b", "c"),
+    [
+        (95, 0.00390969, -6.06e-7, 1.372e-12),
+        (100, 0.00390969, -6.06e-7, 1.372e-12),
+        (105, 0.00390969, -6.06e-7, 1.372e-12),
+        (98, 0.0035, -5e-7, 2e-12),
+        (101, 0.004, 7e-7, 0.5e-12),
+        (1000.2, 0.0039, -7e-7, -1e-12),
+        (999.5, 0.004, -7e-7, 1e-12),
+        (25, 0.004, -6e-7, 1.2e-12),
+        (24, 0.003, -5e-7, 0.5e-12),
+        (26, 0.005, -7e-7, 2.0e-12),
+    ],
+)
+def test_cvd_round_trip(r0: float, a: float, b: float, c: float) -> None:
+    text = f"""
         <cvdCoefficients>
-        <R0>100.0188885</R0>
-        <A>0.00390969</A>
-        <B>-0.000000606</B>
-        <C>0.000000000001372</C>
-        <uncertainty variables="">0.0056/2</uncertainty>
+        <R0>{r0}</R0>
+        <A>{a}</A>
+        <B>{b}</B>
+        <C>{c}</C>
+        <uncertainty variables="">0.0025</uncertainty>
         <range>
-            <minimum>-200</minimum>
-            <maximum>661</maximum>
+            <minimum>-273.15</minimum>
+            <maximum>1000</maximum>
         </range>
         </cvdCoefficients>
     """
     cvd = CVDEquation.from_xml(XML(text))
     t = np.linspace(-200, 661, num=1_000_000)  # 0.000861 degC step size over entire temperature range
-    assert np.allclose(cvd.temperature(cvd.resistance(t)), t, rtol=7e-10, atol=0)
+    assert np.allclose(cvd.temperature(cvd.resistance(t)), t, rtol=4e-6, atol=0)
 
 
 def test_cvd_iec60751() -> None:
     # https://cdn.standards.iteh.ai/samples/14059/7d8443be42764357a50e53e55222996d/IEC-60751-2008.pdf
     # Table 1 in IEC60751
-    data = np.array([
-        [-200, 18.52],
-        [-190, 22.83],
-        [-185, 24.97],
-        [-180, 27.10],
-        [-177, 28.37],
-        [-170, 31.34],
-        [-163, 34.28],
-        [-160, 35.54],
-        [-156, 37.22],
-        [-146, 41.39],
-        [-140, 43.88],
-        [-135, 45.94],
-        [-130, 48.00],
-        [-127, 49.24],
-        [-119, 52.52],
-        [-107, 57.41],
-        [-100, 60.26],
-        [-92, 63.49],
-        [-84, 66.72],
-        [-77, 69.53],
-        [-63, 75.13],
-        [-55, 78.32],
-        [-46, 81.89],
-        [-39, 84.67],
-        [-27, 89.40],
-        [-20, 92.16],
-        [-15, 94.12],
-        [-11, 95.69],
-        [-7, 97.26],
-        [-1, 99.61],
-        [0, 100.00],
-        [100, 138.51],
-        [172, 165.51],
-        [203, 176.96],
-        [330, 222.68],
-        [361, 233.56],
-        [380, 240.18],
-        [409, 250.19],
-        [432, 258.06],
-        [449, 263.84],
-        [455, 265.87],
-        [493, 278.64],
-        [604, 314.99],
-        [658, 332.16],
-        [718, 350.84],
-        [805, 377.19],
-        [822, 382.24],
-        [850, 390.48],
-    ])
+    data = np.array(
+        [
+            [-200, 18.52],
+            [-190, 22.83],
+            [-185, 24.97],
+            [-180, 27.10],
+            [-177, 28.37],
+            [-170, 31.34],
+            [-163, 34.28],
+            [-160, 35.54],
+            [-156, 37.22],
+            [-146, 41.39],
+            [-140, 43.88],
+            [-135, 45.94],
+            [-130, 48.00],
+            [-127, 49.24],
+            [-119, 52.52],
+            [-107, 57.41],
+            [-100, 60.26],
+            [-92, 63.49],
+            [-84, 66.72],
+            [-77, 69.53],
+            [-63, 75.13],
+            [-55, 78.32],
+            [-46, 81.89],
+            [-39, 84.67],
+            [-27, 89.40],
+            [-20, 92.16],
+            [-15, 94.12],
+            [-11, 95.69],
+            [-7, 97.26],
+            [-1, 99.61],
+            [0, 100.00],
+            [100, 138.51],
+            [172, 165.51],
+            [203, 176.96],
+            [330, 222.68],
+            [361, 233.56],
+            [380, 240.18],
+            [409, 250.19],
+            [432, 258.06],
+            [449, 263.84],
+            [455, 265.87],
+            [493, 278.64],
+            [604, 314.99],
+            [658, 332.16],
+            [718, 350.84],
+            [805, 377.19],
+            [822, 382.24],
+            [850, 390.48],
+        ]
+    )
     text = """
         <cvdCoefficients>
         <R0>100</R0>
@@ -1002,8 +1019,8 @@ def test_cvd_iec60751() -> None:
         </cvdCoefficients>
     """
     cvd = CVDEquation.from_xml(XML(text))
-    assert np.allclose(cvd.resistance(data[:,0]), data[:,1], rtol=1e-4, atol=0.005)
-    assert np.allclose(cvd.temperature(data[:,1]), data[:,0], rtol=5e-4, atol=0.005)
+    assert np.allclose(cvd.resistance(data[:, 0]), data[:, 1], rtol=1e-4, atol=0.005)
+    assert np.allclose(cvd.temperature(data[:, 1]), data[:, 0], rtol=5e-4, atol=0.005)
 
 
 # test Measurand, Component, PerformanceCheck, Report

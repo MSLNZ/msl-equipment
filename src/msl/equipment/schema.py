@@ -1886,7 +1886,7 @@ class SpecifiedRequirements(Any):
     """The element's name."""
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, repr=False)
 class Equipment:
     """Represents the [equipment][type_equipment]{:target="_blank"} element in an equipment register.
 
@@ -1989,12 +1989,25 @@ class Equipment:
     quality_manual: QualityManual = field(default_factory=QualityManual)
     """Information that is specified in Section 4.3.6 of the MSL Quality Manual."""
 
+    def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
+        """Returns the string representation."""
+        nr = sum(1 for m in self.calibrations for c in m.components for _ in c.reports)
+        reports = "report" if nr == 1 else "reports"
+
+        npc = sum(1 for m in self.calibrations for c in m.components for _ in c.performance_checks)
+        checks = "check" if npc == 1 else "checks"
+
+        return (
+            f"<{self.__class__.__name__} id={self.id!r}, manufacturer={self.manufacturer!r}, "
+            f"model={self.model!r}, serial={self.serial!r} ({nr} {reports}, {npc} {checks})>"
+        )
+
     @classmethod
     def from_xml(cls, element: Element[str]) -> Equipment:
         """Convert an XML element into an [Equipment][msl.equipment.schema.Equipment] instance.
 
         Args:
-            element: A [equipment][type_equipment]{:target="_blank"} XML element from an equipment register.
+            element: An [equipment][type_equipment]{:target="_blank"} XML element from an equipment register.
 
         Returns:
             The [Equipment][msl.equipment.schema.Equipment] instance.
@@ -2109,11 +2122,6 @@ class Register:
         }
         self._index_map.update({e[0].text or "": i for i, e in enumerate(self._root)})
 
-    @property
-    def team(self) -> str:
-        """[str][] &mdash; Returns the name of the team that is responsible for the equipment register."""
-        return self._root.attrib["team"]
-
     def __getitem__(self, item: str | int) -> Equipment:
         """Returns an Equipment item from the register."""
         if isinstance(item, str):
@@ -2141,3 +2149,12 @@ class Register:
     def __len__(self) -> int:
         """Returns the number of Equipment elements in the register."""
         return len(self._root)
+
+    def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
+        """Returns the string representation."""
+        return f"<{self.__class__.__name__} team={self.team!r} ({len(self)} equipment)>"
+
+    @property
+    def team(self) -> str:
+        """[str][] &mdash; Returns the name of the team that is responsible for the equipment register."""
+        return self._root.attrib["team"]

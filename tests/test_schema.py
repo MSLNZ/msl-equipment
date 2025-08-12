@@ -1404,6 +1404,7 @@ def test_register_empty() -> None:
     assert len(r) == 0
     assert r._equipment == []  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     assert r._index_map == {}  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    assert str(r) == "<Register team='Length' (0 equipment)>"
 
     with pytest.raises(ValueError, match=r"alias or id of 'invalid'"):
         _ = r["invalid"]
@@ -1418,9 +1419,13 @@ def test_register() -> None:  # noqa: PLR0915
     assert len(r) == 2  # noqa: PLR2004
     assert r._equipment == [None, None]  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     assert r._index_map == {"Bob": 1, "MSLE.P.001": 0, "MSLE.M.092": 1}  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    assert str(r) == "<Register team='Mass' (2 equipment)>"
 
     first = r[0]
     assert isinstance(first, Equipment)
+    assert (
+        str(first) == "<Equipment id='MSLE.P.001', manufacturer='MSL', model='ABC', serial='123' (0 reports, 0 checks)>"
+    )
     assert first.entered_by == "Peter McDowall"  # cSpell:ignore Dowall
     assert first.checked_by == ""
     assert first.checked_date is None
@@ -1478,6 +1483,10 @@ def test_register() -> None:  # noqa: PLR0915
         second = item
 
     assert isinstance(second, Equipment)
+    assert (
+        str(second)
+        == "<Equipment id='MSLE.M.092', manufacturer='The Company Name', model='Model', serial='Serial' (4 reports, 0 checks)>"  # noqa: E501
+    )
     assert second is not first
     assert r["Bob"] is second
     assert r["MSLE.M.092"] is second

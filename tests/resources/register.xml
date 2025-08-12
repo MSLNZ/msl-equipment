@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
+    <equipment enteredBy="Peter McDowall">
+        <id>MSLE.P.001</id>
+        <manufacturer>MSL</manufacturer>
+        <model>ABC</model>
+        <serial>123</serial>
+        <description>A short description about the equipment</description>
+        <specifications/>
+        <location>CMM Lab</location>
+        <status>Lost</status>
+        <loggable/>
+        <traceable>false</traceable>
+        <calibrations/>
+        <maintenance/>
+        <alterations/>
+        <firmware/>
+        <specifiedRequirements/>
+        <referenceMaterials/>
+        <qualityManual/>
+    </equipment>
+    <equipment enteredBy="Joseph Borbely" checkedBy="Adam Dunford" checkedDate="2025-08-12" alias="Bob" keywords="Thermometer Hygrometer">
+        <id>MSLE.M.092</id>
+        <manufacturer>The Company Name</manufacturer>
+        <model>Model</model>
+        <serial>Serial</serial>
+        <description>Monitors the ambient lab temperature and humidity</description>
+        <specifications>
+            <foo bar="baz">bar</foo>
+        </specifications>
+        <location>Mass Standards Laboratories</location>
+        <status>Active</status>
+        <loggable>true</loggable>
+        <traceable>1</traceable>
+        <calibrations>
+            <measurand quantity="Humidity" calibrationInterval="5">
+                <component name="Probe 1">
+                    <report enteredBy="Joseph Borbely" id="Humidity/2023/583" checkedBy="Adam Dunford" checkedDate="2025-08-12">
+                        <reportIssueDate>2023-08-18</reportIssueDate>
+                        <measurementStartDate>2023-08-08</measurementStartDate>
+                        <measurementStopDate>2023-08-14</measurementStopDate>
+                        <issuingLaboratory person="Me">MSL</issuingLaboratory>
+                        <technicalProcedure>MSLT.H.002.006</technicalProcedure>
+                        <conditions>
+                            <foo bar="baz">bar</foo>
+                        </conditions>
+                        <acceptanceCriteria>
+                            <foo bar="baz">bar</foo>
+                        </acceptanceCriteria>
+                        <equation>
+                            <value variables="R t">R - 7.131e-2 - 3.951e-2*R + 3.412e-4*pow(R,2) + 2.465e-3*t + 1.034e-3*R*t - 5.297e-6*pow(R,2)*t</value>
+                            <uncertainty variables="">0.355</uncertainty>
+                            <unit>%rh</unit>
+                            <ranges>
+                                <range variable="R">
+                                    <minimum>30</minimum>
+                                    <maximum>80</maximum>
+                                </range>
+                                <range variable="t">
+                                    <minimum>15</minimum>
+                                    <maximum>25</maximum>
+                                </range>
+                            </ranges>
+                            <degreeFreedom>INF</degreeFreedom>
+                        </equation>
+                    </report>
+                </component>
+                <component name="Probe 2">
+                    <report enteredBy="Joseph Borbely" id="Humidity/2023/584">
+                        <reportIssueDate>2023-10-18</reportIssueDate>
+                        <measurementStartDate>2023-10-08</measurementStartDate>
+                        <measurementStopDate>2023-10-14</measurementStopDate>
+                        <issuingLaboratory>MSL</issuingLaboratory>
+                        <technicalProcedure>MSLT.H.002.006</technicalProcedure>
+                        <conditions>
+                            <foo bar="baz">bar</foo>
+                        </conditions>
+                        <acceptanceCriteria>
+                            <foo bar="baz">bar</foo>
+                        </acceptanceCriteria>
+                        <cvdCoefficients>
+                            <R0>100.0189</R0>
+                            <A>3.913e-3</A>
+                            <B>-6.056e-07</B>
+                            <C>1.372e-12</C>
+                            <uncertainty variables="">0.0056/2</uncertainty>
+                            <range>
+                                <minimum>-10</minimum>
+                                <maximum>70</maximum>
+                            </range>
+                        </cvdCoefficients>
+                    </report>
+                </component>
+            </measurand>
+            <measurand quantity="Spectral Irradiance" calibrationInterval="5">
+                <component name="FEL 1">
+                    <report enteredBy="Joseph Borbely" id="SI/2024/123" checkedBy="Ellie Molloy" checkedDate="2025-07-29">
+                        <reportIssueDate>2024-07-10</reportIssueDate>
+                        <measurementStartDate>2024-07-08</measurementStartDate>
+                        <measurementStopDate>2024-07-12</measurementStopDate>
+                        <issuingLaboratory person="Me">MSL</issuingLaboratory>
+                        <technicalProcedure>MSLT.H.002.006</technicalProcedure>
+                        <conditions/>
+                        <acceptanceCriteria/>
+                        <table>
+                            <type>int, double, double</type>
+                            <unit>nm, W/m^2, W/m^2</unit>
+                            <header>Wavelength, Irradiance, u(Irradiance)</header>
+                            <data>250, 0.01818, 0.02033
+                                  300, 0.18478, 0.01755
+                                  350, 0.80845, 0.01606
+                            </data>
+                        </table>
+                    </report>
+                </component>
+                <component name="FEL 2">
+                    <report enteredBy="Joseph Borbely" id="SI/2024/124" checkedBy="Ellie Molloy" checkedDate="2025-07-29">
+                        <reportIssueDate>2025-03-10</reportIssueDate>
+                        <measurementStartDate>2025-03-08</measurementStartDate>
+                        <measurementStopDate>2025-03-10</measurementStopDate>
+                        <issuingLaboratory person="Me">MSL</issuingLaboratory>
+                        <technicalProcedure>MSLT.H.002.006</technicalProcedure>
+                        <conditions/>
+                        <acceptanceCriteria/>
+                        <file>
+                            <url sheet="2024-May" cells="B2:D25">tests/resources/irradiance.xlsx</url>
+                            <sha256>70d79d2eb24dc2515faaf4ab7fa3540e5a73ca6080181908a0ea87a309293609</sha256>
+                        </file>
+                    </report>
+                </component>
+            </measurand>
+        </calibrations>
+        <maintenance>
+            <planned>
+                <task dueDate="2025-05-15" performedBy="Joseph Borbely">Service laser</task>
+            </planned>
+            <completed>
+                <task dueDate="2024-12-01" completedDate="2024-12-02" performedBy="Guy Dubuis">Refill helium gas</task>
+            </completed>
+        </maintenance>
+        <alterations>
+            <alteration date="2025-03-31" performedBy="Chris Young">Did work</alteration>
+        </alterations>
+        <firmware>
+            <version date="2024-03-24">1.1b</version>
+            <version date="2023-06-15">1.02</version>
+        </firmware>
+        <specifiedRequirements>
+            <foo bar="baz">bar</foo>
+        </specifiedRequirements>
+        <referenceMaterials key="value">
+            <fruit colour="red" size="small">apple</fruit>
+        </referenceMaterials>
+        <qualityManual>
+            <accessories>
+                <colour mode="RGB">
+                    <r>34</r>
+                    <g>0</g>
+                    <b>187</b>
+                </colour>
+            </accessories>
+            <financial>
+                <yearPurchased>2023</yearPurchased>
+                <assetNumber>Whatever</assetNumber>
+                <warrantyExpirationDate>2026-08-01</warrantyExpirationDate>
+            </financial>
+            <documentation>https://url.com</documentation>
+            <personnelRestrictions>Everyone</personnelRestrictions>
+            <technicalProcedures>
+                <id>MSLT.E.028.017</id>
+                <id>MSLT.O.009</id>
+            </technicalProcedures>
+            <serviceAgent>MSL</serviceAgent>
+        </qualityManual>
+    </equipment>
+</register>

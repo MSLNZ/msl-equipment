@@ -24,6 +24,7 @@
     ],
     "words": [
         "allclose",
+        "Borbely",
         "Callendar",
         "cbrt",
         "datasheet",
@@ -37,6 +38,8 @@
         "loggable",
         "Measurand",
         "memmap",
+        "MSLE",
+        "MSLT",
         "ndarray",
         "numpy",
         "pycon",

@@ -75,6 +75,7 @@ nav:
     - schema/planned_task.md
     - schema/quality_manual.md
     - schema/reference_materials.md
+    - schema/register.md
     - schema/report.md
     - schema/specifications.md
     - schema/specified_requirements.md

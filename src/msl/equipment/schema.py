@@ -6,15 +6,19 @@ from enum import Enum
 from io import StringIO
 from math import isinf
 from typing import TYPE_CHECKING, NamedTuple
+from xml.etree import ElementTree as ET
 from xml.etree.ElementTree import Element, SubElement
 
 import numpy as np
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from typing import Any as _Any
     from typing import Literal, TypeVar
 
     from numpy.typing import ArrayLike, DTypeLike, NDArray
+
+    from ._types import XMLSource
 
     A = TypeVar("A", bound="Any")
 
@@ -1887,6 +1891,9 @@ class Equipment:
     """Represents the [equipment][type_equipment]{:target="_blank"} element in an equipment register.
 
     Args:
+        entered_by: The name of the person who initially entered the `equipment` element in the register.
+        checked_by: The name of the person who checked the information in the `equipment` element.
+        checked_date: The date that the information in the `equipment` element was last checked.
         alias: An alternative name to associate with the equipment.
         keywords: Keywords that describe the equipment.
         id: Identity in an equipment register.
@@ -1913,22 +1920,224 @@ class Equipment:
         quality_manual: Information that is specified in Section 4.3.6 of the MSL Quality Manual.
     """
 
+    entered_by: str = ""
+    """The name of the person who initially entered the `equipment` element in the register."""
+
+    checked_by: str = ""
+    """The name of the person who checked the information in the `equipment` element."""
+
+    checked_date: _date | None = None
+    """The date that the information in the `equipment` element was last checked."""
+
     alias: str = ""
+    """An alternative name to associate with the equipment."""
+
     keywords: tuple[str, ...] = ()
+    """Keywords that describe the equipment."""
+
     id: str = ""
+    """Identity in an equipment register."""
+
     manufacturer: str = ""
+    """Name of manufacturer."""
+
     model: str = ""
+    """Manufacturer's model number (or type identification)."""
+
     serial: str = ""
+    """Manufacturer's serial number (or other unique identification)."""
+
     description: str = ""
+    """A short description about the equipment."""
+
     specifications: Specifications = field(default_factory=Specifications)
+    """Specifications provided by the manufacturer of the equipment."""
+
     location: str = ""
+    """The usual location (laboratory) that the equipment is found in."""
+
     status: Status = Status.Active
+    """The status of the equipment is an indication of whether the equipment
+    is active (in use) or inactive (not in use)."""
+
     loggable: bool = False
+    """Whether measurements from the equipment should be logged."""
+
     traceable: bool = False
+    """Whether the equipment is used for a traceable measurement."""
+
     calibrations: tuple[Measurand, ...] = ()
+    """The calibration history."""
+
     maintenance: Maintenance = field(default_factory=Maintenance)
+    """The maintenance history and maintenance plan."""
+
     alterations: tuple[Alteration, ...] = ()
+    """The alteration history."""
+
     firmware: tuple[Firmware, ...] = ()
+    """The firmware version history."""
+
     specified_requirements: SpecifiedRequirements = field(default_factory=SpecifiedRequirements)
+    """Verification that equipment conforms with specified requirements before
+    being placed or returned into service."""
+
     reference_materials: ReferenceMaterials = field(default_factory=ReferenceMaterials)
+    """Documentation of reference materials, results, acceptance criteria, relevant
+    dates and the period of validity."""
+
     quality_manual: QualityManual = field(default_factory=QualityManual)
+    """Information that is specified in Section 4.3.6 of the MSL Quality Manual."""
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> Equipment:
+        """Convert an XML element into an [Equipment][msl.equipment.schema.Equipment] instance.
+
+        Args:
+            element: A [equipment][type_equipment]{:target="_blank"} XML element from an equipment register.
+
+        Returns:
+            The [Equipment][msl.equipment.schema.Equipment] instance.
+        """
+        # Schema forces order
+        a = element.attrib
+        return cls(
+            entered_by=a["enteredBy"],
+            checked_by=a.get("checkedBy", ""),
+            checked_date=None if not a.get("checkedDate") else _date.fromisoformat(a["checkedDate"]),
+            alias=a.get("alias", ""),
+            keywords=tuple(a.get("keywords", "").split()),
+            id=element[0].text or "",
+            manufacturer=element[1].text or "",
+            model=element[2].text or "",
+            serial=element[3].text or "",
+            description=element[4].text or "",
+            specifications=Specifications.from_xml(element[5]),
+            location=element[6].text or "",
+            status=Status(element[7].text),
+            loggable=element[8].text in {"1", "true"},
+            traceable=element[9].text in {"1", "true"},
+            calibrations=tuple(Measurand.from_xml(e) for e in element[10]),
+            maintenance=Maintenance.from_xml(element[11]),
+            alterations=tuple(Alteration.from_xml(e) for e in element[12]),
+            firmware=tuple(Firmware.from_xml(e) for e in element[13]),
+            specified_requirements=SpecifiedRequirements.from_xml(element[14]),
+            reference_materials=ReferenceMaterials.from_xml(element[15]),
+            quality_manual=QualityManual.from_xml(element[16]),
+        )
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [Equipment][msl.equipment.schema.Equipment] class into an XML element.
+
+        Returns:
+            The [Equipment][msl.equipment.schema.Equipment] as an XML element.
+        """
+        a = {"enteredBy": self.entered_by}
+        if self.checked_by:
+            a["checkedBy"] = self.checked_by
+        if self.checked_date is not None:
+            a["checkedDate"] = self.checked_date.isoformat()
+        if self.alias:
+            a["alias"] = self.alias
+        if self.keywords:
+            a["keywords"] = " ".join(self.keywords)
+
+        e = Element("equipment", attrib=a)
+
+        _id = SubElement(e, "id")
+        _id.text = self.id
+
+        manufacturer = SubElement(e, "manufacturer")
+        manufacturer.text = self.manufacturer
+
+        model = SubElement(e, "model")
+        model.text = self.model
+
+        serial = SubElement(e, "serial")
+        serial.text = self.serial
+
+        description = SubElement(e, "description")
+        description.text = self.description
+
+        e.append(self.specifications)
+
+        location = SubElement(e, "location")
+        location.text = self.location
+
+        status = SubElement(e, "status")
+        status.text = self.status.value
+
+        loggable = SubElement(e, "loggable")
+        loggable.text = "true" if self.loggable else "false"
+
+        traceable = SubElement(e, "traceable")
+        traceable.text = "true" if self.traceable else "false"
+
+        calibrations = SubElement(e, "calibrations")
+        calibrations.extend(c.to_xml() for c in self.calibrations)
+
+        e.append(self.maintenance.to_xml())
+
+        alterations = SubElement(e, "alterations")
+        alterations.extend(a.to_xml() for a in self.alterations)
+
+        firmware = SubElement(e, "firmware")
+        firmware.extend(f.to_xml() for f in self.firmware)
+
+        e.append(self.specified_requirements)
+        e.append(self.reference_materials)
+        e.append(self.quality_manual.to_xml())
+        return e
+
+
+class Register:
+    """Represents the [register][element_register]{:target="_blank"} element in an equipment register."""
+
+    def __init__(self, source: XMLSource) -> None:
+        """Represents the [register][element_register]{:target="_blank"} element in an equipment register.
+
+        Args:
+            source: A [path-like object][]{:target="_blank"} or a [file-like object][]{:target="_blank"}
+                that contains an equipment register.
+        """
+        self._root: Element[str] = ET.parse(source).getroot()  # noqa: S314
+        self._equipment: list[Equipment | None] = [None] * len(self._root)
+
+        # a mapping between the alias/id and the index number in the register
+        self._index_map: dict[str, int] = {
+            e.attrib["alias"]: i for i, e in enumerate(self._root) if e.attrib.get("alias")
+        }
+        self._index_map.update({e[0].text or "": i for i, e in enumerate(self._root)})
+
+    @property
+    def team(self) -> str:
+        """[str][] &mdash; Returns the name of the team that is responsible for the equipment register."""
+        return self._root.attrib["team"]
+
+    def __getitem__(self, item: str | int) -> Equipment:
+        """Returns an Equipment item from the register."""
+        if isinstance(item, str):
+            index = self._index_map.get(item)
+            if index is None:
+                msg = f"No equipment exists with an alias or id of {item!r}"
+                raise ValueError(msg)
+        else:
+            index = item
+
+        e = self._equipment[index]
+        if e is None:
+            e = Equipment.from_xml(self._root[index])
+            self._equipment[index] = e
+        return e
+
+    def __iter__(self) -> Iterator[Equipment]:
+        """Yields the Equipment elements in the register."""
+        for i, e in enumerate(self._equipment):
+            if e is None:
+                e = Equipment.from_xml(self._root[i])  # noqa: PLW2901
+                self._equipment[i] = e
+            yield e
+
+    def __len__(self) -> int:
+        """Returns the number of Equipment elements in the register."""
+        return len(self._root)

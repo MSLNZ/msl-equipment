@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
+from io import StringIO
 from typing import TYPE_CHECKING, cast
 from xml.etree.ElementTree import XML, Element, tostring
 
@@ -24,6 +25,7 @@ from msl.equipment import (
     DigitalFormat,
     DigitalReport,
     Equation,
+    Equipment,
     Evaluable,
     File,
     Financial,
@@ -35,6 +37,7 @@ from msl.equipment import (
     QualityManual,
     Range,
     ReferenceMaterials,
+    Register,
     Report,
     Specifications,
     SpecifiedRequirements,
@@ -1368,3 +1371,165 @@ def test_measurand() -> None:
     assert len(c.performance_checks) == 1
 
     assert tostring(m.to_xml()) == text
+
+
+def test_equipment_empty() -> None:
+    assert tostring(Equipment().to_xml()) == (
+        b'<equipment enteredBy="">'
+        b"<id />"
+        b"<manufacturer />"
+        b"<model />"
+        b"<serial />"
+        b"<description />"
+        b"<specifications />"
+        b"<location />"
+        b"<status>Active</status>"
+        b"<loggable>false</loggable>"
+        b"<traceable>false</traceable>"
+        b"<calibrations />"
+        b"<maintenance />"
+        b"<alterations />"
+        b"<firmware />"
+        b"<specifiedRequirements />"
+        b"<referenceMaterials />"
+        b"<qualityManual />"
+        b"</equipment>"
+    )
+
+
+def test_register_empty() -> None:
+    text = StringIO('<?xml version="1.0" encoding="UTF-8" ?><register team="Length" />')
+    r = Register(text)
+    assert r.team == "Length"
+    assert len(r) == 0
+    assert r._equipment == []  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    assert r._index_map == {}  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+
+    with pytest.raises(ValueError, match=r"alias or id of 'invalid'"):
+        _ = r["invalid"]
+
+    with pytest.raises(IndexError):
+        _ = r[0]
+
+
+def test_register() -> None:  # noqa: PLR0915
+    r = Register("tests/resources/register.xml")
+    assert r.team == "Mass"
+    assert len(r) == 2  # noqa: PLR2004
+    assert r._equipment == [None, None]  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    assert r._index_map == {"Bob": 1, "MSLE.P.001": 0, "MSLE.M.092": 1}  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+
+    first = r[0]
+    assert isinstance(first, Equipment)
+    assert first.entered_by == "Peter McDowall"  # cSpell:ignore Dowall
+    assert first.checked_by == ""
+    assert first.checked_date is None
+    assert first.alias == ""
+    assert first.keywords == ()
+    assert first.id == "MSLE.P.001"
+    assert first.manufacturer == "MSL"
+    assert first.model == "ABC"
+    assert first.serial == "123"
+    assert first.description == "A short description about the equipment"
+    assert first.specifications.tag == "specifications"
+    assert first.specifications.attrib == {}
+    assert first.specifications.text is None
+    assert len(first.specifications) == 0
+    assert first.location == "CMM Lab"
+    assert first.status == Status.Lost
+    assert not first.loggable
+    assert not first.traceable
+    assert len(first.calibrations) == 0
+    assert len(first.maintenance.completed) == 0
+    assert len(first.maintenance.planned) == 0
+    assert len(first.alterations) == 0
+    assert len(first.firmware) == 0
+    assert first.specified_requirements.tag == "specifiedRequirements"
+    assert first.specified_requirements.attrib == {}
+    assert first.specified_requirements.text is None
+    assert len(first.specified_requirements) == 0
+    assert first.reference_materials.tag == "referenceMaterials"
+    assert first.reference_materials.attrib == {}
+    assert first.reference_materials.text is None
+    assert len(first.reference_materials) == 0
+    assert first.quality_manual.accessories.tag == "accessories"
+    assert first.quality_manual.accessories.attrib == {}
+    assert first.quality_manual.accessories.text is None
+    assert len(first.quality_manual.accessories) == 0
+    assert first.quality_manual.documentation == ""
+    assert first.quality_manual.financial == Financial()
+    assert first.quality_manual.personnel_restrictions == ""
+    assert first.quality_manual.service_agent == ""
+    assert first.quality_manual.technical_procedures == ()
+
+    assert r["MSLE.P.001"] is first
+    assert r[0] is first
+
+    with pytest.raises(ValueError, match=r"alias or id of 'invalid'"):
+        _ = r["invalid"]
+
+    with pytest.raises(IndexError):
+        _ = r[2]
+
+    assert r._equipment == [first, None]  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+
+    second = None
+    for item in r:
+        second = item
+
+    assert isinstance(second, Equipment)
+    assert second is not first
+    assert r["Bob"] is second
+    assert r["MSLE.M.092"] is second
+    assert r[1] is second
+    assert r._equipment == [first, second]  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    assert second.entered_by == "Joseph Borbely"
+    assert second.checked_by == "Adam Dunford"
+    assert second.checked_date == date(2025, 8, 12)
+    assert second.alias == "Bob"
+    assert second.keywords == ("Thermometer", "Hygrometer")
+    assert second.id == "MSLE.M.092"
+    assert second.manufacturer == "The Company Name"
+    assert second.model == "Model"
+    assert second.serial == "Serial"
+    assert second.description == "Monitors the ambient lab temperature and humidity"
+    assert len(second.specifications) == 1
+    assert second.specifications[0].tag == "{https://measurement.govt.nz/equipment-register}foo"
+    assert second.specifications[0].attrib == {"bar": "baz"}
+    assert second.specifications[0].text == "bar"
+    assert second.location == "Mass Standards Laboratories"
+    assert second.status == Status.Active
+    assert second.loggable
+    assert second.traceable
+    assert len(second.calibrations) == 2  # noqa: PLR2004
+    assert len(second.maintenance.planned) == 1
+    assert second.maintenance.planned[0].due_date == date(2025, 5, 15)
+    assert len(second.maintenance.completed) == 1
+    assert second.maintenance.completed[0].completed_date == date(2024, 12, 2)
+    assert len(second.alterations) == 1
+    assert second.alterations[0].details == "Did work"
+    assert len(second.firmware) == 2  # noqa: PLR2004
+    assert second.firmware[1].version == "1.02"
+    assert len(second.specified_requirements) == 1
+    assert second.specified_requirements[0].tag == "{https://measurement.govt.nz/equipment-register}foo"
+    assert second.specified_requirements[0].attrib == {"bar": "baz"}
+    assert second.specified_requirements[0].text == "bar"
+    assert len(second.reference_materials) == 1
+    assert second.reference_materials.attrib == {"key": "value"}
+    assert second.reference_materials[0].tag == "{https://measurement.govt.nz/equipment-register}fruit"
+    assert second.reference_materials[0].attrib == {"colour": "red", "size": "small"}
+    assert second.reference_materials[0].text == "apple"
+    assert len(second.quality_manual.accessories) == 1
+    assert second.quality_manual.accessories[0].tag == "{https://measurement.govt.nz/equipment-register}colour"
+    assert second.quality_manual.accessories[0].attrib == {"mode": "RGB"}
+    assert len(second.quality_manual.accessories[0]) == 3  # noqa: PLR2004
+    assert second.quality_manual.accessories[0][0].text == "34"
+    assert second.quality_manual.accessories[0][1].text == "0"
+    assert second.quality_manual.accessories[0][2].text == "187"
+    assert second.quality_manual.financial.year_purchased == 2023  # noqa: PLR2004
+    assert second.quality_manual.financial.asset_number == "Whatever"
+    assert second.quality_manual.financial.warranty_expiration_date == date(2026, 8, 1)
+    assert second.quality_manual.documentation == "https://url.com"
+    assert second.quality_manual.personnel_restrictions == "Everyone"
+    assert second.quality_manual.service_agent == "MSL"
+    assert second.quality_manual.technical_procedures == ("MSLT.E.028.017", "MSLT.O.009")

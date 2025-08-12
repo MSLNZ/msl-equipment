@@ -2,7 +2,7 @@
 
 Class representations of the [XML Schema Definition](https://mslnz.github.io/equipment-register-schema/latest/){:target="_blank"} for an equipment register.
 
-The primary class is [Equipment][msl.equipment.schema.Equipment] which may contain the following classes:
+The primary class is [Register][register] which contains a sequence of [Equipment][equipment] classes that are each composed of the following classes:
 
 * [AcceptanceCriteria][msl.equipment.schema.AcceptanceCriteria]
 * [Accessories][msl.equipment.schema.Accessories]

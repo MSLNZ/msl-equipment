@@ -10,11 +10,8 @@ theme:
   favicon: assets/images/favicon.ico
   features:
     - content.code.copy
-    - navigation.expand
     - navigation.footer
     - navigation.indexes
-    - navigation.path
-    - navigation.sections
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.top
@@ -144,4 +141,4 @@ extra:
 extra_javascript:
   - javascripts/arithmatex.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6
-  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  - https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.js

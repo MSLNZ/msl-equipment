@@ -348,17 +348,13 @@
     
       
       
-        
-      
     
     
     <li class="md-nav__item md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -508,6 +504,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -515,8 +515,6 @@
         
         
       
-      
-        
       
     
     
@@ -1190,6 +1188,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../performance_check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    PerformanceCheck
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planned_task/" class="md-nav__link">
         
   
@@ -1242,6 +1263,29 @@
   
   <span class="md-ellipsis">
     ReferenceMaterials
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Report
     
   </span>
   
@@ -2071,17 +2115,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">560</span>
-<span class="normal">561</span>
-<span class="normal">562</span>
-<span class="normal">563</span>
-<span class="normal">564</span>
-<span class="normal">565</span>
-<span class="normal">566</span>
-<span class="normal">567</span>
-<span class="normal">568</span>
-<span class="normal">569</span>
-<span class="normal">570</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">570</span>
 <span class="normal">571</span>
 <span class="normal">572</span>
 <span class="normal">573</span>
@@ -2099,7 +2133,17 @@
 <span class="normal">585</span>
 <span class="normal">586</span>
 <span class="normal">587</span>
-<span class="normal">588</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">588</span>
+<span class="normal">589</span>
+<span class="normal">590</span>
+<span class="normal">591</span>
+<span class="normal">592</span>
+<span class="normal">593</span>
+<span class="normal">594</span>
+<span class="normal">595</span>
+<span class="normal">596</span>
+<span class="normal">597</span>
+<span class="normal">598</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Equation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into an [Equation][msl.equipment.schema.Equation] instance.</span>
 
@@ -2185,17 +2229,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">590</span>
-<span class="normal">591</span>
-<span class="normal">592</span>
-<span class="normal">593</span>
-<span class="normal">594</span>
-<span class="normal">595</span>
-<span class="normal">596</span>
-<span class="normal">597</span>
-<span class="normal">598</span>
-<span class="normal">599</span>
-<span class="normal">600</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">600</span>
 <span class="normal">601</span>
 <span class="normal">602</span>
 <span class="normal">603</span>
@@ -2212,7 +2246,17 @@
 <span class="normal">614</span>
 <span class="normal">615</span>
 <span class="normal">616</span>
-<span class="normal">617</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">617</span>
+<span class="normal">618</span>
+<span class="normal">619</span>
+<span class="normal">620</span>
+<span class="normal">621</span>
+<span class="normal">622</span>
+<span class="normal">623</span>
+<span class="normal">624</span>
+<span class="normal">625</span>
+<span class="normal">626</span>
+<span class="normal">627</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Equation][msl.equipment.schema.Equation] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
@@ -2367,7 +2411,7 @@
               <div class="doc-md-description">
                 <p>The numeric range for a variable that the <code>equation</code> is valid for.
 The <em>keys</em> are the variable names. A range does not need to be defined for every variable.
-If a range is not defined then a range of <code>[-INF, +INF]</code> is assumed.</p>
+If a range is not defined then a range of <span class="arithmatex">\([-\infty, +\infty]\)</span> is assumed.</p>
               </div>
             </td>
             <td>
@@ -2578,7 +2622,17 @@ If a range is not defined then a range of <code>[-INF, +INF]</code> is assumed.<
 <span class="normal">527</span>
 <span class="normal">528</span>
 <span class="normal">529</span>
-<span class="normal">530</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+<span class="normal">530</span>
+<span class="normal">531</span>
+<span class="normal">532</span>
+<span class="normal">533</span>
+<span class="normal">534</span>
+<span class="normal">535</span>
+<span class="normal">536</span>
+<span class="normal">537</span>
+<span class="normal">538</span>
+<span class="normal">539</span>
+<span class="normal">540</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate the equation.</span>
 
 <span class="sd">    Args:</span>
@@ -2588,15 +2642,25 @@ If a range is not defined then a range of <code>[-INF, +INF]</code> is assumed.<
 <span class="sd">    Returns:</span>
 <span class="sd">        The equation evaluated.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">_locals</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
     <span class="k">if</span> <span class="n">check_range</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">_locals</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ranges</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># if None then assume [-INF, +INF] for this variable</span>
                 <span class="n">r</span><span class="o">.</span><span class="n">check_within_range</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">equation_map</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]  # pyright: ignore[reportCallIssue, reportArgumentType]</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">equation</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>  <span class="c1"># noqa: S307</span>
+    <span class="c1"># If the same input data is used to evaluate the corrected value and the uncertainty</span>
+    <span class="c1"># then one would expect the returned array to have the same shape in both cases.</span>
+    <span class="c1"># If the equation is a constant (does not depend on variables) the input data is</span>
+    <span class="c1"># ignored during eval() and a scalar array would have been returned. We want to</span>
+    <span class="c1"># ensure that the output shape is always the same as the broadcasted input shape.</span>
+    <span class="n">in_shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_shapes</span><span class="p">(</span><span class="o">*</span><span class="nb">tuple</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_locals</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+    <span class="n">_locals</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">equation_map</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]  # pyright: ignore[reportCallIssue, reportArgumentType]</span>
+    <span class="n">out</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">equation</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">_locals</span><span class="p">))</span>  <span class="c1"># noqa: S307</span>
+    <span class="k">if</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">in_shape</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3024,7 +3088,7 @@ If a range is not defined then a range of <code>[-INF, +INF]</code> is assumed.<
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
@@ -3033,7 +3097,7 @@ If a range is not defined then a range of <code>[-INF, +INF]</code> is assumed.<
       
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
       
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.js"></script>
       
     
   </body>

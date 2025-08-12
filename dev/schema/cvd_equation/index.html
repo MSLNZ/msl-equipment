@@ -348,17 +348,13 @@
     
       
       
-        
-      
     
     
     <li class="md-nav__item md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -508,6 +504,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -515,8 +515,6 @@
         
         
       
-      
-        
       
     
     
@@ -1133,6 +1131,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../performance_check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    PerformanceCheck
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planned_task/" class="md-nav__link">
         
   
@@ -1185,6 +1206,29 @@
   
   <span class="md-ellipsis">
     ReferenceMaterials
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Report
     
   </span>
   
@@ -1461,6 +1505,7 @@
     1 + A \cdot T + B \cdot T^2 + C \cdot (T-100) \cdot T^3 &amp; -200~^{\circ}\text{C} \lt T \lt 0~^{\circ}\text{C} \\
 \end{cases}
 \]</div>
+<p>where, <span class="arithmatex">\(R_0\)</span> is the resistance at <span class="arithmatex">\(T=0~^{\circ}\text{C}\)</span> and <span class="arithmatex">\(A\)</span>, <span class="arithmatex">\(B\)</span> and <span class="arithmatex">\(C\)</span> are the Callendar-Van Dusen coefficients.</p>
 <!--
 >>> from msl.equipment import CVDEquation, Evaluable, Range
 >>> cvd = CVDEquation(
@@ -1492,7 +1537,7 @@
 <span class="w">  </span><span class="nt">&lt;/range&gt;</span>
 <span class="nt">&lt;/cvdCoefficients&gt;</span>
 </code></pre></div>
-<p>You can access the <em>CVD coefficients</em>, <em>degrees of freedom</em> and <em>comment</em> as attributes of <code>cvd</code></p>
+<p>You can access the <em>CVD coefficients</em>, <em>degrees of freedom</em> and <em>comment</em> as attributes of <code>cvd</code>,</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">R0</span>
 <span class="go">100.0189</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">A</span>
@@ -1506,7 +1551,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">comment</span>
 <span class="go">&#39;&#39;</span>
 </code></pre></div>
-<p>You can evaluate the uncertainty,</p>
+<p>evaluate the uncertainty,</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cvd</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">())</span>
 <span class="go">0.0026</span>
 </code></pre></div>
@@ -2047,17 +2092,7 @@ from an equipment register.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1041</span>
-<span class="normal">1042</span>
-<span class="normal">1043</span>
-<span class="normal">1044</span>
-<span class="normal">1045</span>
-<span class="normal">1046</span>
-<span class="normal">1047</span>
-<span class="normal">1048</span>
-<span class="normal">1049</span>
-<span class="normal">1050</span>
-<span class="normal">1051</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1051</span>
 <span class="normal">1052</span>
 <span class="normal">1053</span>
 <span class="normal">1054</span>
@@ -2090,7 +2125,17 @@ from an equipment register.</p>
 <span class="normal">1081</span>
 <span class="normal">1082</span>
 <span class="normal">1083</span>
-<span class="normal">1084</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1084</span>
+<span class="normal">1085</span>
+<span class="normal">1086</span>
+<span class="normal">1087</span>
+<span class="normal">1088</span>
+<span class="normal">1089</span>
+<span class="normal">1090</span>
+<span class="normal">1091</span>
+<span class="normal">1092</span>
+<span class="normal">1093</span>
+<span class="normal">1094</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">CVDEquation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [CVDEquation][msl.equipment.schema.CVDEquation] instance.</span>
 
@@ -2230,21 +2275,21 @@ from an equipment register.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">972</span>
-<span class="normal">973</span>
-<span class="normal">974</span>
-<span class="normal">975</span>
-<span class="normal">976</span>
-<span class="normal">977</span>
-<span class="normal">978</span>
-<span class="normal">979</span>
-<span class="normal">980</span>
-<span class="normal">981</span>
-<span class="normal">982</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">982</span>
 <span class="normal">983</span>
 <span class="normal">984</span>
 <span class="normal">985</span>
-<span class="normal">986</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">resistance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperature</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+<span class="normal">986</span>
+<span class="normal">987</span>
+<span class="normal">988</span>
+<span class="normal">989</span>
+<span class="normal">990</span>
+<span class="normal">991</span>
+<span class="normal">992</span>
+<span class="normal">993</span>
+<span class="normal">994</span>
+<span class="normal">995</span>
+<span class="normal">996</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">resistance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperature</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate resistance from temperature.</span>
 
 <span class="sd">    Args:</span>
@@ -2355,17 +2400,7 @@ from an equipment register.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 988</span>
-<span class="normal"> 989</span>
-<span class="normal"> 990</span>
-<span class="normal"> 991</span>
-<span class="normal"> 992</span>
-<span class="normal"> 993</span>
-<span class="normal"> 994</span>
-<span class="normal"> 995</span>
-<span class="normal"> 996</span>
-<span class="normal"> 997</span>
-<span class="normal"> 998</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 998</span>
 <span class="normal"> 999</span>
 <span class="normal">1000</span>
 <span class="normal">1001</span>
@@ -2406,7 +2441,17 @@ from an equipment register.</p>
 <span class="normal">1036</span>
 <span class="normal">1037</span>
 <span class="normal">1038</span>
-<span class="normal">1039</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resistance</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+<span class="normal">1039</span>
+<span class="normal">1040</span>
+<span class="normal">1041</span>
+<span class="normal">1042</span>
+<span class="normal">1043</span>
+<span class="normal">1044</span>
+<span class="normal">1045</span>
+<span class="normal">1046</span>
+<span class="normal">1047</span>
+<span class="normal">1048</span>
+<span class="normal">1049</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resistance</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate temperature from resistance.</span>
 
 <span class="sd">    Args:</span>
@@ -2515,17 +2560,7 @@ from an equipment register.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1086</span>
-<span class="normal">1087</span>
-<span class="normal">1088</span>
-<span class="normal">1089</span>
-<span class="normal">1090</span>
-<span class="normal">1091</span>
-<span class="normal">1092</span>
-<span class="normal">1093</span>
-<span class="normal">1094</span>
-<span class="normal">1095</span>
-<span class="normal">1096</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1096</span>
 <span class="normal">1097</span>
 <span class="normal">1098</span>
 <span class="normal">1099</span>
@@ -2549,7 +2584,17 @@ from an equipment register.</p>
 <span class="normal">1117</span>
 <span class="normal">1118</span>
 <span class="normal">1119</span>
-<span class="normal">1120</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">1120</span>
+<span class="normal">1121</span>
+<span class="normal">1122</span>
+<span class="normal">1123</span>
+<span class="normal">1124</span>
+<span class="normal">1125</span>
+<span class="normal">1126</span>
+<span class="normal">1127</span>
+<span class="normal">1128</span>
+<span class="normal">1129</span>
+<span class="normal">1130</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [CVDEquation][msl.equipment.schema.CVDEquation] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
@@ -2730,7 +2775,7 @@ from an equipment register.</p>
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
@@ -2739,7 +2784,7 @@ from an equipment register.</p>
       
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
       
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.js"></script>
       
     
   </body>

@@ -27,10 +27,13 @@ from msl.equipment import (
     File,
     Financial,
     Firmware,
+    IssuingLaboratory,
     Maintenance,
+    PerformanceCheck,
     QualityManual,
     Range,
     ReferenceMaterials,
+    Report,
     Specifications,
     SpecifiedRequirements,
     Status,
@@ -1039,4 +1042,229 @@ def test_cvd_iec60751() -> None:
     assert np.allclose(cvd.temperature(data[:, 1]), data[:, 0], rtol=5e-4, atol=0.005)
 
 
-# test Measurand, Component, PerformanceCheck, Report
+def test_performance_check_minimal() -> None:
+    text = (
+        b'<performanceCheck completedDate="2023-04-02" enteredBy="Me">'
+        b"<competency>"
+        b"<worker>Person A.</worker>"
+        b"<checker>B</checker>"
+        b"<technicalProcedure>value is not checked</technicalProcedure>"
+        b"</competency>"
+        b"<conditions />"
+        b"</performanceCheck>"
+    )
+
+    pc = PerformanceCheck.from_xml(XML(text))
+    assert pc.completed_date == date(2023, 4, 2)
+    assert pc.entered_by == "Me"
+    assert pc.checked_by == ""
+    assert pc.checked_date is None
+    assert pc.competency.worker == "Person A."
+    assert pc.competency.checker == "B"
+    assert pc.competency.technical_procedure == "value is not checked"
+    assert pc.conditions.tag == "conditions"
+    assert pc.conditions.attrib == {}
+    assert pc.conditions.text is None
+    assert len(pc.conditions) == 0
+    assert len(pc.cvd_equations) == 0
+    assert len(pc.equations) == 0
+    assert len(pc.files) == 0
+    assert len(pc.deserialised) == 0
+    assert len(pc.tables) == 0
+    assert tostring(pc.to_xml()) == text
+
+
+def test_performance_check() -> None:
+    text = (
+        b'<performanceCheck completedDate="2023-04-02" enteredBy="Me" checkedBy="A" checkedDate="2025-01-01">'
+        b"<competency>"
+        b"<worker>A</worker>"
+        b"<checker>B</checker>"
+        b"<technicalProcedure>C</technicalProcedure>"
+        b"</competency>"
+        b'<conditions><temperature unit="C">25</temperature></conditions>'
+        b"<equation>"
+        b'<value variables="x">1 + x</value>'
+        b'<uncertainty variables="">0.1</uncertainty>'
+        b"<unit>K</unit>"
+        b'<ranges><range variable="x"><minimum>0.0</minimum><maximum>1.0</maximum></range></ranges>'
+        b"</equation>"
+        b"<table>"
+        b"<type>int,double,double,bool,string</type>"
+        b"<unit>nm,W/m^2,W/m^2,,</unit>"
+        b"<header>Wavelength,Irradiance,u(Irradiance),Is Good?,Letter</header>"
+        b"<data>250,0.01818,0.02033,True, A\n"
+        b"300,0.18478,0.01755,True, B\n"
+        b"350,0.80845,0.01606,False, C\n"
+        b"400,2.21355,0.01405,False, D\n"
+        b"450,4.49004,0.0125,True, E\n"
+        b"500,7.45135,0.012,True, F\n"
+        b"</data>"
+        b"</table>"
+        b"<cvdCoefficients>"
+        b"<R0>100.0188885</R0>"
+        b"<A>0.00390969</A>"
+        b"<B>-6.06e-07</B>"
+        b"<C>1.372e-12</C>"
+        b'<uncertainty variables="">0.0056/2</uncertainty>'
+        b"<range><minimum>-10.0</minimum><maximum>70.02</maximum></range>"
+        b"</cvdCoefficients>"
+        b'<file comment="hi"><url foo="bar">whatever</url><sha256>anything</sha256></file>'
+        b'<serialised><gtcArchive version="1.5.0" xmlns="https://measurement.govt.nz/gtc/xml"><leafNodes><leafNode uid="(1, 1)"><u>0.1</u><df>INF</df><label /><independent>true</independent></leafNode></leafNodes><taggedReals><elementaryReal tag="x" uid="(1, 1)"><value>1.0</value></elementaryReal></taggedReals><untaggedReals /><taggedComplexes /><intermediates /></gtcArchive></serialised>'  # noqa: E501
+        b"</performanceCheck>"
+    )
+
+    pc = PerformanceCheck.from_xml(XML(text))
+    assert pc.completed_date == date(2023, 4, 2)
+    assert pc.entered_by == "Me"
+    assert pc.checked_by == "A"
+    assert pc.checked_date == date(2025, 1, 1)
+    assert pc.competency.worker == "A"
+    assert pc.competency.checker == "B"
+    assert pc.competency.technical_procedure == "C"
+    assert pc.conditions.tag == "conditions"
+    assert pc.conditions.attrib == {}
+    assert pc.conditions.text is None
+    assert len(pc.conditions) == 1
+    assert pc.conditions[0].tag == "temperature"
+    assert pc.conditions[0].attrib == {"unit": "C"}
+    assert pc.conditions[0].text == "25"
+    assert len(pc.cvd_equations) == 1
+    assert len(pc.equations) == 1
+    assert len(pc.files) == 1
+    assert len(pc.deserialised) == 1
+    assert len(pc.tables) == 1
+    assert tostring(pc.to_xml()) == text
+
+
+def test_issuing_laboratory_without_person() -> None:
+    text = b"<issuingLaboratory>MSL</issuingLaboratory>"
+    lab = IssuingLaboratory.from_xml(XML(text))
+    assert lab.lab == "MSL"
+    assert lab.person == ""
+    assert tostring(lab.to_xml()) == text
+
+
+def test_issuing_laboratory_with_person() -> None:
+    text = b'<issuingLaboratory person="Me">MSL</issuingLaboratory>'
+    lab = IssuingLaboratory.from_xml(XML(text))
+    assert lab.lab == "MSL"
+    assert lab.person == "Me"
+    assert tostring(lab.to_xml()) == text
+
+
+def test_report_minimal() -> None:
+    text = (
+        b'<report id="ABC" enteredBy="Me">'
+        b"<reportIssueDate>2023-08-18</reportIssueDate>"
+        b"<measurementStartDate>2023-08-08</measurementStartDate>"
+        b"<measurementStopDate>2023-08-14</measurementStopDate>"
+        b"<issuingLaboratory>MSL</issuingLaboratory>"
+        b"<technicalProcedure>Anything</technicalProcedure>"
+        b"<conditions />"
+        b"<acceptanceCriteria />"
+        b"</report>"
+    )
+
+    r = Report.from_xml(XML(text))
+    assert r.id == "ABC"
+    assert r.entered_by == "Me"
+    assert r.checked_by == ""
+    assert r.checked_date is None
+    assert r.report_issue_date == date(2023, 8, 18)
+    assert r.measurement_start_date == date(2023, 8, 8)
+    assert r.measurement_stop_date == date(2023, 8, 14)
+    assert r.issuing_laboratory.lab == "MSL"
+    assert r.issuing_laboratory.person == ""
+    assert r.technical_procedure == "Anything"
+    assert r.conditions.tag == "conditions"
+    assert r.conditions.attrib == {}
+    assert r.conditions.text is None
+    assert len(r.conditions) == 0
+    assert r.acceptance_criteria.tag == "acceptanceCriteria"
+    assert r.acceptance_criteria.attrib == {}
+    assert r.acceptance_criteria.text is None
+    assert len(r.acceptance_criteria) == 0
+    assert len(r.cvd_equations) == 0
+    assert len(r.equations) == 0
+    assert len(r.files) == 0
+    assert len(r.deserialised) == 0
+    assert len(r.tables) == 0
+    assert tostring(r.to_xml()) == text
+
+
+def test_report() -> None:
+    text = (
+        b'<report id="ABC" enteredBy="Me" checkedBy="A" checkedDate="2025-01-01">'
+        b"<reportIssueDate>2023-08-18</reportIssueDate>"
+        b"<measurementStartDate>2023-08-08</measurementStartDate>"
+        b"<measurementStopDate>2023-08-14</measurementStopDate>"
+        b"<issuingLaboratory>MSL</issuingLaboratory>"
+        b"<technicalProcedure>Anything</technicalProcedure>"
+        b'<conditions><temperature unit="C">25</temperature></conditions>'
+        b'<acceptanceCriteria><temperature unit="K">300</temperature></acceptanceCriteria>'
+        b"<equation>"
+        b'<value variables="x">1 + x</value>'
+        b'<uncertainty variables="">0.1</uncertainty>'
+        b"<unit>K</unit>"
+        b'<ranges><range variable="x"><minimum>0.0</minimum><maximum>1.0</maximum></range></ranges>'
+        b"</equation>"
+        b"<table>"
+        b"<type>int,double,double,bool,string</type>"
+        b"<unit>nm,W/m^2,W/m^2,,</unit>"
+        b"<header>Wavelength,Irradiance,u(Irradiance),Is Good?,Letter</header>"
+        b"<data>250,0.01818,0.02033,True, A\n"
+        b"300,0.18478,0.01755,True, B\n"
+        b"350,0.80845,0.01606,False, C\n"
+        b"400,2.21355,0.01405,False, D\n"
+        b"450,4.49004,0.0125,True, E\n"
+        b"500,7.45135,0.012,True, F\n"
+        b"</data>"
+        b"</table>"
+        b"<cvdCoefficients>"
+        b"<R0>100.0188885</R0>"
+        b"<A>0.00390969</A>"
+        b"<B>-6.06e-07</B>"
+        b"<C>1.372e-12</C>"
+        b'<uncertainty variables="">0.0056/2</uncertainty>'
+        b"<range><minimum>-10.0</minimum><maximum>70.02</maximum></range>"
+        b"</cvdCoefficients>"
+        b'<file comment="hi"><url foo="bar">whatever</url><sha256>anything</sha256></file>'
+        b'<serialised><gtcArchive version="1.5.0" xmlns="https://measurement.govt.nz/gtc/xml"><leafNodes><leafNode uid="(1, 1)"><u>0.1</u><df>INF</df><label /><independent>true</independent></leafNode></leafNodes><taggedReals><elementaryReal tag="x" uid="(1, 1)"><value>1.0</value></elementaryReal></taggedReals><untaggedReals /><taggedComplexes /><intermediates /></gtcArchive></serialised>'  # noqa: E501
+        b"</report>"
+    )
+
+    r = Report.from_xml(XML(text))
+    assert r.id == "ABC"
+    assert r.entered_by == "Me"
+    assert r.checked_by == "A"
+    assert r.checked_date == date(2025, 1, 1)
+    assert r.report_issue_date == date(2023, 8, 18)
+    assert r.measurement_start_date == date(2023, 8, 8)
+    assert r.measurement_stop_date == date(2023, 8, 14)
+    assert r.issuing_laboratory.lab == "MSL"
+    assert r.issuing_laboratory.person == ""
+    assert r.technical_procedure == "Anything"
+    assert r.conditions.tag == "conditions"
+    assert r.conditions.attrib == {}
+    assert r.conditions.text is None
+    assert len(r.conditions) == 1
+    assert r.conditions[0].tag == "temperature"
+    assert r.conditions[0].attrib == {"unit": "C"}
+    assert r.conditions[0].text == "25"
+    assert r.acceptance_criteria.tag == "acceptanceCriteria"
+    assert r.acceptance_criteria.attrib == {}
+    assert r.acceptance_criteria.text is None
+    assert len(r.acceptance_criteria) == 1
+    assert r.acceptance_criteria[0].tag == "temperature"
+    assert r.acceptance_criteria[0].attrib == {"unit": "K"}
+    assert r.acceptance_criteria[0].text == "300"
+    assert len(r.cvd_equations) == 1
+    assert len(r.equations) == 1
+    assert len(r.files) == 1
+    assert len(r.deserialised) == 1
+    assert len(r.tables) == 1
+    assert tostring(r.to_xml()) == text
+
+
+# test Measurand, Component

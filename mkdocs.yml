@@ -71,9 +71,11 @@ nav:
     - schema/firmware.md
     - schema/maintenance.md
     - schema/measurand.md
+    - schema/performance_check.md
     - schema/planned_task.md
     - schema/quality_manual.md
     - schema/reference_materials.md
+    - schema/report.md
     - schema/specifications.md
     - schema/specified_requirements.md
     - schema/status.md

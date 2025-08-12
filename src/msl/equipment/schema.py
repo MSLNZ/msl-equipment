@@ -1283,7 +1283,55 @@ class Table(np.ndarray):
 
 @dataclass(frozen=True)
 class PerformanceCheck:
-    """Represents the [performanceCheck][type_performanceCheck]{:target="_blank"} element in an equipment register."""
+    """Represents the [performanceCheck][type_performanceCheck]{:target="_blank"} element in an equipment register.
+
+    Args:
+        completed_date: The date that the performance check was completed.
+        competency: The competent people who accomplished the performance check and the technical procedure
+            that was executed.
+        entered_by: The name of the person who initially entered the `performanceCheck` element in the register.
+        checked_by: The name of the person who checked the information in the `performanceCheck` element.
+        checked_date: The date that the information in the `performanceCheck` element was last checked.
+        conditions: The conditions under which the performance check is valid.
+        cvd_equations: Performance-check data is expressed as coefficients for the Callendar-Van Dusen equation.
+        equations: Performance-check data is expressed as an equation.
+        files: Performance-check data is stored in another file.
+        deserialised: Performance-check data is stored in a deserialised format.
+        tables: Performance-check data is expressed as a CSV table in the equipment register.
+    """
+
+    completed_date: _date
+    """The date that the performance check was completed."""
+
+    competency: Competency
+    """The competent people who accomplished the performance check and the technical procedure that was executed."""
+
+    entered_by: str
+    """The name of the person who initially entered the `performanceCheck` element in the register."""
+
+    checked_by: str = ""
+    """The name of the person who checked the information in the `performanceCheck` element."""
+
+    checked_date: _date | None = None
+    """The date that the information in the `performanceCheck` element was last checked."""
+
+    conditions: Conditions = field(default_factory=Conditions)
+    """The conditions under which the performance check is valid."""
+
+    cvd_equations: tuple[CVDEquation, ...] = ()
+    """Performance-check data is expressed as coefficients for the Callendar-Van Dusen equation."""
+
+    equations: tuple[Equation, ...] = ()
+    """Performance-check data is expressed as an equation."""
+
+    files: tuple[File, ...] = ()
+    """Performance-check data is stored in another file."""
+
+    deserialised: tuple[Deserialised, ...] = ()
+    """Performance-check data is stored in a deserialised format."""
+
+    tables: tuple[Table, ...] = ()
+    """Performance-check data is expressed as a CSV table in the equipment register."""
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> PerformanceCheck:
@@ -1296,7 +1344,41 @@ class PerformanceCheck:
         Returns:
             The [PerformanceCheck][msl.equipment.schema.PerformanceCheck] instance.
         """
-        return cls()
+        # Schema forces order for `competency` and `conditions` but uses xsd:choice,
+        # which allows sub-elements to appear (or not appear) in any order, for the data elements.
+        # Using str.endswith() allows for ignoring XML namespaces that may be associated with each tag
+        cvd_equations: list[CVDEquation] = []
+        equations: list[Equation] = []
+        files: list[File] = []
+        deserialised: list[Deserialised] = []
+        tables: list[Table] = []
+        for child in element[2:]:
+            tag = child.tag
+            if tag.endswith("equation"):
+                equations.append(Equation.from_xml(child))
+            elif tag.endswith("table"):
+                tables.append(Table.from_xml(child))
+            elif tag.endswith("cvdCoefficients"):
+                cvd_equations.append(CVDEquation.from_xml(child))
+            elif tag.endswith("file"):
+                files.append(File.from_xml(child))
+            else:
+                deserialised.append(Deserialised.from_xml(child))
+
+        a = element.attrib
+        return cls(
+            completed_date=_date.fromisoformat(a["completedDate"] or ""),
+            entered_by=a["enteredBy"] or "",
+            checked_by=a.get("checkedBy", ""),
+            checked_date=None if not a.get("checkedDate") else _date.fromisoformat(a["checkedDate"]),
+            competency=Competency.from_xml(element[0]),
+            conditions=Conditions.from_xml(element[1]),
+            cvd_equations=tuple(cvd_equations),
+            equations=tuple(equations),
+            files=tuple(files),
+            deserialised=tuple(deserialised),
+            tables=tuple(tables),
+        )
 
     def to_xml(self) -> Element[str]:
         """Convert the [PerformanceCheck][msl.equipment.schema.PerformanceCheck] class into an XML element.
@@ -1304,12 +1386,136 @@ class PerformanceCheck:
         Returns:
             The [PerformanceCheck][msl.equipment.schema.PerformanceCheck] as an XML element.
         """
-        return Element("performanceCheck")
+        a = {"completedDate": self.completed_date.isoformat(), "enteredBy": self.entered_by}
+        if self.checked_by:
+            a["checkedBy"] = self.checked_by
+        if self.checked_date is not None:
+            a["checkedDate"] = self.checked_date.isoformat()
+
+        e = Element("performanceCheck", attrib=a)
+        e.append(self.competency.to_xml())
+        e.append(self.conditions)
+        e.extend(equation.to_xml() for equation in self.equations)
+        e.extend(table.to_xml() for table in self.tables)
+        e.extend(cvd.to_xml() for cvd in self.cvd_equations)
+        e.extend(file.to_xml() for file in self.files)
+        e.extend(deserialised.to_xml() for deserialised in self.deserialised)
+        return e
+
+
+@dataclass(frozen=True)
+class IssuingLaboratory:
+    """Information about the laboratory that issued a calibration report.
+
+    Args:
+        lab: The name of the laboratory that issued the calibration report.
+        person: The name of a person at the `laboratory` that authorised the report.
+    """
+
+    lab: str = ""
+    """The name of the laboratory that issued the calibration report."""
+
+    person: str = ""
+    """The name of a person at the laboratory that authorised the report."""
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> IssuingLaboratory:
+        """Convert an XML element into a [IssuingLaboratory][msl.equipment.schema.IssuingLaboratory] instance.
+
+        Args:
+            element: An `<issuingLaboratory>` element from a [report][type_report]{:target="_blank"} element
+                in an equipment register.
+
+        Returns:
+            The [IssuingLaboratory][msl.equipment.schema.IssuingLaboratory] instance.
+        """
+        return cls(
+            lab=element.text or "",
+            person=element.attrib.get("person", ""),
+        )
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [IssuingLaboratory][msl.equipment.schema.IssuingLaboratory] class into an XML element.
+
+        Returns:
+            The [IssuingLaboratory][msl.equipment.schema.IssuingLaboratory] as an XML element.
+        """
+        a = {"person": self.person} if self.person else {}
+        e = Element("issuingLaboratory", attrib=a)
+        e.text = self.lab
+        return e
 
 
 @dataclass(frozen=True)
 class Report:
-    """Represents the [report][type_report]{:target="_blank"} element in an equipment register."""
+    """Represents the [report][type_report]{:target="_blank"} element in an equipment register.
+
+    Args:
+        id: The report identification number.
+        entered_by: The name of the person who initially entered the `report` element in the register.
+        report_issue_date: The date that the report was issued.
+        measurement_start_date: The date that the calibration measurement started.
+        measurement_stop_date: The date that the calibration measurement stopped.
+        issuing_laboratory: Information about the laboratory that issued the calibration report.
+        technical_procedure: The technical procedure(s) that was(were) followed to perform the calibration.
+        checked_by: The name of the person who checked the information in the `report` element.
+        checked_date: The date that the information in the `report` element was last checked.
+        conditions: The conditions under which the report is valid.
+        acceptance_criteria: Acceptance criteria for the calibration report.
+        cvd_equations: Calibration data is expressed as coefficients for the Callendar-Van Dusen equation.
+        equations: Calibration data is expressed as an equation.
+        files: Calibration data is stored in another file.
+        deserialised: Calibration data is stored in a deserialised format.
+        tables: Calibration data is expressed as a CSV table in the equipment register.
+    """
+
+    id: str
+    """The report identification number."""
+
+    entered_by: str
+    """The name of the person who initially entered the `report` element in the register."""
+
+    report_issue_date: _date
+    """The date that the report was issued."""
+
+    measurement_start_date: _date
+    """The date that the calibration measurement started."""
+
+    measurement_stop_date: _date
+    """The date that the calibration measurement stopped."""
+
+    issuing_laboratory: IssuingLaboratory = field(default_factory=IssuingLaboratory)
+    """Information about the laboratory that issued the calibration report."""
+
+    technical_procedure: str = ""
+    """The technical procedure(s) that was(were) followed to perform the calibration."""
+
+    checked_by: str = ""
+    """The name of the person who checked the information in the `report` element."""
+
+    checked_date: _date | None = None
+    """The date that the information in the `report` element was last checked."""
+
+    conditions: Conditions = field(default_factory=Conditions)
+    """The conditions under which the report is valid."""
+
+    acceptance_criteria: AcceptanceCriteria = field(default_factory=AcceptanceCriteria)
+    """Acceptance criteria for the calibration report."""
+
+    cvd_equations: tuple[CVDEquation, ...] = ()
+    """Calibration data is expressed as coefficients for the Callendar-Van Dusen equation."""
+
+    equations: tuple[Equation, ...] = ()
+    """Calibration data is expressed as an equation."""
+
+    files: tuple[File, ...] = ()
+    """Calibration data is stored in another file."""
+
+    deserialised: tuple[Deserialised, ...] = ()
+    """Calibration data is stored in a deserialised format."""
+
+    tables: tuple[Table, ...] = ()
+    """Calibration data is expressed as a CSV table in the equipment register."""
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Report:
@@ -1321,7 +1527,46 @@ class Report:
         Returns:
             The [Report][msl.equipment.schema.Report] instance.
         """
-        return cls()
+        # Schema forces order until `acceptanceCriteria` and then uses xsd:choice, which
+        # allows sub-elements to appear (or not appear) in any order, for the data elements.
+        # Using str.endswith() allows for ignoring XML namespaces that may be associated with each tag
+        cvd_equations: list[CVDEquation] = []
+        equations: list[Equation] = []
+        files: list[File] = []
+        deserialised: list[Deserialised] = []
+        tables: list[Table] = []
+        for child in element[7:]:
+            tag = child.tag
+            if tag.endswith("equation"):
+                equations.append(Equation.from_xml(child))
+            elif tag.endswith("table"):
+                tables.append(Table.from_xml(child))
+            elif tag.endswith("cvdCoefficients"):
+                cvd_equations.append(CVDEquation.from_xml(child))
+            elif tag.endswith("file"):
+                files.append(File.from_xml(child))
+            else:
+                deserialised.append(Deserialised.from_xml(child))
+
+        a = element.attrib
+        return cls(
+            id=a["id"] or "",
+            entered_by=a["enteredBy"] or "",
+            checked_by=a.get("checkedBy", ""),
+            checked_date=None if not a.get("checkedDate") else _date.fromisoformat(a["checkedDate"]),
+            report_issue_date=_date.fromisoformat(element[0].text or ""),
+            measurement_start_date=_date.fromisoformat(element[1].text or ""),
+            measurement_stop_date=_date.fromisoformat(element[2].text or ""),
+            issuing_laboratory=IssuingLaboratory.from_xml(element[3]),
+            technical_procedure=element[4].text or "",
+            conditions=Conditions.from_xml(element[5]),
+            acceptance_criteria=AcceptanceCriteria.from_xml(element[6]),
+            cvd_equations=tuple(cvd_equations),
+            equations=tuple(equations),
+            files=tuple(files),
+            deserialised=tuple(deserialised),
+            tables=tuple(tables),
+        )
 
     def to_xml(self) -> Element[str]:
         """Convert the [Report][msl.equipment.schema.Report] class into an XML element.
@@ -1329,7 +1574,36 @@ class Report:
         Returns:
             The [Report][msl.equipment.schema.Report] as an XML element.
         """
-        return Element("report")
+        a = {"id": self.id, "enteredBy": self.entered_by}
+        if self.checked_by:
+            a["checkedBy"] = self.checked_by
+        if self.checked_date is not None:
+            a["checkedDate"] = self.checked_date.isoformat()
+
+        e = Element("report", attrib=a)
+
+        rid = SubElement(e, "reportIssueDate")
+        rid.text = self.report_issue_date.isoformat()
+
+        start = SubElement(e, "measurementStartDate")
+        start.text = self.measurement_start_date.isoformat()
+
+        stop = SubElement(e, "measurementStopDate")
+        stop.text = self.measurement_stop_date.isoformat()
+
+        e.append(self.issuing_laboratory.to_xml())
+
+        tp = SubElement(e, "technicalProcedure")
+        tp.text = self.technical_procedure
+
+        e.append(self.conditions)
+        e.append(self.acceptance_criteria)
+        e.extend(equation.to_xml() for equation in self.equations)
+        e.extend(table.to_xml() for table in self.tables)
+        e.extend(cvd.to_xml() for cvd in self.cvd_equations)
+        e.extend(file.to_xml() for file in self.files)
+        e.extend(deserialised.to_xml() for deserialised in self.deserialised)
+        return e
 
 
 @dataclass(frozen=True)

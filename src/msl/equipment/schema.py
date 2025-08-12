@@ -1651,11 +1651,12 @@ class Component:
         pc: list[PerformanceCheck] = []
         r: list[Report] = []
         for child in element:
-            if child.tag.endswith("report"):
+            tag = child.tag
+            if tag.endswith("report"):
                 r.append(Report.from_xml(child))
-            elif child.tag.endswith("performanceCheck"):
+            elif tag.endswith("performanceCheck"):
                 pc.append(PerformanceCheck.from_xml(child))
-            elif child.tag.endswith("adjustment"):
+            elif tag.endswith("adjustment"):
                 a.append(Adjustment.from_xml(child))
             else:
                 dr.append(DigitalReport.from_xml(child))
@@ -1720,7 +1721,9 @@ class Measurand:
             The [Measurand][msl.equipment.schema.Measurand] instance.
         """
         return cls(
-            quantity=element.attrib["quantity"], calibration_interval=float(element.attrib["calibrationInterval"])
+            quantity=element.attrib["quantity"],
+            calibration_interval=float(element.attrib["calibrationInterval"]),
+            components=tuple(Component.from_xml(c) for c in element),
         )
 
     def to_xml(self) -> Element[str]:

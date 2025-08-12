@@ -17,6 +17,7 @@ from msl.equipment import (
     Adjustment,
     Alteration,
     Competency,
+    Component,
     Conditions,
     CVDEquation,
     Deserialised,
@@ -29,6 +30,7 @@ from msl.equipment import (
     Firmware,
     IssuingLaboratory,
     Maintenance,
+    Measurand,
     PerformanceCheck,
     QualityManual,
     Range,
@@ -1267,4 +1269,102 @@ def test_report() -> None:
     assert tostring(r.to_xml()) == text
 
 
-# test Measurand, Component
+def test_component_empty() -> None:
+    text = b'<component name="" />'
+    c = Component.from_xml(XML(text))
+    assert c.name == ""
+    assert len(c.adjustments) == 0
+    assert len(c.reports) == 0
+    assert len(c.digital_reports) == 0
+    assert len(c.performance_checks) == 0
+    assert tostring(c.to_xml()) == text
+
+
+def test_component() -> None:
+    text = (
+        b'<component name="Probe 1">'
+        b'<report id="ABC" enteredBy="Me">'
+        b"<reportIssueDate>2023-08-18</reportIssueDate>"
+        b"<measurementStartDate>2023-08-08</measurementStartDate>"
+        b"<measurementStopDate>2023-08-14</measurementStopDate>"
+        b"<issuingLaboratory>MSL</issuingLaboratory>"
+        b"<technicalProcedure>Anything</technicalProcedure>"
+        b"<conditions />"
+        b"<acceptanceCriteria />"
+        b"</report>"
+        b'<performanceCheck completedDate="2023-04-02" enteredBy="Me">'
+        b"<competency>"
+        b"<worker>A</worker>"
+        b"<checker>B</checker>"
+        b"<technicalProcedure>Anything</technicalProcedure>"
+        b"</competency>"
+        b"<conditions />"
+        b"</performanceCheck>"
+        b'<adjustment date="2024-10-17">Cleaned the filter</adjustment>'
+        b'<digitalReport format="MSL PDF/A-3" id="Pressure/2025/092">'
+        b"<url>reports/2025/job092.pdf</url>"
+        b"<sha256>76e4e036da8722b55362912396a01a07bb61e6260c7c4b6150d431e613529a54</sha256>"
+        b"</digitalReport>"
+        b"</component>"
+    )
+
+    c = Component.from_xml(XML(text))
+    assert c.name == "Probe 1"
+    assert len(c.adjustments) == 1
+    assert len(c.reports) == 1
+    assert len(c.digital_reports) == 1
+    assert len(c.performance_checks) == 1
+    assert tostring(c.to_xml()) == text
+
+
+def test_measurand_empty() -> None:
+    text = b'<measurand quantity="Wavelength" calibrationInterval="1.0" />'
+    m = Measurand.from_xml(XML(text))
+    assert m.quantity == "Wavelength"
+    assert m.calibration_interval == 1.0
+    assert len(m.components) == 0
+    assert tostring(m.to_xml()) == text
+
+
+def test_measurand() -> None:
+    text = (
+        b'<measurand quantity="Wavelength" calibrationInterval="1.0">'
+        b'<component name="Probe 1">'
+        b'<report id="ABC" enteredBy="Me">'
+        b"<reportIssueDate>2023-08-18</reportIssueDate>"
+        b"<measurementStartDate>2023-08-08</measurementStartDate>"
+        b"<measurementStopDate>2023-08-14</measurementStopDate>"
+        b"<issuingLaboratory>MSL</issuingLaboratory>"
+        b"<technicalProcedure>Anything</technicalProcedure>"
+        b"<conditions />"
+        b"<acceptanceCriteria />"
+        b"</report>"
+        b'<performanceCheck completedDate="2023-04-02" enteredBy="Me">'
+        b"<competency>"
+        b"<worker>A</worker>"
+        b"<checker>B</checker>"
+        b"<technicalProcedure>Anything</technicalProcedure>"
+        b"</competency>"
+        b"<conditions />"
+        b"</performanceCheck>"
+        b'<adjustment date="2024-10-17">Cleaned the filter</adjustment>'
+        b'<digitalReport format="MSL PDF/A-3" id="Pressure/2025/092">'
+        b"<url>reports/2025/job092.pdf</url>"
+        b"<sha256>76e4e036da8722b55362912396a01a07bb61e6260c7c4b6150d431e613529a54</sha256>"
+        b"</digitalReport>"
+        b"</component>"
+        b"</measurand>"
+    )
+    m = Measurand.from_xml(XML(text))
+    assert m.quantity == "Wavelength"
+    assert m.calibration_interval == 1.0
+
+    assert len(m.components) == 1
+    c = m.components[0]
+    assert c.name == "Probe 1"
+    assert len(c.adjustments) == 1
+    assert len(c.reports) == 1
+    assert len(c.digital_reports) == 1
+    assert len(c.performance_checks) == 1
+
+    assert tostring(m.to_xml()) == text

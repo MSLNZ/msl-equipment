@@ -2167,5 +2167,5 @@ class Register:
                 [ElementTree][xml.etree.ElementTree.ElementTree]{:target="_blank"}.
         """
         e = Element("register", attrib={"team": self.team})
-        e.extend(equipment.to_xml() for equipment in iter(self))
+        e.extend(equipment.to_xml() for equipment in self)
         return ET.ElementTree(element=e)

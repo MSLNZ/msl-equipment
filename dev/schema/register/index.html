@@ -1572,7 +1572,7 @@ that contains an equipment register.</p>
 <span class="sd">            [ElementTree][xml.etree.ElementTree.ElementTree]{:target=&quot;_blank&quot;}.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;register&quot;</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;team&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">team</span><span class="p">})</span>
-    <span class="n">e</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">equipment</span><span class="o">.</span><span class="n">to_xml</span><span class="p">()</span> <span class="k">for</span> <span class="n">equipment</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+    <span class="n">e</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">equipment</span><span class="o">.</span><span class="n">to_xml</span><span class="p">()</span> <span class="k">for</span> <span class="n">equipment</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">element</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>

@@ -2158,3 +2158,14 @@ class Register:
     def team(self) -> str:
         """[str][] &mdash; Returns the name of the team that is responsible for the equipment register."""
         return self._root.attrib["team"]
+
+    def tree(self) -> ET.ElementTree[Element[str]]:
+        """Convert the [Register][msl.equipment.schema.Register] class into an XML tree.
+
+        Returns:
+            The [Register][msl.equipment.schema.Register] as an
+                [ElementTree][xml.etree.ElementTree.ElementTree]{:target="_blank"}.
+        """
+        e = Element("register", attrib={"team": self.team})
+        e.extend(equipment.to_xml() for equipment in iter(self))
+        return ET.ElementTree(element=e)

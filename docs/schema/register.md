@@ -2,4 +2,4 @@
 
 ::: msl.equipment.schema
     options:
-        filters: ["Register", "team"]
+        filters: ["Register", "team", "tree"]

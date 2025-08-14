@@ -480,13 +480,13 @@ class Range(NamedTuple):
     """Maximum value in range."""
 
     def check_within_range(self, value: float | ArrayLike) -> bool:
-        """Check that the value(s) is(are) within the range.
+        """Check that the values are within the range.
 
         Args:
-            value: The value(s) to check.
+            value: The values to check.
 
         Returns:
-            `True` is the value(s) is(are) within range.
+            `True` is the values are within range.
 
         Raises:
             ValueError: If `value` is not within the range.
@@ -526,8 +526,8 @@ class Evaluable:
         """Evaluate the equation.
 
         Args:
-            data: A mapping of variable names to value(s) to evaluate the equation with.
-            check_range: Whether to check that the data is within the allowed range(s).
+            data: A mapping of variable names to values to evaluate the equation with.
+            check_range: Whether to check that the data is within the allowed ranges.
 
         Returns:
             The equation evaluated.
@@ -996,11 +996,11 @@ class CVDEquation:
         r"""Calculate resistance from temperature.
 
         Args:
-            temperature: The temperature value(s), in $^\circ\text{C}$.
-            check_range: Whether to check that the temperature value(s) is(are) within the allowed range.
+            temperature: The temperature values, in $^\circ\text{C}$.
+            check_range: Whether to check that the temperature values are within the allowed range.
 
         Returns:
-            The resistance value(s).
+            The resistance values.
         """
         array = np.asarray(temperature, dtype=float)
         if check_range and self.ranges["t"].check_within_range(array):
@@ -1012,11 +1012,11 @@ class CVDEquation:
         r"""Calculate temperature from resistance.
 
         Args:
-            resistance: The resistance value(s), in $\Omega$.
-            check_range: Whether to check that the resistance value(s) is(are) within the allowed range.
+            resistance: The resistance values, in $\Omega$.
+            check_range: Whether to check that the resistance values are within the allowed range.
 
         Returns:
-            The temperature value(s).
+            The temperature values.
         """
         array: NDArray[np.float64] = np.asarray(resistance, dtype=float)
         if check_range and self.ranges["r"].check_within_range(array):
@@ -1721,8 +1721,8 @@ class Measurand:
         quantity: The kind of quantity that is measured.
         calibration_interval: The number of years that may pass between a calibration or a performance check.
             For equipment that do not have a required and periodic interval, but are calibrated on demand,
-            use the value `0`.
-        components: The components of the equipment that measures the `quantity`.
+            set the value `0`.
+        components: The components of the equipment that measure the `quantity`.
     """
 
     quantity: str
@@ -1736,7 +1736,7 @@ class Measurand:
     """
 
     components: tuple[Component, ...] = ()
-    """The components of the equipment that measures the `quantity`."""
+    """The components of the equipment that measure the `quantity`."""
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Measurand:
@@ -1777,7 +1777,7 @@ class QualityManual:
         personnel_restrictions: Information about the people (or team) who are qualified to use the equipment.
         service_agent: Information about the people or company that are qualified to perform alterations and/or
             maintenance to the equipment.
-        technical_procedures: The technical procedure(s) that depend on this equipment.
+        technical_procedures: The technical procedures that depend on this equipment.
     """
 
     accessories: Accessories = field(default_factory=Accessories)
@@ -1797,7 +1797,7 @@ class QualityManual:
     and/or maintenance to the equipment."""
 
     technical_procedures: tuple[str, ...] = ()
-    """The technical procedure(s) that depend on this equipment."""
+    """The technical procedures that depend on this equipment."""
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> QualityManual:
@@ -2175,7 +2175,7 @@ class Equipment:
                 * `stop`: Measurement stop date
 
         Returns:
-            The latest [Report][msl.equipment.schema.Report]) for the specified `quantity` and `name`.
+            The latest [Report][msl.equipment.schema.Report] for the specified `quantity` and `name`.
                 If the _equipment_ has only one measurand _quantity_ and only one _component_ and if the
                 `quantity` and `name` values are both empty strings then that report is returned. Otherwise,
                 returns `None` if there is no report that matches the `quantity` and `name` criteria or the

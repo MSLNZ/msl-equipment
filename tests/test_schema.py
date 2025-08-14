@@ -1538,10 +1538,7 @@ def test_register_tree_namespace() -> None:
 
     with StringIO() as buffer:
         r.tree(namespace="Hi").write(buffer, xml_declaration=True, encoding="unicode")
-        assert (
-            buffer.getvalue()
-            == "<?xml version='1.0' encoding='utf-8'?>\n<register team=\"Length\" xmlns=\"Hi\" />"
-        )
+        assert buffer.getvalue() == "<?xml version='1.0' encoding='utf-8'?>\n<register team=\"Length\" xmlns=\"Hi\" />"
 
 
 @pytest.mark.skipif(sys.version_info[:2] < (3, 9), reason="requires xml indent() function")
@@ -1927,3 +1924,32 @@ def test_latest_report_multiple_measurand_and_components() -> None:
     report = e.latest_report(quantity="Humidity", name="Probe 2", date="issue")
     assert report is not None
     assert report.id == "f"
+
+
+def test_latest_report_no_reports() -> None:
+    e = Equipment(
+        calibrations=(
+            Measurand(
+                quantity="",
+                calibration_interval=1,
+                components=(
+                    Component(
+                        name="",
+                        adjustments=(
+                            Adjustment(details="", date=date(2025, 1, 1)),
+                            Adjustment(details="", date=date(2025, 1, 1)),
+                        ),
+                        digital_reports=(
+                            DigitalReport(id="", url="", format=DigitalFormat.MSL_PDF, sha256=""),
+                            DigitalReport(id="", url="", format=DigitalFormat.MSL_PDF, sha256=""),
+                        ),
+                    ),
+                ),
+            ),
+        )
+    )
+
+    reports = list(e.latest_reports())
+    assert len(reports) == 0
+
+    assert e.latest_report() is None

@@ -1513,11 +1513,23 @@ def test_register_empty() -> None:
 
 
 def test_register_tree_namespace() -> None:
+    encoding, version_info = "utf-8", sys.version_info[:2]
+
+    if version_info < (3, 9):
+        if sys.platform == "win32":
+            encoding = "cp1252"
+        else:
+            encoding = encoding.upper()
+
+    if version_info == (3, 9) and sys.platform == "darwin":
+        encoding = encoding.upper()
+
     r = Register(StringIO('<?xml version="1.0" encoding="UTF-8"?><register team="Length" />'))
 
     tree = r.tree()
     assert isinstance(tree, ElementTree)
     root = tree.getroot()
+    assert root is not None
     assert root.tag == "register"
     assert root.attrib == {"team": "Length", "xmlns": r.NAMESPACE}
     assert root.tail is None
@@ -1527,18 +1539,21 @@ def test_register_tree_namespace() -> None:
     for ns in [None, ""]:
         with StringIO() as buffer:
             r.tree(namespace=ns).write(buffer, xml_declaration=True, encoding="unicode")
-            assert buffer.getvalue() == "<?xml version='1.0' encoding='utf-8'?>\n<register team=\"Length\" />"
+            assert buffer.getvalue() == f"<?xml version='1.0' encoding='{encoding}'?>\n<register team=\"Length\" />"
 
     with StringIO() as buffer:
         r.tree().write(buffer, xml_declaration=True, encoding="unicode")
         assert (
             buffer.getvalue()
-            == f"<?xml version='1.0' encoding='utf-8'?>\n<register team=\"Length\" xmlns=\"{r.NAMESPACE}\" />"
+            == f"<?xml version='1.0' encoding='{encoding}'?>\n<register team=\"Length\" xmlns=\"{r.NAMESPACE}\" />"
         )
 
     with StringIO() as buffer:
         r.tree(namespace="Hi").write(buffer, xml_declaration=True, encoding="unicode")
-        assert buffer.getvalue() == "<?xml version='1.0' encoding='utf-8'?>\n<register team=\"Length\" xmlns=\"Hi\" />"
+        assert (
+            buffer.getvalue()
+            == f"<?xml version='1.0' encoding='{encoding}'?>\n<register team=\"Length\" xmlns=\"Hi\" />"
+        )
 
 
 @pytest.mark.skipif(sys.version_info[:2] < (3, 9), reason="requires xml indent() function")
@@ -1632,6 +1647,7 @@ def test_register_from_file() -> None:  # noqa: PLR0915
         second = item
 
     assert isinstance(second, Equipment)
+    assert second is not None
     assert (
         str(second)
         == "<Equipment id='MSLE.M.092', manufacturer='The Company Name', model='Model', serial='Serial' (4 reports, 0 checks)>"  # noqa: E501

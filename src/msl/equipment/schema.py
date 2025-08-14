@@ -109,7 +109,8 @@ class Any(Element):
         """
         prefix = f"{{{Register.NAMESPACE}}}"
         for e in element.iter():
-            e.tag = e.tag.removeprefix(prefix)
+            if e.tag.startswith(prefix):  # str.removeprefix() was added in Python 3.9
+                e.tag = e.tag[len(prefix) :]
 
         c = cls(**element.attrib)
         c.tail = element.tail
@@ -1247,9 +1248,12 @@ class Table(np.ndarray):
             # the value can be of type bytes for numpy < 2.0
             return value.strip() in booleans
 
-        def strip_string(value: str | bytes) -> str | bytes:
+        def strip_string(value: str | bytes) -> str:
             # the value can be of type bytes for numpy < 2.0
-            return value.strip()
+            stripped = value.strip()
+            if isinstance(stripped, bytes):
+                return stripped.decode()
+            return stripped
 
         # Schema forces order
         _type = [s.strip() for s in (element[0].text or "").split(",")]
@@ -1258,7 +1262,7 @@ class Table(np.ndarray):
         _file = StringIO((element[3].text or "").strip())
 
         # must handle boolean column and string column separately
-        conv: dict[int, Callable[[str | bytes], str | bytes | bool]] = {
+        conv: dict[int, Callable[[str | bytes], str | bool]] = {
             i: convert_bool for i, v in enumerate(_type) if v == "bool"
         }
         conv.update({i: strip_string for i, v in enumerate(_type) if v == "string"})

@@ -1536,6 +1536,13 @@ def test_register_tree_namespace() -> None:
             == f"<?xml version='1.0' encoding='utf-8'?>\n<register team=\"Length\" xmlns=\"{r.NAMESPACE}\" />"
         )
 
+    with StringIO() as buffer:
+        r.tree(namespace="Hi").write(buffer, xml_declaration=True, encoding="unicode")
+        assert (
+            buffer.getvalue()
+            == "<?xml version='1.0' encoding='utf-8'?>\n<register team=\"Length\" xmlns=\"Hi\" />"
+        )
+
 
 @pytest.mark.skipif(sys.version_info[:2] < (3, 9), reason="requires xml indent() function")
 def test_register_read_write_same_output() -> None:

@@ -1172,6 +1172,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Register.add" class="md-nav__link">
+    <span class="md-ellipsis">
+      add
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msl.equipment.schema.Register.tree" class="md-nav__link">
     <span class="md-ellipsis">
       tree
@@ -1371,6 +1380,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Register.add" class="md-nav__link">
+    <span class="md-ellipsis">
+      add
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msl.equipment.schema.Register.tree" class="md-nav__link">
     <span class="md-ellipsis">
       tree
@@ -1439,7 +1457,7 @@
 
 
 <a href="#msl.equipment.schema.Register" class="headerlink" title="Permanent link">¤</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">Register</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n"><span title="msl.equipment._types.XMLSource">XMLSource</span></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">Register</span><span class="p">(</span><span class="o">*</span><span class="n">sources</span><span class="p">:</span> <span class="n"><span title="msl.equipment._types.XMLSource">XMLSource</span></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1462,19 +1480,19 @@
       <tbody>
           <tr class="doc-section-item">
             <td>
-                <code>source</code>
+                <code>sources</code>
             </td>
             <td>
                   <code><span title="msl.equipment._types.XMLSource">XMLSource</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-path-like-object" target="_blank">path-like object</a> or a <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-file-like-object" target="_blank">file-like object</a>
-that contains an equipment register.</p>
+                <p>An iterable of <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-path-like-object" target="_blank">path-like</a> or
+<a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-file-like-object" target="_blank">file-like</a> objects that are equipment registers.</p>
               </div>
             </td>
             <td>
-                <em>required</em>
+                  <code>()</code>
             </td>
           </tr>
       </tbody>
@@ -1488,7 +1506,9 @@ that contains an equipment register.</p>
 
                   <details class="quote">
                     <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2203</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2201</span>
+<span class="normal">2202</span>
+<span class="normal">2203</span>
 <span class="normal">2204</span>
 <span class="normal">2205</span>
 <span class="normal">2206</span>
@@ -1502,21 +1522,47 @@ that contains an equipment register.</p>
 <span class="normal">2214</span>
 <span class="normal">2215</span>
 <span class="normal">2216</span>
-<span class="normal">2217</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">XMLSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">2217</span>
+<span class="normal">2218</span>
+<span class="normal">2219</span>
+<span class="normal">2220</span>
+<span class="normal">2221</span>
+<span class="normal">2222</span>
+<span class="normal">2223</span>
+<span class="normal">2224</span>
+<span class="normal">2225</span>
+<span class="normal">2226</span>
+<span class="normal">2227</span>
+<span class="normal">2228</span>
+<span class="normal">2229</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sources</span><span class="p">:</span> <span class="n">XMLSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents the [register][element_register]{:target=&quot;_blank&quot;} element in an equipment register.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        source: A [path-like object][]{:target=&quot;_blank&quot;} or a [file-like object][]{:target=&quot;_blank&quot;}</span>
-<span class="sd">            that contains an equipment register.</span>
+<span class="sd">        sources: An iterable of [path-like][path-like object]{:target=&quot;_blank&quot;} or</span>
+<span class="sd">            [file-like][file-like object]{:target=&quot;_blank&quot;} objects that are equipment registers.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_equipment</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Equipment</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="p">)</span>
+    <span class="n">team</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;team&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">team</span><span class="p">:</span>
+            <span class="n">team</span> <span class="o">=</span> <span class="n">t</span>
+
+        <span class="k">if</span> <span class="n">team</span> <span class="o">!=</span> <span class="n">t</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Cannot merge equipment registers from different teams, </span><span class="si">{</span><span class="n">team</span><span class="si">!r}</span><span class="s2"> != </span><span class="si">{</span><span class="n">t</span><span class="si">!r}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">child</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">root</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_team</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">team</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_equipment</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Equipment</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span>
 
     <span class="c1"># a mapping between the alias/id and the index number in the register</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_index_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">e</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;alias&quot;</span><span class="p">]:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">)</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;alias&quot;</span><span class="p">]:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">)</span>
     <span class="p">}</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_index_map</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="p">)})</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_index_map</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)})</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -1567,6 +1613,7 @@ that contains an equipment register.</p>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#msl.equipment.schema.Register.team" class="headerlink" title="Permanent link">¤</a></h3>
@@ -1575,7 +1622,7 @@ that contains an equipment register.</p>
 
     <div class="doc doc-contents ">
 
-        <p><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> &mdash; Returns the name of the team that is responsible for the equipment register.</p>
+        <p><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> &mdash; The name of the team that is responsible for the equipment register.</p>
 
     </div>
 
@@ -1586,13 +1633,97 @@ that contains an equipment register.</p>
 <div class="doc doc-object doc-function">
 
 
+<h3 id="msl.equipment.schema.Register.add" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">add</span>
+
+
+<a href="#msl.equipment.schema.Register.add" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">add</span><span class="p">(</span><span class="n">equipment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="Equipment
+
+
+  
+      dataclass
+   (msl.equipment.schema.Equipment)" href="../equipment/#msl.equipment.schema.Equipment">Equipment</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Add equipment to the register.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>equipment</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="Equipment
+
+
+  
+      dataclass
+   (msl.equipment.schema.Equipment)" href="../equipment/#msl.equipment.schema.Equipment">Equipment</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The equipment to add.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2263</span>
+<span class="normal">2264</span>
+<span class="normal">2265</span>
+<span class="normal">2266</span>
+<span class="normal">2267</span>
+<span class="normal">2268</span>
+<span class="normal">2269</span>
+<span class="normal">2270</span>
+<span class="normal">2271</span>
+<span class="normal">2272</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add equipment to the register.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        equipment: The equipment to add.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_index_map</span><span class="p">[</span><span class="n">equipment</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_equipment</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">equipment</span><span class="o">.</span><span class="n">alias</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_index_map</span><span class="p">[</span><span class="n">equipment</span><span class="o">.</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_equipment</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_equipment</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h3 id="msl.equipment.schema.Register.tree" class="doc doc-heading">
             <span class="doc doc-object-name doc-function-name">tree</span>
 
 
 <a href="#msl.equipment.schema.Register.tree" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">tree</span><span class="p">(</span>
-    <span class="n">namespace</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span>
+    <span class="n">namespace</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span> <span class="n">indent</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">4</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.ElementTree" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.ElementTree">ElementTree</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]]</span>
 </code></pre></div>
 
@@ -1637,6 +1768,23 @@ with the root element.</p>
                   <code>&#39;DEFAULT&#39;</code>
             </td>
           </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>indent</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The number of spaces to indent sub-tree elements. The value must be &ge; 0.
+This parameter is ignored if Python is &lt; 3.9.</p>
+              </div>
+            </td>
+            <td>
+                  <code>4</code>
+            </td>
+          </tr>
       </tbody>
     </table>
 
@@ -1667,28 +1815,40 @@ with the root element.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2256</span>
-<span class="normal">2257</span>
-<span class="normal">2258</span>
-<span class="normal">2259</span>
-<span class="normal">2260</span>
-<span class="normal">2261</span>
-<span class="normal">2262</span>
-<span class="normal">2263</span>
-<span class="normal">2264</span>
-<span class="normal">2265</span>
-<span class="normal">2266</span>
-<span class="normal">2267</span>
-<span class="normal">2268</span>
-<span class="normal">2269</span>
-<span class="normal">2270</span>
-<span class="normal">2271</span>
-<span class="normal">2272</span>
-<span class="normal">2273</span>
-<span class="normal">2274</span>
-<span class="normal">2275</span>
-<span class="normal">2276</span>
-<span class="normal">2277</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ElementTree</span><span class="p">[</span><span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2283</span>
+<span class="normal">2284</span>
+<span class="normal">2285</span>
+<span class="normal">2286</span>
+<span class="normal">2287</span>
+<span class="normal">2288</span>
+<span class="normal">2289</span>
+<span class="normal">2290</span>
+<span class="normal">2291</span>
+<span class="normal">2292</span>
+<span class="normal">2293</span>
+<span class="normal">2294</span>
+<span class="normal">2295</span>
+<span class="normal">2296</span>
+<span class="normal">2297</span>
+<span class="normal">2298</span>
+<span class="normal">2299</span>
+<span class="normal">2300</span>
+<span class="normal">2301</span>
+<span class="normal">2302</span>
+<span class="normal">2303</span>
+<span class="normal">2304</span>
+<span class="normal">2305</span>
+<span class="normal">2306</span>
+<span class="normal">2307</span>
+<span class="normal">2308</span>
+<span class="normal">2309</span>
+<span class="normal">2310</span>
+<span class="normal">2311</span>
+<span class="normal">2312</span>
+<span class="normal">2313</span>
+<span class="normal">2314</span>
+<span class="normal">2315</span>
+<span class="normal">2316</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span> <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ElementTree</span><span class="p">[</span><span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Register][msl.equipment.schema.Register] class into an XML element tree.</span>
 
 <span class="sd">    Args:</span>
@@ -1696,6 +1856,8 @@ with the root element.</p>
 <span class="sd">            `DEFAULT`, uses the value of [NAMESPACE][msl.equipment.schema.Register.NAMESPACE]</span>
 <span class="sd">            as the namespace. If `None`, or an empty string, no namespace is associated</span>
 <span class="sd">            with the root element.</span>
+<span class="sd">        indent: The number of spaces to indent sub-tree elements. The value must be &amp;ge; 0.</span>
+<span class="sd">            This parameter is ignored if Python is &amp;lt; 3.9.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Register][msl.equipment.schema.Register] as an</span>
@@ -1707,9 +1869,19 @@ with the root element.</p>
             <span class="n">namespace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NAMESPACE</span>
         <span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;xmlns&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">namespace</span>
 
+    <span class="c1"># The &lt;table&gt;&lt;data&gt; element is 7 levels deep from &lt;register&gt;</span>
+    <span class="n">_Indent</span><span class="o">.</span><span class="n">table_data</span> <span class="o">=</span> <span class="p">(</span><span class="mi">7</span> <span class="o">*</span> <span class="n">indent</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;&lt;data&gt;&quot;</span><span class="p">)</span>
+
     <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;register&quot;</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="n">attrib</span><span class="p">)</span>
     <span class="n">e</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">equipment</span><span class="o">.</span><span class="n">to_xml</span><span class="p">()</span> <span class="k">for</span> <span class="n">equipment</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ElementTree</span><span class="p">(</span><span class="n">element</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+    <span class="n">tree</span><span class="p">:</span> <span class="n">ElementTree</span><span class="p">[</span><span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="p">(</span><span class="n">element</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">indent</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="kn">import</span> <span class="n">indent</span> <span class="k">as</span> <span class="n">pretty</span>  <span class="c1"># noqa: PLC0415</span>
+
+        <span class="n">pretty</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="n">space</span><span class="o">=</span><span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="n">indent</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tree</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

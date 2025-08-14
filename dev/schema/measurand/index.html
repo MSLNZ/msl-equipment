@@ -1535,7 +1535,7 @@
               <div class="doc-md-description">
                 <p>The number of years that may pass between a calibration or a performance check.
 For equipment that do not have a required and periodic interval, but are calibrated on demand,
-use the value <code>0</code>.</p>
+set the value <code>0</code>.</p>
               </div>
             </td>
             <td>
@@ -1556,7 +1556,7 @@ use the value <code>0</code>.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The components of the equipment that measures the <code>quantity</code>.</p>
+                <p>The components of the equipment that measure the <code>quantity</code>.</p>
               </div>
             </td>
             <td>
@@ -1633,7 +1633,7 @@ the value is <code>0</code>.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The components of the equipment that measures the <code>quantity</code>.</p>
+        <p>The components of the equipment that measure the <code>quantity</code>.</p>
 
     </div>
 
@@ -1761,7 +1761,9 @@ the value is <code>0</code>.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1743</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1741</span>
+<span class="normal">1742</span>
+<span class="normal">1743</span>
 <span class="normal">1744</span>
 <span class="normal">1745</span>
 <span class="normal">1746</span>
@@ -1773,9 +1775,7 @@ the value is <code>0</code>.</p>
 <span class="normal">1752</span>
 <span class="normal">1753</span>
 <span class="normal">1754</span>
-<span class="normal">1755</span>
-<span class="normal">1756</span>
-<span class="normal">1757</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1755</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Measurand</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Measurand][msl.equipment.schema.Measurand] instance.</span>
 
@@ -1847,16 +1847,16 @@ the value is <code>0</code>.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1759</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1757</span>
+<span class="normal">1758</span>
+<span class="normal">1759</span>
 <span class="normal">1760</span>
 <span class="normal">1761</span>
 <span class="normal">1762</span>
 <span class="normal">1763</span>
 <span class="normal">1764</span>
 <span class="normal">1765</span>
-<span class="normal">1766</span>
-<span class="normal">1767</span>
-<span class="normal">1768</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">1766</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Measurand][msl.equipment.schema.Measurand] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>

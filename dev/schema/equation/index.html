@@ -2165,8 +2165,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">582</span>
-<span class="normal">583</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">583</span>
 <span class="normal">584</span>
 <span class="normal">585</span>
 <span class="normal">586</span>
@@ -2193,7 +2192,8 @@
 <span class="normal">607</span>
 <span class="normal">608</span>
 <span class="normal">609</span>
-<span class="normal">610</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">610</span>
+<span class="normal">611</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Equation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into an [Equation][msl.equipment.schema.Equation] instance.</span>
 
@@ -2279,8 +2279,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">612</span>
-<span class="normal">613</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">613</span>
 <span class="normal">614</span>
 <span class="normal">615</span>
 <span class="normal">616</span>
@@ -2306,7 +2305,8 @@
 <span class="normal">636</span>
 <span class="normal">637</span>
 <span class="normal">638</span>
-<span class="normal">639</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">639</span>
+<span class="normal">640</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Equation][msl.equipment.schema.Equation] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
@@ -2602,7 +2602,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A mapping of variable names to value(s) to evaluate the equation with.</p>
+                <p>A mapping of variable names to values to evaluate the equation with.</p>
               </div>
             </td>
             <td>
@@ -2618,7 +2618,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Whether to check that the data is within the allowed range(s).</p>
+                <p>Whether to check that the data is within the allowed ranges.</p>
               </div>
             </td>
             <td>
@@ -2654,8 +2654,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">524</span>
-<span class="normal">525</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">525</span>
 <span class="normal">526</span>
 <span class="normal">527</span>
 <span class="normal">528</span>
@@ -2682,12 +2681,13 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
 <span class="normal">549</span>
 <span class="normal">550</span>
 <span class="normal">551</span>
-<span class="normal">552</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+<span class="normal">552</span>
+<span class="normal">553</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate the equation.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        data: A mapping of variable names to value(s) to evaluate the equation with.</span>
-<span class="sd">        check_range: Whether to check that the data is within the allowed range(s).</span>
+<span class="sd">        data: A mapping of variable names to values to evaluate the equation with.</span>
+<span class="sd">        check_range: Whether to check that the data is within the allowed ranges.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The equation evaluated.</span>
@@ -2902,7 +2902,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
 
     <div class="doc doc-contents ">
 
-        <p>Check that the value(s) is(are) within the range.</p>
+        <p>Check that the values are within the range.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2925,7 +2925,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The value(s) to check.</p>
+                <p>The values to check.</p>
               </div>
             </td>
             <td>
@@ -2951,7 +2951,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
             </td>
             <td>
               <div class="doc-md-description">
-                <p><code>True</code> is the value(s) is(are) within range.</p>
+                <p><code>True</code> is the values are within range.</p>
               </div>
             </td>
           </tr>
@@ -2984,8 +2984,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">481</span>
-<span class="normal">482</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">482</span>
 <span class="normal">483</span>
 <span class="normal">484</span>
 <span class="normal">485</span>
@@ -3003,14 +3002,15 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
 <span class="normal">497</span>
 <span class="normal">498</span>
 <span class="normal">499</span>
-<span class="normal">500</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_within_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the value(s) is(are) within the range.</span>
+<span class="normal">500</span>
+<span class="normal">501</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_within_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the values are within the range.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        value: The value(s) to check.</span>
+<span class="sd">        value: The values to check.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        `True` is the value(s) is(are) within range.</span>
+<span class="sd">        `True` is the values are within range.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: If `value` is not within the range.</span>

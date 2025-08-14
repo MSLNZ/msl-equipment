@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from datetime import date
-from io import StringIO
+from io import BytesIO, StringIO
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 from xml.etree.ElementTree import XML, Element, ElementTree, tostring
@@ -46,6 +46,7 @@ from msl.equipment import (
     Status,
     Table,
 )
+from msl.equipment.schema import _Indent  # pyright: ignore[reportPrivateUsage]
 
 if TYPE_CHECKING:
     from numpy.typing import ArrayLike
@@ -818,11 +819,8 @@ def test_table_to_string_indent() -> None:
     </table>
     """
     t = Table.from_xml(XML(text))
-    assert hasattr(t, "INDENT")
 
-    indent = Table.INDENT
-
-    Table.INDENT = 0
+    _Indent.table_data = 0
     assert tostring(t.to_xml()) == (
         b'<table comment="Spectral Irradiance">'
         b"<type>int,double,double,bool,string</type>"
@@ -838,7 +836,7 @@ def test_table_to_string_indent() -> None:
         b"</table>"
     )
 
-    Table.INDENT = 2
+    _Indent.table_data = 2
     assert tostring(t.to_xml()) == (
         b'<table comment="Spectral Irradiance">'
         b"<type>int,double,double,bool,string</type>"
@@ -854,7 +852,7 @@ def test_table_to_string_indent() -> None:
         b"</table>"
     )
 
-    Table.INDENT = 5
+    _Indent.table_data = 5
     assert tostring(t.to_xml()) == (
         b'<table comment="Spectral Irradiance">'
         b"<type>int,double,double,bool,string</type>"
@@ -870,7 +868,7 @@ def test_table_to_string_indent() -> None:
         b"</table>"
     )
 
-    Table.INDENT = 6
+    _Indent.table_data = 6
     assert tostring(t.to_xml()) == (
         b'<table comment="Spectral Irradiance">'
         b"<type>int,double,double,bool,string</type>"
@@ -886,7 +884,7 @@ def test_table_to_string_indent() -> None:
         b"</table>"
     )
 
-    Table.INDENT = 7
+    _Indent.table_data = 7
     assert tostring(t.to_xml()) == (
         b'<table comment="Spectral Irradiance">'
         b"<type>int,double,double,bool,string</type>"
@@ -901,8 +899,6 @@ def test_table_to_string_indent() -> None:
         b" </data>"
         b"</table>"
     )
-
-    Table.INDENT = indent
 
 
 def test_cvd() -> None:
@@ -1231,10 +1227,8 @@ def test_performance_check() -> None:
     assert len(pc.deserialised) == 1
     assert len(pc.tables) == 1
 
-    indent = Table.INDENT
-    Table.INDENT = 3
+    _Indent.table_data = 3
     assert tostring(pc.to_xml()) == text
-    Table.INDENT = indent
 
 
 def test_issuing_laboratory_without_person() -> None:
@@ -1365,10 +1359,8 @@ def test_report() -> None:
     assert len(r.deserialised) == 1
     assert len(r.tables) == 1
 
-    indent = Table.INDENT
-    Table.INDENT = 6
+    _Indent.table_data = 6
     assert tostring(r.to_xml()) == text
-    Table.INDENT = indent
 
 
 def test_component_empty() -> None:
@@ -1558,14 +1550,9 @@ def test_register_tree_namespace() -> None:
 
 @pytest.mark.skipif(sys.version_info[:2] < (3, 9), reason="requires xml indent() function")
 def test_register_read_write_same_output() -> None:
-    from xml.etree.ElementTree import indent  # noqa: PLC0415
-
-    assert Table.INDENT == 34  # noqa: PLR2004
-
     path = Path("tests/resources/register.xml")
     r = Register(path)
-    tree = r.tree()
-    indent(tree, space="    ")
+    tree = r.tree()  # indent=4 by default
 
     buffer = StringIO()
     tree.write(buffer, xml_declaration=True, encoding="unicode")
@@ -1972,3 +1959,155 @@ def test_latest_report_no_reports() -> None:
     assert len(reports) == 0
 
     assert e.latest_report() is None
+
+
+def test_register_add() -> None:
+    table = "<table><type>int,int</type><unit>m,m</unit><header>A,dA</header><data>1,2\n3,4\n</data></table>"
+
+    r = Register()
+    assert len(r) == 0
+    assert r.team == ""
+
+    r.team = "A-team"
+    assert r.team == "A-team"
+
+    r.add(Equipment())
+    r.add(Equipment(id="A"))
+    r.add(Equipment(id="B", alias="Bob"))
+    r.add(
+        Equipment(
+            id="C",
+            alias="Charlie",
+            calibrations=(
+                Measurand(
+                    quantity="Temperature",
+                    calibration_interval=5,
+                    components=(
+                        Component(
+                            performance_checks=(
+                                PerformanceCheck(
+                                    completed_date=date(2024, 4, 10),
+                                    competency=Competency(worker="Me", checker="You", technical_procedure="ABC"),
+                                    entered_by="Me",
+                                    tables=(Table.from_xml(XML(table)),),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+    )
+
+    assert len(r) == 4  # noqa: PLR2004
+    assert r[0].id == ""
+    assert r[1].id == "A"
+    assert r[2].id == "B"
+    assert r[3].id == "C"
+    assert r["A"].id == "A"
+    assert r["B"].id == "B"
+    assert r["Bob"].id == "B"
+    assert r["C"].id == "C"
+    assert r["Charlie"].id == "C"
+
+    buffer = BytesIO()
+    tree = r.tree(indent=0)
+    tree.write(buffer, xml_declaration=True, encoding="us-ascii")
+
+    assert buffer.getvalue() == (
+        b"<?xml version='1.0' encoding='us-ascii'?>\n"
+        b'<register team="A-team" xmlns="https://measurement.govt.nz/equipment-register">'
+        b'<equipment enteredBy="">'
+        b"<id />"
+        b"<manufacturer />"
+        b"<model />"
+        b"<serial />"
+        b"<description />"
+        b"<specifications />"
+        b"<location />"
+        b"<status>Active</status>"
+        b"<loggable>false</loggable>"
+        b"<traceable>false</traceable>"
+        b"<calibrations />"
+        b"<maintenance />"
+        b"<alterations />"
+        b"<firmware />"
+        b"<specifiedRequirements />"
+        b"<referenceMaterials />"
+        b"<qualityManual />"
+        b"</equipment>"
+        b'<equipment enteredBy="">'
+        b"<id>A</id>"
+        b"<manufacturer />"
+        b"<model />"
+        b"<serial />"
+        b"<description />"
+        b"<specifications />"
+        b"<location />"
+        b"<status>Active</status>"
+        b"<loggable>false</loggable>"
+        b"<traceable>false</traceable>"
+        b"<calibrations />"
+        b"<maintenance />"
+        b"<alterations />"
+        b"<firmware />"
+        b"<specifiedRequirements />"
+        b"<referenceMaterials />"
+        b"<qualityManual />"
+        b"</equipment>"
+        b'<equipment enteredBy="" alias="Bob">'
+        b"<id>B</id><manufacturer />"
+        b"<model />"
+        b"<serial />"
+        b"<description />"
+        b"<specifications />"
+        b"<location />"
+        b"<status>Active</status>"
+        b"<loggable>false</loggable>"
+        b"<traceable>false</traceable>"
+        b"<calibrations />"
+        b"<maintenance />"
+        b"<alterations />"
+        b"<firmware />"
+        b"<specifiedRequirements />"
+        b"<referenceMaterials />"
+        b"<qualityManual />"
+        b"</equipment>"
+        b'<equipment enteredBy="" alias="Charlie">'
+        b"<id>C</id>"
+        b"<manufacturer />"
+        b"<model />"
+        b"<serial />"
+        b"<description />"
+        b"<specifications />"
+        b"<location />"
+        b"<status>Active</status>"
+        b"<loggable>false</loggable>"
+        b"<traceable>false</traceable>"
+        b"<calibrations>"
+        b'<measurand quantity="Temperature" calibrationInterval="5">'
+        b'<component name="">'
+        b'<performanceCheck completedDate="2024-04-10" enteredBy="Me">'
+        b"<competency><worker>Me</worker><checker>You</checker><technicalProcedure>ABC</technicalProcedure></competency>"
+        b"<conditions />"
+        b"<table><type>int,int</type><unit>m,m</unit><header>A,dA</header><data>1,2\n      3,4\n</data></table>"
+        b"</performanceCheck>"
+        b"</component>"
+        b"</measurand>"
+        b"</calibrations>"
+        b"<maintenance />"
+        b"<alterations />"
+        b"<firmware />"
+        b"<specifiedRequirements />"
+        b"<referenceMaterials />"
+        b"<qualityManual />"
+        b"</equipment>"
+        b"</register>"
+    )
+
+
+def test_register_cannot_merge() -> None:
+    reg1 = StringIO('<?xml version="1.0" encoding="utf-8"?>\n<register team="A" />')
+    reg2 = StringIO('<?xml version="1.0" encoding="utf-8"?>\n<register team="B" />')
+    with pytest.raises(ValueError, match="different teams, 'A' != 'B'"):
+        _ = Register(reg1, reg2)

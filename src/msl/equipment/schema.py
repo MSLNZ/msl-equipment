@@ -1,5 +1,6 @@
 from __future__ import annotations  # noqa: D100
 
+import sys
 from dataclasses import dataclass, field
 from datetime import date as _date
 from enum import Enum
@@ -1142,15 +1143,12 @@ class CVDEquation:
         return e
 
 
+class _Indent:
+    table_data: int = 0
+
+
 class Table(np.ndarray):
     """Represents the [table][type_table]{:target="_blank"} element in an equipment register."""
-
-    INDENT: int = 34
-    """The number of spaces to indent each row in the `<data>` element when converting the
-    [Table][msl.equipment.schema.Table] to an XML element, see [to_xml][msl.equipment.schema.Table.to_xml].
-    The default, _34_, is appropriate when saving a [Register][msl.equipment.schema.Register] to a file
-    using _4_ spaces for each child element via the [indent][xml.etree.ElementTree.indent]{:target="_blank"}
-    function and _20_ if indenting with _2_ spaces."""
 
     comment: str = ""
     """A comment that is associated with the table."""
@@ -1252,7 +1250,7 @@ class Table(np.ndarray):
             # the value can be of type bytes for numpy < 2.0
             stripped = value.strip()
             if isinstance(stripped, bytes):
-                return stripped.decode()
+                return stripped.decode()  # pragma: no cover
             return stripped
 
         # Schema forces order
@@ -1303,10 +1301,10 @@ class Table(np.ndarray):
         header.text = ",".join(self.header)
 
         buffer = StringIO()
-        newline = "\n" + " " * Table.INDENT
+        newline = "\n" + " " * _Indent.table_data
         np.savetxt(buffer, self, fmt="%s", delimiter=",", newline=newline)
         data = SubElement(e, "data")
-        data.text = buffer.getvalue().rstrip() + "\n" + " " * max(0, Table.INDENT - len("<data>"))
+        data.text = buffer.getvalue().rstrip() + "\n" + " " * max(0, _Indent.table_data - len("<data>"))
 
         return e
 
@@ -2200,21 +2198,35 @@ class Register:
     NAMESPACE: str = "https://measurement.govt.nz/equipment-register"
     """Default XML namespace."""
 
-    def __init__(self, source: XMLSource) -> None:
+    def __init__(self, *sources: XMLSource) -> None:
         """Represents the [register][element_register]{:target="_blank"} element in an equipment register.
 
         Args:
-            source: A [path-like object][]{:target="_blank"} or a [file-like object][]{:target="_blank"}
-                that contains an equipment register.
+            sources: An iterable of [path-like][path-like object]{:target="_blank"} or
+                [file-like][file-like object]{:target="_blank"} objects that are equipment registers.
         """
-        self._root: Element[str] = ElementTree().parse(source)
-        self._equipment: list[Equipment | None] = [None] * len(self._root)
+        team = ""
+        self._elements: list[Element[str]] = []
+        for source in sources:
+            root = ElementTree().parse(source)
+            t = root.attrib.get("team", "")
+            if not team:
+                team = t
+
+            if team != t:
+                msg = f"Cannot merge equipment registers from different teams, {team!r} != {t!r}"
+                raise ValueError(msg)
+
+            self._elements.extend(child for child in root)
+
+        self._team: str = team
+        self._equipment: list[Equipment | None] = [None] * len(self._elements)
 
         # a mapping between the alias/id and the index number in the register
         self._index_map: dict[str, int] = {
-            e.attrib["alias"]: i for i, e in enumerate(self._root) if e.attrib.get("alias")
+            e.attrib["alias"]: i for i, e in enumerate(self._elements) if e.attrib.get("alias")
         }
-        self._index_map.update({e[0].text or "": i for i, e in enumerate(self._root)})
+        self._index_map.update({e[0].text or "": i for i, e in enumerate(self._elements)})
 
     def __getitem__(self, item: str | int) -> Equipment:
         """Returns an Equipment item from the register."""
@@ -2228,7 +2240,7 @@ class Register:
 
         e = self._equipment[index]
         if e is None:
-            e = Equipment.from_xml(self._root[index])
+            e = Equipment.from_xml(self._elements[index])
             self._equipment[index] = e
         return e
 
@@ -2236,24 +2248,39 @@ class Register:
         """Yields the Equipment elements in the register."""
         for i, e in enumerate(self._equipment):
             if e is None:
-                e = Equipment.from_xml(self._root[i])  # noqa: PLW2901
+                e = Equipment.from_xml(self._elements[i])  # noqa: PLW2901
                 self._equipment[i] = e
             yield e
 
     def __len__(self) -> int:
         """Returns the number of Equipment elements in the register."""
-        return len(self._root)
+        return len(self._equipment)
 
     def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the string representation."""
         return f"<{self.__class__.__name__} team={self.team!r} ({len(self)} equipment)>"
 
+    def add(self, equipment: Equipment) -> None:
+        """Add equipment to the register.
+
+        Args:
+            equipment: The equipment to add.
+        """
+        self._index_map[equipment.id] = len(self._equipment)
+        if equipment.alias:
+            self._index_map[equipment.alias] = len(self._equipment)
+        self._equipment.append(equipment)
+
     @property
     def team(self) -> str:
-        """[str][] &mdash; Returns the name of the team that is responsible for the equipment register."""
-        return self._root.attrib["team"]
+        """[str][] &mdash; The name of the team that is responsible for the equipment register."""
+        return self._team
 
-    def tree(self, namespace: str | None = "DEFAULT") -> ElementTree[Element[str]]:
+    @team.setter
+    def team(self, value: str) -> None:
+        self._team = value
+
+    def tree(self, namespace: str | None = "DEFAULT", indent: int = 4) -> ElementTree[Element[str]]:
         """Convert the [Register][msl.equipment.schema.Register] class into an XML element tree.
 
         Args:
@@ -2261,6 +2288,8 @@ class Register:
                 `DEFAULT`, uses the value of [NAMESPACE][msl.equipment.schema.Register.NAMESPACE]
                 as the namespace. If `None`, or an empty string, no namespace is associated
                 with the root element.
+            indent: The number of spaces to indent sub-tree elements. The value must be &ge; 0.
+                This parameter is ignored if Python is &lt; 3.9.
 
         Returns:
             The [Register][msl.equipment.schema.Register] as an
@@ -2272,6 +2301,16 @@ class Register:
                 namespace = self.NAMESPACE
             attrib["xmlns"] = namespace
 
+        # The <table><data> element is 7 levels deep from <register>
+        _Indent.table_data = (7 * indent) + len("<data>")
+
         e = Element("register", attrib=attrib)
         e.extend(equipment.to_xml() for equipment in self)
-        return ElementTree(element=e)
+        tree: ElementTree[Element[str]] = ElementTree(element=e)
+
+        if indent > 0 and sys.version_info >= (3, 9):
+            from xml.etree.ElementTree import indent as pretty  # noqa: PLC0415
+
+            pretty(tree, space=" " * indent)
+
+        return tree

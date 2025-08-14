@@ -8,6 +8,7 @@ The primary class is [Register][register] which contains a sequence of [Equipmen
 * [Accessories][msl.equipment.schema.Accessories]
 * [Adjustment][msl.equipment.schema.Adjustment]
 * [Alteration][msl.equipment.schema.Alteration]
+* [Component][msl.equipment.schema.Component]
 * [Competency][msl.equipment.schema.Competency]
 * [CompletedTask][msl.equipment.schema.CompletedTask]
 * [Conditions][msl.equipment.schema.Conditions]

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from os import PathLike
-from typing import Protocol, TypeAlias, TypeVar, Union  # pyright: ignore[reportDeprecated]
+from typing import Literal, Protocol, TypeAlias, TypeVar, Union  # pyright: ignore[reportDeprecated]
 
 _T_co = TypeVar("_T_co", covariant=True)
 
@@ -18,3 +18,11 @@ class SupportsRead(Protocol[_T_co]):
 
 XMLSource: TypeAlias = Union[int, str, bytes, PathLike[str], PathLike[bytes], SupportsRead[bytes] | SupportsRead[str]]  # pyright: ignore[reportDeprecated]
 """A [path-like object][]{:target="_blank"} or a [file-like object][]{:target="_blank"} for parsing XML content."""
+
+DateValue: TypeAlias = Literal["issue", "start", "stop"]
+"""The value to use when comparing to a date in a report.
+
+* `issue`: Report issue date
+* `start`: Measurement start date
+* `stop`: Measurement stop date
+"""

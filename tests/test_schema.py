@@ -543,7 +543,7 @@ def test_range_bounds_valid(value: float | ArrayLike) -> None:
     assert r.minimum == -100  # noqa: PLR2004
     assert r.maximum == 100  # noqa: PLR2004
     assert r == (-100, 100)
-    assert r.check_within_range(value) is None
+    assert r.check_within_range(value)
 
 
 @pytest.mark.parametrize("value", [-1, 2e6, [1.001, 2], np.array([[11, -22], [-33, 44]])])
@@ -551,7 +551,7 @@ def test_range_bounds_invalid(value: float | ArrayLike) -> None:
     r = Range(0, 1)
     expect = str(value) if isinstance(value, (int, float)) else "sequence"
     with pytest.raises(ValueError, match=f"{expect} is not within the range"):
-        r.check_within_range(value)
+        _ = r.check_within_range(value)
 
 
 def test_evaluable_constant() -> None:
@@ -1690,3 +1690,233 @@ def test_register_from_file() -> None:  # noqa: PLR0915
     assert second.quality_manual.personnel_restrictions == "Everyone"
     assert second.quality_manual.service_agent == "MSL"
     assert second.quality_manual.technical_procedures == ("MSLT.E.028.017", "MSLT.O.009")
+
+
+@pytest.mark.parametrize("calibrations", [(), (Measurand(quantity="A", calibration_interval=1),)])
+def test_latest_report_empty(calibrations: tuple[Measurand, ...]) -> None:
+    e = Equipment(calibrations=calibrations)
+    assert e.latest_report() is None
+    assert list(e.latest_reports()) == []
+
+
+@pytest.mark.parametrize(("value", "expect"), [("stop", "B"), ("issue", "C"), ("start", "B")])
+def test_latest_report_single_measurand_and_component(value: str, expect: str) -> None:
+    e = Equipment(
+        calibrations=(
+            Measurand(
+                quantity="1",
+                calibration_interval=1,
+                components=(
+                    Component(
+                        name="2",
+                        reports=(
+                            Report(
+                                id="A",
+                                entered_by="",
+                                report_issue_date=date(2020, 6, 3),
+                                measurement_start_date=date(2020, 5, 1),
+                                measurement_stop_date=date(2020, 5, 4),
+                            ),
+                            Report(
+                                id="B",
+                                entered_by="",
+                                report_issue_date=date(2024, 10, 23),
+                                measurement_start_date=date(2024, 2, 15),
+                                measurement_stop_date=date(2024, 2, 16),
+                            ),
+                            Report(
+                                id="C",
+                                entered_by="",
+                                report_issue_date=date(2025, 4, 10),  # issue date > Report(id=B) issue date
+                                measurement_start_date=date(2022, 3, 20),
+                                measurement_stop_date=date(2022, 3, 22),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+    )
+
+    reports = list(e.latest_reports(date=value))  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    assert len(reports) == 1
+    assert reports[0][0] == "1"
+    assert reports[0][1] == "2"
+    assert reports[0][2].id == expect
+
+    # Don't specify `quantity` or `name` and the correct report is returned
+    latest = e.latest_report(date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    assert latest is not None
+    assert latest.id == expect
+
+    # If `quantity` or `name` is specified then the Report must match accordingly
+    latest = e.latest_report(quantity="Anything", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    assert latest is None
+    latest = e.latest_report(name="Anything", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    assert latest is None
+
+
+def test_latest_report_multiple_measurand_and_components() -> None:
+    e = Equipment(
+        calibrations=(
+            Measurand(
+                quantity="Temperature",
+                calibration_interval=5,
+                components=(
+                    Component(
+                        name="Probe 1",
+                        reports=(
+                            Report(
+                                id="A",
+                                entered_by="",
+                                report_issue_date=date(2020, 6, 3),
+                                measurement_start_date=date(2020, 5, 1),
+                                measurement_stop_date=date(2020, 5, 4),
+                            ),
+                            Report(
+                                id="B",
+                                entered_by="",
+                                report_issue_date=date(2024, 10, 23),
+                                measurement_start_date=date(2024, 2, 15),
+                                measurement_stop_date=date(2024, 2, 16),
+                            ),
+                            Report(
+                                id="C",
+                                entered_by="",
+                                report_issue_date=date(2025, 4, 10),  # issue date > Report(id=B) issue date
+                                measurement_start_date=date(2022, 3, 20),
+                                measurement_stop_date=date(2022, 3, 22),
+                            ),
+                        ),
+                    ),
+                    Component(
+                        name="Probe 2",
+                        reports=(
+                            Report(
+                                id="E",
+                                entered_by="",
+                                report_issue_date=date(2024, 10, 23),
+                                measurement_start_date=date(2024, 2, 15),
+                                measurement_stop_date=date(2024, 2, 16),
+                            ),
+                            Report(
+                                id="D",
+                                entered_by="",
+                                report_issue_date=date(2020, 6, 3),
+                                measurement_start_date=date(2020, 5, 1),
+                                measurement_stop_date=date(2020, 5, 4),
+                            ),
+                            Report(
+                                id="F",
+                                entered_by="",
+                                report_issue_date=date(2025, 4, 10),  # issue date > Report(id=B) issue date
+                                measurement_start_date=date(2022, 3, 20),
+                                measurement_stop_date=date(2022, 3, 22),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            Measurand(
+                quantity="Humidity",
+                calibration_interval=5,
+                components=(
+                    Component(
+                        name="Probe 1",
+                        reports=(
+                            Report(
+                                id="b",
+                                entered_by="",
+                                report_issue_date=date(2024, 10, 23),
+                                measurement_start_date=date(2024, 2, 15),
+                                measurement_stop_date=date(2024, 2, 16),
+                            ),
+                            Report(
+                                id="c",
+                                entered_by="",
+                                report_issue_date=date(2025, 4, 10),  # issue date > Report(id=B) issue date
+                                measurement_start_date=date(2022, 3, 20),
+                                measurement_stop_date=date(2022, 3, 22),
+                            ),
+                            Report(
+                                id="a",
+                                entered_by="",
+                                report_issue_date=date(2020, 6, 3),
+                                measurement_start_date=date(2020, 5, 1),
+                                measurement_stop_date=date(2020, 5, 4),
+                            ),
+                        ),
+                    ),
+                    Component(
+                        name="Probe 2",
+                        reports=(
+                            Report(
+                                id="d",
+                                entered_by="",
+                                report_issue_date=date(2020, 6, 3),
+                                measurement_start_date=date(2020, 5, 1),
+                                measurement_stop_date=date(2020, 5, 4),
+                            ),
+                            Report(
+                                id="f",
+                                entered_by="",
+                                report_issue_date=date(2025, 4, 10),  # issue date > Report(id=B) issue date
+                                measurement_start_date=date(2022, 3, 20),
+                                measurement_stop_date=date(2022, 3, 22),
+                            ),
+                            Report(
+                                id="e",
+                                entered_by="",
+                                report_issue_date=date(2024, 10, 23),
+                                measurement_start_date=date(2024, 2, 15),
+                                measurement_stop_date=date(2024, 2, 16),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+    )
+
+    reports = list(e.latest_reports())
+    assert len(reports) == 4  # noqa: PLR2004
+    assert reports[0][0] == "Temperature"
+    assert reports[0][1] == "Probe 1"
+    assert reports[0][2].id == "B"
+
+    assert reports[1][0] == "Temperature"
+    assert reports[1][1] == "Probe 2"
+    assert reports[1][2].id == "E"
+
+    assert reports[2][0] == "Humidity"
+    assert reports[2][1] == "Probe 1"
+    assert reports[2][2].id == "b"
+
+    assert reports[3][0] == "Humidity"
+    assert reports[3][1] == "Probe 2"
+    assert reports[3][2].id == "e"
+
+    report = e.latest_report()
+    assert report is None
+
+    report = e.latest_report(quantity="Temperature")
+    assert report is None  # must match `name` also
+
+    report = e.latest_report(name="Probe 1")
+    assert report is None  # must match `quantity` also
+
+    report = e.latest_report(quantity="Temperature", name="Probe 1")
+    assert report is not None
+    assert report.id == "B"
+
+    report = e.latest_report(quantity="Temperature", name="Probe 1", date="start")
+    assert report is not None
+    assert report.id == "B"
+
+    report = e.latest_report(quantity="Temperature", name="Probe 1", date="issue")
+    assert report is not None
+    assert report.id == "C"
+
+    report = e.latest_report(quantity="Humidity", name="Probe 2", date="issue")
+    assert report is not None
+    assert report.id == "f"

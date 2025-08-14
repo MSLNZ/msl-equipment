@@ -58,6 +58,7 @@ nav:
     - schema/adjustment.md
     - schema/alteration.md
     - schema/any.md
+    - schema/component.md
     - schema/competency.md
     - schema/completed_task.md
     - schema/conditions.md

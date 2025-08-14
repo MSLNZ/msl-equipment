@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
     from numpy.typing import ArrayLike, DTypeLike, NDArray
 
-    from ._types import XMLSource
+    from ._types import DateValue, XMLSource
 
     A = TypeVar("A", bound="Any")
 
@@ -477,11 +477,14 @@ class Range(NamedTuple):
     maximum: float
     """Maximum value in range."""
 
-    def check_within_range(self, value: float | ArrayLike) -> None:
+    def check_within_range(self, value: float | ArrayLike) -> bool:
         """Check that the value(s) is(are) within the range.
 
         Args:
             value: The value(s) to check.
+
+        Returns:
+            `True` is the value(s) is(are) within range.
 
         Raises:
             ValueError: If `value` is not within the range.
@@ -493,6 +496,7 @@ class Range(NamedTuple):
         elif np.any(np.less(value, self.minimum)) or np.any(np.greater(value, self.maximum)):  # pyright: ignore[reportUnknownArgumentType]
             msg = f"A value in the sequence is not within the range [{self.minimum}, {self.maximum}]"
             raise ValueError(msg)
+        return True
 
 
 @dataclass(frozen=True)
@@ -531,7 +535,7 @@ class Evaluable:
             for name, value in _locals.items():
                 r = self.ranges.get(name)
                 if r is not None:  # if None then assume [-INF, +INF] for this variable
-                    r.check_within_range(value)
+                    _ = r.check_within_range(value)
 
         # If the same input data is used to evaluate the corrected value and the uncertainty
         # then one would expect the returned array to have the same shape in both cases.
@@ -1187,7 +1191,7 @@ class Table(np.ndarray):
     def __array_finalize__(self, obj: None | NDArray[_Any]) -> None:  # pyright: ignore[reportImplicitOverride]
         """Finalise the creation of the [Table][msl.equipment.schema.Table] by adding the metadata."""
         if obj is None:
-            return
+            return  # pragma: no cover
         self.types = getattr(obj, "types", np.empty(0, dtype=object))
         self.units = getattr(obj, "units", np.empty(0, dtype=object))
         self.header = getattr(obj, "header", np.empty(0, dtype=object))
@@ -1636,9 +1640,9 @@ class Component:
         name: The name to associate with this component. The value must be unique amongst the other
             component elements within the same measurand element. An empty string is permitted.
         adjustments: The history of adjustments.
-        digital_reports: The history of digital reports.
+        digital_reports: The history of digital calibration reports.
         performance_checks: The history of performance checks.
-        reports: The history of reports.
+        reports: The history of calibration reports.
     """
 
     name: str = ""
@@ -1648,13 +1652,13 @@ class Component:
     """The history of adjustments."""
 
     digital_reports: tuple[DigitalReport, ...] = ()
-    """The history of digital reports."""
+    """The history of digital calibration reports."""
 
     performance_checks: tuple[PerformanceCheck, ...] = ()
     """The history of performance checks."""
 
     reports: tuple[Report, ...] = ()
-    """The history of reports."""
+    """The history of calibration reports."""
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Component:
@@ -2119,6 +2123,71 @@ class Equipment:
         e.append(self.reference_materials)
         e.append(self.quality_manual.to_xml())
         return e
+
+    def latest_reports(self, date: DateValue = "stop") -> Iterator[tuple[str, str, Report]]:
+        """Yields the latest calibration reports for every measurand _quantity_ and _component_.
+
+        Args:
+            date: Which date in a report to use to determine what _latest_ refers to:
+
+                * `issue`: Report issue date
+                * `start`: Measurement start date
+                * `stop`: Measurement stop date
+
+        Yields:
+            The ([quantity][msl.equipment.schema.Measurand.quantity],
+                [name][msl.equipment.schema.Component.name],
+                [Report][msl.equipment.schema.Report]) value for the latest calibration report.
+        """
+        default = _date(1875, 5, 20)
+        for m in self.calibrations:
+            for c in m.components:
+                latest = default
+                report: Report | None = None
+                for r in c.reports:
+                    if date == "stop":
+                        if r.measurement_stop_date > latest:
+                            report = r
+                            latest = r.measurement_stop_date
+                    elif date == "start":
+                        if r.measurement_start_date > latest:
+                            report = r
+                            latest = r.measurement_start_date
+                    elif r.report_issue_date > latest:
+                        report = r
+                        latest = r.report_issue_date
+
+                if report is not None:
+                    yield m.quantity, c.name, report
+
+    def latest_report(self, *, quantity: str = "", name: str = "", date: DateValue = "stop") -> Report | None:
+        """Returns the latest calibration report.
+
+        Args:
+            quantity: The measurand [quantity][msl.equipment.schema.Measurand.quantity].
+            name: The component [name][msl.equipment.schema.Component.name].
+            date: Which date in a report to use to determine what _latest_ refers to:
+
+                * `issue`: Report issue date
+                * `start`: Measurement start date
+                * `stop`: Measurement stop date
+
+        Returns:
+            The latest [Report][msl.equipment.schema.Report]) for the specified `quantity` and `name`.
+                If the _equipment_ has only one measurand _quantity_ and only one _component_ and if the
+                `quantity` and `name` values are both empty strings then that report is returned. Otherwise,
+                returns `None` if there is no report that matches the `quantity` and `name` criteria or the
+                _equipment_ does not have calibration reports entered in the register.
+        """
+        reports = list(self.latest_reports(date=date))
+        if len(reports) == 1 and not quantity and not name:
+            return reports[0][2]
+
+        for q, n, report in reports:
+            if quantity == q and name == n:
+                return report
+
+        return None
 
 
 class Register:

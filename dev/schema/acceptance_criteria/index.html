@@ -510,6 +510,8 @@
       
         
       
+        
+      
     
     
     
@@ -736,6 +738,29 @@
   
   <span class="md-ellipsis">
     Any
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../component/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Component
     
   </span>
   
@@ -1449,13 +1474,13 @@ It may be updated to be a more specific class at a later date.</p>
 
                   <details class="quote">
                     <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
+<span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span>
 <span class="normal">96</span>
 <span class="normal">97</span>
-<span class="normal">98</span>
-<span class="normal">99</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class that represents the [any][type_any]{:target=&quot;_blank&quot;} type in the XML Schema Definition.</span>
 
 <span class="sd">    Args:</span>
@@ -1578,7 +1603,8 @@ It may be updated to be a more specific class at a later date.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">101</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
+<span class="normal">101</span>
 <span class="normal">102</span>
 <span class="normal">103</span>
 <span class="normal">104</span>
@@ -1592,7 +1618,10 @@ It may be updated to be a more specific class at a later date.</p>
 <span class="normal">112</span>
 <span class="normal">113</span>
 <span class="normal">114</span>
-<span class="normal">115</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">A</span><span class="p">:</span>  <span class="c1"># noqa: PYI019</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Copies an XML element into the [Any][msl.equipment.schema.Any] subclass.</span>
 
@@ -1602,6 +1631,10 @@ It may be updated to be a more specific class at a later date.</p>
 <span class="sd">    Returns:</span>
 <span class="sd">        The subclass instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">{{</span><span class="si">{</span><span class="n">Register</span><span class="o">.</span><span class="n">NAMESPACE</span><span class="si">}</span><span class="se">}}</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">element</span><span class="o">.</span><span class="n">iter</span><span class="p">():</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+
     <span class="n">c</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="p">)</span>
     <span class="n">c</span><span class="o">.</span><span class="n">tail</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">tail</span>
     <span class="n">c</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">text</span>

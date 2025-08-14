@@ -508,6 +508,8 @@
       
         
       
+        
+      
     
     
     
@@ -659,6 +661,29 @@
   
   <span class="md-ellipsis">
     Any
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../component/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Component
     
   </span>
   
@@ -1242,6 +1267,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Table.INDENT" class="md-nav__link">
+    <span class="md-ellipsis">
+      INDENT
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msl.equipment.schema.Table.comment" class="md-nav__link">
     <span class="md-ellipsis">
       comment
@@ -1369,6 +1403,15 @@
   
     <nav class="md-nav" aria-label="Table">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Table.INDENT" class="md-nav__link">
+    <span class="md-ellipsis">
+      INDENT
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#msl.equipment.schema.Table.comment" class="md-nav__link">
@@ -1621,6 +1664,35 @@
 
 
 
+<h3 id="msl.equipment.schema.Table.INDENT" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">INDENT</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#msl.equipment.schema.Table.INDENT" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">INDENT</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">34</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>The number of spaces to indent each row in the <code>&lt;data&gt;</code> element when converting the
+<a class="autorefs autorefs-internal" title="Table" href="#msl.equipment.schema.Table">Table</a> to an XML element, see <a class="autorefs autorefs-internal" title="to_xml" href="#msl.equipment.schema.Table.to_xml">to_xml</a>.
+The default, <em>34</em>, is appropriate when saving a <a class="autorefs autorefs-internal" title="Register" href="../register/#msl.equipment.schema.Register">Register</a> to a file
+using <em>4</em> spaces for each child element via the <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.indent">indent</a>{:target="<em>blank"}
+function and _20</em> if indenting with <em>2</em> spaces.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="msl.equipment.schema.Table.comment" class="doc doc-heading">
             <span class="doc doc-object-name doc-attribute-name">comment</span>
 
@@ -1839,21 +1911,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1152</span>
-<span class="normal">1153</span>
-<span class="normal">1154</span>
-<span class="normal">1155</span>
-<span class="normal">1156</span>
-<span class="normal">1157</span>
-<span class="normal">1158</span>
-<span class="normal">1159</span>
-<span class="normal">1160</span>
-<span class="normal">1161</span>
-<span class="normal">1162</span>
-<span class="normal">1163</span>
-<span class="normal">1164</span>
-<span class="normal">1165</span>
-<span class="normal">1166</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1166</span>
 <span class="normal">1167</span>
 <span class="normal">1168</span>
 <span class="normal">1169</span>
@@ -1862,7 +1920,21 @@
 <span class="normal">1172</span>
 <span class="normal">1173</span>
 <span class="normal">1174</span>
-<span class="normal">1175</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span>  <span class="c1"># noqa: PYI034</span>
+<span class="normal">1175</span>
+<span class="normal">1176</span>
+<span class="normal">1177</span>
+<span class="normal">1178</span>
+<span class="normal">1179</span>
+<span class="normal">1180</span>
+<span class="normal">1181</span>
+<span class="normal">1182</span>
+<span class="normal">1183</span>
+<span class="normal">1184</span>
+<span class="normal">1185</span>
+<span class="normal">1186</span>
+<span class="normal">1187</span>
+<span class="normal">1188</span>
+<span class="normal">1189</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span>  <span class="c1"># noqa: PYI034</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">types</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">void</span><span class="p">],</span>
@@ -1972,21 +2044,7 @@ the index of a column. If you prefer to work with unstructured data, call
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1216</span>
-<span class="normal">1217</span>
-<span class="normal">1218</span>
-<span class="normal">1219</span>
-<span class="normal">1220</span>
-<span class="normal">1221</span>
-<span class="normal">1222</span>
-<span class="normal">1223</span>
-<span class="normal">1224</span>
-<span class="normal">1225</span>
-<span class="normal">1226</span>
-<span class="normal">1227</span>
-<span class="normal">1228</span>
-<span class="normal">1229</span>
-<span class="normal">1230</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1230</span>
 <span class="normal">1231</span>
 <span class="normal">1232</span>
 <span class="normal">1233</span>
@@ -2015,7 +2073,28 @@ the index of a column. If you prefer to work with unstructured data, call
 <span class="normal">1256</span>
 <span class="normal">1257</span>
 <span class="normal">1258</span>
-<span class="normal">1259</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1259</span>
+<span class="normal">1260</span>
+<span class="normal">1261</span>
+<span class="normal">1262</span>
+<span class="normal">1263</span>
+<span class="normal">1264</span>
+<span class="normal">1265</span>
+<span class="normal">1266</span>
+<span class="normal">1267</span>
+<span class="normal">1268</span>
+<span class="normal">1269</span>
+<span class="normal">1270</span>
+<span class="normal">1271</span>
+<span class="normal">1272</span>
+<span class="normal">1273</span>
+<span class="normal">1274</span>
+<span class="normal">1275</span>
+<span class="normal">1276</span>
+<span class="normal">1277</span>
+<span class="normal">1278</span>
+<span class="normal">1279</span>
+<span class="normal">1280</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Table][msl.equipment.schema.Table] instance.</span>
 
@@ -2029,11 +2108,15 @@ the index of a column. If you prefer to work with unstructured data, call
 <span class="sd">            the index of a column. If you prefer to work with unstructured data, call</span>
 <span class="sd">            [unstructured][msl.equipment.schema.Table.unstructured] on the returned object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">booleans</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;True&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;TRUE&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;True&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;TRUE&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;1&quot;</span><span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">convert_bool</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="c1"># the value is of type bytes for the latest version of numpy (1.24.4) that supports Python 3.8,</span>
-        <span class="c1"># in versions of numpy that support Python 3.9+ it is a string</span>
-        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;True&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;TRUE&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;True&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;TRUE&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;1&quot;</span><span class="p">}</span>
+        <span class="c1"># the value can be of type bytes for numpy &lt; 2.0</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">booleans</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">strip_string</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="c1"># the value can be of type bytes for numpy &lt; 2.0</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
     <span class="c1"># Schema forces order</span>
     <span class="n">_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
@@ -2041,8 +2124,11 @@ the index of a column. If you prefer to work with unstructured data, call
     <span class="n">_header</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
     <span class="n">_file</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">((</span><span class="n">element</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
 
-    <span class="c1"># must handle boolean column separately</span>
-    <span class="n">conv</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">convert_bool</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_type</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;bool&quot;</span><span class="p">}</span>
+    <span class="c1"># must handle boolean column and string column separately</span>
+    <span class="n">conv</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">],</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">i</span><span class="p">:</span> <span class="n">convert_bool</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_type</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;bool&quot;</span>
+    <span class="p">}</span>
+    <span class="n">conv</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">i</span><span class="p">:</span> <span class="n">strip_string</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_type</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;string&quot;</span><span class="p">})</span>
 
     <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="n">h</span><span class="p">,</span> <span class="n">schema_numpy_map</span><span class="p">[</span><span class="n">t</span><span class="p">])</span> <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">_header</span><span class="p">,</span> <span class="n">_type</span><span class="p">)])</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">_file</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">converters</span><span class="o">=</span><span class="n">conv</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]  # pyright: ignore[reportCallIssue, reportArgumentType, reportUnknownVariableType]</span>
@@ -2106,31 +2192,32 @@ the index of a column. If you prefer to work with unstructured data, call
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1261</span>
-<span class="normal">1262</span>
-<span class="normal">1263</span>
-<span class="normal">1264</span>
-<span class="normal">1265</span>
-<span class="normal">1266</span>
-<span class="normal">1267</span>
-<span class="normal">1268</span>
-<span class="normal">1269</span>
-<span class="normal">1270</span>
-<span class="normal">1271</span>
-<span class="normal">1272</span>
-<span class="normal">1273</span>
-<span class="normal">1274</span>
-<span class="normal">1275</span>
-<span class="normal">1276</span>
-<span class="normal">1277</span>
-<span class="normal">1278</span>
-<span class="normal">1279</span>
-<span class="normal">1280</span>
-<span class="normal">1281</span>
-<span class="normal">1282</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1282</span>
 <span class="normal">1283</span>
 <span class="normal">1284</span>
-<span class="normal">1285</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">1285</span>
+<span class="normal">1286</span>
+<span class="normal">1287</span>
+<span class="normal">1288</span>
+<span class="normal">1289</span>
+<span class="normal">1290</span>
+<span class="normal">1291</span>
+<span class="normal">1292</span>
+<span class="normal">1293</span>
+<span class="normal">1294</span>
+<span class="normal">1295</span>
+<span class="normal">1296</span>
+<span class="normal">1297</span>
+<span class="normal">1298</span>
+<span class="normal">1299</span>
+<span class="normal">1300</span>
+<span class="normal">1301</span>
+<span class="normal">1302</span>
+<span class="normal">1303</span>
+<span class="normal">1304</span>
+<span class="normal">1305</span>
+<span class="normal">1306</span>
+<span class="normal">1307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Table][msl.equipment.schema.Table] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
@@ -2150,9 +2237,10 @@ the index of a column. If you prefer to work with unstructured data, call
     <span class="n">header</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
 
     <span class="n">buffer</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">newline</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="n">Table</span><span class="o">.</span><span class="n">INDENT</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="n">newline</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
-    <span class="n">data</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Table</span><span class="o">.</span><span class="n">INDENT</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;&lt;data&gt;&quot;</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">e</span>
 </code></pre></div></td></tr></table></div>
@@ -2277,21 +2365,7 @@ numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1186</span>
-<span class="normal">1187</span>
-<span class="normal">1188</span>
-<span class="normal">1189</span>
-<span class="normal">1190</span>
-<span class="normal">1191</span>
-<span class="normal">1192</span>
-<span class="normal">1193</span>
-<span class="normal">1194</span>
-<span class="normal">1195</span>
-<span class="normal">1196</span>
-<span class="normal">1197</span>
-<span class="normal">1198</span>
-<span class="normal">1199</span>
-<span class="normal">1200</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1200</span>
 <span class="normal">1201</span>
 <span class="normal">1202</span>
 <span class="normal">1203</span>
@@ -2305,7 +2379,21 @@ numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
 <span class="normal">1211</span>
 <span class="normal">1212</span>
 <span class="normal">1213</span>
-<span class="normal">1214</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unstructured</span><span class="p">(</span>
+<span class="normal">1214</span>
+<span class="normal">1215</span>
+<span class="normal">1216</span>
+<span class="normal">1217</span>
+<span class="normal">1218</span>
+<span class="normal">1219</span>
+<span class="normal">1220</span>
+<span class="normal">1221</span>
+<span class="normal">1222</span>
+<span class="normal">1223</span>
+<span class="normal">1224</span>
+<span class="normal">1225</span>
+<span class="normal">1226</span>
+<span class="normal">1227</span>
+<span class="normal">1228</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unstructured</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

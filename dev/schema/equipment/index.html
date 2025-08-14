@@ -510,6 +510,8 @@
       
         
       
+        
+      
     
     
     
@@ -661,6 +663,29 @@
   
   <span class="md-ellipsis">
     Any
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../component/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Component
     
   </span>
   
@@ -1091,6 +1116,24 @@
   <a href="#msl.equipment.schema.Equipment.from_xml" class="md-nav__link">
     <span class="md-ellipsis">
       from_xml
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Equipment.latest_report" class="md-nav__link">
+    <span class="md-ellipsis">
+      latest_report
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Equipment.latest_reports" class="md-nav__link">
+    <span class="md-ellipsis">
+      latest_reports
     </span>
   </a>
   
@@ -1706,6 +1749,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Equipment.latest_report" class="md-nav__link">
+    <span class="md-ellipsis">
+      latest_report
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Equipment.latest_reports" class="md-nav__link">
+    <span class="md-ellipsis">
+      latest_reports
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msl.equipment.schema.Equipment.to_xml" class="md-nav__link">
     <span class="md-ellipsis">
       to_xml
@@ -1794,7 +1855,12 @@
     <span class="n">status</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="Status (msl.equipment.schema.Status)" href="../status/#msl.equipment.schema.Status">Status</a></span> <span class="o">=</span> <span class="n"><span title="msl.equipment.schema.Status.Active">Active</span></span><span class="p">,</span>
     <span class="n">loggable</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">traceable</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">calibrations</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="Measurand (msl.equipment.schema.Measurand)" href="../measurand/#msl.equipment.schema.Measurand">Measurand</a></span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
+    <span class="n">calibrations</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="Measurand
+
+
+  
+      dataclass
+   (msl.equipment.schema.Measurand)" href="../measurand/#msl.equipment.schema.Measurand">Measurand</a></span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
     <span class="n">maintenance</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="Maintenance
 
 
@@ -2099,7 +2165,12 @@ as loggable.</p>
                 <code>calibrations</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title="Measurand (msl.equipment.schema.Measurand)" href="../measurand/#msl.equipment.schema.Measurand">Measurand</a>, ...]</code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title="Measurand
+
+
+  
+      dataclass
+   (msl.equipment.schema.Measurand)" href="../measurand/#msl.equipment.schema.Measurand">Measurand</a>, ...]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2327,7 +2398,12 @@ dates and the period of validity.</p>
   </span>
 
 <a href="#msl.equipment.schema.Equipment.calibrations" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">calibrations</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="Measurand (msl.equipment.schema.Measurand)" href="../measurand/#msl.equipment.schema.Measurand">Measurand</a></span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">calibrations</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="Measurand
+
+
+  
+      dataclass
+   (msl.equipment.schema.Measurand)" href="../measurand/#msl.equipment.schema.Measurand">Measurand</a></span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2924,29 +3000,7 @@ is active (in use) or inactive (not in use).</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2005</span>
-<span class="normal">2006</span>
-<span class="normal">2007</span>
-<span class="normal">2008</span>
-<span class="normal">2009</span>
-<span class="normal">2010</span>
-<span class="normal">2011</span>
-<span class="normal">2012</span>
-<span class="normal">2013</span>
-<span class="normal">2014</span>
-<span class="normal">2015</span>
-<span class="normal">2016</span>
-<span class="normal">2017</span>
-<span class="normal">2018</span>
-<span class="normal">2019</span>
-<span class="normal">2020</span>
-<span class="normal">2021</span>
-<span class="normal">2022</span>
-<span class="normal">2023</span>
-<span class="normal">2024</span>
-<span class="normal">2025</span>
-<span class="normal">2026</span>
-<span class="normal">2027</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2027</span>
 <span class="normal">2028</span>
 <span class="normal">2029</span>
 <span class="normal">2030</span>
@@ -2959,7 +3013,29 @@ is active (in use) or inactive (not in use).</p>
 <span class="normal">2037</span>
 <span class="normal">2038</span>
 <span class="normal">2039</span>
-<span class="normal">2040</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">2040</span>
+<span class="normal">2041</span>
+<span class="normal">2042</span>
+<span class="normal">2043</span>
+<span class="normal">2044</span>
+<span class="normal">2045</span>
+<span class="normal">2046</span>
+<span class="normal">2047</span>
+<span class="normal">2048</span>
+<span class="normal">2049</span>
+<span class="normal">2050</span>
+<span class="normal">2051</span>
+<span class="normal">2052</span>
+<span class="normal">2053</span>
+<span class="normal">2054</span>
+<span class="normal">2055</span>
+<span class="normal">2056</span>
+<span class="normal">2057</span>
+<span class="normal">2058</span>
+<span class="normal">2059</span>
+<span class="normal">2060</span>
+<span class="normal">2061</span>
+<span class="normal">2062</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Equipment</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into an [Equipment][msl.equipment.schema.Equipment] instance.</span>
 
@@ -2995,6 +3071,393 @@ is active (in use) or inactive (not in use).</p>
         <span class="n">reference_materials</span><span class="o">=</span><span class="n">ReferenceMaterials</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">15</span><span class="p">]),</span>
         <span class="n">quality_manual</span><span class="o">=</span><span class="n">QualityManual</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">16</span><span class="p">]),</span>
     <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="msl.equipment.schema.Equipment.latest_report" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">latest_report</span>
+
+
+<a href="#msl.equipment.schema.Equipment.latest_report" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">latest_report</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">quantity</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">date</span><span class="p">:</span> <span class="n"><span title="msl.equipment._types.DateValue">DateValue</span></span> <span class="o">=</span> <span class="s2">&quot;stop&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="Report
+
+
+  
+      dataclass
+   (msl.equipment.schema.Report)" href="../report/#msl.equipment.schema.Report">Report</a></span> <span class="o">|</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Returns the latest calibration report.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>quantity</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The measurand <a class="autorefs autorefs-internal" title="quantity
+
+
+  
+      instance-attribute
+  " href="../measurand/#msl.equipment.schema.Measurand.quantity">quantity</a>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>name</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The component <a class="autorefs autorefs-internal" title="name
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="../component/#msl.equipment.schema.Component.name">name</a>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>date</code>
+            </td>
+            <td>
+                  <code><span title="msl.equipment._types.DateValue">DateValue</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Which date in a report to use to determine what <em>latest</em> refers to:</p>
+<ul>
+<li><code>issue</code>: Report issue date</li>
+<li><code>start</code>: Measurement start date</li>
+<li><code>stop</code>: Measurement stop date</li>
+</ul>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;stop&#39;</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="Report
+
+
+  
+      dataclass
+   (msl.equipment.schema.Report)" href="../report/#msl.equipment.schema.Report">Report</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The latest <a class="autorefs autorefs-internal" title="Report
+
+
+  
+      dataclass
+  " href="../report/#msl.equipment.schema.Report">Report</a>) for the specified <code>quantity</code> and <code>name</code>.
+If the <em>equipment</em> has only one measurand <em>quantity</em> and only one <em>component</em> and if the
+<code>quantity</code> and <code>name</code> values are both empty strings then that report is returned. Otherwise,
+returns <code>None</code> if there is no report that matches the <code>quantity</code> and <code>name</code> criteria or the
+<em>equipment</em> does not have calibration reports entered in the register.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2163</span>
+<span class="normal">2164</span>
+<span class="normal">2165</span>
+<span class="normal">2166</span>
+<span class="normal">2167</span>
+<span class="normal">2168</span>
+<span class="normal">2169</span>
+<span class="normal">2170</span>
+<span class="normal">2171</span>
+<span class="normal">2172</span>
+<span class="normal">2173</span>
+<span class="normal">2174</span>
+<span class="normal">2175</span>
+<span class="normal">2176</span>
+<span class="normal">2177</span>
+<span class="normal">2178</span>
+<span class="normal">2179</span>
+<span class="normal">2180</span>
+<span class="normal">2181</span>
+<span class="normal">2182</span>
+<span class="normal">2183</span>
+<span class="normal">2184</span>
+<span class="normal">2185</span>
+<span class="normal">2186</span>
+<span class="normal">2187</span>
+<span class="normal">2188</span>
+<span class="normal">2189</span>
+<span class="normal">2190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">quantity</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">DateValue</span> <span class="o">=</span> <span class="s2">&quot;stop&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Report</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the latest calibration report.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        quantity: The measurand [quantity][msl.equipment.schema.Measurand.quantity].</span>
+<span class="sd">        name: The component [name][msl.equipment.schema.Component.name].</span>
+<span class="sd">        date: Which date in a report to use to determine what _latest_ refers to:</span>
+
+<span class="sd">            * `issue`: Report issue date</span>
+<span class="sd">            * `start`: Measurement start date</span>
+<span class="sd">            * `stop`: Measurement stop date</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The latest [Report][msl.equipment.schema.Report]) for the specified `quantity` and `name`.</span>
+<span class="sd">            If the _equipment_ has only one measurand _quantity_ and only one _component_ and if the</span>
+<span class="sd">            `quantity` and `name` values are both empty strings then that report is returned. Otherwise,</span>
+<span class="sd">            returns `None` if there is no report that matches the `quantity` and `name` criteria or the</span>
+<span class="sd">            _equipment_ does not have calibration reports entered in the register.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reports</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latest_reports</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">reports</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">quantity</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">reports</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">q</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">reports</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">quantity</span> <span class="o">==</span> <span class="n">q</span> <span class="ow">and</span> <span class="n">name</span> <span class="o">==</span> <span class="n">n</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">report</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="msl.equipment.schema.Equipment.latest_reports" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">latest_reports</span>
+
+
+<a href="#msl.equipment.schema.Equipment.latest_reports" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">latest_reports</span><span class="p">(</span>
+    <span class="n">date</span><span class="p">:</span> <span class="n"><span title="msl.equipment._types.DateValue">DateValue</span></span> <span class="o">=</span> <span class="s2">&quot;stop&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="collections.abc.Iterator" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator">Iterator</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="Report
+
+
+  
+      dataclass
+   (msl.equipment.schema.Report)" href="../report/#msl.equipment.schema.Report">Report</a></span><span class="p">]]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Yields the latest calibration reports for every measurand <em>quantity</em> and <em>component</em>.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>date</code>
+            </td>
+            <td>
+                  <code><span title="msl.equipment._types.DateValue">DateValue</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Which date in a report to use to determine what <em>latest</em> refers to:</p>
+<ul>
+<li><code>issue</code>: Report issue date</li>
+<li><code>start</code>: Measurement start date</li>
+<li><code>stop</code>: Measurement stop date</li>
+</ul>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;stop&#39;</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Yields:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-internal" title="Report
+
+
+  
+      dataclass
+   (msl.equipment.schema.Report)" href="../report/#msl.equipment.schema.Report">Report</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The (<a class="autorefs autorefs-internal" title="quantity
+
+
+  
+      instance-attribute
+  " href="../measurand/#msl.equipment.schema.Measurand.quantity">quantity</a>,
+<a class="autorefs autorefs-internal" title="name
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="../component/#msl.equipment.schema.Component.name">name</a>,
+<a class="autorefs autorefs-internal" title="Report
+
+
+  
+      dataclass
+  " href="../report/#msl.equipment.schema.Report">Report</a>) value for the latest calibration report.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2127</span>
+<span class="normal">2128</span>
+<span class="normal">2129</span>
+<span class="normal">2130</span>
+<span class="normal">2131</span>
+<span class="normal">2132</span>
+<span class="normal">2133</span>
+<span class="normal">2134</span>
+<span class="normal">2135</span>
+<span class="normal">2136</span>
+<span class="normal">2137</span>
+<span class="normal">2138</span>
+<span class="normal">2139</span>
+<span class="normal">2140</span>
+<span class="normal">2141</span>
+<span class="normal">2142</span>
+<span class="normal">2143</span>
+<span class="normal">2144</span>
+<span class="normal">2145</span>
+<span class="normal">2146</span>
+<span class="normal">2147</span>
+<span class="normal">2148</span>
+<span class="normal">2149</span>
+<span class="normal">2150</span>
+<span class="normal">2151</span>
+<span class="normal">2152</span>
+<span class="normal">2153</span>
+<span class="normal">2154</span>
+<span class="normal">2155</span>
+<span class="normal">2156</span>
+<span class="normal">2157</span>
+<span class="normal">2158</span>
+<span class="normal">2159</span>
+<span class="normal">2160</span>
+<span class="normal">2161</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">DateValue</span> <span class="o">=</span> <span class="s2">&quot;stop&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Report</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Yields the latest calibration reports for every measurand _quantity_ and _component_.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        date: Which date in a report to use to determine what _latest_ refers to:</span>
+
+<span class="sd">            * `issue`: Report issue date</span>
+<span class="sd">            * `start`: Measurement start date</span>
+<span class="sd">            * `stop`: Measurement stop date</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        The ([quantity][msl.equipment.schema.Measurand.quantity],</span>
+<span class="sd">            [name][msl.equipment.schema.Component.name],</span>
+<span class="sd">            [Report][msl.equipment.schema.Report]) value for the latest calibration report.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">default</span> <span class="o">=</span> <span class="n">_date</span><span class="p">(</span><span class="mi">1875</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibrations</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">components</span><span class="p">:</span>
+            <span class="n">latest</span> <span class="o">=</span> <span class="n">default</span>
+            <span class="n">report</span><span class="p">:</span> <span class="n">Report</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">reports</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">date</span> <span class="o">==</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">measurement_stop_date</span> <span class="o">&gt;</span> <span class="n">latest</span><span class="p">:</span>
+                        <span class="n">report</span> <span class="o">=</span> <span class="n">r</span>
+                        <span class="n">latest</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">measurement_stop_date</span>
+                <span class="k">elif</span> <span class="n">date</span> <span class="o">==</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">measurement_start_date</span> <span class="o">&gt;</span> <span class="n">latest</span><span class="p">:</span>
+                        <span class="n">report</span> <span class="o">=</span> <span class="n">r</span>
+                        <span class="n">latest</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">measurement_start_date</span>
+                <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">report_issue_date</span> <span class="o">&gt;</span> <span class="n">latest</span><span class="p">:</span>
+                    <span class="n">report</span> <span class="o">=</span> <span class="n">r</span>
+                    <span class="n">latest</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">report_issue_date</span>
+
+            <span class="k">if</span> <span class="n">report</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">m</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">report</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3052,29 +3515,7 @@ is active (in use) or inactive (not in use).</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2042</span>
-<span class="normal">2043</span>
-<span class="normal">2044</span>
-<span class="normal">2045</span>
-<span class="normal">2046</span>
-<span class="normal">2047</span>
-<span class="normal">2048</span>
-<span class="normal">2049</span>
-<span class="normal">2050</span>
-<span class="normal">2051</span>
-<span class="normal">2052</span>
-<span class="normal">2053</span>
-<span class="normal">2054</span>
-<span class="normal">2055</span>
-<span class="normal">2056</span>
-<span class="normal">2057</span>
-<span class="normal">2058</span>
-<span class="normal">2059</span>
-<span class="normal">2060</span>
-<span class="normal">2061</span>
-<span class="normal">2062</span>
-<span class="normal">2063</span>
-<span class="normal">2064</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2064</span>
 <span class="normal">2065</span>
 <span class="normal">2066</span>
 <span class="normal">2067</span>
@@ -3113,7 +3554,29 @@ is active (in use) or inactive (not in use).</p>
 <span class="normal">2100</span>
 <span class="normal">2101</span>
 <span class="normal">2102</span>
-<span class="normal">2103</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">2103</span>
+<span class="normal">2104</span>
+<span class="normal">2105</span>
+<span class="normal">2106</span>
+<span class="normal">2107</span>
+<span class="normal">2108</span>
+<span class="normal">2109</span>
+<span class="normal">2110</span>
+<span class="normal">2111</span>
+<span class="normal">2112</span>
+<span class="normal">2113</span>
+<span class="normal">2114</span>
+<span class="normal">2115</span>
+<span class="normal">2116</span>
+<span class="normal">2117</span>
+<span class="normal">2118</span>
+<span class="normal">2119</span>
+<span class="normal">2120</span>
+<span class="normal">2121</span>
+<span class="normal">2122</span>
+<span class="normal">2123</span>
+<span class="normal">2124</span>
+<span class="normal">2125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Equipment][msl.equipment.schema.Equipment] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>

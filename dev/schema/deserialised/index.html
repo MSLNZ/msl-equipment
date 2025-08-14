@@ -510,6 +510,8 @@
       
         
       
+        
+      
     
     
     
@@ -661,6 +663,29 @@
   
   <span class="md-ellipsis">
     Any
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../component/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Component
     
   </span>
   
@@ -1656,14 +1681,7 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">761</span>
-<span class="normal">762</span>
-<span class="normal">763</span>
-<span class="normal">764</span>
-<span class="normal">765</span>
-<span class="normal">766</span>
-<span class="normal">767</span>
-<span class="normal">768</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">768</span>
 <span class="normal">769</span>
 <span class="normal">770</span>
 <span class="normal">771</span>
@@ -1685,7 +1703,14 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
 <span class="normal">787</span>
 <span class="normal">788</span>
 <span class="normal">789</span>
-<span class="normal">790</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">790</span>
+<span class="normal">791</span>
+<span class="normal">792</span>
+<span class="normal">793</span>
+<span class="normal">794</span>
+<span class="normal">795</span>
+<span class="normal">796</span>
+<span class="normal">797</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Deserialised</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a [serialised][type_serialised]{:target=&quot;_blank&quot;} XML element into a [Deserialised][msl.equipment.schema.Deserialised] instance.</span>
 
@@ -1767,14 +1792,7 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">792</span>
-<span class="normal">793</span>
-<span class="normal">794</span>
-<span class="normal">795</span>
-<span class="normal">796</span>
-<span class="normal">797</span>
-<span class="normal">798</span>
-<span class="normal">799</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">799</span>
 <span class="normal">800</span>
 <span class="normal">801</span>
 <span class="normal">802</span>
@@ -1790,7 +1808,14 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
 <span class="normal">812</span>
 <span class="normal">813</span>
 <span class="normal">814</span>
-<span class="normal">815</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">815</span>
+<span class="normal">816</span>
+<span class="normal">817</span>
+<span class="normal">818</span>
+<span class="normal">819</span>
+<span class="normal">820</span>
+<span class="normal">821</span>
+<span class="normal">822</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Deserialised][msl.equipment.schema.Deserialised] class into a [serialised][type_serialised]{:target=&quot;_blank&quot;} XML element.</span>
 
 <span class="sd">    Returns:</span>

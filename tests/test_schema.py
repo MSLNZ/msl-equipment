@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import sys
 from datetime import date
 from io import StringIO
+from pathlib import Path
 from typing import TYPE_CHECKING, cast
-from xml.etree.ElementTree import XML, Element, tostring
+from xml.etree.ElementTree import XML, Element, ElementTree, tostring
 
 import numpy as np
 import pytest
@@ -728,11 +730,11 @@ def test_table() -> None:
         <header> Wavelength         , Irradiance     ,u(Irradiance), Is Good?, Letter</header>
         <data>
             250, 0.01818, 0.02033, True, A
-            300, 0.18478, 0.01755, true, B
-            350, 0.80845, 0.01606, 0, C
-            400, 2.21355, 0.01405, FALSE, D
-            450, 4.49004, 0.01250, 1, E
-            500, 7.45135, 0.01200, TRUE, F
+            300, 0.18478, 0.01755, true,B
+            350, 0.80845, 0.01606, 0,        C
+            400, 2.21355, 0.01405, FALSE,   D
+            450, 4.49004, 0.01250, 1,   E
+            500, 7.45135, 0.01200, TRUE,                 F G HIJ-K L
         </data>
     </table>
     """
@@ -751,7 +753,7 @@ def test_table() -> None:
     assert t.types["Is Good?"] == np.dtype(dtype=bool)
     assert t.types["Letter"] == np.dtype(dtype=object)
     assert np.array_equal(t["Wavelength"], [250, 300, 350, 400, 450, 500])
-    assert np.array_equal(t[1].tolist(), [300, 0.18478, 0.01755, True, " B"])  # type: ignore[arg-type]
+    assert np.array_equal(t[1].tolist(), [300, 0.18478, 0.01755, True, "B"])  # type: ignore[arg-type]
     assert t.dtype.names is not None
     assert np.array_equal(t.dtype.names, t.header)
     assert t.units.dtype.names is not None
@@ -780,21 +782,6 @@ def test_table() -> None:
     cosine = cast("Table", np.cos(t["Irradiance"] + 0.5))
     assert cosine.comment == "Spectral Irradiance"
 
-    assert tostring(t.to_xml()) == (
-        b'<table comment="Spectral Irradiance">'
-        b"<type>int,double,double,bool,string</type>"
-        b"<unit>nm,W/m^2,W/m^2,,</unit>"
-        b"<header>Wavelength,Irradiance,u(Irradiance),Is Good?,Letter</header>"
-        b"<data>250,0.01818,0.02033,True, A\n"
-        b"300,0.18478,0.01755,True, B\n"
-        b"350,0.80845,0.01606,False, C\n"
-        b"400,2.21355,0.01405,False, D\n"
-        b"450,4.49004,0.0125,True, E\n"
-        b"500,7.45135,0.012,True, F\n"
-        b"</data>"
-        b"</table>"
-    )
-
     # creating an unstructured array from a structured array that contains numerics and strings
     un = t.unstructured()
     assert un.dtype == np.object_
@@ -802,16 +789,120 @@ def test_table() -> None:
         un,
         np.array(
             [
-                [250, 0.01818, 0.02033, True, " A"],
-                [300, 0.18478, 0.01755, True, " B"],
-                [350, 0.80845, 0.01606, False, " C"],
-                [400, 2.21355, 0.01405, False, " D"],
-                [450, 4.49004, 0.01250, True, " E"],
-                [500, 7.45135, 0.01200, True, " F"],
+                [250, 0.01818, 0.02033, True, "A"],
+                [300, 0.18478, 0.01755, True, "B"],
+                [350, 0.80845, 0.01606, False, "C"],
+                [400, 2.21355, 0.01405, False, "D"],
+                [450, 4.49004, 0.01250, True, "E"],
+                [500, 7.45135, 0.01200, True, "F G HIJ-K L"],
             ],
             dtype=object,
         ),
     )
+
+
+def test_table_to_string_indent() -> None:
+    text = """
+    <table comment="Spectral Irradiance">
+        <type> int    , double,           double, bool, string </type>
+        <unit> nm,   W/m^2,      W/m^2, ,   </unit>
+        <header> Wavelength         , Irradiance     ,u(Irradiance), Is Good?, Letter</header>
+        <data>
+            250, 0.01818, 0.02033, True, A
+            300, 0.18478, 0.01755, true,B
+            350, 0.80845, 0.01606, 0, C
+            400, 2.21355, 0.01405, FALSE,     D
+            450, 4.49004, 0.01250, 1, E
+            500, 7.45135, 0.01200, TRUE,  F
+        </data>
+    </table>
+    """
+    t = Table.from_xml(XML(text))
+    assert hasattr(t, "INDENT")
+
+    indent = Table.INDENT
+
+    Table.INDENT = 0
+    assert tostring(t.to_xml()) == (
+        b'<table comment="Spectral Irradiance">'
+        b"<type>int,double,double,bool,string</type>"
+        b"<unit>nm,W/m^2,W/m^2,,</unit>"
+        b"<header>Wavelength,Irradiance,u(Irradiance),Is Good?,Letter</header>"
+        b"<data>250,0.01818,0.02033,True,A\n"
+        b"300,0.18478,0.01755,True,B\n"
+        b"350,0.80845,0.01606,False,C\n"
+        b"400,2.21355,0.01405,False,D\n"
+        b"450,4.49004,0.0125,True,E\n"
+        b"500,7.45135,0.012,True,F\n"
+        b"</data>"
+        b"</table>"
+    )
+
+    Table.INDENT = 2
+    assert tostring(t.to_xml()) == (
+        b'<table comment="Spectral Irradiance">'
+        b"<type>int,double,double,bool,string</type>"
+        b"<unit>nm,W/m^2,W/m^2,,</unit>"
+        b"<header>Wavelength,Irradiance,u(Irradiance),Is Good?,Letter</header>"
+        b"<data>250,0.01818,0.02033,True,A\n"
+        b"  300,0.18478,0.01755,True,B\n"
+        b"  350,0.80845,0.01606,False,C\n"
+        b"  400,2.21355,0.01405,False,D\n"
+        b"  450,4.49004,0.0125,True,E\n"
+        b"  500,7.45135,0.012,True,F\n"
+        b"</data>"
+        b"</table>"
+    )
+
+    Table.INDENT = 5
+    assert tostring(t.to_xml()) == (
+        b'<table comment="Spectral Irradiance">'
+        b"<type>int,double,double,bool,string</type>"
+        b"<unit>nm,W/m^2,W/m^2,,</unit>"
+        b"<header>Wavelength,Irradiance,u(Irradiance),Is Good?,Letter</header>"
+        b"<data>250,0.01818,0.02033,True,A\n"
+        b"     300,0.18478,0.01755,True,B\n"
+        b"     350,0.80845,0.01606,False,C\n"
+        b"     400,2.21355,0.01405,False,D\n"
+        b"     450,4.49004,0.0125,True,E\n"
+        b"     500,7.45135,0.012,True,F\n"
+        b"</data>"
+        b"</table>"
+    )
+
+    Table.INDENT = 6
+    assert tostring(t.to_xml()) == (
+        b'<table comment="Spectral Irradiance">'
+        b"<type>int,double,double,bool,string</type>"
+        b"<unit>nm,W/m^2,W/m^2,,</unit>"
+        b"<header>Wavelength,Irradiance,u(Irradiance),Is Good?,Letter</header>"
+        b"<data>250,0.01818,0.02033,True,A\n"
+        b"      300,0.18478,0.01755,True,B\n"
+        b"      350,0.80845,0.01606,False,C\n"
+        b"      400,2.21355,0.01405,False,D\n"
+        b"      450,4.49004,0.0125,True,E\n"
+        b"      500,7.45135,0.012,True,F\n"
+        b"</data>"
+        b"</table>"
+    )
+
+    Table.INDENT = 7
+    assert tostring(t.to_xml()) == (
+        b'<table comment="Spectral Irradiance">'
+        b"<type>int,double,double,bool,string</type>"
+        b"<unit>nm,W/m^2,W/m^2,,</unit>"
+        b"<header>Wavelength,Irradiance,u(Irradiance),Is Good?,Letter</header>"
+        b"<data>250,0.01818,0.02033,True,A\n"
+        b"       300,0.18478,0.01755,True,B\n"
+        b"       350,0.80845,0.01606,False,C\n"
+        b"       400,2.21355,0.01405,False,D\n"
+        b"       450,4.49004,0.0125,True,E\n"
+        b"       500,7.45135,0.012,True,F\n"
+        b" </data>"
+        b"</table>"
+    )
+
+    Table.INDENT = indent
 
 
 def test_cvd() -> None:
@@ -1098,12 +1189,12 @@ def test_performance_check() -> None:
         b"<type>int,double,double,bool,string</type>"
         b"<unit>nm,W/m^2,W/m^2,,</unit>"
         b"<header>Wavelength,Irradiance,u(Irradiance),Is Good?,Letter</header>"
-        b"<data>250,0.01818,0.02033,True, A\n"
-        b"300,0.18478,0.01755,True, B\n"
-        b"350,0.80845,0.01606,False, C\n"
-        b"400,2.21355,0.01405,False, D\n"
-        b"450,4.49004,0.0125,True, E\n"
-        b"500,7.45135,0.012,True, F\n"
+        b"<data>250,0.01818,0.02033,True,A\n"
+        b"   300,0.18478,0.01755,True,B\n"
+        b"   350,0.80845,0.01606,False,C\n"
+        b"   400,2.21355,0.01405,False,D\n"
+        b"   450,4.49004,0.0125,True,E\n"
+        b"   500,7.45135,0.012,True,F\n"
         b"</data>"
         b"</table>"
         b"<cvdCoefficients>"
@@ -1139,7 +1230,11 @@ def test_performance_check() -> None:
     assert len(pc.files) == 1
     assert len(pc.deserialised) == 1
     assert len(pc.tables) == 1
+
+    indent = Table.INDENT
+    Table.INDENT = 3
     assert tostring(pc.to_xml()) == text
+    Table.INDENT = indent
 
 
 def test_issuing_laboratory_without_person() -> None:
@@ -1218,12 +1313,12 @@ def test_report() -> None:
         b"<type>int,double,double,bool,string</type>"
         b"<unit>nm,W/m^2,W/m^2,,</unit>"
         b"<header>Wavelength,Irradiance,u(Irradiance),Is Good?,Letter</header>"
-        b"<data>250,0.01818,0.02033,True, A\n"
-        b"300,0.18478,0.01755,True, B\n"
-        b"350,0.80845,0.01606,False, C\n"
-        b"400,2.21355,0.01405,False, D\n"
-        b"450,4.49004,0.0125,True, E\n"
-        b"500,7.45135,0.012,True, F\n"
+        b"<data>250,0.01818,0.02033,True,A\n"
+        b"      300,0.18478,0.01755,True,B\n"
+        b"      350,0.80845,0.01606,False,C\n"
+        b"      400,2.21355,0.01405,False,D\n"
+        b"      450,4.49004,0.0125,True,E\n"
+        b"      500,7.45135,0.012,True,F\n"
         b"</data>"
         b"</table>"
         b"<cvdCoefficients>"
@@ -1269,7 +1364,11 @@ def test_report() -> None:
     assert len(r.files) == 1
     assert len(r.deserialised) == 1
     assert len(r.tables) == 1
+
+    indent = Table.INDENT
+    Table.INDENT = 6
     assert tostring(r.to_xml()) == text
+    Table.INDENT = indent
 
 
 def test_component_empty() -> None:
@@ -1413,7 +1512,53 @@ def test_register_empty() -> None:
         _ = r[0]
 
 
-def test_register() -> None:  # noqa: PLR0915
+def test_register_tree_namespace() -> None:
+    r = Register(StringIO('<?xml version="1.0" encoding="UTF-8"?><register team="Length" />'))
+
+    tree = r.tree()
+    assert isinstance(tree, ElementTree)
+    root = tree.getroot()
+    assert root.tag == "register"
+    assert root.attrib == {"team": "Length", "xmlns": r.NAMESPACE}
+    assert root.tail is None
+    assert root.text is None
+    assert len(root) == 0
+
+    for ns in [None, ""]:
+        with StringIO() as buffer:
+            r.tree(namespace=ns).write(buffer, xml_declaration=True, encoding="unicode")
+            assert buffer.getvalue() == "<?xml version='1.0' encoding='utf-8'?>\n<register team=\"Length\" />"
+
+    with StringIO() as buffer:
+        r.tree().write(buffer, xml_declaration=True, encoding="unicode")
+        assert (
+            buffer.getvalue()
+            == f"<?xml version='1.0' encoding='utf-8'?>\n<register team=\"Length\" xmlns=\"{r.NAMESPACE}\" />"
+        )
+
+
+@pytest.mark.skipif(sys.version_info[:2] < (3, 9), reason="requires xml indent() function")
+def test_register_read_write_same_output() -> None:
+    from xml.etree.ElementTree import indent  # noqa: PLC0415
+
+    assert Table.INDENT == 34  # noqa: PLR2004
+
+    path = Path("tests/resources/register.xml")
+    r = Register(path)
+    tree = r.tree()
+    indent(tree, space="    ")
+
+    buffer = StringIO()
+    tree.write(buffer, xml_declaration=True, encoding="unicode")
+
+    lines1 = buffer.getvalue().splitlines()
+    lines2 = path.read_text().splitlines()
+    assert len(lines1) == len(lines2)
+    for line1, line2 in zip(lines1, lines2):
+        assert line1 == line2
+
+
+def test_register_from_file() -> None:  # noqa: PLR0915
     r = Register("tests/resources/register.xml")
     assert r.team == "Mass"
     assert len(r) == 2  # noqa: PLR2004
@@ -1503,7 +1648,7 @@ def test_register() -> None:  # noqa: PLR0915
     assert second.serial == "Serial"
     assert second.description == "Monitors the ambient lab temperature and humidity"
     assert len(second.specifications) == 1
-    assert second.specifications[0].tag == "{https://measurement.govt.nz/equipment-register}foo"
+    assert second.specifications[0].tag == "foo"
     assert second.specifications[0].attrib == {"bar": "baz"}
     assert second.specifications[0].text == "bar"
     assert second.location == "Mass Standards Laboratories"
@@ -1520,20 +1665,23 @@ def test_register() -> None:  # noqa: PLR0915
     assert len(second.firmware) == 2  # noqa: PLR2004
     assert second.firmware[1].version == "1.02"
     assert len(second.specified_requirements) == 1
-    assert second.specified_requirements[0].tag == "{https://measurement.govt.nz/equipment-register}foo"
+    assert second.specified_requirements[0].tag == "foo"
     assert second.specified_requirements[0].attrib == {"bar": "baz"}
     assert second.specified_requirements[0].text == "bar"
     assert len(second.reference_materials) == 1
     assert second.reference_materials.attrib == {"key": "value"}
-    assert second.reference_materials[0].tag == "{https://measurement.govt.nz/equipment-register}fruit"
+    assert second.reference_materials[0].tag == "fruit"
     assert second.reference_materials[0].attrib == {"colour": "red", "size": "small"}
     assert second.reference_materials[0].text == "apple"
     assert len(second.quality_manual.accessories) == 1
-    assert second.quality_manual.accessories[0].tag == "{https://measurement.govt.nz/equipment-register}colour"
+    assert second.quality_manual.accessories[0].tag == "colour"
     assert second.quality_manual.accessories[0].attrib == {"mode": "RGB"}
     assert len(second.quality_manual.accessories[0]) == 3  # noqa: PLR2004
+    assert second.quality_manual.accessories[0][0].tag == "r"
     assert second.quality_manual.accessories[0][0].text == "34"
+    assert second.quality_manual.accessories[0][1].tag == "g"
     assert second.quality_manual.accessories[0][1].text == "0"
+    assert second.quality_manual.accessories[0][2].tag == "b"
     assert second.quality_manual.accessories[0][2].text == "187"
     assert second.quality_manual.financial.year_purchased == 2023  # noqa: PLR2004
     assert second.quality_manual.financial.asset_number == "Whatever"

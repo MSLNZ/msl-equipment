@@ -118,4 +118,4 @@ Table([[2.500000e+02, 1.818000e-02, 2.033000e-02],
 
 ::: msl.equipment.schema
     options:
-        filters: ["Table", "from_xml", "to_xml", "__new__", "types", "units", "header", "comment", "unstructured"]
+        filters: ["Table", "from_xml", "to_xml", "__new__", "types", "units", "header", "comment", "unstructured", "INDENT"]

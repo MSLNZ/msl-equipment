@@ -6,15 +6,14 @@ from enum import Enum
 from io import StringIO
 from math import isinf
 from typing import TYPE_CHECKING, NamedTuple
-from xml.etree import ElementTree as ET
-from xml.etree.ElementTree import Element, SubElement
+from xml.etree.ElementTree import Element, ElementTree, SubElement
 
 import numpy as np
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
     from typing import Any as _Any
-    from typing import Literal, TypeVar
+    from typing import Callable, Literal, TypeVar
 
     from numpy.typing import ArrayLike, DTypeLike, NDArray
 
@@ -108,6 +107,10 @@ class Any(Element):
         Returns:
             The subclass instance.
         """
+        prefix = f"{{{Register.NAMESPACE}}}"
+        for e in element.iter():
+            e.tag = e.tag.removeprefix(prefix)
+
         c = cls(**element.attrib)
         c.tail = element.tail
         c.text = element.text
@@ -1137,6 +1140,13 @@ class CVDEquation:
 class Table(np.ndarray):
     """Represents the [table][type_table]{:target="_blank"} element in an equipment register."""
 
+    INDENT: int = 34
+    """The number of spaces to indent each row in the `<data>` element when converting the
+    [Table][msl.equipment.schema.Table] to an XML element, see [to_xml][msl.equipment.schema.Table.to_xml].
+    The default, _34_, is appropriate when saving a [Register][msl.equipment.schema.Register] to a file
+    using _4_ spaces for each child element via the [indent][xml.etree.ElementTree.indent]{:target="_blank"}
+    function and _20_ if indenting with _2_ spaces."""
+
     comment: str = ""
     """A comment that is associated with the table."""
 
@@ -1227,11 +1237,15 @@ class Table(np.ndarray):
                 the index of a column. If you prefer to work with unstructured data, call
                 [unstructured][msl.equipment.schema.Table.unstructured] on the returned object.
         """
+        booleans = {"True", "true", "TRUE", "1", b"True", b"true", b"TRUE", b"1"}
 
         def convert_bool(value: str | bytes) -> bool:
-            # the value is of type bytes for the latest version of numpy (1.24.4) that supports Python 3.8,
-            # in versions of numpy that support Python 3.9+ it is a string
-            return value.strip() in {"True", "true", "TRUE", "1", b"True", b"true", b"TRUE", b"1"}
+            # the value can be of type bytes for numpy < 2.0
+            return value.strip() in booleans
+
+        def strip_string(value: str | bytes) -> str | bytes:
+            # the value can be of type bytes for numpy < 2.0
+            return value.strip()
 
         # Schema forces order
         _type = [s.strip() for s in (element[0].text or "").split(",")]
@@ -1239,8 +1253,11 @@ class Table(np.ndarray):
         _header = [s.strip() for s in (element[2].text or "").split(",")]
         _file = StringIO((element[3].text or "").strip())
 
-        # must handle boolean column separately
-        conv = {i: convert_bool for i, v in enumerate(_type) if v == "bool"}
+        # must handle boolean column and string column separately
+        conv: dict[int, Callable[[str | bytes], str | bytes | bool]] = {
+            i: convert_bool for i, v in enumerate(_type) if v == "bool"
+        }
+        conv.update({i: strip_string for i, v in enumerate(_type) if v == "string"})
 
         dtype = np.dtype([(h, schema_numpy_map[t]) for h, t in zip(_header, _type)])
         data = np.loadtxt(_file, dtype=dtype, delimiter=",", converters=conv)  # type: ignore[arg-type]  # pyright: ignore[reportCallIssue, reportArgumentType, reportUnknownVariableType]
@@ -1278,9 +1295,10 @@ class Table(np.ndarray):
         header.text = ",".join(self.header)
 
         buffer = StringIO()
-        np.savetxt(buffer, self, fmt="%s", delimiter=",")
+        newline = "\n" + " " * Table.INDENT
+        np.savetxt(buffer, self, fmt="%s", delimiter=",", newline=newline)
         data = SubElement(e, "data")
-        data.text = buffer.getvalue()
+        data.text = buffer.getvalue().rstrip() + "\n" + " " * max(0, Table.INDENT - len("<data>"))
 
         return e
 
@@ -2106,6 +2124,9 @@ class Equipment:
 class Register:
     """Represents the [register][element_register]{:target="_blank"} element in an equipment register."""
 
+    NAMESPACE: str = "https://measurement.govt.nz/equipment-register"
+    """Default XML namespace."""
+
     def __init__(self, source: XMLSource) -> None:
         """Represents the [register][element_register]{:target="_blank"} element in an equipment register.
 
@@ -2113,7 +2134,7 @@ class Register:
             source: A [path-like object][]{:target="_blank"} or a [file-like object][]{:target="_blank"}
                 that contains an equipment register.
         """
-        self._root: Element[str] = ET.parse(source).getroot()  # noqa: S314
+        self._root: Element[str] = ElementTree().parse(source)
         self._equipment: list[Equipment | None] = [None] * len(self._root)
 
         # a mapping between the alias/id and the index number in the register
@@ -2159,13 +2180,25 @@ class Register:
         """[str][] &mdash; Returns the name of the team that is responsible for the equipment register."""
         return self._root.attrib["team"]
 
-    def tree(self) -> ET.ElementTree[Element[str]]:
-        """Convert the [Register][msl.equipment.schema.Register] class into an XML tree.
+    def tree(self, namespace: str | None = "DEFAULT") -> ElementTree[Element[str]]:
+        """Convert the [Register][msl.equipment.schema.Register] class into an XML element tree.
+
+        Args:
+            namespace: The namespace to associate with the root element. If the value is
+                `DEFAULT`, uses the value of [NAMESPACE][msl.equipment.schema.Register.NAMESPACE]
+                as the namespace. If `None`, or an empty string, no namespace is associated
+                with the root element.
 
         Returns:
             The [Register][msl.equipment.schema.Register] as an
                 [ElementTree][xml.etree.ElementTree.ElementTree]{:target="_blank"}.
         """
-        e = Element("register", attrib={"team": self.team})
+        attrib = {"team": self.team}
+        if namespace:
+            if namespace == "DEFAULT":
+                namespace = self.NAMESPACE
+            attrib["xmlns"] = namespace
+
+        e = Element("register", attrib=attrib)
         e.extend(equipment.to_xml() for equipment in self)
-        return ET.ElementTree(element=e)
+        return ElementTree(element=e)

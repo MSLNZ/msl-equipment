@@ -1573,8 +1573,11 @@ def test_register_read_write_same_output() -> None:
     lines1 = buffer.getvalue().splitlines()
     lines2 = path.read_text().splitlines()
     assert len(lines1) == len(lines2)
-    for line1, line2 in zip(lines1, lines2):
-        assert line1 == line2
+    for i, (line1, line2) in enumerate(zip(lines1, lines2)):
+        if i == 0 and (sys.platform == "darwin" and sys.version_info[:2] == (3, 9)):
+            assert line1 == line2.replace("utf", "UTF")
+        else:
+            assert line1 == line2
 
 
 def test_register_from_file() -> None:  # noqa: PLR0915

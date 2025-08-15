@@ -1033,6 +1033,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#msl.equipment.schema.future_date" class="md-nav__link">
+    <span class="md-ellipsis">
+      future_date
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1399,6 +1408,15 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#msl.equipment.schema.future_date" class="md-nav__link">
+    <span class="md-ellipsis">
+      future_date
+    </span>
+  </a>
   
 </li>
       
@@ -1791,6 +1809,149 @@ from an equipment register.</p>
 
 </div>
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="msl.equipment.schema.future_date" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">future_date</span>
+
+
+<a href="#msl.equipment.schema.future_date" class="headerlink" title="Permanent link">¤</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">future_date</span><span class="p">(</span><span class="n">relative_to</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span><span class="p">,</span> <span class="n">years</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Calculate a date in the future.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>relative_to</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The relative-to date.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>years</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The number of years in the future (e.g., use 0.5 for 6 months).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The future date.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1913</span>
+<span class="normal">1914</span>
+<span class="normal">1915</span>
+<span class="normal">1916</span>
+<span class="normal">1917</span>
+<span class="normal">1918</span>
+<span class="normal">1919</span>
+<span class="normal">1920</span>
+<span class="normal">1921</span>
+<span class="normal">1922</span>
+<span class="normal">1923</span>
+<span class="normal">1924</span>
+<span class="normal">1925</span>
+<span class="normal">1926</span>
+<span class="normal">1927</span>
+<span class="normal">1928</span>
+<span class="normal">1929</span>
+<span class="normal">1930</span>
+<span class="normal">1931</span>
+<span class="normal">1932</span>
+<span class="normal">1933</span>
+<span class="normal">1934</span>
+<span class="normal">1935</span>
+<span class="normal">1936</span>
+<span class="normal">1937</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">future_date</span><span class="p">(</span><span class="n">relative_to</span><span class="p">:</span> <span class="n">_date</span><span class="p">,</span> <span class="n">years</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_date</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate a date in the future.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        relative_to: The relative-to date.</span>
+<span class="sd">        years: The number of years in the future (e.g., use 0.5 for 6 months).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The future date.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">year</span><span class="p">,</span> <span class="n">month_decimal</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">month</span> <span class="o">=</span> <span class="n">relative_to</span><span class="o">.</span><span class="n">month</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">month_decimal</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span>  <span class="c1"># round down so a calibration happens sooner</span>
+    <span class="k">if</span> <span class="n">month</span> <span class="o">&gt;</span> <span class="mi">12</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
+        <span class="n">year</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">month</span> <span class="o">-=</span> <span class="mi">12</span>
+
+    <span class="k">if</span> <span class="n">month</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
+        <span class="n">day</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>  <span class="c1"># ignore leap years</span>
+    <span class="k">elif</span> <span class="n">month</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">}:</span>  <span class="c1"># April, June, September, November</span>
+        <span class="n">day</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="n">relative_to</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">day</span> <span class="o">=</span> <span class="n">relative_to</span><span class="o">.</span><span class="n">day</span>
+
+    <span class="n">year</span> <span class="o">=</span> <span class="n">relative_to</span><span class="o">.</span><span class="n">year</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">relative_to</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="n">day</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 

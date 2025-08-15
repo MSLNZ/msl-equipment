@@ -2288,13 +2288,17 @@ class Register:
                 `DEFAULT`, uses the value of [NAMESPACE][msl.equipment.schema.Register.NAMESPACE]
                 as the namespace. If `None`, or an empty string, no namespace is associated
                 with the root element.
-            indent: The number of spaces to indent sub-tree elements. The value must be &ge; 0.
-                This parameter is ignored if Python is &lt; 3.9.
+            indent: The number of spaces to indent sub elements. The value must be &ge; 0.
+                This parameter is ignored if the version of Python is &lt; 3.9.
 
         Returns:
             The [Register][msl.equipment.schema.Register] as an
                 [ElementTree][xml.etree.ElementTree.ElementTree]{:target="_blank"}.
         """
+        if indent < 0:
+            msg = f"Indentation must be >= 0, got {indent}"
+            raise ValueError(msg)
+
         attrib = {"team": self.team}
         if namespace:
             if namespace == "DEFAULT":

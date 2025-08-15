@@ -2111,3 +2111,8 @@ def test_register_cannot_merge() -> None:
     reg2 = StringIO('<?xml version="1.0" encoding="utf-8"?>\n<register team="B" />')
     with pytest.raises(ValueError, match="different teams, 'A' != 'B'"):
         _ = Register(reg1, reg2)
+
+
+def test_register_tree_negative_indent() -> None:
+    with pytest.raises(ValueError, match=">= 0, got -1"):
+        _ = Register().tree(indent=-1)

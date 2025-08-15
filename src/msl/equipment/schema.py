@@ -21,6 +21,7 @@ if TYPE_CHECKING:
     from ._types import XMLSource
 
     A = TypeVar("A", bound="Any")
+    L = TypeVar("L", bound="Latest")
 
 equation_map = {
     "pi": np.pi,
@@ -50,6 +51,49 @@ numpy_schema_map = {
     "d": "double",
     "O": "string",
 }
+
+
+class _Indent:
+    table_data: int = 0
+
+
+def _future_date(relative_to: _date, years: float) -> _date:
+    """Calculate a date in the future when a calibration is due.
+
+    Args:
+        relative_to: The relative-to date.
+        years: The number of years in the future (e.g., use 0.5 for 6 months).
+
+    Returns:
+        The future date.
+    """
+    year, month_decimal = divmod(years, 1)
+    month = relative_to.month + int(month_decimal * 12)  # round down so a calibration happens sooner
+    if month > 12:  # noqa: PLR2004
+        year += 1
+        month -= 12
+
+    if month == 2:  # noqa: PLR2004
+        day = min(28, relative_to.day)  # ignore leap years
+    elif month in {4, 6, 9, 11}:  # April, June, September, November
+        day = min(30, relative_to.day)
+    else:
+        day = relative_to.day
+
+    year = relative_to.year + int(year)
+    return relative_to.replace(year=year, month=month, day=day)
+
+
+def _latest(*, items: list[L], quantity: str, name: str) -> L | None:
+    """Returns the latest report or performance check."""
+    if len(items) == 1 and (quantity == "" or quantity == items[0].quantity) and (name == "" or name == items[0].name):
+        return items[0]
+
+    for item in items:
+        if quantity == item.quantity and name == item.name:
+            return item
+
+    return None
 
 
 class Status(Enum):
@@ -1143,10 +1187,6 @@ class CVDEquation:
         return e
 
 
-class _Indent:
-    table_data: int = 0
-
-
 class Table(np.ndarray):
     """Represents the [table][type_table]{:target="_blank"} element in an equipment register."""
 
@@ -1910,36 +1950,9 @@ class SpecifiedRequirements(Any):
     """The element's name."""
 
 
-def future_date(relative_to: _date, years: float) -> _date:
-    """Calculate a date in the future.
-
-    Args:
-        relative_to: The relative-to date.
-        years: The number of years in the future (e.g., use 0.5 for 6 months).
-
-    Returns:
-        The future date.
-    """
-    year, month_decimal = divmod(years, 1)
-    month = relative_to.month + int(month_decimal * 12)  # round down so a calibration happens sooner
-    if month > 12:  # noqa: PLR2004
-        year += 1
-        month -= 12
-
-    if month == 2:  # noqa: PLR2004
-        day = min(28, relative_to.day)  # ignore leap years
-    elif month in {4, 6, 9, 11}:  # April, June, September, November
-        day = min(30, relative_to.day)
-    else:
-        day = relative_to.day
-
-    year = relative_to.year + int(year)
-    return relative_to.replace(year=year, month=month, day=day)
-
-
 @dataclass(frozen=True)
 class Latest:
-    """Base class for the latest report or performance check."""
+    """Base class for [LatestReport][msl.equipment.schema.LatestReport] and [LatestPerformanceCheck][msl.equipment.schema.LatestPerformanceCheck]."""  # noqa: E501
 
     calibration_interval: float
     """The number of years that may pass between a calibration or a performance check.
@@ -1948,11 +1961,16 @@ class Latest:
     the value is `0`.
     """
 
-    date: _date
-    """The latest date that the equipment was calibrated."""
-
     name: str
     """The [Component][msl.equipment.schema.Component] name."""
+
+    next_calibration_date: _date
+    """The date that the equipment is due for a re-calibration.
+
+    If the [calibration_interval][msl.equipment.schema.Latest.calibration_interval] is `0`,
+    i.e., the equipment is calibrated on demand, this date is equal to the date that
+    the equipment was last calibrated.
+    """
 
     quantity: str
     """The [Measurand][msl.equipment.schema.Measurand] quantity."""
@@ -1970,9 +1988,8 @@ class Latest:
         if self.calibration_interval <= 0:
             return False  # calibrate on-demand
 
-        next_cal_date = future_date(self.date, self.calibration_interval)
-        from_today = future_date(_date.today(), max(0.0, months / 12.0))  # noqa: DTZ011
-        return from_today >= next_cal_date
+        ask_date = _future_date(_date.today(), max(0.0, months / 12.0))  # noqa: DTZ011
+        return ask_date >= self.next_calibration_date
 
 
 @dataclass(frozen=True)
@@ -1987,7 +2004,7 @@ class LatestReport(Latest):
 class LatestPerformanceCheck(Latest):
     """Latest performance check."""
 
-    check: PerformanceCheck
+    performance_check: PerformanceCheck
     """Latest performance check."""
 
 
@@ -2207,8 +2224,49 @@ class Equipment:
         e.append(self.quality_manual.to_xml())
         return e
 
+    def latest_performance_checks(self) -> Iterator[LatestPerformanceCheck]:
+        """Yields the latest performance check for every _measurand_ and _component_.
+
+        Yields:
+            The latest performance check.
+        """
+        default = _date(1875, 5, 20)
+        for m in self.calibrations:
+            for c in m.components:
+                latest = default
+                check: PerformanceCheck | None = None
+                for pc in c.performance_checks:
+                    if pc.completed_date > latest:
+                        check = pc
+                        latest = pc.completed_date
+
+                if check is not None:
+                    yield LatestPerformanceCheck(
+                        calibration_interval=m.calibration_interval,
+                        name=c.name,
+                        next_calibration_date=_future_date(latest, m.calibration_interval),
+                        performance_check=check,
+                        quantity=m.quantity,
+                    )
+
+    def latest_performance_check(self, *, quantity: str = "", name: str = "") -> LatestPerformanceCheck | None:
+        """Returns the latest performance check.
+
+        Args:
+            quantity: The measurand [quantity][msl.equipment.schema.Measurand.quantity].
+            name: The component [name][msl.equipment.schema.Component.name].
+
+        Returns:
+            The [LatestPerformanceCheck][msl.equipment.schema.LatestPerformanceCheck] for the specified
+                `quantity` and `name`. If the equipment has only one _measurand_ and only one _component_
+                then you do not need to specify a value for the `quantity` and `name`. Returns `None` if
+                there are no performance checks that match the `quantity` and `name` criteria or if
+                the equipment does not have performance checks entered in the register.
+        """
+        return _latest(items=list(self.latest_performance_checks()), quantity=quantity, name=name)
+
     def latest_reports(self, date: Literal["issue", "start", "stop"] = "stop") -> Iterator[LatestReport]:
-        """Yields the latest calibration report for every measurand _quantity_ and _component_.
+        """Yields the latest calibration report for every _measurand_ and _component_.
 
         Args:
             date: Which date in a report to use to determine what _latest_ refers to:
@@ -2241,8 +2299,8 @@ class Equipment:
                 if report is not None:
                     yield LatestReport(
                         calibration_interval=m.calibration_interval,
-                        date=latest,
                         name=c.name,
+                        next_calibration_date=_future_date(latest, m.calibration_interval),
                         report=report,
                         quantity=m.quantity,
                     )
@@ -2263,20 +2321,12 @@ class Equipment:
 
         Returns:
             The [LatestReport][msl.equipment.schema.LatestReport] for the specified `quantity` and `name`.
-                If the _equipment_ has only one measurand _quantity_ and only one _component_ and if the
-                `quantity` and `name` values are both empty strings then that report is returned. Otherwise,
-                returns `None` if there is no report that matches the `quantity` and `name` criteria or the
-                _equipment_ does not have calibration reports entered in the register.
+                If the equipment has only one _measurand_ and only one _component_ then you do not need
+                to specify a value for the `quantity` and `name`. Returns `None` if there are no calibration
+                reports that match the `quantity` and `name` criteria or if the equipment does not have
+                calibration reports entered in the register.
         """
-        reports = list(self.latest_reports(date=date))
-        if len(reports) == 1 and not quantity and not name:
-            return reports[0]
-
-        for report in reports:
-            if quantity == report.quantity and name == report.name:
-                return report
-
-        return None
+        return _latest(items=list(self.latest_reports(date=date)), quantity=quantity, name=name)
 
 
 class Register:

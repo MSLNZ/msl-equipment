@@ -46,7 +46,7 @@ from msl.equipment import (
     Status,
     Table,
 )
-from msl.equipment.schema import Latest, _Indent, future_date  # pyright: ignore[reportPrivateUsage]
+from msl.equipment.schema import Latest, _future_date, _Indent  # pyright: ignore[reportPrivateUsage]
 
 if TYPE_CHECKING:
     from numpy.typing import ArrayLike
@@ -1709,6 +1709,13 @@ def test_latest_report_empty(calibrations: tuple[Measurand, ...]) -> None:
     assert list(e.latest_reports()) == []
 
 
+@pytest.mark.parametrize("calibrations", [(), (Measurand(quantity="A", calibration_interval=1),)])
+def test_latest_performance_check_empty(calibrations: tuple[Measurand, ...]) -> None:
+    e = Equipment(calibrations=calibrations)
+    assert e.latest_performance_check() is None
+    assert list(e.latest_performance_checks()) == []
+
+
 @pytest.mark.parametrize(("value", "expect"), [("stop", "B"), ("issue", "C"), ("start", "B")])
 def test_latest_report_single_measurand_and_component(value: str, expect: str) -> None:
     e = Equipment(
@@ -1759,10 +1766,95 @@ def test_latest_report_single_measurand_and_component(value: str, expect: str) -
     assert latest is not None
     assert latest.report.id == expect
 
-    # If `quantity` or `name` is specified then the Report must match accordingly
+    # Can specify `quantity` and/or `name` provided that the value matches a report
+    latest = e.latest_report(quantity="1", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    assert latest is not None
+    assert latest.report.id == expect
+
+    latest = e.latest_report(name="2", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    assert latest is not None
+    assert latest.report.id == expect
+
+    latest = e.latest_report(quantity="1", name="2", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    assert latest is not None
+    assert latest.report.id == expect
+
+    # If `quantity` and/or `name` are specified then the Report must match accordingly
     latest = e.latest_report(quantity="Anything", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
     assert latest is None
     latest = e.latest_report(name="Anything", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    assert latest is None
+    latest = e.latest_report(quantity="2", name="1", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    assert latest is None
+
+
+def test_latest_performance_check_single_measurand_and_component() -> None:
+    e = Equipment(
+        calibrations=(
+            Measurand(
+                quantity="Temperature",
+                calibration_interval=1,
+                components=(
+                    Component(
+                        name="Probe",
+                        performance_checks=(
+                            PerformanceCheck(
+                                completed_date=date(2023, 6, 3),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="A",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2021, 8, 12),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="B",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2024, 3, 4),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="C",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2024, 3, 3),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="D",
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+    )
+
+    checks = list(e.latest_performance_checks())
+    assert len(checks) == 1
+    assert checks[0].quantity == "Temperature"
+    assert checks[0].name == "Probe"
+    assert checks[0].performance_check.entered_by == "C"
+
+    # Don't specify `quantity` or `name` and the correct report is returned
+    latest = e.latest_performance_check()
+    assert latest is not None
+    assert latest.performance_check.entered_by == "C"
+
+    # Can specify `quantity` and/or `name` provided that the value matches a report
+    latest = e.latest_performance_check(quantity="Temperature")
+    assert latest is not None
+    assert latest.performance_check.entered_by == "C"
+
+    latest = e.latest_performance_check(name="Probe")
+    assert latest is not None
+    assert latest.performance_check.entered_by == "C"
+
+    latest = e.latest_performance_check(quantity="Temperature", name="Probe")
+    assert latest is not None
+    assert latest.performance_check.entered_by == "C"
+
+    # If `quantity` and/or `name` are specified then the Report must match accordingly
+    latest = e.latest_performance_check(quantity="Anything")
+    assert latest is None
+    latest = e.latest_performance_check(name="Anything")
+    assert latest is None
+    latest = e.latest_performance_check(quantity="2", name="1")
     assert latest is None
 
 
@@ -1932,6 +2024,148 @@ def test_latest_report_multiple_measurand_and_components() -> None:
     assert report.report.id == "f"
 
 
+def test_latest_performance_check_multiple_measurand_and_components() -> None:
+    e = Equipment(
+        calibrations=(
+            Measurand(
+                quantity="Temperature",
+                calibration_interval=5,
+                components=(
+                    Component(
+                        name="Probe 1",
+                        performance_checks=(
+                            PerformanceCheck(
+                                completed_date=date(2020, 5, 4),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="A",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2024, 2, 16),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="B",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2022, 3, 22),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="C",
+                            ),
+                        ),
+                    ),
+                    Component(
+                        name="Probe 2",
+                        performance_checks=(
+                            PerformanceCheck(
+                                completed_date=date(2024, 2, 16),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="E",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2020, 5, 4),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="D",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2022, 3, 22),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="F",
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            Measurand(
+                quantity="Humidity",
+                calibration_interval=5,
+                components=(
+                    Component(
+                        name="Probe 1",
+                        performance_checks=(
+                            PerformanceCheck(
+                                completed_date=date(2024, 2, 16),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="b",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2022, 3, 22),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="c",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2024, 2, 17),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="a",
+                            ),
+                        ),
+                    ),
+                    Component(
+                        name="Probe 2",
+                        performance_checks=(
+                            PerformanceCheck(
+                                completed_date=date(2024, 2, 16),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="e",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2020, 5, 4),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="d",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2022, 3, 22),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="f",
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+    )
+
+    checks = list(e.latest_performance_checks())
+    assert len(checks) == 4  # noqa: PLR2004
+    assert checks[0].quantity == "Temperature"
+    assert checks[0].name == "Probe 1"
+    assert checks[0].performance_check.entered_by == "B"
+
+    assert checks[1].quantity == "Temperature"
+    assert checks[1].name == "Probe 2"
+    assert checks[1].performance_check.entered_by == "E"
+
+    assert checks[2].quantity == "Humidity"
+    assert checks[2].name == "Probe 1"
+    assert checks[2].performance_check.entered_by == "a"
+
+    assert checks[3].quantity == "Humidity"
+    assert checks[3].name == "Probe 2"
+    assert checks[3].performance_check.entered_by == "e"
+
+    check = e.latest_performance_check()
+    assert check is None
+
+    check = e.latest_performance_check(quantity="Temperature")
+    assert check is None  # must match `name` also
+
+    check = e.latest_performance_check(name="Probe 1")
+    assert check is None  # must match `quantity` also
+
+    check = e.latest_performance_check(quantity="Temperature", name="Probe 1")
+    assert check is not None
+    assert check.performance_check.entered_by == "B"
+
+    check = e.latest_performance_check(quantity="Temperature", name="Probe 2")
+    assert check is not None
+    assert check.performance_check.entered_by == "E"
+
+    check = e.latest_performance_check(quantity="Humidity", name="Probe 1")
+    assert check is not None
+    assert check.performance_check.entered_by == "a"
+
+    check = e.latest_performance_check(quantity="Humidity", name="Probe 2")
+    assert check is not None
+    assert check.performance_check.entered_by == "e"
+
+
 def test_latest_report_no_reports() -> None:
     e = Equipment(
         calibrations=(
@@ -1959,6 +2193,35 @@ def test_latest_report_no_reports() -> None:
     assert len(reports) == 0
 
     assert e.latest_report() is None
+
+
+def test_latest_performance_check_no_checks() -> None:
+    e = Equipment(
+        calibrations=(
+            Measurand(
+                quantity="",
+                calibration_interval=1,
+                components=(
+                    Component(
+                        name="",
+                        adjustments=(
+                            Adjustment(details="", date=date(2025, 1, 1)),
+                            Adjustment(details="", date=date(2025, 1, 1)),
+                        ),
+                        digital_reports=(
+                            DigitalReport(id="", url="", format=DigitalFormat.MSL_PDF, sha256=""),
+                            DigitalReport(id="", url="", format=DigitalFormat.MSL_PDF, sha256=""),
+                        ),
+                    ),
+                ),
+            ),
+        )
+    )
+
+    checks = list(e.latest_performance_checks())
+    assert len(checks) == 0
+
+    assert e.latest_performance_check() is None
 
 
 def test_register_add() -> None:
@@ -2137,27 +2400,34 @@ def test_register_tree_negative_indent() -> None:
 )
 def test_future_date(string: str, years: float, expected: date) -> None:
     date = datetime.strptime(string, "%Y-%m-%d").date()  # noqa: DTZ007
-    assert future_date(date, years) == expected
+    assert _future_date(date, years) == expected
 
 
 def test_report_is_calibration_due() -> None:
+    # NOTE: this test might fail if run on a leap year day, Feb 29
+    # if so, ignore the issue and run again tomorrow
+
+    # the value used for calibration_interval just needs to be >0 or =0
+    # the actual value is not used in is_calibration_due()
+
     today = date.today()  # noqa: DTZ011
-    latest = Latest(date=today, calibration_interval=5, name="", quantity="")
+
+    d = today.replace(year=today.year + 1)
+    latest = Latest(next_calibration_date=d, calibration_interval=1, name="", quantity="")
     assert not latest.is_calibration_due()
     assert not latest.is_calibration_due(1)
-
-    d = date.today().replace(year=today.year - 4)  # noqa: DTZ011
-    latest = Latest(date=d, calibration_interval=5, name="", quantity="")
-    assert not latest.is_calibration_due()
     assert not latest.is_calibration_due(11)
     assert latest.is_calibration_due(12)
     assert latest.is_calibration_due(13)
 
-    d = date.today().replace(year=today.year - 2)  # noqa: DTZ011
-    latest = Latest(date=d, calibration_interval=1, name="", quantity="")
-    assert latest.is_calibration_due()
-    assert latest.is_calibration_due(1)
+    d = today.replace(year=today.year + 2)
+    latest = Latest(next_calibration_date=d, calibration_interval=1, name="", quantity="")
+    assert not latest.is_calibration_due()
+    assert not latest.is_calibration_due(23)
+    assert latest.is_calibration_due(24)
+    assert latest.is_calibration_due(25)
 
     d = date(1875, 5, 20)
-    latest = Latest(date=d, calibration_interval=0, name="", quantity="")
+    latest = Latest(next_calibration_date=d, calibration_interval=0, name="", quantity="")
     assert not latest.is_calibration_due()
+    assert not latest.is_calibration_due(1000)

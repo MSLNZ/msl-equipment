@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from datetime import date
+from datetime import date, datetime
 from io import BytesIO, StringIO
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
@@ -46,7 +46,7 @@ from msl.equipment import (
     Status,
     Table,
 )
-from msl.equipment.schema import _Indent  # pyright: ignore[reportPrivateUsage]
+from msl.equipment.schema import Latest, _Indent, future_date  # pyright: ignore[reportPrivateUsage]
 
 if TYPE_CHECKING:
     from numpy.typing import ArrayLike
@@ -1750,14 +1750,14 @@ def test_latest_report_single_measurand_and_component(value: str, expect: str) -
 
     reports = list(e.latest_reports(date=value))  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
     assert len(reports) == 1
-    assert reports[0][0] == "1"
-    assert reports[0][1] == "2"
-    assert reports[0][2].id == expect
+    assert reports[0].quantity == "1"
+    assert reports[0].name == "2"
+    assert reports[0].report.id == expect
 
     # Don't specify `quantity` or `name` and the correct report is returned
     latest = e.latest_report(date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
     assert latest is not None
-    assert latest.id == expect
+    assert latest.report.id == expect
 
     # If `quantity` or `name` is specified then the Report must match accordingly
     latest = e.latest_report(quantity="Anything", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
@@ -1890,21 +1890,21 @@ def test_latest_report_multiple_measurand_and_components() -> None:
 
     reports = list(e.latest_reports())
     assert len(reports) == 4  # noqa: PLR2004
-    assert reports[0][0] == "Temperature"
-    assert reports[0][1] == "Probe 1"
-    assert reports[0][2].id == "B"
+    assert reports[0].quantity == "Temperature"
+    assert reports[0].name == "Probe 1"
+    assert reports[0].report.id == "B"
 
-    assert reports[1][0] == "Temperature"
-    assert reports[1][1] == "Probe 2"
-    assert reports[1][2].id == "E"
+    assert reports[1].quantity == "Temperature"
+    assert reports[1].name == "Probe 2"
+    assert reports[1].report.id == "E"
 
-    assert reports[2][0] == "Humidity"
-    assert reports[2][1] == "Probe 1"
-    assert reports[2][2].id == "b"
+    assert reports[2].quantity == "Humidity"
+    assert reports[2].name == "Probe 1"
+    assert reports[2].report.id == "b"
 
-    assert reports[3][0] == "Humidity"
-    assert reports[3][1] == "Probe 2"
-    assert reports[3][2].id == "e"
+    assert reports[3].quantity == "Humidity"
+    assert reports[3].name == "Probe 2"
+    assert reports[3].report.id == "e"
 
     report = e.latest_report()
     assert report is None
@@ -1917,19 +1917,19 @@ def test_latest_report_multiple_measurand_and_components() -> None:
 
     report = e.latest_report(quantity="Temperature", name="Probe 1")
     assert report is not None
-    assert report.id == "B"
+    assert report.report.id == "B"
 
     report = e.latest_report(quantity="Temperature", name="Probe 1", date="start")
     assert report is not None
-    assert report.id == "B"
+    assert report.report.id == "B"
 
     report = e.latest_report(quantity="Temperature", name="Probe 1", date="issue")
     assert report is not None
-    assert report.id == "C"
+    assert report.report.id == "C"
 
     report = e.latest_report(quantity="Humidity", name="Probe 2", date="issue")
     assert report is not None
-    assert report.id == "f"
+    assert report.report.id == "f"
 
 
 def test_latest_report_no_reports() -> None:
@@ -2116,3 +2116,48 @@ def test_register_cannot_merge() -> None:
 def test_register_tree_negative_indent() -> None:
     with pytest.raises(ValueError, match=">= 0, got -1"):
         _ = Register().tree(indent=-1)
+
+
+@pytest.mark.parametrize(
+    ("string", "years", "expected"),
+    [
+        ("2020-02-06", 2, date(2022, 2, 6)),
+        ("2020-02-06", 2.5, date(2022, 8, 6)),
+        ("2020-07-06", 0.8, date(2021, 4, 6)),
+        ("2020-07-06", 2.8, date(2023, 4, 6)),
+        ("2020-12-06", 1, date(2021, 12, 6)),
+        ("2020-12-06", 2, date(2022, 12, 6)),
+        ("2020-12-06", 2.3, date(2023, 3, 6)),
+        ("2020-07-06", 5.5, date(2026, 1, 6)),
+        ("2020-09-30", 3.9, date(2024, 7, 30)),
+        ("2023-04-23", 0, date(2023, 4, 23)),
+        ("2024-02-29", 1, date(2025, 2, 28)),  # leap year as input
+        ("2025-01-31", 0.25, date(2025, 4, 30)),  # 31 becomes 30 for April
+    ],
+)
+def test_future_date(string: str, years: float, expected: date) -> None:
+    date = datetime.strptime(string, "%Y-%m-%d").date()  # noqa: DTZ007
+    assert future_date(date, years) == expected
+
+
+def test_report_is_calibration_due() -> None:
+    today = date.today()  # noqa: DTZ011
+    latest = Latest(date=today, calibration_interval=5, name="", quantity="")
+    assert not latest.is_calibration_due()
+    assert not latest.is_calibration_due(1)
+
+    d = date.today().replace(year=today.year - 4)  # noqa: DTZ011
+    latest = Latest(date=d, calibration_interval=5, name="", quantity="")
+    assert not latest.is_calibration_due()
+    assert not latest.is_calibration_due(11)
+    assert latest.is_calibration_due(12)
+    assert latest.is_calibration_due(13)
+
+    d = date.today().replace(year=today.year - 2)  # noqa: DTZ011
+    latest = Latest(date=d, calibration_interval=1, name="", quantity="")
+    assert latest.is_calibration_due()
+    assert latest.is_calibration_due(1)
+
+    d = date(1875, 5, 20)
+    latest = Latest(date=d, calibration_interval=0, name="", quantity="")
+    assert not latest.is_calibration_due()

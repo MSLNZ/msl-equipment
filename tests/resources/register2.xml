@@ -15,10 +15,10 @@
             <measurand quantity="Voltage DC" calibrationInterval="5">
                 <component name="">
                     <adjustment date="2024-10-17">Cleaned the filter</adjustment>
-                    <performanceCheck completedDate="2023-04-02" enteredBy="Minyu Zhang" checkedBy="Tim Lawson" checkedDate="2023-04-04">
+                    <performanceCheck completedDate="2023-04-02" enteredBy="Tom Stewart" checkedBy="Tim Lawson" checkedDate="2023-04-04">
                         <competency>
                             <worker>Minyu Zhang</worker>
-                            <checker>Tim Lawson</checker>
+                            <checker>Murray Early</checker>
                             <technicalProcedure>MSLT.E.048.005</technicalProcedure>
                         </competency>
                         <conditions/>
@@ -28,7 +28,7 @@
                         </file>
                     </performanceCheck>
                     <adjustment date="2022-06-12">Cleaned the fan</adjustment>
-                    <digitalReport format="MSL PDF/A-3" id="Electrical/2025/092">
+                    <digitalReport format="MSL PDF/A-3" id="Electrical/2025/092" comment="Racoon tail">
                         <url>reports\2025\job092.pdf</url>
                         <sha256>76e4e036da8722b55362912396a01a07bb61e6260c7c4b6150d431e613529a54</sha256>
                     </digitalReport>
@@ -44,7 +44,7 @@
                         <technicalProcedure>MSLT.H.002.006</technicalProcedure>
                         <conditions />
                         <acceptanceCriteria />
-                        <equation>
+                        <equation comment="Raptor">
                             <value variables="">1</value>
                             <uncertainty variables="">0.1</uncertainty>
                             <unit>m</unit>
@@ -54,7 +54,12 @@
                 </component>
             </measurand>
         </calibrations>
-        <maintenance />
+        <maintenance>
+            <planned>
+                <task dueDate="2025-05-15" performedBy="Adam Knight">Build banana boat</task>
+            </planned>
+            <completed />
+        </maintenance>
         <alterations />
         <firmware />
         <specifiedRequirements />

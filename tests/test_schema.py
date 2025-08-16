@@ -2453,20 +2453,34 @@ def test_equipment_repr() -> None:
         ("Measurement", "100"),  # manufacturer
         ("ABC", "001"),  # model
         ("Serial", "092"),  # serial
-        (r"M\.1", "100"),  # id
+        (r"M\.1", "100"),  # equipment id
         ("CMM", "001"),  # location
         ("Voltage", "100"),  # quantity
         ("Probe 1", "092"),  # name
-        ("McDowall", "001"),  # entered_by
-        ("Lawson", "100"),  # checked_by
-        ("Young", "092"),  # performed_by
-        ("torpedo", "100"),  # comment
-        ("PDF/A-3", "100"),  # format
-        ("filter", "100"),  # details
-        ("helium", "092"),  # task
-        ("Whatever", "092"),  # asset_number
-        ("Secret", "092"),  # service_agent
-        (r"P\.\d{3}\.\d{3}", "100"),  # technical_procedures
+        ("McDowall", "001"),  # equipment enteredBy
+        ("Lawson", "100"),  # performanceCheck checkedBy
+        ("Young", "092"),  # alteration performedBy
+        ("torpedo", "100"),  # file comment
+        ("PDF/A-3", "100"),  # digital report format
+        ("filter", "100"),  # adjustment details
+        ("helium", "092"),  # maintenance completed task
+        ("Whatever", "092"),  # assetNumber
+        ("Secret", "092"),  # serviceAgent
+        (r"P\.\d{3}\.\d{3}", "100"),  # qualityManual technicalProcedures
+        ("favourite", "092"),  # cvdEquation comment
+        ("T-Rex", "092"),  # equation comment
+        ("Raptor", "100"),  # equation comment
+        ("Elephant", "092"),  # table comment
+        ("Dubuis", "092"),  # maintenance completed performedBy  # cSpell: ignore Dubuis
+        ("banana", "100"),  # maintenance planned task
+        ("Knight", "100"),  # maintenance planned performedBy
+        ("Did work", "092"),  # alteration details
+        ("Ellie", "092"),  # report enteredBy
+        ("Yang", "092"),  # report checkedBy
+        ("SI/2024", "092"),  # report id
+        ("Stewart", "100"),  # performanceCheck enteredBy
+        ("Electrical/2025", "100"),  # digitalReport id
+        ("Racoon", "100"),  # digitalReport comment
     ],
 )
 def test_register_find(pattern: str, expect: str) -> None:

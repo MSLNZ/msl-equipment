@@ -2446,7 +2446,7 @@ class Register:
         * entered_by: [Equipment][msl.equipment.schema.Equipment], [PerformanceCheck][msl.equipment.schema.PerformanceCheck], [Report][msl.equipment.schema.Report]
         * checked_by: [Equipment][msl.equipment.schema.Equipment], [PerformanceCheck][msl.equipment.schema.PerformanceCheck], [Report][msl.equipment.schema.Report]
         * performed_by: [Alteration][msl.equipment.schema.Alteration], [CompletedTask][msl.equipment.schema.CompletedTask], [PlannedTask][msl.equipment.schema.PlannedTask]
-        * comment: [CVDEquation][msl.equipment.schema.CVDEquation], [Equation][msl.equipment.schema.Equation], [File][msl.equipment.schema.File], [Table][msl.equipment.schema.Table], [Deserialised][msl.equipment.schema.Deserialised]
+        * comment: [CVDEquation][msl.equipment.schema.CVDEquation], [Equation][msl.equipment.schema.Equation], [File][msl.equipment.schema.File], [Table][msl.equipment.schema.Table], [Deserialised][msl.equipment.schema.Deserialised], [DigitalReport][msl.equipment.schema.DigitalReport]
         * format: [DigitalReport][msl.equipment.schema.DigitalReport]
         * details: [Alteration][msl.equipment.schema.Alteration], [Adjustment][msl.equipment.schema.Adjustment]
         * task: [CompletedTask][msl.equipment.schema.CompletedTask], [PlannedTask][msl.equipment.schema.PlannedTask]
@@ -2528,6 +2528,8 @@ class Register:
                         if regex.search(dr.format.value) is not None:
                             return True
                         if regex.search(dr.id) is not None:
+                            return True
+                        if regex.search(dr.comment) is not None:
                             return True
             return False
 

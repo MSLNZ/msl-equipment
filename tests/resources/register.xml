@@ -47,7 +47,7 @@
                         <acceptanceCriteria>
                             <foo bar="baz">bar</foo>
                         </acceptanceCriteria>
-                        <equation>
+                        <equation comment="T-Rex">
                             <value variables="R t">R - 7.131e-2 - 3.951e-2*R + 3.412e-4*pow(R,2) + 2.465e-3*t + 1.034e-3*R*t - 5.297e-6*pow(R,2)*t</value>
                             <uncertainty variables="">0.355</uncertainty>
                             <unit>%rh</unit>
@@ -77,7 +77,7 @@
                         <acceptanceCriteria>
                             <foo bar="baz">bar</foo>
                         </acceptanceCriteria>
-                        <cvdCoefficients>
+                        <cvdCoefficients comment="you are my favourite dinosaur">
                             <R0>100.0189</R0>
                             <A>0.003913</A>
                             <B>-6.056e-07</B>
@@ -93,7 +93,7 @@
             </measurand>
             <measurand quantity="Spectral Irradiance" calibrationInterval="5.0">
                 <component name="FEL 1">
-                    <report id="SI/2024/123" enteredBy="Joseph Borbely" checkedBy="Ellie Molloy" checkedDate="2025-07-29">
+                    <report id="SI/2024/123" enteredBy="Ellie Molloy" checkedBy="Yang Yenn Tan" checkedDate="2025-07-29">
                         <reportIssueDate>2024-07-10</reportIssueDate>
                         <measurementStartDate>2024-07-08</measurementStartDate>
                         <measurementStopDate>2024-07-12</measurementStopDate>
@@ -101,7 +101,7 @@
                         <technicalProcedure>MSLT.H.002.006</technicalProcedure>
                         <conditions />
                         <acceptanceCriteria />
-                        <table>
+                        <table comment="Elephant">
                             <type>int,double,double</type>
                             <unit>nm,W/m^2,W/m^2</unit>
                             <header>Wavelength,Irradiance,u(Irradiance)</header>
@@ -113,7 +113,7 @@
                     </report>
                 </component>
                 <component name="FEL 2">
-                    <report id="SI/2024/124" enteredBy="Joseph Borbely" checkedBy="Ellie Molloy" checkedDate="2025-07-29">
+                    <report id="SI/2024/124" enteredBy="Joseph Borbely" checkedBy="Neil Swift" checkedDate="2025-07-29">
                         <reportIssueDate>2025-03-10</reportIssueDate>
                         <measurementStartDate>2025-03-08</measurementStartDate>
                         <measurementStopDate>2025-03-10</measurementStopDate>

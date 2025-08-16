@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.17">
     
     
       
@@ -1131,6 +1131,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Equipment.latest_performance_check" class="md-nav__link">
+    <span class="md-ellipsis">
+      latest_performance_check
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Equipment.latest_performance_checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      latest_performance_checks
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msl.equipment.schema.Equipment.latest_report" class="md-nav__link">
     <span class="md-ellipsis">
       latest_report
@@ -1182,18 +1200,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#msl.equipment.schema.Latest.date" class="md-nav__link">
+  <a href="#msl.equipment.schema.Latest.name" class="md-nav__link">
     <span class="md-ellipsis">
-      date
+      name
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#msl.equipment.schema.Latest.name" class="md-nav__link">
+  <a href="#msl.equipment.schema.Latest.next_calibration_date" class="md-nav__link">
     <span class="md-ellipsis">
-      name
+      next_calibration_date
     </span>
   </a>
   
@@ -1233,9 +1251,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#msl.equipment.schema.LatestPerformanceCheck.check" class="md-nav__link">
+  <a href="#msl.equipment.schema.LatestPerformanceCheck.performance_check" class="md-nav__link">
     <span class="md-ellipsis">
-      check
+      performance_check
     </span>
   </a>
   
@@ -1875,6 +1893,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Equipment.latest_performance_check" class="md-nav__link">
+    <span class="md-ellipsis">
+      latest_performance_check
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.schema.Equipment.latest_performance_checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      latest_performance_checks
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msl.equipment.schema.Equipment.latest_report" class="md-nav__link">
     <span class="md-ellipsis">
       latest_report
@@ -1926,18 +1962,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#msl.equipment.schema.Latest.date" class="md-nav__link">
+  <a href="#msl.equipment.schema.Latest.name" class="md-nav__link">
     <span class="md-ellipsis">
-      date
+      name
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#msl.equipment.schema.Latest.name" class="md-nav__link">
+  <a href="#msl.equipment.schema.Latest.next_calibration_date" class="md-nav__link">
     <span class="md-ellipsis">
-      name
+      next_calibration_date
     </span>
   </a>
   
@@ -1977,9 +2013,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#msl.equipment.schema.LatestPerformanceCheck.check" class="md-nav__link">
+  <a href="#msl.equipment.schema.LatestPerformanceCheck.performance_check" class="md-nav__link">
     <span class="md-ellipsis">
-      check
+      performance_check
     </span>
   </a>
   
@@ -3259,42 +3295,42 @@ is active (in use) or inactive (not in use).</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2110</span>
-<span class="normal">2111</span>
-<span class="normal">2112</span>
-<span class="normal">2113</span>
-<span class="normal">2114</span>
-<span class="normal">2115</span>
-<span class="normal">2116</span>
-<span class="normal">2117</span>
-<span class="normal">2118</span>
-<span class="normal">2119</span>
-<span class="normal">2120</span>
-<span class="normal">2121</span>
-<span class="normal">2122</span>
-<span class="normal">2123</span>
-<span class="normal">2124</span>
-<span class="normal">2125</span>
-<span class="normal">2126</span>
-<span class="normal">2127</span>
-<span class="normal">2128</span>
-<span class="normal">2129</span>
-<span class="normal">2130</span>
-<span class="normal">2131</span>
-<span class="normal">2132</span>
-<span class="normal">2133</span>
-<span class="normal">2134</span>
-<span class="normal">2135</span>
-<span class="normal">2136</span>
-<span class="normal">2137</span>
-<span class="normal">2138</span>
-<span class="normal">2139</span>
-<span class="normal">2140</span>
-<span class="normal">2141</span>
-<span class="normal">2142</span>
-<span class="normal">2143</span>
-<span class="normal">2144</span>
-<span class="normal">2145</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2145</span>
+<span class="normal">2146</span>
+<span class="normal">2147</span>
+<span class="normal">2148</span>
+<span class="normal">2149</span>
+<span class="normal">2150</span>
+<span class="normal">2151</span>
+<span class="normal">2152</span>
+<span class="normal">2153</span>
+<span class="normal">2154</span>
+<span class="normal">2155</span>
+<span class="normal">2156</span>
+<span class="normal">2157</span>
+<span class="normal">2158</span>
+<span class="normal">2159</span>
+<span class="normal">2160</span>
+<span class="normal">2161</span>
+<span class="normal">2162</span>
+<span class="normal">2163</span>
+<span class="normal">2164</span>
+<span class="normal">2165</span>
+<span class="normal">2166</span>
+<span class="normal">2167</span>
+<span class="normal">2168</span>
+<span class="normal">2169</span>
+<span class="normal">2170</span>
+<span class="normal">2171</span>
+<span class="normal">2172</span>
+<span class="normal">2173</span>
+<span class="normal">2174</span>
+<span class="normal">2175</span>
+<span class="normal">2176</span>
+<span class="normal">2177</span>
+<span class="normal">2178</span>
+<span class="normal">2179</span>
+<span class="normal">2180</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Equipment</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into an [Equipment][msl.equipment.schema.Equipment] instance.</span>
 
@@ -3330,6 +3366,267 @@ is active (in use) or inactive (not in use).</p>
         <span class="n">reference_materials</span><span class="o">=</span><span class="n">ReferenceMaterials</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">15</span><span class="p">]),</span>
         <span class="n">quality_manual</span><span class="o">=</span><span class="n">QualityManual</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">16</span><span class="p">]),</span>
     <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="msl.equipment.schema.Equipment.latest_performance_check" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">latest_performance_check</span>
+
+
+<a href="#msl.equipment.schema.Equipment.latest_performance_check" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">latest_performance_check</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">quantity</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="LatestPerformanceCheck
+
+
+  
+      dataclass
+   (msl.equipment.schema.LatestPerformanceCheck)" href="#msl.equipment.schema.LatestPerformanceCheck">LatestPerformanceCheck</a></span> <span class="o">|</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Returns the latest performance check.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>quantity</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The measurand <a class="autorefs autorefs-internal" title="quantity
+
+
+  
+      instance-attribute
+  " href="../measurand/#msl.equipment.schema.Measurand.quantity">quantity</a>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>name</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The component <a class="autorefs autorefs-internal" title="name
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="../component/#msl.equipment.schema.Component.name">name</a>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;&#39;</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="LatestPerformanceCheck
+
+
+  
+      dataclass
+   (msl.equipment.schema.LatestPerformanceCheck)" href="#msl.equipment.schema.LatestPerformanceCheck">LatestPerformanceCheck</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The <a class="autorefs autorefs-internal" title="LatestPerformanceCheck
+
+
+  
+      dataclass
+  " href="#msl.equipment.schema.LatestPerformanceCheck">LatestPerformanceCheck</a> for the specified
+<code>quantity</code> and <code>name</code>. If the equipment has only one <em>measurand</em> and only one <em>component</em>
+then you do not need to specify a value for the <code>quantity</code> and <code>name</code>. Returns <code>None</code> if
+there are no performance checks that match the <code>quantity</code> and <code>name</code> criteria or if
+the equipment does not have performance checks entered in the register.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2270</span>
+<span class="normal">2271</span>
+<span class="normal">2272</span>
+<span class="normal">2273</span>
+<span class="normal">2274</span>
+<span class="normal">2275</span>
+<span class="normal">2276</span>
+<span class="normal">2277</span>
+<span class="normal">2278</span>
+<span class="normal">2279</span>
+<span class="normal">2280</span>
+<span class="normal">2281</span>
+<span class="normal">2282</span>
+<span class="normal">2283</span>
+<span class="normal">2284</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_performance_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">quantity</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LatestPerformanceCheck</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the latest performance check.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        quantity: The measurand [quantity][msl.equipment.schema.Measurand.quantity].</span>
+<span class="sd">        name: The component [name][msl.equipment.schema.Component.name].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The [LatestPerformanceCheck][msl.equipment.schema.LatestPerformanceCheck] for the specified</span>
+<span class="sd">            `quantity` and `name`. If the equipment has only one _measurand_ and only one _component_</span>
+<span class="sd">            then you do not need to specify a value for the `quantity` and `name`. Returns `None` if</span>
+<span class="sd">            there are no performance checks that match the `quantity` and `name` criteria or if</span>
+<span class="sd">            the equipment does not have performance checks entered in the register.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_latest</span><span class="p">(</span><span class="n">items</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latest_performance_checks</span><span class="p">()),</span> <span class="n">quantity</span><span class="o">=</span><span class="n">quantity</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="msl.equipment.schema.Equipment.latest_performance_checks" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">latest_performance_checks</span>
+
+
+<a href="#msl.equipment.schema.Equipment.latest_performance_checks" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">latest_performance_checks</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="p">(</span>
+    <span class="n"><a class="autorefs autorefs-external" title="collections.abc.Iterator" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator">Iterator</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="LatestPerformanceCheck
+
+
+  
+      dataclass
+   (msl.equipment.schema.LatestPerformanceCheck)" href="#msl.equipment.schema.LatestPerformanceCheck">LatestPerformanceCheck</a></span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Yields the latest performance check for every <em>measurand</em> and <em>component</em>.</p>
+
+
+    <p><span class="doc-section-title">Yields:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="LatestPerformanceCheck
+
+
+  
+      dataclass
+   (msl.equipment.schema.LatestPerformanceCheck)" href="#msl.equipment.schema.LatestPerformanceCheck">LatestPerformanceCheck</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The latest performance check.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2245</span>
+<span class="normal">2246</span>
+<span class="normal">2247</span>
+<span class="normal">2248</span>
+<span class="normal">2249</span>
+<span class="normal">2250</span>
+<span class="normal">2251</span>
+<span class="normal">2252</span>
+<span class="normal">2253</span>
+<span class="normal">2254</span>
+<span class="normal">2255</span>
+<span class="normal">2256</span>
+<span class="normal">2257</span>
+<span class="normal">2258</span>
+<span class="normal">2259</span>
+<span class="normal">2260</span>
+<span class="normal">2261</span>
+<span class="normal">2262</span>
+<span class="normal">2263</span>
+<span class="normal">2264</span>
+<span class="normal">2265</span>
+<span class="normal">2266</span>
+<span class="normal">2267</span>
+<span class="normal">2268</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_performance_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">LatestPerformanceCheck</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Yields the latest performance check for every _measurand_ and _component_.</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        The latest performance check.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">default</span> <span class="o">=</span> <span class="n">_date</span><span class="p">(</span><span class="mi">1875</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibrations</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">components</span><span class="p">:</span>
+            <span class="n">latest</span> <span class="o">=</span> <span class="n">default</span>
+            <span class="n">check</span><span class="p">:</span> <span class="n">PerformanceCheck</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">pc</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">performance_checks</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">pc</span><span class="o">.</span><span class="n">completed_date</span> <span class="o">&gt;</span> <span class="n">latest</span><span class="p">:</span>
+                    <span class="n">check</span> <span class="o">=</span> <span class="n">pc</span>
+                    <span class="n">latest</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">completed_date</span>
+
+            <span class="k">if</span> <span class="n">check</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">LatestPerformanceCheck</span><span class="p">(</span>
+                    <span class="n">calibration_interval</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">calibration_interval</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">next_calibration_date</span><span class="o">=</span><span class="n">_future_date</span><span class="p">(</span><span class="n">latest</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">calibration_interval</span><span class="p">),</span>
+                    <span class="n">performance_check</span><span class="o">=</span><span class="n">check</span><span class="p">,</span>
+                    <span class="n">quantity</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span>
+                <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3467,10 +3764,10 @@ is active (in use) or inactive (not in use).</p>
   
       dataclass
   " href="#msl.equipment.schema.LatestReport">LatestReport</a> for the specified <code>quantity</code> and <code>name</code>.
-If the <em>equipment</em> has only one measurand <em>quantity</em> and only one <em>component</em> and if the
-<code>quantity</code> and <code>name</code> values are both empty strings then that report is returned. Otherwise,
-returns <code>None</code> if there is no report that matches the <code>quantity</code> and <code>name</code> criteria or the
-<em>equipment</em> does not have calibration reports entered in the register.</p>
+If the equipment has only one <em>measurand</em> and only one <em>component</em> then you do not need
+to specify a value for the <code>quantity</code> and <code>name</code>. Returns <code>None</code> if there are no calibration
+reports that match the <code>quantity</code> and <code>name</code> criteria or if the equipment does not have
+calibration reports entered in the register.</p>
               </div>
             </td>
           </tr>
@@ -3480,36 +3777,28 @@ returns <code>None</code> if there is no report that matches the <code>quantity<
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2250</span>
-<span class="normal">2251</span>
-<span class="normal">2252</span>
-<span class="normal">2253</span>
-<span class="normal">2254</span>
-<span class="normal">2255</span>
-<span class="normal">2256</span>
-<span class="normal">2257</span>
-<span class="normal">2258</span>
-<span class="normal">2259</span>
-<span class="normal">2260</span>
-<span class="normal">2261</span>
-<span class="normal">2262</span>
-<span class="normal">2263</span>
-<span class="normal">2264</span>
-<span class="normal">2265</span>
-<span class="normal">2266</span>
-<span class="normal">2267</span>
-<span class="normal">2268</span>
-<span class="normal">2269</span>
-<span class="normal">2270</span>
-<span class="normal">2271</span>
-<span class="normal">2272</span>
-<span class="normal">2273</span>
-<span class="normal">2274</span>
-<span class="normal">2275</span>
-<span class="normal">2276</span>
-<span class="normal">2277</span>
-<span class="normal">2278</span>
-<span class="normal">2279</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_report</span><span class="p">(</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2326</span>
+<span class="normal">2327</span>
+<span class="normal">2328</span>
+<span class="normal">2329</span>
+<span class="normal">2330</span>
+<span class="normal">2331</span>
+<span class="normal">2332</span>
+<span class="normal">2333</span>
+<span class="normal">2334</span>
+<span class="normal">2335</span>
+<span class="normal">2336</span>
+<span class="normal">2337</span>
+<span class="normal">2338</span>
+<span class="normal">2339</span>
+<span class="normal">2340</span>
+<span class="normal">2341</span>
+<span class="normal">2342</span>
+<span class="normal">2343</span>
+<span class="normal">2344</span>
+<span class="normal">2345</span>
+<span class="normal">2346</span>
+<span class="normal">2347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_report</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">quantity</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;issue&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;stop&quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LatestReport</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the latest calibration report.</span>
@@ -3525,20 +3814,12 @@ returns <code>None</code> if there is no report that matches the <code>quantity<
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [LatestReport][msl.equipment.schema.LatestReport] for the specified `quantity` and `name`.</span>
-<span class="sd">            If the _equipment_ has only one measurand _quantity_ and only one _component_ and if the</span>
-<span class="sd">            `quantity` and `name` values are both empty strings then that report is returned. Otherwise,</span>
-<span class="sd">            returns `None` if there is no report that matches the `quantity` and `name` criteria or the</span>
-<span class="sd">            _equipment_ does not have calibration reports entered in the register.</span>
+<span class="sd">            If the equipment has only one _measurand_ and only one _component_ then you do not need</span>
+<span class="sd">            to specify a value for the `quantity` and `name`. Returns `None` if there are no calibration</span>
+<span class="sd">            reports that match the `quantity` and `name` criteria or if the equipment does not have</span>
+<span class="sd">            calibration reports entered in the register.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">reports</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latest_reports</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">))</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">reports</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">quantity</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">reports</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="k">for</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">reports</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">quantity</span> <span class="o">==</span> <span class="n">report</span><span class="o">.</span><span class="n">quantity</span> <span class="ow">and</span> <span class="n">name</span> <span class="o">==</span> <span class="n">report</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">report</span>
-
-    <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">_latest</span><span class="p">(</span><span class="n">items</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latest_reports</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">)),</span> <span class="n">quantity</span><span class="o">=</span><span class="n">quantity</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3565,7 +3846,7 @@ returns <code>None</code> if there is no report that matches the <code>quantity<
 
     <div class="doc doc-contents ">
 
-        <p>Yields the latest calibration report for every measurand <em>quantity</em> and <em>component</em>.</p>
+        <p>Yields the latest calibration report for every <em>measurand</em> and <em>component</em>.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -3634,46 +3915,46 @@ returns <code>None</code> if there is no report that matches the <code>quantity<
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2210</span>
-<span class="normal">2211</span>
-<span class="normal">2212</span>
-<span class="normal">2213</span>
-<span class="normal">2214</span>
-<span class="normal">2215</span>
-<span class="normal">2216</span>
-<span class="normal">2217</span>
-<span class="normal">2218</span>
-<span class="normal">2219</span>
-<span class="normal">2220</span>
-<span class="normal">2221</span>
-<span class="normal">2222</span>
-<span class="normal">2223</span>
-<span class="normal">2224</span>
-<span class="normal">2225</span>
-<span class="normal">2226</span>
-<span class="normal">2227</span>
-<span class="normal">2228</span>
-<span class="normal">2229</span>
-<span class="normal">2230</span>
-<span class="normal">2231</span>
-<span class="normal">2232</span>
-<span class="normal">2233</span>
-<span class="normal">2234</span>
-<span class="normal">2235</span>
-<span class="normal">2236</span>
-<span class="normal">2237</span>
-<span class="normal">2238</span>
-<span class="normal">2239</span>
-<span class="normal">2240</span>
-<span class="normal">2241</span>
-<span class="normal">2242</span>
-<span class="normal">2243</span>
-<span class="normal">2244</span>
-<span class="normal">2245</span>
-<span class="normal">2246</span>
-<span class="normal">2247</span>
-<span class="normal">2248</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;issue&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;stop&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">LatestReport</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Yields the latest calibration report for every measurand _quantity_ and _component_.</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2286</span>
+<span class="normal">2287</span>
+<span class="normal">2288</span>
+<span class="normal">2289</span>
+<span class="normal">2290</span>
+<span class="normal">2291</span>
+<span class="normal">2292</span>
+<span class="normal">2293</span>
+<span class="normal">2294</span>
+<span class="normal">2295</span>
+<span class="normal">2296</span>
+<span class="normal">2297</span>
+<span class="normal">2298</span>
+<span class="normal">2299</span>
+<span class="normal">2300</span>
+<span class="normal">2301</span>
+<span class="normal">2302</span>
+<span class="normal">2303</span>
+<span class="normal">2304</span>
+<span class="normal">2305</span>
+<span class="normal">2306</span>
+<span class="normal">2307</span>
+<span class="normal">2308</span>
+<span class="normal">2309</span>
+<span class="normal">2310</span>
+<span class="normal">2311</span>
+<span class="normal">2312</span>
+<span class="normal">2313</span>
+<span class="normal">2314</span>
+<span class="normal">2315</span>
+<span class="normal">2316</span>
+<span class="normal">2317</span>
+<span class="normal">2318</span>
+<span class="normal">2319</span>
+<span class="normal">2320</span>
+<span class="normal">2321</span>
+<span class="normal">2322</span>
+<span class="normal">2323</span>
+<span class="normal">2324</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;issue&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;stop&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">LatestReport</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Yields the latest calibration report for every _measurand_ and _component_.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        date: Which date in a report to use to determine what _latest_ refers to:</span>
@@ -3706,8 +3987,8 @@ returns <code>None</code> if there is no report that matches the <code>quantity<
             <span class="k">if</span> <span class="n">report</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">LatestReport</span><span class="p">(</span>
                     <span class="n">calibration_interval</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">calibration_interval</span><span class="p">,</span>
-                    <span class="n">date</span><span class="o">=</span><span class="n">latest</span><span class="p">,</span>
                     <span class="n">name</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">next_calibration_date</span><span class="o">=</span><span class="n">_future_date</span><span class="p">(</span><span class="n">latest</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">calibration_interval</span><span class="p">),</span>
                     <span class="n">report</span><span class="o">=</span><span class="n">report</span><span class="p">,</span>
                     <span class="n">quantity</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span>
                 <span class="p">)</span>
@@ -3768,42 +4049,7 @@ returns <code>None</code> if there is no report that matches the <code>quantity<
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2147</span>
-<span class="normal">2148</span>
-<span class="normal">2149</span>
-<span class="normal">2150</span>
-<span class="normal">2151</span>
-<span class="normal">2152</span>
-<span class="normal">2153</span>
-<span class="normal">2154</span>
-<span class="normal">2155</span>
-<span class="normal">2156</span>
-<span class="normal">2157</span>
-<span class="normal">2158</span>
-<span class="normal">2159</span>
-<span class="normal">2160</span>
-<span class="normal">2161</span>
-<span class="normal">2162</span>
-<span class="normal">2163</span>
-<span class="normal">2164</span>
-<span class="normal">2165</span>
-<span class="normal">2166</span>
-<span class="normal">2167</span>
-<span class="normal">2168</span>
-<span class="normal">2169</span>
-<span class="normal">2170</span>
-<span class="normal">2171</span>
-<span class="normal">2172</span>
-<span class="normal">2173</span>
-<span class="normal">2174</span>
-<span class="normal">2175</span>
-<span class="normal">2176</span>
-<span class="normal">2177</span>
-<span class="normal">2178</span>
-<span class="normal">2179</span>
-<span class="normal">2180</span>
-<span class="normal">2181</span>
-<span class="normal">2182</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2182</span>
 <span class="normal">2183</span>
 <span class="normal">2184</span>
 <span class="normal">2185</span>
@@ -3829,7 +4075,42 @@ returns <code>None</code> if there is no report that matches the <code>quantity<
 <span class="normal">2205</span>
 <span class="normal">2206</span>
 <span class="normal">2207</span>
-<span class="normal">2208</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">2208</span>
+<span class="normal">2209</span>
+<span class="normal">2210</span>
+<span class="normal">2211</span>
+<span class="normal">2212</span>
+<span class="normal">2213</span>
+<span class="normal">2214</span>
+<span class="normal">2215</span>
+<span class="normal">2216</span>
+<span class="normal">2217</span>
+<span class="normal">2218</span>
+<span class="normal">2219</span>
+<span class="normal">2220</span>
+<span class="normal">2221</span>
+<span class="normal">2222</span>
+<span class="normal">2223</span>
+<span class="normal">2224</span>
+<span class="normal">2225</span>
+<span class="normal">2226</span>
+<span class="normal">2227</span>
+<span class="normal">2228</span>
+<span class="normal">2229</span>
+<span class="normal">2230</span>
+<span class="normal">2231</span>
+<span class="normal">2232</span>
+<span class="normal">2233</span>
+<span class="normal">2234</span>
+<span class="normal">2235</span>
+<span class="normal">2236</span>
+<span class="normal">2237</span>
+<span class="normal">2238</span>
+<span class="normal">2239</span>
+<span class="normal">2240</span>
+<span class="normal">2241</span>
+<span class="normal">2242</span>
+<span class="normal">2243</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Equipment][msl.equipment.schema.Equipment] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
@@ -3953,8 +4234,8 @@ returns <code>None</code> if there is no report that matches the <code>quantity<
 <a href="#msl.equipment.schema.Latest" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">Latest</span><span class="p">(</span>
     <span class="n">calibration_interval</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span>
-    <span class="n">date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
+    <span class="n">next_calibration_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span><span class="p">,</span>
     <span class="n">quantity</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -3962,7 +4243,17 @@ returns <code>None</code> if there is no report that matches the <code>quantity<
     <div class="doc doc-contents ">
 
 
-        <p>Base class for the latest report or performance check.</p>
+        <p>Base class for <a class="autorefs autorefs-internal" title="LatestReport
+
+
+  
+      dataclass
+  " href="#msl.equipment.schema.LatestReport">LatestReport</a> and <a class="autorefs autorefs-internal" title="LatestPerformanceCheck
+
+
+  
+      dataclass
+  " href="#msl.equipment.schema.LatestPerformanceCheck">LatestPerformanceCheck</a>.</p>
 
 
 
@@ -4011,30 +4302,6 @@ the value is <code>0</code>.</p>
 
 
 
-<h3 id="msl.equipment.schema.Latest.date" class="doc doc-heading">
-            <span class="doc doc-object-name doc-attribute-name">date</span>
-
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
-  </span>
-
-<a href="#msl.equipment.schema.Latest.date" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span>
-</code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>The latest date that the equipment was calibrated.</p>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
 <h3 id="msl.equipment.schema.Latest.name" class="doc doc-heading">
             <span class="doc doc-object-name doc-attribute-name">name</span>
 
@@ -4055,6 +4322,38 @@ the value is <code>0</code>.</p>
   
       dataclass
   " href="../component/#msl.equipment.schema.Component">Component</a> name.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="msl.equipment.schema.Latest.next_calibration_date" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">next_calibration_date</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#msl.equipment.schema.Latest.next_calibration_date" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">next_calibration_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>The date that the equipment is due for a re-calibration.</p>
+<p>If the <a class="autorefs autorefs-internal" title="calibration_interval
+
+
+  
+      instance-attribute
+  " href="#msl.equipment.schema.Latest.calibration_interval">calibration_interval</a> is <code>0</code>,
+i.e., the equipment is calibrated on demand, this date is equal to the date that
+the equipment was last calibrated.</p>
 
     </div>
 
@@ -4164,22 +4463,21 @@ the equipment needs to be re-calibrated.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1960</span>
-<span class="normal">1961</span>
-<span class="normal">1962</span>
-<span class="normal">1963</span>
-<span class="normal">1964</span>
-<span class="normal">1965</span>
-<span class="normal">1966</span>
-<span class="normal">1967</span>
-<span class="normal">1968</span>
-<span class="normal">1969</span>
-<span class="normal">1970</span>
-<span class="normal">1971</span>
-<span class="normal">1972</span>
-<span class="normal">1973</span>
-<span class="normal">1974</span>
-<span class="normal">1975</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_calibration_due</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">months</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1979</span>
+<span class="normal">1980</span>
+<span class="normal">1981</span>
+<span class="normal">1982</span>
+<span class="normal">1983</span>
+<span class="normal">1984</span>
+<span class="normal">1985</span>
+<span class="normal">1986</span>
+<span class="normal">1987</span>
+<span class="normal">1988</span>
+<span class="normal">1989</span>
+<span class="normal">1990</span>
+<span class="normal">1991</span>
+<span class="normal">1992</span>
+<span class="normal">1993</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_calibration_due</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">months</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine if the equipment needs to be re-calibrated.</span>
 
 <span class="sd">    Args:</span>
@@ -4192,9 +4490,8 @@ the equipment needs to be re-calibrated.</p>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_interval</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># calibrate on-demand</span>
 
-    <span class="n">next_cal_date</span> <span class="o">=</span> <span class="n">future_date</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_interval</span><span class="p">)</span>
-    <span class="n">from_today</span> <span class="o">=</span> <span class="n">future_date</span><span class="p">(</span><span class="n">_date</span><span class="o">.</span><span class="n">today</span><span class="p">(),</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">months</span> <span class="o">/</span> <span class="mf">12.0</span><span class="p">))</span>  <span class="c1"># noqa: DTZ011</span>
-    <span class="k">return</span> <span class="n">from_today</span> <span class="o">&gt;=</span> <span class="n">next_cal_date</span>
+    <span class="n">ask_date</span> <span class="o">=</span> <span class="n">_future_date</span><span class="p">(</span><span class="n">_date</span><span class="o">.</span><span class="n">today</span><span class="p">(),</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">months</span> <span class="o">/</span> <span class="mf">12.0</span><span class="p">))</span>  <span class="c1"># noqa: DTZ011</span>
+    <span class="k">return</span> <span class="n">ask_date</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_calibration_date</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -4257,10 +4554,10 @@ the equipment needs to be re-calibrated.</p>
 <a href="#msl.equipment.schema.LatestPerformanceCheck" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">LatestPerformanceCheck</span><span class="p">(</span>
     <span class="n">calibration_interval</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span>
-    <span class="n">date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
+    <span class="n">next_calibration_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span><span class="p">,</span>
     <span class="n">quantity</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
-    <span class="n">check</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="PerformanceCheck
+    <span class="n">performance_check</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="PerformanceCheck
 
 
   
@@ -4302,16 +4599,16 @@ the equipment needs to be re-calibrated.</p>
 
 
 
-<h3 id="msl.equipment.schema.LatestPerformanceCheck.check" class="doc doc-heading">
-            <span class="doc doc-object-name doc-attribute-name">check</span>
+<h3 id="msl.equipment.schema.LatestPerformanceCheck.performance_check" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">performance_check</span>
 
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
-<a href="#msl.equipment.schema.LatestPerformanceCheck.check" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">check</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="PerformanceCheck
+<a href="#msl.equipment.schema.LatestPerformanceCheck.performance_check" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">performance_check</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="PerformanceCheck
 
 
   
@@ -4385,8 +4682,8 @@ the equipment needs to be re-calibrated.</p>
 <a href="#msl.equipment.schema.LatestReport" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">LatestReport</span><span class="p">(</span>
     <span class="n">calibration_interval</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span>
-    <span class="n">date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
+    <span class="n">next_calibration_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span><span class="p">,</span>
     <span class="n">quantity</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
     <span class="n">report</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="Report
 
@@ -4597,10 +4894,10 @@ the equipment needs to be re-calibrated.</p>
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
+      <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
       
         <script src="../../javascripts/arithmatex.js"></script>
       

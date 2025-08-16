@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8'?>
+<register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
+    <equipment enteredBy="Joseph Borbely">
+        <id>MSLE.M.100</id>
+        <manufacturer>Measurement</manufacturer>
+        <model>Stds</model>
+        <serial>Lab</serial>
+        <description>Does stuff</description>
+        <specifications />
+        <location>Mass Standards Laboratories</location>
+        <status>Active</status>
+        <loggable>false</loggable>
+        <traceable>true</traceable>
+        <calibrations>
+            <measurand quantity="Voltage DC" calibrationInterval="5">
+                <component name="">
+                    <adjustment date="2024-10-17">Cleaned the filter</adjustment>
+                    <performanceCheck completedDate="2023-04-02" enteredBy="Minyu Zhang" checkedBy="Tim Lawson" checkedDate="2023-04-04">
+                        <competency>
+                            <worker>Minyu Zhang</worker>
+                            <checker>Tim Lawson</checker>
+                            <technicalProcedure>MSLT.E.048.005</technicalProcedure>
+                        </competency>
+                        <conditions/>
+                        <file>
+                            <url>\\msl-nas\Light\Calibrations\job123456.xml</url>
+                            <sha256>8392e473a047543773138653b98037956fa2086e4a54fc882d913f10cc217728</sha256>
+                        </file>
+                    </performanceCheck>
+                    <adjustment date="2022-06-12">Cleaned the filter</adjustment>
+                    <digitalReport format="MSL PDF/A-3" id="Electrical/2025/092">
+                        <url>reports\2025\job092.pdf</url>
+                        <sha256>76e4e036da8722b55362912396a01a07bb61e6260c7c4b6150d431e613529a54</sha256>
+                    </digitalReport>
+                </component>
+            </measurand>
+            <measurand quantity="Wavelength" calibrationInterval="0">
+                <component name="">
+                    <report id="Mono/2023/583" enteredBy="Joseph Borbely">
+                        <reportIssueDate>2023-08-18</reportIssueDate>
+                        <measurementStartDate>2023-08-08</measurementStartDate>
+                        <measurementStopDate>2023-08-14</measurementStopDate>
+                        <issuingLaboratory person="Me">MSL</issuingLaboratory>
+                        <technicalProcedure>MSLT.H.002.006</technicalProcedure>
+                        <conditions />
+                        <acceptanceCriteria />
+                        <equation>
+                            <value variables="">1</value>
+                            <uncertainty variables="">0.1</uncertainty>
+                            <unit>m</unit>
+                            <ranges />
+                        </equation>
+                    </report>
+                </component>
+            </measurand>
+        </calibrations>
+        <maintenance />
+        <alterations />
+        <firmware />
+        <specifiedRequirements />
+        <referenceMaterials />
+        <qualityManual />
+    </equipment>
+</register>

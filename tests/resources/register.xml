@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
     <equipment enteredBy="Peter McDowall">
-        <id>MSLE.P.001</id>
+        <id>MSLE.M.001</id>
         <manufacturer>MSL</manufacturer>
         <model>ABC</model>
         <serial>123</serial>

@@ -1572,20 +1572,18 @@ def test_register_from_file() -> None:  # noqa: PLR0915
     assert r.team == "Mass"
     assert len(r) == 2  # noqa: PLR2004
     assert r._equipment == [None, None]  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
-    assert r._index_map == {"Bob": 1, "MSLE.P.001": 0, "MSLE.M.092": 1}  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    assert r._index_map == {"Bob": 1, "MSLE.M.001": 0, "MSLE.M.092": 1}  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     assert str(r) == "<Register team='Mass' (2 equipment)>"
 
     first = r[0]
     assert isinstance(first, Equipment)
-    assert (
-        str(first) == "<Equipment id='MSLE.P.001', manufacturer='MSL', model='ABC', serial='123' (0 reports, 0 checks)>"
-    )
+    assert str(first) == "<Equipment manufacturer='MSL', model='ABC', serial='123'>"
     assert first.entered_by == "Peter McDowall"  # cSpell:ignore Dowall
     assert first.checked_by == ""
     assert first.checked_date is None
     assert first.alias == ""
     assert first.keywords == ()
-    assert first.id == "MSLE.P.001"
+    assert first.id == "MSLE.M.001"
     assert first.manufacturer == "MSL"
     assert first.model == "ABC"
     assert first.serial == "123"
@@ -1621,7 +1619,7 @@ def test_register_from_file() -> None:  # noqa: PLR0915
     assert first.quality_manual.service_agent == ""
     assert first.quality_manual.technical_procedures == ()
 
-    assert r["MSLE.P.001"] is first
+    assert r["MSLE.M.001"] is first
     assert r[0] is first
 
     with pytest.raises(ValueError, match=r"alias or id of 'invalid'"):
@@ -1638,10 +1636,7 @@ def test_register_from_file() -> None:  # noqa: PLR0915
 
     assert isinstance(second, Equipment)
     assert second is not None
-    assert (
-        str(second)
-        == "<Equipment id='MSLE.M.092', manufacturer='The Company Name', model='Model', serial='Serial' (4 reports, 0 checks)>"  # noqa: E501
-    )
+    assert str(second) == "<Equipment manufacturer='The Company Name', model='Model', serial='Serial' (4 reports)>"
     assert second is not first
     assert r["Bob"] is second
     assert r["MSLE.M.092"] is second
@@ -2431,3 +2426,20 @@ def test_report_is_calibration_due() -> None:
     latest = Latest(next_calibration_date=d, calibration_interval=0, name="", quantity="")
     assert not latest.is_calibration_due()
     assert not latest.is_calibration_due(1000)
+
+
+def test_equipment_repr() -> None:
+    path = Path(__file__).parent / "resources"
+    r = Register(path / "register.xml", path / "register2.xml")
+    assert r.team == "Mass"
+    assert len(r) == 3  # noqa: PLR2004
+    assert str(r) == "<Register team='Mass' (3 equipment)>"
+    assert repr(r["MSLE.M.001"]) == "<Equipment manufacturer='MSL', model='ABC', serial='123'>"
+    assert (
+        repr(r["MSLE.M.092"])
+        == "<Equipment manufacturer='The Company Name', model='Model', serial='Serial' (4 reports)>"
+    )
+    assert (
+        repr(r["MSLE.M.100"])
+        == "<Equipment manufacturer='Measurement', model='Stds', serial='Lab' (2 adjustments, 1 digital report, 1 performance check, 1 report)>"  # noqa: E501
+    )

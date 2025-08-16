@@ -2113,15 +2113,32 @@ class Equipment:
 
     def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the string representation."""
-        nr = sum(1 for m in self.calibrations for c in m.components for _ in c.reports)
-        reports = "report" if nr == 1 else "reports"
+        items: list[str] = []
+
+        na = sum(1 for m in self.calibrations for c in m.components for _ in c.adjustments)
+        if na > 0:
+            plural = "" if na == 1 else "s"
+            items.append(f"{na} adjustment{plural}")
+
+        ndr = sum(1 for m in self.calibrations for c in m.components for _ in c.digital_reports)
+        if ndr > 0:
+            plural = "" if ndr == 1 else "s"
+            items.append(f"{ndr} digital report{plural}")
 
         npc = sum(1 for m in self.calibrations for c in m.components for _ in c.performance_checks)
-        checks = "check" if npc == 1 else "checks"
+        if npc > 0:
+            plural = "" if npc == 1 else "s"
+            items.append(f"{npc} performance check{plural}")
 
+        nr = sum(1 for m in self.calibrations for c in m.components for _ in c.reports)
+        if nr > 0:
+            plural = "" if nr == 1 else "s"
+            items.append(f"{nr} report{plural}")
+
+        summary = "" if not items else " (" + ", ".join(items) + ")"
         return (
-            f"<{self.__class__.__name__} id={self.id!r}, manufacturer={self.manufacturer!r}, "
-            f"model={self.model!r}, serial={self.serial!r} ({nr} {reports}, {npc} {checks})>"
+            f"<{self.__class__.__name__} manufacturer={self.manufacturer!r}, "
+            f"model={self.model!r}, serial={self.serial!r}{summary}>"
         )
 
     @classmethod
@@ -2339,8 +2356,10 @@ class Register:
         """Represents the [register][element_register]{:target="_blank"} element in an equipment register.
 
         Args:
-            sources: An iterable of [path-like][path-like object]{:target="_blank"} or
+            sources: The [path-like][path-like object]{:target="_blank"} or
                 [file-like][file-like object]{:target="_blank"} objects that are equipment registers.
+                Specifying multiple objects allows for storing an equipment register across multiple
+                files for the same team.
         """
         team = ""
         self._elements: list[Element[str]] = []

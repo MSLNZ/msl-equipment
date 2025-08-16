@@ -1798,7 +1798,17 @@ files for the same team.</p>
 
   
       dataclass
-  " href="../equipment/#msl.equipment.schema.Equipment">Equipment</a></li>
+  " href="../equipment/#msl.equipment.schema.Equipment">Equipment</a>, <a class="autorefs autorefs-internal" title="Report
+
+
+  
+      dataclass
+  " href="../report/#msl.equipment.schema.Report">Report</a>, <a class="autorefs autorefs-internal" title="DigitalReport
+
+
+  
+      dataclass
+  " href="../digital_report/#msl.equipment.schema.DigitalReport">DigitalReport</a></li>
 <li>location: <a class="autorefs autorefs-internal" title="Equipment
 
 
@@ -2129,7 +2139,11 @@ files for the same team.</p>
 <span class="normal">2546</span>
 <span class="normal">2547</span>
 <span class="normal">2548</span>
-<span class="normal">2549</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">Pattern</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">flags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Equipment</span><span class="p">]:</span>  <span class="c1"># noqa: C901</span>
+<span class="normal">2549</span>
+<span class="normal">2550</span>
+<span class="normal">2551</span>
+<span class="normal">2552</span>
+<span class="normal">2553</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">Pattern</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">flags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Equipment</span><span class="p">]:</span>  <span class="c1"># noqa: C901</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find equipment in the register.</span>
 
 <span class="sd">    The following attributes are used in the search:</span>
@@ -2139,7 +2153,7 @@ files for the same team.</p>
 <span class="sd">    * manufacturer: [Equipment][msl.equipment.schema.Equipment]</span>
 <span class="sd">    * model: [Equipment][msl.equipment.schema.Equipment]</span>
 <span class="sd">    * serial: [Equipment][msl.equipment.schema.Equipment]</span>
-<span class="sd">    * id: [Equipment][msl.equipment.schema.Equipment]</span>
+<span class="sd">    * id: [Equipment][msl.equipment.schema.Equipment], [Report][msl.equipment.schema.Report], [DigitalReport][msl.equipment.schema.DigitalReport]</span>
 <span class="sd">    * location: [Equipment][msl.equipment.schema.Equipment]</span>
 <span class="sd">    * quantity: [Measurand][msl.equipment.schema.Measurand]</span>
 <span class="sd">    * name: [Component][msl.equipment.schema.Component]</span>
@@ -2212,6 +2226,8 @@ files for the same team.</p>
                         <span class="k">return</span> <span class="kc">True</span>
                     <span class="k">if</span> <span class="n">comment_search</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
                         <span class="k">return</span> <span class="kc">True</span>
+                    <span class="k">if</span> <span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">True</span>
                 <span class="k">for</span> <span class="n">pc</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">performance_checks</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">entered_by</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="k">return</span> <span class="kc">True</span>
@@ -2224,6 +2240,8 @@ files for the same team.</p>
                         <span class="k">return</span> <span class="kc">True</span>
                 <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">digital_reports</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">dr</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">True</span>
+                    <span class="k">if</span> <span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">dr</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
@@ -2354,11 +2372,7 @@ This parameter is ignored if the version of Python is &lt; 3.9.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2560</span>
-<span class="normal">2561</span>
-<span class="normal">2562</span>
-<span class="normal">2563</span>
-<span class="normal">2564</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2564</span>
 <span class="normal">2565</span>
 <span class="normal">2566</span>
 <span class="normal">2567</span>
@@ -2391,7 +2405,11 @@ This parameter is ignored if the version of Python is &lt; 3.9.</p>
 <span class="normal">2594</span>
 <span class="normal">2595</span>
 <span class="normal">2596</span>
-<span class="normal">2597</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span> <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ElementTree</span><span class="p">[</span><span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="normal">2597</span>
+<span class="normal">2598</span>
+<span class="normal">2599</span>
+<span class="normal">2600</span>
+<span class="normal">2601</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span> <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ElementTree</span><span class="p">[</span><span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Register][msl.equipment.schema.Register] class into an XML element tree.</span>
 
 <span class="sd">    Args:</span>

@@ -104,9 +104,9 @@ class Status(Enum):
         Active (str): The equipment is operable and may be used.
         Damaged (str): The equipment is damaged and is no longer usable.
         Disposed (str): The equipment has been disposed of and is no longer at available
-            (e.g., the equipment was sent to the landfill or to be recycled)
+            (e.g., the equipment was sent to the landfill or to be recycled).
         Dormant (str): The equipment is still operable, it is no longer in use but may be used again
-            (e.g., the equipment was replaced with a newer model, and it is kept as a backup)
+            (e.g., the equipment was replaced with a newer model, and it is kept as a backup).
         Lost (str): The equipment is lost, but if found may be put back into service.
         Retired (str): The equipment is still operable, but there are no intentions of using it again
             (e.g., the equipment depends on other equipment that is not available or is no longer manufactured).
@@ -524,17 +524,15 @@ class Range(NamedTuple):
     maximum: float
     """Maximum value in range."""
 
-    def check_within_range(self, value: float | ArrayLike) -> bool:
+    def check_within_range(self, value: float | ArrayLike) -> Literal[True]:
         """Check that the values are within the range.
 
         Args:
-            value: The values to check.
+            value: The values to check, raises
 
         Returns:
-            `True` is the values are within range.
-
-        Raises:
-            ValueError: If `value` is not within the range.
+            Always returns `True`. Raises [ValueError][]{:target="_blank"} if
+                `value` is not within the range.
         """
         if isinstance(value, (int, float)) or (isinstance(value, np.ndarray) and value.ndim == 0):
             if value < self.minimum or value > self.maximum:
@@ -1250,7 +1248,7 @@ class Table(np.ndarray):
         for more details.
 
         Args:
-            dtype: The dtype of the output unstructured array.
+            dtype: The _dtype_ of the output unstructured array.
             copy: If `True`, always return a copy. If `False`, a view is returned if possible.
             casting: Controls what kind of data casting may occur. See the *casting* argument of
                 [numpy.ndarray.astype][]{:target="_blank"} for more details.
@@ -1358,14 +1356,14 @@ class PerformanceCheck:
         completed_date: The date that the performance check was completed.
         competency: The competent people who accomplished the performance check and the technical procedure
             that was executed.
-        entered_by: The name of the person who initially entered the `performanceCheck` element in the register.
-        checked_by: The name of the person who checked the information in the `performanceCheck` element.
-        checked_date: The date that the information in the `performanceCheck` element was last checked.
+        entered_by: The name of the person who initially entered the `<performanceCheck>` element in the register.
+        checked_by: The name of the person who checked the information in the `<performanceCheck>` element.
+        checked_date: The date that the information in the `<performanceCheck>` element was last checked.
         conditions: The conditions under which the performance check is valid.
         cvd_equations: Performance-check data is expressed as coefficients for the Callendar-Van Dusen equation.
         equations: Performance-check data is expressed as an equation.
-        files: Performance-check data is stored in another file.
-        deserialised: Performance-check data is stored in a deserialised format.
+        files: Performance-check data is stored in another file (not in the equipment register).
+        deserialised: Performance-check data is stored in a serialised format and deserialised.
         tables: Performance-check data is expressed as a CSV table in the equipment register.
     """
 
@@ -1376,13 +1374,13 @@ class PerformanceCheck:
     """The competent people who accomplished the performance check and the technical procedure that was executed."""
 
     entered_by: str
-    """The name of the person who initially entered the `performanceCheck` element in the register."""
+    """The name of the person who initially entered the `<performanceCheck>` element in the register."""
 
     checked_by: str = ""
-    """The name of the person who checked the information in the `performanceCheck` element."""
+    """The name of the person who checked the information in the `<performanceCheck>` element."""
 
     checked_date: _date | None = None
-    """The date that the information in the `performanceCheck` element was last checked."""
+    """The date that the information in the `<performanceCheck>` element was last checked."""
 
     conditions: Conditions = field(default_factory=Conditions)
     """The conditions under which the performance check is valid."""
@@ -1394,10 +1392,10 @@ class PerformanceCheck:
     """Performance-check data is expressed as an equation."""
 
     files: tuple[File, ...] = ()
-    """Performance-check data is stored in another file."""
+    """Performance-check data is stored in another file (not in the equipment register)."""
 
     deserialised: tuple[Deserialised, ...] = ()
-    """Performance-check data is stored in a deserialised format."""
+    """Performance-check data is stored in a serialised format and deserialised."""
 
     tables: tuple[Table, ...] = ()
     """Performance-check data is expressed as a CSV table in the equipment register."""
@@ -1521,20 +1519,20 @@ class Report:
 
     Args:
         id: The report identification number.
-        entered_by: The name of the person who initially entered the `report` element in the register.
+        entered_by: The name of the person who initially entered the `<report>` element in the register.
         report_issue_date: The date that the report was issued.
         measurement_start_date: The date that the calibration measurement started.
         measurement_stop_date: The date that the calibration measurement stopped.
         issuing_laboratory: Information about the laboratory that issued the calibration report.
         technical_procedure: The technical procedure(s) that was(were) followed to perform the calibration.
-        checked_by: The name of the person who checked the information in the `report` element.
-        checked_date: The date that the information in the `report` element was last checked.
+        checked_by: The name of the person who checked the information in the `<report>` element.
+        checked_date: The date that the information in the `<report>` element was last checked.
         conditions: The conditions under which the report is valid.
         acceptance_criteria: Acceptance criteria for the calibration report.
         cvd_equations: Calibration data is expressed as coefficients for the Callendar-Van Dusen equation.
         equations: Calibration data is expressed as an equation.
-        files: Calibration data is stored in another file.
-        deserialised: Calibration data is stored in a deserialised format.
+        files: Calibration data is stored in another file (not in the equipment register).
+        deserialised: Calibration data is stored in a serialised format and deserialised.
         tables: Calibration data is expressed as a CSV table in the equipment register.
     """
 
@@ -1542,7 +1540,7 @@ class Report:
     """The report identification number."""
 
     entered_by: str
-    """The name of the person who initially entered the `report` element in the register."""
+    """The name of the person who initially entered the `<report>` element in the register."""
 
     report_issue_date: _date
     """The date that the report was issued."""
@@ -1560,10 +1558,10 @@ class Report:
     """The technical procedure(s) that was(were) followed to perform the calibration."""
 
     checked_by: str = ""
-    """The name of the person who checked the information in the `report` element."""
+    """The name of the person who checked the information in the `<report>` element."""
 
     checked_date: _date | None = None
-    """The date that the information in the `report` element was last checked."""
+    """The date that the information in the `<report>` element was last checked."""
 
     conditions: Conditions = field(default_factory=Conditions)
     """The conditions under which the report is valid."""
@@ -1578,10 +1576,10 @@ class Report:
     """Calibration data is expressed as an equation."""
 
     files: tuple[File, ...] = ()
-    """Calibration data is stored in another file."""
+    """Calibration data is stored in another file (not in the equipment register)."""
 
     deserialised: tuple[Deserialised, ...] = ()
-    """Calibration data is stored in a deserialised format."""
+    """Calibration data is stored in a serialised format and deserialised."""
 
     tables: tuple[Table, ...] = ()
     """Calibration data is expressed as a CSV table in the equipment register."""
@@ -1762,7 +1760,7 @@ class Measurand:
         quantity: The kind of quantity that is measured.
         calibration_interval: The number of years that may pass between a calibration or a performance check.
             For equipment that do not have a required and periodic interval, but are calibrated on demand,
-            set the value `0`.
+            set the value to `0`.
         components: The components of the equipment that measure the `quantity`.
     """
 
@@ -2014,9 +2012,9 @@ class Equipment:
     """Represents the [equipment][type_equipment]{:target="_blank"} element in an equipment register.
 
     Args:
-        entered_by: The name of the person who initially entered the `equipment` element in the register.
-        checked_by: The name of the person who checked the information in the `equipment` element.
-        checked_date: The date that the information in the `equipment` element was last checked.
+        entered_by: The name of the person who initially entered the `<equipment>` element in the register.
+        checked_by: The name of the person who checked the information in the `<equipment>` element.
+        checked_date: The date that the information in the `<equipment>` element was last checked.
         alias: An alternative name to associate with the equipment.
         keywords: Keywords that describe the equipment.
         id: Identity in an equipment register.
@@ -2044,13 +2042,13 @@ class Equipment:
     """
 
     entered_by: str = ""
-    """The name of the person who initially entered the `equipment` element in the register."""
+    """The name of the person who initially entered the `<equipment>` element in the register."""
 
     checked_by: str = ""
-    """The name of the person who checked the information in the `equipment` element."""
+    """The name of the person who checked the information in the `<equipment>` element."""
 
     checked_date: _date | None = None
-    """The date that the information in the `equipment` element was last checked."""
+    """The date that the information in the `<equipment>` element was last checked."""
 
     alias: str = ""
     """An alternative name to associate with the equipment."""
@@ -2359,7 +2357,7 @@ class Register:
         Args:
             sources: The [path-like][path-like object]{:target="_blank"} or
                 [file-like][file-like object]{:target="_blank"} objects that are equipment registers.
-                Specifying multiple objects allows for storing an equipment register across multiple
+                Specifying multiple sources allows for storing an equipment register across multiple
                 files for the same team.
         """
         team = ""

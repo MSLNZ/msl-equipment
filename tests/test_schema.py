@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import sys
 from datetime import date, datetime
 from io import BytesIO, StringIO
@@ -1693,7 +1694,7 @@ def test_register_from_file() -> None:  # noqa: PLR0915
     assert second.quality_manual.financial.warranty_expiration_date == date(2026, 8, 1)
     assert second.quality_manual.documentation == "https://url.com"
     assert second.quality_manual.personnel_restrictions == "Everyone"
-    assert second.quality_manual.service_agent == "MSL"
+    assert second.quality_manual.service_agent == "Someone from the Secret Service"
     assert second.quality_manual.technical_procedures == ("MSLT.E.028.017", "MSLT.O.009")
 
 
@@ -2443,3 +2444,63 @@ def test_equipment_repr() -> None:
         repr(r["MSLE.M.100"])
         == "<Equipment manufacturer='Measurement', model='Stds', serial='Lab' (2 adjustments, 1 digital report, 1 performance check, 1 report)>"  # noqa: E501
     )
+
+
+@pytest.mark.parametrize(
+    ("pattern", "expect"),
+    [
+        ("ambient", "092"),  # description
+        ("Measurement", "100"),  # manufacturer
+        ("ABC", "001"),  # model
+        ("Serial", "092"),  # serial
+        (r"M\.1", "100"),  # id
+        ("CMM", "001"),  # location
+        ("Voltage", "100"),  # quantity
+        ("Probe 1", "092"),  # name
+        ("McDowall", "001"),  # entered_by
+        ("Lawson", "100"),  # checked_by
+        ("Young", "092"),  # performed_by
+        ("torpedo", "100"),  # comment
+        ("PDF/A-3", "100"),  # format
+        ("filter", "100"),  # details
+        ("helium", "092"),  # task
+        ("Whatever", "092"),  # asset_number
+        ("Secret", "092"),  # service_agent
+        (r"P\.\d{3}\.\d{3}", "100"),  # technical_procedures
+    ],
+)
+def test_register_find(pattern: str, expect: str) -> None:
+    path = Path(__file__).parent / "resources"
+    r = Register(path / "register.xml", path / "register2.xml")
+    found = list(r.find(pattern))
+    assert len(found) == 1
+    assert found[0].id == f"MSLE.M.{expect}"
+
+
+def test_register_find_flags() -> None:
+    path = Path(__file__).parent / "resources"
+    r = Register(path / "register.xml", path / "register2.xml")
+
+    found = list(r.find("Hygrometer"))
+    assert len(found) == 1
+    assert found[0].id == "MSLE.M.092"
+
+    found = list(r.find("hygrometer", flags=re.IGNORECASE))
+    assert len(found) == 1
+    assert found[0].id == "MSLE.M.092"
+
+
+def test_register_find_multiple() -> None:
+    path = Path(__file__).parent / "resources"
+    r = Register(path / "register.xml", path / "register2.xml")
+    found = list(r.find("Hygrometer|AC"))
+    assert len(found) == 2  # noqa: PLR2004
+    assert found[0].id == "MSLE.M.092"
+    assert found[1].id == "MSLE.M.100"
+
+
+def test_register_find_none() -> None:
+    path = Path(__file__).parent / "resources"
+    r = Register(path / "register.xml", path / "register2.xml")
+    found = list(r.find("peanut"))
+    assert len(found) == 0

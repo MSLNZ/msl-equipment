@@ -35,7 +35,7 @@
         <calibrations>
             <measurand quantity="Humidity" calibrationInterval="5.0">
                 <component name="Probe 1">
-                    <report id="Humidity/2023/583" enteredBy="Joseph Borbely" checkedBy="Adam Dunford" checkedDate="2025-08-12">
+                    <report id="Humidity/2023/583" enteredBy="Joseph Borbely" checkedBy="Neil Swift" checkedDate="2025-08-12">
                         <reportIssueDate>2023-08-18</reportIssueDate>
                         <measurementStartDate>2023-08-08</measurementStartDate>
                         <measurementStopDate>2023-08-14</measurementStopDate>
@@ -165,7 +165,7 @@
                 <yearPurchased>2023</yearPurchased>
             </financial>
             <personnelRestrictions>Everyone</personnelRestrictions>
-            <serviceAgent>MSL</serviceAgent>
+            <serviceAgent>Someone from the Secret Service</serviceAgent>
             <technicalProcedures>
                 <id>MSLT.E.028.017</id>
                 <id>MSLT.O.009</id>

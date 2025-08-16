@@ -1,5 +1,6 @@
 from __future__ import annotations  # noqa: D100
 
+import re
 import sys
 from dataclasses import dataclass, field
 from datetime import date as _date
@@ -2422,10 +2423,130 @@ class Register:
         Args:
             equipment: The equipment to add.
         """
-        self._index_map[equipment.id] = len(self._equipment)
+        if equipment.id:
+            self._index_map[equipment.id] = len(self._equipment)
         if equipment.alias:
             self._index_map[equipment.alias] = len(self._equipment)
         self._equipment.append(equipment)
+
+    def find(self, pattern: str | re.Pattern[str], *, flags: int = 0) -> Iterator[Equipment]:  # noqa: C901
+        """Find equipment in the register.
+
+        The following attributes are used in the search:
+
+        * keywords: [Equipment][msl.equipment.schema.Equipment]
+        * description: [Equipment][msl.equipment.schema.Equipment]
+        * manufacturer: [Equipment][msl.equipment.schema.Equipment]
+        * model: [Equipment][msl.equipment.schema.Equipment]
+        * serial: [Equipment][msl.equipment.schema.Equipment]
+        * id: [Equipment][msl.equipment.schema.Equipment]
+        * location: [Equipment][msl.equipment.schema.Equipment]
+        * quantity: [Measurand][msl.equipment.schema.Measurand]
+        * name: [Component][msl.equipment.schema.Component]
+        * entered_by: [Equipment][msl.equipment.schema.Equipment], [PerformanceCheck][msl.equipment.schema.PerformanceCheck], [Report][msl.equipment.schema.Report]
+        * checked_by: [Equipment][msl.equipment.schema.Equipment], [PerformanceCheck][msl.equipment.schema.PerformanceCheck], [Report][msl.equipment.schema.Report]
+        * performed_by: [Alteration][msl.equipment.schema.Alteration], [CompletedTask][msl.equipment.schema.CompletedTask], [PlannedTask][msl.equipment.schema.PlannedTask]
+        * comment: [CVDEquation][msl.equipment.schema.CVDEquation], [Equation][msl.equipment.schema.Equation], [File][msl.equipment.schema.File], [Table][msl.equipment.schema.Table], [Deserialised][msl.equipment.schema.Deserialised]
+        * format: [DigitalReport][msl.equipment.schema.DigitalReport]
+        * details: [Alteration][msl.equipment.schema.Alteration], [Adjustment][msl.equipment.schema.Adjustment]
+        * task: [CompletedTask][msl.equipment.schema.CompletedTask], [PlannedTask][msl.equipment.schema.PlannedTask]
+        * asset_number: [Financial][msl.equipment.schema.Financial]
+        * service_agent: [QualityManual][msl.equipment.schema.QualityManual]
+        * technical_procedures: [QualityManual][msl.equipment.schema.QualityManual]
+
+        Args:
+            pattern: A [regular-expression pattern](https://regexr.com/){:target="_blank"} to use to find equipment.
+            flags: The flags to use to compile the `pattern`. See [re.compile][]{:target="_blank"} for more details.
+
+        Yields:
+            Equipment that match the `pattern`.
+        """  # noqa: E501
+
+        def comment_search(item: Report | PerformanceCheck) -> bool:
+            for cvd_equation in item.cvd_equations:
+                if regex.search(cvd_equation.comment) is not None:
+                    return True
+            for equation in item.equations:
+                if regex.search(equation.comment) is not None:
+                    return True
+            for file in item.files:
+                if regex.search(file.comment) is not None:
+                    return True
+            for table in item.tables:
+                if regex.search(table.comment) is not None:
+                    return True
+            return any(regex.search(deserialised.comment) is not None for deserialised in item.deserialised)
+
+        def task_search(m: Maintenance) -> bool:
+            for c in m.completed:
+                if regex.search(c.task) is not None:
+                    return True
+                if regex.search(c.performed_by) is not None:
+                    return True
+            for p in m.planned:
+                if regex.search(p.task) is not None:
+                    return True
+                if regex.search(p.performed_by) is not None:
+                    return True
+            return False
+
+        def alteration_search(alterations: tuple[Alteration, ...]) -> bool:
+            for a in alterations:
+                if regex.search(a.details) is not None:
+                    return True
+                if regex.search(a.performed_by) is not None:
+                    return True
+            return False
+
+        def calibrations_search(e: Equipment) -> bool:  # noqa: C901, PLR0911, PLR0912
+            for m in e.calibrations:
+                if regex.search(m.quantity) is not None:
+                    return True
+                for c in m.components:
+                    if regex.search(c.name) is not None:
+                        return True
+                    for r in c.reports:
+                        if regex.search(r.entered_by) is not None:
+                            return True
+                        if regex.search(r.checked_by) is not None:
+                            return True
+                        if comment_search(r):
+                            return True
+                    for pc in c.performance_checks:
+                        if regex.search(pc.entered_by) is not None:
+                            return True
+                        if regex.search(pc.checked_by) is not None:
+                            return True
+                        if comment_search(pc):
+                            return True
+                    for a in c.adjustments:
+                        if regex.search(a.details) is not None:
+                            return True
+                    for dr in c.digital_reports:
+                        if regex.search(dr.format.value) is not None:
+                            return True
+            return False
+
+        regex = re.compile(pattern, flags=flags)
+        for equipment in self:
+            if (
+                regex.search(" ".join(equipment.keywords)) is not None
+                or regex.search(equipment.description) is not None
+                or regex.search(equipment.manufacturer) is not None
+                or regex.search(equipment.model) is not None
+                or regex.search(equipment.serial) is not None
+                or regex.search(equipment.id) is not None
+                or regex.search(equipment.location) is not None
+                or regex.search(equipment.entered_by) is not None
+                or regex.search(equipment.checked_by) is not None
+                or calibrations_search(equipment)
+                or alteration_search(equipment.alterations)
+                or task_search(equipment.maintenance)
+                or regex.search(equipment.quality_manual.financial.asset_number) is not None
+                or regex.search(equipment.quality_manual.service_agent) is not None
+                or regex.search(" ".join(equipment.quality_manual.technical_procedures)) is not None
+            ):
+                yield equipment
 
     @property
     def team(self) -> str:

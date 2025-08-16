@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
-    <equipment enteredBy="Joseph Borbely">
+    <equipment enteredBy="Joseph Borbely" keywords="AC DC">
         <id>MSLE.M.100</id>
         <manufacturer>Measurement</manufacturer>
         <model>Stds</model>
@@ -22,12 +22,12 @@
                             <technicalProcedure>MSLT.E.048.005</technicalProcedure>
                         </competency>
                         <conditions/>
-                        <file>
+                        <file comment="Photon torpedo">
                             <url>\\msl-nas\Light\Calibrations\job123456.xml</url>
                             <sha256>8392e473a047543773138653b98037956fa2086e4a54fc882d913f10cc217728</sha256>
                         </file>
                     </performanceCheck>
-                    <adjustment date="2022-06-12">Cleaned the filter</adjustment>
+                    <adjustment date="2022-06-12">Cleaned the fan</adjustment>
                     <digitalReport format="MSL PDF/A-3" id="Electrical/2025/092">
                         <url>reports\2025\job092.pdf</url>
                         <sha256>76e4e036da8722b55362912396a01a07bb61e6260c7c4b6150d431e613529a54</sha256>
@@ -59,6 +59,10 @@
         <firmware />
         <specifiedRequirements />
         <referenceMaterials />
-        <qualityManual />
+        <qualityManual>
+            <technicalProcedures>
+                <id>MSLT.P.028.017</id>
+            </technicalProcedures>
+        </qualityManual>
     </equipment>
 </register>

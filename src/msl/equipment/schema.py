@@ -2439,7 +2439,7 @@ class Register:
         * manufacturer: [Equipment][msl.equipment.schema.Equipment]
         * model: [Equipment][msl.equipment.schema.Equipment]
         * serial: [Equipment][msl.equipment.schema.Equipment]
-        * id: [Equipment][msl.equipment.schema.Equipment]
+        * id: [Equipment][msl.equipment.schema.Equipment], [Report][msl.equipment.schema.Report], [DigitalReport][msl.equipment.schema.DigitalReport]
         * location: [Equipment][msl.equipment.schema.Equipment]
         * quantity: [Measurand][msl.equipment.schema.Measurand]
         * name: [Component][msl.equipment.schema.Component]
@@ -2512,6 +2512,8 @@ class Register:
                             return True
                         if comment_search(r):
                             return True
+                        if regex.search(r.id) is not None:
+                            return True
                     for pc in c.performance_checks:
                         if regex.search(pc.entered_by) is not None:
                             return True
@@ -2524,6 +2526,8 @@ class Register:
                             return True
                     for dr in c.digital_reports:
                         if regex.search(dr.format.value) is not None:
+                            return True
+                        if regex.search(dr.id) is not None:
                             return True
             return False
 

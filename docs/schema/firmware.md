@@ -1,4 +1,6 @@
-# Firmware {: #msl.equipment.schema.Firmware}
-::: msl.equipment.schema
+# Firmware
+
+::: msl.equipment.schema.Firmware
     options:
-        filters: ["Firmware", "from_xml", "to_xml", "version", "^date$"]
+        show_root_full_path: false
+        show_root_heading: true

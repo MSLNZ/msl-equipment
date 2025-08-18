@@ -1,4 +1,6 @@
-# Conditions {: #msl.equipment.schema.Conditions}
-::: msl.equipment.schema
+# Conditions
+
+::: msl.equipment.schema.Conditions
     options:
-        filters: ["Conditions", "from_xml", "tag"]
+        show_root_full_path: false
+        show_root_heading: true

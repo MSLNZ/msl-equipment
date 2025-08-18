@@ -1,4 +1,6 @@
-# Alteration {: #msl.equipment.schema.Alteration}
-::: msl.equipment.schema
+# Alteration
+
+::: msl.equipment.schema.Alteration
     options:
-        filters: ["Alteration", "from_xml", "to_xml", "^date$", "details", "performed_by"]
+        show_root_full_path: false
+        show_root_heading: true

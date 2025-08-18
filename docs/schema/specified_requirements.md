@@ -1,4 +1,6 @@
-# SpecifiedRequirements {: #msl.equipment.schema.SpecifiedRequirements}
-::: msl.equipment.schema
+# SpecifiedRequirements
+
+::: msl.equipment.schema.SpecifiedRequirements
     options:
-        filters: ["SpecifiedRequirements", "from_xml", "tag"]
+        show_root_full_path: false
+        show_root_heading: true

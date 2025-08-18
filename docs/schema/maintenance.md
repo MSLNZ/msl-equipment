@@ -1,4 +1,6 @@
-# Maintenance {: #msl.equipment.schema.Maintenance}
-::: msl.equipment.schema
+# Maintenance
+
+::: msl.equipment.schema.Maintenance
     options:
-        filters: ["Maintenance", "from_xml", "to_xml", "planned", "completed"]
+        show_root_full_path: false
+        show_root_heading: true

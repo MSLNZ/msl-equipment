@@ -1,5 +1,6 @@
 # Register
 
-::: msl.equipment.schema
+::: msl.equipment.schema.Register
     options:
-        filters: ["Register", "^add$", "^find$", "team", "tree", "NAMESPACE"]
+        show_root_full_path: false
+        show_root_heading: true

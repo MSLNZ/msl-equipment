@@ -1,4 +1,6 @@
-# PlannedTask {: #msl.equipment.schema.PlannedTask}
-::: msl.equipment.schema
+# PlannedTask
+
+::: msl.equipment.schema.PlannedTask
     options:
-        filters: ["PlannedTask", "from_xml", "to_xml", "task", "due_date", "performed_by"]
+        show_root_full_path: false
+        show_root_heading: true

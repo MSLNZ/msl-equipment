@@ -122,14 +122,17 @@ array(50.4719306)
 
 ```
 
-::: msl.equipment.schema
+::: msl.equipment.schema.Equation
     options:
-        filters: ["^Equation$", "from_xml", "to_xml", "value", "uncertainty", "unit", "degree_freedom", "comment"]
+        show_root_full_path: false
+        show_root_heading: true
 
-::: msl.equipment.schema
+::: msl.equipment.schema.Evaluable
     options:
-        filters: ["Evaluable", "equation", "variables", "ranges", "__call__"]
+        show_root_full_path: false
+        show_root_heading: true
 
-::: msl.equipment.schema
+::: msl.equipment.schema.Range
     options:
-        filters: ["Range", "minimum", "maximum", "check_within_range"]
+        show_root_full_path: false
+        show_root_heading: true

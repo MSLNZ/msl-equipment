@@ -1,17 +1,21 @@
 # Equipment
 
-::: msl.equipment.schema
+::: msl.equipment.schema.Equipment
     options:
-        filters: ["Equipment", "from_xml", "to_xml", "entered_by", "checked_by", "checked_date", "alias", "keywords", "id", "manufacturer", "model", "^serial$", "description", "specifications", "location", "status", "loggable", "traceable", "calibrations", "maintenance", "alterations", "firmware", "specified_requirements", "reference_materials", "quality_manual", "latest_performance_checks", "latest_performance_check", "latest_reports", "latest_report"]
+        show_root_full_path: false
+        show_root_heading: true
 
-::: msl.equipment.schema
+::: msl.equipment.schema.Latest
     options:
-        filters: ["^Latest$", "calibration_interval", "next_calibration_date", "name", "quantity", "is_calibration_due"]
+        show_root_full_path: false
+        show_root_heading: true
 
-::: msl.equipment.schema
+::: msl.equipment.schema.LatestPerformanceCheck
     options:
-        filters: ["^LatestPerformanceCheck$", "^performance_check$"]
+        show_root_full_path: false
+        show_root_heading: true
 
-::: msl.equipment.schema
+::: msl.equipment.schema.LatestReport
     options:
-        filters: ["^LatestReport$", "^report$"]
+        show_root_full_path: false
+        show_root_heading: true

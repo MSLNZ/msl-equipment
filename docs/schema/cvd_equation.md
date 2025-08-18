@@ -117,6 +117,7 @@ You can bypass range checking by including a `check_range=False` keyword argumen
 
 ```
 
-::: msl.equipment.schema
+::: msl.equipment.schema.CVDEquation
     options:
-        filters: ["CVDEquation", "from_xml", "to_xml", "R0", "^A$", "^B$", "^C$", "uncertainty", "ranges", " degree_freedom", "comment", "^resistance$", "temperature"]
+        show_root_full_path: false
+        show_root_heading: true

@@ -1,4 +1,6 @@
-# Competency {: #msl.equipment.schema.Competency}
-::: msl.equipment.schema
+# Competency
+
+::: msl.equipment.schema.Competency
     options:
-        filters: ["Competency", "from_xml", "to_xml", "worker", "checker", "technical_procedure"]
+        show_root_full_path: false
+        show_root_heading: true

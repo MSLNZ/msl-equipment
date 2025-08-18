@@ -2,33 +2,33 @@
 
 Class representations of the [XML Schema Definition](https://mslnz.github.io/equipment-register-schema/latest/){:target="_blank"} for an equipment register.
 
-The primary class is [Register][register] which contains a sequence of [Equipment][equipment] classes that are each composed of the following classes:
+The primary class is [Register][] which contains a sequence of [Equipment][] classes that are each composed of the following classes:
 
-* [AcceptanceCriteria][msl.equipment.schema.AcceptanceCriteria]
-* [Accessories][msl.equipment.schema.Accessories]
-* [Adjustment][msl.equipment.schema.Adjustment]
-* [Alteration][msl.equipment.schema.Alteration]
-* [Component][msl.equipment.schema.Component]
-* [Competency][msl.equipment.schema.Competency]
-* [CompletedTask][msl.equipment.schema.CompletedTask]
-* [Conditions][msl.equipment.schema.Conditions]
-* [CVDEquation][cvdequation] (Callendar-Van Dusen equation, uses the [cvdCoefficients][type_cvdCoefficients]{:target="_blank"})
-* [Deserialised][msl.equipment.schema.Deserialised] (opposite of [serialised][type_serialised]{:target="_blank"})
-* [DigitalReport][digitalreport]
-* [Equation][equation]
-* [File][file]
-* [Financial][msl.equipment.schema.Financial]
-* [Firmware][msl.equipment.schema.Firmware]
-* [Maintenance][msl.equipment.schema.Maintenance]
-* [Measurand][msl.equipment.schema.Measurand]
-* [PerformanceCheck][msl.equipment.schema.PerformanceCheck]
-* [PlannedTask][msl.equipment.schema.PlannedTask]
-* [QualityManual][msl.equipment.schema.QualityManual]
-* [ReferenceMaterials][msl.equipment.schema.ReferenceMaterials]
-* [Report][msl.equipment.schema.Report]
-* [Specifications][msl.equipment.schema.Specifications]
-* [SpecifiedRequirements][msl.equipment.schema.SpecifiedRequirements]
-* [Status][msl.equipment.schema.Status]
-* [Table][table]
+* [AcceptanceCriteria][]
+* [Accessories][]
+* [Adjustment][]
+* [Alteration][]
+* [Component][]
+* [Competency][]
+* [CompletedTask][]
+* [Conditions][]
+* [CVDEquation][] (Callendar-Van Dusen equation, uses the [cvdCoefficients][type_cvdCoefficients]{:target="_blank"})
+* [Deserialised][] (opposite of [serialised][type_serialised]{:target="_blank"})
+* [DigitalReport][]
+* [Equation][]
+* [File][]
+* [Financial][]
+* [Firmware][]
+* [Maintenance][]
+* [Measurand][]
+* [PerformanceCheck][]
+* [PlannedTask][]
+* [QualityManual][]
+* [ReferenceMaterials][]
+* [Report][]
+* [Specifications][]
+* [SpecifiedRequirements][]
+* [Status][]
+* [Table][]
 
-The [Any][msl.equipment.schema.Any] class is used as a base class for elements that are currently represented by the [any][type_any]{:target="_blank"} type in the XML Schema Definition.
+The [Any][] class is used as a base class for elements that are currently represented by the [any][type_any]{:target="_blank"} type in the XML Schema Definition.

@@ -116,6 +116,7 @@ Table([[2.500000e+02, 1.818000e-02, 2.033000e-02],
 
 ```
 
-::: msl.equipment.schema
+::: msl.equipment.schema.Table
     options:
-        filters: ["Table", "from_xml", "to_xml", "__new__", "types", "units", "header", "comment", "unstructured"]
+        show_root_full_path: false
+        show_root_heading: true

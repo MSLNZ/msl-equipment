@@ -1,4 +1,6 @@
-# Any {: #msl.equipment.schema.Any}
-::: msl.equipment.schema
+# Any
+
+::: msl.equipment.schema.Any
     options:
-        filters: ["Any", "from_xml"]
+        show_root_full_path: false
+        show_root_heading: true

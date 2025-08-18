@@ -1,4 +1,6 @@
-# Component {: #msl.equipment.schema.Component}
-::: msl.equipment.schema
+# Component
+
+::: msl.equipment.schema.Component
     options:
-        filters: ["Component", "from_xml", "to_xml", "name", "adjustments", "digital_reports", "performance_checks", "reports"]
+        show_root_full_path: false
+        show_root_heading: true

@@ -1,4 +1,6 @@
-# Accessories {: #msl.equipment.schema.Accessories}
-::: msl.equipment.schema
+# Accessories
+
+::: msl.equipment.schema.Accessories
     options:
-        filters: ["Accessories", "from_xml", "tag"]
+        show_root_full_path: false
+        show_root_heading: true

@@ -1,4 +1,6 @@
-# Measurand {: #msl.equipment.schema.Measurand}
-::: msl.equipment.schema
+# Measurand
+
+::: msl.equipment.schema.Measurand
     options:
-        filters: ["Measurand", "from_xml", "to_xml", "quantity", "calibration_interval", "components"]
+        show_root_full_path: false
+        show_root_heading: true

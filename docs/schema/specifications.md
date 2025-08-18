@@ -1,4 +1,6 @@
-# Specifications {: #msl.equipment.schema.Specifications}
-::: msl.equipment.schema
+# Specifications
+
+::: msl.equipment.schema.Specifications
     options:
-        filters: ["Specifications", "from_xml", "tag"]
+        show_root_full_path: false
+        show_root_heading: true

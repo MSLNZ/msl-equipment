@@ -1,9 +1,11 @@
 # DigitalReport
 
-::: msl.equipment.schema
+::: msl.equipment.schema.DigitalReport
     options:
-        filters: ["DigitalReport", "from_xml", "to_xml", "url", "format", "id", "sha256", "attributes", "comment"]
+        show_root_full_path: false
+        show_root_heading: true
 
-::: msl.equipment.schema
+::: msl.equipment.schema.DigitalFormat
     options:
-        filters: ["DigitalFormat"]
+        show_root_full_path: false
+        show_root_heading: true

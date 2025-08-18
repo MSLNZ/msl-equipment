@@ -1,4 +1,6 @@
-# Adjustment {: #msl.equipment.schema.Adjustment}
-::: msl.equipment.schema
+# Adjustment
+
+::: msl.equipment.schema.Adjustment
     options:
-        filters: ["Adjustment", "from_xml", "to_xml", "details", "^date$"]
+        show_root_full_path: false
+        show_root_heading: true

@@ -1,4 +1,6 @@
-# CompletedTask {: #msl.equipment.schema.CompletedTask}
-::: msl.equipment.schema
+# CompletedTask
+
+::: msl.equipment.schema.CompletedTask
     options:
-        filters: ["CompletedTask", "from_xml", "to_xml", "task", "due_date", "performed_by", "completed_date"]
+        show_root_full_path: false
+        show_root_heading: true

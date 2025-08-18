@@ -56,6 +56,7 @@ array([[2.500000e+02, 1.818000e-02, 2.033000e-02],
 !!! note
     Passing `**file.attributes` to [read_table][msl.io.tables.read_table]{:target="_blank"} works as expected provided that the XML attributes of the `<url>` element are valid keyword arguments to [read_table][msl.io.tables.read_table]{:target="_blank"}. See [Read a table](https://mslnz.github.io/msl-io/latest/#read-a-table){:target="_blank"} for more examples from [msl-io](https://mslnz.github.io/msl-io/latest/){:target="_blank"}, in particular, specifying `dtype="header"` will return a structured dataset which would behave similar to the [Table][table] example in `msl-equipment` (i.e., accessing columns by header name).
 
-::: msl.equipment.schema
+::: msl.equipment.schema.File
     options:
-        filters: ["File", "from_xml", "to_xml", "url", "sha256", "attributes", "comment"]
+        show_root_full_path: false
+        show_root_heading: true

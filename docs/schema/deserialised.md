@@ -1,4 +1,6 @@
-# Deserialised {: #msl.equipment.schema.Deserialised}
-::: msl.equipment.schema
+# Deserialised
+
+::: msl.equipment.schema.Deserialised
     options:
-        filters: ["Deserialised", "from_xml", "to_xml", "value", "comment"]
+        show_root_full_path: false
+        show_root_heading: true

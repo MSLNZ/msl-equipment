@@ -1,8 +1,11 @@
-# Report {: #msl.equipment.schema.Report}
-::: msl.equipment.schema
-    options:
-        filters: ["^Report$", "from_xml", "to_xml", "id", "entered_by", "checked_by", "checked_date", "report_issue_date", "measurement_start_date", "measurement_stop_date", "issuing_laboratory", "technical_procedure", "conditions", "acceptance_criteria", "cvd_equations", "^equations$", "files", "deserialised", "tables"]
+# Report
 
-::: msl.equipment.schema
+::: msl.equipment.schema.Report
     options:
-        filters: ["IssuingLaboratory", "from_xml", "to_xml", "lab", "person"]
+        show_root_full_path: false
+        show_root_heading: true
+
+::: msl.equipment.schema.IssuingLaboratory
+    options:
+        show_root_full_path: false
+        show_root_heading: true

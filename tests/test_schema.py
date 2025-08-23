@@ -909,6 +909,7 @@ def test_cvd() -> None:
         <A>0.00390969</A>
         <B>-0.000000606</B>
         <C>0.000000000001372</C>
+        <D>0</D>
         <uncertainty variables="">0.0056/2</uncertainty>
         <range>
             <minimum>-10</minimum>
@@ -922,6 +923,7 @@ def test_cvd() -> None:
     assert cvd.A == 0.00390969  # noqa: PLR2004
     assert cvd.B == -6.06e-7  # noqa: PLR2004
     assert cvd.C == 1.372e-12  # noqa: PLR2004
+    assert cvd.D == 0.0
     assert cvd.uncertainty.equation == "0.0056/2"
     assert cvd.uncertainty.variables == ()
     assert cvd.uncertainty.ranges == {"t": Range(-10, 70.02), "r": Range(96.102, 127.103)}
@@ -935,6 +937,7 @@ def test_cvd() -> None:
         b"<A>0.00390969</A>"
         b"<B>-6.06e-07</B>"
         b"<C>1.372e-12</C>"
+        b"<D>0.0</D>"
         b'<uncertainty variables="">0.0056/2</uncertainty>'
         b"<range>"
         b"<minimum>-10.0</minimum>"
@@ -995,6 +998,7 @@ def test_cvd_from_to_xml_no_comment_nor_dof() -> None:
         <A>0.0321</A>
         <B>-5e-7</B>
         <C>0</C>
+        <D>0</D>
         <uncertainty variables="">0.0035</uncertainty>
         <range>
             <minimum>0</minimum>
@@ -1007,6 +1011,7 @@ def test_cvd_from_to_xml_no_comment_nor_dof() -> None:
     assert cvd.A == 0.0321  # noqa: PLR2004
     assert cvd.B == -5.0e-7  # noqa: PLR2004
     assert cvd.C == 0
+    assert cvd.D == 0
     assert cvd.uncertainty.equation == "0.0035"
     assert cvd.uncertainty.variables == ()
     assert cvd.uncertainty.ranges == {"t": Range(0, 100), "r": Range(100.02, 420.584)}
@@ -1019,6 +1024,7 @@ def test_cvd_from_to_xml_no_comment_nor_dof() -> None:
         b"<A>0.0321</A>"
         b"<B>-5e-07</B>"
         b"<C>0.0</C>"
+        b"<D>0.0</D>"
         b'<uncertainty variables="">0.0035</uncertainty>'
         b"<range>"
         b"<minimum>0.0</minimum>"
@@ -1029,27 +1035,33 @@ def test_cvd_from_to_xml_no_comment_nor_dof() -> None:
 
 
 @pytest.mark.parametrize(
-    ("r0", "a", "b", "c"),
+    ("r0", "a", "b", "c", "d"),
     [
-        (95, 0.00390969, -6.06e-7, 1.372e-12),
-        (100, 0.00390969, -6.06e-7, 1.372e-12),
-        (105, 0.00390969, -6.06e-7, 1.372e-12),
-        (98, 0.0035, -5e-7, 2e-12),
-        (101, 0.004, 7e-7, 0.5e-12),
-        (1000.2, 0.0039, -7e-7, -1e-12),
-        (999.5, 0.004, -7e-7, 1e-12),
-        (25, 0.004, -6e-7, 1.2e-12),
-        (24, 0.003, -5e-7, 0.5e-12),
-        (26, 0.005, -7e-7, 2.0e-12),
+        (95, 0.00390969, -6.06e-7, 1.372e-12, 0.0),
+        (100, 0.00390969, -6.06e-7, 1.372e-12, 0.0),
+        (105, 0.00390969, -6.06e-7, 1.372e-12, 0.0),
+        (98, 0.0035, -5e-7, 2e-12, 0.0),
+        (101, 0.004, 7e-7, 0.5e-12, 0.0),
+        (1000.2, 0.0039, -7e-7, -1e-12, 0.0),
+        (999.5, 0.004, -7e-7, 1e-12, 0.0),
+        (25, 0.004, -6e-7, 1.2e-12, 0.0),
+        (24, 0.003, -5e-7, 0.5e-12, 0.0),
+        (26, 0.005, -7e-7, 2.0e-12, 0.0),
+        (99.9, 3.92e-3, -6.68e-7, -4.27e-12, 1.01e-10),
+        (99.9, 3e-3, -6.68e-7, -4.27e-12, 5e-11),
+        (99.9, 5e-3, -6.68e-7, -4.27e-12, 1e-9),
+        (99.9, 3.92e-3, -2e-7, -4.27e-12, 1e-10),
+        (99.9, 3.92e-3, -1e-6, -4.27e-12, 1e-10),
     ],
 )
-def test_cvd_round_trip(r0: float, a: float, b: float, c: float) -> None:
+def test_cvd_round_trip(r0: float, a: float, b: float, c: float, d: float) -> None:
     text = f"""
         <cvdCoefficients>
         <R0>{r0}</R0>
         <A>{a}</A>
         <B>{b}</B>
         <C>{c}</C>
+        <D>{d}</D>
         <uncertainty variables="">0.0025</uncertainty>
         <range>
             <minimum>-273.15</minimum>
@@ -1123,6 +1135,7 @@ def test_cvd_iec60751() -> None:
         <A>3.9083e-3</A>
         <B>-5.775e-7</B>
         <C>-4.183e-12</C>
+        <D>0</D>
         <uncertainty variables="">1</uncertainty>
         <range>
             <minimum>-200</minimum>
@@ -1199,6 +1212,7 @@ def test_performance_check() -> None:
         b"<A>0.00390969</A>"
         b"<B>-6.06e-07</B>"
         b"<C>1.372e-12</C>"
+        b"<D>1e-10</D>"
         b'<uncertainty variables="">0.0056/2</uncertainty>'
         b"<range><minimum>-10.0</minimum><maximum>70.02</maximum></range>"
         b"</cvdCoefficients>"
@@ -1321,6 +1335,7 @@ def test_report() -> None:
         b"<A>0.00390969</A>"
         b"<B>-6.06e-07</B>"
         b"<C>1.372e-12</C>"
+        b"<D>0.0</D>"
         b'<uncertainty variables="">0.0056/2</uncertainty>'
         b"<range><minimum>-10.0</minimum><maximum>70.02</maximum></range>"
         b"</cvdCoefficients>"

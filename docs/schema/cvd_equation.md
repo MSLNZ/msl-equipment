@@ -1,15 +1,15 @@
 # CVDEquation
 
-The Callendar-Van Dusen (CVD) equation describes the relationship between resistance, $R$, and temperature, $T$, of platinum resistance thermometers (PRT). It is typically defined in two temperature ranges
+The Callendar-Van Dusen (CVD) equation describes the relationship between resistance, $R$, and temperature, $t$, of platinum resistance thermometers (PRT). It is defined in two temperature ranges
 
 $$
-\frac{R(T)}{R_0} = \begin{cases}
-    1 + A \cdot T + B \cdot T^2 & 0~^{\circ}\text{C} \leq T \lt 661~^{\circ}\text{C} \\
-    1 + A \cdot T + B \cdot T^2 + C \cdot (T-100) \cdot T^3 & -200~^{\circ}\text{C} \lt T \lt 0~^{\circ}\text{C} \\
+\frac{R(t)}{R_0} = \begin{cases}
+    1 + A \cdot t + B \cdot t^2 + D \cdot t^3 & R(t) \geq R_0 \\
+    1 + A \cdot t + B \cdot t^2 + C \cdot t^3 \cdot (t-100) & R(t) \lt R_0 \\
 \end{cases}
 $$
 
-where, $R_0$ is the resistance at $T=0~^{\circ}\text{C}$ and $A$, $B$ and $C$ are the Callendar-Van Dusen coefficients.
+where, $R_0 = R(0~^{\circ}\text{C})$ is the resistance at $t=0~^{\circ}\text{C}$ and $A$, $B$, $C$ and $D$ are the CVD coefficients. The $D$ coefficient is typically zero but may be non-zero if $t \gtrsim 200~^{\circ}\text{C}$.
 
 <!--
 >>> from msl.equipment import CVDEquation, Evaluable, Range
@@ -18,6 +18,7 @@ where, $R_0$ is the resistance at $T=0~^{\circ}\text{C}$ and $A$, $B$ and $C$ ar
 ...     A=3.913e-3,
 ...     B=-6.056e-7,
 ...     C=1.372e-12,
+...     D=0.0,
 ...     uncertainty=Evaluable(equation="0.0026"),
 ...     ranges={"t": Range(-10, 70), "r": Range(96.099, 127.118)},
 ... )
@@ -32,6 +33,7 @@ Suppose you have a variable named `cvd` (which is an instance of [CVDEquation][m
   <A>3.913e-3</A>
   <B>-6.056e-7</B>
   <C>1.372e-12</C>
+  <D>0</D>
   <uncertainty variables="">0.0056/2</uncertainty>
   <range>
     <minimum>-10</minimum>
@@ -51,6 +53,8 @@ You can access the *CVD coefficients*, *degrees of freedom* and *comment* as att
 -6.056e-07
 >>> cvd.C
 1.372e-12
+>>> cvd.D
+0.0
 >>> cvd.degree_freedom
 inf
 >>> cvd.comment
@@ -87,9 +91,9 @@ array([-3.36816839, -2.09169544,  0.9738958 ,  4.29823964,  9.67558125])
 
 ```
 
-Any sequence of numbers, i.e., a [list][]{:target="_blank"}, [tuple][]{:target="_blank"}, [ndarray][numpy.ndarray]{:target="_blank"}, etc., may be used to calculate the temperature or resistance *(tip: using [ndarray][numpy.ndarray]{:target="_blank"} will improve performance since a copy of the values is not required)*.
+A number or any sequence of numbers, i.e., a [list][]{:target="_blank"}, [tuple][]{:target="_blank"} or [ndarray][numpy.ndarray]{:target="_blank"} may be used to calculate the temperature or resistance *(tip: using [ndarray][numpy.ndarray]{:target="_blank"} will improve performance since a copy of the values is not required)*.
 
-When calculating resistance or temperature, the value(s) of the inputs are checked to ensure that the value(s) are within the ranges that the CVD coefficients are valid for. The XML data above shows that the temperature must be in the range $-10~^\circ\text{C}$ to $70~^\circ\text{C}$, which has a corresponding resistance range of $96.099~\Omega$ to $127.118~\Omega$ from the equation above. If you calculate resistance from $T=-10.2~^\circ\text{C}$ or temperature from $R=96.0~\Omega$ a [ValueError][]{:target="_blank"} is raised
+When calculating resistance or temperature, the values of the inputs are checked to ensure that the values are within the range that the CVD coefficients are valid for. The XML data above shows that the temperature must be in the range $-10~^\circ\text{C}$ to $70~^\circ\text{C}$, which has a corresponding resistance range of $96.099~\Omega$ to $127.118~\Omega$ from the equation above. If you calculate resistance from $t=-10.2~^\circ\text{C}$ or temperature from $R=96.0~\Omega$ a [ValueError][]{:target="_blank"} is raised, since the value is outside the range.
 
 ```pycon
 >>> cvd.ranges

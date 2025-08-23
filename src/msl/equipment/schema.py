@@ -981,14 +981,16 @@ class DigitalReport:
         return e
 
 
-def _cvd_resistance(array: float | np.ndarray, r0: float, a: float, b: float, c: float) -> NDArray[np.float64]:
-    """Calculate resistance from CVD coefficients."""
+def _cvd_resistance(  # noqa: PLR0913
+    temperature: float | np.ndarray, r0: float, a: float, b: float, c: float, d: float
+) -> NDArray[np.float64]:
+    """Calculate resistance from temperature."""
     return np.piecewise(
-        array,
-        [array < 0, array >= 0],
+        temperature,
+        [temperature < 0, temperature >= 0],
         [
-            lambda t: r0 * (1.0 + a * t + b * t**2 + c * (t - 100.0) * t**3),
-            lambda t: r0 * (1.0 + a * t + b * t**2),
+            lambda t: r0 * (1.0 + a * t + b * t**2 + c * t**3 * (t - 100.0)),
+            lambda t: r0 * (1.0 + a * t + b * t**2 + d * t**3),
         ],
     )
 
@@ -999,11 +1001,14 @@ class CVDEquation:
 
     Args:
         R0: The value, in $\Omega$, of the resistance at $0~^\circ\text{C}$, $R_0$.
-        A: The value, in $^\circ\text{C}^{-1}$, of the A coefficient, $A \cdot T$.
-        B: The value, in $^\circ\text{C}^{-2}$, of the B coefficient, $B \cdot T^2$.
-        C: The value, in $^\circ\text{C}^{-4}$, of the C coefficient, $C \cdot (T-100) \cdot T^3$.
+        A: The value, in $(^\circ\text{C})^{-1}$, of the A coefficient, $A \cdot t$.
+        B: The value, in $(^\circ\text{C})^{-2}$, of the B coefficient, $B \cdot t^2$.
+        C: The value, in $(^\circ\text{C})^{-4}$, of the C coefficient, $C \cdot t^3 \cdot (t-100)$.
+        D: The value, in $(^\circ\text{C})^{-3}$, of the D coefficient, $D \cdot t^3$.
+            The $D$ coefficient is typically zero but may be non-zero if $t \gtrsim 200~^{\circ}\text{C}$.
+            If a calibration report does not specify the $D$ coefficient, set the value to be 0.
         uncertainty:  The equation to evaluate to calculate the *standard* uncertainty.
-        ranges: The temperature range, in $^\circ\text{C}$, and the resistance range, in $\Omega$,
+        ranges: The temperature range, in $(^\circ)\text{C}$, and the resistance range, in $\Omega$,
             that the CVD coefficients are valid. The temperature key must be `"t"` and the resistance
             key `"r"`.
         degree_freedom: The degrees of freedom.
@@ -1014,13 +1019,16 @@ class CVDEquation:
     r"""The value, in $\Omega$, of the resistance at $0~^\circ\text{C}$, $R_0$."""
 
     A: float
-    r"""The value, in $^\circ\text{C}^{-1}$, of the A coefficient, $A \cdot T$."""
+    r"""The value, in $(^\circ\text{C})^{-1}$, of the A coefficient, $A \cdot t$."""
 
     B: float
-    r"""The value, in $^\circ\text{C}^{-2}$, of the B coefficient, $B \cdot T^2$."""
+    r"""The value, in $(^\circ\text{C})^{-2}$, of the B coefficient, $B \cdot t^2$."""
 
     C: float
-    r"""The value, in $^\circ\text{C}^{-4}$, of the C coefficient, $C \cdot (T-100) \cdot T^3$."""
+    r"""The value, in $(^\circ\text{C})^{-4}$, of the C coefficient, $C \cdot t^3 \cdot (t-100)$."""
+
+    D: float
+    r"""The value, in $(^\circ\text{C})^{-3}$, of the D coefficient, $D \cdot t^3$."""
 
     uncertainty: Evaluable
     """The equation to evaluate to calculate the *standard* uncertainty."""
@@ -1049,7 +1057,7 @@ class CVDEquation:
         if check_range and self.ranges["t"].check_within_range(array):
             pass  # check_within_range() will raise an error, if one occurred
 
-        return _cvd_resistance(array, self.R0, self.A, self.B, self.C)
+        return _cvd_resistance(array, self.R0, self.A, self.B, self.C, self.D)
 
     def temperature(self, resistance: ArrayLike, *, check_range: bool = True) -> NDArray[np.float64]:
         r"""Calculate temperature from resistance.
@@ -1066,10 +1074,26 @@ class CVDEquation:
             pass  # check_within_range raised an error, if one occurred
 
         def positive(r: NDArray[np.float64]) -> NDArray[np.float64]:
-            # rearrange CVD equation to be: a*x^2 + b*x + c = 0
-            #   a -> B, b -> A, c -> 1 - R/R0
-            # then use the quadratic formula
-            return (-self.A + np.sqrt(self.A**2 - 4.0 * self.B * (1.0 - r / self.R0))) / (2.0 * self.B)
+            if self.D == 0:
+                # rearrange CVD equation to be: a*x^2 + b*x + c = 0
+                #   a -> B, b -> A, c -> 1 - R/R0
+                # then use the quadratic formula
+                return (-self.A + np.sqrt(self.A**2 - 4.0 * self.B * (1.0 - r / self.R0))) / (2.0 * self.B)
+
+            # rearrange CVD equation to be: a*x^3 + b*x^2 + c*x + d = 0
+            a = self.D
+            b = self.B
+            c = self.A
+            d = 1.0 - (r / self.R0)
+
+            # then use Cardano's Formula
+            # https://proofwiki.org/wiki/Cardano's_Formula#Real_Coefficients
+            Q: float = (3.0 * a * c - b**2) / (9.0 * a**2)  # noqa: N806
+            R: NDArray[np.float64] = (9.0 * a * b * c - 27.0 * a**2 * d - 2.0 * b**3) / (54.0 * a**3)  # noqa: N806
+            sqrt: NDArray[np.float64] = np.sqrt(Q**3 + R**2)
+            S: NDArray[np.float64] = np.cbrt(R + sqrt)  # noqa: N806
+            T: NDArray[np.float64] = np.cbrt(R - sqrt)  # noqa: N806
+            return S + T - (b / (3.0 * a))  # x1 equation
 
         def negative(r: NDArray[np.float64]) -> NDArray[np.float64]:
             # rearrange CVD equation to be: a*x^4 + b*x^3 + c*x^2 + d*x + e = 0
@@ -1120,18 +1144,19 @@ class CVDEquation:
         a = float(element[1].text or 0)
         b = float(element[2].text or 0)
         c = float(element[3].text or 0)
+        d = float(element[4].text or 0)
 
-        r = element[5]
+        r = element[6]
         _range = Range(float(r[0].text or -200), float(r[1].text or 661))
         ranges = {
             "t": _range,
             "r": Range(
-                minimum=round(float(_cvd_resistance(_range.minimum, r0, a, b, c)), 3),
-                maximum=round(float(_cvd_resistance(_range.maximum, r0, a, b, c)), 3),
+                minimum=round(float(_cvd_resistance(_range.minimum, r0, a, b, c, d)), 3),
+                maximum=round(float(_cvd_resistance(_range.maximum, r0, a, b, c, d)), 3),
             ),
         }
 
-        u = element[4]
+        u = element[5]
         uncertainty = Evaluable(
             equation=u.text or "",
             variables=tuple(u.attrib["variables"].split()),
@@ -1143,9 +1168,10 @@ class CVDEquation:
             A=a,
             B=b,
             C=c,
+            D=d,
             uncertainty=uncertainty,
             ranges=ranges,
-            degree_freedom=float(element[6].text or np.inf) if len(element) > 6 else np.inf,  # noqa: PLR2004
+            degree_freedom=float(element[7].text or np.inf) if len(element) > 7 else np.inf,  # noqa: PLR2004
             comment=element.attrib.get("comment", ""),
         )
 
@@ -1169,6 +1195,9 @@ class CVDEquation:
 
         c = SubElement(e, "C")
         c.text = str(self.C)
+
+        d = SubElement(e, "D")
+        d.text = str(self.D)
 
         u = SubElement(e, "uncertainty", attrib={"variables": " ".join(self.uncertainty.variables)})
         u.text = str(self.uncertainty.equation)

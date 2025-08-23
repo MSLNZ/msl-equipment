@@ -82,6 +82,7 @@
                             <A>0.003913</A>
                             <B>-6.056e-07</B>
                             <C>1.372e-12</C>
+                            <D>0.0</D>
                             <uncertainty variables="">0.0056/2</uncertainty>
                             <range>
                                 <minimum>-10.0</minimum>

@@ -8,9 +8,10 @@ The primary class is [Register][] which contains a sequence of [Equipment][] cla
 * [Accessories][]
 * [Adjustment][]
 * [Alteration][]
-* [Component][]
+* [CapitalExpenditure][]
 * [Competency][]
 * [CompletedTask][]
+* [Component][]
 * [Conditions][]
 * [CVDEquation][] (Callendar-Van Dusen equation, uses the [cvdCoefficients][type_cvdCoefficients]{:target="_blank"})
 * [Deserialised][] (opposite of [serialised][type_serialised]{:target="_blank"})

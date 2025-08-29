@@ -248,24 +248,86 @@ class Conditions(Any):
 
 
 @dataclass(frozen=True)
+class CapitalExpenditure:
+    """Represents the [capitalExpenditure][type_capitalExpenditure]{:target="_blank"} element in an equipment register.
+
+    Args:
+        asset_number: The asset number in the financial system.
+        depreciation_end_year: The year (inclusive) that depreciation ends for the asset.
+        price: The price of the asset.
+        currency: The currency associated with the `price`.
+    """
+
+    asset_number: str
+    """The asset number in the financial system."""
+
+    depreciation_end_year: int
+    """The year (inclusive) that depreciation ends for the asset."""
+
+    price: float
+    """The price of the asset."""
+
+    currency: str
+    """The currency associated with the `price`."""
+
+    @classmethod
+    def from_xml(cls, element: Element[str]) -> CapitalExpenditure:
+        """Convert an XML element into a [CapitalExpenditure][msl.equipment.schema.CapitalExpenditure] instance.
+
+        Args:
+            element: A [capitalExpenditure][type_capitalExpenditure]{:target="_blank"} XML element
+                from an equipment register.
+
+        Returns:
+            The [CapitalExpenditure][msl.equipment.schema.CapitalExpenditure] instance.
+        """
+        # Schema forces order
+        return cls(
+            asset_number=element[0].text or "",
+            depreciation_end_year=int(element[1].text or 0),
+            price=float(element[2].text or 0),
+            currency=element[2].attrib["currency"],
+        )
+
+    def to_xml(self) -> Element[str]:
+        """Convert the [CapitalExpenditure][msl.equipment.schema.CapitalExpenditure] class into an XML element.
+
+        Returns:
+            The [CapitalExpenditure][msl.equipment.schema.CapitalExpenditure] as an XML element.
+        """
+        e = Element("capitalExpenditure")
+
+        an = SubElement(e, "assetNumber")
+        an.text = self.asset_number
+
+        dey = SubElement(e, "depreciationEndYear")
+        dey.text = str(self.depreciation_end_year)
+
+        p = SubElement(e, "price", attrib={"currency": self.currency})
+        p.text = f"{self.price:.14g}"
+
+        return e
+
+
+@dataclass(frozen=True)
 class Financial:
     """Represents the [financial][type_financial]{:target="_blank"} element in an equipment register.
 
     Args:
-        asset_number: The asset number in the financial system.
-        warranty_expiration_date: Approximate date that the warranty expires.
-        year_purchased: Approximate year that the equipment was purchased.
+        capital_expenditure: The equipment is a capital expenditure.
+        purchase_year: The (approximate) year that the equipment was purchased.
             A value of `0` represents that the year is unknown.
+        warranty_expiration_date: Approximate date that the warranty expires.
     """
 
-    asset_number: str = ""
-    """The asset number in the financial system."""
+    capital_expenditure: CapitalExpenditure | None = None
+    """The equipment is a capital expenditure."""
+
+    purchase_year: int = 0
+    """The (approximate) year that the equipment was purchased. A value of `0` represents that the year is unknown."""
 
     warranty_expiration_date: _date | None = None
     """Approximate date that the warranty expires."""
-
-    year_purchased: int = 0
-    """Approximate year that the equipment was purchased. A value of `0` represents that the year is unknown."""
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Financial:
@@ -279,15 +341,15 @@ class Financial:
         """
         # Schema defines <financial> using xsd:all, which allows sub-elements to appear (or not appear) in any order
         # Using str.endswith() allows for ignoring XML namespaces that may be associated with each tag
-        asset, warranty, year = "", None, 0
+        cap_ex, warranty, year = None, None, 0
         for child in element:
-            if child.tag.endswith("assetNumber"):
-                asset = child.text or ""
+            if child.tag.endswith("capitalExpenditure"):
+                cap_ex = CapitalExpenditure.from_xml(child)
             elif child.tag.endswith("warrantyExpirationDate"):
                 warranty = _date.fromisoformat(child.text or "")
             else:
                 year = int(child.text or 0)
-        return cls(asset_number=asset, warranty_expiration_date=warranty, year_purchased=year)
+        return cls(capital_expenditure=cap_ex, purchase_year=year, warranty_expiration_date=warranty)
 
     def to_xml(self) -> Element[str]:
         """Convert the [Financial][msl.equipment.schema.Financial] class into an XML element.
@@ -297,17 +359,16 @@ class Financial:
         """
         e = Element("financial")
 
-        if self.asset_number:
-            an = SubElement(e, "assetNumber")
-            an.text = self.asset_number
+        if self.capital_expenditure is not None:
+            e.append(self.capital_expenditure.to_xml())
+
+        if self.purchase_year > 0:
+            py = SubElement(e, "purchaseYear")
+            py.text = str(self.purchase_year)
 
         if self.warranty_expiration_date is not None:
             wed = SubElement(e, "warrantyExpirationDate")
             wed.text = self.warranty_expiration_date.isoformat()
-
-        if self.year_purchased > 0:
-            yp = SubElement(e, "yearPurchased")
-            yp.text = str(self.year_purchased)
 
         return e
 
@@ -2560,6 +2621,11 @@ class Register:
                             return True
             return False
 
+        def asset_number_search(f: Financial) -> bool:
+            if f.capital_expenditure is None:
+                return False
+            return regex.search(f.capital_expenditure.asset_number) is not None
+
         regex = re.compile(pattern, flags=flags)
         for equipment in self:
             if (
@@ -2575,7 +2641,7 @@ class Register:
                 or calibrations_search(equipment)
                 or alteration_search(equipment.alterations)
                 or task_search(equipment.maintenance)
-                or regex.search(equipment.quality_manual.financial.asset_number) is not None
+                or asset_number_search(equipment.quality_manual.financial)
                 or regex.search(equipment.quality_manual.service_agent) is not None
                 or regex.search(" ".join(equipment.quality_manual.technical_procedures)) is not None
             ):

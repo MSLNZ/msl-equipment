@@ -161,9 +161,13 @@
             </accessories>
             <documentation>https://url.com</documentation>
             <financial>
-                <assetNumber>Whatever</assetNumber>
+                <capitalExpenditure>
+                    <assetNumber>Whatever</assetNumber>
+                    <depreciationEndYear>2030</depreciationEndYear>
+                    <price currency="NZD">10000</price>
+                </capitalExpenditure>
+                <purchaseYear>2023</purchaseYear>
                 <warrantyExpirationDate>2026-08-01</warrantyExpirationDate>
-                <yearPurchased>2023</yearPurchased>
             </financial>
             <personnelRestrictions>Everyone</personnelRestrictions>
             <serviceAgent>Someone from the Secret Service</serviceAgent>

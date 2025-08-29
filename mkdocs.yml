@@ -58,9 +58,10 @@ nav:
     - schema/adjustment.md
     - schema/alteration.md
     - schema/any.md
-    - schema/component.md
+    - schema/capital_expenditure.md
     - schema/competency.md
     - schema/completed_task.md
+    - schema/component.md
     - schema/conditions.md
     - schema/cvd_equation.md
     - schema/deserialised.md

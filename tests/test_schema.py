@@ -20,6 +20,7 @@ from msl.equipment import (
     Accessories,
     Adjustment,
     Alteration,
+    CapitalExpenditure,
     Competency,
     Component,
     Conditions,
@@ -148,55 +149,124 @@ def test_any_element_type_subclass(cls: type[Any], tag: str) -> None:
     assert a[0][0].text == "7"
 
 
+@pytest.mark.parametrize("price", ["1000000", "1e6", "1000e3", "1000000.00000"])
+def test_capital_expenditure_price_without_decimal(price: str) -> None:
+    text = (
+        f"<capitalExpenditure>"
+        f"<assetNumber/>"
+        f"<depreciationEndYear>2030</depreciationEndYear>"
+        f'<price currency="NZD">{price}</price>'
+        f"</capitalExpenditure>"
+    )
+
+    ce = CapitalExpenditure.from_xml(XML(text))
+    assert ce.asset_number == ""
+    assert ce.depreciation_end_year == 2030  # noqa: PLR2004
+    assert ce.price == 1e6  # noqa: PLR2004
+    assert ce.currency == "NZD"
+
+    assert tostring(ce.to_xml()) == (
+        b"<capitalExpenditure>"
+        b"<assetNumber />"
+        b"<depreciationEndYear>2030</depreciationEndYear>"
+        b'<price currency="NZD">1000000</price>'
+        b"</capitalExpenditure>"
+    )
+
+
+def test_capital_expenditure_price_with_decimal() -> None:
+    text = (
+        "<capitalExpenditure>"
+        "<assetNumber/>"
+        "<depreciationEndYear>2030</depreciationEndYear>"
+        '<price currency="NZD">10000000.01</price>'
+        "</capitalExpenditure>"
+    )
+
+    ce = CapitalExpenditure.from_xml(XML(text))
+    assert ce.asset_number == ""
+    assert ce.depreciation_end_year == 2030  # noqa: PLR2004
+    assert ce.price == 10000000.01  # noqa: PLR2004
+    assert ce.currency == "NZD"
+
+    assert tostring(ce.to_xml()) == (
+        b"<capitalExpenditure>"
+        b"<assetNumber />"
+        b"<depreciationEndYear>2030</depreciationEndYear>"
+        b'<price currency="NZD">10000000.01</price>'
+        b"</capitalExpenditure>"
+    )
+
+
 def test_financial_empty() -> None:
     text = b"<financial />"
     f = Financial.from_xml(XML(text))
-    assert f.asset_number == ""
+    assert f.capital_expenditure is None
     assert f.warranty_expiration_date is None
-    assert f.year_purchased == 0
+    assert f.purchase_year == 0
     assert tostring(f.to_xml()) == text
 
 
 def test_financial_all() -> None:
     text = (
         b"<financial>"
+        b"<capitalExpenditure>"
         b"<assetNumber>7265817</assetNumber>"
+        b"<depreciationEndYear>2030</depreciationEndYear>"
+        b'<price currency="NZD">1000000</price>'
+        b"</capitalExpenditure>"
+        b"<purchaseYear>2025</purchaseYear>"
         b"<warrantyExpirationDate>2026-08-01</warrantyExpirationDate>"
-        b"<yearPurchased>2025</yearPurchased>"
         b"</financial>"
     )
 
     f = Financial.from_xml(XML(text))
-    assert f.asset_number == "7265817"
+    assert f.capital_expenditure is not None
+    assert f.capital_expenditure.asset_number == "7265817"
+    assert f.capital_expenditure.depreciation_end_year == 2030  # noqa: PLR2004
+    assert f.capital_expenditure.price == 1000000.0  # noqa: PLR2004
+    assert f.capital_expenditure.currency == "NZD"
     assert f.warranty_expiration_date == date(2026, 8, 1)
-    assert f.year_purchased == 2025  # noqa: PLR2004
+    assert f.purchase_year == 2025  # noqa: PLR2004
     assert tostring(f.to_xml()) == text
 
 
-def test_financial_asset_number() -> None:
-    text = b"<financial><assetNumber>Anything</assetNumber></financial>"
+def test_financial_asset_number_empty() -> None:
+    text = (
+        b"<financial>"
+        b"<capitalExpenditure>"
+        b"<assetNumber />"
+        b"<depreciationEndYear>2052</depreciationEndYear>"
+        b'<price currency="CAD">48000</price>'
+        b"</capitalExpenditure>"
+        b"</financial>"
+    )
     f = Financial.from_xml(XML(text))
-    assert f.asset_number == "Anything"
+    assert f.capital_expenditure is not None
+    assert f.capital_expenditure.asset_number == ""
+    assert f.capital_expenditure.depreciation_end_year == 2052  # noqa: PLR2004
+    assert f.capital_expenditure.price == 48000.0  # noqa: PLR2004
+    assert f.capital_expenditure.currency == "CAD"
     assert f.warranty_expiration_date is None
-    assert f.year_purchased == 0
+    assert f.purchase_year == 0
     assert tostring(f.to_xml()) == text
 
 
 def test_financial_warranty_expiration_date() -> None:
     text = b"<financial><warrantyExpirationDate>2026-08-01</warrantyExpirationDate></financial>"
     f = Financial.from_xml(XML(text))
-    assert f.asset_number == ""
+    assert f.capital_expenditure is None
     assert f.warranty_expiration_date == date(2026, 8, 1)
-    assert f.year_purchased == 0
+    assert f.purchase_year == 0
     assert tostring(f.to_xml()) == text
 
 
 def test_financial_year_purchased() -> None:
-    text = b"<financial><yearPurchased>2025</yearPurchased></financial>"
+    text = b"<financial><purchaseYear>2025</purchaseYear></financial>"
     f = Financial.from_xml(XML(text))
-    assert f.asset_number == ""
+    assert f.capital_expenditure is None
     assert f.warranty_expiration_date is None
-    assert f.year_purchased == 2025  # noqa: PLR2004
+    assert f.purchase_year == 2025  # noqa: PLR2004
     assert tostring(f.to_xml()) == text
 
 
@@ -209,7 +279,7 @@ def test_financial_invalid_date(date: str) -> None:
 
 @pytest.mark.parametrize("year", ["26-08-01", "2k"])
 def test_financial_invalid_year(year: str) -> None:
-    text = f"<financial><yearPurchased>{year}</yearPurchased></financial>"
+    text = f"<financial><purchaseYear>{year}</purchaseYear></financial>"
     with pytest.raises(ValueError, match=r"invalid literal"):
         _ = Financial.from_xml(XML(text))
 
@@ -376,16 +446,27 @@ def test_quality_manual_documentation() -> None:
 def test_quality_manual_financial() -> None:
     text = (
         b"<qualityManual>"
-        b"<financial><assetNumber>abc</assetNumber><yearPurchased>2000</yearPurchased></financial>"
+        b"<financial>"
+        b"<capitalExpenditure>"
+        b"<assetNumber>abc</assetNumber>"
+        b"<depreciationEndYear>1</depreciationEndYear>"
+        b'<price currency="NZD">1</price>'
+        b"</capitalExpenditure>"
+        b"<purchaseYear>2000</purchaseYear>"
+        b"</financial>"
         b"</qualityManual>"
     )
     qm = QualityManual.from_xml(XML(text))
     assert len(qm.accessories) == 0
     assert qm.accessories.attrib == {}
     assert qm.documentation == ""
-    assert qm.financial.asset_number == "abc"
+    assert qm.financial.capital_expenditure is not None
+    assert qm.financial.capital_expenditure.asset_number == "abc"
+    assert qm.financial.capital_expenditure.depreciation_end_year == 1
+    assert qm.financial.capital_expenditure.price == 1.0
+    assert qm.financial.capital_expenditure.currency == "NZD"
     assert qm.financial.warranty_expiration_date is None
-    assert qm.financial.year_purchased == 2000  # noqa: PLR2004
+    assert qm.financial.purchase_year == 2000  # noqa: PLR2004
     assert qm.personnel_restrictions == ""
     assert qm.service_agent == ""
     assert len(qm.technical_procedures) == 0
@@ -1704,8 +1785,12 @@ def test_register_from_file() -> None:  # noqa: PLR0915
     assert second.quality_manual.accessories[0][1].text == "0"
     assert second.quality_manual.accessories[0][2].tag == "b"
     assert second.quality_manual.accessories[0][2].text == "187"
-    assert second.quality_manual.financial.year_purchased == 2023  # noqa: PLR2004
-    assert second.quality_manual.financial.asset_number == "Whatever"
+    assert second.quality_manual.financial.purchase_year == 2023  # noqa: PLR2004
+    assert second.quality_manual.financial.capital_expenditure is not None
+    assert second.quality_manual.financial.capital_expenditure.asset_number == "Whatever"
+    assert second.quality_manual.financial.capital_expenditure.depreciation_end_year == 2030  # noqa: PLR2004
+    assert second.quality_manual.financial.capital_expenditure.price == 10000.0  # noqa: PLR2004
+    assert second.quality_manual.financial.capital_expenditure.currency == "NZD"
     assert second.quality_manual.financial.warranty_expiration_date == date(2026, 8, 1)
     assert second.quality_manual.documentation == "https://url.com"
     assert second.quality_manual.personnel_restrictions == "Everyone"

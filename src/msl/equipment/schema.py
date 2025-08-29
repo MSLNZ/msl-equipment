@@ -1134,13 +1134,13 @@ class CVDEquation:
         if check_range and self.ranges["r"].check_within_range(array):
             pass  # check_within_range raised an error, if one occurred
 
-        def positive(r: NDArray[np.float64]) -> NDArray[np.float64]:
-            if self.D == 0:
-                # rearrange CVD equation to be: a*x^2 + b*x + c = 0
-                #   a -> B, b -> A, c -> 1 - R/R0
-                # then use the quadratic formula
-                return (-self.A + np.sqrt(self.A**2 - 4.0 * self.B * (1.0 - r / self.R0))) / (2.0 * self.B)
+        def positive_quadratic(r: NDArray[np.float64]) -> NDArray[np.float64]:
+            # rearrange CVD equation to be: a*x^2 + b*x + c = 0
+            #   a -> B, b -> A, c -> 1 - R/R0
+            # then use the quadratic formula
+            return (-self.A + np.sqrt(self.A**2 - 4.0 * self.B * (1.0 - r / self.R0))) / (2.0 * self.B)
 
+        def positive_cubic(r: NDArray[np.float64]) -> NDArray[np.float64]:
             # rearrange CVD equation to be: a*x^3 + b*x^2 + c*x + d = 0
             a = self.D
             b = self.B
@@ -1187,6 +1187,7 @@ class CVDEquation:
                 ],
             )
 
+        positive = positive_quadratic if self.D == 0 else positive_cubic
         return np.piecewise(array, [array < self.R0, array >= self.R0], [negative, positive])
 
     @classmethod

@@ -1,4 +1,6 @@
-from __future__ import annotations  # noqa: D100
+"""[Equipment-register schema](https://mslnz.github.io/equipment-register-schema) classes."""
+
+from __future__ import annotations
 
 import re
 import sys

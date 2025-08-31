@@ -71,15 +71,17 @@ Since `table` is a numpy array, you can index it
 
 ```
 
-and notice that the returned instance fo `sliced` is another [Table][msl.equipment.schema.Table] instance, so the attributes of [Table][msl.equipment.schema.Table] are available
+and since `sliced` is another [Table][msl.equipment.schema.Table] instance, the attributes of the original `table` are available
 
 ```pycon
 >>> sliced.comment
 'Spectral'
+>>> sliced.header
+array(['Wavelength', 'Irradiance', 'u(Irradiance)'], dtype='<U13')
 
 ```
 
-as well as perform mathematical operations and call numpy functions directly with the `table` instance
+You can also perform mathematical operations and call numpy functions directly with the `table` instance
 
 ```pycon
 >>> np.cos(1 + table["Irradiance"])

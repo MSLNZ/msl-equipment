@@ -2546,6 +2546,23 @@ def test_equipment_repr() -> None:
     )
 
 
+def test_equipment_str_element_sources() -> None:
+    path = Path(__file__).parent / "resources"
+    r = Register(str(path / "register.xml"), XML((path / "register2.xml").read_text()))
+    assert r.team == "Mass"
+    assert len(r) == 3  # noqa: PLR2004
+    assert str(r) == "<Register team='Mass' (3 equipment)>"
+    assert repr(r["MSLE.M.001"]) == "<Equipment manufacturer='MSL', model='ABC', serial='123'>"
+    assert (
+        repr(r["MSLE.M.092"])
+        == "<Equipment manufacturer='The Company Name', model='Model', serial='Serial' (4 reports)>"
+    )
+    assert (
+        repr(r["MSLE.M.100"])
+        == "<Equipment manufacturer='Measurement', model='Stds', serial='Lab' (2 adjustments, 1 digital report, 1 performance check, 1 report)>"  # noqa: E501
+    )
+
+
 @pytest.mark.parametrize(
     ("pattern", "expect"),
     [

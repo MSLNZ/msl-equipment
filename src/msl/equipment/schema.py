@@ -2444,19 +2444,22 @@ class Register:
     NAMESPACE: str = "https://measurement.govt.nz/equipment-register"
     """Default XML namespace."""
 
-    def __init__(self, *sources: XMLSource) -> None:
+    def __init__(self, *sources: XMLSource | Element[str]) -> None:
         """Represents the [register][element_register]{:target="_blank"} element in an equipment register.
 
+        Specifying multiple sources allows for storing an equipment register across multiple
+        files for the same team. Not specifying a source creates a new (empty) register.
+
         Args:
-            sources: The [path-like][path-like object]{:target="_blank"} or
-                [file-like][file-like object]{:target="_blank"} objects that are equipment registers.
-                Specifying multiple sources allows for storing an equipment register across multiple
-                files for the same team.
+            sources: The [path-like][path-like object]{:target="_blank"},
+                [file-like][file-like object]{:target="_blank"} or
+                [Element][xml.etree.ElementTree.Element]{:target="_blank"}
+                objects that are equipment registers.
         """
         team = ""
         self._elements: list[Element[str]] = []
         for source in sources:
-            root = ElementTree().parse(source)
+            root = source if isinstance(source, Element) else ElementTree().parse(source)
             t = root.attrib.get("team", "")
             if not team:
                 team = t

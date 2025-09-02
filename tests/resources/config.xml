@@ -7,7 +7,12 @@
     -->
 
     <!-- User-defined constants -->
-    <max_temperature units="C">60</max_temperature>
+    <max_temperature unit="°C">60</max_temperature>
+    <smtp>
+        <file>settings.ini</file>
+        <recipient>me@measurement.govt.nz</recipient>
+        <recipient>you@measurement.govt.nz</recipient>
+    </smtp>
 
     <!-- The digital multimeter that is being used to perform the measurement -->
     <equipment alias="dmm" model="34401A"/>

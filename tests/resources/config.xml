@@ -7,7 +7,7 @@
     -->
 
     <!-- User-defined constants -->
-    <max_voltage unit="V">3.3</max_voltage>
+    <max_temperature units="C">60</max_temperature>
 
     <!-- The digital multimeter that is being used to perform the measurement -->
     <equipment alias="dmm" model="34401A"/>

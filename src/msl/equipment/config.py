@@ -1,4 +1,11 @@
-"""Load a configuration file."""
+"""A configuration file is useful when you want to perform a measurement.
+
+You can use it to specify
+
+1. equipment that is being used to perform the measurement
+2. locations of the equipment and connection registers that the equipment can be found in
+3. additional information that the measurement procedure requires for data acquisition.
+"""
 
 from __future__ import annotations
 
@@ -17,14 +24,14 @@ if TYPE_CHECKING:
 
 
 class Config:
-    """Load an XML configuration-file."""
+    """Load a configuration-file."""
 
     def __init__(self, source: XMLSource) -> None:
         """Load a [configuration file][configuration-file].
 
         The purpose of the [configuration file][configuration-file] is to define
         parameters and equipment that are required for data acquisition and to load
-        [equipment][equipment-registers] and [connection][connection-registers]
+        [equipment][equipment-register] and [connection][connection-register]
         registers.
 
         Args:
@@ -110,7 +117,7 @@ class Config:
 
     @property
     def registers(self) -> dict[str, Register]:
-        """[dict][[str][], [Register][]] &mdash; Returns all equipment registers specified in the configuration file.
+        """[dict][][[str][], [Register][]] &mdash; Returns all equipment registers specified in the configuration file.
 
         The keys are the [team][msl.equipment.schema.Register.team] values of each register.
         """
@@ -178,7 +185,6 @@ class Config:
         Args:
             path: Either an element tag name or an XPath.
             default: The default value if an element cannot be found.
-            namespaces: An optional mapping from namespace prefix to full name.
 
         Returns:
             The value of the element or `default` if no element was found.

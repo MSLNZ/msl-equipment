@@ -83,6 +83,10 @@ nav:
     - schema/specified_requirements.md
     - schema/status.md
     - schema/table.md
+  - API:
+    - api/index.md
+    - api/config.md
+    - api/types.md
 
 markdown_extensions:
   - admonition  # enables: !!! tip

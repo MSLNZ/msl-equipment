@@ -1,0 +1,3 @@
+# Config
+
+::: msl.equipment.config

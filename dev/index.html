@@ -1410,6 +1410,56 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#registers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Registers
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Registers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#equipment-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      Equipment Register
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connection-register" class="md-nav__link">
+    <span class="md-ellipsis">
+      Connection Register
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration File
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1433,10 +1483,10 @@
 <p>The docs are being rewritten. See <a href="https://msl-equipment.readthedocs.io/en/latest/index.html">here</a> for the old docs.</p>
 </div>
 <p>The purpose of <code>msl-equipment</code> is to manage information about equipment and to interface with equipment for computer control. The information that is managed is focused on testing and calibration laboratories that are accredited for the <a href="https://www.iso.org/ISO-IEC-17025-testing-and-calibration-laboratories.html" target="_blank">ISO/IEC 17025</a> standard.</p>
-<h1 id="registers">Registers<a class="headerlink" href="#registers" title="Permanent link">¤</a></h1>
-<h2 id="equipment-register">Equipment Register<a class="headerlink" href="#equipment-register" title="Permanent link">¤</a></h2>
-<h2 id="connection-register">Connection Register<a class="headerlink" href="#connection-register" title="Permanent link">¤</a></h2>
-<h1 id="configuration-file">Configuration File<a class="headerlink" href="#configuration-file" title="Permanent link">¤</a></h1>
+<h2 id="registers">Registers<a class="headerlink" href="#registers" title="Permanent link">¤</a></h2>
+<h3 id="equipment-register">Equipment Register<a class="headerlink" href="#equipment-register" title="Permanent link">¤</a></h3>
+<h3 id="connection-register">Connection Register<a class="headerlink" href="#connection-register" title="Permanent link">¤</a></h3>
+<h2 id="configuration-file">Configuration File<a class="headerlink" href="#configuration-file" title="Permanent link">¤</a></h2>
 <p>A configuration file is useful when you want to perform a measurement. You can use it to specify</p>
 <ol>
 <li>equipment that is being used to perform the measurement</li>
@@ -1448,18 +1498,19 @@
 <div class="highlight"><pre><span></span><code><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
 <span class="nt">&lt;msl&gt;</span>
 
-<span class="w">  </span><span class="cm">&lt;!-- OPTIONAL: Set the path to the GPIB library file to use for GPIB communication.</span>
+<span class="w">  </span><span class="cm">&lt;!-- OPTIONAL: Set the path to a GPIB library file (for GPIB communication).</span>
 
-<span class="cm">    This will create/overwrite the value of the GPIB_LIBRARY environment variable.</span>
-<span class="cm">    Specifying this element is only necessary only if the default file location is not</span>
-<span class="cm">    automatically found or if you want to use a different file instead of the default file.</span>
+<span class="cm">    This creates/overwrites the value of the GPIB_LIBRARY environment variable.</span>
+<span class="cm">    Specifying this element is only necessary if the default file location is</span>
+<span class="cm">    not automatically found or if you want to use a different file instead of</span>
+<span class="cm">    the default file.</span>
 <span class="cm">  --&gt;</span>
 <span class="w">  </span><span class="nt">&lt;gpib_library&gt;</span>/opt/gpib/libgpib.so.0<span class="nt">&lt;/gpib_library&gt;</span>
 
 <span class="w">  </span><span class="cm">&lt;!-- OPTIONAL: Set the PyVISA backend library to use for PyVISA communication.</span>
 
-<span class="cm">    This will create/overwrite the value of the PYVISA_LIBRARY environment variable.</span>
-<span class="cm">    Possible values are:</span>
+<span class="cm">    This creates/overwrites the value of the PYVISA_LIBRARY environment</span>
+<span class="cm">    variable. Possible values are:</span>
 <span class="cm">      @ivi (PyVISA &gt;=1.11)</span>
 <span class="cm">      @ni  (PyVISA &lt; 1.11)</span>
 <span class="cm">      @py  (PyVISA-py)</span>
@@ -1469,50 +1520,52 @@
 
 <span class="w">  </span><span class="cm">&lt;!-- OPTIONAL: Add paths to where external resource files are located.</span>
 
-<span class="cm">    The paths are appended to the PATH environment variable. If a recursive=&quot;true&quot;</span>
-<span class="cm">    attribute is included, then recursively adds the specified directory all</span>
-<span class="cm">    sub-directories to PATH. This is useful if communication to the equipment</span>
-<span class="cm">    uses the manufacturer&#39;s SDK. The &lt;path&gt; element may be specified multiple times.</span>
+<span class="cm">    Paths are appended to the PATH environment variable. If a recursive=&quot;true&quot;</span>
+<span class="cm">    attribute is included, then recursively adds the specified directory and</span>
+<span class="cm">    all sub-directories to PATH. This is useful if communication to the</span>
+<span class="cm">    equipment uses an SDK. The &lt;path&gt; element may be specified multiple times.</span>
 <span class="cm">  --&gt;</span>
 <span class="w">  </span><span class="nt">&lt;path&gt;</span>D:\code\SDKs<span class="nt">&lt;/path&gt;</span>
 <span class="w">  </span><span class="nt">&lt;path</span><span class="w"> </span><span class="na">recursive=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>C:\Program<span class="w"> </span>Files\Manufacturer<span class="nt">&lt;/path&gt;</span>
 
 <span class="w">  </span><span class="cm">&lt;!-- OPTIONAL: You may define your own elements. --&gt;</span>
-<span class="w">  </span><span class="nt">&lt;max_temperature</span><span class="w"> </span><span class="na">units=</span><span class="s">&quot;C&quot;</span><span class="nt">&gt;</span>60<span class="nt">&lt;/max_temperature&gt;</span>
+<span class="w">  </span><span class="nt">&lt;max_temperature</span><span class="w"> </span><span class="na">unit=</span><span class="s">&quot;°C&quot;</span><span class="nt">&gt;</span>60<span class="nt">&lt;/max_temperature&gt;</span>
 <span class="w">  </span><span class="nt">&lt;smtp&gt;</span>
 <span class="w">    </span><span class="nt">&lt;file&gt;</span>settings.ini<span class="nt">&lt;/file&gt;</span>
-<span class="w">    </span><span class="nt">&lt;recipients&gt;</span>me@measurement.govt.nz<span class="nt">&lt;/recipients&gt;</span>
+<span class="w">    </span><span class="nt">&lt;recipient&gt;</span>me@measurement.govt.nz<span class="nt">&lt;/recipient&gt;</span>
+<span class="w">    </span><span class="nt">&lt;recipient&gt;</span>you@measurement.govt.nz<span class="nt">&lt;/recipient&gt;</span>
 <span class="w">  </span><span class="nt">&lt;/smtp&gt;</span>
 
 <span class="w">  </span><span class="cm">&lt;!-- Specify the equipment that is being used to perform the measurement.</span>
 
-<span class="cm">    The `eid` attribute (the equipment ID from an equipment register) is mandatory,</span>
-<span class="cm">    all other attributes are optional. If you define an &quot;alias&quot; then you can access the</span>
-<span class="cm">    equipment by the alias value instead of by the index in which it is defined in the</span>
-<span class="cm">    configuration file. Defining the `manufacturer`, `model` or `serial` are helpful for</span>
-<span class="cm">    a person to know what the equipment is when they read the configuration file,</span>
-<span class="cm">    since the equipment ID does not provide &quot;helpful&quot; information for a person.</span>
+<span class="cm">    The `eid` attribute (equipment ID from an equipment register) is mandatory,</span>
+<span class="cm">    all other attributes are optional. If you define an &quot;alias&quot; then you can</span>
+<span class="cm">    access the equipment by the alias value instead of the index number based</span>
+<span class="cm">    on the order that it is defined in the configuration file. Defining the</span>
+<span class="cm">    `manufacturer`, `model` or `serial` are helpful for a person to know what</span>
+<span class="cm">    the equipment is when they read the configuration file, since the equipment</span>
+<span class="cm">    ID does not provide &quot;helpful&quot; information for a person.</span>
 <span class="cm">   --&gt;</span>
-<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.231&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;dmm&quot;</span><span class="w"> </span><span class="na">manufacturer=</span><span class="s">&quot;Keysight&quot;</span><span class="w"> </span><span class="na">model=</span><span class="s">&quot;34465A&quot;</span><span class="w"> </span><span class="na">serial=</span><span class="s">&quot;123456789&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
-<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.086&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;amplifier&quot;</span><span class="w"> </span><span class="na">manufacturer=</span><span class="s">&quot;MSL&quot;</span><span class="w"> </span><span class="na">model=</span><span class="s">&quot;PA1039&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
-<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.086&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;photodiode&quot;</span><span class="w">  </span><span class="na">manufacturer=</span><span class="s">&quot;MSL&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
-<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.142&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;shutter&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
-<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.061&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;laser&quot;</span><span class="w"> </span><span class="na">manufacturer=</span><span class="s">&quot;Coherent&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.231&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;dmm&quot;</span><span class="w"> </span><span class="na">model=</span><span class="s">&quot;3458A&quot;</span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.086&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;amplifier&quot;</span><span class="w"> </span><span class="na">manufacturer=</span><span class="s">&quot;MSL&quot;</span><span class="w"> </span><span class="na">model=</span><span class="s">&quot;39&quot;</span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.103&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;photodiode&quot;</span><span class="w"> </span><span class="na">manufacturer=</span><span class="s">&quot;MSL&quot;</span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.142&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;shutter&quot;</span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.061&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;laser&quot;</span><span class="nt">/&gt;</span>
 
-<span class="w">  </span><span class="cm">&lt;!-- Specify the Equipment Registers that the equipment above can be found in. --&gt;</span>
+<span class="w">  </span><span class="cm">&lt;!-- The Equipment Registers that the equipment above can be found in. --&gt;</span>
 <span class="w">  </span><span class="nt">&lt;registers&gt;</span>
-<span class="w">    </span><span class="cm">&lt;!-- The equipment register is defined in a single file. --&gt;</span>
-<span class="w">    </span><span class="nt">&lt;register&gt;</span>R:\Equipment\Equipment<span class="w"> </span>Register.xml<span class="nt">&lt;/register&gt;</span>
-<span class="w">    </span><span class="cm">&lt;!-- The equipment register spans multiple files, specify the parent directory. --&gt;</span>
-<span class="w">    </span><span class="nt">&lt;register&gt;</span>L:\Register\<span class="nt">&lt;/register&gt;</span>
+<span class="w">    </span><span class="cm">&lt;!-- Equipment register is defined in a single file. --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;register&gt;</span>C:\Equipment\register.xml<span class="nt">&lt;/register&gt;</span>
+<span class="w">    </span><span class="cm">&lt;!-- Equipment register spans multiple files, specify parent directory. --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;register&gt;</span>L:\Register<span class="nt">&lt;/register&gt;</span>
 <span class="w">  </span><span class="nt">&lt;/registers&gt;</span>
 
-<span class="w">  </span><span class="cm">&lt;!-- Specify the Connection Registers to load connection information from. --&gt;</span>
+<span class="w">  </span><span class="cm">&lt;!-- The Connection Registers to load connection information from. --&gt;</span>
 <span class="w">  </span><span class="nt">&lt;connections&gt;</span>
-<span class="w">    </span><span class="cm">&lt;!-- The connection register is defined in a single file. --&gt;</span>
-<span class="w">    </span><span class="nt">&lt;connection&gt;</span>R:\Equipment\Connection<span class="w"> </span>Register.xml<span class="nt">&lt;/connection&gt;</span>
-<span class="w">    </span><span class="cm">&lt;!-- The connection register spans multiple files, specify the parent directory. --&gt;</span>
-<span class="w">    </span><span class="nt">&lt;connection&gt;</span>L:\Register\<span class="nt">&lt;/connection&gt;</span>
+<span class="w">    </span><span class="cm">&lt;!-- Connection register is defined in a single file. --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;connection&gt;</span>C:\Connection\register.xml<span class="nt">&lt;/connection&gt;</span>
+<span class="w">    </span><span class="cm">&lt;!-- Connection register spans multiple files, specify parent directory. --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;connection&gt;</span>L:\Register<span class="nt">&lt;/connection&gt;</span>
 <span class="w">  </span><span class="nt">&lt;/connections&gt;</span>
 
 <span class="nt">&lt;/msl&gt;</span>
@@ -1520,10 +1573,24 @@
 <p>The <a class="autorefs autorefs-internal" href="api/config/#config">Config</a> class is used to load a configuration file</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">&quot;tests/resources/config.xml&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">registers</span>
-<span class="go">{&#39;Mass&#39;: &lt;Register team=&#39;Mass&#39; (3 equipment)&gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;max_temperature&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">60</span>
 </code></pre></div>
+<p>You can then access the equipment registers</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">registers</span>
+<span class="go">{&#39;Mass&#39;: &lt;Register team=&#39;Mass&#39; (3 equipment)&gt;}</span>
+</code></pre></div>
+<p>access XML elements defined in the configuration file by using the tag name or the path to the element</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">attrib</span><span class="p">(</span><span class="s2">&quot;max_temperature&quot;</span><span class="p">)</span>
+<span class="go">{&#39;unit&#39;: &#39;°C&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;max_temperature&quot;</span><span class="p">)</span>
+<span class="go">&lt;Element &#39;max_temperature&#39; at ...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;smtp/recipient&quot;</span><span class="p">)</span>
+<span class="go">[&lt;Element &#39;recipient&#39; at ...&gt;, &lt;Element &#39;recipient&#39; at ...&gt;]</span>
+</code></pre></div>
+<p>and if the value of an XML element is a boolean (<code>true</code>, <code>false</code>) an integer or a float, it will be converted to the appropriate Python data type</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;max_temperature&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">10</span>
+<span class="go">70</span>
+</code></pre></div>
+<p>otherwise the value will remain a string.</p>
 
 
 

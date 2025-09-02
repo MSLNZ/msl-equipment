@@ -1559,11 +1559,13 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sliced</span><span class="p">)</span>
 <span class="go">[(250, 0.01818, 0.02033) (300, 0.18478, 0.01755) (350, 0.80845, 0.01606)]</span>
 </code></pre></div>
-<p>and notice that the returned instance fo <code>sliced</code> is another <a class="autorefs autorefs-internal" title="            Table" href="#msl.equipment.schema.Table">Table</a> instance, so the attributes of <a class="autorefs autorefs-internal" title="            Table" href="#msl.equipment.schema.Table">Table</a> are available</p>
+<p>and since <code>sliced</code> is another <a class="autorefs autorefs-internal" title="            Table" href="#msl.equipment.schema.Table">Table</a> instance, the attributes of the original <code>table</code> are available</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">sliced</span><span class="o">.</span><span class="n">comment</span>
 <span class="go">&#39;Spectral&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sliced</span><span class="o">.</span><span class="n">header</span>
+<span class="go">array([&#39;Wavelength&#39;, &#39;Irradiance&#39;, &#39;u(Irradiance)&#39;], dtype=&#39;&lt;U13&#39;)</span>
 </code></pre></div>
-<p>as well as perform mathematical operations and call numpy functions directly with the <code>table</code> instance</p>
+<p>You can also perform mathematical operations and call numpy functions directly with the <code>table</code> instance</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;Irradiance&quot;</span><span class="p">])</span>
 <span class="go">Table([ 0.52491592,  0.37650087, -0.2354229 , -0.99741219,  0.70160756,</span>
 <span class="go">       -0.56246854,  0.6903377 , -0.78390036,  0.65631968, -0.0205763 ])</span>
@@ -1809,9 +1811,7 @@ the index of a column. If you prefer to work with unstructured data, call
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1359</span>
-<span class="normal">1360</span>
-<span class="normal">1361</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1361</span>
 <span class="normal">1362</span>
 <span class="normal">1363</span>
 <span class="normal">1364</span>
@@ -1862,7 +1862,9 @@ the index of a column. If you prefer to work with unstructured data, call
 <span class="normal">1409</span>
 <span class="normal">1410</span>
 <span class="normal">1411</span>
-<span class="normal">1412</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1412</span>
+<span class="normal">1413</span>
+<span class="normal">1414</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Table][msl.equipment.schema.Table] instance.</span>
 
@@ -1963,9 +1965,7 @@ the index of a column. If you prefer to work with unstructured data, call
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1414</span>
-<span class="normal">1415</span>
-<span class="normal">1416</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1416</span>
 <span class="normal">1417</span>
 <span class="normal">1418</span>
 <span class="normal">1419</span>
@@ -1988,7 +1988,9 @@ the index of a column. If you prefer to work with unstructured data, call
 <span class="normal">1436</span>
 <span class="normal">1437</span>
 <span class="normal">1438</span>
-<span class="normal">1439</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">1439</span>
+<span class="normal">1440</span>
+<span class="normal">1441</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Table][msl.equipment.schema.Table] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
@@ -2136,9 +2138,7 @@ numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1329</span>
-<span class="normal">1330</span>
-<span class="normal">1331</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1331</span>
 <span class="normal">1332</span>
 <span class="normal">1333</span>
 <span class="normal">1334</span>
@@ -2164,7 +2164,9 @@ numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
 <span class="normal">1354</span>
 <span class="normal">1355</span>
 <span class="normal">1356</span>
-<span class="normal">1357</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unstructured</span><span class="p">(</span>
+<span class="normal">1357</span>
+<span class="normal">1358</span>
+<span class="normal">1359</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unstructured</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

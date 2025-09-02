@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8'?>
+<register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
+    This is an invalid XML document, but since it is within a ".hidden" folder
+    (folder name starts with .) this file is not parsed when Config.registers()
+    resursively looks for register files within the tests directory.

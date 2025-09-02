@@ -60,6 +60,7 @@
         "numpy",
         "Prologix",
         "pycon",
+        "pyvisa",
         "recarray",
         "recfunctions",
         "rtol",
@@ -70,6 +71,7 @@
         "SIXBITS",
         "STOPBITS",
         "TCPIP",
+        "teardown",
         "tobytes",
         "ureal"
     ]

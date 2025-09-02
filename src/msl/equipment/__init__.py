@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from .__about__ import __version__, version_tuple
+from .config import Config
 from .schema import (
     AcceptanceCriteria,
     Accessories,
@@ -50,6 +51,7 @@ __all__: list[str] = [
     "CompletedTask",
     "Component",
     "Conditions",
+    "Config",
     "Deserialised",
     "DigitalFormat",
     "DigitalReport",

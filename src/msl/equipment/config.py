@@ -1,188 +1,191 @@
-"""
-Load an XML :ref:`configuration-file`.
-"""
+"""Load a configuration file."""
+
 from __future__ import annotations
 
 import os
-from typing import Any
-from typing import BinaryIO
-from typing import TYPE_CHECKING
-from typing import TextIO
-from typing import Union
-from xml.etree import ElementTree
-from xml.etree.ElementTree import Element
+from pathlib import Path
+from typing import TYPE_CHECKING, overload
+from xml.etree.ElementTree import parse
 
-from .utils import convert_to_primitive
-from .utils import logger
+from .schema import Register
+from .utils import logger, to_primitive
 
 if TYPE_CHECKING:
-    from .database import Database
+    from xml.etree.ElementTree import Element
 
-
-XMLType = Union[str, bytes, os.PathLike, BinaryIO, TextIO]
-"""An XML-document type that can be parsed."""
+    from ._types import XMLSource
 
 
 class Config:
+    """Load an XML configuration-file."""
 
-    GPIB_LIBRARY: str = ''
-    """The path to a GPIB library file.
-    
-    Setting this attribute is necessary only if you want to communicate with
-    a GPIB device and the file is not automatically found or you want to
-    use a different file than the default file.
-    """
+    def __init__(self, source: XMLSource) -> None:
+        """Load a [configuration file][configuration-file].
 
-    PyVISA_LIBRARY: str = '@ivi'
-    """The PyVISA backend :ref:`library <intro-configuring>` to use."""
+        The purpose of the [configuration file][configuration-file] is to define
+        parameters and equipment that are required for data acquisition and to load
+        [equipment][equipment-registers] and [connection][connection-registers]
+        registers.
 
-    DEMO_MODE: bool = False
-    """Whether to open connections in demo mode. 
-    
-    If enabled then the equipment does not need to be physically connected
-    to a computer and the connection is simulated.
-    """
-
-    PATH: list[str] = []
-    """Paths are also appended to :data:`os.environ['PATH'] <os.environ>`."""
-
-    def __init__(self, source: XMLType) -> None:
-        r"""Load an XML :ref:`configuration-file`.
-
-        The purpose of the :ref:`configuration-file` is to define parameters
-        that may be required during data acquisition and to access
-        :class:`.EquipmentRecord`'s from an :ref:`equipment-database` and
-        :class:`.ConnectionRecord`'s from a :ref:`connections-database`.
-
-        The following table summarizes the XML elements that are used by
-        MSL-Equipment which may be defined in a :ref:`configuration-file`:
-
-        +----------------+----------------------------+---------------------------------------------------+
-        |    XML Tag     |      Example Values        |               Description                         |
-        +================+============================+===================================================+
-        |   demo_mode    | true, false, True, False   | Whether to open connections in demo mode. The     |
-        |                |                            | value will set :attr:`.DEMO_MODE`.                |
-        +----------------+----------------------------+---------------------------------------------------+
-        |  gpib_library  | /opt/gpib/libgpib.so.0     | The path to a GPIB library file. Required only    |
-        |                |                            | if you want to use a specific file. The value     |
-        |                |                            | will set :attr:`.GPIB_LIBRARY`.                   |
-        +----------------+----------------------------+---------------------------------------------------+
-        |     path       | C:\\Program Files\\Company | A path that contains additional resources.        |
-        |                |                            | Accepts a *recursive="true"* attribute. The       |
-        |                |                            | path(s) are appended to :attr:`.PATH` and to      |
-        |                |                            | :data:`os.environ['PATH'] <os.environ>`. A        |
-        |                |                            | *<path>* element may be specified multiple times. |
-        +----------------+----------------------------+---------------------------------------------------+
-        | pyvisa_library | @ivi, @py,                 | The PyVISA :ref:`library <intro-configuring>` to  |
-        |                | /opt/ni/libvisa.so.7       | use. The value will set :attr:`.PyVISA_LIBRARY`.  |
-        +----------------+----------------------------+---------------------------------------------------+
-
-        You are also encouraged to define your own application-specific elements
-        within your :ref:`configuration-file`.
-
-        :param source: A filename or file object containing XML data.
+        Args:
+            source: A filename or file object containing XML data.
         """
-        logger.debug('loading %s', source)
-        self._source = source
-        self._database: Database | None = None
-        self._root: Element = ElementTree.parse(source).getroot()
+        logger.debug("load configuration %s", source)
+        self._source: XMLSource = source
+        self._root: Element[str] = parse(source).getroot()  # noqa: S314
+        self._registers: dict[str, Register] | None = None
 
-        element = self.find('gpib_library')
-        if element is not None:
-            Config.GPIB_LIBRARY = element.text
-            logger.debug('update Config.GPIB_LIBRARY = %s', Config.GPIB_LIBRARY)
+        element = self.find("gpib_library")
+        if element is not None and element.text:
+            os.environ["GPIB_LIBRARY"] = element.text
+            logger.debug("update GPIB_LIBRARY=%s", element.text)
 
-        element = self.find('pyvisa_library')
-        if element is not None:
-            Config.PyVISA_LIBRARY = element.text
-            logger.debug('update Config.PyVISA_LIBRARY = %s', Config.PyVISA_LIBRARY)
+        element = self.find("pyvisa_library")
+        if element is not None and element.text:
+            os.environ["PYVISA_LIBRARY"] = element.text
+            logger.debug("update PyVISA_LIBRARY=%s", element.text)
 
-        element = self.find('demo_mode')
-        if element is not None:
-            Config.DEMO_MODE = element.text.lower() == 'true'
-            logger.debug('update Config.DEMO_MODE = %s', Config.DEMO_MODE)
+        path_elements = self.findall("path")
+        if path_elements:
+            paths: list[str] = []
+            os_paths: set[str] = set(os.environ["PATH"].split(os.pathsep))
+            for element in path_elements:
+                path = element.text
+                if not path or not os.path.isdir(path):  # noqa: PTH112
+                    logger.warning("skipped append to PATH: %r", path)
+                elif element.attrib.get("recursive", "false").lower() == "true":
+                    for directory, _, _ in os.walk(path):
+                        if directory not in os_paths and directory not in paths:
+                            paths.append(directory)
+                            logger.debug("append to PATH: %r", path)
+                elif path not in os_paths and path not in paths:
+                    paths.append(path)
+                    logger.debug("append to PATH: %r", path)
 
-        for element in self.findall('path'):
-            path = element.text
-            if not os.path.isdir(path):
-                logger.warning('cannot append to Config.PATH, %r is not a directory', path)
-            elif element.attrib.get('recursive', 'false').lower() == 'true':
-                for root, _, _ in os.walk(path):
-                    if root not in Config.PATH:
-                        Config.PATH.append(root)
-                        os.environ['PATH'] += os.pathsep + root
-                        logger.debug('append %r to Config.PATH', root)
-            elif path not in Config.PATH:
-                Config.PATH.append(path)
-                os.environ['PATH'] += os.pathsep + path
-                logger.debug('append %r to Config.PATH', path)
+            os.environ["PATH"] += os.pathsep + os.pathsep.join(paths)
 
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(path={self.path!r})'
+    def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
+        """Returns the string representation."""
+        return f"<{self.__class__.__name__} path={self.path!r}>"
 
-    def attrib(self, tag_or_path: str) -> dict[str, Any]:
+    def attrib(self, path: str) -> dict[str, bool | float | str | None]:
         """Get the attributes of the first matching element by tag name or path.
 
-        The values are converted to the appropriate data type if possible. For
-        example, if the text of the element is ``true`` it will be converted
-        to :data:`True`, otherwise the value will be kept as a :class:`str`.
+        The values are converted to the appropriate data type if possible.
+        For example, if the value of an attribute is `"true"` the value is
+        converted to the [True][]{:target="_blank"} boolean type.
 
-        :param tag_or_path: Either an element tag name or an XPath.
-        :return: The attributes of the matching element.
+        Args:
+            path: Either an element tag name or an XPath.
+
+        Returns:
+            The attributes of the matching element.
         """
-        element = self.find(tag_or_path)
+        element = self.find(path)
         if element is None:
             return {}
-        return dict((k, convert_to_primitive(v)) for k, v in element.attrib.items())
+        return {k: to_primitive(v) for k, v in element.attrib.items()}
 
-    def database(self) -> Database:
-        """A reference to the equipment and connection records in the database(s)."""
-        if self._database is None:
-            from .database import Database  # avoid circular import errors
-            self._database = Database(self._source)
-        return self._database
-
-    def find(self, tag_or_path: str) -> Element | None:
+    def find(self, path: str) -> Element | None:
         """Find the first matching element by tag name or path.
 
-        :param tag_or_path: Either an element tag name or an XPath.
-        :return: The element or :data:`None` if no element was found.
-        """
-        return self._root.find(tag_or_path)
+        Args:
+            path: Either an element tag name or an XPath.
 
-    def findall(self, tag_or_path: str) -> list[Element]:
+        Returns:
+            The element or `None` if no element was found.
+        """
+        return self._root.find(path)
+
+    def findall(self, path: str) -> list[Element[str]]:
         """Find all matching sub-elements by tag name or path.
 
-        :param tag_or_path: Either an element tag name or an XPath.
-        :return: All matching elements in document order.
+        Args:
+            path: Either an element tag name or an XPath.
+
+        Returns:
+            All matching elements in document order.
         """
-        return self._root.findall(tag_or_path)
+        return self._root.findall(path)
+
+    @property
+    def registers(self) -> dict[str, Register]:
+        """[dict][[str][], [Register][]] &mdash; Returns all equipment registers specified in the configuration file.
+
+        The keys are the [team][msl.equipment.schema.Register.team] values of each register.
+        """
+        if self._registers is not None:
+            return self._registers
+
+        registers: dict[str, Register] = {}
+        for element in self.findall("registers/register"):
+            if not element.text or not element.text.strip():
+                continue
+
+            path = Path(element.text)
+            sources: list[Path | Element[str]] = []
+            if path.is_dir():
+                for file in path.rglob("*.xml"):
+                    # Ignore XML files in hidden directories (e.g., XML files in PyCharm's .idea directory)
+                    if any(part.startswith(".") for part in file.parts):
+                        continue
+                    root = parse(file).getroot()  # noqa: S314
+                    if root.tag.endswith("register"):
+                        sources.append(root)
+            else:
+                sources.append(path)
+
+            register = Register(*sources)
+            registers[register.team] = register
+
+        self._registers = registers
+        return registers
+
+    @property
+    def root(self) -> Element[str]:
+        """The root element (the first node) in the XML document."""
+        return self._root
 
     @property
     def path(self) -> str:
         """The path to the configuration file."""
-        try:
+        if isinstance(self._source, (bytes, str, os.PathLike)):
             return os.fsdecode(self._source)
-        except TypeError:
-            return f'<{self._source.__class__.__name__}>'
+        return f"<{self._source.__class__.__name__}>"
 
-    @property
-    def root(self) -> Element:
-        """The root element (the first node) in the XML document."""
-        return self._root
+    @overload
+    def value(self, path: str, default: None = None) -> bool | float | str | None: ...  # pragma: no cover
 
-    def value(self, tag_or_path: str, default: Any = None) -> Any:
+    @overload
+    def value(self, path: str, default: bool) -> bool: ...  # pragma: no cover  # noqa: FBT001
+
+    @overload
+    def value(self, path: str, default: int) -> int: ...  # pragma: no cover
+
+    @overload
+    def value(self, path: str, default: float) -> float: ...  # pragma: no cover
+
+    @overload
+    def value(self, path: str, default: str) -> str: ...  # pragma: no cover
+
+    def value(self, path: str, default: bool | float | str | None = None) -> bool | float | str | None:  # noqa: FBT001
         """Gets the value (text) associated with the first matching element.
 
         The value is converted to the appropriate data type if possible. For
-        example, if the text of the element is ``true`` it will be converted
-        to :data:`True`.
+        example, if the text of the element is `true` it will be converted
+        to [True][]{:target="_blank"}.
 
-        :param tag_or_path: Either an element tag name or an XPath.
-        :param default: The default value if an element cannot be found.
-        :return: The value of the element or `default` if no element was found.
+        Args:
+            path: Either an element tag name or an XPath.
+            default: The default value if an element cannot be found.
+            namespaces: An optional mapping from namespace prefix to full name.
+
+        Returns:
+            The value of the element or `default` if no element was found.
         """
-        element = self.find(tag_or_path)
+        element = self.find(path)
         if element is None:
             return default
-        return convert_to_primitive(element.text)
+        if element.text is None:
+            return None
+        return to_primitive(element.text)

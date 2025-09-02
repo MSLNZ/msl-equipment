@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<msl>
+    <!--
+        Since the root tag is not "register" this XML document
+        is ignored when Config.registers() resursively looks for
+        register files within the tests directory.
+    -->
+
+    <!-- User-defined constants -->
+    <max_voltage unit="V">3.3</max_voltage>
+
+    <!-- The digital multimeter that is being used to perform the measurement -->
+    <equipment alias="dmm" model="34401A"/>
+
+    <!-- The Equipment-Registers -->
+    <registers>
+        <register>tests/resources</register>
+    </registers>
+
+    <!-- The Connections -->
+    <connections>
+        <connection>tests/resources/connections.xml</connection>
+    </connections>
+
+</msl>

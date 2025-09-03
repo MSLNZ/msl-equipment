@@ -1489,8 +1489,8 @@
 <h2 id="configuration-file">Configuration File<a class="headerlink" href="#configuration-file" title="Permanent link">¤</a></h2>
 <p>A configuration file is useful when you want to perform a measurement. You can use it to specify</p>
 <ol>
-<li>equipment that is being used to perform the measurement</li>
-<li>locations of the equipment and connection registers that the equipment can be found in</li>
+<li>equipment that is required to perform the measurement,</li>
+<li>locations of the <a class="autorefs autorefs-internal" title="Equipment Register" href="#equipment-register">equipment</a> and <a class="autorefs autorefs-internal" title="Connection Register" href="#connection-register">connection</a> registers that the equipment can be found in, and</li>
 <li>additional information that the measurement procedure requires for data acquisition.</li>
 </ol>
 <p>The configuration file uses the XML file format to specify this information.</p>
@@ -1546,11 +1546,9 @@
 <span class="cm">    the equipment is when they read the configuration file, since the equipment</span>
 <span class="cm">    ID does not provide &quot;helpful&quot; information for a person.</span>
 <span class="cm">   --&gt;</span>
-<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.231&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;dmm&quot;</span><span class="w"> </span><span class="na">model=</span><span class="s">&quot;3458A&quot;</span><span class="nt">/&gt;</span>
-<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.086&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;amplifier&quot;</span><span class="w"> </span><span class="na">manufacturer=</span><span class="s">&quot;MSL&quot;</span><span class="w"> </span><span class="na">model=</span><span class="s">&quot;39&quot;</span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.231&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;dmm&quot;</span><span class="w"> </span><span class="na">model=</span><span class="s">&quot;3458A&quot;</span><span class="w"> </span><span class="na">serial=</span><span class="s">&quot;0123456789&quot;</span><span class="nt">/&gt;</span>
 <span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.103&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;photodiode&quot;</span><span class="w"> </span><span class="na">manufacturer=</span><span class="s">&quot;MSL&quot;</span><span class="nt">/&gt;</span>
-<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.142&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;shutter&quot;</span><span class="nt">/&gt;</span>
-<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.061&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;laser&quot;</span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.061&quot;</span><span class="w"> </span><span class="na">alias=</span><span class="s">&quot;monochromator&quot;</span><span class="nt">/&gt;</span>
 
 <span class="w">  </span><span class="cm">&lt;!-- The Equipment Registers that the equipment above can be found in. --&gt;</span>
 <span class="w">  </span><span class="nt">&lt;registers&gt;</span>
@@ -1575,8 +1573,23 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">&quot;tests/resources/config.xml&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>You can then access the equipment registers</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">registers</span>
-<span class="go">{&#39;Mass&#39;: &lt;Register team=&#39;Mass&#39; (3 equipment)&gt;}</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">registers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+<span class="go">Mass: &lt;Register team=&#39;Mass&#39; (3 equipment)&gt;</span>
+<span class="go">Light: &lt;Register team=&#39;Light&#39; (4 equipment)&gt;</span>
+</code></pre></div>
+<p>iterate over and access <code>&lt;equipment/&gt;</code> elements that have been defined in the configuration file</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">equipment</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">equipment</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<span class="go">MSLE.O.231</span>
+<span class="go">MSLE.O.103</span>
+<span class="go">MSLE.O.061</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># using the index in the configuration file</span>
+<span class="go">&#39;MSLE.O.231&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;MSLE.O.231&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># using the equipment id</span>
+<span class="go">&#39;MSLE.O.231&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;dmm&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># using the alias defined in the configuration file</span>
+<span class="go">&#39;MSLE.O.231&#39;</span>
 </code></pre></div>
 <p>access XML elements defined in the configuration file by using the tag name or the path to the element</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">attrib</span><span class="p">(</span><span class="s2">&quot;max_temperature&quot;</span><span class="p">)</span>
@@ -1586,9 +1599,9 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;smtp/recipient&quot;</span><span class="p">)</span>
 <span class="go">[&lt;Element &#39;recipient&#39; at ...&gt;, &lt;Element &#39;recipient&#39; at ...&gt;]</span>
 </code></pre></div>
-<p>and if the value of an XML element is a boolean (<code>true</code>, <code>false</code>) an integer or a float, it will be converted to the appropriate Python data type</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;max_temperature&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">10</span>
-<span class="go">70</span>
+<p>and if the value of an XML element is a boolean (<code>true</code>, <code>false</code> case-insensitive) an integer or a float, it will be converted to the appropriate Python data type</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;max_temperature&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+<span class="go">30.0</span>
 </code></pre></div>
 <p>otherwise the value will remain a string.</p>
 

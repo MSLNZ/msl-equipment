@@ -2474,10 +2474,8 @@ class Register:
         self._equipment: list[Equipment | None] = [None] * len(self._elements)
 
         # a mapping between the alias/id and the index number in the register
-        self._index_map: dict[str, int] = {
-            e.attrib["alias"]: i for i, e in enumerate(self._elements) if e.attrib.get("alias")
-        }
-        self._index_map.update({e[0].text or "": i for i, e in enumerate(self._elements)})
+        self._index_map: dict[str, int] = {str(e[0].text): i for i, e in enumerate(self._elements)}  # e[0] is the ID
+        self._index_map.update({e.attrib["alias"]: i for i, e in enumerate(self._elements) if e.attrib.get("alias")})
 
     def __getitem__(self, item: str | int) -> Equipment:
         """Returns an Equipment item from the register."""
@@ -2489,7 +2487,7 @@ class Register:
         else:
             index = item
 
-        e = self._equipment[index]
+        e = self._equipment[index]  # this will raise IndexError if out of bounds
         if e is None:
             e = Equipment.from_xml(self._elements[index])
             self._equipment[index] = e
@@ -2652,6 +2650,56 @@ class Register:
                 or regex.search(" ".join(equipment.quality_manual.technical_procedures)) is not None
             ):
                 yield equipment
+
+    def get(self, item: int | str) -> Equipment | None:
+        """Get an [Equipment][msl.equipment.schema.Equipment] item from the register.
+
+        This method will ignore all errors if the register does not contain the requested
+        [Equipment][msl.equipment.schema.Equipment] item.
+
+        !!! tip
+            You can also treat a _register_ instance as a sequence of [Equipment][msl.equipment.schema.Equipment] items.
+
+        <!--
+        >>> from msl.equipment import Register
+        >>> register = Register("tests/resources/mass/register.xml")
+
+        -->
+
+        Using the _indexable_ notation on a _register_ instance to access an [Equipment][msl.equipment.schema.Equipment]
+        item by using the alias of the equipment or the index within the register could raise an exception
+
+        ```pycon
+        >>> register["unknown-alias"]
+        Traceback (most recent call last):
+        ...
+        ValueError: No equipment exists with an alias or id of 'unknown-alias'
+
+        >>> register[243]
+        Traceback (most recent call last):
+        ...
+        IndexError: list index out of range
+
+        ```
+
+        whereas these errors can be silenced by using the [get][msl.equipment.schema.Register.get] method
+
+        ```pycon
+        >>> assert register.get("unknown") is None
+        >>> assert register.get(243) is None
+
+        ```
+
+        Args:
+            item: The index number, equipment id value or the equipment alias value in the register.
+
+        Returns:
+            The [Equipment][msl.equipment.schema.Equipment] item if `item` is valid, otherwise `None`.
+        """
+        try:
+            return self[item]
+        except (ValueError, IndexError):
+            return None
 
     @property
     def team(self) -> str:

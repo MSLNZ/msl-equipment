@@ -14,12 +14,15 @@
         <recipient>you@measurement.govt.nz</recipient>
     </smtp>
 
-    <!-- The digital multimeter that is being used to perform the measurement -->
-    <equipment alias="dmm" model="34401A"/>
+    <!-- Temperature sensor monitoring the lab environment -->
+    <equipment eid="MSLE.O.231" alias="dmm" model="3458A" serial="0123456789"/>
+    <equipment eid="MSLE.O.103" alias="photodiode" manufacturer="MSL"/>
+    <equipment eid="MSLE.O.061" alias="monochromator"/>
 
     <!-- The Equipment-Registers -->
     <registers>
-        <register>tests/resources</register>
+        <register>tests/resources/mass</register>
+        <register>tests/resources/light</register>
     </registers>
 
     <!-- The Connections -->

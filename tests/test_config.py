@@ -206,7 +206,7 @@ def test_registers_directory() -> None:
     <msl>
         <a>A</a>
         <registers>
-            <register>tests</register>
+            <register>tests/resources/mass</register>
         </registers>
     </msl>
     """
@@ -221,7 +221,7 @@ def test_registers_file() -> None:
     <msl>
         <a>A</a>
         <registers>
-            <register>tests/resources/register.xml</register>
+            <register>tests/resources/mass/register.xml</register>
         </registers>
     </msl>
     """

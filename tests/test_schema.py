@@ -1647,7 +1647,7 @@ def test_register_tree_namespace() -> None:
 
 @pytest.mark.skipif(sys.version_info[:2] < (3, 9), reason="requires xml indent() function")
 def test_register_read_write_same_output() -> None:
-    path = Path("tests/resources/register.xml")
+    path = Path("tests/resources/mass/register.xml")
     r = Register(path)
     tree = r.tree()  # indent=4 by default
 
@@ -1665,7 +1665,7 @@ def test_register_read_write_same_output() -> None:
 
 
 def test_register_from_file() -> None:  # noqa: PLR0915
-    r = Register("tests/resources/register.xml")
+    r = Register("tests/resources/mass/register.xml")
     assert r.team == "Mass"
     assert len(r) == 2  # noqa: PLR2004
     assert r._equipment == [None, None]  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
@@ -2530,7 +2530,7 @@ def test_report_is_calibration_due() -> None:
 
 
 def test_equipment_repr() -> None:
-    path = Path(__file__).parent / "resources"
+    path = Path(__file__).parent / "resources" / "mass"
     r = Register(path / "register.xml", path / "register2.xml")
     assert r.team == "Mass"
     assert len(r) == 3  # noqa: PLR2004
@@ -2547,7 +2547,7 @@ def test_equipment_repr() -> None:
 
 
 def test_equipment_str_element_sources() -> None:
-    path = Path(__file__).parent / "resources"
+    path = Path(__file__).parent / "resources" / "mass"
     r = Register(str(path / "register.xml"), XML((path / "register2.xml").read_text()))
     assert r.team == "Mass"
     assert len(r) == 3  # noqa: PLR2004
@@ -2601,7 +2601,7 @@ def test_equipment_str_element_sources() -> None:
     ],
 )
 def test_register_find(pattern: str, expect: str) -> None:
-    path = Path(__file__).parent / "resources"
+    path = Path(__file__).parent / "resources" / "mass"
     r = Register(path / "register.xml", path / "register2.xml")
     found = list(r.find(pattern))
     assert len(found) == 1
@@ -2609,7 +2609,7 @@ def test_register_find(pattern: str, expect: str) -> None:
 
 
 def test_register_find_flags() -> None:
-    path = Path(__file__).parent / "resources"
+    path = Path(__file__).parent / "resources" / "mass"
     r = Register(path / "register.xml", path / "register2.xml")
 
     found = list(r.find("Hygrometer"))
@@ -2622,7 +2622,7 @@ def test_register_find_flags() -> None:
 
 
 def test_register_find_multiple() -> None:
-    path = Path(__file__).parent / "resources"
+    path = Path(__file__).parent / "resources" / "mass"
     r = Register(path / "register.xml", path / "register2.xml")
     found = list(r.find("Hygrometer|AC"))
     assert len(found) == 2  # noqa: PLR2004
@@ -2631,7 +2631,13 @@ def test_register_find_multiple() -> None:
 
 
 def test_register_find_none() -> None:
-    path = Path(__file__).parent / "resources"
+    path = Path(__file__).parent / "resources" / "mass"
     r = Register(path / "register.xml", path / "register2.xml")
     found = list(r.find("peanut"))
     assert len(found) == 0
+
+
+def test_register_get() -> None:
+    r = Register(Path(__file__).parent / "resources" / "mass" / "register.xml")
+    assert r.get(100) is None
+    assert r.get("unknown-alias") is None

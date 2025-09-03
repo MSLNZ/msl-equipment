@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='utf-8'?>
+<register team="Light" xmlns="https://measurement.govt.nz/equipment-register">
+    <equipment enteredBy="Joseph Borbely">
+        <id>MSLE.O.231</id>
+        <manufacturer>MSL</manufacturer>
+        <model>3458A</model>
+        <serial>0123456789</serial>
+        <description>A digital multimeter</description>
+        <specifications />
+        <location>Spectrophotometer</location>
+        <status>Active</status>
+        <loggable>false</loggable>
+        <traceable>true</traceable>
+        <calibrations />
+        <maintenance />
+        <alterations />
+        <firmware />
+        <specifiedRequirements />
+        <referenceMaterials />
+        <qualityManual />
+    </equipment>
+    <equipment enteredBy="Joseph Borbely" alias="B02">
+        <id>MSLE.O.103</id>
+        <manufacturer>MSL</manufacturer>
+        <model>Single</model>
+        <serial>B02</serial>
+        <description>Single element photodiode</description>
+        <specifications />
+        <location>Spectrophotometer</location>
+        <status>Active</status>
+        <loggable>false</loggable>
+        <traceable>true</traceable>
+        <calibrations />
+        <maintenance />
+        <alterations />
+        <firmware />
+        <specifiedRequirements />
+        <referenceMaterials />
+        <qualityManual />
+    </equipment>
+    <equipment enteredBy="Joseph Borbely" alias="mono">
+        <id>MSLE.O.061</id>
+        <manufacturer>MSL</manufacturer>
+        <model>Mono</model>
+        <serial>123</serial>
+        <description>Monochromator f=500mm</description>
+        <specifications />
+        <location>Spectrophotometer</location>
+        <status>Active</status>
+        <loggable>false</loggable>
+        <traceable>true</traceable>
+        <calibrations />
+        <maintenance />
+        <alterations />
+        <firmware />
+        <specifiedRequirements />
+        <referenceMaterials />
+        <qualityManual />
+    </equipment>
+    <equipment enteredBy="Joseph Borbely" alias="dut-temperature">
+        <id>MSLE.O.023</id>
+        <manufacturer>MSL</manufacturer>
+        <model>Model</model>
+        <serial>abc</serial>
+        <description>Temperature probe</description>
+        <specifications />
+        <location>Spectrophotometer</location>
+        <status>Active</status>
+        <loggable>true</loggable>
+        <traceable>true</traceable>
+        <calibrations />
+        <maintenance />
+        <alterations />
+        <firmware />
+        <specifiedRequirements />
+        <referenceMaterials />
+        <qualityManual />
+    </equipment>
+</register>

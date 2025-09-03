@@ -17,8 +17,8 @@ The purpose of `msl-equipment` is to manage information about equipment and to i
 
 A configuration file is useful when you want to perform a measurement. You can use it to specify
 
-1. equipment that is being used to perform the measurement
-2. locations of the equipment and connection registers that the equipment can be found in
+1. equipment that is required to perform the measurement,
+2. locations of the [equipment][equipment-register] and [connection][connection-register] registers that the equipment can be found in, and
 3. additional information that the measurement procedure requires for data acquisition.
 
 The configuration file uses the XML file format to specify this information.
@@ -77,11 +77,9 @@ The following illustrates an example configuration file.
     the equipment is when they read the configuration file, since the equipment
     ID does not provide "helpful" information for a person.
    -->
-  <equipment eid="MSLE.O.231" alias="dmm" model="3458A"/>
-  <equipment eid="MSLE.O.086" alias="amplifier" manufacturer="MSL" model="39"/>
+  <equipment eid="MSLE.O.231" alias="dmm" model="3458A" serial="0123456789"/>
   <equipment eid="MSLE.O.103" alias="photodiode" manufacturer="MSL"/>
-  <equipment eid="MSLE.O.142" alias="shutter"/>
-  <equipment eid="MSLE.O.061" alias="laser"/>
+  <equipment eid="MSLE.O.061" alias="monochromator"/>
 
   <!-- The Equipment Registers that the equipment above can be found in. -->
   <registers>
@@ -113,8 +111,27 @@ The [Config][] class is used to load a configuration file
 You can then access the equipment registers
 
 ```pycon
->>> cfg.registers
-{'Mass': <Register team='Mass' (3 equipment)>}
+>>> for key, value in cfg.registers.items():
+...    print(f"{key}:", value)
+Mass: <Register team='Mass' (3 equipment)>
+Light: <Register team='Light' (4 equipment)>
+
+```
+
+iterate over and access `<equipment/>` elements that have been defined in the configuration file
+
+```pycon
+>>> for equipment in cfg.equipment:
+...     print(equipment.id)
+MSLE.O.231
+MSLE.O.103
+MSLE.O.061
+>>> cfg.equipment[0].id  # using the index in the configuration file
+'MSLE.O.231'
+>>> cfg.equipment["MSLE.O.231"].id  # using the equipment id
+'MSLE.O.231'
+>>> cfg.equipment["dmm"].id  # using the alias defined in the configuration file
+'MSLE.O.231'
 
 ```
 
@@ -130,11 +147,11 @@ access XML elements defined in the configuration file by using the tag name or t
 
 ```
 
-and if the value of an XML element is a boolean (`true`, `false`) an integer or a float, it will be converted to the appropriate Python data type
+and if the value of an XML element is a boolean (`true`, `false` case-insensitive) an integer or a float, it will be converted to the appropriate Python data type
 
 ```pycon
->>> cfg.value("max_temperature") + 10
-70
+>>> cfg.value("max_temperature") / 2
+30.0
 
 ```
 

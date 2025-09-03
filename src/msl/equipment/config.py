@@ -1,11 +1,11 @@
-"""A configuration file is useful when you want to perform a measurement.
+"""A [configuration file][configuration-file] is useful when you want to perform a measurement.
 
 You can use it to specify
 
-1. equipment that is being used to perform the measurement
-2. locations of the equipment and connection registers that the equipment can be found in
+1. equipment that is required to perform the measurement,
+2. locations of the [equipment][equipment-register] and [connection][connection-register] registers that the equipment can be found in, and
 3. additional information that the measurement procedure requires for data acquisition.
-"""
+"""  # noqa: E501
 
 from __future__ import annotations
 
@@ -18,29 +18,28 @@ from .schema import Register
 from .utils import logger, to_primitive
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from xml.etree.ElementTree import Element
 
     from ._types import XMLSource
+    from .schema import Equipment
 
 
 class Config:
-    """Load a configuration-file."""
+    """Load a configuration file."""
 
     def __init__(self, source: XMLSource) -> None:
-        """Load a [configuration file][configuration-file].
-
-        The purpose of the [configuration file][configuration-file] is to define
-        parameters and equipment that are required for data acquisition and to load
-        [equipment][equipment-register] and [connection][connection-register]
-        registers.
+        """Load a configuration file.
 
         Args:
-            source: A filename or file object containing XML data.
+            source: A [path-like][path-like object]{:target="_blank"} or [file-like][file-like object]{:target="_blank"}
+                object containing the configuration data.
         """
         logger.debug("load configuration %s", source)
         self._source: XMLSource = source
         self._root: Element[str] = parse(source).getroot()  # noqa: S314
         self._registers: dict[str, Register] | None = None
+        self._config_equipment: ConfigEquipment = ConfigEquipment(self)
 
         element = self.find("gpib_library")
         if element is not None and element.text:
@@ -93,6 +92,16 @@ class Config:
             return {}
         return {k: to_primitive(v) for k, v in element.attrib.items()}
 
+    @property
+    def equipment(self) -> ConfigEquipment:
+        """Returns the `<equipment/>` elements in the configuration file as a sequence of [Equipment][] items.
+
+        You can access [Equipment][] items by index (based on the order that `<equipment/>` elements are
+        defined in the configuration file), by the `eid` attribute value or by the `alias` attribute value.
+        You can also iterate over the `<equipment/>` elements.
+        """
+        return self._config_equipment
+
     def find(self, path: str) -> Element | None:
         """Find the first matching element by tag name or path.
 
@@ -117,7 +126,7 @@ class Config:
 
     @property
     def registers(self) -> dict[str, Register]:
-        """[dict][][[str][], [Register][]] &mdash; Returns all equipment registers specified in the configuration file.
+        """Returns all equipment registers specified in the configuration file.
 
         The keys are the [team][msl.equipment.schema.Register.team] values of each register.
         """
@@ -195,3 +204,57 @@ class Config:
         if element.text is None:
             return None
         return to_primitive(element.text)
+
+
+class ConfigEquipment:
+    """Treats `<equipment/>` elements in a configuration files as a sequence of [Equipment][] items."""
+
+    def __init__(self, cfg: Config) -> None:
+        """Treats `<equipment/>` elements in a configuration files as a sequence of [Equipment][] items.
+
+        Args:
+            cfg: The configuration instance.
+        """
+        self._cfg: Config = cfg
+        self._elements: list[Element[str]] = cfg.findall("equipment")
+        self._equipment: dict[str, Equipment] = {}  # key=eid
+        self._index_map: dict[int, str] = {i: e.attrib["eid"] for i, e in enumerate(self._elements)}
+        self._alias_map: dict[str, str] = {
+            e.attrib["alias"]: e.attrib["eid"] for e in self._elements if e.attrib.get("alias")
+        }
+
+    def __getitem__(self, item: str | int) -> Equipment:
+        """Returns an `<equipment/>` element from the configuration file."""
+        if isinstance(item, int):
+            eid = self._index_map.get(item, None)
+            if eid is None:
+                msg = "list index out of range"  # Python's generic error message for IndexError
+                raise IndexError(msg)
+        else:
+            eid = self._alias_map.get(item, item)  # assume item=eid if not an alias
+
+        equipment = self._equipment.get(eid)
+        if equipment is not None:
+            return equipment
+
+        for register in self._cfg.registers.values():
+            equipment = register.get(eid)
+            if equipment is not None:
+                self._equipment[eid] = equipment
+                return equipment
+
+        msg = f"No equipment exists with an alias or id of {item!r}"
+        raise ValueError(msg)
+
+    def __iter__(self) -> Iterator[Equipment]:
+        """Yields the `<equipment/>` elements in the configuration file."""
+        for index in range(len(self._elements)):
+            yield self[index]
+
+    def __len__(self) -> int:
+        """Returns the number of `<equipment/>` elements in the configuration file."""
+        return len(self._equipment)
+
+    def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
+        """Returns the string representation."""
+        return f"<{self.__class__.__name__} ({len(self)} equipment)>"

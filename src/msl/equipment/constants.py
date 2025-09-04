@@ -1,4 +1,4 @@
-"""Constants used by `msl-equipment`."""
+"""Enumeration constants."""
 
 from __future__ import annotations
 
@@ -39,21 +39,37 @@ REGEX_GPIB = re.compile(
 
 
 class Backend(enum.IntEnum):
-    """The software backend to use for the communication system."""
+    """The software backend to use for communication.
 
-    UNKNOWN = 0
-    MSL = 1
-    PyVISA = 2
-    NIDAQ = 3
+    Attributes:
+        MSL (int): 0
+        PyVISA (int): 1
+        NIDAQ (int): 2
+    """
+
+    MSL = 0
+    PyVISA = 1
+    NIDAQ = 2
 
 
 class Interface(enum.IntEnum):
     """The interface to use for the communication system.
 
-    Only used if [Backend.MSL][msl.equipment.constants.Backend.MSL] is chosen as the backend.
+    Only used if `MSL` is chosen as the [Backend][msl.equipment.constants.Backend].
+
+    Attributes:
+        UNKNOWN (int): 0
+        SDK (int): 1
+        SERIAL (int): 2
+        SOCKET (int): 3
+        PROLOGIX (int): 4
+        TCPIP_VXI11 (int): 5
+        TCPIP_HISLIP (int): 6
+        ZMQ (int): 7
+        GPIB (int): 8
     """
 
-    NONE = 0
+    UNKNOWN = 0
     SDK = 1
     SERIAL = 2
     SOCKET = 3
@@ -65,7 +81,15 @@ class Interface(enum.IntEnum):
 
 
 class Parity(enum.Enum):
-    """The parity type to use for Serial communication."""
+    """The parity type to use for Serial communication.
+
+    Attributes:
+        NONE (str): "N"
+        ODD (str): "O"
+        EVEN (str): "E"
+        MARK (str): "M""
+        SPACE (str): "S"
+    """
 
     NONE = serial.PARITY_NONE
     ODD = serial.PARITY_ODD
@@ -75,7 +99,13 @@ class Parity(enum.Enum):
 
 
 class StopBits(enum.Enum):
-    """The number of stop bits to use for Serial communication."""
+    """The number of stop bits to use for Serial communication.
+
+    Attributes:
+        ONE (int): 1
+        ONE_POINT_FIVE (float): 1.5
+        TWO (int): 2
+    """
 
     ONE = serial.STOPBITS_ONE
     ONE_POINT_FIVE = serial.STOPBITS_ONE_POINT_FIVE
@@ -83,7 +113,14 @@ class StopBits(enum.Enum):
 
 
 class DataBits(enum.IntEnum):
-    """The number of data bits to use for Serial communication."""
+    """The number of data bits to use for Serial communication.
+
+    Attributes:
+        FIVE (int): 5
+        SIX (int): 6
+        SEVEN (int): 7
+        EIGHT (int): 8
+    """
 
     FIVE = serial.FIVEBITS
     SIX = serial.SIXBITS

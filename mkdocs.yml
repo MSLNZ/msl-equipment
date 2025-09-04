@@ -51,6 +51,11 @@ nav:
     - index.md
     - release-notes.md
     - license.md
+  - Getting Started:
+    - getting-started/index.md
+    - getting-started/equipment-registers.md
+    - getting-started/connections.md
+    - getting-started/configuration-files.md
   - Schema Classes:
     - schema/index.md
     - schema/acceptance_criteria.md
@@ -86,7 +91,11 @@ nav:
   - API:
     - api/index.md
     - api/config.md
+    - api/constants.md
     - api/types.md
+  - Resources:
+    - resources/index.md
+  - WebApp: webapp.md
 
 markdown_extensions:
   - admonition  # enables: !!! tip

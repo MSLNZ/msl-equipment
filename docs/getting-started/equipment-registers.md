@@ -2,7 +2,7 @@
 
 Laboratories that use equipment for traceable calibration measurements are required to manage information about the equipment by following the [ISO/IEC 17025]{:target="_blank"} standard. An equipment register is in the eXtensible Markup Language (XML) file format, and, as such, it may be parsed by many programming languages.
 
-An equipment register may be defined in a single file or distributed across multiple files.
+An equipment register may be defined in a single XML file or distributed across multiple XML files (for the same _team_). You can also define the information directly in a [Python module][non-iso-labs] instead of XML files.
 
 The [Schema Classes][] section of the documentation shows how each of the XML elements that are contained in an equipment register can be used in a Python program.
 
@@ -34,7 +34,7 @@ TODO show how to use tool...
 
 ## Non ISO/IEC 17025 labs {: #non-iso-labs }
 
-If your laboratory is not bound to the [ISO/IEC 17025]{:target="_blank"} standard and you are primarily interested in interfacing with equipment, you can define [Equipment][] classes in a Python module
+If your laboratory is not bound to the [ISO/IEC 17025]{:target="_blank"} standard and you are primarily interested in interfacing with equipment, you can define [Equipment][] classes in a Python module and connect to the equipment
 
 ```python
 from msl.equipment import Connection, Equipment

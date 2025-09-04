@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<msl>
+    <!--
+        Since the root tag is not "register" this XML document
+        is ignored when Config.registers() resursively looks for
+        register files within the tests directory.
+    -->
+    <ignored>true</ignored>
+</msl>

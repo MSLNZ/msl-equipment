@@ -1594,7 +1594,7 @@ def test_register_empty() -> None:
     assert r._index_map == {}  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     assert str(r) == "<Register team='Length' (0 equipment)>"
 
-    with pytest.raises(ValueError, match=r"alias or id of 'invalid'"):
+    with pytest.raises(ValueError, match=r"the alias or id 'invalid'"):
         _ = r["invalid"]
 
     with pytest.raises(IndexError):
@@ -1719,7 +1719,7 @@ def test_register_from_file() -> None:  # noqa: PLR0915
     assert r["MSLE.M.001"] is first
     assert r[0] is first
 
-    with pytest.raises(ValueError, match=r"alias or id of 'invalid'"):
+    with pytest.raises(ValueError, match=r"the alias or id 'invalid'"):
         _ = r["invalid"]
 
     with pytest.raises(IndexError):
@@ -2637,7 +2637,23 @@ def test_register_find_none() -> None:
     assert len(found) == 0
 
 
-def test_register_get() -> None:
+def test_register_get_none() -> None:
     r = Register(Path(__file__).parent / "resources" / "mass" / "register.xml")
     assert r.get(100) is None
     assert r.get("unknown-alias") is None
+
+
+@pytest.mark.parametrize(
+    ("item", "eid"),
+    [
+        ("MSLE.M.001", "MSLE.M.001"),
+        (0, "MSLE.M.001"),
+        ("Bob", "MSLE.M.092"),
+        (1, "MSLE.M.092"),
+    ],
+)
+def test_register_get_some(item: str | int, eid: str) -> None:
+    r = Register(Path(__file__).parent / "resources" / "mass" / "register.xml")
+    e = r.get(item)
+    assert e is not None
+    assert e.id == eid

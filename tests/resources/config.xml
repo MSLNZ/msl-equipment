@@ -1,33 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<msl>
-    <!--
-        Since the root tag is not "register" this XML document
-        is ignored when Config.registers() resursively looks for
-        register files within the tests directory.
-    -->
+<config>
 
-    <!-- User-defined constants -->
-    <max_temperature unit="°C">60</max_temperature>
+    <max_temperature unit="°C">30</max_temperature>
+    <auto_zero>true</auto_zero>
     <smtp>
-        <file>settings.ini</file>
+        <host>smtp.server.nz</host>
+        <port>25</port>
         <recipient>me@measurement.govt.nz</recipient>
         <recipient>you@measurement.govt.nz</recipient>
     </smtp>
 
-    <!-- Temperature sensor monitoring the lab environment -->
-    <equipment eid="MSLE.O.231" alias="dmm" model="3458A" serial="0123456789"/>
-    <equipment eid="MSLE.O.103" alias="photodiode" manufacturer="MSL"/>
-    <equipment eid="MSLE.O.061" alias="monochromator"/>
+    <equipment eid="MSLE.M.092" name="dmm" comment="borrowed from Kibble lab"/>
+    <equipment eid="MSLE.O.103" name="photodiode" manufacturer="MSL" std="B03"/>
+    <equipment eid="MSLE.O.061" name="monochromator"/>
 
-    <!-- The Equipment-Registers -->
-    <registers>
-        <register>tests/resources/mass</register>
-        <register>tests/resources/light</register>
-    </registers>
+    <register>tests/resources/mass</register>
+    <register>tests/resources/light</register>
 
-    <!-- The Connections -->
-    <connections>
-        <connection>tests/resources/connections.xml</connection>
-    </connections>
+    <connection>tests/resources/connections.xml</connection>
 
-</msl>
+</config>

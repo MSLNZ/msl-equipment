@@ -78,7 +78,9 @@ def test_environ_path(caplog: pytest.LogCaptureFixture) -> None:  # cSpell: igno
             "docs/api",
             "docs/assets",
             "docs/assets/images",
+            "docs/getting-started",
             "docs/javascripts",  # cSpell: ignore javascripts
+            "docs/resources",
             "docs/schema",
             "tests",
         ]
@@ -93,6 +95,11 @@ def test_environ_path(caplog: pytest.LogCaptureFixture) -> None:  # cSpell: igno
         assert path in splitted
     assert splitted.count("tests") == 1
     assert splitted.count("docs") == 1
+
+    assert str(Path("tests")) in splitted
+    assert str(Path("tests/resources")) not in splitted
+    assert str(Path("tests/resources/light")) not in splitted
+    assert str(Path("tests/resources/mass")) not in splitted
 
     assert caplog.messages == ["skipped append to PATH: None", "skipped append to PATH: 'tests/test_config.py'"]
 
@@ -191,10 +198,8 @@ def test_register_empty_text() -> None:
     text = """<?xml version="1.0" encoding="utf-8" ?>
     <msl>
         <a>A</a>
-        <registers>
-            <register />
-            <register>     </register>
-        </registers>
+        <register />
+        <register>     </register>
     </msl>
     """
     c = Config(StringIO(text))
@@ -205,9 +210,7 @@ def test_registers_directory() -> None:
     text = """<?xml version="1.0" encoding="utf-8" ?>
     <msl>
         <a>A</a>
-        <registers>
-            <register>tests/resources/mass</register>
-        </registers>
+        <register>tests/resources/mass</register>
     </msl>
     """
     # The "bad" XML file in tests/resources/.hidden is ignored
@@ -220,9 +223,7 @@ def test_registers_file() -> None:
     text = """<?xml version="1.0" encoding="utf-8" ?>
     <msl>
         <a>A</a>
-        <registers>
-            <register>tests/resources/mass/register.xml</register>
-        </registers>
+        <register>tests/resources/mass/register.xml</register>
     </msl>
     """
     # The "bad" XML file in tests/resources/.hidden is ignored
@@ -250,3 +251,48 @@ def test_source_types() -> None:
         assert c.path == "<BufferedReader>"
         assert str(c) == "<Config path='<BufferedReader>'>"
         assert repr(c) == "<Config path='<BufferedReader>'>"
+
+
+def test_equipment_sequence() -> None:
+    c = Config(Path(__file__).parent / "resources" / "config.xml")
+
+    assert len(c.equipment) == 3  # noqa: PLR2004
+    assert repr(c.equipment) == "<ConfigEquipment (3 equipment elements)>"
+
+    assert [e.id for e in c.equipment] == ["MSLE.M.092", "MSLE.O.103", "MSLE.O.061"]
+
+    assert c.equipment[0].id == "MSLE.M.092"
+    assert c.equipment["MSLE.M.092"].id == "MSLE.M.092"
+    assert c.equipment["dmm"].id == "MSLE.M.092"
+
+
+def test_equipment_raises() -> None:
+    c = Config(Path(__file__).parent / "resources" / "config.xml")
+
+    with pytest.raises(IndexError):
+        _ = c.equipment[100]
+
+    with pytest.raises(ValueError, match="the name or id 'unknown'"):
+        _ = c.equipment["unknown"]
+
+
+def test_equipment_names_eids() -> None:
+    c = Config(Path(__file__).parent / "resources" / "config.xml")
+    assert c.equipment.names == ("dmm", "photodiode", "monochromator")
+    assert c.equipment.eids == ("MSLE.M.092", "MSLE.O.103", "MSLE.O.061")
+
+    text = """<?xml version="1.0" encoding="utf-8"?>
+        <config>
+            <equipment eid="MSLE.M.092" name="alice"/>
+            <equipment eid="MSLE.O.103"/>
+            <equipment eid="MSLE.O.061" name="bob"/>
+            <equipment eid="MSLE.O.231"/>
+
+            <register>tests/resources/mass</register>
+            <register>tests/resources/light</register>
+        </config>
+    """
+
+    c = Config(StringIO(text))
+    assert c.equipment.names == ("alice", "", "bob", "")
+    assert c.equipment.eids == ("MSLE.M.092", "MSLE.O.103", "MSLE.O.061", "MSLE.O.231")

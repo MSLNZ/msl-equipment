@@ -1,11 +1,4 @@
-"""A [configuration file][configuration-file] is useful when you want to perform a measurement.
-
-You can use it to specify
-
-1. equipment that is required to perform the measurement,
-2. locations of the [equipment][equipment-register] and [connection][connection-register] registers that the equipment can be found in, and
-3. additional information that the measurement procedure requires for data acquisition.
-"""  # noqa: E501
+"""A [configuration file][configuration-files] is useful when you want to perform a measurement."""
 
 from __future__ import annotations
 
@@ -96,9 +89,9 @@ class Config:
     def equipment(self) -> ConfigEquipment:
         """Returns the `<equipment/>` elements in the configuration file as a sequence of [Equipment][] items.
 
-        You can access [Equipment][] items by index (based on the order that `<equipment/>` elements are
-        defined in the configuration file), by the `eid` attribute value or by the `alias` attribute value.
-        You can also iterate over the `<equipment/>` elements.
+        Using the returned object you can access [Equipment][] items by index (based on the order that
+        `<equipment/>` elements are defined in the configuration file), by the `eid` attribute value or
+        by the `name` attribute value. You can also iterate over the [Equipment][] items in the sequence.
         """
         return self._config_equipment
 
@@ -134,11 +127,11 @@ class Config:
             return self._registers
 
         registers: dict[str, Register] = {}
-        for element in self.findall("registers/register"):
+        for element in self.findall("register"):
             if not element.text or not element.text.strip():
                 continue
 
-            path = Path(element.text)
+            path = Path(element.text).expanduser()
             sources: list[Path | Element[str]] = []
             if path.is_dir():
                 for file in path.rglob("*.xml"):
@@ -219,8 +212,8 @@ class ConfigEquipment:
         self._elements: list[Element[str]] = cfg.findall("equipment")
         self._equipment: dict[str, Equipment] = {}  # key=eid
         self._index_map: dict[int, str] = {i: e.attrib["eid"] for i, e in enumerate(self._elements)}
-        self._alias_map: dict[str, str] = {
-            e.attrib["alias"]: e.attrib["eid"] for e in self._elements if e.attrib.get("alias")
+        self._name_map: dict[str, str] = {
+            e.attrib["name"]: e.attrib["eid"] for e in self._elements if e.attrib.get("name")
         }
 
     def __getitem__(self, item: str | int) -> Equipment:
@@ -231,7 +224,7 @@ class ConfigEquipment:
                 msg = "list index out of range"  # Python's generic error message for IndexError
                 raise IndexError(msg)
         else:
-            eid = self._alias_map.get(item, item)  # assume item=eid if not an alias
+            eid = self._name_map.get(item, item)  # assume item=eid if not a name
 
         equipment = self._equipment.get(eid)
         if equipment is not None:
@@ -243,7 +236,7 @@ class ConfigEquipment:
                 self._equipment[eid] = equipment
                 return equipment
 
-        msg = f"No equipment exists with an alias or id of {item!r}"
+        msg = f"No equipment exists with the name or id {item!r}"
         raise ValueError(msg)
 
     def __iter__(self) -> Iterator[Equipment]:
@@ -253,8 +246,20 @@ class ConfigEquipment:
 
     def __len__(self) -> int:
         """Returns the number of `<equipment/>` elements in the configuration file."""
-        return len(self._equipment)
+        return len(self._elements)
 
     def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the string representation."""
-        return f"<{self.__class__.__name__} ({len(self)} equipment)>"
+        n = len(self)
+        plural = "" if n == 1 else "s"
+        return f"<{self.__class__.__name__} ({n} equipment element{plural})>"
+
+    @property
+    def eids(self) -> tuple[str, ...]:
+        """Returns the value of the `eid` attribute for each `<equipment/>` element in a configuration file."""
+        return tuple(self._index_map.values())
+
+    @property
+    def names(self) -> tuple[str, ...]:
+        """Returns the value of the `name` attribute for each `<equipment/>` element in a configuration file."""
+        return tuple(e.attrib.get("name", "") for e in self._elements)

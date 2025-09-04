@@ -2482,7 +2482,7 @@ class Register:
         if isinstance(item, str):
             index = self._index_map.get(item)
             if index is None:
-                msg = f"No equipment exists with an alias or id of {item!r}"
+                msg = f"No equipment exists with the alias or id {item!r}"
                 raise ValueError(msg)
         else:
             index = item

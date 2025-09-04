@@ -1853,7 +1853,7 @@
 
 <h1 id="equipment-registers">Equipment Registers<a class="headerlink" href="#equipment-registers" title="Permanent link">¤</a></h1>
 <p>Laboratories that use equipment for traceable calibration measurements are required to manage information about the equipment by following the <a href="https://www.iso.org/ISO-IEC-17025-testing-and-calibration-laboratories.html" target="_blank">ISO/IEC 17025</a> standard. An equipment register is in the eXtensible Markup Language (XML) file format, and, as such, it may be parsed by many programming languages.</p>
-<p>An equipment register may be defined in a single file or distributed across multiple files.</p>
+<p>An equipment register may be defined in a single XML file or distributed across multiple XML files (for the same <em>team</em>). You can also define the information directly in a <a class="autorefs autorefs-internal" title="Non ISO/IEC 17025 labs" href="#non-iso-labs">Python module</a> instead of XML files.</p>
 <p>The <a class="autorefs autorefs-internal" href="../../schema/#schema-classes">Schema Classes</a> section of the documentation shows how each of the XML elements that are contained in an equipment register can be used in a Python program.</p>
 <h2 id="xml-schema">XML Schema<a class="headerlink" href="#xml-schema" title="Permanent link">¤</a></h2>
 <p>The documentation for the equipment-register schema is available <a href="https://mslnz.github.io/equipment-register-schema/latest/" target="_blank">here</a> and development of the schema is performed in the <a href="https://github.com/MSLNZ/equipment-register-schema" target="_blank">repository</a>.</p>
@@ -1876,7 +1876,7 @@
 <p>This will install a command-line tool that you can use to validate the content in an equipment register.</p>
 <p>TODO show how to use tool...</p>
 <h2 id="non-iso-labs">Non ISO/IEC 17025 labs<a class="headerlink" href="#non-iso-labs" title="Permanent link">¤</a></h2>
-<p>If your laboratory is not bound to the <a href="https://www.iso.org/ISO-IEC-17025-testing-and-calibration-laboratories.html" target="_blank">ISO/IEC 17025</a> standard and you are primarily interested in interfacing with equipment, you can define <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> classes in a Python module</p>
+<p>If your laboratory is not bound to the <a href="https://www.iso.org/ISO-IEC-17025-testing-and-calibration-laboratories.html" target="_blank">ISO/IEC 17025</a> standard and you are primarily interested in interfacing with equipment, you can define <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> classes in a Python module and connect to the equipment</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">Equipment</span>
 
 <span class="n">equipment</span> <span class="o">=</span> <span class="p">{</span>

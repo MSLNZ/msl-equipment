@@ -37,6 +37,7 @@ classifiers = [
 ]
 dependencies = [
     "msl-loadlib",
+    "numpy",
     "pyserial",
     "pyzmq",
 ]

@@ -1840,10 +1840,10 @@
 
 
 <h1 id="connections">Connections<a class="headerlink" href="#connections" title="Permanent link">¤</a></h1>
-<p>The information about how to connect to equipment for computer control is defined in the eXtensible Markup Language (XML) file format, and, as such, it may be parsed by many programming languages. You specify the XML file that specifies the <em>connections</em> as <code>&lt;connections /&gt;</code> elements in your <a class="autorefs autorefs-internal" title="Configuration Files" href="../configuration-files/#configuration-files">configuration file</a>. When the configuration file is loaded, it links the Connection with the corresponding <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a>. You may also define the information directly in a <a class="autorefs autorefs-internal" title="Non ISO/IEC 17025 labs" href="../equipment-registers/#non-iso-labs">Python module</a>.</p>
+<p>The information about how to connect to equipment for computer control is defined in the eXtensible Markup Language (XML) file format. You specify the XML file that contains the connection information as a <code>&lt;connections&gt;</code> element in your <a class="autorefs autorefs-internal" title="Configuration Files" href="../configuration-files/#configuration-files">configuration file</a>. When the configuration file is loaded, it links the Connection item with the corresponding <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> item. You may also define the connection information directly in a <a class="autorefs autorefs-internal" title="Non ISO/IEC 17025 labs" href="../equipment-registers/#non-iso-labs">Python module</a>, instead of in XML files.</p>
 <h2 id="xml-schema">XML Schema<a class="headerlink" href="#xml-schema" title="Permanent link">¤</a></h2>
 <h2 id="address-syntax">Address Syntax<a class="headerlink" href="#address-syntax" title="Permanent link">¤</a></h2>
-<p>The following are examples of the supported VISA-style addresses to use to connect to equipment</p>
+<p>The following are examples of VISA-style addresses that may be used to connect to equipment.</p>
 <table>
   <tr>
     <th>Interface</th>
@@ -1972,6 +1972,7 @@
   </tr>
 </table>
 
+<p>National Instruments also provides <a href="https://www.ni.com/docs/en-US/bundle/ni-visa/page/visa-resource-syntax-and-examples.html" target="_blank">examples</a> if you are using <a href="https://pyvisa.readthedocs.io/en/stable/" target="_blank">PyVISA</a> as the backend.</p>
 <h2 id="connection-classes">Connection Classes<a class="headerlink" href="#connection-classes" title="Permanent link">¤</a></h2>
 
 

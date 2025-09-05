@@ -1810,7 +1810,7 @@
 <li>locations of the <a class="autorefs autorefs-internal" title="Equipment Registers" href="../equipment-registers/#equipment-registers">equipment registers</a> and <a class="autorefs autorefs-internal" title="Connections" href="../connections/#connections">connections</a> that the equipment can be found in</li>
 <li>user-specific information that the measurement procedure requires for data acquisition.</li>
 </ul>
-<p>A configuration file uses the eXtensible Markup Language (XML) file format to specify this information. The following illustrates an example configuration file</p>
+<p>A configuration file uses the eXtensible Markup Language (XML) file format to specify this information. The following illustrates an example configuration file.</p>
 <div class="highlight"><pre><span></span><code><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
 <span class="nt">&lt;config&gt;</span><span class="w"> </span><span class="cm">&lt;!-- The name of the root tag can be anything you want. --&gt;</span>
 
@@ -1887,13 +1887,14 @@
 <span class="cm">    will be searched for connection files.</span>
 
 <span class="cm">    The value supports the ~ character to represent the users HOME directory.</span>
-<span class="cm">    The &lt;connection&gt; element can be specified multiple times.</span>
+<span class="cm">    The &lt;connections&gt; element can be specified multiple times.</span>
 <span class="cm">  --&gt;</span>
-<span class="w">  </span><span class="nt">&lt;connection&gt;</span>C:\DATA\Connections\transmittance.xml<span class="nt">&lt;/connection&gt;</span>
+<span class="w">  </span><span class="nt">&lt;connections&gt;</span>C:\DATA\Connections\transmittance.xml<span class="nt">&lt;/connections&gt;</span>
 
 <span class="w">  </span><span class="cm">&lt;!-- USER SPECIFIC: You may define your own elements. --&gt;</span>
 <span class="w">  </span><span class="nt">&lt;max_temperature</span><span class="w"> </span><span class="na">unit=</span><span class="s">&quot;°C&quot;</span><span class="nt">&gt;</span>30<span class="nt">&lt;/max_temperature&gt;</span>
 <span class="w">  </span><span class="nt">&lt;auto_zero&gt;</span>true<span class="nt">&lt;/auto_zero&gt;</span>
+<span class="w">  </span><span class="nt">&lt;nd_filter&gt;</span>OD:<span class="w"> </span>2.0<span class="nt">&lt;/nd_filter&gt;</span>
 <span class="w">  </span><span class="nt">&lt;smtp&gt;</span>
 <span class="w">    </span><span class="nt">&lt;host&gt;</span>smtp.server.nz<span class="nt">&lt;/host&gt;</span>
 <span class="w">    </span><span class="nt">&lt;port&gt;</span>25<span class="nt">&lt;/port&gt;</span>
@@ -1940,11 +1941,13 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;smtp/recipient&quot;</span><span class="p">)</span>
 <span class="go">[&lt;Element &#39;recipient&#39; at ...&gt;, &lt;Element &#39;recipient&#39; at ...&gt;]</span>
 </code></pre></div>
-<p>and if the value of an XML element is a boolean (<code>true</code>, <code>false</code> case-insensitive) an integer or a float, you can use the <a class="autorefs autorefs-internal" title="            value" href="../../api/config/#msl.equipment.config.Config.value">value</a> method to convert the text value to the appropriate Python data type (otherwise the text value will remain as a string).</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;max_temperature&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
-<span class="go">15.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;auto_zero&quot;</span><span class="p">)</span>
+<p>and if the value of an XML element is a boolean (<code>true</code>, <code>false</code> case-insensitive) an integer or a floating-point number, you can use the <a class="autorefs autorefs-internal" title="            value" href="../../api/config/#msl.equipment.config.Config.value">value</a> method to convert the text value to the appropriate Python data type (otherwise the text value will remain as a string).</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;auto_zero&quot;</span><span class="p">)</span>
 <span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;max_temperature&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+<span class="go">15.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;nd_filter&quot;</span><span class="p">)</span>
+<span class="go">&#39;OD: 2.0&#39;</span>
 </code></pre></div>
 
 

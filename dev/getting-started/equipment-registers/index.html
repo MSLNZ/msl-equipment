@@ -658,9 +658,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#validate" class="md-nav__link">
+  <a href="#validation" class="md-nav__link">
     <span class="md-ellipsis">
-      Validate
+      Validation
     </span>
   </a>
   
@@ -1810,9 +1810,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#validate" class="md-nav__link">
+  <a href="#validation" class="md-nav__link">
     <span class="md-ellipsis">
-      Validate
+      Validation
     </span>
   </a>
   
@@ -1853,18 +1853,22 @@
 
 <h1 id="equipment-registers">Equipment Registers<a class="headerlink" href="#equipment-registers" title="Permanent link">¤</a></h1>
 <p>Laboratories that use equipment for traceable calibration measurements are required to manage information about the equipment by following the <a href="https://www.iso.org/ISO-IEC-17025-testing-and-calibration-laboratories.html" target="_blank">ISO/IEC 17025</a> standard. An equipment register is in the eXtensible Markup Language (XML) file format, and, as such, it may be parsed by many programming languages.</p>
-<p>An equipment register may be defined in a single XML file or distributed across multiple XML files (for the same <em>team</em>). You can also define the information directly in a <a class="autorefs autorefs-internal" title="Non ISO/IEC 17025 labs" href="#non-iso-labs">Python module</a> instead of XML files.</p>
+<p>An equipment register may be defined in a single XML file or distributed across multiple XML files (for the same <em>team</em>). You can also define the information directly in a <a class="autorefs autorefs-internal" title="Non ISO/IEC 17025 labs" href="#non-iso-labs">Python module</a> instead of in XML files.</p>
 <p>The <a class="autorefs autorefs-internal" href="../../schema/#schema-classes">Schema Classes</a> section of the documentation shows how each of the XML elements that are contained in an equipment register can be used in a Python program.</p>
 <h2 id="xml-schema">XML Schema<a class="headerlink" href="#xml-schema" title="Permanent link">¤</a></h2>
 <p>The documentation for the equipment-register schema is available <a href="https://mslnz.github.io/equipment-register-schema/latest/" target="_blank">here</a> and development of the schema is performed in the <a href="https://github.com/MSLNZ/equipment-register-schema" target="_blank">repository</a>.</p>
-<p>Currently, the schema is targeting equipment that is located at the Measurement Standards Laboratory of New Zealand (in particular, enumeration values and pattern-string matches). If you work at a calibration laboratory and are interested in using the schema within your quality system, please <a href="https://www.measurement.govt.nz/contact-us" target="_blank">contact us</a> or open an <a href="https://github.com/MSLNZ/msl-equipment/issues" target="_blank">issue</a>.</p>
-<h3 id="validate">Validate<a class="headerlink" href="#validate" title="Permanent link">¤</a></h3>
-<p>You may use any tool to validate an equipment register against the schema; however, some of the values of the XML elements are not <em>completely</em> validated by the schema alone. For example, the value of an element in an equipment register could be the SHA256 checksum of a file. The schema will validate that the SHA256 checksum value has the correct string length and that the checksum only contains the allowed alphanumeric characters, but, the schema does not validate that the checksum value is correct for the associated file. For these additional validation steps, another tool must be used.</p>
-<p>To validate <em>all</em> elements within an equipment register, you can install the following package</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">pip</label><label for="__tabbed_1_2">uv</label></div>
+<p>Currently, the schema is targeting equipment that is located at the Measurement Standards Laboratory of New Zealand (in particular, enumeration values and pattern-string matches). If you work at a calibration laboratory and are interested in using the schema within your quality system, please <a href="https://www.measurement.govt.nz/contact-us" target="_blank">contact us</a> or open an <a href="https://github.com/MSLNZ/equipment-register-schema/issues" target="_blank">issue</a>.</p>
+<h3 id="validation">Validation<a class="headerlink" href="#validation" title="Permanent link">¤</a></h3>
+<p>You may use any XML-validating tool to validate an equipment register against the schema; however, some of the values of the XML elements are not <em>completely</em> validated by the schema alone. For example, the value of an element in an equipment register could be the SHA256 checksum of a file. The schema will validate that the SHA256 checksum value has the correct string length and that the checksum only contains the allowed alphanumeric characters, but, the schema does not validate that the checksum value is correct for the associated file. For these additional validation steps, another tool must be used.</p>
+<p>To validate <em>all</em> elements within an equipment register, you can install <code>msl-equipment-validate</code></p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">pip</label><label for="__tabbed_1_2">pipx</label><label for="__tabbed_1_3">uv</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><span class="go">pip install msl-equipment-validate</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="go">pipx install msl-equipment-validate</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
@@ -1876,7 +1880,7 @@
 <p>This will install a command-line tool that you can use to validate the content in an equipment register.</p>
 <p>TODO show how to use tool...</p>
 <h2 id="non-iso-labs">Non ISO/IEC 17025 labs<a class="headerlink" href="#non-iso-labs" title="Permanent link">¤</a></h2>
-<p>If your laboratory is not bound to the <a href="https://www.iso.org/ISO-IEC-17025-testing-and-calibration-laboratories.html" target="_blank">ISO/IEC 17025</a> standard and you are primarily interested in interfacing with equipment, you can define <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> classes in a Python module and connect to the equipment</p>
+<p>If your laboratory is not bound to the <a href="https://www.iso.org/ISO-IEC-17025-testing-and-calibration-laboratories.html" target="_blank">ISO/IEC 17025</a> standard and you are primarily interested in interfacing with equipment, you can define <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> classes in a Python module to connect to the equipment</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">Equipment</span>
 
 <span class="n">equipment</span> <span class="o">=</span> <span class="p">{</span>

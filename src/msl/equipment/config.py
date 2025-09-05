@@ -67,18 +67,19 @@ class Config:
         """Returns the string representation."""
         return f"<{self.__class__.__name__} path={self.path!r}>"
 
-    def attrib(self, path: str) -> dict[str, bool | float | str | None]:
+    def attrib(self, path: str) -> dict[str, bool | float | str]:
         """Get the attributes of the first matching element by tag name or path.
 
-        The values are converted to the appropriate data type if possible.
-        For example, if the value of an attribute is `"true"` the value is
-        converted to the [True][]{:target="_blank"} boolean type.
+        If possible, the value is converted to a [bool][]{:target="_blank"}
+        (`true` or `false` case-insensitive), an [int][]{:target="_blank"} or
+        a [float][]{:target="_blank"}, otherwise the value remains a
+        [str][]{:target="_blank"}.
 
         Args:
             path: Either an element tag name or an XPath.
 
         Returns:
-            The attributes of the matching element.
+            The attributes of the matching `path` element.
         """
         element = self.find(path)
         if element is None:
@@ -87,22 +88,24 @@ class Config:
 
     @property
     def equipment(self) -> ConfigEquipment:
-        """Returns the `<equipment/>` elements in the configuration file as a sequence of [Equipment][] items.
+        """Returns the `<equipment/>` elements in the configuration file like a sequence of [Equipment][] items.
 
         Using the returned object you can access [Equipment][] items by index (based on the order that
         `<equipment/>` elements are defined in the configuration file), by the `eid` attribute value or
         by the `name` attribute value. You can also iterate over the [Equipment][] items in the sequence.
+
+        See [here][config-usage] for examples.
         """
         return self._config_equipment
 
-    def find(self, path: str) -> Element | None:
+    def find(self, path: str) -> Element[str] | None:
         """Find the first matching element by tag name or path.
 
         Args:
             path: Either an element tag name or an XPath.
 
         Returns:
-            The element or `None` if no element was found.
+            The element or `None` if an element was not found at `path`.
         """
         return self._root.find(path)
 
@@ -119,9 +122,10 @@ class Config:
 
     @property
     def registers(self) -> dict[str, Register]:
-        """Returns all equipment registers specified in the configuration file.
+        """Returns all equipment registers that are specified in the configuration file.
 
-        The keys are the [team][msl.equipment.schema.Register.team] values of each register.
+        The _key_ in the returned [dict][]{:target="_blank"} is the [team][msl.equipment.schema.Register.team]
+        value of the corresponding [Register][].
         """
         if self._registers is not None:
             return self._registers
@@ -152,7 +156,7 @@ class Config:
 
     @property
     def root(self) -> Element[str]:
-        """The root element (the first node) in the XML document."""
+        """The root element (the first node) in the configuration file."""
         return self._root
 
     @property
@@ -180,16 +184,17 @@ class Config:
     def value(self, path: str, default: bool | float | str | None = None) -> bool | float | str | None:  # noqa: FBT001
         """Gets the value (text) associated with the first matching element.
 
-        The value is converted to the appropriate data type if possible. For
-        example, if the text of the element is `true` it will be converted
-        to [True][]{:target="_blank"}.
+        If possible, the value is converted to a [bool][]{:target="_blank"}
+        (`true` or `false` case-insensitive), an [int][]{:target="_blank"} or
+        a [float][]{:target="_blank"}, otherwise the value remains a
+        [str][]{:target="_blank"}.
 
         Args:
             path: Either an element tag name or an XPath.
             default: The default value if an element cannot be found.
 
         Returns:
-            The value of the element or `default` if no element was found.
+            The value of the element or `default` if an element was not found at `path`.
         """
         element = self.find(path)
         if element is None:
@@ -200,10 +205,10 @@ class Config:
 
 
 class ConfigEquipment:
-    """Treats `<equipment/>` elements in a configuration files as a sequence of [Equipment][] items."""
+    """Access `<equipment/>` elements in a configuration file like a sequence of [Equipment][] items."""
 
     def __init__(self, cfg: Config) -> None:
-        """Treats `<equipment/>` elements in a configuration files as a sequence of [Equipment][] items.
+        """Access `<equipment/>` elements in a configuration file like a sequence of [Equipment][] items.
 
         Args:
             cfg: The configuration instance.
@@ -217,11 +222,11 @@ class ConfigEquipment:
         }
 
     def __getitem__(self, item: str | int) -> Equipment:
-        """Returns an `<equipment/>` element from the configuration file."""
+        """Returns the `equipment` item from the configuration file."""
         if isinstance(item, int):
-            eid = self._index_map.get(item, None)
+            eid = self._index_map.get(item)
             if eid is None:
-                msg = "list index out of range"  # Python's generic error message for IndexError
+                msg = "index out of range"
                 raise IndexError(msg)
         else:
             eid = self._name_map.get(item, item)  # assume item=eid if not a name
@@ -236,21 +241,14 @@ class ConfigEquipment:
                 self._equipment[eid] = equipment
                 return equipment
 
-        if isinstance(item, int):
-            msg = (
-                "The index value is valid but the equipment cannot be found in any of the "
-                "registers that are specified in the configuration file"
-            )
-        else:
-            msg = (
-                f"No equipment exists with the name or id {item!r}\n"
-                f"Have you added all the necessary registers in the configuration file?"
-            )
-
+        msg = (
+            f"The equipment with id {eid!r} cannot be found in the "
+            f"registers that are specified in the configuration file"
+        )
         raise ValueError(msg)
 
     def __iter__(self) -> Iterator[Equipment]:
-        """Yields the `<equipment/>` elements in the configuration file."""
+        """Yields `equipment` items from the configuration file."""
         for index in range(len(self._elements)):
             yield self[index]
 

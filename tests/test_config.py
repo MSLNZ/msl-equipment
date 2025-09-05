@@ -209,7 +209,7 @@ def test_registers_directory() -> None:
         <register>tests/resources/mass</register>
     </msl>
     """
-    # The "bad" XML file in tests/resources/.hidden is ignored
+    # The "bad" XML file in tests/resources/mass/.hidden is ignored
     c = Config(StringIO(text))
     assert len(c.registers) == 1
     assert str(c.registers["Mass"]) == "<Register team='Mass' (3 equipment)>"
@@ -222,7 +222,6 @@ def test_registers_file() -> None:
         <register>tests/resources/mass/register.xml</register>
     </msl>
     """
-    # The "bad" XML file in tests/resources/.hidden is ignored
     c = Config(StringIO(text))
     assert len(c.registers) == 1
     assert str(c.registers["Mass"]) == "<Register team='Mass' (2 equipment)>"
@@ -268,7 +267,7 @@ def test_equipment_raises() -> None:
     with pytest.raises(IndexError):
         _ = c.equipment[100]
 
-    with pytest.raises(ValueError, match="the name or id 'unknown'"):
+    with pytest.raises(ValueError, match="with id 'unknown' cannot be found"):
         _ = c.equipment["unknown"]
 
 
@@ -306,8 +305,30 @@ def test_equipment_missing_register() -> None:
     c = Config(StringIO(text))
     assert c.equipment[0].id == "MSLE.M.092"
 
-    with pytest.raises(ValueError, match="equipment cannot be found in any of the registers"):
+    with pytest.raises(ValueError, match="id 'MSLE.O.103' cannot be found"):
         _ = c.equipment[1].id
 
-    with pytest.raises(ValueError, match="Have you added all the necessary registers"):
+    with pytest.raises(ValueError, match="id 'MSLE.O.103' cannot be found"):
         _ = c.equipment["MSLE.O.103"].id
+
+
+def test_equipment_repr() -> None:
+    text = '<?xml version="1.0" encoding="utf-8"?><config/>'
+    c = Config(StringIO(text))
+    assert len(c.equipment) == 0
+    assert repr(c.equipment) == "<ConfigEquipment (0 equipment elements)>"
+
+    text = '<?xml version="1.0" encoding="utf-8"?><config><equipment eid="MSLE.M.092"/></config>'
+    c = Config(StringIO(text))
+    assert len(c.equipment) == 1
+    assert repr(c.equipment) == "<ConfigEquipment (1 equipment element)>"
+
+    text = """<?xml version="1.0" encoding="utf-8"?>
+        <config>
+            <equipment eid="MSLE.M.092"/>
+            <equipment eid="MSLE.O.103"/>
+        </config>
+    """
+    c = Config(StringIO(text))
+    assert len(c.equipment) == 2  # noqa: PLR2004
+    assert repr(c.equipment) == "<ConfigEquipment (2 equipment elements)>"

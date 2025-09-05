@@ -296,3 +296,22 @@ def test_equipment_names_eids() -> None:
     c = Config(StringIO(text))
     assert c.equipment.names == ("alice", "", "bob", "")
     assert c.equipment.eids == ("MSLE.M.092", "MSLE.O.103", "MSLE.O.061", "MSLE.O.231")
+
+
+def test_equipment_missing_register() -> None:
+    text = """<?xml version="1.0" encoding="utf-8"?>
+        <config>
+            <equipment eid="MSLE.M.092"/>
+            <equipment eid="MSLE.O.103"/>
+            <register>tests/resources/mass</register>
+        </config>
+    """
+
+    c = Config(StringIO(text))
+    assert c.equipment[0].id == "MSLE.M.092"
+
+    with pytest.raises(ValueError, match="equipment cannot be found in any of the registers"):
+        _ = c.equipment[1].id
+
+    with pytest.raises(ValueError, match="Have you added all the necessary registers"):
+        _ = c.equipment["MSLE.O.103"].id

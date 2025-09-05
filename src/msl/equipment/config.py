@@ -236,7 +236,17 @@ class ConfigEquipment:
                 self._equipment[eid] = equipment
                 return equipment
 
-        msg = f"No equipment exists with the name or id {item!r}"
+        if isinstance(item, int):
+            msg = (
+                "The index value is valid but the equipment cannot be found in any of the "
+                "registers that are specified in the configuration file"
+            )
+        else:
+            msg = (
+                f"No equipment exists with the name or id {item!r}\n"
+                f"Have you added all the necessary registers in the configuration file?"
+            )
+
         raise ValueError(msg)
 
     def __iter__(self) -> Iterator[Equipment]:

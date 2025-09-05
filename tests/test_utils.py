@@ -118,11 +118,6 @@ def test_to_enum() -> None:
 
 
 def test_to_primitive() -> None:
-    assert to_primitive("none") is None
-    assert to_primitive("None") is None
-    assert to_primitive("nOnE") is None
-    assert to_primitive("\n  None \t") is None
-
     assert to_primitive("true") is True
     assert to_primitive("True") is True
     assert to_primitive("TRuE") is True

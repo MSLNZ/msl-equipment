@@ -116,11 +116,9 @@ def test_find_attrib_value() -> None:
         </fruits>
 
         <numbers i1="0" i2="-987" f1="1.234" f2="-9.2e-6"/>
-        <cases n1="None" n2="none" b1="true" b2="TruE" b3="false" b4="FalSe"/>
+        <cases b1="true" b2="TruE" b3="false" b4="FalSe"/>
         <strings s1="this is a string" s2="[1,2, 3]"/>
 
-        <n1>NONE</n1>
-        <n2>none</n2>
         <b1>true</b1>
         <b2>false</b2>
         <b3>TRUE</b3>
@@ -142,14 +140,12 @@ def test_find_attrib_value() -> None:
     assert c.root.text is not None
 
     assert c.attrib("numbers") == {"i1": 0, "i2": -987, "f1": 1.234, "f2": -9.2e-6}
-    assert c.attrib("cases") == {"n1": None, "n2": None, "b1": True, "b2": True, "b3": False, "b4": False}
+    assert c.attrib("cases") == {"b1": True, "b2": True, "b3": False, "b4": False}
     assert c.attrib("strings") == {"s1": "this is a string", "s2": "[1,2, 3]"}
     assert c.attrib("missing") == {}
     assert c.attrib("fruits/fruit") == {"colour": "red"}
     assert c.attrib("veggie") == {"colour": "orange"}
 
-    assert c.value("n1") is None
-    assert c.value("n2") is None
     assert c.value("b1") is True
     assert c.value("b2") is False
     assert c.value("b3") is True

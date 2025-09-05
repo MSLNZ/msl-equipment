@@ -65,14 +65,14 @@ def to_enum(obj: object, enum: type[Enum], *, prefix: str | None = None, to_uppe
     raise ValueError(msg)
 
 
-def to_primitive(text: str | bytes) -> None | bool | float | str:
-    """Convert text into a Python primitive type.
+def to_primitive(text: str | bytes) -> bool | float | str:
+    """Convert text into a [bool][], [int][] or [float][].
 
     Args:
         text: The text to convert.
 
     Returns:
-        The `text` as a Python primitive type: `None`, `bool`, `int` or `float`.
+        The `text` as a Python primitive type: [bool][], [int][] or [float][].
             Returns the original `text` (decoded if `bytes`) if it cannot be
             converted to any of these types. The text `"0"` and `"1"` are
             converted to an integer not a boolean.
@@ -80,20 +80,17 @@ def to_primitive(text: str | bytes) -> None | bool | float | str:
     if isinstance(text, bytes):
         text = text.decode()
 
-    upper = text.upper().strip()
-
-    if upper == "NONE":
-        return None
-    if upper == "TRUE":
-        return True
-    if upper == "FALSE":
-        return False
-
     for t in (int, float):  # order matters
         try:
             return t(text)
         except (ValueError, TypeError):  # noqa: PERF203
             pass
+
+    upper = text.upper().strip()
+    if upper == "TRUE":
+        return True
+    if upper == "FALSE":
+        return False
 
     return text
 

@@ -6,7 +6,7 @@ A configuration file is useful when you want to perform a measurement. You can u
 * locations of the [equipment registers][] and [connections][] that the equipment can be found in
 * user-specific information that the measurement procedure requires for data acquisition.
 
-A configuration file uses the eXtensible Markup Language (XML) file format to specify this information. The following illustrates an example configuration file
+A configuration file uses the eXtensible Markup Language (XML) file format to specify this information. The following illustrates an example configuration file.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -85,13 +85,14 @@ A configuration file uses the eXtensible Markup Language (XML) file format to sp
     will be searched for connection files.
 
     The value supports the ~ character to represent the users HOME directory.
-    The <connection> element can be specified multiple times.
+    The <connections> element can be specified multiple times.
   -->
-  <connection>C:\DATA\Connections\transmittance.xml</connection>
+  <connections>C:\DATA\Connections\transmittance.xml</connections>
 
   <!-- USER SPECIFIC: You may define your own elements. -->
   <max_temperature unit="°C">30</max_temperature>
   <auto_zero>true</auto_zero>
+  <nd_filter>OD: 2.0</nd_filter>
   <smtp>
     <host>smtp.server.nz</host>
     <port>25</port>
@@ -151,12 +152,14 @@ access XML elements defined in the configuration file by using the tag name or t
 
 ```
 
-and if the value of an XML element is a boolean (`true`, `false` case-insensitive) an integer or a float, you can use the [value][msl.equipment.config.Config.value] method to convert the text value to the appropriate Python data type (otherwise the text value will remain as a string).
+and if the value of an XML element is a boolean (`true`, `false` case-insensitive) an integer or a floating-point number, you can use the [value][msl.equipment.config.Config.value] method to convert the text value to the appropriate Python data type (otherwise the text value will remain as a string).
 
 ```pycon
->>> cfg.value("max_temperature") / 2
-15.0
 >>> cfg.value("auto_zero")
 True
+>>> cfg.value("max_temperature") / 2
+15.0
+>>> cfg.value("nd_filter")
+'OD: 2.0'
 
 ```

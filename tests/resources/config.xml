@@ -3,6 +3,7 @@
 
     <max_temperature unit="°C">30</max_temperature>
     <auto_zero>true</auto_zero>
+    <nd_filter>OD: 2.0</nd_filter>
     <smtp>
         <host>smtp.server.nz</host>
         <port>25</port>

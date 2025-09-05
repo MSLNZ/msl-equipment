@@ -1,12 +1,12 @@
 # Connections
 
-The information about how to connect to equipment for computer control is defined in the eXtensible Markup Language (XML) file format, and, as such, it may be parsed by many programming languages. You specify the XML file that specifies the _connections_ as `<connections />` elements in your [configuration file][configuration-files]. When the configuration file is loaded, it links the Connection with the corresponding [Equipment][]. You may also define the information directly in a [Python module][non-iso-labs].
+The information about how to connect to equipment for computer control is defined in the eXtensible Markup Language (XML) file format. You specify the XML file that contains the connection information as a `<connections>` element in your [configuration file][configuration-files]. When the configuration file is loaded, it links the Connection item with the corresponding [Equipment][] item. You may also define the connection information directly in a [Python module][non-iso-labs], instead of in XML files.
 
 ## XML Schema
 
 ## Address Syntax
 
-The following are examples of the supported VISA-style addresses to use to connect to equipment
+The following are examples of VISA-style addresses that may be used to connect to equipment.
 
 <table>
   <tr>
@@ -135,5 +135,7 @@ The following are examples of the supported VISA-style addresses to use to conne
     <td>Use the ZeroMQ messaging library to connect to a device, host=192.168.20.90, port=5555</td>
   </tr>
 </table>
+
+National Instruments also provides [examples](https://www.ni.com/docs/en-US/bundle/ni-visa/page/visa-resource-syntax-and-examples.html){:target="_blank"} if you are using [PyVISA](https://pyvisa.readthedocs.io/en/stable/){:target="_blank"} as the backend.
 
 ## Connection Classes

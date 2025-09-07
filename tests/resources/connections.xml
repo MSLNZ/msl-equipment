@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<connections>
+    <connection>
+        <eid>MSLE.M.092</eid>
+        <address>COM1</address>
+    </connection>
+    <connection>
+        <eid>MSLE.M.001</eid>
+        <address>GPIB::22</address>
+        <backend>MSL</backend>
+    </connection>
+    <connection>
+        <eid>MSLE.M.100</eid>
+        <address>TCPIP::dev.company.com::hislip0</address>
+        <manufacturer/>
+    </connection>
+    <connection>
+        <eid>MSLE.O.231</eid>
+        <address>SDK::library.dll</address>
+        <model/>
+    </connection>
+    <connection>
+        <eid>MSLE.O.103</eid>
+        <address>TCPIP::192.168.1.100</address>
+        <serial/>
+    </connection>
+    <connection>
+        <eid>MSLE.O.061</eid>
+        <address>TCP::192.168.1.100::5000</address>
+        <properties/>
+    </connection>
+    <connection>
+        <eid>MSLE.O.023</eid>
+        <address>ASRL/dev/ttyS1</address>
+        <backend>PyVISA</backend>
+        <manufacturer>Manufacturer</manufacturer>
+        <model>Model</model>
+        <serial>Serial</serial>
+        <properties>
+            <baud_rate>19200</baud_rate>
+            <write_termination>\r</write_termination>
+            <timeout>10.2</timeout>
+            <check>true</check>
+            <empty/>
+        </properties>
+    </connection>
+</connections>

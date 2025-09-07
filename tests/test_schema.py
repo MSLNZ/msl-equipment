@@ -48,6 +48,7 @@ from msl.equipment import (
     Status,
     Table,
 )
+from msl.equipment.connections import connections
 from msl.equipment.schema import Latest, _future_date, _Indent  # pyright: ignore[reportPrivateUsage]
 
 if TYPE_CHECKING:
@@ -2657,3 +2658,17 @@ def test_register_get_some(item: str | int, eid: str) -> None:
     e = r.get(item)
     assert e is not None
     assert e.id == eid
+
+
+def test_equipment_connection_none() -> None:
+    connections.clear()
+
+    with pytest.raises(KeyError, match="eid='MSLE.O.231' cannot be found"):
+        _ = Equipment(id="MSLE.O.231").connect()
+
+    connections.add(*("tests/resources/connections.xml",))
+
+    with pytest.raises(OSError, match="Cannot find 'library.dll' for libtype='cdll'"):
+        _ = Equipment(id="MSLE.O.231").connect()
+
+    connections.clear()

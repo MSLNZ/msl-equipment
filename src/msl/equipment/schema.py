@@ -14,6 +14,10 @@ from xml.etree.ElementTree import Element, ElementTree, SubElement
 
 import numpy as np
 
+from msl.equipment.interfaces import connect
+
+from .connections import connections
+
 if TYPE_CHECKING:
     from collections.abc import Iterator
     from typing import Any as _Any
@@ -22,6 +26,7 @@ if TYPE_CHECKING:
     from numpy.typing import ArrayLike, DTypeLike, NDArray
 
     from ._types import XMLSource
+    from .connections import Connection
 
     A = TypeVar("A", bound="Any")
     L = TypeVar("L", bound="Latest")
@@ -2132,6 +2137,7 @@ class Equipment:
         reference_materials: Documentation of reference materials, results, acceptance criteria, relevant
             dates and the period of validity.
         quality_manual: Information that is specified in Section 4.3.6 of the MSL Quality Manual.
+        connection: The connection to the equipment for computer control.
     """
 
     entered_by: str = ""
@@ -2203,6 +2209,9 @@ class Equipment:
     quality_manual: QualityManual = field(default_factory=QualityManual)
     """Information that is specified in Section 4.3.6 of the MSL Quality Manual."""
 
+    connection: Connection | None = None
+    """The connection to use for computer control."""
+
     def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the string representation."""
         items: list[str] = []
@@ -2232,6 +2241,15 @@ class Equipment:
             f"<{self.__class__.__name__} manufacturer={self.manufacturer!r}, "
             f"model={self.model!r}, serial={self.serial!r}{summary}>"
         )
+
+    def connect(self) -> _Any:  # noqa: ANN401
+        """Connect to the equipment."""
+        if self.connection is None:
+            super().__setattr__("connection", connections[self.id])
+            assert self.connection is not None  # noqa: S101
+
+        interface = connect(self)
+        return interface(self)
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Equipment:
@@ -2468,7 +2486,7 @@ class Register:
                 msg = f"Cannot merge equipment registers from different teams, {team!r} != {t!r}"
                 raise ValueError(msg)
 
-            self._elements.extend(child for child in root)
+            self._elements.extend(root)
 
         self._team: str = team
         self._equipment: list[Equipment | None] = [None] * len(self._elements)

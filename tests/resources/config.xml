@@ -18,6 +18,6 @@
     <register>tests/resources/mass</register>
     <register>tests/resources/light</register>
 
-    <connection>tests/resources/connections.xml</connection>
+    <connections>tests/resources/connections.xml</connections>
 
 </config>

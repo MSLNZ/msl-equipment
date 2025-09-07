@@ -7,21 +7,50 @@ from pathlib import Path
 from typing import TYPE_CHECKING, overload
 from xml.etree.ElementTree import parse
 
+from .connections import connections
 from .schema import Register
 from .utils import logger, to_primitive
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+    from typing import Literal
     from xml.etree.ElementTree import Element
 
     from ._types import XMLSource
     from .schema import Equipment
 
 
+def _sources(text: str | None, tag: Literal["register", "connections"]) -> list[Path | Element[str]]:
+    """Get the XML source files from `<register>` or `<connections>` elements in a config file.
+
+    Args:
+        text: The text value of a `<register>` or `<connections>` element.
+        tag: The name of the root tag to check for when searching a directory for XML files.
+    """
+    if not text or not text.strip():
+        return []
+
+    path = Path(text).expanduser()
+    sources: list[Path | Element[str]] = []
+    if path.is_dir():
+        for file in path.rglob("*.xml"):
+            # Ignore XML files in hidden directories (e.g., XML files in PyCharm's .idea directory)
+            if any(part.startswith(".") for part in file.parts):
+                continue
+            root = parse(file).getroot()  # noqa: S314
+            if root.tag.endswith(tag):
+                sources.append(root)
+    else:
+        sources.append(path)
+
+    return sources
+
+
+
 class Config:
     """Load a configuration file."""
 
-    def __init__(self, source: XMLSource) -> None:
+    def __init__(self, source: XMLSource) -> None:  # noqa: C901
         """Load a configuration file.
 
         Args:
@@ -62,6 +91,9 @@ class Config:
                     logger.debug("append to PATH: %r", path)
 
             os.environ["PATH"] += os.pathsep + os.pathsep.join(paths)
+
+        for element in self.findall("connections"):
+            connections.add(*_sources(element.text, "connections"))
 
     def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the string representation."""
@@ -132,24 +164,10 @@ class Config:
 
         registers: dict[str, Register] = {}
         for element in self.findall("register"):
-            if not element.text or not element.text.strip():
-                continue
-
-            path = Path(element.text).expanduser()
-            sources: list[Path | Element[str]] = []
-            if path.is_dir():
-                for file in path.rglob("*.xml"):
-                    # Ignore XML files in hidden directories (e.g., XML files in PyCharm's .idea directory)
-                    if any(part.startswith(".") for part in file.parts):
-                        continue
-                    root = parse(file).getroot()  # noqa: S314
-                    if root.tag.endswith("register"):
-                        sources.append(root)
-            else:
-                sources.append(path)
-
-            register = Register(*sources)
-            registers[register.team] = register
+            sources = _sources(element.text, "register")
+            if sources:
+                register = Register(*sources)
+                registers[register.team] = register
 
         self._registers = registers
         return registers

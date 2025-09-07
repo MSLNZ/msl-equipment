@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from .__about__ import __version__, version_tuple
 from .config import Config
+from .connections import Connection
+from .constants import Backend
+from .interfaces import NIDAQ, SDK, Interface, PyVISA
 from .schema import (
     AcceptanceCriteria,
     Accessories,
@@ -41,10 +44,13 @@ from .schema import (
 )
 
 __all__: list[str] = [
+    "NIDAQ",
+    "SDK",
     "AcceptanceCriteria",
     "Accessories",
     "Adjustment",
     "Alteration",
+    "Backend",
     "CVDEquation",
     "CapitalExpenditure",
     "Competency",
@@ -52,6 +58,7 @@ __all__: list[str] = [
     "Component",
     "Conditions",
     "Config",
+    "Connection",
     "Deserialised",
     "DigitalFormat",
     "DigitalReport",
@@ -61,11 +68,13 @@ __all__: list[str] = [
     "File",
     "Financial",
     "Firmware",
+    "Interface",
     "IssuingLaboratory",
     "Maintenance",
     "Measurand",
     "PerformanceCheck",
     "PlannedTask",
+    "PyVISA",
     "QualityManual",
     "Range",
     "ReferenceMaterials",

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from os import PathLike
+import os
 from typing import Protocol, TypeAlias, TypeVar, Union  # pyright: ignore[reportDeprecated]
 
 _T_co = TypeVar("_T_co", covariant=True)
@@ -16,5 +16,8 @@ class SupportsRead(Protocol[_T_co]):
         ...
 
 
-XMLSource: TypeAlias = Union[int, str, bytes, PathLike[str], PathLike[bytes], SupportsRead[bytes] | SupportsRead[str]]  # pyright: ignore[reportDeprecated]
+PathLike = Union[str, bytes, os.PathLike[str], os.PathLike[bytes]]  # pyright: ignore[reportDeprecated]
+"""A [path-like object][]{:target="_blank"}."""
+
+XMLSource: TypeAlias = Union[int, PathLike, SupportsRead[bytes] | SupportsRead[str]]  # pyright: ignore[reportDeprecated]
 """A [path-like object][]{:target="_blank"} or a [file-like object][]{:target="_blank"} for parsing XML content."""

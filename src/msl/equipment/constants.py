@@ -38,46 +38,18 @@ REGEX_GPIB = re.compile(
 )
 
 
-class Backend(enum.IntEnum):
-    """The software backend to use for communication.
+class Backend(enum.Enum):
+    """The backend library to use for communication with the equipment.
 
     Attributes:
-        MSL (int): 0
-        PyVISA (int): 1
-        NIDAQ (int): 2
+        MSL (str): "MSL"
+        PyVISA (str): "PyVISA"
+        NIDAQ (str): "NIDAQ"
     """
 
-    MSL = 0
-    PyVISA = 1
-    NIDAQ = 2
-
-
-class Interface(enum.IntEnum):
-    """The interface to use for the communication system.
-
-    Only used if `MSL` is chosen as the [Backend][msl.equipment.constants.Backend].
-
-    Attributes:
-        UNKNOWN (int): 0
-        SDK (int): 1
-        SERIAL (int): 2
-        SOCKET (int): 3
-        PROLOGIX (int): 4
-        TCPIP_VXI11 (int): 5
-        TCPIP_HISLIP (int): 6
-        ZMQ (int): 7
-        GPIB (int): 8
-    """
-
-    UNKNOWN = 0
-    SDK = 1
-    SERIAL = 2
-    SOCKET = 3
-    PROLOGIX = 4
-    TCPIP_VXI11 = 5
-    TCPIP_HISLIP = 6
-    ZMQ = 7
-    GPIB = 8
+    MSL = "MSL"
+    PyVISA = "PyVISA"
+    NIDAQ = "NIDAQ"
 
 
 class Parity(enum.Enum):

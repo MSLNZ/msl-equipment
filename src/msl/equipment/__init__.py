@@ -4,9 +4,8 @@ from __future__ import annotations
 
 from .__about__ import __version__, version_tuple
 from .config import Config
-from .connections import Connection
-from .constants import Backend
-from .interfaces import NIDAQ, SDK, Interface, PyVISA
+from .enumerations import Backend, DataBits, Parity, StopBits
+from .interfaces import NIDAQ, SDK, PyVISA
 from .schema import (
     AcceptanceCriteria,
     Accessories,
@@ -17,6 +16,7 @@ from .schema import (
     CompletedTask,
     Component,
     Conditions,
+    Connection,
     CVDEquation,
     Deserialised,
     DigitalFormat,
@@ -27,6 +27,7 @@ from .schema import (
     File,
     Financial,
     Firmware,
+    Interface,
     IssuingLaboratory,
     Maintenance,
     Measurand,
@@ -59,6 +60,7 @@ __all__: list[str] = [
     "Conditions",
     "Config",
     "Connection",
+    "DataBits",
     "Deserialised",
     "DigitalFormat",
     "DigitalReport",
@@ -72,6 +74,7 @@ __all__: list[str] = [
     "IssuingLaboratory",
     "Maintenance",
     "Measurand",
+    "Parity",
     "PerformanceCheck",
     "PlannedTask",
     "PyVISA",
@@ -83,6 +86,7 @@ __all__: list[str] = [
     "Specifications",
     "SpecifiedRequirements",
     "Status",
+    "StopBits",
     "Table",
     "__version__",
     "version_tuple",

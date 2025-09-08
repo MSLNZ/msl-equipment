@@ -7,8 +7,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, overload
 from xml.etree.ElementTree import parse
 
-from .connections import connections
-from .schema import Register
+from .schema import Register, connections
 from .utils import logger, to_primitive
 
 if TYPE_CHECKING:

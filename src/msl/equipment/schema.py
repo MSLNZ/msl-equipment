@@ -1,4 +1,4 @@
-"""[Equipment-register schema](https://mslnz.github.io/equipment-register-schema) classes."""
+"""Classes for the equipment register and connection schemas."""
 
 from __future__ import annotations
 
@@ -14,9 +14,8 @@ from xml.etree.ElementTree import Element, ElementTree, SubElement
 
 import numpy as np
 
-from msl.equipment.interfaces import connect
-
-from .connections import connections
+from .enumerations import Backend
+from .utils import logger, to_primitive
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -25,11 +24,12 @@ if TYPE_CHECKING:
 
     from numpy.typing import ArrayLike, DTypeLike, NDArray
 
-    from ._types import XMLSource
-    from .connections import Connection
+    from ._types import PathLike, XMLSource
 
     A = TypeVar("A", bound="Any")
     L = TypeVar("L", bound="Latest")
+    Self = TypeVar("Self", bound="Interface")
+
 
 equation_map = {
     "pi": np.pi,
@@ -52,6 +52,7 @@ schema_numpy_map = {
     "double": float,
     "string": object,
 }
+
 numpy_schema_map = {
     "?": "bool",
     "q": "int",
@@ -2248,8 +2249,21 @@ class Equipment:
             super().__setattr__("connection", connections[self.id])
             assert self.connection is not None  # noqa: S101
 
-        interface = connect(self)
-        return interface(self)
+        for backend in backends:
+            if backend.handles(self.connection):
+                return backend.cls(self)
+
+        for resource in resources:
+            if resource.handles(self):
+                return resource.cls(self)
+
+        address = self.connection.address
+        for interface in interfaces:
+            if interface.handles(address):
+                return interface.cls(self)
+
+        msg = f"Cannot determine the interface from the address {address!r}"
+        raise ValueError(msg)
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Equipment:
@@ -2766,3 +2780,289 @@ class Register:
             pretty(tree, space=" " * indent)
 
         return tree
+
+
+class Connection:
+    """Information about how to interface with equipment."""
+
+    __slots__: tuple[str, ...] = (
+        "address",
+        "backend",
+        "eid",
+        "manufacturer",
+        "model",
+        "properties",
+        "serial",
+    )
+
+    def __init__(  # noqa: PLR0913
+        self,
+        address: str,
+        *,
+        backend: Literal["MSL", "PyVISA", "NIDAQ"] | Backend = Backend.MSL,
+        eid: str = "",
+        manufacturer: str = "",
+        model: str = "",
+        serial: str = "",
+        **properties: _Any,  # noqa: ANN401
+    ) -> None:
+        """Information about how to interface with equipment.
+
+        Args:
+            address: The VISA-style address of the connection (see [here][address-syntax] for examples).
+            backend: The [backend][msl.equipment.constants.Backend] to use to communicate with the equipment.
+            eid: The [equipment id][msl.equipment.schema.Equipment.id] to associate with the [Connection][] instance.
+            manufacturer: The name of the manufacturer of the equipment.
+            model: The model number of the equipment.
+            serial: The serial number (or unique identifier) of the equipment.
+            properties: Additional key-value pairs that are required to communicate with the equipment.
+                For example, the _baud_rate_ and _parity_ values for an _RS-232_ connection.
+        """
+        self.address: str = address
+        """The VISA-style address of the connection (see [here][address-syntax] for examples)."""
+
+        self.backend: Backend = Backend(backend)
+        """The [backend][msl.equipment.constants.Backend] that is used to communicate with the equipment."""
+
+        self.eid: str = eid
+        """The [equipment id][msl.equipment.schema.Equipment.id] associated with the [Connection][] instance."""
+
+        self.manufacturer: str = manufacturer
+        """The name of the manufacturer of the equipment."""
+
+        self.model: str = model
+        """The model number of the equipment."""
+
+        self.properties: dict[str, _Any] = properties
+        """Additional key-value pairs that are required to communicate with the equipment.
+
+        For example, the _baud_rate_ and _parity_ values for an _RS-232_ connection.
+        """
+
+        self.serial: str = serial
+        """The serial number (or unique identifier) of the equipment."""
+
+    def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
+        """Returns the string representation."""
+        return f"{self.__class__.__name__}(eid={self.eid!r} address={self.address!r})"
+
+    def connect(self) -> _Any:  # noqa: ANN401
+        """Connect to the equipment."""
+        equipment = Equipment(
+            id=self.eid,
+            manufacturer=self.manufacturer,
+            model=self.model,
+            serial=self.serial,
+            connection=self,
+        )
+        return equipment.connect()
+
+
+class Connections:
+    """Singleton class containing an eid:Connection mapping from <connections> defined in a configuration file."""
+
+    def __init__(self) -> None:
+        """Singleton class containing an eid:Connection mapping from <connections> defined in a configuration file."""
+        self._connections: dict[str, Connection | Element[str]] = {}
+
+    def __contains__(self, eid: str) -> bool:
+        """Check whether an eid is in the mapping."""
+        return eid in self._connections
+
+    def __getitem__(self, eid: str) -> Connection:
+        """Returns a Connection instance."""
+        item = self._connections.get(eid)
+        if isinstance(item, Connection):
+            return item
+
+        if item is None:
+            msg = (
+                f"A <connection> element with eid={eid!r} cannot be found in the "
+                f"connections that are specified in the configuration file"
+            )
+            raise KeyError(msg)
+
+        connection = self._from_xml(item)
+        self._connections[eid] = connection
+        return connection
+
+    def __len__(self) -> int:
+        """Returns the size of the mapping."""
+        return len(self._connections)
+
+    def add(self, *sources: PathLike | Element[str]) -> None:
+        """Add the sources from the <connections> element in a configuration file."""
+        for source in sources:
+            root = source if isinstance(source, Element) else ElementTree().parse(source)
+
+            # schema requires that the eid is the first child element
+            self._connections.update({e[0].text: e for e in root if e[0].text})
+
+    def clear(self) -> None:
+        """Remove all connections from the mapping."""
+        self._connections.clear()
+
+    def _from_xml(self, element: Element[str]) -> Connection:
+        """Convert a <connection> from a connections XML file."""
+        # schema requires that eid and address are the first two elements
+        eid = element[0].text or ""
+        address = element[1].text or ""
+        # the other elements are optional (minOccurs="0")
+        backend, manufacturer, model, serial = Backend.MSL, "", "", ""
+        properties: dict[str, bool | float | str | None] = {}
+        for e in element[2:]:
+            if e.tag == "backend":
+                backend = Backend[e.text or "MSL"]
+            elif e.tag == "manufacturer":
+                manufacturer = e.text or ""
+            elif e.tag == "model":
+                model = e.text or ""
+            elif e.tag == "serial":
+                serial = e.text or ""
+            else:
+                for child in e:
+                    properties[child.tag] = None if child.text is None else to_primitive(child.text)
+
+        return Connection(
+            eid=eid,
+            address=address,
+            backend=backend,
+            manufacturer=manufacturer,
+            model=model,
+            serial=serial,
+            **properties,
+        )
+
+
+class Interface:
+    """Base class for all interfaces."""
+
+    def __init__(self, equipment: Equipment) -> None:
+        """Base class for all interfaces.
+
+        Args:
+            equipment: An [Equipment][] instance to use for communication.
+        """
+        assert equipment.connection is not None  # noqa: S101
+        self._equipment: Equipment = equipment
+
+        # __str__ and __repr__ can be called often for logging message, cache values
+        self.__str: str = f"{self.__class__.__name__}<{equipment.manufacturer}|{equipment.model}|{equipment.serial}>"
+        self.__repr: str = (
+            f"{self.__class__.__name__}"
+            f"<{equipment.manufacturer}|{equipment.model}|{equipment.serial} at {equipment.connection.address}>"
+        )
+
+        logger.debug("Connecting as %s", self)
+
+    def __del__(self) -> None:
+        """Calls disconnect()."""
+        self.disconnect()
+
+    def __enter__(self: Self) -> Self:  # noqa: PYI019
+        """Enter a context manager."""
+        return self
+
+    def __exit__(self, *ignore: object) -> None:
+        """Exit the context manager."""
+        self.disconnect()
+
+    def __init_subclass__(
+        cls,
+        manufacturer: str = "",
+        model: str = "",
+        flags: int = 0,
+        backend: Backend | None = None,
+        regex: re.Pattern[str] | None = None,
+    ) -> None:
+        """This method is called whenever the Interface is sub-classed.
+
+        Args:
+            manufacturer: The name of the manufacturer (supports a regex pattern string).
+            model: The model number of the equipment (supports a regex pattern string).
+            flags: The flags to use for the regex pattern string.
+            backend: The backend to use for communication.
+            regex: The compiled regex to use when matching the Connection address.
+        """
+        if backend is not None:
+            backends.append(_Backend(cls, backend))
+            logger.debug("added backend: %s", cls)
+        elif regex is not None:
+            interfaces.append(_Interface(cls, regex))
+            logger.debug("added interface: %s", cls)
+        else:
+            resources.append(_Resource(cls, manufacturer, model, flags))
+            logger.debug("added resource: %s", cls)
+
+    def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
+        """Returns the representation."""
+        return self.__repr
+
+    def __str__(self) -> str:  # pyright: ignore[reportImplicitOverride]
+        """Returns the string representation."""
+        return self.__str
+
+    @property
+    def equipment(self) -> Equipment:
+        """The [Equipment][] associated with the interface."""
+        return self._equipment
+
+    def disconnect(self) -> None:
+        """Disconnect from the equipment.
+
+        This method should be overridden in the subclass if the subclass must implement
+        tasks that need to be performed in order to safely disconnect from the equipment.
+
+        For example
+
+        * to clean up system resources from memory (e.g., if using a manufacturer's SDK)
+        * to configure the equipment to be in a state that is safe for people
+          working in the lab when the equipment is not in use
+
+        !!! tip
+            This method gets called automatically when the [Interface][msl.equipment.interfaces.Interface]
+            instance gets garbage collected, which happens when the reference count is 0.
+        """
+
+
+class _Backend:
+    def __init__(self, cls: type[Interface], backend: Backend) -> None:
+        """Keep track of the backend classes."""
+        self.cls: type[Interface] = cls
+        self.backend: Backend = backend
+
+    def handles(self, connection: Connection) -> bool:
+        """Checks if the backend handles communication with the equipment."""
+        return connection.backend == self.backend
+
+
+class _Interface:
+    def __init__(self, cls: type[Interface], regex: re.Pattern[str]) -> None:
+        """Keep track of the base interface classes."""
+        self.cls: type[Interface] = cls
+        self.regex: re.Pattern[str] = regex
+
+    def handles(self, address: str) -> bool:
+        """Checks if the interface class handles communication with the equipment."""
+        return self.regex.match(address) is not None
+
+
+class _Resource:
+    def __init__(self, cls: type[Interface], manufacturer: str, model: str, flags: int) -> None:
+        """Keep track of resource classes."""
+        self.cls: type[Interface] = cls
+        self.manufacturer: re.Pattern[str] | None = re.compile(manufacturer, flags=flags) if manufacturer else None
+        self.model: re.Pattern[str] | None = re.compile(model, flags=flags) if model else None
+
+    def handles(self, equipment: Equipment) -> bool:
+        """Checks if the resource handles communication with the equipment."""
+        # both manufacturer and model must match (if specified) to be a match
+        if self.manufacturer and not self.manufacturer.search(equipment.manufacturer):
+            return False
+        return not (self.model and not self.model.search(equipment.model))
+
+
+resources: list[_Resource] = []
+backends: list[_Backend] = []
+interfaces: list[_Interface] = []
+connections = Connections()

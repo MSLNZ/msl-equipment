@@ -14,8 +14,6 @@ LF = b"\n"
 IS_LINUX: bool = sys.platform == "linux"
 IS_WINDOWS: bool = sys.platform == "win32"
 
-REGEX_SDK = re.compile(r"SDK::(?P<path>.+)", flags=re.IGNORECASE)
-
 REGEX_SERIAL = re.compile(r"(COM|ASRL|ASRLCOM)((?P<dev>/dev/[^\s:]+)|(?P<number>\d+))", flags=re.IGNORECASE)
 
 REGEX_SOCKET = re.compile(

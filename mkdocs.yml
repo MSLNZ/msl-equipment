@@ -92,7 +92,7 @@ nav:
     - api/index.md
     - api/config.md
     - api/connection.md
-    - api/constants.md
+    - api/enumerations.md
     - api/interfaces.md
     - api/types.md
   - Resources:

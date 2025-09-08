@@ -48,8 +48,7 @@ from msl.equipment import (
     Status,
     Table,
 )
-from msl.equipment.connections import connections
-from msl.equipment.schema import Latest, _future_date, _Indent  # pyright: ignore[reportPrivateUsage]
+from msl.equipment.schema import Latest, _future_date, _Indent, connections  # pyright: ignore[reportPrivateUsage]
 
 if TYPE_CHECKING:
     from numpy.typing import ArrayLike

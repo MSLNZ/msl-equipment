@@ -1,0 +1,3 @@
+# enumerations
+
+::: msl.equipment.enumerations

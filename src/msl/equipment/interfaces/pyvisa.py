@@ -12,10 +12,9 @@ try:
 except ImportError:
     pyvisa = None  # type: ignore[assignment]
 
-from msl.equipment.constants import Parity, StopBits
+from msl.equipment.enumerations import Backend, Parity, StopBits
+from msl.equipment.schema import Interface
 from msl.equipment.utils import logger, to_enum
-
-from . import Interface
 
 if TYPE_CHECKING:
     from typing import Any, ClassVar
@@ -23,11 +22,10 @@ if TYPE_CHECKING:
     from pyvisa.highlevel import ResourceManager, VisaLibraryBase
     from pyvisa.resources.resource import Resource
 
-    from msl.equipment.connections import Connection
-    from msl.equipment.schema import Equipment
+    from msl.equipment.schema import Connection, Equipment
 
 
-class PyVISA(Interface):
+class PyVISA(Interface, backend=Backend.PyVISA):
     """Use [PyVISA]{:target="_blank"} as the backend to communicate with the equipment.
 
     [PyVISA]: https://pyvisa.readthedocs.io/en/stable/

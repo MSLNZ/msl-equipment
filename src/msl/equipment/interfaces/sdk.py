@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from msl.equipment.constants import REGEX_SDK
+from msl.equipment.schema import Interface
 from msl.equipment.utils import logger
 from msl.loadlib import LoadLibrary
-
-from . import Interface
 
 if TYPE_CHECKING:
     from ctypes import _CData, _CDataType, _NamedFuncPointer  # pyright: ignore[reportPrivateUsage]
@@ -20,7 +19,10 @@ if TYPE_CHECKING:
     from msl.loadlib._types import LibType
 
 
-class SDK(Interface):
+REGEX_SDK = re.compile(r"SDK::(?P<path>.+)", flags=re.IGNORECASE)
+
+
+class SDK(Interface, regex=REGEX_SDK):
     """Base class for equipment that use the Software Development Kit (SDK) provided by the manufacturer."""
 
     def __init__(self, equipment: Equipment, libtype: LibType | None = None, path: PathLike | None = None) -> None:

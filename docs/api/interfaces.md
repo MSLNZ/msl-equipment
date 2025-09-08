@@ -2,7 +2,7 @@
 
 Interface classes for computer control.
 
-::: msl.equipment.interfaces.Interface
+::: msl.equipment.schema.Interface
     options:
         show_root_full_path: false
         show_root_heading: true

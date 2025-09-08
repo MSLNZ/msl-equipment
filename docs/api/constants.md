@@ -1,3 +1,0 @@
-# constants
-
-::: msl.equipment.constants

@@ -14,7 +14,8 @@ try:
 except ImportError:  # pragma: no cover
     nidaqmx = None
 
-from . import Interface
+from msl.equipment.enumerations import Backend
+from msl.equipment.schema import Interface
 
 if TYPE_CHECKING:
     from typing import Any
@@ -22,7 +23,7 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-class NIDAQ(Interface):
+class NIDAQ(Interface, backend=Backend.NIDAQ):
     """Use [NI-DAQmx]{:target="_blank"} to establish a connection to the equipment.
 
     [NI-DAQmx]: https://nidaqmx-python.readthedocs.io/en/stable/index.html
@@ -93,6 +94,6 @@ class NIDAQ(Interface):
         return getattr(nidaqmx, attr)
 
     @property
-    def address(self)-> str:
+    def address(self) -> str:
         """Returns the [address][msl.equipment.connections.Connection.address] of the [Connection][]."""
-        return self.equipment.connection.address  #type: ignore[union-attr]  # pyright: ignore[reportOptionalMemberAccess]
+        return self.equipment.connection.address  # type: ignore[union-attr]  # pyright: ignore[reportOptionalMemberAccess]

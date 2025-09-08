@@ -1,7 +1,7 @@
 import pytest
 
 from msl.equipment import Config
-from msl.equipment.connections import connections
+from msl.equipment.schema import connections
 
 
 def test_from_config() -> None:

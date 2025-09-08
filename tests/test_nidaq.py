@@ -10,6 +10,8 @@ from msl.equipment import NIDAQ, Connection, Equipment
 def test_equivalent_to_importing_nidaqmx() -> None:
     daq = NIDAQ(Equipment(connection=Connection(address="Dev1")))
 
+    assert f"{daq.address}/ai0" == "Dev1/ai0"
+
     assert daq.CtrFreq is nidaqmx.CtrFreq
     assert daq.CtrTick is nidaqmx.CtrTick
     assert daq.CtrTime is nidaqmx.CtrTime

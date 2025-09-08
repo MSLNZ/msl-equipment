@@ -1,4 +1,4 @@
-"""An interface for computer control."""
+"""Interfaces for computer control."""
 # pyright: reportImportCycles=false
 
 from __future__ import annotations
@@ -89,7 +89,7 @@ class Interface:
         """Base class for all interfaces.
 
         Args:
-            equipment: The [Equipment][] instance to use for communication.
+            equipment: An [Equipment][] instance to use for communication.
         """
         assert equipment.connection is not None  # noqa: S101
         self._equipment: Equipment = equipment
@@ -124,7 +124,7 @@ class Interface:
             flags: The flags to use for the regular-expression patterns.
         """
         if manufacturer or model:
-            resources.append(_Resource(manufacturer, model, flags, cls))
+            resources.append(_Resource(cls, manufacturer, model, flags))
             logger.debug("added resource: %s", cls)
 
     def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
@@ -146,20 +146,20 @@ class Interface:
         This method should be overridden in the subclass if the subclass must implement
         tasks that need to be performed in order to safely disconnect from the equipment.
 
-        For example:
+        For example
 
-            * to clean up system resources from memory (e.g., if using a manufacturer's SDK)
-            * to configure the equipment to be in a state that is safe for people
-              working in the lab when the equipment is not in use
+        * to clean up system resources from memory (e.g., if using a manufacturer's SDK)
+        * to configure the equipment to be in a state that is safe for people
+            working in the lab when the equipment is not in use
 
-        !!! note
-            This method gets called automatically when the [Interface][] object
-            gets garbage collected, which happens when the reference count is 0.
+        !!! tip
+            This method gets called automatically when the [Interface][msl.equipment.interfaces.Interface]
+            instance gets garbage collected, which happens when the reference count is 0.
         """
 
 
 class _Resource:
-    def __init__(self, manufacturer: str, model: str, flags: int, cls: type[Interface]) -> None:
+    def __init__(self, cls: type[Interface], manufacturer: str, model: str, flags: int) -> None:
         """Keep track of custom classes from msl-equipment-resources."""
         self.manufacturer: re.Pattern[str] | None = re.compile(manufacturer, flags=flags) if manufacturer else None
         self.model: re.Pattern[str] | None = re.compile(model, flags=flags) if model else None
@@ -167,8 +167,6 @@ class _Resource:
 
     def is_match(self, equipment: Equipment) -> bool:
         """Checks if the resource is capable of communicating with the equipment."""
-        if self.manufacturer is None and self.model is None:
-            return False
         if self.manufacturer and not self.manufacturer.search(equipment.manufacturer):
             return False
         return not (self.model and not self.model.search(equipment.model))

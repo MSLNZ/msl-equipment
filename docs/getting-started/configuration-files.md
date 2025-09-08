@@ -6,7 +6,11 @@ A configuration file is useful when you want to perform a measurement. You can u
 * locations of the [equipment registers][] and [connections][] that the equipment can be found in
 * user-specific information that the measurement procedure requires for data acquisition.
 
-A configuration file uses the eXtensible Markup Language (XML) file format to specify this information. The following illustrates an example configuration file.
+A configuration file uses the eXtensible Markup Language (XML) file format to specify this information.
+
+## XML Example {: #config-xml-example}
+
+The following illustrates an example configuration file.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -103,7 +107,7 @@ A configuration file uses the eXtensible Markup Language (XML) file format to sp
 </config>
 ```
 
-## Usage {: #config-usage}
+## Python Example {: #config-python-example}
 
 The [Config][] class is used to load a configuration file
 

@@ -10,7 +10,7 @@ The [Schema Classes][] section of the documentation shows how each of the XML el
 
 The documentation for the equipment-register schema is available [here](https://mslnz.github.io/equipment-register-schema/latest/){:target="_blank"} and development of the schema is performed in the [repository](https://github.com/MSLNZ/equipment-register-schema){:target="_blank"}.
 
-Currently, the schema is targeting equipment that is located at the Measurement Standards Laboratory of New Zealand (in particular, enumeration values and pattern-string matches). If you work at a calibration laboratory and are interested in using the schema within your quality system, please [contact us](https://www.measurement.govt.nz/contact-us){:target="_blank"} or open an [issue](https://github.com/MSLNZ/equipment-register-schema/issues){:target="_blank"}.
+Currently, the schema is targeting equipment that is located at the Measurement Standards Laboratory of New Zealand (in particular, enumeration values and pattern-string matches). If you work at a calibration laboratory and are interested in using the schema within your Quality Management System, please [contact us](https://www.measurement.govt.nz/contact-us){:target="_blank"} or open an [issue](https://github.com/MSLNZ/equipment-register-schema/issues){:target="_blank"}.
 
 ### Validation
 

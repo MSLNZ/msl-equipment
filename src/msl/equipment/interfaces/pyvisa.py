@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 
-import os
 from typing import TYPE_CHECKING
 
 try:
@@ -29,26 +28,29 @@ if TYPE_CHECKING:
 
 
 class PyVISA(Interface):
-    """Use PyVISA as the backend to communicate with the equipment."""
+    """Use [PyVISA]{:target="_blank"} as the backend to communicate with the equipment.
+
+    [PyVISA]: https://pyvisa.readthedocs.io/en/stable/
+    """
 
     _resource_classes: ClassVar[dict[str, type[Resource]]] = {}
 
     def __init__(self, equipment: Equipment) -> None:  # noqa: C901
         """Use [PyVISA] as the backend to communicate with the equipment.
 
-        The [Connection.backend][msl.equipment.record_types.Connection.backend]
+        The [backend][msl.equipment.connections.Connection.backend]
         value must be equal to `PyVISA` to use this class for the communication backend.
 
         The returned object from calling the [connect][msl.equipment.schema.Equipment.connect]
-        method is equivalent to calling [open_resource][pyvisa.highlevel.ResourceManager.open_resource].
-
-        For example,
+        method is equivalent to calling
+        [open_resource][pyvisa.highlevel.ResourceManager.open_resource]{:target="_blank"}, e.g.,
 
         ```python
         from msl.equipment import Backend, Connection, Equipment
 
         equipment = Equipment(connection=Connection(address="GPIB::12", backend=Backend.PyVISA))
         inst = equipment.connect()
+        print(inst.query("*IDN?"))
         ```
 
         is equivalent to
@@ -58,12 +60,31 @@ class PyVISA(Interface):
 
         rm = pyvisa.ResourceManager()
         inst = rm.open_resource("GPIB::12")
+        print(inst.query("*IDN?"))
         ```
 
-        Args:
-            equipment: The [Equipment][] instance.
+        You can also combine the packages, use `msl-equipment` for managing information
+        about the equipment and directly use `pyvisa` for the connection
+
+        ```python
+        import pyvisa
+        from msl.equipment import Config
+
+        # config.xml contains <equipment eid="MSLE.0.063" name="dmm"/>
+        # and specifies where the equipment registers are and the connections file.
+        cfg = Config("config.xml")
+
+        address = cfg.equipment["dmm"].connection.address
+
+        rm = pyvisa.ResourceManager()
+        inst = rm.open_resource(address)
+        print(inst.query("*IDN?"))
+        ```
 
         [PyVISA]: https://pyvisa.readthedocs.io/en/stable/
+
+        Args:
+            equipment: An [Equipment][] instance.
         """
         self._resource: Resource | None = None
         super().__init__(equipment)
@@ -147,39 +168,41 @@ class PyVISA(Interface):
 
     @property
     def resource(self) -> Resource | None:
-        """:class:`~pyvisa.resources.Resource`: The PyVISA_ resource that is used for the connection.
+        """The PyVISA resource that is used for the connection.
 
-        This is the :class:`~pyvisa.resources.Resource` that would have
-        been returned if you did the following in a script::
+        This is the [Resource][pyvisa.resources.Resource]{:target="_blank"} instance
+        that would have been returned if you did the following
 
-            import pyvisa
-            rm = pyvisa.ResourceManager()
-            resource = rm.open_resource('ASRL3::INSTR')
-
+        ```python
+        import pyvisa
+        rm = pyvisa.ResourceManager()
+        resource = rm.open_resource("ASRL3::INSTR")
+        ```
         """
         return self._resource
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
-        """Calls [pyvisa.resources.Resource.close][]."""
+        """Calls [pyvisa.resources.Resource.close][]{:target="_blank"}."""
         if self._resource is not None:
             self._resource.close()
             logger.debug("Disconnected from %s", self)
             self._resource = None
 
     @staticmethod
-    def resource_manager(visa_library: str | VisaLibraryBase | None = None) -> ResourceManager:  # noqa: C901, PLR0912
+    def resource_manager(visa_library: str | VisaLibraryBase = "") -> ResourceManager:  # noqa: C901
         """Returns the PyVISA Resource Manager.
 
         Args:
-            visa_library: The library to use for PyVISA_. For example:
+            visa_library: The library to use for PyVISA, for example,
 
-                * `@ivi` &mdash; use [IVI][intro-configuring]
-                * `@ni` &mdash; use [NI-VISA](https://www.ni.com/visa/) (only supported in PyVISA <1.11)
-                * `@py` &mdash; use [PyVISA-py](https://pyvisa.readthedocs.io/projects/pyvisa-py/en/stable/)
-                * `@sim` &mdash; use [PyVISA-sim](https://pyvisa.readthedocs.io/projects/pyvisa-sim/en/stable/)
+                * `@ivi` &mdash; PyVISA &ge; 1.11
+                * `@ni` &mdash; PyVISA &lt; 1.11
+                * `@py` &mdash; use [PyVISA-py](https://pyvisa.readthedocs.io/projects/pyvisa-py/en/stable/){:target="_blank"}
+                * `@sim` &mdash; use [PyVISA-sim](https://pyvisa.readthedocs.io/projects/pyvisa-sim/en/stable/){:target="_blank"}
 
-                If `None`, the `PYVISA_LIBRARY` environment variable is used. This environment
-                variable can be set in a [configuration file][configuration-files].
+                If unspecified, the `PYVISA_LIBRARY` environment variable is used (if it exists).
+                This environment variable can be defined in a [configuration file][config-xml-example].
+                The default library is `@ivi` if not specified elsewhere.
 
         Returns:
             The PyVISA Resource Manager.
@@ -208,64 +231,52 @@ class PyVISA(Interface):
             for item in ("COM", "ASRL", "LPT1", "ASRLCOM"):
                 PyVISA._resource_classes[item] = pyvisa.resources.SerialInstrument
 
-        if visa_library is None:
-            visa_library = os.getenv("PYVISA_LIBRARY", "@ivi")
-
-        try:
-            return pyvisa.ResourceManager(visa_library)
-        except ValueError as err:
-            # as of PyVISA 1.11 the @ni backend was renamed to @ivi
-            msg = str(err)
-            if msg.endswith("ni"):
-                return pyvisa.ResourceManager("@ivi")
-            if msg.endswith("ivi"):
-                return pyvisa.ResourceManager("@ni")
-            raise
+        return pyvisa.ResourceManager(visa_library)
 
     @staticmethod
-    def resource_class(item: Equipment | Connection) -> type[Resource]:  # noqa: C901, PLR0911
-        """Get the PyVISA [Resource class][api_resources].
+    def resource_class(connection: Connection) -> type[Resource]:  # noqa: C901, PLR0911
+        """Get the PyVISA [Resource][pyvisa.resources.Resource]{:target="_blank"} class for the [Connection][].
 
         Args:
-            item: An equipment or connection item.
+            connection: A [Connection][] instance.
 
         Returns:
-            The PyVISA Resource class that can open the `item`.
+            The type of PyVISA Resource class for `connection`.
         """
-        address = str(item.address) if hasattr(item, "address") else str(item.connection.address)  # type: ignore[union-attr]  # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue, reportOptionalMemberAccess, reportUnknownArgumentType]
+        address = str(connection.address)
         if not address:
-            msg = "The Connection.address has not been set"
+            msg = "The Connection.address attribute has not been set"
             raise ValueError(msg)
 
         rm = PyVISA.resource_manager()
-        try:
-            info = rm.resource_info(address, extended=True)
-            return rm._resource_classes[(info.interface_type, info.resource_class)]  # type: ignore[index]  # noqa: SLF001  # pyright: ignore[reportArgumentType, reportPrivateUsage]
-        except:  # noqa: E722
-            # try to figure out the resource class...
-            a = str(address.upper())
+        info = rm.resource_info(address, extended=True)
+        if info.resource_class is not None:
+            return rm._resource_classes[(info.interface_type, info.resource_class)]  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
 
-            if a.startswith("GPIB") and a.endswith("INTFC"):
-                return PyVISA._resource_classes["GPIB_INTFC"]
+        # try to figure out the resource class...
+        a = str(address.upper())
 
-            if a.startswith("VXI") and a.endswith("BACKPLANE"):
-                return PyVISA._resource_classes["VXI_BACKPLANE"]
+        if a.startswith("GPIB") and a.endswith("INTFC"):
+            return PyVISA._resource_classes["GPIB_INTFC"]
 
-            if a.startswith("VXI") and a.endswith("MEMACC"):
-                return PyVISA._resource_classes["VXI_MEMACC"]
+        if a.startswith("VXI") and a.endswith("BACKPLANE"):
+            return PyVISA._resource_classes["VXI_BACKPLANE"]
 
-            if a.startswith("TCPIP") and a.endswith("SOCKET"):
-                return PyVISA._resource_classes["TCPIP_SOCKET"]
+        if a.startswith("VXI") and a.endswith("MEMACC"):
+            return PyVISA._resource_classes["VXI_MEMACC"]
 
-            if a.startswith("USB") and a.endswith("RAW"):
-                return PyVISA._resource_classes["USB_RAW"]
+        if a.startswith("TCPIP") and a.endswith("SOCKET"):
+            return PyVISA._resource_classes["TCPIP_SOCKET"]
 
-            if a.startswith("PXI") and a.endswith("MEMACC"):
-                return PyVISA._resource_classes["PXI_MEMACC"]
+        if a.startswith("USB") and a.endswith("RAW"):
+            return PyVISA._resource_classes["USB_RAW"]
 
-            for key, value in PyVISA._resource_classes.items():
-                if a.startswith(key):
-                    return value
+        if a.startswith("PXI") and a.endswith("MEMACC"):
+            return PyVISA._resource_classes["PXI_MEMACC"]
 
-            msg = f"Cannot find a PyVISA resource class for {address}"
-            raise ValueError(msg) from None
+        for key, value in PyVISA._resource_classes.items():
+            if a.startswith(key):
+                return value
+
+        msg = f"Cannot find a PyVISA resource class for {address}"
+        raise ValueError(msg) from None

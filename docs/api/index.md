@@ -1,3 +1,16 @@
 # API Overview
 
+Although this package contains many classes and functions, the classes that you may typically create instances of are
+
 * [Config][]
+* [Connection][]
+* [Equipment][] &mdash; possibly a [Register][] if you only want to load an equipment register (i.e., you don't need to create [Connection][]s)
+
+The following interfaces are available to communicate with equipment,
+
+* [SDK][msl.equipment.interfaces.sdk.SDK] &mdash; Use the Software Development Kit (SDK) provided by the manufacturer
+
+and the following classes may be used to interface with equipment using external packages
+
+* [NIDAQ][msl.equipment.interfaces.nidaq.NIDAQ] &mdash; Use the [NIDAQmx](https://nidaqmx-python.readthedocs.io/en/stable/index.html) package to establish a connection to the equipment
+* [PyVISA][msl.equipment.interfaces.pyvisa.PyVISA] &mdash; Use the [PyVISA](https://pyvisa.readthedocs.io/en/stable/index.html) package to establish a connection to the equipment

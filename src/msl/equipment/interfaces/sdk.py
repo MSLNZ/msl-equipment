@@ -21,16 +21,19 @@ if TYPE_CHECKING:
 
 
 class SDK(Interface):
-    """Base class for equipment that use the SDK provided by the manufacturer for the connection."""
+    """Base class for equipment that use the Software Development Kit (SDK) provided by the manufacturer."""
 
     def __init__(self, equipment: Equipment, libtype: LibType | None = None, path: PathLike | None = None) -> None:
-        """Base class for equipment that use the SDK provided by the manufacturer for the connection.
+        """Base class for equipment that use the Software Development Kit (SDK) provided by the manufacturer.
+
+        You can use the [configuration file][config-xml-example] to add the location to the SDK
+        to the `PATH` environment variable.
 
         Args:
-            equipment: The [Equipment][] instance.
+            equipment: An [Equipment][] instance.
             libtype: The library type. See [LoadLibrary][msl.loadlib.load_library.LoadLibrary] for more details.
-            path: The path to the SDK, only required if the [address][msl.equipment.connections.Connection.address]
-                does not contain this information.
+            path: The path to the SDK. Specifying this value will take precedence over the
+                [address][msl.equipment.connections.Connection.address] value.
         """
         super().__init__(equipment)
 
@@ -47,7 +50,7 @@ class SDK(Interface):
 
     @property
     def assembly(self) -> Any:  # noqa: ANN401
-        """[assembly][msl.loadlib.load_library.LoadLibrary.assembly &mdash; The reference to the .NET assembly."""
+        """[assembly][msl.loadlib.load_library.LoadLibrary.assembly] &mdash; The reference to the .NET assembly."""
         return self._lib.assembly
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
@@ -63,13 +66,13 @@ class SDK(Interface):
     def log_errcheck(
         self, result: _CData | _CDataType | None, func: _NamedFuncPointer, arguments: tuple[_CData | _CDataType, ...]
     ) -> _CData | _CDataType | None:
-        """Convenience method for logging an [errcheck][ctypes._CFuncPtr.errcheck]."""
+        """Convenience method for logging an [errcheck][ctypes._CFuncPtr.errcheck] from [ctypes][]."""
         logger.debug("%s.%s%s -> %s", self.__class__.__name__, func.__name__, arguments, result)
         return result
 
     @property
     def path(self) -> str:
-        """The path to the SDK file."""
+        """[str][] &mdash; The path to the SDK file."""
         return self._lib.path
 
     @property

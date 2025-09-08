@@ -1,8 +1,12 @@
 # Connections
 
-The information about how to connect to equipment for computer control is defined in the eXtensible Markup Language (XML) file format. You specify the XML file that contains the connection information as a `<connections>` element in your [configuration file][configuration-files]. When the configuration file is loaded, it links the Connection item with the corresponding [Equipment][] item. You may also define the connection information directly in a [Python module][non-iso-labs], instead of in XML files.
+The information about how to interface with equipment for computer control is defined in the eXtensible Markup Language (XML) file format. You specify the XML file that contains the connection information as a `<connections>` element in your [configuration file][configuration-files]. When the configuration file is loaded, it links a [Connection][] instance with the corresponding [Equipment][] instance. You may also define the connection information directly in a [Python module][non-iso-labs], instead of in XML files.
 
-## XML Schema
+## XML {: #connections-xml}
+
+### Schema {: #connections-xml-schema}
+
+### Example {: #connections-xml-example}
 
 ## Address Syntax
 
@@ -136,6 +140,18 @@ The following are examples of VISA-style addresses that may be used to connect t
   </tr>
 </table>
 
-National Instruments also provides [examples](https://www.ni.com/docs/en-US/bundle/ni-visa/page/visa-resource-syntax-and-examples.html){:target="_blank"} if you are using [PyVISA](https://pyvisa.readthedocs.io/en/stable/){:target="_blank"} as the backend.
+National Instruments also provides [examples](https://www.ni.com/docs/en-US/bundle/ni-visa/page/visa-resource-syntax-and-examples.html){:target="_blank"} if you are using [PyVISA](https://pyvisa.readthedocs.io/en/stable/){:target="_blank"} as the [backend][connections-backend].
 
-## Connection Classes
+## Interfaces {: #connections-interfaces}
+
+The following interface classes are available
+
+* [SDK][msl.equipment.interfaces.sdk.SDK] &mdash; Use the Software Development Kit (SDK) provided by the manufacturer
+
+### Backends {: #connections-backend}
+
+When a [Connection][] instance is created, the `backend` keyword argument decides which backend to use when interfacing with the equipment. There are different [Backends][msl.equipment.constants.Backend] to choose from: `MSL` (default), `PyVISA` or `NIDAQ`.
+
+The [interface class][connections-interfaces] can be used if the `backend` is `MSL`. The corresponding interface classes for the external backends are [PyVISA][msl.equipment.interfaces.pyvisa.PyVISA] and [NIDAQ][msl.equipment.interfaces.nidaq.NIDAQ].
+
+## Python Example {: #connections-python-example}

@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class Connection:
-    """Information about the connection to equipment."""
+    """Information about how to interface with equipment."""
 
     __slots__: tuple[str, ...] = (
         "address",
@@ -38,24 +38,41 @@ class Connection:
         serial: str = "",
         **properties: Any,  # noqa: ANN401
     ) -> None:
-        """Information about the connection to equipment.
+        """Information about how to interface with equipment.
 
         Args:
-            address: The VISA-style address to use for the connection (see [here][address-syntax] for examples).
-            backend: The backend package to use to communicate with the equipment.
-            eid: The [Equipment.id][msl.equipment.schema.Equipment.id] to associate with the connection.
+            address: The VISA-style address of the connection (see [here][address-syntax] for examples).
+            backend: The [backend][msl.equipment.constants.Backend] to use to communicate with the equipment.
+            eid: The [equipment id][msl.equipment.schema.Equipment.id] to associate with the [Connection][] instance.
             manufacturer: The name of the manufacturer of the equipment.
             model: The model number of the equipment.
             serial: The serial number (or unique identifier) of the equipment.
             properties: Additional key-value pairs that are required to communicate with the equipment.
+                For example, the _baud_rate_ and _parity_ values for an _RS-232_ connection.
         """
         self.address: str = address
+        """The VISA-style address of the connection (see [here][address-syntax] for examples)."""
+
         self.backend: Backend = Backend(backend)
+        """The [backend][msl.equipment.constants.Backend] that is used to communicate with the equipment."""
+
         self.eid: str = eid
+        """The [equipment id][msl.equipment.schema.Equipment.id] associated with the [Connection][] instance."""
+
         self.manufacturer: str = manufacturer
+        """The name of the manufacturer of the equipment."""
+
         self.model: str = model
+        """The model number of the equipment."""
+
         self.properties: dict[str, Any] = properties
+        """Additional key-value pairs that are required to communicate with the equipment.
+
+        For example, the _baud_rate_ and _parity_ values for an _RS-232_ connection.
+        """
+
         self.serial: str = serial
+        """The serial number (or unique identifier) of the equipment."""
 
     def __repr__(self)-> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the string representation."""

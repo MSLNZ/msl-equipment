@@ -126,7 +126,7 @@ class Config:
         `<equipment/>` elements are defined in the configuration file), by the `eid` attribute value or
         by the `name` attribute value. You can also iterate over the [Equipment][] items in the sequence.
 
-        See [here][config-usage] for examples.
+        See [here][config-python-example] for examples.
         """
         return self._config_equipment
 

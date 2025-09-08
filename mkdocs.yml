@@ -91,7 +91,9 @@ nav:
   - API:
     - api/index.md
     - api/config.md
+    - api/connection.md
     - api/constants.md
+    - api/interfaces.md
     - api/types.md
   - Resources:
     - resources/index.md
@@ -126,6 +128,10 @@ plugins:
               domains: [xsd]
             - url: https://gtc.readthedocs.io/en/stable/objects.inv
             - url: https://mslnz.github.io/msl-io/latest/objects.inv
+            - url: https://mslnz.github.io/msl-loadlib/latest/objects.inv
+            - url: https://pyvisa.readthedocs.io/en/stable/objects.inv
+            - url: https://nidaqmx-python.readthedocs.io/en/stable/objects.inv
+            - url: https://pyzmq.readthedocs.io/en/stable/objects.inv
           options:
             # General
             show_source: true

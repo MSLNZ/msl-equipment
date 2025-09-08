@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.19">
     
     
       
@@ -1499,6 +1499,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1572,12 +1576,58 @@
   
   
     <li class="md-nav__item">
+      <a href="../api/connection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Connection
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../api/constants/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     constants
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    interfaces
     
   </span>
   
@@ -1742,6 +1792,7 @@
 <li><a class="autorefs autorefs-internal" href="connections/#connections">Connections</a> &mdash; to interface with equipment for computer control</li>
 <li><a class="autorefs autorefs-internal" title="Configuration Files" href="configuration-files/#configuration-files">Configuration files</a> &mdash; define requirements for a measurement (links items 1 and 2 together)</li>
 </ol>
+<p>You do not need to use all three concepts for your application. You can choose to only use the <a class="autorefs autorefs-internal" title="Schema Classes" href="../schema/#schema-classes">equipment-register classes</a> to help manage information about the equipment in your laboratory and use a different Python package to communicate with the equipment. Similarly, you can choose to use one of the supported <a class="autorefs autorefs-internal" title="Backends" href="connections/#connections-backend">backends</a> for communication. You do not need to use <code>msl-equipment</code> at all. Since an equipment register is written in the eXtensible Markup Language (XML) file format, it may be parsed by many programming languages. This allows people to share a common equipment register and use different programming languages to read information from the same equipment register.</p>
 
 
 

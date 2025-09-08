@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.19">
     
     
       
@@ -1496,6 +1496,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1572,12 +1576,58 @@
   
   
     <li class="md-nav__item">
+      <a href="connection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Connection
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="constants/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     constants
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    interfaces
     
   </span>
   
@@ -1736,8 +1786,20 @@
 
 
 <h1 id="api-overview">API Overview<a class="headerlink" href="#api-overview" title="Permanent link">¤</a></h1>
+<p>Although this package contains many classes and functions, the classes that you may typically create instances of are</p>
 <ul>
 <li><a class="autorefs autorefs-internal" href="config/#config">Config</a></li>
+<li><a class="autorefs autorefs-internal" href="connection/#connection">Connection</a></li>
+<li><a class="autorefs autorefs-internal" href="../schema/equipment/#equipment">Equipment</a> &mdash; possibly a <a class="autorefs autorefs-internal" href="../schema/register/#register">Register</a> if you only want to load an equipment register (i.e., you don't need to create <a class="autorefs autorefs-internal" href="connection/#connection">Connection</a>s)</li>
+</ul>
+<p>The following interfaces are available to communicate with equipment,</p>
+<ul>
+<li><a class="autorefs autorefs-internal" title="            SDK" href="interfaces/#msl.equipment.interfaces.sdk.SDK">SDK</a> &mdash; Use the Software Development Kit (SDK) provided by the manufacturer</li>
+</ul>
+<p>and the following classes may be used to interface with equipment using external packages</p>
+<ul>
+<li><a class="autorefs autorefs-internal" title="            NIDAQ" href="interfaces/#msl.equipment.interfaces.nidaq.NIDAQ">NIDAQ</a> &mdash; Use the <a href="https://nidaqmx-python.readthedocs.io/en/stable/index.html">NIDAQmx</a> package to establish a connection to the equipment</li>
+<li><a class="autorefs autorefs-internal" title="            PyVISA" href="interfaces/#msl.equipment.interfaces.pyvisa.PyVISA">PyVISA</a> &mdash; Use the <a href="https://pyvisa.readthedocs.io/en/stable/index.html">PyVISA</a> package to establish a connection to the equipment</li>
 </ul>
 
 

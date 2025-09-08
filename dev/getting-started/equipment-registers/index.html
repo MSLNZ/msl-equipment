@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.19">
     
     
       
@@ -1574,6 +1574,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1647,12 +1651,58 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/connection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Connection
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/constants/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     constants
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    interfaces
     
   </span>
   
@@ -1857,7 +1907,7 @@
 <p>The <a class="autorefs autorefs-internal" href="../../schema/#schema-classes">Schema Classes</a> section of the documentation shows how each of the XML elements that are contained in an equipment register can be used in a Python program.</p>
 <h2 id="xml-schema">XML Schema<a class="headerlink" href="#xml-schema" title="Permanent link">¤</a></h2>
 <p>The documentation for the equipment-register schema is available <a href="https://mslnz.github.io/equipment-register-schema/latest/" target="_blank">here</a> and development of the schema is performed in the <a href="https://github.com/MSLNZ/equipment-register-schema" target="_blank">repository</a>.</p>
-<p>Currently, the schema is targeting equipment that is located at the Measurement Standards Laboratory of New Zealand (in particular, enumeration values and pattern-string matches). If you work at a calibration laboratory and are interested in using the schema within your quality system, please <a href="https://www.measurement.govt.nz/contact-us" target="_blank">contact us</a> or open an <a href="https://github.com/MSLNZ/equipment-register-schema/issues" target="_blank">issue</a>.</p>
+<p>Currently, the schema is targeting equipment that is located at the Measurement Standards Laboratory of New Zealand (in particular, enumeration values and pattern-string matches). If you work at a calibration laboratory and are interested in using the schema within your Quality Management System, please <a href="https://www.measurement.govt.nz/contact-us" target="_blank">contact us</a> or open an <a href="https://github.com/MSLNZ/equipment-register-schema/issues" target="_blank">issue</a>.</p>
 <h3 id="validation">Validation<a class="headerlink" href="#validation" title="Permanent link">¤</a></h3>
 <p>You may use any XML-validating tool to validate an equipment register against the schema; however, some of the values of the XML elements are not <em>completely</em> validated by the schema alone. For example, the value of an element in an equipment register could be the SHA256 checksum of a file. The schema will validate that the SHA256 checksum value has the correct string length and that the checksum only contains the allowed alphanumeric characters, but, the schema does not validate that the checksum value is correct for the associated file. For these additional validation steps, another tool must be used.</p>
 <p>To validate <em>all</em> elements within an equipment register, you can install <code>msl-equipment-validate</code></p>

@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.19">
     
     
       
@@ -671,11 +671,35 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#xml-schema" class="md-nav__link">
+  <a href="#connections-xml" class="md-nav__link">
     <span class="md-ellipsis">
-      XML Schema
+      XML
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="XML">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connections-xml-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      Schema
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connections-xml-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -689,9 +713,33 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#connection-classes" class="md-nav__link">
+  <a href="#connections-interfaces" class="md-nav__link">
     <span class="md-ellipsis">
-      Connection Classes
+      Interfaces
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interfaces">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connections-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      Backends
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#connections-python-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python Example
     </span>
   </a>
   
@@ -1568,6 +1616,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1641,12 +1693,58 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/connection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Connection
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/constants/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     constants
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    interfaces
     
   </span>
   
@@ -1794,11 +1892,35 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#xml-schema" class="md-nav__link">
+  <a href="#connections-xml" class="md-nav__link">
     <span class="md-ellipsis">
-      XML Schema
+      XML
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="XML">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connections-xml-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      Schema
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connections-xml-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1812,9 +1934,33 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#connection-classes" class="md-nav__link">
+  <a href="#connections-interfaces" class="md-nav__link">
     <span class="md-ellipsis">
-      Connection Classes
+      Interfaces
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interfaces">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connections-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      Backends
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#connections-python-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python Example
     </span>
   </a>
   
@@ -1840,8 +1986,10 @@
 
 
 <h1 id="connections">Connections<a class="headerlink" href="#connections" title="Permanent link">¤</a></h1>
-<p>The information about how to connect to equipment for computer control is defined in the eXtensible Markup Language (XML) file format. You specify the XML file that contains the connection information as a <code>&lt;connections&gt;</code> element in your <a class="autorefs autorefs-internal" title="Configuration Files" href="../configuration-files/#configuration-files">configuration file</a>. When the configuration file is loaded, it links the Connection item with the corresponding <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> item. You may also define the connection information directly in a <a class="autorefs autorefs-internal" title="Non ISO/IEC 17025 labs" href="../equipment-registers/#non-iso-labs">Python module</a>, instead of in XML files.</p>
-<h2 id="xml-schema">XML Schema<a class="headerlink" href="#xml-schema" title="Permanent link">¤</a></h2>
+<p>The information about how to interface with equipment for computer control is defined in the eXtensible Markup Language (XML) file format. You specify the XML file that contains the connection information as a <code>&lt;connections&gt;</code> element in your <a class="autorefs autorefs-internal" title="Configuration Files" href="../configuration-files/#configuration-files">configuration file</a>. When the configuration file is loaded, it links a <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instance with the corresponding <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> instance. You may also define the connection information directly in a <a class="autorefs autorefs-internal" title="Non ISO/IEC 17025 labs" href="../equipment-registers/#non-iso-labs">Python module</a>, instead of in XML files.</p>
+<h2 id="connections-xml">XML<a class="headerlink" href="#connections-xml" title="Permanent link">¤</a></h2>
+<h3 id="connections-xml-schema">Schema<a class="headerlink" href="#connections-xml-schema" title="Permanent link">¤</a></h3>
+<h3 id="connections-xml-example">Example<a class="headerlink" href="#connections-xml-example" title="Permanent link">¤</a></h3>
 <h2 id="address-syntax">Address Syntax<a class="headerlink" href="#address-syntax" title="Permanent link">¤</a></h2>
 <p>The following are examples of VISA-style addresses that may be used to connect to equipment.</p>
 <table>
@@ -1972,8 +2120,16 @@
   </tr>
 </table>
 
-<p>National Instruments also provides <a href="https://www.ni.com/docs/en-US/bundle/ni-visa/page/visa-resource-syntax-and-examples.html" target="_blank">examples</a> if you are using <a href="https://pyvisa.readthedocs.io/en/stable/" target="_blank">PyVISA</a> as the backend.</p>
-<h2 id="connection-classes">Connection Classes<a class="headerlink" href="#connection-classes" title="Permanent link">¤</a></h2>
+<p>National Instruments also provides <a href="https://www.ni.com/docs/en-US/bundle/ni-visa/page/visa-resource-syntax-and-examples.html" target="_blank">examples</a> if you are using <a href="https://pyvisa.readthedocs.io/en/stable/" target="_blank">PyVISA</a> as the <a class="autorefs autorefs-internal" title="Backends" href="#connections-backend">backend</a>.</p>
+<h2 id="connections-interfaces">Interfaces<a class="headerlink" href="#connections-interfaces" title="Permanent link">¤</a></h2>
+<p>The following interface classes are available</p>
+<ul>
+<li><a class="autorefs autorefs-internal" title="            SDK" href="../../api/interfaces/#msl.equipment.interfaces.sdk.SDK">SDK</a> &mdash; Use the Software Development Kit (SDK) provided by the manufacturer</li>
+</ul>
+<h3 id="connections-backend">Backends<a class="headerlink" href="#connections-backend" title="Permanent link">¤</a></h3>
+<p>When a <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instance is created, the <code>backend</code> keyword argument decides which backend to use when interfacing with the equipment. There are different <a class="autorefs autorefs-internal" title="            Backend" href="../../api/constants/#msl.equipment.constants.Backend">Backends</a> to choose from: <code>MSL</code> (default), <code>PyVISA</code> or <code>NIDAQ</code>.</p>
+<p>The <a class="autorefs autorefs-internal" title="Interfaces" href="#connections-interfaces">interface class</a> can be used if the <code>backend</code> is <code>MSL</code>. The corresponding interface classes for the external backends are <a class="autorefs autorefs-internal" title="            PyVISA" href="../../api/interfaces/#msl.equipment.interfaces.pyvisa.PyVISA">PyVISA</a> and <a class="autorefs autorefs-internal" title="            NIDAQ" href="../../api/interfaces/#msl.equipment.interfaces.nidaq.NIDAQ">NIDAQ</a>.</p>
+<h2 id="connections-python-example">Python Example<a class="headerlink" href="#connections-python-example" title="Permanent link">¤</a></h2>
 
 
 

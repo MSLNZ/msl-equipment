@@ -6,6 +6,7 @@ from .__about__ import __version__, version_tuple
 from .config import Config
 from .enumerations import Backend, DataBits, Parity, StopBits
 from .interfaces import NIDAQ, SDK, PyVISA
+from .record_types import ConnectionRecord, EquipmentRecord
 from .schema import (
     AcceptanceCriteria,
     Accessories,
@@ -60,12 +61,14 @@ __all__: list[str] = [
     "Conditions",
     "Config",
     "Connection",
+    "ConnectionRecord",
     "DataBits",
     "Deserialised",
     "DigitalFormat",
     "DigitalReport",
     "Equation",
     "Equipment",
+    "EquipmentRecord",
     "Evaluable",
     "File",
     "Financial",

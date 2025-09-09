@@ -75,6 +75,7 @@
         "pyvisa",
         "recarray",
         "recfunctions",
+        "recwarn",
         "rtol",
         "savetxt",
         "SCPI",

@@ -106,7 +106,7 @@ def _latest(*, items: list[L], quantity: str, name: str) -> L | None:
 
 
 class Status(Enum):
-    """Represents the [status][type_statusEnumerationString]{:target="_blank"} enumeration in an equipment register.
+    """Represents the [status][type_statusEnumerationString] enumeration in an equipment register.
 
     Attributes:
         Active (str): The equipment is operable and may be used.
@@ -129,7 +129,7 @@ class Status(Enum):
 
 
 class DigitalFormat(Enum):
-    """Represents the [digitalFormatEnumerationString][type_digitalFormatEnumerationString]{:target="_blank"} enumeration in an equipment register.
+    """Represents the [digitalFormatEnumerationString][type_digitalFormatEnumerationString] enumeration in an equipment register.
 
     Attributes:
         MSL_PDF (str): `"MSL PDF/A-3"` (MSL's PDF/A-3 format).
@@ -141,10 +141,10 @@ class DigitalFormat(Enum):
 
 
 class Any(Element):
-    """Base class that represents the [any][type_any]{:target="_blank"} type in the XML Schema Definition."""
+    """Base class that represents the [any][type_any] type in the XML Schema Definition."""
 
     def __init__(self, **attributes: str) -> None:
-        """Base class that represents the [any][type_any]{:target="_blank"} type in the XML Schema Definition.
+        """Base class that represents the [any][type_any] type in the XML Schema Definition.
 
         Args:
             attributes: All keyword arguments are used as the element's attributes.
@@ -176,8 +176,8 @@ class Any(Element):
 class Accessories(Any):
     """Additional accessories that may be required to use the equipment.
 
-    Since this class is currently represented by the [any][type_any]{:target="_blank"} type in the
-    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"}.
+    Since this class is currently represented by the [any][type_any] type in the
+    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element].
     It may be updated to be a more specific class at a later date.
     """
 
@@ -187,7 +187,7 @@ class Accessories(Any):
 
 @dataclass(frozen=True)
 class Alteration:
-    """Represents the [alteration][type_alteration]{:target="_blank"} element in an equipment register.
+    """Represents the [alteration][type_alteration] element in an equipment register.
 
     Args:
         date: The date that the alteration was performed.
@@ -209,7 +209,7 @@ class Alteration:
         """Convert an XML element into an [Alteration][msl.equipment.schema.Alteration] instance.
 
         Args:
-            element: An [alteration][type_alteration]{:target="_blank"} XML element from an equipment register.
+            element: An [alteration][type_alteration] XML element from an equipment register.
 
         Returns:
             The [Alteration][msl.equipment.schema.Alteration] instance.
@@ -232,10 +232,10 @@ class Alteration:
 
 
 class AcceptanceCriteria(Any):
-    """Represents the acceptance criteria in a calibration [report][type_report]{:target="_blank"}.
+    """Represents the acceptance criteria in a calibration [report][type_report].
 
-    Since this class is currently represented by the [any][type_any]{:target="_blank"} type in the
-    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"}.
+    Since this class is currently represented by the [any][type_any] type in the
+    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element].
     It may be updated to be a more specific class at a later date.
     """
 
@@ -244,10 +244,10 @@ class AcceptanceCriteria(Any):
 
 
 class Conditions(Any):
-    """Conditions under which a [performance check][type_performanceCheck]{:target="_blank"} or calibration [report][type_report]{:target="_blank"} is valid.
+    """Conditions under which a [performance check][type_performanceCheck] or calibration [report][type_report] is valid.
 
-    Since this class is currently represented by the [any][type_any]{:target="_blank"} type in the
-    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"}.
+    Since this class is currently represented by the [any][type_any] type in the
+    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element].
     It may be updated to be a more specific class at a later date.
     """  # noqa: E501
 
@@ -257,7 +257,7 @@ class Conditions(Any):
 
 @dataclass(frozen=True)
 class CapitalExpenditure:
-    """Represents the [capitalExpenditure][type_capitalExpenditure]{:target="_blank"} element in an equipment register.
+    """Represents the [capitalExpenditure][type_capitalExpenditure] element in an equipment register.
 
     Args:
         asset_number: The asset number in the financial system.
@@ -283,7 +283,7 @@ class CapitalExpenditure:
         """Convert an XML element into a [CapitalExpenditure][msl.equipment.schema.CapitalExpenditure] instance.
 
         Args:
-            element: A [capitalExpenditure][type_capitalExpenditure]{:target="_blank"} XML element
+            element: A [capitalExpenditure][type_capitalExpenditure] XML element
                 from an equipment register.
 
         Returns:
@@ -319,7 +319,7 @@ class CapitalExpenditure:
 
 @dataclass(frozen=True)
 class Financial:
-    """Represents the [financial][type_financial]{:target="_blank"} element in an equipment register.
+    """Represents the [financial][type_financial] element in an equipment register.
 
     Args:
         capital_expenditure: The equipment is a capital expenditure.
@@ -342,7 +342,7 @@ class Financial:
         """Convert an XML element into a [Financial][msl.equipment.schema.Financial] instance.
 
         Args:
-            element: A [financial][type_financial]{:target="_blank"} XML element from an equipment register.
+            element: A [financial][type_financial] XML element from an equipment register.
 
         Returns:
             The [Financial][msl.equipment.schema.Financial] instance.
@@ -383,7 +383,7 @@ class Financial:
 
 @dataclass(frozen=True)
 class Firmware:
-    """Represents a [firmware][type_firmware]{:target="_blank"} `<version>` sub-element in an equipment register.
+    """Represents a [firmware][type_firmware] `<version>` sub-element in an equipment register.
 
     Args:
         version: Firmware version number.
@@ -401,7 +401,7 @@ class Firmware:
         """Convert an XML element into a [Firmware][msl.equipment.schema.Firmware] instance.
 
         Args:
-            element: A [firmware][type_firmware]{:target="_blank"} `<version>` XML sub-element
+            element: A [firmware][type_firmware] `<version>` XML sub-element
                 from an equipment register.
 
         Returns:
@@ -422,7 +422,7 @@ class Firmware:
 
 @dataclass(frozen=True)
 class CompletedTask:
-    """Represents the [completedTask][type_completedTask]{:target="_blank"} element in an equipment register.
+    """Represents the [completedTask][type_completedTask] element in an equipment register.
 
     Args:
         task: A description of the task that was completed.
@@ -448,7 +448,7 @@ class CompletedTask:
         """Convert an XML element into a [CompletedTask][msl.equipment.schema.CompletedTask] instance.
 
         Args:
-            element: A [completedTask][type_completedTask]{:target="_blank"} XML element from an equipment register.
+            element: A [completedTask][type_completedTask] XML element from an equipment register.
 
         Returns:
             The [CompletedTask][msl.equipment.schema.CompletedTask] instance.
@@ -479,7 +479,7 @@ class CompletedTask:
 
 @dataclass(frozen=True)
 class PlannedTask:
-    """Represents the [plannedTask][type_plannedTask]{:target="_blank"} element in an equipment register.
+    """Represents the [plannedTask][type_plannedTask] element in an equipment register.
 
     Args:
         task: A description of the task that is planned.
@@ -501,7 +501,7 @@ class PlannedTask:
         """Convert an XML element into a [PlannedTask][msl.equipment.schema.PlannedTask] instance.
 
         Args:
-            element: A [plannedTask][type_plannedTask]{:target="_blank"} XML element from an equipment register.
+            element: A [plannedTask][type_plannedTask] XML element from an equipment register.
 
         Returns:
             The [PlannedTask][msl.equipment.schema.PlannedTask] instance.
@@ -529,7 +529,7 @@ class PlannedTask:
 
 @dataclass(frozen=True)
 class Maintenance:
-    """Represents the [maintenance][type_maintenance]{:target="_blank"} element in an equipment register.
+    """Represents the [maintenance][type_maintenance] element in an equipment register.
 
     Args:
         planned: Maintenance tasks that are planned to be performed.
@@ -547,7 +547,7 @@ class Maintenance:
         """Convert an XML element into a [Maintenance][msl.equipment.schema.Maintenance] instance.
 
         Args:
-            element: A [maintenance][type_maintenance]{:target="_blank"} XML element from an equipment register.
+            element: A [maintenance][type_maintenance] XML element from an equipment register.
 
         Returns:
             The [Maintenance][msl.equipment.schema.Maintenance] instance.
@@ -600,7 +600,7 @@ class Range(NamedTuple):
             value: The values to check, raises
 
         Returns:
-            Always returns `True`. Raises [ValueError][]{:target="_blank"} if
+            Always returns `True`. Raises [ValueError][] if
                 `value` is not within the range.
         """
         if isinstance(value, (int, float)) or (isinstance(value, np.ndarray) and value.ndim == 0):
@@ -615,7 +615,7 @@ class Range(NamedTuple):
 
 @dataclass(frozen=True)
 class Evaluable:
-    r"""Represents the `<value>` and `<uncertainty>` XML elements in an [equation][type_equation]{:target="_blank"}.
+    r"""Represents the `<value>` and `<uncertainty>` XML elements in an [equation][type_equation].
 
     Args:
         equation: The string representation of the equation to evaluate.
@@ -667,7 +667,7 @@ class Evaluable:
 
 @dataclass(frozen=True)
 class Equation:
-    """Represents the [equation][type_equation]{:target="_blank"} element in an equipment register.
+    """Represents the [equation][type_equation] element in an equipment register.
 
     Args:
         value: The equation to evaluate to calculate the *corrected* value.
@@ -697,7 +697,7 @@ class Equation:
         """Convert an XML element into an [Equation][msl.equipment.schema.Equation] instance.
 
         Args:
-            element: An [equation][type_equation]{:target="_blank"} XML element from an equipment register.
+            element: An [equation][type_equation] XML element from an equipment register.
 
         Returns:
             The [Equation][msl.equipment.schema.Equation] instance.
@@ -754,7 +754,7 @@ class Equation:
 
 @dataclass(frozen=True)
 class Competency:
-    """Represents the [competency][type_competency]{:target="_blank"} element in an equipment register.
+    """Represents the [competency][type_competency] element in an equipment register.
 
     Args:
         worker: The competent person who executed the technical procedure to accomplish the performance check.
@@ -776,7 +776,7 @@ class Competency:
         """Convert an XML element into a [Competency][msl.equipment.schema.Competency] instance.
 
         Args:
-            element: A [competency][type_competency]{:target="_blank"} XML element from an equipment register.
+            element: A [competency][type_competency] XML element from an equipment register.
 
         Returns:
             The [Competency][msl.equipment.schema.Competency] instance.
@@ -806,10 +806,10 @@ class Competency:
 
 @dataclass(frozen=True)
 class File:
-    """Represents the [file][type_file]{:target="_blank"} element in an equipment register.
+    """Represents the [file][type_file] element in an equipment register.
 
     Args:
-        url: The location of the file. The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738){:target="_blank"}
+        url: The location of the file. The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738)
             `scheme:scheme-specific-part`. If `scheme:` is not specified, it is assumed to be `file:`.
         sha256: The SHA-256 checksum of the file.
         attributes: XML attributes associated with the `<url>` element.
@@ -817,7 +817,7 @@ class File:
     """
 
     url: str
-    """The location of the file. The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738){:target="_blank"}
+    """The location of the file. The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738)
     `scheme:scheme-specific-part`. If `scheme:` is not specified, it is assumed to be `file:`."""
 
     sha256: str
@@ -834,7 +834,7 @@ class File:
         """Convert an XML element into a [File][msl.equipment.schema.File] instance.
 
         Args:
-            element: A [file][type_file]{:target="_blank"} XML element from an equipment register.
+            element: A [file][type_file] XML element from an equipment register.
 
         Returns:
             The [File][msl.equipment.schema.File] instance.
@@ -864,7 +864,7 @@ class File:
 
 @dataclass(frozen=True)
 class Deserialised:
-    """Represents the opposite of the [serialised][type_serialised]{:target="_blank"} element in an equipment register.
+    """Represents the opposite of the [serialised][type_serialised] element in an equipment register.
 
     Args:
         value: The value of the deserialised object.
@@ -872,8 +872,8 @@ class Deserialised:
     """
 
     value: _Any
-    """The value of the deserialised object. For example, an [Archive][persistence.Archive]{:target="_blank"}
-    object from [GTC](https://gtc.readthedocs.io/en/stable/){:target="_blank"}.
+    """The value of the deserialised object. For example, an [Archive][persistence.Archive]
+    object from [GTC](https://gtc.readthedocs.io/en/stable/).
     """
 
     comment: str = ""
@@ -881,10 +881,10 @@ class Deserialised:
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Deserialised:
-        """Convert a [serialised][type_serialised]{:target="_blank"} XML element into a [Deserialised][msl.equipment.schema.Deserialised] instance.
+        """Convert a [serialised][type_serialised] XML element into a [Deserialised][msl.equipment.schema.Deserialised] instance.
 
         Args:
-            element: A [serialised][type_serialised]{:target="_blank"} XML element from an equipment register.
+            element: A [serialised][type_serialised] XML element from an equipment register.
 
         Returns:
             The [Deserialised][msl.equipment.schema.Deserialised] instance.
@@ -911,10 +911,10 @@ class Deserialised:
         return cls(value=e, comment=comment)
 
     def to_xml(self) -> Element[str]:
-        """Convert the [Deserialised][msl.equipment.schema.Deserialised] class into a [serialised][type_serialised]{:target="_blank"} XML element.
+        """Convert the [Deserialised][msl.equipment.schema.Deserialised] class into a [serialised][type_serialised] XML element.
 
         Returns:
-            The [serialised][type_serialised]{:target="_blank"} XML element.
+            The [serialised][type_serialised] XML element.
         """  # noqa: E501
         attrib = {"comment": self.comment} if self.comment else {}
         e = Element("serialised", attrib=attrib)
@@ -943,7 +943,7 @@ class Adjustment:
     An example of an adjustment is cleaning the equipment (e.g., a spectral filter) and then
     performing another calibration measurement.
 
-    This XML element is found in [component][type_component]{:target="_blank"}.
+    This XML element is found in [component][type_component].
 
     Args:
         details: The details of the adjustment that was performed.
@@ -962,7 +962,7 @@ class Adjustment:
 
         Args:
             element: An `<adjustment>` XML element from an equipment register
-                (see [component][type_component]{:target="_blank"}).
+                (see [component][type_component]).
 
         Returns:
             The [Adjustment][msl.equipment.schema.Adjustment] instance.
@@ -982,10 +982,10 @@ class Adjustment:
 
 @dataclass(frozen=True)
 class DigitalReport:
-    """Represents the [digitalReport][type_digitalReport]{:target="_blank"} element in an equipment register.
+    """Represents the [digitalReport][type_digitalReport] element in an equipment register.
 
     Args:
-        url: The location of the digital report. The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738){:target="_blank"}
+        url: The location of the digital report. The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738)
             `scheme:scheme-specific-part`. If `scheme:` is not specified, it is assumed to be `file:`.
         format: The format of the digital calibration report.
         id: The report identification number.
@@ -995,7 +995,7 @@ class DigitalReport:
     """
 
     url: str
-    """The location of the digital report. The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738){:target="_blank"}
+    """The location of the digital report. The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738)
     `scheme:scheme-specific-part`. If `scheme:` is not specified, it is assumed to be `file:`."""
 
     format: DigitalFormat
@@ -1018,7 +1018,7 @@ class DigitalReport:
         """Convert an XML element into a [DigitalReport][msl.equipment.schema.DigitalReport] instance.
 
         Args:
-            element: A [digitalReport][type_digitalReport]{:target="_blank"} XML element from an equipment register.
+            element: A [digitalReport][type_digitalReport] XML element from an equipment register.
 
         Returns:
             The [DigitalReport][msl.equipment.schema.DigitalReport] instance.
@@ -1066,7 +1066,7 @@ def _cvd_resistance(  # noqa: PLR0913
 
 @dataclass(frozen=True)
 class CVDEquation:
-    r"""The Callendar-Van Dusen (CVD) equation based on the [cvdCoefficients][type_cvdCoefficients]{:target="_blank"} element in an equipment register.
+    r"""The Callendar-Van Dusen (CVD) equation based on the [cvdCoefficients][type_cvdCoefficients] element in an equipment register.
 
     Args:
         R0: The value, in $\Omega$, of the resistance at $0~^\circ\text{C}$, $R_0$.
@@ -1203,7 +1203,7 @@ class CVDEquation:
         """Convert an XML element into a [CVDEquation][msl.equipment.schema.CVDEquation] instance.
 
         Args:
-            element: A [cvdCoefficients][type_cvdCoefficients]{:target="_blank"} XML element
+            element: A [cvdCoefficients][type_cvdCoefficients] XML element
                 from an equipment register.
 
         Returns:
@@ -1286,7 +1286,7 @@ class CVDEquation:
 
 
 class Table(np.ndarray):
-    """Represents the [table][type_table]{:target="_blank"} element in an equipment register."""
+    """Represents the [table][type_table] element in an equipment register."""
 
     comment: str = ""
     """A comment that is associated with the table."""
@@ -1343,17 +1343,17 @@ class Table(np.ndarray):
     ) -> NDArray[_Any]:
         """Converts the structured array into an unstructured array.
 
-        See [structured_to_unstructured][numpy.lib.recfunctions.structured_to_unstructured]{:target="_blank"}
+        See [structured_to_unstructured][numpy.lib.recfunctions.structured_to_unstructured]
         for more details.
 
         Args:
             dtype: The _dtype_ of the output unstructured array.
             copy: If `True`, always return a copy. If `False`, a view is returned if possible.
             casting: Controls what kind of data casting may occur. See the *casting* argument of
-                [numpy.ndarray.astype][]{:target="_blank"} for more details.
+                [numpy.ndarray.astype][] for more details.
 
         Returns:
-            The unstructured array. This method may return a numpy [ndarray][numpy.ndarray]{:target="_blank"}
+            The unstructured array. This method may return a numpy [ndarray][numpy.ndarray]
                 instance instead of a [Table][msl.equipment.schema.Table] instance if the table consists of
                 numbers and strings and the appropriate `dtype` is not specified.
         """
@@ -1369,11 +1369,11 @@ class Table(np.ndarray):
         """Convert an XML element into a [Table][msl.equipment.schema.Table] instance.
 
         Args:
-            element: A [table][type_table]{:target="_blank"} XML element from an equipment register.
+            element: A [table][type_table] XML element from an equipment register.
 
         Returns:
             A [Table][msl.equipment.schema.Table] is an subclass of a numpy
-                [structured array][structured_arrays]{:target="_blank"}, where the `header` is used as
+                [structured array][structured_arrays], where the `header` is used as
                 the *field names*. This allows for accessing a column by the header value rather than by
                 the index of a column. If you prefer to work with unstructured data, call
                 [unstructured][msl.equipment.schema.Table.unstructured] on the returned object.
@@ -1449,7 +1449,7 @@ class Table(np.ndarray):
 
 @dataclass(frozen=True)
 class PerformanceCheck:
-    """Represents the [performanceCheck][type_performanceCheck]{:target="_blank"} element in an equipment register.
+    """Represents the [performanceCheck][type_performanceCheck] element in an equipment register.
 
     Args:
         completed_date: The date that the performance check was completed.
@@ -1504,7 +1504,7 @@ class PerformanceCheck:
         """Convert an XML element into a [PerformanceCheck][msl.equipment.schema.PerformanceCheck] instance.
 
         Args:
-            element: A [performanceCheck][type_performanceCheck]{:target="_blank"} XML element from an
+            element: A [performanceCheck][type_performanceCheck] XML element from an
                 equipment register.
 
         Returns:
@@ -1589,7 +1589,7 @@ class IssuingLaboratory:
         """Convert an XML element into a [IssuingLaboratory][msl.equipment.schema.IssuingLaboratory] instance.
 
         Args:
-            element: An `<issuingLaboratory>` element from a [report][type_report]{:target="_blank"} element
+            element: An `<issuingLaboratory>` element from a [report][type_report] element
                 in an equipment register.
 
         Returns:
@@ -1614,7 +1614,7 @@ class IssuingLaboratory:
 
 @dataclass(frozen=True)
 class Report:
-    """Represents the [report][type_report]{:target="_blank"} element in an equipment register.
+    """Represents the [report][type_report] element in an equipment register.
 
     Args:
         id: The report identification number.
@@ -1688,7 +1688,7 @@ class Report:
         """Convert an XML element into a [Report][msl.equipment.schema.Report] instance.
 
         Args:
-            element: A [report][type_report]{:target="_blank"} XML element from an equipment register.
+            element: A [report][type_report] XML element from an equipment register.
 
         Returns:
             The [Report][msl.equipment.schema.Report] instance.
@@ -1774,7 +1774,7 @@ class Report:
 
 @dataclass(frozen=True)
 class Component:
-    """Represents the [component][type_component]{:target="_blank"} element in an equipment register.
+    """Represents the [component][type_component] element in an equipment register.
 
     Args:
         name: The name to associate with this component. The value must be unique amongst the other
@@ -1805,7 +1805,7 @@ class Component:
         """Convert an XML element into a [Component][msl.equipment.schema.Component] instance.
 
         Args:
-            element: A [component][type_component]{:target="_blank"} XML element from an equipment register.
+            element: A [component][type_component] XML element from an equipment register.
 
         Returns:
             The [Component][msl.equipment.schema.Component] instance.
@@ -1853,7 +1853,7 @@ class Component:
 
 @dataclass(frozen=True)
 class Measurand:
-    """Represents the [measurand][type_measurand]{:target="_blank"} element in an equipment register.
+    """Represents the [measurand][type_measurand] element in an equipment register.
 
     Args:
         quantity: The kind of quantity that is measured.
@@ -1881,7 +1881,7 @@ class Measurand:
         """Convert an XML element into a [Measurand][msl.equipment.schema.Measurand] instance.
 
         Args:
-            element: A [measurand][type_measurand]{:target="_blank"} XML element from an equipment register.
+            element: A [measurand][type_measurand] XML element from an equipment register.
 
         Returns:
             The [Measurand][msl.equipment.schema.Measurand] instance.
@@ -1906,7 +1906,7 @@ class Measurand:
 
 @dataclass(frozen=True)
 class QualityManual:
-    """Represents the [qualityManual][type_qualityManual]{:target="_blank"} element in an equipment register.
+    """Represents the [qualityManual][type_qualityManual] element in an equipment register.
 
     Args:
         accessories: Additional accessories that may be required to use the equipment.
@@ -1942,7 +1942,7 @@ class QualityManual:
         """Convert an XML element into an [QualityManual][msl.equipment.schema.QualityManual] instance.
 
         Args:
-            element: A [qualityManual][type_qualityManual]{:target="_blank"} XML element from an equipment register.
+            element: A [qualityManual][type_qualityManual] XML element from an equipment register.
 
         Returns:
             The [QualityManual][msl.equipment.schema.QualityManual] instance.
@@ -2012,8 +2012,8 @@ class QualityManual:
 class ReferenceMaterials(Any):
     """Documentation of reference materials, results, acceptance criteria, relevant dates and the period of validity.
 
-    Since this class is currently represented by the [any][type_any]{:target="_blank"} type in the
-    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"}.
+    Since this class is currently represented by the [any][type_any] type in the
+    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element].
     It may be updated to be a more specific class at a later date.
     """
 
@@ -2027,8 +2027,8 @@ class Specifications(Any):
     Typically, the specifications are specified on the website, datasheet and/or technical notes that a
     manufacturer provides.
 
-    Since this class is currently represented by the [any][type_any]{:target="_blank"} type in the
-    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"}.
+    Since this class is currently represented by the [any][type_any] type in the
+    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element].
     It may be updated to be a more specific class at a later date.
     """
 
@@ -2039,8 +2039,8 @@ class Specifications(Any):
 class SpecifiedRequirements(Any):
     """Verification that equipment conforms with specified requirements before being placed or returned into service.
 
-    Since this class is currently represented by the [any][type_any]{:target="_blank"} type in the
-    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element]{:target="_blank"}.
+    Since this class is currently represented by the [any][type_any] type in the
+    XML Schema Definition, it is simply a subclass of [Element][xml.etree.ElementTree.Element].
     It may be updated to be a more specific class at a later date.
     """
 
@@ -2108,7 +2108,7 @@ class LatestPerformanceCheck(Latest):
 
 @dataclass(frozen=True, repr=False)
 class Equipment:
-    """Represents the [equipment][type_equipment]{:target="_blank"} element in an equipment register.
+    """Represents the [equipment][type_equipment] element in an equipment register.
 
     Args:
         entered_by: The name of the person who initially entered the `<equipment>` element in the register.
@@ -2270,7 +2270,7 @@ class Equipment:
         """Convert an XML element into an [Equipment][msl.equipment.schema.Equipment] instance.
 
         Args:
-            element: An [equipment][type_equipment]{:target="_blank"} XML element from an equipment register.
+            element: An [equipment][type_equipment] XML element from an equipment register.
 
         Returns:
             The [Equipment][msl.equipment.schema.Equipment] instance.
@@ -2471,21 +2471,21 @@ class Equipment:
 
 
 class Register:
-    """Represents the [register][element_register]{:target="_blank"} element in an equipment register."""
+    """Represents the [register][element_register] element in an equipment register."""
 
     NAMESPACE: str = "https://measurement.govt.nz/equipment-register"
     """Default XML namespace."""
 
     def __init__(self, *sources: XMLSource | Element[str]) -> None:
-        """Represents the [register][element_register]{:target="_blank"} element in an equipment register.
+        """Represents the [register][element_register] element in an equipment register.
 
         Specifying multiple sources allows for storing an equipment register across multiple
         files for the same team. Not specifying a source creates a new (empty) register.
 
         Args:
-            sources: The [path-like][path-like object]{:target="_blank"},
-                [file-like][file-like object]{:target="_blank"} or
-                [Element][xml.etree.ElementTree.Element]{:target="_blank"}
+            sources: The [path-like][path-like object],
+                [file-like][file-like object] or
+                [Element][xml.etree.ElementTree.Element]
                 objects that are equipment registers.
         """
         team = ""
@@ -2579,8 +2579,8 @@ class Register:
         * technical_procedures: [QualityManual][msl.equipment.schema.QualityManual]
 
         Args:
-            pattern: A [regular-expression pattern](https://regexr.com/){:target="_blank"} to use to find equipment.
-            flags: The flags to use to compile the `pattern`. See [re.compile][]{:target="_blank"} for more details.
+            pattern: A [regular-expression pattern](https://regexr.com/) to use to find equipment.
+            flags: The flags to use to compile the `pattern`. See [re.compile][] for more details.
 
         Yields:
             Equipment that match the `pattern`.
@@ -2755,7 +2755,7 @@ class Register:
 
         Returns:
             The [Register][msl.equipment.schema.Register] as an
-                [ElementTree][xml.etree.ElementTree.ElementTree]{:target="_blank"}.
+                [ElementTree][xml.etree.ElementTree.ElementTree].
         """
         if indent < 0:
             msg = f"Indentation must be >= 0, got {indent}"
@@ -2810,7 +2810,7 @@ class Connection:
 
         Args:
             address: The VISA-style address of the connection (see [here][address-syntax] for examples).
-            backend: The [backend][msl.equipment.constants.Backend] to use to communicate with the equipment.
+            backend: The [backend][msl.equipment.enumerations.Backend] to use to communicate with the equipment.
             eid: The [equipment id][msl.equipment.schema.Equipment.id] to associate with the [Connection][] instance.
             manufacturer: The name of the manufacturer of the equipment.
             model: The model number of the equipment.
@@ -2822,7 +2822,7 @@ class Connection:
         """The VISA-style address of the connection (see [here][address-syntax] for examples)."""
 
         self.backend: Backend = Backend(backend)
-        """The [backend][msl.equipment.constants.Backend] that is used to communicate with the equipment."""
+        """The [backend][msl.equipment.enumerations.Backend] that is used to communicate with the equipment."""
 
         self.eid: str = eid
         """The [equipment id][msl.equipment.schema.Equipment.id] associated with the [Connection][] instance."""
@@ -3029,7 +3029,7 @@ class Interface:
           working in the lab when the equipment is not in use
 
         !!! tip
-            This method gets called automatically when the [Interface][msl.equipment.interfaces.Interface]
+            This method gets called automatically when the [Interface][msl.equipment.schema.Interface]
             instance gets garbage collected, which happens when the reference count is 0.
         """
 

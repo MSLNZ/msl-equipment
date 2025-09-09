@@ -150,7 +150,7 @@ The following interface classes are available
 
 ### Backends {: #connections-backend}
 
-When a [Connection][] instance is created, the `backend` keyword argument decides which backend to use when interfacing with the equipment. There are different [Backends][msl.equipment.constants.Backend] to choose from: `MSL` (default), `PyVISA` or `NIDAQ`.
+When a [Connection][] instance is created, the `backend` keyword argument decides which backend to use when interfacing with the equipment. There are different [Backends][msl.equipment.enumerations.Backend] to choose from: `MSL` (default), `PyVISA` or `NIDAQ`.
 
 The [interface class][connections-interfaces] can be used if the `backend` is `MSL`. The corresponding interface classes for the external backends are [PyVISA][msl.equipment.interfaces.pyvisa.PyVISA] and [NIDAQ][msl.equipment.interfaces.nidaq.NIDAQ].
 

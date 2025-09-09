@@ -34,8 +34,8 @@ class PyVISA(Interface, backend=Backend.PyVISA):
     def __init__(self, equipment: Equipment) -> None:
         """Use [PyVISA] as the backend to communicate with the equipment.
 
-        The [backend][msl.equipment.connections.Connection.backend]
-        value must be equal to `PyVISA` to use this class for the communication backend.
+        The [backend][msl.equipment.schema.Connection.backend] value must be equal to
+        `PyVISA` to use this class for the communication backend.
 
         The `PYVISA_LIBRARY` environment variable is used (if it exists) to create the
         [ResourceManager][pyvisa.highlevel.ResourceManager]. This environment variable

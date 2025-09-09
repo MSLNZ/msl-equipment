@@ -53,7 +53,7 @@ class Config:
         """Load a configuration file.
 
         Args:
-            source: A [path-like][path-like object]{:target="_blank"} or [file-like][file-like object]{:target="_blank"}
+            source: A [path-like][path-like object] or [file-like][file-like object]
                 object containing the configuration data.
         """
         logger.debug("load configuration %s", source)
@@ -101,10 +101,8 @@ class Config:
     def attrib(self, path: str) -> dict[str, bool | float | str]:
         """Get the attributes of the first matching element by tag name or path.
 
-        If possible, the value is converted to a [bool][]{:target="_blank"}
-        (`true` or `false` case-insensitive), an [int][]{:target="_blank"} or
-        a [float][]{:target="_blank"}, otherwise the value remains a
-        [str][]{:target="_blank"}.
+        If possible, the value is converted to a [bool][] (`true` or `false` case-insensitive),
+        an [int][] or a [float][], otherwise the value remains a [str][].
 
         Args:
             path: Either an element tag name or an XPath.
@@ -155,7 +153,7 @@ class Config:
     def registers(self) -> dict[str, Register]:
         """Returns all equipment registers that are specified in the configuration file.
 
-        The _key_ in the returned [dict][]{:target="_blank"} is the [team][msl.equipment.schema.Register.team]
+        The _key_ in the returned [dict][] is the [team][msl.equipment.schema.Register.team]
         value of the corresponding [Register][].
         """
         if self._registers is not None:
@@ -201,10 +199,8 @@ class Config:
     def value(self, path: str, default: bool | float | str | None = None) -> bool | float | str | None:  # noqa: FBT001
         """Gets the value (text) associated with the first matching element.
 
-        If possible, the value is converted to a [bool][]{:target="_blank"}
-        (`true` or `false` case-insensitive), an [int][]{:target="_blank"} or
-        a [float][]{:target="_blank"}, otherwise the value remains a
-        [str][]{:target="_blank"}.
+        If possible, the value is converted to a [bool][] (`true` or `false` case-insensitive),
+        an [int][] or a [float][], otherwise the value remains a [str][].
 
         Args:
             path: Either an element tag name or an XPath.

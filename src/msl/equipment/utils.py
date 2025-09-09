@@ -27,12 +27,12 @@ logger = logging.getLogger(__package__)
 
 
 def to_enum(obj: object, enum: type[Enum], *, prefix: str | None = None, to_upper: bool = False) -> Enum:
-    """Convert an object into the specified [enum.Enum][]{:target="_blank"} member.
+    """Convert an object into the specified [enum.Enum][] member.
 
     Args:
         obj: An object that can be converted to the specified `enum`.
             Can be a _value_ or a _member_ name of the specified `enum`.
-        enum: The [enum.Enum][]{:target="_blank"} subclass that `obj` should be converted to.
+        enum: The [enum.Enum][] subclass that `obj` should be converted to.
         prefix: If `obj` is a string, ensures that `prefix` is included at the beginning
             of `obj` before converting `obj` to the `enum`.
         to_upper: If `obj` is a string, then whether to change `obj` to upper case before
@@ -111,21 +111,21 @@ def to_bytes(
 
             * `ascii` &mdash; comma-separated ASCII characters, see the
                   `<PROGRAM DATA SEPARATOR>` standard that is defined in Section 7.4.2.2 of
-                  [IEEE 488.2-1992](https://standards.ieee.org/ieee/488.2/718/){:target="_blank"}.
+                  [IEEE 488.2-1992](https://standards.ieee.org/ieee/488.2/718/).
 
                !!! example
                    `<string>,<string>,<string>,...`
 
             * `ieee` &mdash; arbitrary block data for `SCPI` messages, see the
                   `<DEFINITE LENGTH ARBITRARY BLOCK RESPONSE DATA>` standard that is defined in
-                  Section 8.7.9 of [IEEE 488.2-1992](https://standards.ieee.org/ieee/488.2/718/){:target="_blank"}.
+                  Section 8.7.9 of [IEEE 488.2-1992](https://standards.ieee.org/ieee/488.2/718/).
 
                !!! example
                    `#<length of num bytes value><num bytes><byte><byte><byte>...`
 
             * `hp` &mdash; the HP-IB data transfer standard, i.e., the `FORM#` command
                   option. See the programming guide for an
-                  [HP 8530A](https://www.keysight.com/us/en/product/8530A/microwave-receiver.html#resources){:target="_blank"}
+                  [HP 8530A](https://www.keysight.com/us/en/product/8530A/microwave-receiver.html#resources)
                   for more details.
 
                !!! example

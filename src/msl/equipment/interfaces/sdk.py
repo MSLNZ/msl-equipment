@@ -35,7 +35,7 @@ class SDK(Interface, regex=REGEX_SDK):
             equipment: An [Equipment][] instance.
             libtype: The library type. See [LoadLibrary][msl.loadlib.load_library.LoadLibrary] for more details.
             path: The path to the SDK. Specifying this value will take precedence over the
-                [address][msl.equipment.connections.Connection.address] value.
+                [address][msl.equipment.schema.Connection.address] value.
         """
         super().__init__(equipment)
 

@@ -9,7 +9,7 @@ _T_co = TypeVar("_T_co", covariant=True)
 
 
 class SupportsRead(Protocol[_T_co]):
-    """A [file-like object][]{:target="_blank"} that has a `read` method."""
+    """A [file-like object][] that has a `read` method."""
 
     def read(self, size: int | None = -1, /) -> _T_co:
         """Read from the stream."""
@@ -17,7 +17,7 @@ class SupportsRead(Protocol[_T_co]):
 
 
 PathLike = Union[str, bytes, os.PathLike[str], os.PathLike[bytes]]  # pyright: ignore[reportDeprecated]
-"""A [path-like object][]{:target="_blank"}."""
+"""A [path-like object][]."""
 
 XMLSource: TypeAlias = Union[int, PathLike, SupportsRead[bytes] | SupportsRead[str]]  # pyright: ignore[reportDeprecated]
-"""A [path-like object][]{:target="_blank"} or a [file-like object][]{:target="_blank"} for parsing XML content."""
+"""A [path-like object][] or a [file-like object][] for parsing XML content."""

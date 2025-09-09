@@ -213,8 +213,9 @@ ignore = [
 "tests/*.py" = [
     "D100", # Missing docstring in public module
     "D103", # Missing docstring in public function
-    "S101", # Use of `assert` detected
     "INP001", # implicit-namespace-package
+    "PLR2004",  # magic-value-comparison
+    "S101", # Use of `assert` detected
 ]
 
 [tool.ruff.lint.pydocstyle]

@@ -55,7 +55,7 @@ def test_connect() -> None:
     assert c.assembly is None
     assert c.gateway is None
     assert c.path.startswith(str(path))
-    assert c.sdk.add(1, 1) == 2  # noqa: PLR2004
+    assert c.sdk.add(1, 1) == 2
 
 
 def test_direct_invalid_address() -> None:
@@ -70,7 +70,7 @@ def test_direct_path() -> None:
         assert sdk.assembly is None
         assert sdk.gateway is None
         assert sdk.path.startswith(str(path))
-        assert sdk.sdk.add(1, 1) == 2  # noqa: PLR2004
+        assert sdk.sdk.add(1, 1) == 2
 
 
 def test_log_errcheck(caplog: pytest.LogCaptureFixture) -> None:

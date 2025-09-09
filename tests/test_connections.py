@@ -1,6 +1,9 @@
+from xml.etree.ElementTree import XML
+
 import pytest
 
-from msl.equipment import Config
+from msl.equipment import Config, Connection
+from msl.equipment.enumerations import Backend
 from msl.equipment.schema import connections
 
 
@@ -9,7 +12,7 @@ def test_from_config() -> None:
     assert len(connections) == 0
 
     _ = Config("tests/resources/config.xml")
-    assert len(connections) == 7  # noqa: PLR2004
+    assert len(connections) == 7
     assert "MSLE.M.092" in connections
     assert "unknown" not in connections
 
@@ -30,7 +33,9 @@ def test_from_config() -> None:
     assert connections["MSLE.O.023"].serial == "Serial"
     assert connections["MSLE.O.023"].properties == {
         "baud_rate": 19200,
-        "write_termination": r"\r",
+        "read_termination": "\n",
+        "write_termination": "\r",
+        "both_termination": "\r\n",
         "timeout": 10.2,
         "check": True,
         "empty": None,
@@ -40,3 +45,57 @@ def test_from_config() -> None:
 
     with pytest.raises(KeyError, match="eid='unknown' cannot be found"):
         _ = connections["unknown"]
+
+
+def test_properties() -> None:
+    c = Connection("A", properties={"a": 0, "b": 1})
+    assert c.properties == {"a": 0, "b": 1}
+
+    c = Connection("A", a=0, b=1)
+    assert c.properties == {"a": 0, "b": 1}
+
+    c = Connection("A", properties=0)
+    assert c.properties == {"properties": 0}
+
+
+def test_from_xml() -> None:
+    text = r"""
+        <connection>
+            <eid>A</eid>
+            <address>B</address>
+            <backend>MSL</backend>
+            <manufacturer>C</manufacturer>
+            <model>D</model>
+            <serial>E</serial>
+            <properties>
+                <foo>bar</foo>
+                <b/>
+                <empty_termination/>
+                <read_termination>\r</read_termination>
+                <write_termination>\r\n</write_termination>
+                <other_termination>\n</other_termination>
+            </properties>
+        </connection>
+    """
+
+    c = connections._from_xml(XML(text))  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    assert c.eid == "A"
+    assert c.address == "B"
+    assert c.backend == Backend.MSL
+    assert c.manufacturer == "C"
+    assert c.model == "D"
+    assert c.serial == "E"
+
+    # empty_termination is ignored
+    assert c.properties == {
+        "foo": "bar",
+        "b": None,
+        "read_termination": "\r",
+        "write_termination": "\r\n",
+        "other_termination": "\n",
+    }
+
+
+def test_unknown_address() -> None:
+    with pytest.raises(ValueError, match="Cannot determine the interface from the address 'UNKNOWN'"):
+        _ = Connection("UNKNOWN").connect()

@@ -152,10 +152,10 @@ def test_find_attrib_value() -> None:
     assert c.value("b4") is False
     assert c.value("i1") == 0
     assert isinstance(c.value("i1"), int)
-    assert c.value("i2") == -99999  # noqa: PLR2004
+    assert c.value("i2") == -99999
     assert isinstance(c.value("i2"), int)
-    assert c.value("f1") == 1.23  # noqa: PLR2004
-    assert c.value("f2") == -1.712e-12  # noqa: PLR2004
+    assert c.value("f1") == 1.23
+    assert c.value("f2") == -1.712e-12
     assert c.value("i1", -1) == 0
     assert c.value("missing", "ok") == "ok"
     assert c.value("fruits/fruit") == "apple"
@@ -177,12 +177,12 @@ def test_find_attrib_value() -> None:
     fruit = c.find("fruits/fruit")
     assert fruit is not None
     assert fruit.text == "apple"
-    assert len(c.findall("fruits/fruit")) == 3  # noqa: PLR2004
+    assert len(c.findall("fruits/fruit")) == 3
 
     veggie = c.find("veggie")
     assert veggie is not None
     assert veggie.text == "carrot"
-    assert len(c.findall("veggie")) == 3  # noqa: PLR2004
+    assert len(c.findall("veggie")) == 3
 
     numbers = c.find("numbers")
     assert numbers is not None
@@ -251,7 +251,7 @@ def test_source_types() -> None:
 def test_equipment_sequence() -> None:
     c = Config(Path(__file__).parent / "resources" / "config.xml")
 
-    assert len(c.equipment) == 3  # noqa: PLR2004
+    assert len(c.equipment) == 3
     assert repr(c.equipment) == "<ConfigEquipment (3 equipment elements)>"
 
     assert [e.id for e in c.equipment] == ["MSLE.M.092", "MSLE.O.103", "MSLE.O.061"]
@@ -330,5 +330,5 @@ def test_equipment_repr() -> None:
         </config>
     """
     c = Config(StringIO(text))
-    assert len(c.equipment) == 2  # noqa: PLR2004
+    assert len(c.equipment) == 2
     assert repr(c.equipment) == "<ConfigEquipment (2 equipment elements)>"

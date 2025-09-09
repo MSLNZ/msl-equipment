@@ -38,7 +38,9 @@
         <serial>Serial</serial>
         <properties>
             <baud_rate>19200</baud_rate>
+            <read_termination>\n</read_termination>
             <write_termination>\r</write_termination>
+            <both_termination>\r\n</both_termination>
             <timeout>10.2</timeout>
             <check>true</check>
             <empty/>

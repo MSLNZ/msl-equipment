@@ -134,15 +134,15 @@ def test_to_primitive() -> None:
     assert to_primitive(" 0 ") == 0
     assert to_primitive("1") == 1
     assert to_primitive("       1\n") == 1
-    assert to_primitive("-999") == -999  # noqa: PLR2004
+    assert to_primitive("-999") == -999
 
     assert isinstance(to_primitive("1.9"), float)
     assert isinstance(to_primitive("-49.4"), float)
     assert isinstance(to_primitive("2.553e83"), float)
-    assert to_primitive("1.9") == 1.9  # noqa: PLR2004
-    assert to_primitive("-49.4") == -49.4  # noqa: PLR2004
-    assert to_primitive("\t-49.4\n") == -49.4  # noqa: PLR2004
-    assert to_primitive("2.553e83") == 2.553e83  # noqa: PLR2004
+    assert to_primitive("1.9") == 1.9
+    assert to_primitive("-49.4") == -49.4
+    assert to_primitive("\t-49.4\n") == -49.4
+    assert to_primitive("2.553e83") == 2.553e83
 
     assert to_primitive("") == ""
     assert to_primitive(" \t \n ") == " \t \n "

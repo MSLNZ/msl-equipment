@@ -2833,7 +2833,12 @@ class Connection:
         self.model: str = model
         """The model number of the equipment."""
 
-        self.properties: dict[str, _Any] = properties
+        # check for a properties key being explicitly defined and the value is a dict
+        self.properties: dict[str, _Any] = (
+            properties["properties"]
+            if ("properties" in properties and isinstance(properties["properties"], dict))
+            else properties
+        )
         """Additional key-value pairs that are required to communicate with the equipment.
 
         For example, the _baud_rate_ and _parity_ values for an _RS-232_ connection.
@@ -2921,7 +2926,11 @@ class Connections:
                 serial = e.text or ""
             else:
                 for child in e:
-                    properties[child.tag] = None if child.text is None else to_primitive(child.text)
+                    if child.tag.endswith("termination"):
+                        if child.text:
+                            properties[child.tag] = child.text.replace("\\r", "\r").replace("\\n", "\n")
+                    else:
+                        properties[child.tag] = None if child.text is None else to_primitive(child.text)
 
         return Connection(
             eid=eid,

@@ -161,8 +161,8 @@ def test_capital_expenditure_price_without_decimal(price: str) -> None:
 
     ce = CapitalExpenditure.from_xml(XML(text))
     assert ce.asset_number == ""
-    assert ce.depreciation_end_year == 2030  # noqa: PLR2004
-    assert ce.price == 1e6  # noqa: PLR2004
+    assert ce.depreciation_end_year == 2030
+    assert ce.price == 1e6
     assert ce.currency == "NZD"
 
     assert tostring(ce.to_xml()) == (
@@ -185,8 +185,8 @@ def test_capital_expenditure_price_with_decimal() -> None:
 
     ce = CapitalExpenditure.from_xml(XML(text))
     assert ce.asset_number == ""
-    assert ce.depreciation_end_year == 2030  # noqa: PLR2004
-    assert ce.price == 10000000.01  # noqa: PLR2004
+    assert ce.depreciation_end_year == 2030
+    assert ce.price == 10000000.01
     assert ce.currency == "NZD"
 
     assert tostring(ce.to_xml()) == (
@@ -223,11 +223,11 @@ def test_financial_all() -> None:
     f = Financial.from_xml(XML(text))
     assert f.capital_expenditure is not None
     assert f.capital_expenditure.asset_number == "7265817"
-    assert f.capital_expenditure.depreciation_end_year == 2030  # noqa: PLR2004
-    assert f.capital_expenditure.price == 1000000.0  # noqa: PLR2004
+    assert f.capital_expenditure.depreciation_end_year == 2030
+    assert f.capital_expenditure.price == 1000000.0
     assert f.capital_expenditure.currency == "NZD"
     assert f.warranty_expiration_date == date(2026, 8, 1)
-    assert f.purchase_year == 2025  # noqa: PLR2004
+    assert f.purchase_year == 2025
     assert tostring(f.to_xml()) == text
 
 
@@ -244,8 +244,8 @@ def test_financial_asset_number_empty() -> None:
     f = Financial.from_xml(XML(text))
     assert f.capital_expenditure is not None
     assert f.capital_expenditure.asset_number == ""
-    assert f.capital_expenditure.depreciation_end_year == 2052  # noqa: PLR2004
-    assert f.capital_expenditure.price == 48000.0  # noqa: PLR2004
+    assert f.capital_expenditure.depreciation_end_year == 2052
+    assert f.capital_expenditure.price == 48000.0
     assert f.capital_expenditure.currency == "CAD"
     assert f.warranty_expiration_date is None
     assert f.purchase_year == 0
@@ -266,7 +266,7 @@ def test_financial_year_purchased() -> None:
     f = Financial.from_xml(XML(text))
     assert f.capital_expenditure is None
     assert f.warranty_expiration_date is None
-    assert f.purchase_year == 2025  # noqa: PLR2004
+    assert f.purchase_year == 2025
     assert tostring(f.to_xml()) == text
 
 
@@ -322,7 +322,7 @@ def test_maintenance_two_planned_none_completed() -> None:
         b"</maintenance>"
     )
     m = Maintenance.from_xml(XML(text))
-    assert len(m.planned) == 2  # noqa: PLR2004
+    assert len(m.planned) == 2
     assert m.planned[0].due_date == date(2024, 12, 1)
     assert m.planned[0].performed_by == ""
     assert m.planned[0].task == "Refill helium gas"
@@ -369,7 +369,7 @@ def test_maintenance_none_planned_two_completed() -> None:
     )
     m = Maintenance.from_xml(XML(text))
     assert len(m.planned) == 0
-    assert len(m.completed) == 2  # noqa: PLR2004
+    assert len(m.completed) == 2
     assert m.completed[0].due_date == date(2025, 5, 15)
     assert m.completed[0].completed_date == date(2025, 5, 15)
     assert m.completed[0].performed_by == "Company X"
@@ -408,7 +408,7 @@ def test_quality_manual_accessories() -> None:
     assert qm.accessories.tag == "accessories"
     assert qm.accessories.attrib == {"a": "a"}
     assert qm.accessories.text == "Any text"
-    assert len(qm.accessories) == 2  # noqa: PLR2004
+    assert len(qm.accessories) == 2
     assert qm.accessories[0].tag == "child"
     assert qm.accessories[0].attrib == {"b": "b"}
     assert qm.accessories[0].text == "More info."
@@ -466,7 +466,7 @@ def test_quality_manual_financial() -> None:
     assert qm.financial.capital_expenditure.price == 1.0
     assert qm.financial.capital_expenditure.currency == "NZD"
     assert qm.financial.warranty_expiration_date is None
-    assert qm.financial.purchase_year == 2000  # noqa: PLR2004
+    assert qm.financial.purchase_year == 2000
     assert qm.personnel_restrictions == ""
     assert qm.service_agent == ""
     assert len(qm.technical_procedures) == 0
@@ -623,8 +623,8 @@ def test_adjustment_date_missing() -> None:
 @pytest.mark.parametrize("value", [-99, 99.9, [-1, 0, 1], (10, 9, 8), np.array([[11, -22], [-33, 44]])])
 def test_range_bounds_valid(value: float | ArrayLike) -> None:
     r = Range(-100, 100)
-    assert r.minimum == -100  # noqa: PLR2004
-    assert r.maximum == 100  # noqa: PLR2004
+    assert r.minimum == -100
+    assert r.maximum == 100
     assert r == (-100, 100)
     assert r.check_within_range(value)
 
@@ -757,7 +757,7 @@ def test_equation() -> None:
     assert e.uncertainty.ranges == {"x": Range(0, 1), "y": Range(0.1, 0.9), "zebra": Range(0.2, 0.8)}
     assert e.uncertainty(x=0.1, y=0.2, zebra=0.3) == 0.1 / 2 + 0.2 / 2 + 0.3 / 10
     assert e.unit == "%rh"
-    assert e.degree_freedom == 100.2  # noqa: PLR2004
+    assert e.degree_freedom == 100.2
     assert e.comment == "3D"
     assert tostring(e.to_xml()) == text
 
@@ -773,7 +773,7 @@ def test_serialised_gtc_xml() -> None:
     assert d.comment == ""
     assert isinstance(d.value, pr.Archive)  # pyright: ignore[reportUnknownMemberType]
     assert d.value["x"].x == 1
-    assert d.value["x"].u == 0.1  # noqa: PLR2004
+    assert d.value["x"].u == 0.1
     assert np.isinf(d.value["x"].df)
     assert tostring(d.to_xml()).decode() == text
 
@@ -789,7 +789,7 @@ def test_serialised_gtc_json() -> None:
     assert d.comment == "GTC 4ever"
     assert isinstance(d.value, pr.Archive)  # pyright: ignore[reportUnknownMemberType]
     assert d.value["x"].x == 1
-    assert d.value["x"].u == 0.1  # noqa: PLR2004
+    assert d.value["x"].u == 0.1
     assert np.isinf(d.value["x"].df)
 
     dumped_xml: str = pr.dumps_xml(ar, encoding="unicode")  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
@@ -1000,17 +1000,17 @@ def test_cvd() -> None:
         </cvdCoefficients>
     """
     cvd = CVDEquation.from_xml(XML(text))
-    assert cvd.R0 == 100.0188885  # noqa: PLR2004
-    assert cvd.A == 0.00390969  # noqa: PLR2004
-    assert cvd.B == -6.06e-7  # noqa: PLR2004
-    assert cvd.C == 1.372e-12  # noqa: PLR2004
+    assert cvd.R0 == 100.0188885
+    assert cvd.A == 0.00390969
+    assert cvd.B == -6.06e-7
+    assert cvd.C == 1.372e-12
     assert cvd.D == 0.0
     assert cvd.uncertainty.equation == "0.0056/2"
     assert cvd.uncertainty.variables == ()
     assert cvd.uncertainty.ranges == {"t": Range(-10, 70.02), "r": Range(96.102, 127.103)}
     assert cvd.uncertainty() == 0.0056 / 2
     assert cvd.ranges == cvd.uncertainty.ranges
-    assert cvd.degree_freedom == 99.9  # noqa: PLR2004
+    assert cvd.degree_freedom == 99.9
     assert cvd.comment == "My favourite PRT"
     assert tostring(cvd.to_xml()) == (
         b'<cvdCoefficients comment="My favourite PRT">'
@@ -1033,16 +1033,16 @@ def test_cvd() -> None:
     with pytest.raises(ValueError, match="in the sequence is not within the range"):
         _ = cvd.resistance([0, 1, -10.1, -1])
 
-    assert pytest.approx(cvd.resistance(-10.1, check_range=False)) == 96.0631883261  # pyright: ignore[reportUnknownMemberType]  # noqa: PLR2004
+    assert pytest.approx(cvd.resistance(-10.1, check_range=False)) == 96.0631883261  # pyright: ignore[reportUnknownMemberType]
 
     with pytest.raises(ValueError, match="96.0 is not within the range"):
         _ = cvd.temperature(96)
     with pytest.raises(ValueError, match="in the sequence is not within the range"):
         _ = cvd.temperature([100, 101, 96, 102])
 
-    assert pytest.approx(cvd.temperature(96, check_range=False)) == -10.26108289  # pyright: ignore[reportUnknownMemberType]  # noqa: PLR2004
+    assert pytest.approx(cvd.temperature(96, check_range=False)) == -10.26108289  # pyright: ignore[reportUnknownMemberType]
 
-    assert cvd.resistance(0) == 100.0188885  # noqa: PLR2004
+    assert cvd.resistance(0) == 100.0188885
     assert cvd.temperature(100.0188885) == 0
 
     # values from Humidity Standards
@@ -1088,9 +1088,9 @@ def test_cvd_from_to_xml_no_comment_nor_dof() -> None:
         </cvdCoefficients>
     """
     cvd = CVDEquation.from_xml(XML(text))
-    assert cvd.R0 == 100.02  # noqa: PLR2004
-    assert cvd.A == 0.0321  # noqa: PLR2004
-    assert cvd.B == -5.0e-7  # noqa: PLR2004
+    assert cvd.R0 == 100.02
+    assert cvd.A == 0.0321
+    assert cvd.B == -5.0e-7
     assert cvd.C == 0
     assert cvd.D == 0
     assert cvd.uncertainty.equation == "0.0035"
@@ -1667,7 +1667,7 @@ def test_register_read_write_same_output() -> None:
 def test_register_from_file() -> None:  # noqa: PLR0915
     r = Register("tests/resources/mass/register.xml")
     assert r.team == "Mass"
-    assert len(r) == 2  # noqa: PLR2004
+    assert len(r) == 2
     assert r._equipment == [None, None]  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     assert r._index_map == {"Bob": 1, "MSLE.M.001": 0, "MSLE.M.092": 1}  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     assert str(r) == "<Register team='Mass' (2 equipment)>"
@@ -1757,14 +1757,14 @@ def test_register_from_file() -> None:  # noqa: PLR0915
     assert second.status == Status.Active
     assert second.loggable
     assert second.traceable
-    assert len(second.calibrations) == 2  # noqa: PLR2004
+    assert len(second.calibrations) == 2
     assert len(second.maintenance.planned) == 1
     assert second.maintenance.planned[0].due_date == date(2025, 5, 15)
     assert len(second.maintenance.completed) == 1
     assert second.maintenance.completed[0].completed_date == date(2024, 12, 2)
     assert len(second.alterations) == 1
     assert second.alterations[0].details == "Did work"
-    assert len(second.firmware) == 2  # noqa: PLR2004
+    assert len(second.firmware) == 2
     assert second.firmware[1].version == "1.02"
     assert len(second.specified_requirements) == 1
     assert second.specified_requirements[0].tag == "foo"
@@ -1778,18 +1778,18 @@ def test_register_from_file() -> None:  # noqa: PLR0915
     assert len(second.quality_manual.accessories) == 1
     assert second.quality_manual.accessories[0].tag == "colour"
     assert second.quality_manual.accessories[0].attrib == {"mode": "RGB"}
-    assert len(second.quality_manual.accessories[0]) == 3  # noqa: PLR2004
+    assert len(second.quality_manual.accessories[0]) == 3
     assert second.quality_manual.accessories[0][0].tag == "r"
     assert second.quality_manual.accessories[0][0].text == "34"
     assert second.quality_manual.accessories[0][1].tag == "g"
     assert second.quality_manual.accessories[0][1].text == "0"
     assert second.quality_manual.accessories[0][2].tag == "b"
     assert second.quality_manual.accessories[0][2].text == "187"
-    assert second.quality_manual.financial.purchase_year == 2023  # noqa: PLR2004
+    assert second.quality_manual.financial.purchase_year == 2023
     assert second.quality_manual.financial.capital_expenditure is not None
     assert second.quality_manual.financial.capital_expenditure.asset_number == "Whatever"
-    assert second.quality_manual.financial.capital_expenditure.depreciation_end_year == 2030  # noqa: PLR2004
-    assert second.quality_manual.financial.capital_expenditure.price == 10000.0  # noqa: PLR2004
+    assert second.quality_manual.financial.capital_expenditure.depreciation_end_year == 2030
+    assert second.quality_manual.financial.capital_expenditure.price == 10000.0
     assert second.quality_manual.financial.capital_expenditure.currency == "NZD"
     assert second.quality_manual.financial.warranty_expiration_date == date(2026, 8, 1)
     assert second.quality_manual.documentation == "https://url.com"
@@ -2077,7 +2077,7 @@ def test_latest_report_multiple_measurand_and_components() -> None:
     )
 
     reports = list(e.latest_reports())
-    assert len(reports) == 4  # noqa: PLR2004
+    assert len(reports) == 4
     assert reports[0].quantity == "Temperature"
     assert reports[0].name == "Probe 1"
     assert reports[0].report.id == "B"
@@ -2219,7 +2219,7 @@ def test_latest_performance_check_multiple_measurand_and_components() -> None:
     )
 
     checks = list(e.latest_performance_checks())
-    assert len(checks) == 4  # noqa: PLR2004
+    assert len(checks) == 4
     assert checks[0].quantity == "Temperature"
     assert checks[0].name == "Probe 1"
     assert checks[0].performance_check.entered_by == "B"
@@ -2358,7 +2358,7 @@ def test_register_add() -> None:
         )
     )
 
-    assert len(r) == 4  # noqa: PLR2004
+    assert len(r) == 4
     assert r[0].id == ""
     assert r[1].id == "A"
     assert r[2].id == "B"
@@ -2533,7 +2533,7 @@ def test_equipment_repr() -> None:
     path = Path(__file__).parent / "resources" / "mass"
     r = Register(path / "register.xml", path / "register2.xml")
     assert r.team == "Mass"
-    assert len(r) == 3  # noqa: PLR2004
+    assert len(r) == 3
     assert str(r) == "<Register team='Mass' (3 equipment)>"
     assert repr(r["MSLE.M.001"]) == "<Equipment manufacturer='MSL', model='ABC', serial='123'>"
     assert (
@@ -2550,7 +2550,7 @@ def test_equipment_str_element_sources() -> None:
     path = Path(__file__).parent / "resources" / "mass"
     r = Register(str(path / "register.xml"), XML((path / "register2.xml").read_text()))
     assert r.team == "Mass"
-    assert len(r) == 3  # noqa: PLR2004
+    assert len(r) == 3
     assert str(r) == "<Register team='Mass' (3 equipment)>"
     assert repr(r["MSLE.M.001"]) == "<Equipment manufacturer='MSL', model='ABC', serial='123'>"
     assert (
@@ -2625,7 +2625,7 @@ def test_register_find_multiple() -> None:
     path = Path(__file__).parent / "resources" / "mass"
     r = Register(path / "register.xml", path / "register2.xml")
     found = list(r.find("Hygrometer|AC"))
-    assert len(found) == 2  # noqa: PLR2004
+    assert len(found) == 2
     assert found[0].id == "MSLE.M.092"
     assert found[1].id == "MSLE.M.100"
 

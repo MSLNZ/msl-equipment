@@ -1701,12 +1701,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/constants/" class="md-nav__link">
+      <a href="../../api/enumerations/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    constants
+    enumerations
     
   </span>
   
@@ -1977,7 +1977,7 @@
     <div class="doc doc-contents first">
 
 
-        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_alteration" target="_blank">alteration</a> element in an equipment register.</p>
+        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_alteration">alteration</a> element in an equipment register.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2185,7 +2185,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>An <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_alteration" target="_blank">alteration</a> XML element from an equipment register.</p>
+                <p>An <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_alteration">alteration</a> XML element from an equipment register.</p>
               </div>
             </td>
             <td>
@@ -2231,8 +2231,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">206</span>
-<span class="normal">207</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">207</span>
 <span class="normal">208</span>
 <span class="normal">209</span>
 <span class="normal">210</span>
@@ -2245,12 +2244,13 @@
 <span class="normal">217</span>
 <span class="normal">218</span>
 <span class="normal">219</span>
-<span class="normal">220</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">220</span>
+<span class="normal">221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Alteration</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into an [Alteration][msl.equipment.schema.Alteration] instance.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        element: An [alteration][type_alteration]{:target=&quot;_blank&quot;} XML element from an equipment register.</span>
+<span class="sd">        element: An [alteration][type_alteration] XML element from an equipment register.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Alteration][msl.equipment.schema.Alteration] instance.</span>
@@ -2317,15 +2317,15 @@
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">222</span>
-<span class="normal">223</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">223</span>
 <span class="normal">224</span>
 <span class="normal">225</span>
 <span class="normal">226</span>
 <span class="normal">227</span>
 <span class="normal">228</span>
 <span class="normal">229</span>
-<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">230</span>
+<span class="normal">231</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Alteration][msl.equipment.schema.Alteration] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>

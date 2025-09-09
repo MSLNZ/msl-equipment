@@ -1701,12 +1701,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/constants/" class="md-nav__link">
+      <a href="../../api/enumerations/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    constants
+    enumerations
     
   </span>
   
@@ -1986,7 +1986,7 @@
     <div class="doc doc-contents first">
 
 
-        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_measurand" target="_blank">measurand</a> element in an equipment register.</p>
+        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_measurand">measurand</a> element in an equipment register.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2209,7 +2209,7 @@ the value is <code>0</code>.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_measurand" target="_blank">measurand</a> XML element from an equipment register.</p>
+                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_measurand">measurand</a> XML element from an equipment register.</p>
               </div>
             </td>
             <td>
@@ -2255,8 +2255,7 @@ the value is <code>0</code>.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1878</span>
-<span class="normal">1879</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1879</span>
 <span class="normal">1880</span>
 <span class="normal">1881</span>
 <span class="normal">1882</span>
@@ -2269,12 +2268,13 @@ the value is <code>0</code>.</p>
 <span class="normal">1889</span>
 <span class="normal">1890</span>
 <span class="normal">1891</span>
-<span class="normal">1892</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1892</span>
+<span class="normal">1893</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Measurand</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Measurand][msl.equipment.schema.Measurand] instance.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        element: A [measurand][type_measurand]{:target=&quot;_blank&quot;} XML element from an equipment register.</span>
+<span class="sd">        element: A [measurand][type_measurand] XML element from an equipment register.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Measurand][msl.equipment.schema.Measurand] instance.</span>
@@ -2341,8 +2341,7 @@ the value is <code>0</code>.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1894</span>
-<span class="normal">1895</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1895</span>
 <span class="normal">1896</span>
 <span class="normal">1897</span>
 <span class="normal">1898</span>
@@ -2350,7 +2349,8 @@ the value is <code>0</code>.</p>
 <span class="normal">1900</span>
 <span class="normal">1901</span>
 <span class="normal">1902</span>
-<span class="normal">1903</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">1903</span>
+<span class="normal">1904</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Measurand][msl.equipment.schema.Measurand] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>

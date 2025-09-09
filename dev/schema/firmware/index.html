@@ -1692,12 +1692,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/constants/" class="md-nav__link">
+      <a href="../../api/enumerations/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    constants
+    enumerations
     
   </span>
   
@@ -1959,7 +1959,7 @@
     <div class="doc doc-contents first">
 
 
-        <p>Represents a <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_firmware" target="_blank">firmware</a> <code>&lt;version&gt;</code> sub-element in an equipment register.</p>
+        <p>Represents a <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_firmware">firmware</a> <code>&lt;version&gt;</code> sub-element in an equipment register.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2127,7 +2127,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_firmware" target="_blank">firmware</a> <code>&lt;version&gt;</code> XML sub-element
+                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_firmware">firmware</a> <code>&lt;version&gt;</code> XML sub-element
 from an equipment register.</p>
               </div>
             </td>
@@ -2174,8 +2174,7 @@ from an equipment register.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">398</span>
-<span class="normal">399</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">399</span>
 <span class="normal">400</span>
 <span class="normal">401</span>
 <span class="normal">402</span>
@@ -2185,12 +2184,13 @@ from an equipment register.</p>
 <span class="normal">406</span>
 <span class="normal">407</span>
 <span class="normal">408</span>
-<span class="normal">409</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">409</span>
+<span class="normal">410</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Firmware</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Firmware][msl.equipment.schema.Firmware] instance.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        element: A [firmware][type_firmware]{:target=&quot;_blank&quot;} `&lt;version&gt;` XML sub-element</span>
+<span class="sd">        element: A [firmware][type_firmware] `&lt;version&gt;` XML sub-element</span>
 <span class="sd">            from an equipment register.</span>
 
 <span class="sd">    Returns:</span>
@@ -2254,15 +2254,15 @@ from an equipment register.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">411</span>
-<span class="normal">412</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">412</span>
 <span class="normal">413</span>
 <span class="normal">414</span>
 <span class="normal">415</span>
 <span class="normal">416</span>
 <span class="normal">417</span>
 <span class="normal">418</span>
-<span class="normal">419</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">419</span>
+<span class="normal">420</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Firmware][msl.equipment.schema.Firmware] class into a `&lt;version&gt;` XML element.</span>
 
 <span class="sd">    Returns:</span>

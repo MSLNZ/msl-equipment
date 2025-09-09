@@ -1710,12 +1710,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/constants/" class="md-nav__link">
+      <a href="../../api/enumerations/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    constants
+    enumerations
     
   </span>
   
@@ -2000,7 +2000,7 @@
     <div class="doc doc-contents first">
 
 
-        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_completedTask" target="_blank">completedTask</a> element in an equipment register.</p>
+        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_completedTask">completedTask</a> element in an equipment register.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2248,7 +2248,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_completedTask" target="_blank">completedTask</a> XML element from an equipment register.</p>
+                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_completedTask">completedTask</a> XML element from an equipment register.</p>
               </div>
             </td>
             <td>
@@ -2294,8 +2294,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">445</span>
-<span class="normal">446</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">446</span>
 <span class="normal">447</span>
 <span class="normal">448</span>
 <span class="normal">449</span>
@@ -2309,12 +2308,13 @@
 <span class="normal">457</span>
 <span class="normal">458</span>
 <span class="normal">459</span>
-<span class="normal">460</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">460</span>
+<span class="normal">461</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">CompletedTask</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [CompletedTask][msl.equipment.schema.CompletedTask] instance.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        element: A [completedTask][type_completedTask]{:target=&quot;_blank&quot;} XML element from an equipment register.</span>
+<span class="sd">        element: A [completedTask][type_completedTask] XML element from an equipment register.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [CompletedTask][msl.equipment.schema.CompletedTask] instance.</span>
@@ -2382,8 +2382,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">462</span>
-<span class="normal">463</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">463</span>
 <span class="normal">464</span>
 <span class="normal">465</span>
 <span class="normal">466</span>
@@ -2396,7 +2395,8 @@
 <span class="normal">473</span>
 <span class="normal">474</span>
 <span class="normal">475</span>
-<span class="normal">476</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">476</span>
+<span class="normal">477</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [CompletedTask][msl.equipment.schema.CompletedTask] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>

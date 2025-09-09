@@ -1719,12 +1719,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/constants/" class="md-nav__link">
+      <a href="../../api/enumerations/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    constants
+    enumerations
     
   </span>
   
@@ -2101,7 +2101,7 @@
               Bases: <code><a class="autorefs autorefs-external" title="numpy.ndarray" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a></code></p>
 
 
-        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_table" target="_blank">table</a> element in an equipment register.</p>
+        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_table">table</a> element in an equipment register.</p>
 
 
 
@@ -2264,7 +2264,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_table" target="_blank">table</a> XML element from an equipment register.</p>
+                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_table">table</a> XML element from an equipment register.</p>
               </div>
             </td>
             <td>
@@ -2291,7 +2291,7 @@
             <td>
               <div class="doc-md-description">
                 <p>A <a class="autorefs autorefs-internal" title="            Table" href="#msl.equipment.schema.Table">Table</a> is an subclass of a numpy
-<a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/user/basics.rec.html#structured-arrays" target="_blank">structured array</a>, where the <code>header</code> is used as
+<a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/user/basics.rec.html#structured-arrays">structured array</a>, where the <code>header</code> is used as
 the <em>field names</em>. This allows for accessing a column by the header value rather than by
 the index of a column. If you prefer to work with unstructured data, call
 <a class="autorefs autorefs-internal" title="            unstructured" href="#msl.equipment.schema.Table.unstructured">unstructured</a> on the returned object.</p>
@@ -2304,8 +2304,7 @@ the index of a column. If you prefer to work with unstructured data, call
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1366</span>
-<span class="normal">1367</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1367</span>
 <span class="normal">1368</span>
 <span class="normal">1369</span>
 <span class="normal">1370</span>
@@ -2357,16 +2356,17 @@ the index of a column. If you prefer to work with unstructured data, call
 <span class="normal">1416</span>
 <span class="normal">1417</span>
 <span class="normal">1418</span>
-<span class="normal">1419</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1419</span>
+<span class="normal">1420</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Table][msl.equipment.schema.Table] instance.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        element: A [table][type_table]{:target=&quot;_blank&quot;} XML element from an equipment register.</span>
+<span class="sd">        element: A [table][type_table] XML element from an equipment register.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A [Table][msl.equipment.schema.Table] is an subclass of a numpy</span>
-<span class="sd">            [structured array][structured_arrays]{:target=&quot;_blank&quot;}, where the `header` is used as</span>
+<span class="sd">            [structured array][structured_arrays], where the `header` is used as</span>
 <span class="sd">            the *field names*. This allows for accessing a column by the header value rather than by</span>
 <span class="sd">            the index of a column. If you prefer to work with unstructured data, call</span>
 <span class="sd">            [unstructured][msl.equipment.schema.Table.unstructured] on the returned object.</span>
@@ -2458,8 +2458,7 @@ the index of a column. If you prefer to work with unstructured data, call
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1421</span>
-<span class="normal">1422</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1422</span>
 <span class="normal">1423</span>
 <span class="normal">1424</span>
 <span class="normal">1425</span>
@@ -2483,7 +2482,8 @@ the index of a column. If you prefer to work with unstructured data, call
 <span class="normal">1443</span>
 <span class="normal">1444</span>
 <span class="normal">1445</span>
-<span class="normal">1446</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">1446</span>
+<span class="normal">1447</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Table][msl.equipment.schema.Table] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
@@ -2536,7 +2536,7 @@ the index of a column. If you prefer to work with unstructured data, call
     <div class="doc doc-contents ">
 
         <p>Converts the structured array into an unstructured array.</p>
-<p>See <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/user/basics.rec.html#numpy.lib.recfunctions.structured_to_unstructured" target="_blank">structured_to_unstructured</a>
+<p>See <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/user/basics.rec.html#numpy.lib.recfunctions.structured_to_unstructured">structured_to_unstructured</a>
 for more details.</p>
 
 
@@ -2593,7 +2593,7 @@ for more details.</p>
             <td>
               <div class="doc-md-description">
                 <p>Controls what kind of data casting may occur. See the <em>casting</em> argument of
-<a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.astype.html#numpy.ndarray.astype" target="_blank">numpy.ndarray.astype</a> for more details.</p>
+<a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.astype.html#numpy.ndarray.astype">numpy.ndarray.astype</a> for more details.</p>
               </div>
             </td>
             <td>
@@ -2619,7 +2619,7 @@ for more details.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The unstructured array. This method may return a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a>
+                <p>The unstructured array. This method may return a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a>
 instance instead of a <a class="autorefs autorefs-internal" title="            Table" href="#msl.equipment.schema.Table">Table</a> instance if the table consists of
 numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
               </div>
@@ -2631,8 +2631,7 @@ numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1336</span>
-<span class="normal">1337</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1337</span>
 <span class="normal">1338</span>
 <span class="normal">1339</span>
 <span class="normal">1340</span>
@@ -2659,7 +2658,8 @@ numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
 <span class="normal">1361</span>
 <span class="normal">1362</span>
 <span class="normal">1363</span>
-<span class="normal">1364</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unstructured</span><span class="p">(</span>
+<span class="normal">1364</span>
+<span class="normal">1365</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unstructured</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2668,17 +2668,17 @@ numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">_Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts the structured array into an unstructured array.</span>
 
-<span class="sd">    See [structured_to_unstructured][numpy.lib.recfunctions.structured_to_unstructured]{:target=&quot;_blank&quot;}</span>
+<span class="sd">    See [structured_to_unstructured][numpy.lib.recfunctions.structured_to_unstructured]</span>
 <span class="sd">    for more details.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dtype: The _dtype_ of the output unstructured array.</span>
 <span class="sd">        copy: If `True`, always return a copy. If `False`, a view is returned if possible.</span>
 <span class="sd">        casting: Controls what kind of data casting may occur. See the *casting* argument of</span>
-<span class="sd">            [numpy.ndarray.astype][]{:target=&quot;_blank&quot;} for more details.</span>
+<span class="sd">            [numpy.ndarray.astype][] for more details.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        The unstructured array. This method may return a numpy [ndarray][numpy.ndarray]{:target=&quot;_blank&quot;}</span>
+<span class="sd">        The unstructured array. This method may return a numpy [ndarray][numpy.ndarray]</span>
 <span class="sd">            instance instead of a [Table][msl.equipment.schema.Table] instance if the table consists of</span>
 <span class="sd">            numbers and strings and the appropriate `dtype` is not specified.</span>
 <span class="sd">    &quot;&quot;&quot;</span>

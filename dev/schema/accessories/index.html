@@ -1674,12 +1674,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/constants/" class="md-nav__link">
+      <a href="../../api/enumerations/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    constants
+    enumerations
     
   </span>
   
@@ -1922,8 +1922,8 @@
 
 
         <p>Additional accessories that may be required to use the equipment.</p>
-<p>Since this class is currently represented by the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_any" target="_blank">any</a> type in the
-XML Schema Definition, it is simply a subclass of <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element" target="_blank">Element</a>.
+<p>Since this class is currently represented by the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_any">any</a> type in the
+XML Schema Definition, it is simply a subclass of <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a>.
 It may be updated to be a more specific class at a later date.</p>
 
 
@@ -1967,14 +1967,14 @@ It may be updated to be a more specific class at a later date.</p>
 
                   <details class="quote">
                     <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
-<span class="normal">146</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">146</span>
 <span class="normal">147</span>
 <span class="normal">148</span>
 <span class="normal">149</span>
 <span class="normal">150</span>
-<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class that represents the [any][type_any]{:target=&quot;_blank&quot;} type in the XML Schema Definition.</span>
+<span class="normal">151</span>
+<span class="normal">152</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">attributes</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class that represents the [any][type_any] type in the XML Schema Definition.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        attributes: All keyword arguments are used as the element&#39;s attributes.</span>
@@ -2097,8 +2097,7 @@ It may be updated to be a more specific class at a later date.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">153</span>
-<span class="normal">154</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">154</span>
 <span class="normal">155</span>
 <span class="normal">156</span>
 <span class="normal">157</span>
@@ -2116,7 +2115,8 @@ It may be updated to be a more specific class at a later date.</p>
 <span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span>
-<span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">172</span>
+<span class="normal">173</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">A</span><span class="p">:</span>  <span class="c1"># noqa: PYI019</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Copies an XML element into the [Any][msl.equipment.schema.Any] subclass.</span>
 

@@ -1710,12 +1710,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/constants/" class="md-nav__link">
+      <a href="../../api/enumerations/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    constants
+    enumerations
     
   </span>
   
@@ -1996,7 +1996,7 @@
     <div class="doc doc-contents first">
 
 
-        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#element_register" target="_blank">register</a> element in an equipment register.</p>
+        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#element_register">register</a> element in an equipment register.</p>
 
         <p>Specifying multiple sources allows for storing an equipment register across multiple
 files for the same team. Not specifying a source creates a new (empty) register.</p>
@@ -2027,9 +2027,9 @@ files for the same team. Not specifying a source creates a new (empty) register.
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-path-like-object" target="_blank">path-like</a>,
-<a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-file-like-object" target="_blank">file-like</a> or
-<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element" target="_blank">Element</a>
+                <p>The <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-path-like-object">path-like</a>,
+<a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-file-like-object">file-like</a> or
+<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a>
 objects that are equipment registers.</p>
               </div>
             </td>
@@ -2049,21 +2049,7 @@ objects that are equipment registers.</p>
 
                   <details class="quote">
                     <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2465</span>
-<span class="normal">2466</span>
-<span class="normal">2467</span>
-<span class="normal">2468</span>
-<span class="normal">2469</span>
-<span class="normal">2470</span>
-<span class="normal">2471</span>
-<span class="normal">2472</span>
-<span class="normal">2473</span>
-<span class="normal">2474</span>
-<span class="normal">2475</span>
-<span class="normal">2476</span>
-<span class="normal">2477</span>
-<span class="normal">2478</span>
-<span class="normal">2479</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2479</span>
 <span class="normal">2480</span>
 <span class="normal">2481</span>
 <span class="normal">2482</span>
@@ -2080,16 +2066,30 @@ objects that are equipment registers.</p>
 <span class="normal">2493</span>
 <span class="normal">2494</span>
 <span class="normal">2495</span>
-<span class="normal">2496</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sources</span><span class="p">:</span> <span class="n">XMLSource</span> <span class="o">|</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents the [register][element_register]{:target=&quot;_blank&quot;} element in an equipment register.</span>
+<span class="normal">2496</span>
+<span class="normal">2497</span>
+<span class="normal">2498</span>
+<span class="normal">2499</span>
+<span class="normal">2500</span>
+<span class="normal">2501</span>
+<span class="normal">2502</span>
+<span class="normal">2503</span>
+<span class="normal">2504</span>
+<span class="normal">2505</span>
+<span class="normal">2506</span>
+<span class="normal">2507</span>
+<span class="normal">2508</span>
+<span class="normal">2509</span>
+<span class="normal">2510</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sources</span><span class="p">:</span> <span class="n">XMLSource</span> <span class="o">|</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents the [register][element_register] element in an equipment register.</span>
 
 <span class="sd">    Specifying multiple sources allows for storing an equipment register across multiple</span>
 <span class="sd">    files for the same team. Not specifying a source creates a new (empty) register.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        sources: The [path-like][path-like object]{:target=&quot;_blank&quot;},</span>
-<span class="sd">            [file-like][file-like object]{:target=&quot;_blank&quot;} or</span>
-<span class="sd">            [Element][xml.etree.ElementTree.Element]{:target=&quot;_blank&quot;}</span>
+<span class="sd">        sources: The [path-like][path-like object],</span>
+<span class="sd">            [file-like][file-like object] or</span>
+<span class="sd">            [Element][xml.etree.ElementTree.Element]</span>
 <span class="sd">            objects that are equipment registers.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">team</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -2239,17 +2239,17 @@ objects that are equipment registers.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2530</span>
-<span class="normal">2531</span>
-<span class="normal">2532</span>
-<span class="normal">2533</span>
-<span class="normal">2534</span>
-<span class="normal">2535</span>
-<span class="normal">2536</span>
-<span class="normal">2537</span>
-<span class="normal">2538</span>
-<span class="normal">2539</span>
-<span class="normal">2540</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2544</span>
+<span class="normal">2545</span>
+<span class="normal">2546</span>
+<span class="normal">2547</span>
+<span class="normal">2548</span>
+<span class="normal">2549</span>
+<span class="normal">2550</span>
+<span class="normal">2551</span>
+<span class="normal">2552</span>
+<span class="normal">2553</span>
+<span class="normal">2554</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add equipment to the register.</span>
 
 <span class="sd">    Args:</span>
@@ -2496,7 +2496,7 @@ objects that are equipment registers.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A <a href="https://regexr.com/" target="_blank">regular-expression pattern</a> to use to find equipment.</p>
+                <p>A <a href="https://regexr.com/">regular-expression pattern</a> to use to find equipment.</p>
               </div>
             </td>
             <td>
@@ -2512,7 +2512,7 @@ objects that are equipment registers.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The flags to use to compile the <code>pattern</code>. See <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/re.html#re.compile" target="_blank">re.compile</a> for more details.</p>
+                <p>The flags to use to compile the <code>pattern</code>. See <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/re.html#re.compile">re.compile</a> for more details.</p>
               </div>
             </td>
             <td>
@@ -2553,21 +2553,7 @@ objects that are equipment registers.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2542</span>
-<span class="normal">2543</span>
-<span class="normal">2544</span>
-<span class="normal">2545</span>
-<span class="normal">2546</span>
-<span class="normal">2547</span>
-<span class="normal">2548</span>
-<span class="normal">2549</span>
-<span class="normal">2550</span>
-<span class="normal">2551</span>
-<span class="normal">2552</span>
-<span class="normal">2553</span>
-<span class="normal">2554</span>
-<span class="normal">2555</span>
-<span class="normal">2556</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2556</span>
 <span class="normal">2557</span>
 <span class="normal">2558</span>
 <span class="normal">2559</span>
@@ -2681,7 +2667,21 @@ objects that are equipment registers.</p>
 <span class="normal">2667</span>
 <span class="normal">2668</span>
 <span class="normal">2669</span>
-<span class="normal">2670</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">Pattern</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">flags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Equipment</span><span class="p">]:</span>  <span class="c1"># noqa: C901</span>
+<span class="normal">2670</span>
+<span class="normal">2671</span>
+<span class="normal">2672</span>
+<span class="normal">2673</span>
+<span class="normal">2674</span>
+<span class="normal">2675</span>
+<span class="normal">2676</span>
+<span class="normal">2677</span>
+<span class="normal">2678</span>
+<span class="normal">2679</span>
+<span class="normal">2680</span>
+<span class="normal">2681</span>
+<span class="normal">2682</span>
+<span class="normal">2683</span>
+<span class="normal">2684</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">Pattern</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">flags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Equipment</span><span class="p">]:</span>  <span class="c1"># noqa: C901</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find equipment in the register.</span>
 
 <span class="sd">    The following attributes are used in the search:</span>
@@ -2707,8 +2707,8 @@ objects that are equipment registers.</p>
 <span class="sd">    * technical_procedures: [QualityManual][msl.equipment.schema.QualityManual]</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        pattern: A [regular-expression pattern](https://regexr.com/){:target=&quot;_blank&quot;} to use to find equipment.</span>
-<span class="sd">        flags: The flags to use to compile the `pattern`. See [re.compile][]{:target=&quot;_blank&quot;} for more details.</span>
+<span class="sd">        pattern: A [regular-expression pattern](https://regexr.com/) to use to find equipment.</span>
+<span class="sd">        flags: The flags to use to compile the `pattern`. See [re.compile][] for more details.</span>
 
 <span class="sd">    Yields:</span>
 <span class="sd">        Equipment that match the `pattern`.</span>
@@ -2951,21 +2951,7 @@ item by using the alias of the equipment or the index within the register could 
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2672</span>
-<span class="normal">2673</span>
-<span class="normal">2674</span>
-<span class="normal">2675</span>
-<span class="normal">2676</span>
-<span class="normal">2677</span>
-<span class="normal">2678</span>
-<span class="normal">2679</span>
-<span class="normal">2680</span>
-<span class="normal">2681</span>
-<span class="normal">2682</span>
-<span class="normal">2683</span>
-<span class="normal">2684</span>
-<span class="normal">2685</span>
-<span class="normal">2686</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2686</span>
 <span class="normal">2687</span>
 <span class="normal">2688</span>
 <span class="normal">2689</span>
@@ -2999,7 +2985,21 @@ item by using the alias of the equipment or the index within the register could 
 <span class="normal">2717</span>
 <span class="normal">2718</span>
 <span class="normal">2719</span>
-<span class="normal">2720</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Equipment</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">2720</span>
+<span class="normal">2721</span>
+<span class="normal">2722</span>
+<span class="normal">2723</span>
+<span class="normal">2724</span>
+<span class="normal">2725</span>
+<span class="normal">2726</span>
+<span class="normal">2727</span>
+<span class="normal">2728</span>
+<span class="normal">2729</span>
+<span class="normal">2730</span>
+<span class="normal">2731</span>
+<span class="normal">2732</span>
+<span class="normal">2733</span>
+<span class="normal">2734</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Equipment</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get an [Equipment][msl.equipment.schema.Equipment] item from the register.</span>
 
 <span class="sd">    This method will ignore all errors if the register does not contain the requested</span>
@@ -3145,7 +3145,7 @@ This parameter is ignored if the version of Python is &lt; 3.9.</p>
             <td>
               <div class="doc-md-description">
                 <p>The <a class="autorefs autorefs-internal" title="            Register" href="#msl.equipment.schema.Register">Register</a> as an
-<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.ElementTree" target="_blank">ElementTree</a>.</p>
+<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.ElementTree">ElementTree</a>.</p>
               </div>
             </td>
           </tr>
@@ -3155,21 +3155,7 @@ This parameter is ignored if the version of Python is &lt; 3.9.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2731</span>
-<span class="normal">2732</span>
-<span class="normal">2733</span>
-<span class="normal">2734</span>
-<span class="normal">2735</span>
-<span class="normal">2736</span>
-<span class="normal">2737</span>
-<span class="normal">2738</span>
-<span class="normal">2739</span>
-<span class="normal">2740</span>
-<span class="normal">2741</span>
-<span class="normal">2742</span>
-<span class="normal">2743</span>
-<span class="normal">2744</span>
-<span class="normal">2745</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2745</span>
 <span class="normal">2746</span>
 <span class="normal">2747</span>
 <span class="normal">2748</span>
@@ -3192,7 +3178,21 @@ This parameter is ignored if the version of Python is &lt; 3.9.</p>
 <span class="normal">2765</span>
 <span class="normal">2766</span>
 <span class="normal">2767</span>
-<span class="normal">2768</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span> <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ElementTree</span><span class="p">[</span><span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="normal">2768</span>
+<span class="normal">2769</span>
+<span class="normal">2770</span>
+<span class="normal">2771</span>
+<span class="normal">2772</span>
+<span class="normal">2773</span>
+<span class="normal">2774</span>
+<span class="normal">2775</span>
+<span class="normal">2776</span>
+<span class="normal">2777</span>
+<span class="normal">2778</span>
+<span class="normal">2779</span>
+<span class="normal">2780</span>
+<span class="normal">2781</span>
+<span class="normal">2782</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">,</span> <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ElementTree</span><span class="p">[</span><span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Register][msl.equipment.schema.Register] class into an XML element tree.</span>
 
 <span class="sd">    Args:</span>
@@ -3205,7 +3205,7 @@ This parameter is ignored if the version of Python is &lt; 3.9.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Register][msl.equipment.schema.Register] as an</span>
-<span class="sd">            [ElementTree][xml.etree.ElementTree.ElementTree]{:target=&quot;_blank&quot;}.</span>
+<span class="sd">            [ElementTree][xml.etree.ElementTree.ElementTree].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">indent</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Indentation must be &gt;= 0, got </span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">&quot;</span>

@@ -1803,12 +1803,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/constants/" class="md-nav__link">
+      <a href="../../api/enumerations/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    constants
+    enumerations
     
   </span>
   
@@ -2285,7 +2285,7 @@
     <div class="doc doc-contents first">
 
 
-        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_equation" target="_blank">equation</a> element in an equipment register.</p>
+        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_equation">equation</a> element in an equipment register.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2595,7 +2595,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>An <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_equation" target="_blank">equation</a> XML element from an equipment register.</p>
+                <p>An <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_equation">equation</a> XML element from an equipment register.</p>
               </div>
             </td>
             <td>
@@ -2641,8 +2641,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">694</span>
-<span class="normal">695</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">695</span>
 <span class="normal">696</span>
 <span class="normal">697</span>
 <span class="normal">698</span>
@@ -2669,12 +2668,13 @@
 <span class="normal">719</span>
 <span class="normal">720</span>
 <span class="normal">721</span>
-<span class="normal">722</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">722</span>
+<span class="normal">723</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Equation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into an [Equation][msl.equipment.schema.Equation] instance.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        element: An [equation][type_equation]{:target=&quot;_blank&quot;} XML element from an equipment register.</span>
+<span class="sd">        element: An [equation][type_equation] XML element from an equipment register.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Equation][msl.equipment.schema.Equation] instance.</span>
@@ -2755,8 +2755,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">724</span>
-<span class="normal">725</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">725</span>
 <span class="normal">726</span>
 <span class="normal">727</span>
 <span class="normal">728</span>
@@ -2782,7 +2781,8 @@
 <span class="normal">748</span>
 <span class="normal">749</span>
 <span class="normal">750</span>
-<span class="normal">751</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">751</span>
+<span class="normal">752</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Equation][msl.equipment.schema.Equation] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
@@ -2847,7 +2847,7 @@
     <div class="doc doc-contents first">
 
 
-        <p>Represents the <code>&lt;value&gt;</code> and <code>&lt;uncertainty&gt;</code> XML elements in an <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_equation" target="_blank">equation</a>.</p>
+        <p>Represents the <code>&lt;value&gt;</code> and <code>&lt;uncertainty&gt;</code> XML elements in an <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_equation">equation</a>.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -3214,7 +3214,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Always returns <code>True</code>. Raises <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#ValueError" target="_blank">ValueError</a> if
+                <p>Always returns <code>True</code>. Raises <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#ValueError">ValueError</a> if
 <code>value</code> is not within the range.</p>
               </div>
             </td>
@@ -3225,8 +3225,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">595</span>
-<span class="normal">596</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">596</span>
 <span class="normal">597</span>
 <span class="normal">598</span>
 <span class="normal">599</span>
@@ -3242,14 +3241,15 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
 <span class="normal">609</span>
 <span class="normal">610</span>
 <span class="normal">611</span>
-<span class="normal">612</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_within_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">]:</span>
+<span class="normal">612</span>
+<span class="normal">613</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_within_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the values are within the range.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        value: The values to check, raises</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        Always returns `True`. Raises [ValueError][]{:target=&quot;_blank&quot;} if</span>
+<span class="sd">        Always returns `True`. Raises [ValueError][] if</span>
 <span class="sd">            `value` is not within the range.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>

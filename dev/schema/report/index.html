@@ -1869,12 +1869,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/constants/" class="md-nav__link">
+      <a href="../../api/enumerations/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    constants
+    enumerations
     
   </span>
   
@@ -2360,7 +2360,7 @@
     <div class="doc doc-contents first">
 
 
-        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_report" target="_blank">report</a> element in an equipment register.</p>
+        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_report">report</a> element in an equipment register.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -3163,7 +3163,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_report" target="_blank">report</a> XML element from an equipment register.</p>
+                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_report">report</a> XML element from an equipment register.</p>
               </div>
             </td>
             <td>
@@ -3209,8 +3209,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1685</span>
-<span class="normal">1686</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1686</span>
 <span class="normal">1687</span>
 <span class="normal">1688</span>
 <span class="normal">1689</span>
@@ -3258,12 +3257,13 @@
 <span class="normal">1731</span>
 <span class="normal">1732</span>
 <span class="normal">1733</span>
-<span class="normal">1734</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1734</span>
+<span class="normal">1735</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Report</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Report][msl.equipment.schema.Report] instance.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        element: A [report][type_report]{:target=&quot;_blank&quot;} XML element from an equipment register.</span>
+<span class="sd">        element: A [report][type_report] XML element from an equipment register.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Report][msl.equipment.schema.Report] instance.</span>
@@ -3365,8 +3365,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1736</span>
-<span class="normal">1737</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1737</span>
 <span class="normal">1738</span>
 <span class="normal">1739</span>
 <span class="normal">1740</span>
@@ -3400,7 +3399,8 @@
 <span class="normal">1768</span>
 <span class="normal">1769</span>
 <span class="normal">1770</span>
-<span class="normal">1771</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">1771</span>
+<span class="normal">1772</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Report][msl.equipment.schema.Report] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
@@ -3639,7 +3639,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>An <code>&lt;issuingLaboratory&gt;</code> element from a <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_report" target="_blank">report</a> element
+                <p>An <code>&lt;issuingLaboratory&gt;</code> element from a <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_report">report</a> element
 in an equipment register.</p>
               </div>
             </td>
@@ -3686,8 +3686,7 @@ in an equipment register.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1586</span>
-<span class="normal">1587</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1587</span>
 <span class="normal">1588</span>
 <span class="normal">1589</span>
 <span class="normal">1590</span>
@@ -3700,12 +3699,13 @@ in an equipment register.</p>
 <span class="normal">1597</span>
 <span class="normal">1598</span>
 <span class="normal">1599</span>
-<span class="normal">1600</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1600</span>
+<span class="normal">1601</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IssuingLaboratory</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [IssuingLaboratory][msl.equipment.schema.IssuingLaboratory] instance.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        element: An `&lt;issuingLaboratory&gt;` element from a [report][type_report]{:target=&quot;_blank&quot;} element</span>
+<span class="sd">        element: An `&lt;issuingLaboratory&gt;` element from a [report][type_report] element</span>
 <span class="sd">            in an equipment register.</span>
 
 <span class="sd">    Returns:</span>
@@ -3772,8 +3772,7 @@ in an equipment register.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1602</span>
-<span class="normal">1603</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1603</span>
 <span class="normal">1604</span>
 <span class="normal">1605</span>
 <span class="normal">1606</span>
@@ -3781,7 +3780,8 @@ in an equipment register.</p>
 <span class="normal">1608</span>
 <span class="normal">1609</span>
 <span class="normal">1610</span>
-<span class="normal">1611</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">1611</span>
+<span class="normal">1612</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [IssuingLaboratory][msl.equipment.schema.IssuingLaboratory] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>

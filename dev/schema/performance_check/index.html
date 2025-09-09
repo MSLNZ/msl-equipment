@@ -1773,12 +1773,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/constants/" class="md-nav__link">
+      <a href="../../api/enumerations/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    constants
+    enumerations
     
   </span>
   
@@ -2158,7 +2158,7 @@
     <div class="doc doc-contents first">
 
 
-        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_performanceCheck" target="_blank">performanceCheck</a> element in an equipment register.</p>
+        <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_performanceCheck">performanceCheck</a> element in an equipment register.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2745,7 +2745,7 @@ that was executed.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_performanceCheck" target="_blank">performanceCheck</a> XML element from an
+                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_performanceCheck">performanceCheck</a> XML element from an
 equipment register.</p>
               </div>
             </td>
@@ -2792,8 +2792,7 @@ equipment register.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1501</span>
-<span class="normal">1502</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1502</span>
 <span class="normal">1503</span>
 <span class="normal">1504</span>
 <span class="normal">1505</span>
@@ -2837,12 +2836,13 @@ equipment register.</p>
 <span class="normal">1543</span>
 <span class="normal">1544</span>
 <span class="normal">1545</span>
-<span class="normal">1546</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1546</span>
+<span class="normal">1547</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">PerformanceCheck</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [PerformanceCheck][msl.equipment.schema.PerformanceCheck] instance.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        element: A [performanceCheck][type_performanceCheck]{:target=&quot;_blank&quot;} XML element from an</span>
+<span class="sd">        element: A [performanceCheck][type_performanceCheck] XML element from an</span>
 <span class="sd">            equipment register.</span>
 
 <span class="sd">    Returns:</span>
@@ -2940,8 +2940,7 @@ equipment register.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1548</span>
-<span class="normal">1549</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1549</span>
 <span class="normal">1550</span>
 <span class="normal">1551</span>
 <span class="normal">1552</span>
@@ -2960,7 +2959,8 @@ equipment register.</p>
 <span class="normal">1565</span>
 <span class="normal">1566</span>
 <span class="normal">1567</span>
-<span class="normal">1568</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">1568</span>
+<span class="normal">1569</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [PerformanceCheck][msl.equipment.schema.PerformanceCheck] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>

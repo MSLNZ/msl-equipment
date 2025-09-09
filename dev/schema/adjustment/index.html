@@ -1692,12 +1692,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/constants/" class="md-nav__link">
+      <a href="../../api/enumerations/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    constants
+    enumerations
     
   </span>
   
@@ -1962,7 +1962,7 @@
         <p>An adjustment of the equipment.</p>
 <p>An example of an adjustment is cleaning the equipment (e.g., a spectral filter) and then
 performing another calibration measurement.</p>
-<p>This XML element is found in <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_component" target="_blank">component</a>.</p>
+<p>This XML element is found in <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_component">component</a>.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2131,7 +2131,7 @@ performing another calibration measurement.</p>
             <td>
               <div class="doc-md-description">
                 <p>An <code>&lt;adjustment&gt;</code> XML element from an equipment register
-(see <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_component" target="_blank">component</a>).</p>
+(see <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_component">component</a>).</p>
               </div>
             </td>
             <td>
@@ -2177,8 +2177,7 @@ performing another calibration measurement.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">958</span>
-<span class="normal">959</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">959</span>
 <span class="normal">960</span>
 <span class="normal">961</span>
 <span class="normal">962</span>
@@ -2188,13 +2187,14 @@ performing another calibration measurement.</p>
 <span class="normal">966</span>
 <span class="normal">967</span>
 <span class="normal">968</span>
-<span class="normal">969</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">969</span>
+<span class="normal">970</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Adjustment</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Adjustment][msl.equipment.schema.Adjustment] instance.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        element: An `&lt;adjustment&gt;` XML element from an equipment register</span>
-<span class="sd">            (see [component][type_component]{:target=&quot;_blank&quot;}).</span>
+<span class="sd">            (see [component][type_component]).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Adjustment][msl.equipment.schema.Adjustment] instance.</span>
@@ -2257,15 +2257,15 @@ performing another calibration measurement.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">971</span>
-<span class="normal">972</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">972</span>
 <span class="normal">973</span>
 <span class="normal">974</span>
 <span class="normal">975</span>
 <span class="normal">976</span>
 <span class="normal">977</span>
 <span class="normal">978</span>
-<span class="normal">979</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">979</span>
+<span class="normal">980</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Adjustment][msl.equipment.schema.Adjustment] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>

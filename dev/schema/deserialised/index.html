@@ -1692,12 +1692,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/constants/" class="md-nav__link">
+      <a href="../../api/enumerations/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    constants
+    enumerations
     
   </span>
   
@@ -1959,7 +1959,7 @@
     <div class="doc doc-contents first">
 
 
-        <p>Represents the opposite of the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_serialised" target="_blank">serialised</a> element in an equipment register.</p>
+        <p>Represents the opposite of the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_serialised">serialised</a> element in an equipment register.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2069,8 +2069,8 @@
 
     <div class="doc doc-contents ">
 
-        <p>The value of the deserialised object. For example, an <a class="autorefs autorefs-external" href="https://gtc.readthedocs.io/en/stable/API/persistence.html#persistence.Archive" target="_blank">Archive</a>
-object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC</a>.</p>
+        <p>The value of the deserialised object. For example, an <a class="autorefs autorefs-external" href="https://gtc.readthedocs.io/en/stable/API/persistence.html#persistence.Archive">Archive</a>
+object from <a href="https://gtc.readthedocs.io/en/stable/">GTC</a>.</p>
 
     </div>
 
@@ -2101,7 +2101,7 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
 
     <div class="doc doc-contents ">
 
-        <p>Convert a <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_serialised" target="_blank">serialised</a> XML element into a <a class="autorefs autorefs-internal" title="            Deserialised
+        <p>Convert a <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_serialised">serialised</a> XML element into a <a class="autorefs autorefs-internal" title="            Deserialised
 
 
   
@@ -2129,7 +2129,7 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_serialised" target="_blank">serialised</a> XML element from an equipment register.</p>
+                <p>A <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_serialised">serialised</a> XML element from an equipment register.</p>
               </div>
             </td>
             <td>
@@ -2175,8 +2175,7 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">881</span>
-<span class="normal">882</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">882</span>
 <span class="normal">883</span>
 <span class="normal">884</span>
 <span class="normal">885</span>
@@ -2204,12 +2203,13 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
 <span class="normal">907</span>
 <span class="normal">908</span>
 <span class="normal">909</span>
-<span class="normal">910</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">910</span>
+<span class="normal">911</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Deserialised</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a [serialised][type_serialised]{:target=&quot;_blank&quot;} XML element into a [Deserialised][msl.equipment.schema.Deserialised] instance.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a [serialised][type_serialised] XML element into a [Deserialised][msl.equipment.schema.Deserialised] instance.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        element: A [serialised][type_serialised]{:target=&quot;_blank&quot;} XML element from an equipment register.</span>
+<span class="sd">        element: A [serialised][type_serialised] XML element from an equipment register.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Deserialised][msl.equipment.schema.Deserialised] instance.</span>
@@ -2258,7 +2258,7 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
 
   
       dataclass
-  " href="#msl.equipment.schema.Deserialised">Deserialised</a> class into a <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_serialised" target="_blank">serialised</a> XML element.</p>
+  " href="#msl.equipment.schema.Deserialised">Deserialised</a> class into a <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_serialised">serialised</a> XML element.</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -2276,7 +2276,7 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_serialised" target="_blank">serialised</a> XML element.</p>
+                <p>The <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/develop/#type_serialised">serialised</a> XML element.</p>
               </div>
             </td>
           </tr>
@@ -2286,8 +2286,7 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">912</span>
-<span class="normal">913</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">913</span>
 <span class="normal">914</span>
 <span class="normal">915</span>
 <span class="normal">916</span>
@@ -2309,11 +2308,12 @@ object from <a href="https://gtc.readthedocs.io/en/stable/" target="_blank">GTC<
 <span class="normal">932</span>
 <span class="normal">933</span>
 <span class="normal">934</span>
-<span class="normal">935</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Deserialised][msl.equipment.schema.Deserialised] class into a [serialised][type_serialised]{:target=&quot;_blank&quot;} XML element.</span>
+<span class="normal">935</span>
+<span class="normal">936</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Deserialised][msl.equipment.schema.Deserialised] class into a [serialised][type_serialised] XML element.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        The [serialised][type_serialised]{:target=&quot;_blank&quot;} XML element.</span>
+<span class="sd">        The [serialised][type_serialised] XML element.</span>
 <span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
     <span class="n">attrib</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">}</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="k">else</span> <span class="p">{}</span>
     <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;serialised&quot;</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="n">attrib</span><span class="p">)</span>

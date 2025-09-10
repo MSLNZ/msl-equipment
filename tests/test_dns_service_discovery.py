@@ -261,3 +261,7 @@ def test_find_lxi() -> None:
     for ipv4, device in find_lxi().items():
         assert isinstance(ipv4, str)
         assert device.description
+        assert device.webserver
+        for address in device.addresses:
+            assert address.startswith("TCPIP::")
+            assert address.endswith(("::inst0::INSTR", "::hislip0::INSTR", "::SOCKET"))

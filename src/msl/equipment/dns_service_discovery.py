@@ -270,7 +270,8 @@ def find_lxi(*, ip: Sequence[str] | None = None, timeout: float = 1) -> dict[str
     def parse_xml(ip_address: str, port: int = 80) -> LXIDevice | None:
         try:
             return parse_lxi_webserver(ip_address, port=port, timeout=timeout)
-        except:  # noqa: E722
+        except Exception as e:  # noqa: BLE001
+            logger.warning("%s: %s [%s:%s]", e.__class__.__name__, e, ip_address, port)
             return None
 
     def discover(host: str) -> None:  # noqa: C901, PLR0912, PLR0915
@@ -293,16 +294,28 @@ def find_lxi(*, ip: Sequence[str] | None = None, timeout: float = 1) -> dict[str
             try:
                 record = _DNSRecord(reply)
             except Exception as e:  # noqa: BLE001
-                logger.warning("%s: %s", e.__class__.__name__, e)
+                logger.warning("%s: %s [%s]", e.__class__.__name__, e, host)
                 continue
 
-            device: dict[str, str] = {}
+            def check_addresses(values: tuple[str, ...]) -> list[str]:
+                out: list[str] = []
+                for address in values:
+                    if not address.startswith("TCPIP::"):
+                        address = f"TCPIP::{address}"  # noqa: PLW2901
+                    if not address.endswith(("::INSTR", "::SOCKET")):
+                        address = f"{address}::SOCKET" # must be SOCKET  # noqa: PLW2901
+                    out.append(address)
+                return out
+
+            info: dict[str, str] = {}
             addresses: set[str] = set()
             found_lxi_srv = False
 
             # Check SRV and TXT records
             for a in record.additional:
-                if isinstance(a.rr_data, _Service):
+                if isinstance(a.rr_data, _Text):
+                    info.update(a.rr_data.mapping)
+                elif isinstance(a.rr_data, _Service):
                     port = a.rr_data.port
                     if a.rr_name.endswith("_scpi-raw._tcp.local."):
                         addresses.add(f"TCPIP::{ip_address}::{port}::SOCKET")
@@ -315,12 +328,12 @@ def find_lxi(*, ip: Sequence[str] | None = None, timeout: float = 1) -> dict[str
                     elif a.rr_name.endswith("_lxi._tcp.local."):
                         found_lxi_srv = True
                         port_str = "" if port == HTTP_PORT else f":{port}"
-                        device["webserver"] = f"http://{ip_address}{port_str}"
+                        info["webserver"] = f"http://{ip_address}{port_str}"
                         parsed = parse_xml(ip_address, port=port)
                         if parsed is not None:
-                            device["description"] = parsed.description
+                            info["description"] = parsed.description
                             for interface in parsed.interfaces:
-                                for address in interface.addresses:
+                                for address in check_addresses(interface.addresses):
                                     addresses.add(address)
 
             # Fetch the XML identification document (if it hasn't already been fetched)
@@ -329,18 +342,25 @@ def find_lxi(*, ip: Sequence[str] | None = None, timeout: float = 1) -> dict[str
                     if a.rr_name in {"_lxi._tcp.local.", "_http._tcp.local."}:
                         parsed = parse_xml(ip_address)
                         if parsed is not None:
-                            device["webserver"] = f"http://{ip_address}"
-                            device["description"] = parsed.description
+                            info["webserver"] = f"http://{ip_address}"
+                            info["description"] = parsed.description
                             for interface in parsed.interfaces:
-                                for address in interface.addresses:
+                                for address in check_addresses(interface.addresses):
                                     addresses.add(address)
 
-            key = tuple(int(s) for s in ip_address.split("."))
-            devices[key] = _ServiceDiscoveryDevice(
-                webserver=device.get("webserver", ""),
-                description=device.get("description", "Unknown LXI device"),
-                addresses=sorted(addresses),
-            )
+            description = info.get("description")
+            if not description:
+                info["description"] = ", ".join(
+                    info[item] for item in ("Manufacturer", "Model", "SerialNumber") if item in info
+                )
+
+            if "webserver" in info:
+                key = tuple(int(s) for s in ip_address.split("."))
+                devices[key] = _ServiceDiscoveryDevice(
+                    webserver=info["webserver"],
+                    description=info["description"] or "Unknown LXI device",
+                    addresses=sorted(addresses),
+                )
 
         sock.close()
 

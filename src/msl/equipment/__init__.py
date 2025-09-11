@@ -5,7 +5,8 @@ from __future__ import annotations
 from .__about__ import __version__, version_tuple
 from .config import Config
 from .enumerations import Backend, DataBits, Parity, StopBits
-from .interfaces import NIDAQ, SDK, PyVISA
+from .exceptions import MSLConnectionError
+from .interfaces import NIDAQ, SDK, MSLTimeoutError, PyVISA
 from .record_types import ConnectionRecord, EquipmentRecord
 from .schema import (
     AcceptanceCriteria,
@@ -75,6 +76,8 @@ __all__: list[str] = [
     "Firmware",
     "Interface",
     "IssuingLaboratory",
+    "MSLConnectionError",
+    "MSLTimeoutError",
     "Maintenance",
     "Measurand",
     "Parity",

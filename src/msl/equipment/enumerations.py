@@ -8,9 +8,6 @@ import sys
 
 import serial
 
-CR = b"\r"
-LF = b"\n"
-
 IS_LINUX: bool = sys.platform == "linux"
 IS_WINDOWS: bool = sys.platform == "win32"
 

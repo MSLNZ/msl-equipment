@@ -16,11 +16,9 @@ from xml.etree.ElementTree import XML, ParseError
 import numpy as np
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
     from enum import Enum
-    from typing import Any, Literal
 
-    from numpy.typing import DTypeLike, NDArray
+    from ._types import MessageDataType, MessageFormat, NumpyArray1D, Sequence1D
 
 
 logger = logging.getLogger(__package__)
@@ -95,9 +93,7 @@ def to_primitive(text: str | bytes) -> bool | float | str:
     return text
 
 
-def to_bytes(
-    seq: Sequence[float] | np.ndarray, fmt: Literal[None, "ascii", "hp", "ieee"] = "ieee", dtype: DTypeLike = "<f"
-) -> bytes:
+def to_bytes(seq: Sequence1D, *, fmt: MessageFormat | None = None, dtype: MessageDataType = "<f") -> bytes:
     """Convert a sequence of numbers into bytes.
 
     Args:
@@ -179,16 +175,15 @@ def to_bytes(
 
 
 def from_bytes(  # noqa: C901, PLR0912, PLR0915
-    buffer: bytes | bytearray | str, fmt: Literal[None, "ascii", "hp", "ieee"] = "ieee", dtype: DTypeLike = "<f"
-) -> NDArray[Any]:
+    buffer: bytes | bytearray | str, fmt: MessageFormat | None = "ieee", dtype: MessageDataType = "<f"
+) -> NumpyArray1D:
     """Convert bytes into an array.
 
     Args:
-        buffer: A byte buffer. Can be an already-decoded buffer of type [str][], but only if
-            `fmt` is `"ascii"`.
+        buffer: A byte buffer. Can be an already-decoded buffer of type [str][], but only if `fmt` is `"ascii"`.
         fmt: The format that `buffer` is in. See [to_bytes][msl.equipment.utils.to_bytes] for more details.
         dtype: The data type of each element in `buffer`. Can be any object that [numpy.dtype][] supports.
-        See [to_bytes][msl.equipment.utils.to_bytes] for more details.
+            See [to_bytes][msl.equipment.utils.to_bytes] for more details.
 
     Returns:
         The input buffer as a numpy array.
@@ -202,6 +197,7 @@ def from_bytes(  # noqa: C901, PLR0912, PLR0915
         msg = f"buffer must be of type bytes | bytearray, got {type(buffer)}"
         raise TypeError(msg)
 
+    _dtype: np.dtype
     if fmt == "ieee":
         offset = buffer.find(b"#")
         if offset == -1:
@@ -238,10 +234,10 @@ def from_bytes(  # noqa: C901, PLR0912, PLR0915
             msg = f"Invalid IEEE-488.2 format, characters after #{len_nbytes} are not integers"
             raise ValueError(msg)
 
-        dtype = np.dtype(dtype)
+        _dtype = np.dtype(dtype)
         offset += 2 + len_nbytes
-        count = nbytes // dtype.itemsize
-        return np.frombuffer(buffer, dtype=dtype, count=count, offset=offset)
+        count = nbytes // _dtype.itemsize
+        return np.frombuffer(buffer, dtype=_dtype, count=count, offset=offset)
 
     if fmt == "hp":
         offset = buffer.find(b"#A")
@@ -249,10 +245,10 @@ def from_bytes(  # noqa: C901, PLR0912, PLR0915
             msg = "Invalid HP format, cannot find #A character"
             raise ValueError(msg)
 
-        dtype = np.dtype(dtype)
+        _dtype = np.dtype(dtype)
         i, j = offset + 2, offset + 4
 
-        byteorder = dtype.byteorder
+        byteorder = _dtype.byteorder
         if byteorder == "|":
             # | means not applicable for the dtype specified, assign little endian
             # this redefinition is also declared in to_bytes()
@@ -267,8 +263,8 @@ def from_bytes(  # noqa: C901, PLR0912, PLR0915
             msg = "Invalid HP format, characters after #A are not an unsigned short integer"
             raise ValueError(msg)
 
-        count = nbytes // dtype.itemsize
-        return np.frombuffer(buffer, dtype=dtype, count=count, offset=j)
+        count = nbytes // _dtype.itemsize
+        return np.frombuffer(buffer, dtype=_dtype, count=count, offset=j)
 
     return np.frombuffer(buffer, dtype=dtype)
 

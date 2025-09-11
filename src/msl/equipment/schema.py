@@ -3066,6 +3066,8 @@ class _Resource:
     def handles(self, equipment: Equipment) -> bool:
         """Checks if the resource handles communication with the equipment."""
         # both manufacturer and model must match (if specified) to be a match
+        if not (self.manufacturer or self.model):
+            return False
         if self.manufacturer and not self.manufacturer.search(equipment.manufacturer):
             return False
         return not (self.model and not self.model.search(equipment.model))

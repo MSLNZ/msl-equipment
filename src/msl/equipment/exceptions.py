@@ -1,27 +1,32 @@
-"""
-Exceptions used by MSL-Equipment.
-"""
+"""Exception classes."""
+
 from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from .utils import logger
+
+if TYPE_CHECKING:
+    from .schema import Interface
 
 
 class MSLConnectionError(OSError):
-    """Base class for all MSL :class:`~.connection.Connection` exceptions."""
+    """Base class for connection-related exceptions."""
 
+    def __init__(self, interface: Interface | None, message: str) -> None:
+        """Base class for connection-related exceptions.
 
-class MSLTimeoutError(MSLConnectionError):
-    """A timeout exception for I/O operations."""
-
-
-class ResourceClassNotFound(MSLConnectionError):
-
-    def __init__(self, record):
-        """Exception if a resource class cannot be found to connect to the equipment."""
-        super().__init__(
-            f'Cannot find a resource class for {record}\n'
-            f'If you know that a resource class exists, define a '
-            f'"resource_class_name" property\nin the Connection '
-            f'Database with the name of the resource class as the '
-            f'property value.')
+        Args:
+            interface: The interface subclass or `None`.
+            message: The message to append to the generic error message.
+        """
+        if interface is None:
+            logger.error("%s", message)
+            msg = message
+        else:
+            logger.error("%r %s", interface, message)
+            msg = f"{interface!r}\n{message}"
+        super().__init__(msg)
 
 
 class AimTTiError(MSLConnectionError):
@@ -48,26 +53,19 @@ class EnergetiqError(MSLConnectionError):
     """Exception for equipment from Energetiq."""
 
 
-class GPIBError(MSLConnectionError):
+class GPIBLibraryError(OSError):
+    """Exception from the GPIB library."""
 
-    def __init__(self,
-                 message: str,
-                 *,
-                 name: str = '',
-                 ibsta: int = -1,
-                 iberr: int = -1) -> None:
-        """Exception for equipment that use the GPIB interface.
+    def __init__(self, *, message: str, name: str, ibsta: int, iberr: int) -> None:
+        """Exception from the GPIB library.
 
-        :param message: The error message.
-        :param name: The GPIB function name.
-        :param ibsta: The status value.
-        :param iberr: The error code.
+        Args:
+            message: The error message.
+            name: The GPIB function name.
+            ibsta: The status value.
+            iberr: The error code.
         """
-        if name:
-            msg = f'{message} [{name}(), ibsta:{hex(ibsta)}, iberr:{hex(iberr)}]'
-        else:
-            msg = message
-        super().__init__(msg)
+        super().__init__(f"{message} [{name}(), ibsta:{hex(ibsta)}, iberr:{hex(iberr)}]")
 
 
 class GreisingerError(MSLConnectionError):
@@ -112,6 +110,7 @@ class RaicolCrystalsError(MSLConnectionError):
 
 class ThorlabsError(MSLConnectionError):
     """Exception for equipment from Thorlabs."""
+
 
 class VaisalaError(MSLConnectionError):
     """Exception for equipment from Vaisala."""

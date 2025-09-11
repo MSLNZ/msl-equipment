@@ -22,8 +22,7 @@ from msl.equipment.utils import (
 if TYPE_CHECKING:
     from typing import Literal
 
-    from numpy.typing import DTypeLike
-
+    from msl.equipment._types import MessageDataType
     from tests.conftest import HTTPServer
 
 
@@ -154,37 +153,37 @@ def test_to_primitive() -> None:
 
 
 def test_to_bytes_ieee() -> None:
-    assert to_bytes([]) == b"#10"
-    assert to_bytes(()) == b"#10"
-    assert to_bytes(np.ndarray((0,))) == b"#10"
+    assert to_bytes([], fmt="ieee") == b"#10"
+    assert to_bytes((), fmt="ieee") == b"#10"
+    assert to_bytes(np.ndarray((0,)), fmt="ieee") == b"#10"
 
-    assert to_bytes([9.8]) == b"#14\xcd\xcc\x1cA"
+    assert to_bytes([9.8], fmt="ieee") == b"#14\xcd\xcc\x1cA"
 
     expected = (
         b"#240\x00\x00\x00\x00\x00\x00\x80?\x00\x00\x00@\x00\x00@@"
         b"\x00\x00\x80@\x00\x00\xa0@\x00\x00\xc0@\x00\x00\xe0@\x00"
         b"\x00\x00A\x00\x00\x10A"
     )
-    assert to_bytes(range(10)) == expected
-    assert to_bytes(list(range(10))) == expected
+    assert to_bytes(range(10), fmt="ieee") == expected
+    assert to_bytes(list(range(10)), fmt="ieee") == expected
 
     expected = (
         b"#240\x00\x00\x00\x00?\x80\x00\x00@\x00\x00\x00@@\x00\x00@"
         b"\x80\x00\x00@\xa0\x00\x00@\xc0\x00\x00@\xe0\x00\x00A\x00"
         b"\x00\x00A\x10\x00\x00"
     )
-    assert to_bytes(range(10), dtype=">f") == expected
-    assert to_bytes(list(range(10)), dtype=">f") == expected
-    assert to_bytes(np.array(range(10)), dtype=">f") == expected
+    assert to_bytes(range(10), fmt="ieee", dtype=">f") == expected
+    assert to_bytes(list(range(10)), fmt="ieee", dtype=">f") == expected
+    assert to_bytes(np.array(range(10)), fmt="ieee", dtype=">f") == expected
 
     expected = b"#220\x00\x00\x01\x00\x02\x00\x03\x00\x04\x00\x05\x00\x06\x00\x07\x00\x08\x00\t\x00"
-    assert to_bytes(range(10), dtype=np.uint16) == expected
-    assert to_bytes(list(range(10)), dtype="ushort") == expected
-    assert to_bytes(np.array(range(10)), dtype="H") == expected
+    assert to_bytes(range(10), fmt="ieee", dtype=np.uint16) == expected
+    assert to_bytes(list(range(10)), fmt="ieee", dtype="ushort") == expected
+    assert to_bytes(np.array(range(10)), fmt="ieee", dtype="H") == expected
 
     expected = b"#15\x01\x00\x01\x01\x00"
-    assert to_bytes([True, False, True, True, False], dtype=np.uint8) == expected
-    assert to_bytes(np.array([True, False, True, True, False]), dtype="B") == expected
+    assert to_bytes([True, False, True, True, False], fmt="ieee", dtype=np.uint8) == expected
+    assert to_bytes(np.array([True, False, True, True, False]), fmt="ieee", dtype="B") == expected
 
     expected = (
         b"#280\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
@@ -194,11 +193,11 @@ def test_to_bytes_ieee() -> None:
         b"\x06\x00\x00\x00\x00\x00\x00\x00\x07\x00\x00\x00\x00\x00"
         b"\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\t"
     )
-    assert to_bytes(range(10), dtype=">Q") == expected
-    assert to_bytes(list(range(10)), dtype=">Q") == expected
-    assert to_bytes(np.array(range(10)), dtype=">Q") == expected
+    assert to_bytes(range(10), fmt="ieee", dtype=">Q") == expected
+    assert to_bytes(list(range(10)), fmt="ieee", dtype=">Q") == expected
+    assert to_bytes(np.array(range(10)), fmt="ieee", dtype=">Q") == expected
 
-    assert to_bytes(range(123456), dtype="float64").startswith(b"#6987648")
+    assert to_bytes(range(123456), fmt="ieee", dtype="float64").startswith(b"#6987648")
 
 
 def test_to_bytes_no_header() -> None:
@@ -272,8 +271,8 @@ def test_to_bytes_ascii() -> None:
 
 
 def test_to_bytes_as_bytes() -> None:
-    assert to_bytes(b"abc_xyz", dtype="b") == b"#17abc_xyz"
-    assert to_bytes(b"abcdefghijklmnopqrstuvwxyz", dtype="B") == b"#226abcdefghijklmnopqrstuvwxyz"
+    assert to_bytes(b"abc_xyz", fmt="ieee", dtype="b") == b"#17abc_xyz"
+    assert to_bytes(b"abcdefghijklmnopqrstuvwxyz", fmt="ieee", dtype="B") == b"#226abcdefghijklmnopqrstuvwxyz"
     assert to_bytes(bytearray(b"abc"), fmt=None, dtype="b") == b"abc"
     assert to_bytes(b"MSL", fmt=None, dtype="int8") == b"MSL"
 
@@ -480,7 +479,7 @@ def test_from_bytes_ascii() -> None:
         (128, "hp", "d"),
     ],
 )
-def test_to_bytes_from_bytes(size: int, fmt: Literal["hp", "ieee"] | None, dtype: DTypeLike) -> None:  # type: ignore[misc]
+def test_to_bytes_from_bytes(size: int, fmt: Literal["hp", "ieee"] | None, dtype: MessageDataType) -> None:
     array = np.arange(size, dtype=dtype)
     buffer = to_bytes(array, fmt=fmt, dtype=dtype)
     assert np.array_equal(from_bytes(buffer, fmt=fmt, dtype=dtype), array)

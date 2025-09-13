@@ -1500,6 +1500,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1751,6 +1755,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../exceptions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    exceptions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../interfaces/" class="md-nav__link">
         
   
@@ -1780,6 +1807,29 @@
   
   <span class="md-ellipsis">
     types
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    utils
     
   </span>
   
@@ -2164,7 +2214,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Additional key-value pairs that are required to communicate with the equipment.
+                <p>Additional key-value pairs to use when communicating with the equipment.
 For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232</em> connection.</p>
               </div>
             </td>
@@ -2184,10 +2234,7 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 
                   <details class="quote">
                     <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2798</span>
-<span class="normal">2799</span>
-<span class="normal">2800</span>
-<span class="normal">2801</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2801</span>
 <span class="normal">2802</span>
 <span class="normal">2803</span>
 <span class="normal">2804</span>
@@ -2234,7 +2281,11 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 <span class="normal">2845</span>
 <span class="normal">2846</span>
 <span class="normal">2847</span>
-<span class="normal">2848</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
+<span class="normal">2848</span>
+<span class="normal">2849</span>
+<span class="normal">2850</span>
+<span class="normal">2851</span>
+<span class="normal">2852</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -2254,7 +2305,7 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 <span class="sd">        manufacturer: The name of the manufacturer of the equipment.</span>
 <span class="sd">        model: The model number of the equipment.</span>
 <span class="sd">        serial: The serial number (or unique identifier) of the equipment.</span>
-<span class="sd">        properties: Additional key-value pairs that are required to communicate with the equipment.</span>
+<span class="sd">        properties: Additional key-value pairs to use when communicating with the equipment.</span>
 <span class="sd">            For example, the _baud_rate_ and _parity_ values for an _RS-232_ connection.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">address</span>
@@ -2273,12 +2324,13 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model number of the equipment.&quot;&quot;&quot;</span>
 
     <span class="c1"># check for a properties key being explicitly defined and the value is a dict</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">properties</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span>
+    <span class="n">properties</span><span class="o">=</span> <span class="p">(</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
         <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;properties&quot;</span> <span class="ow">in</span> <span class="n">properties</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">],</span> <span class="nb">dict</span><span class="p">))</span>
         <span class="k">else</span> <span class="n">properties</span>
     <span class="p">)</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Additional key-value pairs that are required to communicate with the equipment.</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">properties</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Additional key-value pairs to use when communicating with the equipment.</span>
 
 <span class="sd">    For example, the _baud_rate_ and _parity_ values for an _RS-232_ connection.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2437,17 +2489,12 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
   </span>
 
 <a href="#msl.equipment.schema.Connection.properties" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">properties</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n"><span title="msl.equipment.schema.Connection(properties)">properties</span></span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="s2">&quot;properties&quot;</span> <span class="ow">in</span> <span class="n"><span title="msl.equipment.schema.Connection(properties)">properties</span></span>
-    <span class="ow">and</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#isinstance">isinstance</a></span><span class="p">(</span><span class="n"><span title="msl.equipment.schema.Connection(properties)">properties</span></span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">],</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">)</span>
-    <span class="k">else</span> <span class="n"><span title="msl.equipment.schema.Connection(properties)">properties</span></span>
-<span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">properties</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">]</span> <span class="o">=</span> <span class="n"><span title="msl.equipment.schema.Connection(properties)">properties</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Additional key-value pairs that are required to communicate with the equipment.</p>
+        <p>Additional key-value pairs to use when communicating with the equipment.</p>
 <p>For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232</em> connection.</p>
 
     </div>
@@ -2499,16 +2546,16 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2854</span>
-<span class="normal">2855</span>
-<span class="normal">2856</span>
-<span class="normal">2857</span>
-<span class="normal">2858</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2858</span>
 <span class="normal">2859</span>
 <span class="normal">2860</span>
 <span class="normal">2861</span>
 <span class="normal">2862</span>
-<span class="normal">2863</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Any</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
+<span class="normal">2863</span>
+<span class="normal">2864</span>
+<span class="normal">2865</span>
+<span class="normal">2866</span>
+<span class="normal">2867</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Any</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Connect to the equipment.&quot;&quot;&quot;</span>
     <span class="n">equipment</span> <span class="o">=</span> <span class="n">Equipment</span><span class="p">(</span>
         <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eid</span><span class="p">,</span>

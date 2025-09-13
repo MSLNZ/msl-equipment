@@ -389,12 +389,12 @@ class ZMQServer:
         with c.connect() as dev:
             dev.write(b"SHUTDOWN")
 
+        self._thread.join()
+        self._thread = None
+
         self._socket.unbind(f"tcp://{self._host}:{self._port}")
         self._context.destroy()
         self.clear_response_queue()
-
-        self._thread.join()
-        self._thread = None
 
 
 @pytest.fixture

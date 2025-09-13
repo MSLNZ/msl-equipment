@@ -17,29 +17,56 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
+CR: bytes = b"\r"
+"""The carriage-return character (hex: 0x0D, decimal: 13)."""
+
+LF: bytes = b"\n"
+"""The line-feed character (hex: 0x0A, decimal: 10)."""
+
+
 class MessageBased(Interface):
     """Base class for equipment that use message-based communication."""
 
-    CR: bytes = b"\r"
-    """The carriage-return character (hex: 0x0D, decimal: 13)."""
-
-    LF: bytes = b"\n"
-    """The line-feed character (hex: 0x0A, decimal: 10)."""
-
     def __init__(self, equipment: Equipment) -> None:
-        """Base class for equipment that use message-based communication.
+        r"""Base class for equipment that use message-based communication.
 
         Args:
             equipment: An [Equipment][] instance.
+
+        A [Connection][msl.equipment.schema.Connection] instance supports the following
+        _properties_ for message-based communication.
+
+        Attributes: Connection Properties:
+            encoding (str): Encoding to used for
+                [read][msl.equipment.interfaces.message_based.MessageBased.read] and
+                [write][msl.equipment.interfaces.message_based.MessageBased.write] operations.
+                _Default: `utf-8`_
+            max_read_size (int): Maximum number of bytes that can be
+                [read][msl.equipment.interfaces.message_based.MessageBased.read].
+                _Default: `1048576` (1 MB)_
+            read_termination (bytes | str): Termination character(s) to use for
+                [read][msl.equipment.interfaces.message_based.MessageBased.read] messages.
+                _Default: `\n`_
+            rstrip (bool): Whether to remove trailing whitespace from
+                [read][msl.equipment.interfaces.message_based.MessageBased.read] messages.
+                _Default: `False`_
+            termination (bytes | str): Sets both `read_termination` and `write_termination`
+                to the same termination character(s).
+            timeout (float | None): Timeout, in seconds, for
+                [read][msl.equipment.interfaces.message_based.MessageBased.read] and
+                [write][msl.equipment.interfaces.message_based.MessageBased.write] operations.
+                _Default: `None`_
+            write_termination (bytes | str): Termination character(s) to use for
+                [write][msl.equipment.interfaces.message_based.MessageBased.write] messages.
+                _Default: `\r\n`_
         """
         super().__init__(equipment)
         assert equipment.connection is not None  # noqa: S101
 
         self._encoding: str = "utf-8"
-        self._encoding_errors: str = "strict"
         self._read_termination: bytes | None = None
         self._write_termination: bytes | None = None
-        self._max_read_size: int = 1 << 20  # 1 MB
+        self._max_read_size: int = 1048576  # 1 << 20 (1 MB)
         self._timeout: float | None = None
         self._rstrip: bool = False
 
@@ -54,12 +81,18 @@ class MessageBased(Interface):
             self.read_termination = p["termination"]
             self.write_termination = p["termination"]
         else:
-            self.read_termination = p.get("read_termination", MessageBased.LF)
-            self.write_termination = p.get("write_termination", MessageBased.CR + MessageBased.LF)
+            self.read_termination = p.get("read_termination", LF)
+            self.write_termination = p.get("write_termination", CR + LF)
 
     def _read(self, size: int | None) -> bytes:  # pyright: ignore[reportUnusedParameter]
         """The subclass must override this method."""
         raise NotImplementedError
+
+    def _set_interface_max_read_size(self) -> None:
+        """Some connections need to be notified of the max_read_size change.
+
+        The connection subclass must override this method to notify the backend.
+        """
 
     def _set_interface_timeout(self) -> None:
         """Some connections (e.g. serial, socket) need to be notified of the timeout change.
@@ -102,6 +135,7 @@ class MessageBased(Interface):
             msg = f"The maximum number of bytes to read must be >= 1, got {size}"
             raise ValueError(msg)
         self._max_read_size = max_size
+        self._set_interface_max_read_size()
 
     @overload
     def query(  # pyright: ignore[reportOverlappingOverload]  # pragma: no cover
@@ -226,8 +260,8 @@ class MessageBased(Interface):
            [read_termination][msl.equipment.interfaces.message_based.MessageBased.read_termination]
            is not `None`.
         3. a timeout occurs &mdash; only if [timeout][msl.equipment.interfaces.message_based.MessageBased.timeout]
-           is not `None`. If a timeout occurs, an [MSLTimeoutError][msl.equipment.exceptions.MSLTimeoutError]
-           is raised.
+           is not `None`. If a timeout occurs, an
+           [MSLTimeoutError][msl.equipment.interfaces.message_based.MSLTimeoutError] is raised.
         4. [max_read_size][msl.equipment.interfaces.message_based.MessageBased.max_read_size]
            bytes have been received. If the maximum number of bytes have been read, an
            [MSLConnectionError][msl.equipment.exceptions.MSLConnectionError] is raised.
@@ -350,7 +384,7 @@ class MessageBased(Interface):
             The number of bytes written.
         """
         if not isinstance(message, bytes):
-            message = message.encode(encoding=self._encoding, errors=self._encoding_errors)
+            message = message.encode(encoding=self._encoding)
 
         if data is not None:
             message += to_bytes(data, fmt=fmt, dtype=dtype)
@@ -393,7 +427,7 @@ class MSLTimeoutError(TimeoutError):
 
         Args:
             interface: A message-based interface subclass.
-            message: An optional message to append to the generic error message.
+            message: An optional message to append to the generic timeout error message.
         """
         msg = f"Timeout occurred after {interface.timeout} second(s). {message}"
         logger.error("%r %s", interface, msg)

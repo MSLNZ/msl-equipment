@@ -1,7 +1,4 @@
-"""Use [NI-DAQmx] as the backend to communicate with the equipment.
-
-[NI-DAQmx]: https://nidaqmx-python.readthedocs.io/en/stable/index.html
-"""
+"""Use NI-DAQmx as the backend to communicate with the equipment."""
 
 from __future__ import annotations
 
@@ -24,13 +21,13 @@ if TYPE_CHECKING:
 
 
 class NIDAQ(Interface, backend=Backend.NIDAQ):
-    """Use [NI-DAQmx] to establish a connection to the equipment.
+    """Use [NI-DAQmx] as the backend to communicate with the equipment.
 
     [NI-DAQmx]: https://nidaqmx-python.readthedocs.io/en/stable/index.html
     """
 
     def __init__(self, equipment: Equipment) -> None:
-        """Use [NI-DAQmx] to establish a connection to the equipment.
+        """Use [NI-DAQmx] as the backend to communicate with the equipment.
 
         The [backend][msl.equipment.schema.Connection.backend] value must be equal
         to `NIDAQ` to use this class for the communication backend.
@@ -39,7 +36,7 @@ class NIDAQ(Interface, backend=Backend.NIDAQ):
         method is equivalent to importing the [NI-DAQmx] package, e.g.,
 
         ```python
-        from msl.equipment import Backend, Connection, Equipment
+        from msl.equipment import Backend, Connection
 
         connection = Connection(address="Dev1", backend=Backend.NIDAQ)
         nidaqmx = connection.connect()
@@ -98,4 +95,5 @@ class NIDAQ(Interface, backend=Backend.NIDAQ):
     @property
     def address(self) -> str:
         """Returns the [address][msl.equipment.schema.Connection.address] of the [Connection][]."""
-        return self.equipment.connection.address  # type: ignore[union-attr]  # pyright: ignore[reportOptionalMemberAccess]
+        assert self.equipment.connection  # noqa: S101
+        return self.equipment.connection.address

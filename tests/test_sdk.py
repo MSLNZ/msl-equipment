@@ -78,8 +78,10 @@ def test_log_errcheck(caplog: pytest.LogCaptureFixture) -> None:
     with caplog.at_level("DEBUG"):
         sdk = SDK(Equipment(manufacturer="MSL", connection=Connection("")), libtype="cdll", path=path)
         assert sdk.log_errcheck(None, sdk.sdk.add, (ctypes.c_float(1), ctypes.c_float(1))) is None
+        sdk.disconnect()
         assert caplog.messages == [
-            "Connecting as SDK<MSL||>",
+            "Connecting to SDK<MSL|| at >",
             f"Loaded {sdk.path}",
             "SDK.add(c_float(1.0), c_float(1.0)) -> None",
+            "Disconnecting from SDK<MSL|| at >",
         ]

@@ -1,7 +1,4 @@
-"""Use [PyVISA] as the backend to communicate with the equipment.
-
-[PyVISA]: https://pyvisa.readthedocs.io/en/stable/
-"""
+"""Use PyVISA as the backend to communicate with the equipment."""
 
 from __future__ import annotations
 
@@ -130,6 +127,7 @@ class PyVISA(Interface, backend=Backend.PyVISA):
             self._resource.close()
             logger.debug("Disconnected from %s", self)
             self._resource = None
+        super().disconnect()
 
 
 def _prepare_kwargs(props: dict[str, Any]) -> dict[str, Any]:  # noqa: C901

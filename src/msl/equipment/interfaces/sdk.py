@@ -23,10 +23,10 @@ REGEX_SDK = re.compile(r"SDK::(?P<path>.+)", flags=re.IGNORECASE)
 
 
 class SDK(Interface, regex=REGEX_SDK):
-    """Base class for equipment that use the Software Development Kit (SDK) provided by the manufacturer."""
+    """Base class for equipment that use the manufacturer's Software Development Kit (SDK)."""
 
     def __init__(self, equipment: Equipment, libtype: LibType | None = None, path: PathLike | None = None) -> None:
-        """Base class for equipment that use the Software Development Kit (SDK) provided by the manufacturer.
+        """Base class for equipment that use the manufacturer's Software Development Kit (SDK).
 
         You can use the [configuration file][config-xml-example] to add the location to the SDK
         to the `PATH` environment variable.
@@ -59,6 +59,7 @@ class SDK(Interface, regex=REGEX_SDK):
         """Cleanup references to the SDK library."""
         if hasattr(self, "_lib"):
             self._lib.cleanup()
+        super().disconnect()
 
     @property
     def gateway(self) -> Any:  # noqa: ANN401

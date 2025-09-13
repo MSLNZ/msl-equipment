@@ -13,20 +13,15 @@ if TYPE_CHECKING:
 class MSLConnectionError(OSError):
     """Base class for connection-related exceptions."""
 
-    def __init__(self, interface: Interface | None, message: str) -> None:
+    def __init__(self, interface: Interface, message: str) -> None:
         """Base class for connection-related exceptions.
 
         Args:
-            interface: The interface subclass or `None`.
-            message: The message to append to the generic error message.
+            interface: An interface subclass.
+            message: A message to append to the generic error message.
         """
-        if interface is None:
-            logger.error("%s", message)
-            msg = message
-        else:
-            logger.error("%r %s", interface, message)
-            msg = f"{interface!r}\n{message}"
-        super().__init__(msg)
+        logger.error("%r %s", interface, message)
+        super().__init__(f"{interface!r}\n{message}")
 
 
 class AimTTiError(MSLConnectionError):

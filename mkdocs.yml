@@ -93,8 +93,10 @@ nav:
     - api/config.md
     - api/connection.md
     - api/enumerations.md
+    - api/exceptions.md
     - api/interfaces.md
     - api/types.md
+    - api/utils.md
   - Resources:
     - resources/index.md
   - WebApp: webapp.md

@@ -2962,7 +2962,7 @@ class Interface:
             f"<{equipment.manufacturer}|{equipment.model}|{equipment.serial} at {equipment.connection.address}>"
         )
 
-        logger.debug("Connecting as %s", self)
+        logger.debug("Connecting to %r", self)
 
     def __del__(self) -> None:
         """Calls disconnect()."""
@@ -3019,10 +3019,10 @@ class Interface:
     def disconnect(self) -> None:
         """Disconnect from the equipment.
 
-        This method should be overridden in the subclass if the subclass must implement
+        This method can be overridden in the subclass if the subclass must implement
         tasks that need to be performed in order to safely disconnect from the equipment.
 
-        For example
+        For example,
 
         * to clean up system resources from memory (e.g., if using a manufacturer's SDK)
         * to configure the equipment to be in a state that is safe for people
@@ -3032,6 +3032,7 @@ class Interface:
             This method gets called automatically when the [Interface][msl.equipment.schema.Interface]
             instance gets garbage collected, which happens when the reference count is 0.
         """
+        logger.debug("Disconnecting from %r", self)
 
 
 class _Backend:

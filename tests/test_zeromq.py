@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from typing import TYPE_CHECKING
 
 import pytest
@@ -116,3 +115,5 @@ def test_multiple_context(zmq_server: type[ZMQServer]) -> None:
 
     assert z2.query("echo") == "echo"
     z2.disconnect()
+
+    server.stop()

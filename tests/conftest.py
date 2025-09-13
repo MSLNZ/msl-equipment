@@ -14,6 +14,8 @@ from typing import TYPE_CHECKING
 import pytest
 import zmq
 
+from msl.equipment import Connection
+
 if TYPE_CHECKING:
     from typing import Any, TypeVar
 
@@ -368,9 +370,8 @@ class ZMQServer:
 
         def _start() -> None:
             while True:
-                try:
-                    data = self._socket.recv()
-                except zmq.ContextTerminated:
+                data = self._socket.recv()
+                if data == b"SHUTDOWN":
                     break
 
                 self._socket.send(data if self._queue.empty() else self._queue.get())
@@ -384,7 +385,11 @@ class ZMQServer:
         if self._thread is None:
             return
 
-        self._socket.unbind(f"tcp://{self.host}:{self.port}")
+        c = Connection(f"ZMQ::{self._host}::{self._port}")
+        with c.connect() as dev:
+            dev.write(b"SHUTDOWN")
+
+        self._socket.unbind(f"tcp://{self._host}:{self._port}")
         self._context.destroy()
         self.clear_response_queue()
 

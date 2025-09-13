@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import socket
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer as BaseHTTPServer
@@ -11,15 +12,20 @@ from time import sleep
 from typing import TYPE_CHECKING
 
 import pytest
+import zmq
 
 if TYPE_CHECKING:
     from typing import Any, TypeVar
+
+    from zmq.sugar.context import Context
+    from zmq.sugar.socket import SyncSocket
 
     # the Self type was added in Python 3.11 (PEP 673)
     # using TypeVar is equivalent for < 3.11
     HTTPSelf = TypeVar("HTTPSelf", bound="HTTPServer")
     TCPSelf = TypeVar("TCPSelf", bound="TCPServer")
     UDPSelf = TypeVar("UDPSelf", bound="UDPServer")
+    ZMQSelf = TypeVar("ZMQSelf", bound="ZMQServer")
 
 
 class HTTPRequestHandler(BaseHTTPRequestHandler):
@@ -300,6 +306,92 @@ class UDPServer:
         self.clear_response_queue()
 
 
+class ZMQServer:
+    """A ZeroMQ server."""
+
+    def __init__(self, *, host: str = "127.0.0.1", port: int = 0) -> None:
+        """A ZeroMQ server.
+
+        Args:
+            host: The host to run the server on.
+            port: The port number to use for the server.
+        """
+        self._thread: Thread | None = None
+        self._queue: Queue[bytes] = Queue()
+        self._context: Context[SyncSocket] = zmq.Context()
+        self._socket: SyncSocket = self._context.socket(zmq.REP)
+
+        bound = self._socket.bind(f"tcp://{host}:{port}")
+        address = re.match(r"tcp://(?P<host>[^\s:]+):(?P<port>\d+)", bound.addr)
+        assert address is not None, "Invalid regex for ZMQ address"
+        self._host: str = address["host"]
+        self._port: int = int(address["port"])
+
+    def __enter__(self: ZMQServer) -> ZMQServer:  # noqa: PYI034
+        """Enter a context manager."""
+        self.start()
+        return self
+
+    def __exit__(self, *ignored: object) -> None:
+        """Exit the context manager."""
+        self.stop()
+
+    def add_response(self, content: bytes) -> None:
+        """Add a response to the server's queue.
+
+        Args:
+            content: The content of the response message.
+        """
+        self._queue.put(content)
+
+    def clear_response_queue(self) -> None:
+        """Clear the server's response queue."""
+        with self._queue.mutex:
+            self._queue.queue.clear()
+
+    @property
+    def host(self) -> str:
+        """Returns the host that the server is running on."""
+        return self._host
+
+    @property
+    def port(self) -> int:
+        """Returns the port number of the server."""
+        return self._port
+
+    def start(self, wait: float = 0.1) -> None:
+        """Start a ZeroMQ server.
+
+        Args:
+            wait: The number of seconds to wait for the server to start before returning.
+        """
+
+        def _start() -> None:
+            while True:
+                try:
+                    data = self._socket.recv()
+                except zmq.ContextTerminated:
+                    break
+
+                self._socket.send(data if self._queue.empty() else self._queue.get())
+
+        self._thread = Thread(target=_start, daemon=True)
+        self._thread.start()
+        sleep(wait)
+
+    def stop(self) -> None:
+        """Stop the server and clear the response queue."""
+        if self._thread is None:
+            return
+
+        self._socket.unbind(f"tcp://{self.host}:{self.port}")
+        self._context.destroy()
+        self.clear_response_queue()
+
+        self._thread.join()
+        self._thread = None
+
+
 @pytest.fixture
 def http_server() -> type[HTTPServer]:
     return HTTPServer
@@ -313,3 +405,8 @@ def tcp_server() -> type[TCPServer]:
 @pytest.fixture
 def udp_server() -> type[UDPServer]:
     return UDPServer
+
+
+@pytest.fixture
+def zmq_server() -> type[ZMQServer]:
+    return ZMQServer

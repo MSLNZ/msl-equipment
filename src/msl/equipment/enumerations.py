@@ -26,7 +26,6 @@ REGEX_PROLOGIX = re.compile(
     r"Prologix::(?P<name>[^\s:]+)(?P<port>::1234)?(::GPIB\d*)?::(?P<pad>\d+)(::(?P<sad>\d+))?", flags=re.IGNORECASE
 )
 
-REGEX_ZMQ = re.compile(r"ZMQ::(?P<host>[^\s:]+)::(?P<port>\d+)", flags=re.IGNORECASE)
 
 REGEX_GPIB = re.compile(
     r"(?P<board>\d{0,2})(::((?P<pad>\d+)|(?P<name>[^\s:]+)))?(::(?P<sad>\d+))?", flags=re.IGNORECASE

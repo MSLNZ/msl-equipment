@@ -50,13 +50,8 @@ def test_connect_address_invalid() -> None:
 
 
 def test_connect_timeout() -> None:
-    if sys.platform == "win32":
-        expect = r"Timeout occurred after 0.1 second\(s\)"
-    else:
-        expect = "Connection refused"
-
     conn = Connection("ZMQ::127.0.0.1::1000", timeout=0.1)
-    with pytest.raises(MSLTimeoutError, match=expect):
+    with pytest.raises(MSLTimeoutError, match=r"Timeout occurred after 0.1 second\(s\)"):
         conn.connect()
 
 

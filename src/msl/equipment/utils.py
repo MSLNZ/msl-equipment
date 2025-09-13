@@ -16,15 +16,13 @@ from xml.etree.ElementTree import XML, ParseError
 import numpy as np
 
 if TYPE_CHECKING:
-    from enum import Enum
-
-    from ._types import MessageDataType, MessageFormat, NumpyArray1D, Sequence1D
+    from ._types import EnumType, MessageDataType, MessageFormat, NumpyArray1D, Sequence1D
 
 
 logger = logging.getLogger(__package__)
 
 
-def to_enum(obj: object, enum: type[Enum], *, prefix: str | None = None, to_upper: bool = False) -> Enum:
+def to_enum(obj: object, enum: type[EnumType], *, prefix: str | None = None, to_upper: bool = False) -> EnumType:
     """Convert an object into the specified [enum.Enum][] member.
 
     Args:

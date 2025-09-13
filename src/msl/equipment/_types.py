@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from collections.abc import Sequence
+from enum import Enum
 from typing import Literal, Protocol, TypeAlias, TypeVar, Union  # pyright: ignore[reportDeprecated]
 
 import numpy as np
@@ -36,3 +37,6 @@ NumpyArray1D = np.ndarray[tuple[int], np.dtype[np.number]]
 
 Sequence1D = Sequence[float] | NumpyArray1D
 """A 1-dimensional sequence of numbers."""
+
+EnumType = TypeVar("EnumType", bound=Enum)
+"""An [Enum][enum.Enum] subclass."""

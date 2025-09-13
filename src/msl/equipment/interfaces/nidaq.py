@@ -57,7 +57,9 @@ class NIDAQ(Interface, backend=Backend.NIDAQ):
         ```
 
         You can also combine the packages, use `msl-equipment` for managing information
-        about the equipment and directly use `nidaqmx` for the connection
+        about the equipment and directly use `nidaqmx` for the connection. If you use this
+        combination, the editor you use to develop your code may have better support for
+        features like code completion and type checking.
 
         ```python
         import nidaqmx
@@ -66,11 +68,14 @@ class NIDAQ(Interface, backend=Backend.NIDAQ):
         # config.xml contains <equipment eid="MSLE.0.142" name="daq" manufacturer="NI"/>
         # and specifies where the equipment registers are and the connections file.
         cfg = Config("config.xml")
+        equipment = cfg.equipment["daq"]
+        address = equipment.connection.address
 
-        address = cfg.equipment["daq"].connection.address
         with nidaqmx.Task() as task:
             task.ai_channels.add_ai_voltage_chan(f"{address}/ai0")
             voltage = task.read()
+
+            # You could now use the `equipment` instance to apply a correction to the `voltage`
         ```
 
         See the [examples](https://github.com/ni/nidaqmx-python/tree/master/examples)

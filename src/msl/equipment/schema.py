@@ -262,7 +262,7 @@ class CapitalExpenditure:
     Args:
         asset_number: The asset number in the financial system.
         depreciation_end_year: The year (inclusive) that depreciation ends for the asset.
-        price: The price of the asset.
+        price: The purchase price of the asset.
         currency: The currency associated with the `price`.
     """
 
@@ -2305,6 +2305,9 @@ class Equipment:
     def to_xml(self) -> Element[str]:
         """Convert the [Equipment][msl.equipment.schema.Equipment] class into an XML element.
 
+        The [connection][msl.equipment.schema.Equipment.connection] attribute is not included
+        as an XML element.
+
         Returns:
             The [Equipment][msl.equipment.schema.Equipment] as an XML element.
         """
@@ -2815,7 +2818,7 @@ class Connection:
             manufacturer: The name of the manufacturer of the equipment.
             model: The model number of the equipment.
             serial: The serial number (or unique identifier) of the equipment.
-            properties: Additional key-value pairs that are required to communicate with the equipment.
+            properties: Additional key-value pairs to use when communicating with the equipment.
                 For example, the _baud_rate_ and _parity_ values for an _RS-232_ connection.
         """
         self.address: str = address
@@ -2834,12 +2837,13 @@ class Connection:
         """The model number of the equipment."""
 
         # check for a properties key being explicitly defined and the value is a dict
-        self.properties: dict[str, _Any] = (
-            properties["properties"]
+        properties= (properties["properties"]  # pyright: ignore[reportUnknownVariableType]
             if ("properties" in properties and isinstance(properties["properties"], dict))
             else properties
         )
-        """Additional key-value pairs that are required to communicate with the equipment.
+
+        self.properties: dict[str, _Any] = properties
+        """Additional key-value pairs to use when communicating with the equipment.
 
         For example, the _baud_rate_ and _parity_ values for an _RS-232_ connection.
         """
@@ -2950,7 +2954,7 @@ class Interface:
         """Base class for all interfaces.
 
         Args:
-            equipment: An [Equipment][] instance to use for communication.
+            equipment: An [Equipment][] instance.
         """
         assert equipment.connection is not None  # noqa: S101
         self._equipment: Equipment = equipment

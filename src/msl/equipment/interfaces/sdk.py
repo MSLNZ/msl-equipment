@@ -28,8 +28,8 @@ class SDK(Interface, regex=REGEX_SDK):
     def __init__(self, equipment: Equipment, libtype: LibType | None = None, path: PathLike | None = None) -> None:
         """Base class for equipment that use the manufacturer's Software Development Kit (SDK).
 
-        You can use the [configuration file][config-xml-example] to add the location to the SDK
-        to the `PATH` environment variable.
+        You can use the [configuration file][config-xml-example] to add the directory that the SDK
+        is located at to the `PATH` environment variable.
 
         Args:
             equipment: An [Equipment][] instance.

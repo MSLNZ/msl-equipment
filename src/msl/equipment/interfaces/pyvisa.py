@@ -64,7 +64,7 @@ class PyVISA(Interface, backend=Backend.PyVISA):
 
         You can also combine the packages, use `msl-equipment` for managing information
         about the equipment and directly use `pyvisa` for the connection. If you use this
-        method, the editor you use to develop your code will have better support for
+        combination, the editor you use to develop your code may have better support for
         features like code completion and type checking.
 
         ```python
@@ -74,11 +74,13 @@ class PyVISA(Interface, backend=Backend.PyVISA):
         # config.xml contains <equipment eid="MSLE.0.063" name="dmm"/>
         # and specifies where the equipment registers are and the connections file.
         cfg = Config("config.xml")
-        address = cfg.equipment["dmm"].connection.address
+        equipment = cfg.equipment["dmm"]
 
         rm = pyvisa.ResourceManager()
-        inst = rm.open_resource(address)
-        print(inst.query("*IDN?"))
+        inst = rm.open_resource(equipment.connection.address)
+        data = inst.query("READ?")
+
+        # You could now use the `equipment` instance to apply a correction to the `data`
         ```
 
         [PyVISA]: https://pyvisa.readthedocs.io/en/stable/

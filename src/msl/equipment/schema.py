@@ -3036,7 +3036,7 @@ class Interface:
             This method gets called automatically when the [Interface][msl.equipment.schema.Interface]
             instance gets garbage collected, which happens when the reference count is 0.
         """
-        logger.debug("Disconnecting from %r", self)
+        logger.debug("Disconnected from %r", self)
 
 
 class _Backend:

@@ -47,24 +47,25 @@ class SDK(Interface, regex=REGEX_SDK):
                 raise ValueError(msg)
             path = info.path
 
-        self._lib: LoadLibrary = LoadLibrary(path, libtype)
-        self._sdk: Any = self._lib.lib
+        self._load_library: LoadLibrary = LoadLibrary(path, libtype)
+        self._sdk: Any = self._load_library.lib
 
     @property
     def assembly(self) -> Any:  # noqa: ANN401
         """[assembly][msl.loadlib.load_library.LoadLibrary.assembly] &mdash; The reference to the .NET assembly."""
-        return self._lib.assembly
+        return self._load_library.assembly
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
         """Cleanup references to the SDK library."""
-        if hasattr(self, "_lib"):
-            self._lib.cleanup()
-        super().disconnect()
+        if hasattr(self, "_sdk") and self._sdk is not None:
+            self._load_library.cleanup()
+            self._sdk = None
+            super().disconnect()
 
     @property
     def gateway(self) -> Any:  # noqa: ANN401
         """[gateway][msl.loadlib.load_library.LoadLibrary.gateway] &mdash; The reference to the JAVA gateway."""
-        return self._lib.gateway
+        return self._load_library.gateway
 
     def log_errcheck(
         self, result: _CData | _CDataType | None, func: _NamedFuncPointer, arguments: tuple[_CData | _CDataType, ...]
@@ -76,7 +77,7 @@ class SDK(Interface, regex=REGEX_SDK):
     @property
     def path(self) -> str:
         """[str][] &mdash; The path to the SDK file."""
-        return self._lib.path
+        return self._load_library.path
 
     @property
     def sdk(self) -> Any:  # noqa: ANN401

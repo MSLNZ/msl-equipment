@@ -295,22 +295,25 @@ class MessageBased(Interface):
             message = self._read(size)
         except (socket.timeout, TimeoutError):
             raise MSLTimeoutError(self) from None
-        except Exception as e:
-            raise MSLConnectionError(self, str(e)) from e
+        except Exception as e:  # noqa: BLE001
+            msg = f"{e.__class__.__name__}: {e}"
+            raise MSLConnectionError(self, msg) from None
+
+        if size is not None and len(message) != size:
+            msg = f"received {len(message)} bytes, requested {size} bytes"
+            raise MSLConnectionError(self, msg)
+
+        if dtype:
+            logger.debug("%s.read(dtype=%r, fmt=%r) -> %r", self, dtype, fmt, message)
+            return from_bytes(message, fmt=fmt, dtype=dtype)
 
         if size is None:
             logger.debug("%s.read() -> %r", self, message)
         else:
-            if len(message) != size:
-                msg = f"received {len(message)} bytes, requested {size} bytes"
-                raise MSLConnectionError(self, msg)
-            logger.debug("%s.read(%s) -> %r", self, size, message)
+            logger.debug("%s.read(size=%s) -> %r", self, size, message)
 
         if self._rstrip:
             message = message.rstrip()
-
-        if dtype:
-            return from_bytes(message, fmt=fmt, dtype=dtype)
 
         if decode:
             return message.decode(encoding=self._encoding)

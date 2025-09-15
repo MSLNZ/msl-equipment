@@ -73,15 +73,17 @@ def test_direct_path() -> None:
         assert sdk.sdk.add(1, 1) == 2
 
 
-def test_log_errcheck(caplog: pytest.LogCaptureFixture) -> None:
+def test_logging_messages(caplog: pytest.LogCaptureFixture) -> None:
     path = EXAMPLES_DIR / f"cpp_lib{suffix}"
     with caplog.at_level("DEBUG"):
         sdk = SDK(Equipment(manufacturer="MSL", connection=Connection("")), libtype="cdll", path=path)
         assert sdk.log_errcheck(None, sdk.sdk.add, (ctypes.c_float(1), ctypes.c_float(1))) is None
         sdk.disconnect()
+        sdk.disconnect()  # multiple times is ok and only logs "Disconnected from ..." once
+        sdk.disconnect()
         assert caplog.messages == [
             "Connecting to SDK<MSL|| at >",
             f"Loaded {sdk.path}",
             "SDK.add(c_float(1.0), c_float(1.0)) -> None",
-            "Disconnecting from SDK<MSL|| at >",
+            "Disconnected from SDK<MSL|| at >",
         ]

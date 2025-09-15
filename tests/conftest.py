@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import re
 import socket
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer as BaseHTTPServer
@@ -321,13 +320,15 @@ class ZMQServer:
         self._thread: Thread | None = None
         self._queue: Queue[bytes] = Queue()
         self._context: Context[SyncSocket] = zmq.Context()
+        self._context.set(zmq.BLOCKY, 0)
         self._socket: SyncSocket = self._context.socket(zmq.REP)
 
-        bound = self._socket.bind(f"tcp://{host}:{port}")
-        address = re.match(r"tcp://(?P<host>[^\s:]+):(?P<port>\d+)", bound.addr)
-        assert address is not None, "Invalid regex for ZMQ address"
-        self._host: str = address["host"]
-        self._port: int = int(address["port"])
+        self._host: str = host
+        self._port: int = port
+        if port == 0:
+            self._port = self._socket.bind_to_random_port(f"tcp://{host}")
+        else:
+            _ = self._socket.bind(f"tcp://{host}:{port}")
 
     def __enter__(self: ZMQServer) -> ZMQServer:  # noqa: PYI034
         """Enter a context manager."""
@@ -371,10 +372,9 @@ class ZMQServer:
         def _start() -> None:
             while True:
                 data = self._socket.recv()
+                self._socket.send(data if self._queue.empty() else self._queue.get())
                 if data == b"SHUTDOWN":
                     break
-
-                self._socket.send(data if self._queue.empty() else self._queue.get())
 
         self._thread = Thread(target=_start, daemon=True)
         self._thread.start()
@@ -387,7 +387,7 @@ class ZMQServer:
 
         c = Connection(f"ZMQ::{self._host}::{self._port}")
         with c.connect() as dev:
-            dev.write(b"SHUTDOWN")
+            _ = dev.query(b"SHUTDOWN")
 
         self._thread.join()
         self._thread = None

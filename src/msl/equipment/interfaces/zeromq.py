@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-import socket
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -13,7 +12,7 @@ from zmq.constants import SocketType
 from msl.equipment.exceptions import MSLConnectionError
 from msl.equipment.utils import to_enum
 
-from .message_based import MessageBased, MSLTimeoutError
+from .message_based import MessageBased
 
 if TYPE_CHECKING:
     from zmq.sugar.context import Context
@@ -57,33 +56,22 @@ class ZeroMQ(MessageBased, regex=REGEX_ZMQ):
             msg = f"Invalid ZeroMQ address {equipment.connection.address!r}"
             raise ValueError(msg)
 
-        self._address: ParsedZMQAddress = address
-
-        self._socket_type: SocketType = to_enum(p.get("socket_type", "REQ"), SocketType, to_upper=True)
-        self._protocol: str = p.get("protocol", "tcp")
+        socket_type = to_enum(p.get("socket_type", "REQ"), SocketType, to_upper=True)
+        protocol: str = p.get("protocol", "tcp")
 
         self._context: Context[SyncSocket] = zmq.Context()
-        self._socket: SyncSocket = self._context.socket(self._socket_type)
-        self._connect()
-
-    def _connect(self) -> None:
-        host, port = self._address.host, self._address.port
-        # Calling zmq.Socket.connect() does not verify if the connection can be made immediately
-        # Use the builtin socket module to verify
-        try:
-            with socket.socket() as s:
-                s.settimeout(self.timeout or 10)
-                s.connect((host, port))
-        except (OSError, TimeoutError):
-            raise MSLTimeoutError(self) from None
-
-        try:
-            # The (host, port) is valid, connect with ZeroMQ
-            _ = self._socket.connect(f"{self._protocol}://{host}:{port}")
-        except zmq.ZMQError as e:
-            raise MSLConnectionError(self, str(e)) from None
-
+        self._socket: SyncSocket = self._context.socket(socket_type)
         self._set_interface_timeout()
+        self._set_interface_max_read_size()
+
+        # Calling zmq.Socket.connect() does not verify that the host:port value until the
+        # socket is used to write/read bytes. An error raised here would be for an an invalid
+        # ZeroMQ addr value
+        try:
+            _ = self._socket.connect(f"{protocol}://{address.host}:{address.port}")
+        except zmq.ZMQError as e:
+            msg = f"{e.__class__.__name__}: {e}"
+            raise MSLConnectionError(self, msg) from None
 
     def _read(self, size: int | None) -> bytes:  # pyright: ignore[reportImplicitOverride]
         """Overrides method in MessageBased."""
@@ -114,11 +102,13 @@ class ZeroMQ(MessageBased, regex=REGEX_ZMQ):
         return len(message)
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
-        """Close the socket connection."""
-        if hasattr(self, "_socket"):
+        """Close the socket connection and terminate the context."""
+        if hasattr(self, "_socket") and not self._socket.closed:
+            self._context.set(zmq.BLOCKY, 0)
+            self._socket.setsockopt(zmq.LINGER, 0)
             self._socket.close()
             self._context.term()
-        super().disconnect()
+            super().disconnect()
 
 
 @dataclass

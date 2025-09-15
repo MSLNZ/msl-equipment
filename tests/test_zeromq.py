@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from msl.equipment import Connection, Equipment, MSLConnectionError, MSLTimeoutError
+from msl.equipment import Connection, Equipment, MSLConnectionError
 from msl.equipment.interfaces.zeromq import ZeroMQ, parse_zmq_address
 
 if TYPE_CHECKING:
@@ -48,30 +48,31 @@ def test_connect_address_invalid() -> None:
         _ = ZeroMQ(equipment)
 
 
-def test_connect_timeout() -> None:
-    conn = Connection("ZMQ::127.0.0.1::1000", timeout=0.1)
-    with pytest.raises(MSLTimeoutError, match=r"Timeout occurred after 0.1 second\(s\)"):
-        conn.connect()
+def test_no_server() -> None:
+    # ZeroMQ does not verify the server is running until a write/read
+    conn = Connection("ZMQ::127.0.0.1::53182", timeout=0.1)
+    zmq = conn.connect()
+    with pytest.raises(MSLConnectionError, match=r"Resource temporarily unavailable"):
+        _ = zmq.query("hi")
 
 
-def test_connect_socket_type_invalid() -> None:
-    conn = Connection("ZMQ::127.0.0.1::1000", socket_type=99999)
+def test_socket_type_invalid() -> None:
+    conn = Connection("ZMQ::127.0.0.1::46283", socket_type=99999)
     with pytest.raises(ValueError, match="Cannot create <enum 'SocketType'> from 99999"):
         conn.connect()
 
 
-def test_connect_protocol_invalid(zmq_server: type[ZMQServer]) -> None:
-    with zmq_server() as server:
-        conn = Connection(f"ZMQ::127.0.0.1::{server.port}", protocol="invalid")
-        with pytest.raises(MSLConnectionError, match="Protocol not supported"):
-            conn.connect()
+def test_protocol_invalid() -> None:
+    conn = Connection("ZMQ::127.0.0.1::58244", protocol="invalid")
+    with pytest.raises(MSLConnectionError, match="Protocol not supported"):
+        conn.connect()
 
 
-def test_write_read(zmq_server: type[ZMQServer]) -> None:
+def test_query(zmq_server: type[ZMQServer]) -> None:
     server = zmq_server()
     server.start()
 
-    conn = Connection(f"ZMQ::127.0.0.1::{server.port}", read_termination="ignored")
+    conn = Connection(f"ZMQ::{server.host}::{server.port}", read_termination="ignored")
     dev: ZeroMQ = conn.connect()
     assert dev.read_termination is None
     assert dev.write_termination is None
@@ -99,10 +100,10 @@ def test_multiple_context(zmq_server: type[ZMQServer]) -> None:
     server = zmq_server()
     server.start()
 
-    c1 = Connection(f"ZMQ::127.0.0.1::{server.port}")
+    c1 = Connection(f"ZMQ::{server.host}::{server.port}")
     z1: ZeroMQ = c1.connect()
 
-    c2 = Connection(f"ZMQ::127.0.0.1::{server.port}")
+    c2 = Connection(f"ZMQ::{server.host}::{server.port}")
     z2: ZeroMQ = c2.connect()
 
     server.add_response(b"bar")
@@ -117,3 +118,24 @@ def test_multiple_context(zmq_server: type[ZMQServer]) -> None:
     z2.disconnect()
 
     server.stop()
+
+
+def test_logging_messages(zmq_server: type[ZMQServer], caplog: pytest.LogCaptureFixture) -> None:
+    with zmq_server() as server:
+        address = f"ZMQ::{server.host}::{server.port}"
+        c = Connection(address)
+        with caplog.at_level("DEBUG"):
+            zmq: ZeroMQ = c.connect()
+            assert zmq.query("hello") == "hello"
+            assert zmq.query("hello", size=2) == "he"
+            zmq.disconnect()
+            zmq.disconnect()  # multiple times is ok and only logs "Disconnected from ..." once
+            zmq.disconnect()
+            assert caplog.messages == [
+                f"Connecting to ZeroMQ<|| at {address}>",
+                "ZeroMQ<||>.write(b'hello')",
+                "ZeroMQ<||>.read() -> b'hello'",
+                "ZeroMQ<||>.write(b'hello')",
+                "ZeroMQ<||>.read(size=2) -> b'he'",
+                f"Disconnected from ZeroMQ<|| at {address}>",
+            ]

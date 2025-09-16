@@ -7,6 +7,7 @@ Interface classes for computer control.
 * [NIDAQ][msl.equipment.interfaces.nidaq.NIDAQ] &mdash; Use [NI-DAQmx](https://nidaqmx-python.readthedocs.io/en/stable/index.html) as the backend to communicate with the equipment
 * [PyVISA][msl.equipment.interfaces.pyvisa.PyVISA] &mdash; Use [PyVISA](https://pyvisa.readthedocs.io/en/stable/) as the backend to communicate with the equipment
 * [SDK][msl.equipment.interfaces.sdk.SDK] &mdash; Base class for equipment that use the manufacturer's Software Development Kit
+* [Socket][msl.equipment.interfaces.socket.Socket] &mdash; Base class for equipment that is connected through a socket
 * [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] &mdash; Base class for equipment that use the [ZeroMQ](https://zeromq.org/) communication protocol
 
 ::: msl.equipment.schema.Interface
@@ -30,6 +31,11 @@ Interface classes for computer control.
         show_root_heading: true
 
 ::: msl.equipment.interfaces.sdk.SDK
+    options:
+        show_root_full_path: false
+        show_root_heading: true
+
+::: msl.equipment.interfaces.socket.Socket
     options:
         show_root_full_path: false
         show_root_heading: true

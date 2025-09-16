@@ -190,6 +190,10 @@ class TCPServer:
                 if not data or data.startswith(b"SHUTDOWN"):
                     break
 
+                if data.startswith(b"CONTINUE"):
+                    self._conn.sendall(b"NOT TERMINATED")
+                    continue
+
                 self._conn.sendall(data if self._queue.empty() else self._queue.get())
 
         self._thread = Thread(target=_start, args=(self.term,), daemon=True)
@@ -265,7 +269,7 @@ class UDPServer:
         return int(self._sock.getsockname()[1])
 
     def start(self, wait: float = 0.1) -> None:
-        """Start a TCP server.
+        """Start a UDP server.
 
         Args:
             wait: The number of seconds to wait for the server to start before returning.
@@ -303,6 +307,7 @@ class UDPServer:
         self._thread.join()
         self._thread = None
 
+        self._sock.shutdown(socket.SHUT_RDWR)  # cSpell: ignore RDWR
         self._sock.close()
         self.clear_response_queue()
 

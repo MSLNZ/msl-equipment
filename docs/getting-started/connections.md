@@ -147,6 +147,7 @@ National Instruments also provides [examples](https://www.ni.com/docs/en-US/bund
 The following interface classes are available
 
 * [SDK][msl.equipment.interfaces.sdk.SDK] &mdash; Use the Software Development Kit (SDK) provided by the manufacturer
+* [Socket][msl.equipment.interfaces.socket.Socket] &mdash; Base class for equipment that is connected through a socket
 * [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] &mdash; Communicate via the [ZeroMQ](https://zeromq.org/) protocol
 
 ### Backends {: #connections-backend}

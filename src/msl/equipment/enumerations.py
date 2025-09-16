@@ -13,10 +13,6 @@ IS_WINDOWS: bool = sys.platform == "win32"
 
 REGEX_SERIAL = re.compile(r"(COM|ASRL|ASRLCOM)((?P<dev>/dev/[^\s:]+)|(?P<number>\d+))", flags=re.IGNORECASE)
 
-REGEX_SOCKET = re.compile(
-    r"(?P<prefix>SOCKET|TCP|UDP|TCPIP\d*)::(?P<host>[^\s:]+)::(?P<port>\d+)(?P<suffix>::SOCKET)?", flags=re.IGNORECASE
-)
-
 # TCPIP[board]::host address[::LAN device name][::INSTR]
 REGEX_TCPIP = re.compile(
     r"TCPIP(?P<board>\d*)::(?P<host>[^\s:]+)(::(?P<name>([^\s:]+\d+(\[.+])?)))?(::INSTR)?$", flags=re.IGNORECASE
@@ -25,7 +21,6 @@ REGEX_TCPIP = re.compile(
 REGEX_PROLOGIX = re.compile(
     r"Prologix::(?P<name>[^\s:]+)(?P<port>::1234)?(::GPIB\d*)?::(?P<pad>\d+)(::(?P<sad>\d+))?", flags=re.IGNORECASE
 )
-
 
 REGEX_GPIB = re.compile(
     r"(?P<board>\d{0,2})(::((?P<pad>\d+)|(?P<name>[^\s:]+)))?(::(?P<sad>\d+))?", flags=re.IGNORECASE

@@ -1,6 +1,0 @@
-Description	Manufacturer™	Model	Serial Number	Usual Location	Calibration Cycle “Years”	Last Service/Calibration [Date Calibrated]
-Spectroradiometer Optics Head	Optronics Laboratories Ltd	742	1005	Photometric bench Room	1	19/01/2007
-"Lamp Power Supply (40A, 25V) and 0.01 ohm shunt"	Kepco and “TMK” shunt	JQE 0-25V 0-40A		Photometric bench Room	4	8/04/2014
-1 kW Std Resistor.	Vishay	VHA-412-1k	51390	Cryogenic Radiometer Lab		
-Motorized Filter Flip Mount for Ø25mm Optics	Thorlabs	MFF101/M	37870963	Few Photon Lab		
-"Optical Beam Shutter with 10' Long Cable, Ø1/2"" Aperture, M4 Taps"	Thorlabs	SH05/M	10-291	Few Photon Lab	5	19/05/2016

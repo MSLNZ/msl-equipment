@@ -649,6 +649,7 @@ def test_parse_lxi_webserver_xml(http_server: type[HTTPServer]) -> None:
                 "TCPIP::hostname::5025::SOCKET",
             ),
             mac_address="00-00-00-00-00-00",
+            hostname="hostname",
         ),
     )
 
@@ -670,7 +671,7 @@ def test_parse_lxi_webserver_xml_namespace(http_server: type[HTTPServer]) -> Non
   <IdentificationURL>http://hostname.local/lxi/identification</IdentificationURL>
   <Interface xsi:type="NetworkInformation" InterfaceType="LXI" IPType="IPv4" InterfaceName="eth0">
     <InstrumentAddressString>TCPIP::hostname::5555::SOCKET</InstrumentAddressString>
-    <Hostname>hostname</Hostname>
+    <Hostname>lxi.company.nz</Hostname>
     <IPAddress>169.254.100.2</IPAddress>
     <SubnetMask>255.255.255.0</SubnetMask>
     <MACAddress>00:00:00:00:11:ab</MACAddress>
@@ -699,11 +700,13 @@ def test_parse_lxi_webserver_xml_namespace(http_server: type[HTTPServer]) -> Non
             type="LXI",
             addresses=("TCPIP::hostname::5555::SOCKET",),
             mac_address="00:00:00:00:11:ab",
+            hostname="lxi.company.nz",
         ),
         LXIInterface(
             type="MyInterface",
             addresses=("hostname:1234",),
             mac_address="",
+            hostname="",
         ),
     )
 
@@ -726,7 +729,7 @@ def test_parse_lxi_webserver_xml_multiple_interfaces(http_server: type[HTTPServe
     <InstrumentAddressString>TCPIP::ip.address::hislip0::INSTR</InstrumentAddressString>
     <InstrumentAddressString>TCPIP::ip.address::inst0::INSTR</InstrumentAddressString>
     <InstrumentAddressString>TCPIP::ip.address::5025::SOCKET</InstrumentAddressString>
-    <Hostname>ip.address</Hostname>
+    <Hostname>ip.address.1</Hostname>
     <IPAddress>10.12.102.2</IPAddress>
     <SubnetMask>255.255.255.128</SubnetMask>
     <MACAddress>00-01-02-03-04-05</MACAddress>
@@ -737,7 +740,7 @@ def test_parse_lxi_webserver_xml_multiple_interfaces(http_server: type[HTTPServe
   <Interface xsi:type="NetworkInformation" InterfaceType="LXI" IPType="IPv6">
     <InstrumentAddressString>TCPIP::ip.address::hislip0::INSTR</InstrumentAddressString>
     <InstrumentAddressString>TCPIP::ip.address::5025::SOCKET</InstrumentAddressString>
-    <Hostname>ip.address</Hostname>
+    <Hostname>ip.address.2</Hostname>
     <IPAddress>ab01::1234:2cd:ef03:0123a</IPAddress>
     <SubnetMask />
     <MACAddress>de-ad-02-03-04-05</MACAddress>
@@ -773,6 +776,7 @@ def test_parse_lxi_webserver_xml_multiple_interfaces(http_server: type[HTTPServe
                 "TCPIP::ip.address::5025::SOCKET",
             ),
             mac_address="00-01-02-03-04-05",
+            hostname="ip.address.1",
         ),
         LXIInterface(
             type="LXI",
@@ -781,6 +785,7 @@ def test_parse_lxi_webserver_xml_multiple_interfaces(http_server: type[HTTPServe
                 "TCPIP::ip.address::5025::SOCKET",
             ),
             mac_address="de-ad-02-03-04-05",
+            hostname="ip.address.2",
         ),
     )
 

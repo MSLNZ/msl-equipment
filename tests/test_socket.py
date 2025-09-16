@@ -382,6 +382,7 @@ def test_reconnect_udp(udp_server: type[UDPServer]) -> None:
     server.stop()
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="error raised only on Windows")
 def test_reconnect_tcp(tcp_server: type[TCPServer], caplog: pytest.LogCaptureFixture) -> None:
     term = b"\r\n"
     server = tcp_server(term=term)

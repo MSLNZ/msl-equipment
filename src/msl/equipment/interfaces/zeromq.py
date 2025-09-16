@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple
 
 import zmq
 from zmq.constants import SocketType
@@ -21,10 +20,10 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-REGEX_ZMQ = re.compile(r"ZMQ::(?P<host>[^\s:]+)::(?P<port>\d+)", flags=re.IGNORECASE)
+REGEX = re.compile(r"ZMQ::(?P<host>[^\s:]+)::(?P<port>\d+)", flags=re.IGNORECASE)
 
 
-class ZeroMQ(MessageBased, regex=REGEX_ZMQ):
+class ZeroMQ(MessageBased, regex=REGEX):
     """Base class for equipment that use the [ZeroMQ](https://zeromq.org/) communication protocol."""
 
     def __init__(self, equipment: Equipment) -> None:
@@ -43,21 +42,22 @@ class ZeroMQ(MessageBased, regex=REGEX_ZMQ):
             protocol (str): ZeroMQ protocol (`tcp`, `udp`, `pgm`, `inproc`, `ipc`) _Default: `tcp`_
             socket_type (int | str): ZeroMQ [socket type][zmq.SocketType]. _Default: `REQ`_
         """
-        assert equipment.connection is not None  # noqa: S101
-        p = equipment.connection.properties
-
-        # ZeroMQ does not use termination characters
-        p["termination"] = None
-
         super().__init__(equipment)
+
+        assert equipment.connection is not None  # noqa: S101
 
         address = parse_zmq_address(equipment.connection.address)
         if address is None:
             msg = f"Invalid ZeroMQ address {equipment.connection.address!r}"
             raise ValueError(msg)
 
+        p = equipment.connection.properties
         socket_type = to_enum(p.get("socket_type", "REQ"), SocketType, to_upper=True)
         protocol: str = p.get("protocol", "tcp")
+
+        # ZeroMQ does not use termination characters
+        self.read_termination = None  # pyright: ignore[reportUnannotatedClassAttribute]
+        self.write_termination = None  # pyright: ignore[reportUnannotatedClassAttribute]
 
         self._context: Context[SyncSocket] = zmq.Context()
         self._socket: SyncSocket = self._context.socket(socket_type)
@@ -82,19 +82,16 @@ class ZeroMQ(MessageBased, regex=REGEX_ZMQ):
 
     def _set_interface_max_read_size(self) -> None:  # pyright: ignore[reportImplicitOverride]
         """Overrides method in MessageBased."""
-        if not hasattr(self, "_socket"):
-            return
-        self._socket.setsockopt(zmq.MAXMSGSIZE, self.max_read_size)
+        if hasattr(self, "_socket"):
+            self._socket.setsockopt(zmq.MAXMSGSIZE, self.max_read_size)
 
     def _set_interface_timeout(self) -> None:  # pyright: ignore[reportImplicitOverride]
         """Overrides method in MessageBased."""
-        if not hasattr(self, "_socket"):
-            return
-
-        # ZeroMQ requires the timeout to be an integer with units of milliseconds (-1 is Infinity)
-        timeout_ms = -1 if self._timeout is None else int(self._timeout * 1000)
-        self._socket.setsockopt(zmq.RCVTIMEO, timeout_ms)
-        self._socket.setsockopt(zmq.SNDTIMEO, timeout_ms)
+        if hasattr(self, "_socket"):
+            # ZeroMQ requires the timeout to be an integer with units of milliseconds (-1 is Infinity)
+            timeout_ms = -1 if self._timeout is None else int(self._timeout * 1000)
+            self._socket.setsockopt(zmq.RCVTIMEO, timeout_ms)
+            self._socket.setsockopt(zmq.SNDTIMEO, timeout_ms)
 
     def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
         """Overrides method in MessageBased."""
@@ -110,9 +107,13 @@ class ZeroMQ(MessageBased, regex=REGEX_ZMQ):
             self._context.term()
             super().disconnect()
 
+    @property
+    def socket(self) -> SyncSocket:
+        """Returns a reference to the underlying socket."""
+        return self._socket
 
-@dataclass
-class ParsedZMQAddress:
+
+class ParsedZMQAddress(NamedTuple):
     """The parsed result of a VISA-style address for the ZeroMQ interface.
 
     Args:
@@ -133,5 +134,5 @@ def parse_zmq_address(address: str) -> ParsedZMQAddress | None:
     Returns:
         The parsed address or `None` if `address` is not valid for the ZeroMQ interface.
     """
-    match = REGEX_ZMQ.match(address)
+    match = REGEX.match(address)
     return ParsedZMQAddress(match["host"], int(match["port"])) if match else None

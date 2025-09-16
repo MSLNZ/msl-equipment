@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pytest
+import zmq
 
 from msl.equipment import Connection, Equipment, MSLConnectionError
 from msl.equipment.interfaces.zeromq import ZeroMQ, parse_zmq_address
@@ -139,3 +140,35 @@ def test_logging_messages(zmq_server: type[ZMQServer], caplog: pytest.LogCapture
                 "ZeroMQ<||>.read(size=2) -> b'he'",
                 f"Disconnected from ZeroMQ<|| at {address}>",
             ]
+
+
+def test_set_interface(zmq_server: type[ZMQServer]) -> None:
+    with zmq_server() as server:
+        conn = Connection(f"ZMQ::{server.host}::{server.port}", termination="X")
+        with conn.connect() as dev:
+            assert dev.read_termination is None
+            assert dev.write_termination is None
+
+            dev.max_read_size = 32
+            assert dev.max_read_size == 32
+            assert dev.socket.getsockopt(zmq.MAXMSGSIZE) == 32
+
+            dev.timeout = 0.5
+            assert dev.timeout == 0.5
+            assert dev.socket.getsockopt(zmq.RCVTIMEO) == 500
+            assert dev.socket.getsockopt(zmq.SNDTIMEO) == 500
+
+            dev.timeout = -1
+            assert dev.timeout is None
+            assert dev.socket.getsockopt(zmq.RCVTIMEO) == -1
+            assert dev.socket.getsockopt(zmq.SNDTIMEO) == -1
+
+            dev.timeout = 10
+            assert dev.timeout == 10
+            assert dev.socket.getsockopt(zmq.RCVTIMEO) == 10_000
+            assert dev.socket.getsockopt(zmq.SNDTIMEO) == 10_000
+
+            dev.timeout = None
+            assert dev.timeout is None
+            assert dev.socket.getsockopt(zmq.RCVTIMEO) == -1
+            assert dev.socket.getsockopt(zmq.SNDTIMEO) == -1

@@ -17,13 +17,6 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-CR: bytes = b"\r"
-"""The carriage-return character (hex: 0x0D, decimal: 13)."""
-
-LF: bytes = b"\n"
-"""The line-feed character (hex: 0x0A, decimal: 10)."""
-
-
 class MessageBased(Interface):
     """Base class for equipment that use message-based communication."""
 
@@ -81,8 +74,8 @@ class MessageBased(Interface):
             self.read_termination = p["termination"]
             self.write_termination = p["termination"]
         else:
-            self.read_termination = p.get("read_termination", LF)
-            self.write_termination = p.get("write_termination", CR + LF)
+            self.read_termination = p.get("read_termination", b"\n")
+            self.write_termination = p.get("write_termination", b"\r\n")
 
     def _read(self, size: int | None) -> bytes:  # pyright: ignore[reportUnusedParameter]
         """The subclass must override this method."""
@@ -299,21 +292,22 @@ class MessageBased(Interface):
             msg = f"{e.__class__.__name__}: {e}"
             raise MSLConnectionError(self, msg) from None
 
-        if size is not None and len(message) != size:
-            msg = f"received {len(message)} bytes, requested {size} bytes"
-            raise MSLConnectionError(self, msg)
-
-        if dtype:
-            logger.debug("%s.read(dtype=%r, fmt=%r) -> %r", self, dtype, fmt, message)
-            return from_bytes(message, fmt=fmt, dtype=dtype)
-
         if size is None:
-            logger.debug("%s.read() -> %r", self, message)
+            if dtype:
+                logger.debug("%s.read(dtype=%r, fmt=%r) -> %r", self, dtype, fmt, message)
+            else:
+                logger.debug("%s.read() -> %r", self, message)
         else:
+            if len(message) != size:
+                msg = f"received {len(message)} bytes, requested {size} bytes"
+                raise MSLConnectionError(self, msg)
             logger.debug("%s.read(size=%s) -> %r", self, size, message)
 
         if self._rstrip:
             message = message.rstrip()
+
+        if dtype:
+            return from_bytes(message, fmt=fmt, dtype=dtype)
 
         if decode:
             return message.decode(encoding=self._encoding)

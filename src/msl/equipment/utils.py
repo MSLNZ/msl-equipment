@@ -293,11 +293,13 @@ class LXIInterface:
             (e.g., VXI, PXI, GPIB, Serial, USB, ...).
         addresses: The VISA-like string addresses that are supported to communicate with the device.
         mac_address: The MAC address of the interface.
+        hostname: The hostname of the interface.
     """
 
     type: str = ""
     addresses: tuple[str, ...] = ()
     mac_address: str = ""
+    hostname: str = ""
 
 
 @dataclass
@@ -406,6 +408,8 @@ def _parse_lxi_xml(content: str) -> LXIDevice:  # noqa: C901
                     interface.addresses += (i.text,)
                 elif i.tag.endswith("MACAddress") and i.text:
                     interface.mac_address = i.text
+                elif i.tag.endswith("Hostname") and i.text:
+                    interface.hostname = i.text
             device.interfaces += (interface,)
 
     return device

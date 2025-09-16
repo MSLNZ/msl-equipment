@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -225,7 +226,8 @@ def test_tcp_for_udp_server(udp_server: type[UDPServer]) -> None:
             timeout=0.2,
         )
 
-        with pytest.raises(MSLTimeoutError):
+        error = MSLTimeoutError if sys.platform == "win32" else MSLConnectionError
+        with pytest.raises(error):
             _ = connection.connect()
 
 
@@ -237,7 +239,8 @@ def test_udp_for_tcp_server(tcp_server: type[TCPServer]) -> None:
         )
 
         dev = connection.connect()
-        with pytest.raises(MSLConnectionError):
+        error = MSLConnectionError if sys.platform == "win32" else MSLTimeoutError
+        with pytest.raises(error):
             _ = dev.query("Hi")
 
 
@@ -365,7 +368,8 @@ def test_reconnect_udp(udp_server: type[UDPServer]) -> None:
 
     server.stop()
 
-    with pytest.raises(MSLConnectionError):
+    error = MSLConnectionError if sys.platform == "win32" else MSLTimeoutError
+    with pytest.raises(error):
         _ = dev.query("foo")
 
     server = udp_server(port=port, term=term)

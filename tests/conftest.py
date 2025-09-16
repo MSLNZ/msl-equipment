@@ -307,7 +307,6 @@ class UDPServer:
         self._thread.join()
         self._thread = None
 
-        self._sock.shutdown(socket.SHUT_RDWR)  # cSpell: ignore RDWR
         self._sock.close()
         self.clear_response_queue()
 

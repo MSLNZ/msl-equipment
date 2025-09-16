@@ -11,7 +11,6 @@ from msl.equipment.utils import logger
 from msl.loadlib import LoadLibrary
 
 if TYPE_CHECKING:
-    from ctypes import _CData, _CDataType, _NamedFuncPointer  # pyright: ignore[reportPrivateUsage]
     from typing import Any
 
     from msl.equipment._types import PathLike
@@ -19,10 +18,10 @@ if TYPE_CHECKING:
     from msl.loadlib._types import LibType
 
 
-REGEX_SDK = re.compile(r"SDK::(?P<path>.+)", flags=re.IGNORECASE)
+REGEX = re.compile(r"SDK::(?P<path>.+)", flags=re.IGNORECASE)
 
 
-class SDK(Interface, regex=REGEX_SDK):
+class SDK(Interface, regex=REGEX):
     """Base class for equipment that use the manufacturer's Software Development Kit (SDK)."""
 
     def __init__(self, equipment: Equipment, libtype: LibType | None = None, path: PathLike | None = None) -> None:
@@ -67,9 +66,7 @@ class SDK(Interface, regex=REGEX_SDK):
         """[gateway][msl.loadlib.load_library.LoadLibrary.gateway] &mdash; The reference to the JAVA gateway."""
         return self._load_library.gateway
 
-    def log_errcheck(
-        self, result: _CData | _CDataType | None, func: _NamedFuncPointer, arguments: tuple[_CData | _CDataType, ...]
-    ) -> _CData | _CDataType | None:
+    def log_errcheck(self, result: Any, func: Any, arguments: tuple[Any, ...]) -> Any:  # noqa: ANN401
         """Convenience method for logging an [errcheck][ctypes._CFuncPtr.errcheck] from [ctypes][]."""
         logger.debug("%s.%s%s -> %s", self.__class__.__name__, func.__name__, arguments, result)
         return result
@@ -85,19 +82,6 @@ class SDK(Interface, regex=REGEX_SDK):
         return self._sdk
 
 
-def parse_sdk_address(address: str) -> ParsedSDKAddress | None:
-    """Get the path to the SDK library from an address.
-
-    Args:
-        address: The VISA-style address to use for the connection.
-
-    Returns:
-        The parsed SDK address or `None` if `address` is not valid for the SDK interface.
-    """
-    match = REGEX_SDK.match(address)
-    return ParsedSDKAddress(path=match["path"]) if match else None
-
-
 @dataclass
 class ParsedSDKAddress:
     """The parsed result of a VISA-style address for the SDK interface.
@@ -107,3 +91,16 @@ class ParsedSDKAddress:
     """
 
     path: str
+
+
+def parse_sdk_address(address: str) -> ParsedSDKAddress | None:
+    """Get the path to the SDK library from an address.
+
+    Args:
+        address: The VISA-style address to use for the connection.
+
+    Returns:
+        The parsed SDK address or `None` if `address` is not valid for the SDK interface.
+    """
+    match = REGEX.match(address)
+    return ParsedSDKAddress(path=match["path"]) if match else None

@@ -382,7 +382,6 @@ def test_reconnect_udp(udp_server: type[UDPServer]) -> None:
     server.stop()
 
 
-@pytest.mark.skipif(sys.platform != "win32", reason="error raised only on Windows")
 def test_reconnect_tcp(tcp_server: type[TCPServer], caplog: pytest.LogCaptureFixture) -> None:
     term = b"\r\n"
     server = tcp_server(term=term)
@@ -404,7 +403,12 @@ def test_reconnect_tcp(tcp_server: type[TCPServer], caplog: pytest.LogCaptureFix
 
     server.stop()
 
-    with pytest.raises(MSLConnectionError):
+    is_windows = sys.platform == "win32"
+    if not is_windows:
+        assert dev.read() == "SHUTDOWN"
+
+    error = MSLConnectionError if is_windows else MSLTimeoutError
+    with pytest.raises(error):
         _ = dev.query("foo")
 
     with caplog.at_level("DEBUG"):
@@ -412,13 +416,19 @@ def test_reconnect_tcp(tcp_server: type[TCPServer], caplog: pytest.LogCaptureFix
             dev.reconnect(max_attempts=5)
 
         messages = caplog.messages
-        assert len(messages) == 6
-        assert messages[0].startswith(f"Socket<|| at {address}> ConnectionAbortedError")
+        if is_windows:
+            assert len(messages) == 6
+            assert messages[0].startswith(f"Socket<|| at {address}> ConnectionAbortedError")
+        else:
+            assert len(messages) == 7
+            assert messages[0].rstrip() == f"Socket<|| at {address}> Timeout occurred after 0.1 second(s)."
         assert messages[1].rstrip() == f"Socket<|| at {address}> Timeout occurred after 0.1 second(s)."
         assert messages[2].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
         assert messages[3].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
         assert messages[4].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
         assert messages[5].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
+        if not is_windows:
+            assert messages[6].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
 
     server = tcp_server(port=port, term=term)
     server.start()

@@ -508,7 +508,11 @@ def test_to_bytes_from_bytes_ascii(size: int, dtype: str) -> None:
 
 
 def test_ipv4_addresses() -> None:
-    assert len(ipv4_addresses()) >= 1
+    addresses = ipv4_addresses()
+    assert len(addresses) >= 1
+    for address in addresses:
+        assert ":" not in address  # does not contain an IPv6 address
+    assert "127.0.0.1" not in addresses
 
 
 def test_parse_lxi_webserver_400(http_server: type[HTTPServer]) -> None:

@@ -51,7 +51,7 @@ class EnergetiqError(MSLConnectionError):
 class GPIBLibraryError(OSError):
     """Exception from the GPIB library."""
 
-    def __init__(self, *, message: str, name: str, ibsta: int, iberr: int) -> None:
+    def __init__(self, *, message: str, name: str = "", ibsta: int = 0, iberr: int = 0) -> None:
         """Exception from the GPIB library.
 
         Args:
@@ -60,7 +60,8 @@ class GPIBLibraryError(OSError):
             ibsta: The status value.
             iberr: The error code.
         """
-        super().__init__(f"{message} [{name}(), ibsta:{hex(ibsta)}, iberr:{hex(iberr)}]")
+        msg = message if not name else f"{message} [{name}(), ibsta:{hex(ibsta)}, iberr:{hex(iberr)}]"
+        super().__init__(msg)
 
 
 class GreisingerError(MSLConnectionError):

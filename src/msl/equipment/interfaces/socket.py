@@ -31,8 +31,7 @@ class Socket(MessageBased, regex=REGEX):
 
         A [Connection][msl.equipment.schema.Connection] instance supports the following _properties_
         for the socket communication protocol, as well as the _properties_ defined in
-        [MessageBased][msl.equipment.interfaces.message_based.MessageBased]. See also [socket.socket][]
-        for more details about family and proto.
+        [MessageBased][msl.equipment.interfaces.message_based.MessageBased].
 
         Attributes: Connection Properties:
             buffer_size (int): The maximum number of bytes to read at a time. _Default: `4096`_

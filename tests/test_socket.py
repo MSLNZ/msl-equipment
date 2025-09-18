@@ -420,9 +420,12 @@ def test_reconnect_tcp(tcp_server: type[TCPServer], caplog: pytest.LogCaptureFix
         if is_linux:
             assert len(messages) == 7
             assert messages[0].rstrip() == f"Socket<|| at {address}> Timeout occurred after 0.1 second(s)."
-        else:
+        elif is_windows:
             assert len(messages) == 6
             assert messages[0].startswith(f"Socket<|| at {address}> ConnectionAbortedError")
+        else:  # darwin
+            assert len(messages) == 6
+            assert messages[0].startswith(f"Socket<|| at {address}> ConnectionResetError")
         assert messages[1].rstrip() == f"Socket<|| at {address}> Timeout occurred after 0.1 second(s)."
         assert messages[2].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
         assert messages[3].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")

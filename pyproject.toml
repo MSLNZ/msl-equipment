@@ -146,6 +146,7 @@ title = "MSL-Equipment coverage report"
 
 [tool.mypy]
 cache_dir = ".cache/mypy"
+platform = "win32"
 strict = true
 strict_bytes = true
 
@@ -173,6 +174,7 @@ warn_unreachable = true
 failOnWarnings = true
 typeCheckingMode = "recommended"
 useLibraryCodeForTypes = false
+pythonPlatform = "Windows"
 exclude = [
     "**/.*",
     "**/__pycache__",

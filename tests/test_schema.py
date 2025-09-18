@@ -1608,10 +1608,10 @@ def test_register_tree_namespace() -> None:
         if sys.platform == "win32":
             encoding = "cp1252"
         else:
-            encoding = encoding.upper()
+            encoding = encoding.upper()  # pyright: ignore[reportUnreachable]
 
     if version_info == (3, 9) and sys.platform == "darwin":
-        encoding = encoding.upper()
+        encoding = encoding.upper()  # pyright: ignore[reportUnreachable]
 
     r = Register(StringIO('<?xml version="1.0" encoding="UTF-8"?><register team="Length" />'))
 
@@ -1659,7 +1659,7 @@ def test_register_read_write_same_output() -> None:
     assert len(lines1) == len(lines2)
     for i, (line1, line2) in enumerate(zip(lines1, lines2)):
         if i == 0 and (sys.platform == "darwin" and sys.version_info[:2] == (3, 9)):
-            assert line1 == line2.replace("utf", "UTF")
+            assert line1 == line2.replace("utf", "UTF")  # pyright: ignore[reportUnreachable]
         else:
             assert line1 == line2
 

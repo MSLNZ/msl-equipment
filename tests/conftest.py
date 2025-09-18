@@ -418,10 +418,10 @@ class PTYServer:
         self._thread: Thread | None = None
         self._queue: Queue[bytes] = Queue()
 
-        server, client = pty.openpty()
+        server, client = pty.openpty()  # type: ignore[attr-defined]  # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue, reportUnknownVariableType]
         self._server_fd: int = server
         self._client_fd: int = client
-        self._name: str = os.ttyname(client)
+        self._name: str = os.ttyname(client)  # type: ignore[attr-defined]  # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue]
 
     def __enter__(self: PTYSelf) -> PTYSelf:  # noqa: PYI019
         """Enter a context manager."""

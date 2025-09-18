@@ -30,7 +30,9 @@
         "attrib",
         "BADCRED",
         "BADVERF",
+        "baudrate",
         "Borbely",
+        "bytesize",
         "calcsize",
         "Callendar",
         "CALLIT",
@@ -41,6 +43,7 @@
         "DEASSERT",
         "deserialised",
         "DGRAM",
+        "dsrdtr",
         "dtype",
         "Dusen",
         "EABO",
@@ -154,6 +157,7 @@
         "REQCNT",
         "REUSEADDR",
         "rtol",
+        "rtscts",
         "savetxt",
         "Schar",
         "SCPI",
@@ -171,9 +175,12 @@
         "TIMO",
         "tobytes",
         "TOOWEAK",
+        "ttyname",
         "UNAVAIL",
         "ureal",
         "VERS",
-        "WAITLOCK"
+        "WAITLOCK",
+        "xoff",
+        "xonxoff"
     ]
 }

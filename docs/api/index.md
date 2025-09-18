@@ -10,6 +10,7 @@ The following interfaces are available to communicate with equipment,
 
 * [GPIB][msl.equipment.interfaces.gpib.GPIB] &mdash; Base class for GPIB communication
 * [SDK][msl.equipment.interfaces.sdk.SDK] &mdash; Use the Software Development Kit (SDK) provided by the manufacturer
+* [Serial][msl.equipment.interfaces.serial.Serial] &mdash; Base class for equipment that is connected through a serial port
 * [Socket][msl.equipment.interfaces.socket.Socket] &mdash; Base class for equipment that is connected through a socket
 * [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] &mdash; Base class for equipment that use the [ZeroMQ](https://zeromq.org/) communication protocol
 

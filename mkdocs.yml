@@ -134,6 +134,7 @@ plugins:
             - url: https://pyvisa.readthedocs.io/en/stable/objects.inv
             - url: https://nidaqmx-python.readthedocs.io/en/stable/objects.inv
             - url: https://pyzmq.readthedocs.io/en/stable/objects.inv
+            - url: https://pyserial.readthedocs.io/en/stable/objects.inv
           options:
             # General
             show_source: true

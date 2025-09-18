@@ -2,15 +2,23 @@
 
 Interface classes for computer control.
 
+Generic interface classes
+
 * [Interface][msl.equipment.schema.Interface] &mdash; Base class for all interfaces
 * [MessageBased][msl.equipment.interfaces.message_based.MessageBased] &mdash; Base class for all message-based interfaces
 
+Specific interfaces
+
 * [GPIB][msl.equipment.interfaces.gpib.GPIB] &mdash; Base class for GPIB communication
-* [NIDAQ][msl.equipment.interfaces.nidaq.NIDAQ] &mdash; Use [NI-DAQmx](https://nidaqmx-python.readthedocs.io/en/stable/index.html) as the backend to communicate with the equipment
-* [PyVISA][msl.equipment.interfaces.pyvisa.PyVISA] &mdash; Use [PyVISA](https://pyvisa.readthedocs.io/en/stable/) as the backend to communicate with the equipment
 * [SDK][msl.equipment.interfaces.sdk.SDK] &mdash; Base class for equipment that use the manufacturer's Software Development Kit
+* [Serial][msl.equipment.interfaces.serial.Serial] &mdash; Base class for equipment that is connected through a serial port
 * [Socket][msl.equipment.interfaces.socket.Socket] &mdash; Base class for equipment that is connected through a socket
 * [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] &mdash; Base class for equipment that use the [ZeroMQ](https://zeromq.org/) communication protocol
+
+Backend (external package) interfaces
+
+* [NIDAQ][msl.equipment.interfaces.nidaq.NIDAQ] &mdash; Use [NI-DAQmx](https://nidaqmx-python.readthedocs.io/en/stable/index.html) as the backend to communicate with the equipment
+* [PyVISA][msl.equipment.interfaces.pyvisa.PyVISA] &mdash; Use [PyVISA](https://pyvisa.readthedocs.io/en/stable/) as the backend to communicate with the equipment
 
 ::: msl.equipment.schema.Interface
     options:
@@ -38,6 +46,11 @@ Interface classes for computer control.
         show_root_heading: true
 
 ::: msl.equipment.interfaces.sdk.SDK
+    options:
+        show_root_full_path: false
+        show_root_heading: true
+
+::: msl.equipment.interfaces.serial.Serial
     options:
         show_root_full_path: false
         show_root_heading: true

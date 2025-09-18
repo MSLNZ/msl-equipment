@@ -6,6 +6,8 @@ import socket
 import time
 from typing import TYPE_CHECKING, overload
 
+import serial
+
 from msl.equipment.exceptions import MSLConnectionError
 from msl.equipment.schema import Interface
 from msl.equipment.utils import from_bytes, logger, to_bytes
@@ -286,7 +288,7 @@ class MessageBased(Interface):
 
         try:
             message = self._read(size)
-        except (socket.timeout, TimeoutError):
+        except (serial.SerialTimeoutException, socket.timeout, TimeoutError):
             raise MSLTimeoutError(self) from None
         except Exception as e:  # noqa: BLE001
             msg = f"{e.__class__.__name__}: {e}"
@@ -393,10 +395,10 @@ class MessageBased(Interface):
 
         try:
             return self._write(message)
-        except (socket.timeout, TimeoutError):
+        except (serial.SerialTimeoutException, socket.timeout, TimeoutError):
             raise MSLTimeoutError(self) from None
-        except Exception as e:
-            raise MSLConnectionError(self, str(e)) from e
+        except Exception as e:  # noqa: BLE001
+            raise MSLConnectionError(self, str(e)) from None
 
     @property
     def write_termination(self) -> bytes | None:

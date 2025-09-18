@@ -6,7 +6,7 @@ from .__about__ import __version__, version_tuple
 from .config import Config
 from .enumerations import Backend, DataBits, Parity, StopBits
 from .exceptions import MSLConnectionError
-from .interfaces import GPIB, NIDAQ, SDK, MSLTimeoutError, PyVISA, Socket
+from .interfaces import GPIB, NIDAQ, SDK, MSLTimeoutError, PyVISA, Serial, Socket
 from .record_types import ConnectionRecord, EquipmentRecord
 from .schema import (
     AcceptanceCriteria,
@@ -90,6 +90,7 @@ __all__: list[str] = [
     "ReferenceMaterials",
     "Register",
     "Report",
+    "Serial",
     "Socket",
     "Specifications",
     "SpecifiedRequirements",

@@ -4,14 +4,8 @@ from __future__ import annotations
 
 import enum
 import re
-import sys
 
 import serial
-
-IS_LINUX: bool = sys.platform == "linux"
-IS_WINDOWS: bool = sys.platform == "win32"
-
-REGEX_SERIAL = re.compile(r"(COM|ASRL|ASRLCOM)((?P<dev>/dev/[^\s:]+)|(?P<number>\d+))", flags=re.IGNORECASE)
 
 # TCPIP[board]::host address[::LAN device name][::INSTR]
 REGEX_TCPIP = re.compile(

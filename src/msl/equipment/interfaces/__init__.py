@@ -7,6 +7,7 @@ from .message_based import MessageBased, MSLTimeoutError
 from .nidaq import NIDAQ
 from .pyvisa import PyVISA
 from .sdk import SDK
+from .serial import Serial
 from .socket import Socket
 from .zeromq import ZeroMQ
 
@@ -17,6 +18,7 @@ __all__: list[str] = [
     "MSLTimeoutError",
     "MessageBased",
     "PyVISA",
+    "Serial",
     "Socket",
     "ZeroMQ",
 ]

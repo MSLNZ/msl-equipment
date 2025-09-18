@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import socket
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer as BaseHTTPServer
@@ -27,6 +28,7 @@ if TYPE_CHECKING:
     TCPSelf = TypeVar("TCPSelf", bound="TCPServer")
     UDPSelf = TypeVar("UDPSelf", bound="UDPServer")
     ZMQSelf = TypeVar("ZMQSelf", bound="ZMQServer")
+    PTYSelf = TypeVar("PTYSelf", bound="PTYServer")
 
 
 class HTTPRequestHandler(BaseHTTPRequestHandler):
@@ -401,6 +403,91 @@ class ZMQServer:
         self.clear_response_queue()
 
 
+class PTYServer:
+    """A serial server."""
+
+    def __init__(self, *, term: bytes = b"\n") -> None:
+        """A serial server.
+
+        Args:
+            term: The termination character(s) to use for messages.
+        """
+        import pty  # noqa: PLC0415
+
+        self.term: bytes = term
+        self._thread: Thread | None = None
+        self._queue: Queue[bytes] = Queue()
+
+        server, client = pty.openpty()
+        self._server_fd: int = server
+        self._client_fd: int = client
+        self._name: str = os.ttyname(client)
+
+    def __enter__(self: PTYSelf) -> PTYSelf:  # noqa: PYI019
+        """Enter a context manager."""
+        self.start()
+        return self
+
+    def __exit__(self, *ignored: object) -> None:
+        """Exit the context manager."""
+        self.stop()
+
+    def add_response(self, content: bytes) -> None:
+        """Add a response to the server's queue.
+
+        Args:
+            content: The content of the response message.
+        """
+        self._queue.put(content)
+
+    def clear_response_queue(self) -> None:
+        """Clear the server's response queue."""
+        with self._queue.mutex:
+            self._queue.queue.clear()
+
+    @property
+    def name(self) -> str:
+        """Returns the port name of the server."""
+        return self._name
+
+    def start(self, wait: float = 0.1) -> None:
+        """Start a PTY server.
+
+        Args:
+            wait: The number of seconds to wait for the server to start before returning.
+        """
+
+        def _start(term: bytes) -> None:
+            while True:
+                data = bytearray()
+                while not data.endswith(term):
+                    data.extend(os.read(self._server_fd, 1))
+
+                if data.startswith(b"SHUTDOWN"):
+                    break
+
+                msg = data if self._queue.empty() else self._queue.get()
+                _ = os.write(self._server_fd, msg)
+
+        self._thread = Thread(target=_start, args=(self.term,), daemon=True)
+        self._thread.start()
+        sleep(wait)
+
+    def stop(self) -> None:
+        """Stop the server and clear the response queue."""
+        if self._thread is None:
+            return
+
+        _ = os.write(self._client_fd, b"SHUTDOWN" + self.term)
+
+        self._thread.join()
+        self._thread = None
+
+        os.close(self._client_fd)
+        os.close(self._server_fd)
+        self.clear_response_queue()
+
+
 @pytest.fixture
 def http_server() -> type[HTTPServer]:
     return HTTPServer
@@ -419,3 +506,8 @@ def udp_server() -> type[UDPServer]:
 @pytest.fixture
 def zmq_server() -> type[ZMQServer]:
     return ZMQServer
+
+
+@pytest.fixture
+def pty_server() -> type[PTYServer]:
+    return PTYServer

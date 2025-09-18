@@ -13,6 +13,7 @@ Specific interfaces
 * [SDK][msl.equipment.interfaces.sdk.SDK] &mdash; Base class for equipment that use the manufacturer's Software Development Kit
 * [Serial][msl.equipment.interfaces.serial.Serial] &mdash; Base class for equipment that is connected through a serial port
 * [Socket][msl.equipment.interfaces.socket.Socket] &mdash; Base class for equipment that is connected through a socket
+* [VXI11][msl.equipment.interfaces.vxi11.VXI11] &mdash; Base class for equipment that use the VXI-11 communication protocol
 * [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] &mdash; Base class for equipment that use the [ZeroMQ](https://zeromq.org/) communication protocol
 
 Backend (external package) interfaces
@@ -56,6 +57,11 @@ Backend (external package) interfaces
         show_root_heading: true
 
 ::: msl.equipment.interfaces.socket.Socket
+    options:
+        show_root_full_path: false
+        show_root_heading: true
+
+::: msl.equipment.interfaces.vxi11.VXI11
     options:
         show_root_full_path: false
         show_root_heading: true

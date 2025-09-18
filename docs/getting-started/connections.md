@@ -150,6 +150,7 @@ The following interface classes are available
 * [SDK][msl.equipment.interfaces.sdk.SDK] &mdash; Use the Software Development Kit (SDK) provided by the manufacturer
 * [Serial][msl.equipment.interfaces.serial.Serial] &mdash; Base class for equipment that is connected through a serial port
 * [Socket][msl.equipment.interfaces.socket.Socket] &mdash; Base class for equipment that is connected through a socket
+* [VXI11][msl.equipment.interfaces.vxi11.VXI11] &mdash; Base class for equipment that use the VXI-11 communication protocol
 * [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] &mdash; Communicate via the [ZeroMQ](https://zeromq.org/) protocol
 
 ### Backends {: #connections-backend}

@@ -273,11 +273,11 @@ def ipv4_addresses() -> set[str]:
         interfaces = socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET)
         addresses = {str(ip[-1][0]) for ip in interfaces}
     elif sys.platform == "linux":
-        out = subprocess.check_output(["hostname", "--all-ip-addresses"])  # noqa: S607
+        out = subprocess.check_output(["hostname", "--all-ip-addresses"])  # pyright: ignore[reportUnreachable] # noqa: S607
         # --all-ip-addresses can return IPv6 addresses, which contain :
         addresses = {a for a in out.decode().split() if a[4] != ":"}
     else:
-        ps = subprocess.Popen("ifconfig", stdout=subprocess.PIPE)  # noqa: S607
+        ps = subprocess.Popen("ifconfig", stdout=subprocess.PIPE)  # pyright: ignore[reportUnreachable]  # noqa: S607
         output = subprocess.check_output(("grep", "inet "), stdin=ps.stdout)
         _ = ps.wait()
         addresses = {line.split()[1] for line in output.decode().splitlines()}

@@ -44,31 +44,31 @@ def test_to_enum_raises() -> None:
         _ = to_enum("unknown", MyEnum)
 
     # must be uppercase
-    with pytest.raises(ValueError, match="Cannot create"):
+    with pytest.raises(ValueError, match=r"Cannot create"):
         _ = to_enum("one", MyEnum)
 
     # wrong prefix
-    with pytest.raises(ValueError, match="Cannot create"):
+    with pytest.raises(ValueError, match=r"Cannot create"):
         _ = to_enum("TWO", MyEnum, prefix="xxx")
 
     # member name must be lowercase
-    with pytest.raises(ValueError, match="Cannot create"):
+    with pytest.raises(ValueError, match=r"Cannot create"):
         _ = to_enum("THREE", MyEnum)
-    with pytest.raises(ValueError, match="Cannot create"):
+    with pytest.raises(ValueError, match=r"Cannot create"):
         _ = to_enum("three", MyEnum, to_upper=True)
-    with pytest.raises(ValueError, match="Cannot create"):
+    with pytest.raises(ValueError, match=r"Cannot create"):
         _ = to_enum("f o u r", MyEnum)
 
     # being uppercase is wrong
-    with pytest.raises(ValueError, match="Cannot create"):
+    with pytest.raises(ValueError, match=r"Cannot create"):
         _ = to_enum("FiVe", MyEnum, to_upper=True)
 
     # prefix should not be uppercase
-    with pytest.raises(ValueError, match="Cannot create"):
+    with pytest.raises(ValueError, match=r"Cannot create"):
         _ = to_enum("FiVe", MyEnum, prefix="FI")
 
     # prefix check before to_upper
-    with pytest.raises(ValueError, match="Cannot create"):
+    with pytest.raises(ValueError, match=r"Cannot create"):
         _ = to_enum("six", MyEnum, prefix="Six", to_upper=True)
 
 
@@ -518,7 +518,7 @@ def test_ipv4_addresses() -> None:
 def test_parse_lxi_webserver_400(http_server: type[HTTPServer]) -> None:
     with http_server() as server:
         server.add_response(code=400)
-        with pytest.raises(HTTPError, match="Bad Request"):
+        with pytest.raises(HTTPError, match=r"Bad Request"):
             _ = parse_lxi_webserver(server.host, port=server.port, timeout=2)
 
 

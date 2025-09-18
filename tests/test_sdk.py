@@ -4,10 +4,10 @@ import ctypes
 import sys
 
 import pytest
+from msl.examples.loadlib import EXAMPLES_DIR
 
 from msl.equipment import SDK, Connection, Equipment
 from msl.equipment.interfaces.sdk import parse_sdk_address
-from msl.examples.loadlib import EXAMPLES_DIR
 
 suffix = "arm64" if sys.platform == "darwin" else "64"
 
@@ -59,7 +59,7 @@ def test_connect() -> None:
 
 
 def test_direct_invalid_address() -> None:
-    with pytest.raises(ValueError, match="Invalid SDK interface address"):
+    with pytest.raises(ValueError, match=r"Invalid SDK interface address"):
         _ = SDK(Equipment(connection=Connection("SDK")))
 
 

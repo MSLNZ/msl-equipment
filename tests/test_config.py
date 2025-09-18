@@ -267,7 +267,7 @@ def test_equipment_raises() -> None:
     with pytest.raises(IndexError):
         _ = c.equipment[100]
 
-    with pytest.raises(ValueError, match="with id 'unknown' cannot be found"):
+    with pytest.raises(ValueError, match=r"with id 'unknown' cannot be found"):
         _ = c.equipment["unknown"]
 
 
@@ -305,10 +305,10 @@ def test_equipment_missing_register() -> None:
     c = Config(StringIO(text))
     assert c.equipment[0].id == "MSLE.M.092"
 
-    with pytest.raises(ValueError, match="id 'MSLE.O.103' cannot be found"):
+    with pytest.raises(ValueError, match=r"id 'MSLE.O.103' cannot be found"):
         _ = c.equipment[1].id
 
-    with pytest.raises(ValueError, match="id 'MSLE.O.103' cannot be found"):
+    with pytest.raises(ValueError, match=r"id 'MSLE.O.103' cannot be found"):
         _ = c.equipment["MSLE.O.103"].id
 
 

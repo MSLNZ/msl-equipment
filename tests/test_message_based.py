@@ -101,13 +101,13 @@ def test_max_read_size_value() -> None:
     mb = MessageBased(Equipment(connection=Connection("COM1")))
     assert mb.max_read_size == 1 << 20
 
-    with pytest.raises(ValueError, match="must be >= 1, got 0"):
+    with pytest.raises(ValueError, match=r"must be >= 1, got 0"):
         mb.max_read_size = 0
 
     mb.max_read_size = 123.4567  # type: ignore[assignment]  # pyright: ignore[reportAttributeAccessIssue]
     assert mb.max_read_size == 123
 
-    with pytest.raises(MSLConnectionError, match="max_read_size is 123 bytes"):
+    with pytest.raises(MSLConnectionError, match=r"max_read_size is 123 bytes"):
         r: str = mb.read(size=124)  # noqa: F841
 
 
@@ -121,15 +121,15 @@ def test_rstrip() -> None:
 def test_write() -> None:
     mb = MessageBased(Equipment(connection=Connection("COM1")))
 
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         _ = mb.write("hi", data=[1, 2, 3])
 
     assert mb.write_termination == b"\r\n"
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         _ = mb.write(b"hi\r\n")
 
     mb.write_termination = None
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         _ = mb.write(b"hi")
 
 
@@ -137,80 +137,80 @@ def test_type_annotation_read_query() -> None:  # noqa: PLR0915
     # A test for type checking with mypy and pyright for the overload signatures
     mb = MessageBased(Equipment(connection=Connection("COM1")))
 
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r1: str = mb.read()  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r2: str = mb.read(size=None)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r3: str = mb.read(size=10)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r4: str = mb.read(decode=True)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r5: str = mb.read(decode=True, size=100)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r6: str = mb.read(size=100, dtype=None, fmt=None, decode=True)  # noqa: F841
 
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r7: bytes = mb.read(decode=False)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r8: bytes = mb.read(decode=False, size=100)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r9: bytes = mb.read(fmt=None, dtype=None, size=100, decode=False)  # noqa: F841
 
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r10: NumpyArray1D = mb.read(dtype=int)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r11: NumpyArray1D = mb.read(decode=True, dtype=float)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r12: NumpyArray1D = mb.read(dtype="<f")  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r13: NumpyArray1D = mb.read(decode=False, dtype=np.float64)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r14: NumpyArray1D = mb.read(dtype=np.uint16)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r15: NumpyArray1D = mb.read(dtype=int, fmt="ascii")  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r16: NumpyArray1D = mb.read(dtype=int, decode=False, fmt="hp")  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r17: NumpyArray1D = mb.read(size=100, dtype=int, decode=False, fmt="hp")  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         r18: NumpyArray1D = mb.read(fmt="ieee", dtype=int, decode=True)  # noqa: F841
 
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q1: str = mb.query("hi")  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q2: str = mb.query(b"hi", size=None)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q3: str = mb.query("hi", delay=10, size=10)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q4: str = mb.query(b"hi", decode=True)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q5: str = mb.query("hi", decode=True, size=100)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q6: str = mb.query(b"hi", size=100, dtype=None, delay=5, decode=True, fmt=None)  # noqa: F841
 
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q7: bytes = mb.query("hi", decode=False)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q8: bytes = mb.query(b"hi", decode=False, size=100)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q9: bytes = mb.query("hi", fmt=None, delay=1, size=100, decode=False)  # noqa: F841
 
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q10: NumpyArray1D = mb.query(b"hi", dtype=int)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q11: NumpyArray1D = mb.query("hi", decode=True, delay=10, dtype=float)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q12: NumpyArray1D = mb.query(b"hi", dtype="<f")  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q13: NumpyArray1D = mb.query("hi", size=100, decode=False, dtype=np.float64)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q14: NumpyArray1D = mb.query(b"hi", dtype=np.uint16)  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q15: NumpyArray1D = mb.query("hi", dtype=int, delay=1, size=16, fmt="ascii")  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q16: NumpyArray1D = mb.query(b"hi", dtype=int, decode=False, fmt="hp")  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q17: NumpyArray1D = mb.query("hi", size=100, dtype=int, decode=False, fmt="hp")  # noqa: F841
-    with pytest.raises(MSLConnectionError, match="MessageBased"):
+    with pytest.raises(MSLConnectionError, match=r"MessageBased"):
         q18: NumpyArray1D = mb.query(b"hi", fmt="ieee", dtype=int, decode=True)  # noqa: F841

@@ -286,7 +286,7 @@ def test_parse_address_invalid(address: str) -> None:
     parsed = parse_socket_address(address)
     assert parsed is None
 
-    with pytest.raises(ValueError, match="Invalid socket address"):
+    with pytest.raises(ValueError, match=r"Invalid socket address"):
         _ = Socket(Equipment(connection=Connection(address)))
 
 

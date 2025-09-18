@@ -45,7 +45,7 @@ def test_parse_address_invalid(address: str) -> None:
 
 def test_connect_address_invalid() -> None:
     equipment = Equipment(connection=Connection("ZMQ::127.0.0.1"))
-    with pytest.raises(ValueError, match="Invalid ZeroMQ address"):
+    with pytest.raises(ValueError, match=r"Invalid ZeroMQ address"):
         _ = ZeroMQ(equipment)
 
 
@@ -59,13 +59,13 @@ def test_no_server() -> None:
 
 def test_socket_type_invalid() -> None:
     conn = Connection("ZMQ::127.0.0.1::46283", socket_type=99999)
-    with pytest.raises(ValueError, match="Cannot create <enum 'SocketType'> from 99999"):
+    with pytest.raises(ValueError, match=r"Cannot create <enum 'SocketType'> from 99999"):
         conn.connect()
 
 
 def test_protocol_invalid() -> None:
     conn = Connection("ZMQ::127.0.0.1::58244", protocol="invalid")
-    with pytest.raises(MSLConnectionError, match="Protocol not supported"):
+    with pytest.raises(MSLConnectionError, match=r"Protocol not supported"):
         conn.connect()
 
 

@@ -675,10 +675,10 @@ def test_evaluable_1d() -> None:
     expected = 2 * np.pi * np.sin(np.array([0.1, 0.2]) + 0.1) - np.cos(np.array([0.1, 0.2]) / 2)
     assert np.array_equal(e(x=[0.1, 0.2]), expected)
 
-    with pytest.raises(ValueError, match="-1.0 is not within the range"):
+    with pytest.raises(ValueError, match=r"-1.0 is not within the range"):
         _ = e(x=-1)
 
-    with pytest.raises(NameError, match="'x' is not defined"):
+    with pytest.raises(NameError, match=r"'x' is not defined"):
         _ = e()
 
     x = -1
@@ -703,9 +703,9 @@ def test_evaluable_2d() -> None:
     )
     assert e(rh=rh, t=t) == expect
 
-    with pytest.raises(ValueError, match="-1.0 is not within the range"):
+    with pytest.raises(ValueError, match=r"-1.0 is not within the range"):
         _ = e(rh=-1, t=20)
-    with pytest.raises(ValueError, match="200.0 is not within the range"):
+    with pytest.raises(ValueError, match=r"200.0 is not within the range"):
         _ = e(rh=50, t=200)
 
 
@@ -843,13 +843,13 @@ def test_table() -> None:
     assert np.array_equal(t.units.dtype.names, t.header)
 
     # All arrays are initially read only
-    with pytest.raises(ValueError, match="read-only"):
+    with pytest.raises(ValueError, match=r"read-only"):
         t.types[0] = np.complex64
-    with pytest.raises(ValueError, match="read-only"):
+    with pytest.raises(ValueError, match=r"read-only"):
         t.units[0] = "degC"
-    with pytest.raises(ValueError, match="read-only"):
+    with pytest.raises(ValueError, match=r"read-only"):
         t.header[0] = "Something else"
-    with pytest.raises(ValueError, match="read-only"):
+    with pytest.raises(ValueError, match=r"read-only"):
         t[0][0] = 1
 
     # Check that the metadata comes along, using cast() to improve type checking for the tests
@@ -1028,16 +1028,16 @@ def test_cvd() -> None:
         b"</cvdCoefficients>"
     )
 
-    with pytest.raises(ValueError, match="-10.1 is not within the range"):
+    with pytest.raises(ValueError, match=r"-10.1 is not within the range"):
         _ = cvd.resistance(-10.1)
-    with pytest.raises(ValueError, match="in the sequence is not within the range"):
+    with pytest.raises(ValueError, match=r"in the sequence is not within the range"):
         _ = cvd.resistance([0, 1, -10.1, -1])
 
     assert pytest.approx(cvd.resistance(-10.1, check_range=False)) == 96.0631883261  # pyright: ignore[reportUnknownMemberType]
 
-    with pytest.raises(ValueError, match="96.0 is not within the range"):
+    with pytest.raises(ValueError, match=r"96.0 is not within the range"):
         _ = cvd.temperature(96)
-    with pytest.raises(ValueError, match="in the sequence is not within the range"):
+    with pytest.raises(ValueError, match=r"in the sequence is not within the range"):
         _ = cvd.temperature([100, 101, 96, 102])
 
     assert pytest.approx(cvd.temperature(96, check_range=False)) == -10.26108289  # pyright: ignore[reportUnknownMemberType]
@@ -2468,12 +2468,12 @@ def test_register_add() -> None:
 def test_register_cannot_merge() -> None:
     reg1 = StringIO('<?xml version="1.0" encoding="utf-8"?>\n<register team="A" />')
     reg2 = StringIO('<?xml version="1.0" encoding="utf-8"?>\n<register team="B" />')
-    with pytest.raises(ValueError, match="different teams, 'A' != 'B'"):
+    with pytest.raises(ValueError, match=r"different teams, 'A' != 'B'"):
         _ = Register(reg1, reg2)
 
 
 def test_register_tree_negative_indent() -> None:
-    with pytest.raises(ValueError, match=">= 0, got -1"):
+    with pytest.raises(ValueError, match=r">= 0, got -1"):
         _ = Register().tree(indent=-1)
 
 
@@ -2662,12 +2662,12 @@ def test_register_get_some(item: str | int, eid: str) -> None:
 def test_equipment_connection_none() -> None:
     connections.clear()
 
-    with pytest.raises(KeyError, match="eid='MSLE.O.231' cannot be found"):
+    with pytest.raises(KeyError, match=r"eid='MSLE.O.231' cannot be found"):
         _ = Equipment(id="MSLE.O.231").connect()
 
     connections.add(*("tests/resources/connections.xml",))
 
-    with pytest.raises(OSError, match="Cannot find 'library.dll' for libtype='cdll'"):
+    with pytest.raises(OSError, match=r"Cannot find 'library.dll' for libtype='cdll'"):
         _ = Equipment(id="MSLE.O.231").connect()
 
     connections.clear()

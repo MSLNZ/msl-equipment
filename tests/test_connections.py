@@ -43,7 +43,7 @@ def test_from_config() -> None:
 
     assert str(connections["MSLE.M.092"]) == "Connection(eid='MSLE.M.092' address='COM1')"
 
-    with pytest.raises(KeyError, match="eid='unknown' cannot be found"):
+    with pytest.raises(KeyError, match=r"eid='unknown' cannot be found"):
         _ = connections["unknown"]
 
 
@@ -97,5 +97,5 @@ def test_from_xml() -> None:
 
 
 def test_unknown_address() -> None:
-    with pytest.raises(ValueError, match="Cannot determine the interface from the address 'UNKNOWN'"):
+    with pytest.raises(ValueError, match=r"Cannot determine the interface from the address 'UNKNOWN'"):
         _ = Connection("UNKNOWN").connect()

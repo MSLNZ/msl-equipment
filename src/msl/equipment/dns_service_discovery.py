@@ -280,7 +280,11 @@ def find_lxi(*, ip: Sequence[str] | None = None, timeout: float = 1) -> dict[str
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 1)
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 255)
         sock.bind((host, 0))
-        _ = sock.sendto(message, (MDNS_ADDR, MDNS_PORT))
+        try:
+            _ = sock.sendto(message, (MDNS_ADDR, MDNS_PORT))
+        except OSError:
+            return
+
         select_timeout = min(timeout * 0.1, 0.1)
         t0 = time.time()
         while True:
@@ -303,7 +307,7 @@ def find_lxi(*, ip: Sequence[str] | None = None, timeout: float = 1) -> dict[str
                     if not address.startswith("TCPIP::"):
                         address = f"TCPIP::{address}"  # noqa: PLW2901
                     if not address.endswith(("::INSTR", "::SOCKET")):
-                        address = f"{address}::SOCKET" # must be SOCKET  # noqa: PLW2901
+                        address = f"{address}::SOCKET"  # must be SOCKET  # noqa: PLW2901
                     out.append(address)
                 return out
 

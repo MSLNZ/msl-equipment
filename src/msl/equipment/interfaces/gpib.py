@@ -29,6 +29,7 @@ if TYPE_CHECKING:
 
 IS_WINDOWS: bool = sys.platform == "win32"
 IS_LINUX: bool = sys.platform == "linux"
+IS_DARWIN: bool = sys.platform == "darwin"
 
 REGEX = re.compile(r"GPIB(?P<board>\d{0,2})(::((?P<pad>\d+)|(?P<name>[^\s:]+)))?(::(?P<sad>\d+))?", flags=re.IGNORECASE)
 
@@ -166,7 +167,7 @@ def _load_library(errcheck: Callable[[int, _NamedFuncPointer, tuple[int, ...]], 
                     "gpib-32.so",
                 ]
             )
-        elif sys.platform == "darwin":
+        elif IS_DARWIN:
             files.extend(
                 [
                     "/Library/Frameworks/NI4882.framework/NI4882",

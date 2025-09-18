@@ -404,10 +404,11 @@ def test_reconnect_tcp(tcp_server: type[TCPServer], caplog: pytest.LogCaptureFix
     server.stop()
 
     is_windows = sys.platform == "win32"
+    is_linux = sys.platform == "linux"
     if not is_windows:
         assert dev.read() == "SHUTDOWN"
 
-    error = MSLConnectionError if is_windows else MSLTimeoutError
+    error = MSLTimeoutError if is_linux else MSLConnectionError
     with pytest.raises(error):
         _ = dev.query("foo")
 
@@ -416,18 +417,18 @@ def test_reconnect_tcp(tcp_server: type[TCPServer], caplog: pytest.LogCaptureFix
             dev.reconnect(max_attempts=5)
 
         messages = caplog.messages
-        if is_windows:
-            assert len(messages) == 6
-            assert messages[0].startswith(f"Socket<|| at {address}> ConnectionAbortedError")
-        else:
+        if is_linux:
             assert len(messages) == 7
             assert messages[0].rstrip() == f"Socket<|| at {address}> Timeout occurred after 0.1 second(s)."
+        else:
+            assert len(messages) == 6
+            assert messages[0].startswith(f"Socket<|| at {address}> ConnectionAbortedError")
         assert messages[1].rstrip() == f"Socket<|| at {address}> Timeout occurred after 0.1 second(s)."
         assert messages[2].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
         assert messages[3].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
         assert messages[4].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
         assert messages[5].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
-        if not is_windows:
+        if is_linux:
             assert messages[6].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
 
     server = tcp_server(port=port, term=term)

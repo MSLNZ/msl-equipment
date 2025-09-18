@@ -188,6 +188,7 @@ def test_timeout(pty_server: type[PTYServer]) -> None:
         dev.disconnect()
 
 
+@pytest.mark.skipif(pty is None, reason="pty is not available")
 def test_logging(pty_server: type[PTYServer], caplog: pytest.LogCaptureFixture) -> None:
     term = b"\n"
     server = pty_server(term=term)

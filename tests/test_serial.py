@@ -237,7 +237,7 @@ def test_invalid_address() -> None:
 
 def test_invalid_port() -> None:
     with pytest.raises(MSLConnectionError, match=r"could not open port"):
-        _ = Serial(Equipment(connection=Connection("COM3")))
+        _ = Serial(Equipment(connection=Connection("COM254")))
 
 
 def test_init_serial_defaults() -> None:

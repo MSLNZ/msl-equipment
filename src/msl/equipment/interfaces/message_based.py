@@ -184,20 +184,20 @@ class MessageBased(Interface):
         Args:
             message: The message to write to the equipment.
             delay: Time delay, in seconds, to wait between the _write_ and _read_ operations.
-            size: The number of bytes to read. Ignored if the value is `None`.
-            fmt: The format that the returned message data is in. Ignored if `dtype` is `None`.
-                 See [from_bytes][msl.equipment.utils.from_bytes] for more details.
+            decode: Whether to decode the returned message (i.e., convert the message to a [str][])
+                or keep the message as [bytes][]. Ignored if `dtype` is not `None`.
             dtype: The data type of the elements in the returned message. Can be any object
-                that [numpy.dtype][] supports. See [from_bytes][msl.equipment.utils.from_bytes]
+                that numpy [dtype][numpy.dtype] supports. See [from_bytes][msl.equipment.utils.from_bytes]
                 for more details. For messages that are of scalar type (i.e., a single number)
                 it is more efficient to not specify `dtype` but to pass the returned message to the
                 [int][] or [float][] class to convert the message to the appropriate numeric type.
-            decode: Whether to decode the returned message (i.e., convert the message to a [str][])
-                or keep the message as [bytes][]. Ignored if `dtype` is not `None`.
+            fmt: The format that the returned message data is in. Ignored if `dtype` is `None`.
+                 See [from_bytes][msl.equipment.utils.from_bytes] for more details.
+            size: The number of bytes to read. Ignored if the value is `None`.
 
         Returns:
             The message from the equipment. If `dtype` is specified, then the message is
-                returned as an [numpy.ndarray][], if `decode` is `True` then the message
+                returned as a numpy [ndarray][numpy.ndarray], if `decode` is `True` then the message
                 is returned as a [str][], otherwise the message is returned as [bytes][].
         """  # noqa: D205
         _ = self.write(message)
@@ -266,20 +266,20 @@ class MessageBased(Interface):
             value for the class instance.
 
         Args:
-            size: The number of bytes to read. Ignored if the value is `None`.
-            fmt: The format that the message data is in. Ignored if `dtype` is `None`.
-                 See [from_bytes][msl.equipment.utils.from_bytes] for more details.
+            decode: Whether to decode the message (i.e., convert the message to a [str][])
+                or keep the message as [bytes][]. Ignored if `dtype` is not `None`.
             dtype: The data type of the elements in the message. Can be any object
-                that [numpy.dtype][] supports. See [from_bytes][msl.equipment.utils.from_bytes]
+                that numpy [dtype][numpy.dtype] supports. See [from_bytes][msl.equipment.utils.from_bytes]
                 for more details. For messages that are of scalar type (i.e., a single number)
                 it is more efficient to not specify `dtype` but to pass the returned message to the
                 [int][] or [float][] class to convert the message to the appropriate numeric type.
-            decode: Whether to decode the message (i.e., convert the message to a [str][])
-                or keep the message as [bytes][]. Ignored if `dtype` is not `None`.
+            fmt: The format that the message data is in. Ignored if `dtype` is `None`.
+                 See [from_bytes][msl.equipment.utils.from_bytes] for more details.
+            size: The number of bytes to read. Ignored if the value is `None`.
 
         Returns:
-            The message from the equipment. If `dtype` is specified, then the message is
-                returned as an [numpy.ndarray][], if `decode` is `True` then the message
+            The message from the equipment. If `dtype` is specified, then the message is returned
+                as a numpy [ndarray][numpy.ndarray], if `decode` is `True` then the message
                 is returned as a [str][], otherwise the message is returned as [bytes][].
         """
         if size is not None and size > self._max_read_size:
@@ -365,8 +365,8 @@ class MessageBased(Interface):
         message: bytes | str,
         *,
         data: Sequence1D | None = None,
-        fmt: MessageFormat | None = "ieee",
         dtype: MessageDataType = "<f",
+        fmt: MessageFormat | None = "ieee",
     ) -> int:
         """Write a message to the equipment.
 
@@ -374,10 +374,10 @@ class MessageBased(Interface):
             message: The message to write to the equipment.
             data: The data to append to `message`. See [to_bytes][msl.equipment.utils.to_bytes]
                 for more details.
-            fmt: The format to use to convert `data` to bytes. Ignored if `data` is `None`.
-                See [to_bytes][msl.equipment.utils.to_bytes] for more details.
             dtype: The data type to use to convert each element in `data` to bytes. Ignored
                 if `data` is `None`. See [to_bytes][msl.equipment.utils.to_bytes] for more details.
+            fmt: The format to use to convert `data` to bytes. Ignored if `data` is `None`.
+                See [to_bytes][msl.equipment.utils.to_bytes] for more details.
 
         Returns:
             The number of bytes written.

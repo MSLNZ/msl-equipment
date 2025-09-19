@@ -1350,11 +1350,11 @@ class Table(np.ndarray):
             dtype: The _dtype_ of the output unstructured array.
             copy: If `True`, always return a copy. If `False`, a view is returned if possible.
             casting: Controls what kind of data casting may occur. See the *casting* argument of
-                [numpy.ndarray.astype][] for more details.
+                [astype][numpy.ndarray.astype] for more details.
 
         Returns:
-            The unstructured array. This method may return a numpy [ndarray][numpy.ndarray]
-                instance instead of a [Table][msl.equipment.schema.Table] instance if the table consists of
+            The unstructured array. This method may return a numpy [ndarray][numpy.ndarray] instance
+                instead of a [Table][msl.equipment.schema.Table] instance if the table consists of
                 numbers and strings and the appropriate `dtype` is not specified.
         """
         from numpy.lib.recfunctions import structured_to_unstructured  # noqa: PLC0415

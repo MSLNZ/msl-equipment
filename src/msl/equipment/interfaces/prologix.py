@@ -539,7 +539,7 @@ def find_prologix(  # noqa: C901, PLR0915
         host_str = "{}.{}.{}.{}".format(*host)
         try:
             reader, writer = await asyncio.wait_for(asyncio.open_connection(host_str, port), timeout=timeout)
-        except OSError:
+        except (OSError, asyncio.TimeoutError):
             return
 
         writer.write(b"++ver\n")
@@ -547,7 +547,7 @@ def find_prologix(  # noqa: C901, PLR0915
 
         try:
             reply = await asyncio.wait_for(reader.readline(), timeout=timeout)
-        except OSError:
+        except (OSError, asyncio.TimeoutError):
             return
         finally:
             writer.close()

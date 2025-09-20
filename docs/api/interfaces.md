@@ -10,6 +10,7 @@ Generic interface classes
 Specific interfaces
 
 * [GPIB][msl.equipment.interfaces.gpib.GPIB] &mdash; Base class for GPIB communication
+* [Prologix][msl.equipment.interfaces.prologix.Prologix] &mdash; Use [Prologix](https://prologix.biz/) hardware to establish a connection
 * [SDK][msl.equipment.interfaces.sdk.SDK] &mdash; Base class for equipment that use the manufacturer's Software Development Kit
 * [Serial][msl.equipment.interfaces.serial.Serial] &mdash; Base class for equipment that is connected through a serial port
 * [Socket][msl.equipment.interfaces.socket.Socket] &mdash; Base class for equipment that is connected through a socket
@@ -37,6 +38,11 @@ Backend (external package) interfaces
         show_root_heading: true
 
 ::: msl.equipment.interfaces.nidaq.NIDAQ
+    options:
+        show_root_full_path: false
+        show_root_heading: true
+
+::: msl.equipment.interfaces.prologix.Prologix
     options:
         show_root_full_path: false
         show_root_heading: true

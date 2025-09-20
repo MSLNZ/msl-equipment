@@ -70,6 +70,11 @@ The following are examples of VISA-style addresses that may be used to connect t
   </tr>
   <tr>
     <td>PROLOGIX</td>
+    <td>Prologix::COM3::GPIB::6</td>
+    <td>The GPIB-USB Controller, port=COM3, primary GPIB address=6</td>
+  </tr>
+  <tr>
+    <td>PROLOGIX</td>
     <td>Prologix::/dev/ttyS0::4::96</td>
     <td>The GPIB-USB Controller, port=/dev/ttyS0, primary GPIB address=4, secondary GPIB address=96</td>
   </tr>
@@ -147,6 +152,7 @@ National Instruments also provides [examples](https://www.ni.com/docs/en-US/bund
 The following interface classes are available
 
 * [GPIB][msl.equipment.interfaces.gpib.GPIB] &mdash; Base class for GPIB communication
+* [Prologix][msl.equipment.interfaces.prologix.Prologix] &mdash; Use [Prologix](https://prologix.biz/) hardware to establish a connection
 * [SDK][msl.equipment.interfaces.sdk.SDK] &mdash; Use the Software Development Kit (SDK) provided by the manufacturer
 * [Serial][msl.equipment.interfaces.serial.Serial] &mdash; Base class for equipment that is connected through a serial port
 * [Socket][msl.equipment.interfaces.socket.Socket] &mdash; Base class for equipment that is connected through a socket

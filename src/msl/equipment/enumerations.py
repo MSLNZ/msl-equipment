@@ -12,10 +12,6 @@ REGEX_TCPIP = re.compile(
     r"TCPIP(?P<board>\d*)::(?P<host>[^\s:]+)(::(?P<name>([^\s:]+\d+(\[.+])?)))?(::INSTR)?$", flags=re.IGNORECASE
 )
 
-REGEX_PROLOGIX = re.compile(
-    r"Prologix::(?P<name>[^\s:]+)(?P<port>::1234)?(::GPIB\d*)?::(?P<pad>\d+)(::(?P<sad>\d+))?", flags=re.IGNORECASE
-)
-
 
 class Backend(enum.Enum):
     """The backend library to use for communication with the equipment.

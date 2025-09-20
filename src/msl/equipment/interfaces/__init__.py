@@ -5,6 +5,7 @@ from __future__ import annotations
 from .gpib import GPIB
 from .message_based import MessageBased, MSLTimeoutError
 from .nidaq import NIDAQ
+from .prologix import Prologix
 from .pyvisa import PyVISA
 from .sdk import SDK
 from .serial import Serial
@@ -19,6 +20,7 @@ __all__: list[str] = [
     "VXI11",
     "MSLTimeoutError",
     "MessageBased",
+    "Prologix",
     "PyVISA",
     "Serial",
     "Socket",

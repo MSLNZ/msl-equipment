@@ -2643,7 +2643,7 @@ for more details.</p>
             <td>
               <div class="doc-md-description">
                 <p>Controls what kind of data casting may occur. See the <em>casting</em> argument of
-<a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.astype.html#numpy.ndarray.astype">numpy.ndarray.astype</a> for more details.</p>
+<a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.astype.html#numpy.ndarray.astype">astype</a> for more details.</p>
               </div>
             </td>
             <td>
@@ -2669,8 +2669,8 @@ for more details.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The unstructured array. This method may return a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a>
-instance instead of a <a class="autorefs autorefs-internal" title="            Table" href="#msl.equipment.schema.Table">Table</a> instance if the table consists of
+                <p>The unstructured array. This method may return a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a> instance
+instead of a <a class="autorefs autorefs-internal" title="            Table" href="#msl.equipment.schema.Table">Table</a> instance if the table consists of
 numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
               </div>
             </td>
@@ -2725,11 +2725,11 @@ numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
 <span class="sd">        dtype: The _dtype_ of the output unstructured array.</span>
 <span class="sd">        copy: If `True`, always return a copy. If `False`, a view is returned if possible.</span>
 <span class="sd">        casting: Controls what kind of data casting may occur. See the *casting* argument of</span>
-<span class="sd">            [numpy.ndarray.astype][] for more details.</span>
+<span class="sd">            [astype][numpy.ndarray.astype] for more details.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        The unstructured array. This method may return a numpy [ndarray][numpy.ndarray]</span>
-<span class="sd">            instance instead of a [Table][msl.equipment.schema.Table] instance if the table consists of</span>
+<span class="sd">        The unstructured array. This method may return a numpy [ndarray][numpy.ndarray] instance</span>
+<span class="sd">            instead of a [Table][msl.equipment.schema.Table] instance if the table consists of</span>
 <span class="sd">            numbers and strings and the appropriate `dtype` is not specified.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">numpy.lib.recfunctions</span><span class="w"> </span><span class="kn">import</span> <span class="n">structured_to_unstructured</span>  <span class="c1"># noqa: PLC0415</span>

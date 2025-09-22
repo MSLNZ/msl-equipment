@@ -121,7 +121,7 @@ class HTTPServer:
 class TCPServer:
     """A TCP socket server."""
 
-    def __init__(self, *, host: str = "127.0.0.1", port: int = 0, term: bytes = b"\n") -> None:
+    def __init__(self, *, host: str = "127.0.0.1", port: int = 0, term: bytes | None = b"\n") -> None:
         """A TCP socket server.
 
         Args:
@@ -129,7 +129,7 @@ class TCPServer:
             port: The port number to use for the server.
             term: The termination character(s) to use for messages.
         """
-        self.term: bytes = term
+        self.term: bytes | None = term
         self._thread: Thread | None = None
         self._queue: Queue[bytes] = Queue()
         self._conn: socket.socket | None = None
@@ -176,7 +176,7 @@ class TCPServer:
             wait: The number of seconds to wait for the server to start before returning.
         """
 
-        def _start(term: bytes) -> None:
+        def _start(term: bytes | None) -> None:
             self._conn, _ = self._sock.accept()
             while True:
                 data = bytearray()
@@ -186,7 +186,7 @@ class TCPServer:
                     except (ConnectionResetError, ConnectionAbortedError):
                         break
 
-                    if not data or data.endswith(term):
+                    if not data or term is None or data.endswith(term):
                         break
 
                 if not data or data.startswith(b"SHUTDOWN"):
@@ -211,7 +211,7 @@ class TCPServer:
             self._conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self._conn.connect((self.host, self.port))
 
-        self._conn.sendall(b"SHUTDOWN" + self.term)
+        self._conn.sendall(b"SHUTDOWN" + (self.term if self.term else b""))
 
         self._thread.join()
         self._thread = None

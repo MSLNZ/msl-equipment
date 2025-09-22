@@ -18,7 +18,6 @@ and are encoded/decoded using the eXternal Data Representation standard [RFC-101
 from __future__ import annotations
 
 import contextlib
-import os
 import random
 import re
 import select
@@ -123,7 +122,7 @@ PMAPPROC_DUMP = 4
 PMAPPROC_CALLIT = 5
 
 # RPC constants
-PMAP_PORT = 11111 if os.getenv("MSL_EQUIPMENT_TESTING") else 111
+PMAP_PORT = 111
 
 
 # RPC enums
@@ -195,10 +194,8 @@ class RPCClient:
     def append_opaque(self, text: bytes | memoryview | str) -> None:
         """Append a variable-length string to the body of the current RPC message.
 
-        Parameters
-        ----------
-        text : :class:`memoryview`, :class:`bytes` or :class:`str`
-            The data to append.
+        Args:
+            text: The data to append.
         """
         # mimic the builtin xdrlib.Packer class
         # don't use xdrlib since it became deprecated in Python 3.11
@@ -231,7 +228,7 @@ class RPCClient:
             The reply or `None` if the transaction id does not match the
                 value that was used in the corresponding `write` call.
         """
-        xid, m_type, status = unpack(">3I", message[:12])
+        xid, m_type = unpack(">2I", message[:8])
         if xid != self._xid:
             # data in read buffer is due to an interrupt?
             return None
@@ -240,6 +237,7 @@ class RPCClient:
             msg = f"RPC message type is not {MessageType.REPLY!r}, got {m_type}"
             raise RuntimeError(msg)
 
+        (status,) = unpack(">I", message[8:12])
         if status == ReplyStatus.MSG_ACCEPTED:
             verify, status = unpack(">QI", message[12:24])
             assert verify == 0  # VXI-11 does not use authentication  # noqa: S101
@@ -359,7 +357,6 @@ class RPCClient:
         This method gets called if an interrupt is received during a `read`.
         It does not continuously poll the device.
         """
-        return
 
     def read(self) -> memoryview:
         """Read an RPC message, check for errors, and return the procedure-specific data.
@@ -420,15 +417,15 @@ class RPCClient:
 
     @overload
     @staticmethod
-    def unpack_opaque(data: bytes) -> bytes: ...
+    def unpack_opaque(data: bytes) -> bytes: ...  # pragma: no cover
 
     @overload
     @staticmethod
-    def unpack_opaque(data: bytearray) -> bytearray: ...
+    def unpack_opaque(data: bytearray) -> bytearray: ...  # pragma: no cover
 
     @overload
     @staticmethod
-    def unpack_opaque(data: memoryview) -> memoryview: ...
+    def unpack_opaque(data: memoryview) -> memoryview: ...  # pragma: no cover
 
     @staticmethod
     def unpack_opaque(data: bytes | bytearray | memoryview) -> bytes | bytearray | memoryview:
@@ -834,7 +831,7 @@ class VXI11(MessageBased, regex=REGEX):
         self.lock_timeout = props.get("lock_timeout", 0)
 
         # A non-empty read_termination value is applied by default in
-        # ConnectionMessageBased if the user did not specify one. Set it back
+        # MessageBased if the user did not specify one. Set it back
         # to None if a read-termination character was not explicitly specified.
         if "read_termination" not in props and "termination" not in props:
             self.read_termination = None  # pyright: ignore[reportUnannotatedClassAttribute]

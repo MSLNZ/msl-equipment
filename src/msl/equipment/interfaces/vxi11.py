@@ -987,13 +987,6 @@ class VXI11(MessageBased, regex=REGEX):
             self._abort_client.connect(self._abort_port, timeout=self.timeout)
         self._abort_client.device_abort(self._link_id)
 
-    @property
-    def byte_buffer(self) -> bytearray:
-        """Returns the reference to the byte buffer."""
-        if self._core_client is None:
-            return bytearray()
-        return self._core_client.get_buffer()
-
     def clear(self) -> None:
         """Send the `clear` command to the device."""
         if self._core_client is None:

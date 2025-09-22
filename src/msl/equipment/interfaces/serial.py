@@ -77,7 +77,7 @@ class Serial(MessageBased, regex=REGEX):
             data_bits (int): The number of data bits, e.g. 5, 6, 7, 8 (_alias:_ bytesize). _Default: `8`_
             dsr_dtr (bool): Whether to enable hardware (DSR/DTR) flow control (_alias:_ dsrdtr). _Default: `False`_
             inter_byte_timeout (float | None): The inter-character timeout. _Default: `None`_
-            parity (str | None): Parity checking, e.g. 'even', 'odd'. _Default: `None`_
+            parity (str): Parity checking, e.g. 'even', 'odd'. _Default: `none`_
             rts_cts (bool): Whether to enable hardware (RTS/CTS) flow control (_alias:_ rtscts). _Default: `False`_
             stop_bits (int | float): The number of stop bits, e.g. 1, 1.5, 2 (_alias:_ stopbits). _Default: `1`_
             xon_xoff (bool): Whether to enable software flow control (_alias:_ xonxoff). _Default: `False`_

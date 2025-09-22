@@ -95,8 +95,7 @@ def test_find_prologix(tcp_server: type[TCPServer]) -> None:
             assert isinstance(ipv4, str)
             assert device.description.startswith(description)
             for address in device.addresses:
-                assert address.startswith("Prologix::")
-                assert address.endswith(f"::{server.port}::GPIB::<PAD>[::<SAD>]")
+                assert address == f"Prologix::{server.host}::{server.port}::GPIB::<PAD>[::<SAD>]"
 
 
 def test_find_prologix_unknown_response(tcp_server: type[TCPServer]) -> None:

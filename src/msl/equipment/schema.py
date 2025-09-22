@@ -817,8 +817,12 @@ class File:
     """
 
     url: str
-    """The location of the file. The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738)
-    `scheme:scheme-specific-part`. If `scheme:` is not specified, it is assumed to be `file:`."""
+    """The location of the file.
+
+    The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738) `<scheme>:<scheme-specific-part>`.
+    If `<scheme>` is not specified, it shall be treated as the `file` scheme
+    (see also [scheme][msl.equipment.schema.File.scheme]).
+    """
 
     sha256: str
     """The SHA-256 checksum of the file."""
@@ -846,6 +850,26 @@ class File:
             attributes=element[0].attrib,
             comment=element.attrib.get("comment", ""),
         )
+
+    @property
+    def scheme(self) -> str:
+        """Returns the _scheme_ component that is specified in the [url] (see [RFC 1738] for more details).
+
+        If a `<scheme>` is not specified, an empty string is returned (which shall be treated
+        as the `file` scheme). Drive letters on Windows are not considered as a _scheme_.
+
+        [RFC 1738]: https://www.rfc-editor.org/rfc/rfc1738
+        [url]: ../../schema/file/#msl.equipment.schema.File.url
+        """
+        index = self.url.find(":")
+        if index == -1:
+            return ""
+
+        scheme = self.url[:index]
+        if index == 1 and scheme.lower() in "abcdefghijklmnopqrstuvwxyz":  # assume Windows drive letter
+            return ""
+
+        return scheme
 
     def to_xml(self) -> Element[str]:
         """Convert the [File][msl.equipment.schema.File] class into an XML element.
@@ -2837,7 +2861,8 @@ class Connection:
         """The model number of the equipment."""
 
         # check for a properties key being explicitly defined and the value is a dict
-        properties= (properties["properties"]  # pyright: ignore[reportUnknownVariableType]
+        properties = (  # pyright: ignore[reportUnknownVariableType]
+            properties["properties"]
             if ("properties" in properties and isinstance(properties["properties"], dict))
             else properties
         )

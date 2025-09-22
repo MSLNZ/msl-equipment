@@ -567,6 +567,24 @@ def test_file() -> None:
     assert tostring(f.to_xml()) == text
 
 
+@pytest.mark.parametrize(
+    ("url", "scheme"),
+    [
+        ("filename.xls", ""),
+        (":filename.xls", ""),
+        (r"C:\filename.xls", ""),
+        (r"ab:\filename.xls", "ab"),
+        ("file://host/path", "file"),
+        ("https://www.measurement.govt.nz/", "https"),
+    ],
+)
+def test_file_scheme(url: str, scheme: str) -> None:
+    text = f"<file><url>{url}</url><sha256>anything</sha256></file>"
+    f = File.from_xml(XML(text))
+    assert f.url == url
+    assert f.scheme == scheme
+
+
 def test_digital_report_no_comment_nor_url_attributes() -> None:
     text = (
         b'<digitalReport format="MSL PDF/A-3" id="Pressure/2025/092">'

@@ -13,7 +13,7 @@ The following interfaces are available to communicate with equipment,
 * [SDK][msl.equipment.interfaces.sdk.SDK] &mdash; Use the Software Development Kit (SDK) provided by the manufacturer
 * [Serial][msl.equipment.interfaces.serial.Serial] &mdash; Base class for equipment that is connected through a serial port
 * [Socket][msl.equipment.interfaces.socket.Socket] &mdash; Base class for equipment that is connected through a socket
-* [VXI11][msl.equipment.interfaces.vxi11.VXI11] &mdash; Base class for equipment that use the VXI-11 communication protocol
+* [VXI11][msl.equipment.interfaces.vxi11.VXI11] &mdash; Base class for the [VXI-11](http://www.vxibus.org/specifications.html) communication protocol
 * [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] &mdash; Base class for equipment that use the [ZeroMQ](https://zeromq.org/) communication protocol
 
 and the following classes may be used to interface with equipment using external packages

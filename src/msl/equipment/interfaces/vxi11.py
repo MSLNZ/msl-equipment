@@ -789,17 +789,17 @@ class CoreClient(VXIClient):
 
 
 class VXI11(MessageBased, regex=REGEX):
-    """Base class for equipment that use the VXI-11 communication protocol."""
+    """Base class for the [VXI-11](http://www.vxibus.org/specifications.html) communication protocol."""
 
     def __init__(self, equipment: Equipment) -> None:
-        """Base class for equipment that use the VXI-11 communication protocol.
+        """Base class for the [VXI-11](http://www.vxibus.org/specifications.html) communication protocol.
 
         Args:
             equipment: An [Equipment][] instance.
 
         A [Connection][msl.equipment.schema.Connection] instance supports the following _properties_
-        for the serial communication protocol, as well as the _properties_ defined in
-        [MessageBased][msl.equipment.interfaces.message_based.MessageBased].
+        for the [VXI-11](http://www.vxibus.org/specifications.html) communication protocol, as well
+        as the _properties_ defined in [MessageBased][msl.equipment.interfaces.message_based.MessageBased].
 
         Attributes: Connection Properties:
             buffer_size (int): The maximum number of bytes to read at a time. _Default: `4096`_

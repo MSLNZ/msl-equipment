@@ -14,7 +14,7 @@ Specific interfaces
 * [SDK][msl.equipment.interfaces.sdk.SDK] &mdash; Base class for equipment that use the manufacturer's Software Development Kit
 * [Serial][msl.equipment.interfaces.serial.Serial] &mdash; Base class for equipment that is connected through a serial port
 * [Socket][msl.equipment.interfaces.socket.Socket] &mdash; Base class for equipment that is connected through a socket
-* [VXI11][msl.equipment.interfaces.vxi11.VXI11] &mdash; Base class for equipment that use the VXI-11 communication protocol
+* [VXI11][msl.equipment.interfaces.vxi11.VXI11] &mdash; Base class for the [VXI-11](http://www.vxibus.org/specifications.html) communication protocol
 * [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] &mdash; Base class for equipment that use the [ZeroMQ](https://zeromq.org/) communication protocol
 
 Backend (external package) interfaces

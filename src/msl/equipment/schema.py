@@ -853,14 +853,12 @@ class File:
 
     @property
     def scheme(self) -> str:
-        """Returns the _scheme_ component that is specified in the [url] (see [RFC 1738] for more details).
+        """Returns the _scheme_ component that is specified in the [url][msl.equipment.schema.File.url]
+        (see [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738) for more details).
 
         If a `<scheme>` is not specified, an empty string is returned (which shall be treated
         as the `file` scheme). Drive letters on Windows are not considered as a _scheme_.
-
-        [RFC 1738]: https://www.rfc-editor.org/rfc/rfc1738
-        [url]: ../../schema/file/#msl.equipment.schema.File.url
-        """
+        """  # noqa: D205
         index = self.url.find(":")
         if index == -1:
             return ""

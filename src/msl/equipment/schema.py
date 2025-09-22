@@ -2577,7 +2577,7 @@ class Register:
         * format: [DigitalReport][msl.equipment.schema.DigitalReport]
         * details: [Alteration][msl.equipment.schema.Alteration], [Adjustment][msl.equipment.schema.Adjustment]
         * task: [CompletedTask][msl.equipment.schema.CompletedTask], [PlannedTask][msl.equipment.schema.PlannedTask]
-        * asset_number: [Financial][msl.equipment.schema.Financial]
+        * asset_number: [CapitalExpenditure][msl.equipment.schema.CapitalExpenditure]
         * service_agent: [QualityManual][msl.equipment.schema.QualityManual]
         * technical_procedures: [QualityManual][msl.equipment.schema.QualityManual]
 

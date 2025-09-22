@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-class MessageBased(Interface):
+class MessageBased(Interface, append=False):
     """Base class for equipment that use message-based communication."""
 
     def __init__(self, equipment: Equipment) -> None:

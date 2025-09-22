@@ -36,11 +36,11 @@ MIN_READ_TIMEOUT_MS = 1
 MAX_READ_TIMEOUT_MS = 3000
 
 
-class PrologixEthernet(Socket):
+class PrologixEthernet(Socket, append=False):
     """Prologix GPIB-ETHERNET Controller."""
 
 
-class PrologixUSB(Serial):
+class PrologixUSB(Serial, append=False):
     """Prologix GPIB-USB Controller."""
 
 

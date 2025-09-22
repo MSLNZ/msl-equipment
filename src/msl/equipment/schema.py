@@ -2980,13 +2980,15 @@ class Interface:
         """Exit the context manager."""
         self.disconnect()
 
-    def __init_subclass__(
+    def __init_subclass__(  # noqa: PLR0913
         cls,
+        *,
         manufacturer: str = "",
         model: str = "",
         flags: int = 0,
         backend: Backend | None = None,
         regex: re.Pattern[str] | None = None,
+        append: bool = True,
     ) -> None:
         """This method is called whenever the Interface is sub-classed.
 
@@ -2996,7 +2998,12 @@ class Interface:
             flags: The flags to use for the regex pattern string.
             backend: The backend to use for communication.
             regex: The compiled regex to use when matching the Connection address.
+            append: Whether to append the subclass to the appropriate `backends`, `interfaces`
+                or `resources` list.
         """
+        if not append:
+            return
+
         if backend is not None:
             backends.append(_Backend(cls, backend))
             logger.debug("added backend: %s", cls)

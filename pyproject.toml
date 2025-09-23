@@ -49,6 +49,9 @@ Homepage = "https://mslnz.github.io/msl-equipment/"
 Issues = "https://github.com/MSLNZ/msl-equipment/issues"
 Source = "https://github.com/MSLNZ/msl-equipment"
 
+[project.scripts]
+msl-equipment = "msl.equipment.cli:cli"
+
 [project.optional-dependencies]
 resources = [
     "msl-equipment-resources",

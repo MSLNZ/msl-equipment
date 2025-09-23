@@ -8,7 +8,7 @@ import logging
 import os
 import sys
 from dataclasses import dataclass
-from enum import IntEnum, auto
+from enum import IntEnum
 from threading import Thread
 from typing import TYPE_CHECKING
 
@@ -26,11 +26,11 @@ if TYPE_CHECKING:
 
 
 class _DeviceType(IntEnum):
-    ASRL = auto()
-    GPIB = auto()
-    PROLOGIX = auto()
-    LXI = auto()
-    VXI11 = auto()
+    ASRL = 0
+    GPIB = 1
+    PROLOGIX = 2
+    LXI = 3
+    VXI11 = 4
 
 
 @dataclass
@@ -156,7 +156,7 @@ def _print_stdout(found: ValuesView[_Device]) -> None:
     devices = sorted(found, key=lambda v: v.description)
     types = sorted({d.type for d in devices})
     for typ in types:
-        print(f"{typ} Devices")  # noqa: T201
+        print(f"{typ.name} Devices")  # noqa: T201
         for device in devices:
             if device.type != typ:
                 continue
@@ -164,10 +164,9 @@ def _print_stdout(found: ValuesView[_Device]) -> None:
                 print("  " + "\n  ".join(device.addresses))  # noqa: T201
             elif typ == _DeviceType.ASRL:
                 print(f"  {device.addresses[0]} [{device.description}]")  # noqa: T201
-            elif typ == _DeviceType.PROLOGIX | _DeviceType.LXI | _DeviceType.VXI11:
-                print(f"  {device.description}")  # noqa: T201
-                if device.webserver:
-                    print(f"    webserver {device.webserver}")  # noqa: T201
+            elif typ in (_DeviceType.PROLOGIX, _DeviceType.LXI, _DeviceType.VXI11):
+                webserver = f" [webserver: {device.webserver}]" if device.webserver else ""
+                print(f"  {device.description}{webserver}")  # noqa: T201
                 if device.addresses:
                     print("    " + "\n    ".join(sorted(device.addresses)))  # noqa: T201
 
@@ -234,6 +233,19 @@ def cli() -> None:
     )
 
     if parsed.json:
-        print(json.dumps(list(equipment), indent=2))  # noqa: T201
+        print(  # noqa: T201
+            json.dumps(
+                [
+                    {
+                        "type": e.type.name,
+                        "addresses": e.addresses,
+                        "description": e.description,
+                        "webserver": e.webserver,
+                    }
+                    for e in equipment
+                ],
+                indent=2,
+            )
+        )
     else:
         _print_stdout(equipment)

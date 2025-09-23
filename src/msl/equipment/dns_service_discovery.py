@@ -271,7 +271,7 @@ def find_lxi(*, ip: Sequence[str] | None = None, timeout: float = 1) -> dict[str
         try:
             return parse_lxi_webserver(ip_address, port=port, timeout=timeout)
         except Exception as e:  # noqa: BLE001
-            logger.warning("%s: %s [%s:%s]", e.__class__.__name__, e, ip_address, port)
+            logger.debug("%s: %s [%s:%s]", e.__class__.__name__, e, ip_address, port)
             return None
 
     def discover(host: str) -> None:  # noqa: C901, PLR0912, PLR0915

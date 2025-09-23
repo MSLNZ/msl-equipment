@@ -2287,7 +2287,13 @@
 
     <div class="doc doc-contents ">
 
-        <p>Returns the <em>scheme</em> component that is specified in the <a href="../../schema/file/#msl.equipment.schema.File.url">url</a> (see <a href="https://www.rfc-editor.org/rfc/rfc1738">RFC 1738</a> for more details).</p>
+        <p>Returns the <em>scheme</em> component that is specified in the <a class="autorefs autorefs-internal" title="            url
+
+
+  
+      instance-attribute
+  " href="#msl.equipment.schema.File.url">url</a>
+(see <a href="https://www.rfc-editor.org/rfc/rfc1738">RFC 1738</a> for more details).</p>
 <p>If a <code>&lt;scheme&gt;</code> is not specified, an empty string is returned (which shall be treated
 as the <code>file</code> scheme). Drive letters on Windows are not considered as a <em>scheme</em>.</p>
 
@@ -2540,7 +2546,9 @@ If <code>&lt;scheme&gt;</code> is not specified, it shall be treated as the <cod
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">874</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">872</span>
+<span class="normal">873</span>
+<span class="normal">874</span>
 <span class="normal">875</span>
 <span class="normal">876</span>
 <span class="normal">877</span>
@@ -2550,9 +2558,7 @@ If <code>&lt;scheme&gt;</code> is not specified, it shall be treated as the <cod
 <span class="normal">881</span>
 <span class="normal">882</span>
 <span class="normal">883</span>
-<span class="normal">884</span>
-<span class="normal">885</span>
-<span class="normal">886</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">884</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [File][msl.equipment.schema.File] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>

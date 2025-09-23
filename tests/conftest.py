@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import os
 import socket
 from http.server import BaseHTTPRequestHandler
@@ -211,7 +212,8 @@ class TCPServer:
             self._conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self._conn.connect((self.host, self.port))
 
-        self._conn.sendall(b"SHUTDOWN" + (self.term if self.term else b""))
+        with contextlib.suppress(ConnectionError):
+            self._conn.sendall(b"SHUTDOWN" + (self.term if self.term else b""))
 
         self._thread.join()
         self._thread = None

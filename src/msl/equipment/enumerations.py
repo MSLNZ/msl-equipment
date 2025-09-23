@@ -3,14 +3,8 @@
 from __future__ import annotations
 
 import enum
-import re
 
 import serial
-
-# TCPIP[board]::host address[::LAN device name][::INSTR]
-REGEX_TCPIP = re.compile(
-    r"TCPIP(?P<board>\d*)::(?P<host>[^\s:]+)(::(?P<name>([^\s:]+\d+(\[.+])?)))?(::INSTR)?$", flags=re.IGNORECASE
-)
 
 
 class Backend(enum.Enum):

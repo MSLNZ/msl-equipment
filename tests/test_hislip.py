@@ -8,51 +8,13 @@ import time
 import pytest
 from msl.loadlib.utils import get_available_port
 
-from msl.equipment import ConnectionRecord
-from msl.equipment import EquipmentRecord
-from msl.equipment import MSLConnectionError
-from msl.equipment import MSLTimeoutError
-from msl.equipment.connection_tcpip_hislip import ConnectionTCPIPHiSLIP
-from msl.equipment.hislip import AsyncInitialize
-from msl.equipment.hislip import Message
-from msl.equipment.hislip import PORT
+from msl.equipment import Connection, Equipment, HiSLIP, MSLConnectionError, MSLTimeoutError
+from msl.equipment.interfaces.hislip import PORT, AsyncInitialize, Message, parse_hislip_address
+
+IS_WINDOWS = sys.platform == "win32"
 
 
-@pytest.mark.parametrize(
-    "address,expected",
-    [
-        ("TCPIP::dev.company.com::INSTR", None),
-        ("GPIB::23", None),
-        ("TCPIP::dev.company.com::hisli", None),
-        ("TCPIP0::dev.company.com::instr::INSTR", None),
-        ("TCPIP0::10.0.0.1::usb0[1234::5678::MYSERIAL::0]::INSTR", None),
-        ("TCPIP::1.1.1.1::gpib,5::INSTR", None),
-        ("TCPIP::1.1.1.1::gpib,5", None),
-        ("TCPIP0::company::hislip0,port::INSTR", None),
-        ("tcpip3::10.0.0.1::USB0::instr", None),
-        ("SOCKET::myMachine::1234", None),
-        ("TCPIP0::testMachine1::COM1,488::INSTR", None),
-        ("TCPIP::1.2.3.4::HiSLIP0::INSTR", ("0", "1.2.3.4", "HiSLIP0", PORT)),
-        ("TCPIP::company::hislip1,3::INSTR", ("0", "company", "hislip1", 3)),
-        ("tcpip::company::hislip1,30000::INSTR", ("0", "company", "hislip1", 30000)),
-        ("TCPIP0::1.2.3.4::hislip0", ("0", "1.2.3.4", "hislip0", PORT)),
-        ("TCPIP1::company::hislip0,4880::INSTR", ("1", "company", "hislip0", 4880)),
-        ("TCPIP2::company2::hislip1,30000::INSTR", ("2", "company2", "hislip1", 30000)),
-    ],
-)
-def test_parse_address(address, expected):
-    info = ConnectionTCPIPHiSLIP.parse_address(address)
-    if expected is None:
-        assert info is None
-    else:
-        board, host, name, port = expected
-        assert info["board"] == board
-        assert info["host"] == host
-        assert info["name"] == name
-        assert info["port"] == port
-
-
-def server(address, port, action):
+def server(address: str, port: int, action: str) -> None:
     # Simulate a HiSLIP server.
 
     # The payloads for the request/reply were determined when an instrument
@@ -94,6 +56,11 @@ def server(address, port, action):
     s.listen(2)
     sync_conn, _ = s.accept()  # synchronous channel connects
     data = sync_conn.recv(256)
+    if not data:
+        sync_conn.close()
+        s.close()
+        return
+
     assert data == initialize_request
     sync_conn.sendall(initialize_response)
     async_conn, _ = s.accept()  # asynchronous channel connects
@@ -122,7 +89,48 @@ def server(address, port, action):
     s.close()
 
 
-def test_protocol():
+@pytest.mark.parametrize(
+    "address",
+    [
+        "TCPIP::dev.company.com::INSTR",
+        "GPIB::23",
+        "TCPIP::dev.company.com::hislip",
+        "TCPIP0::dev.company.com::instr::INSTR",
+        "TCPIP0::10.0.0.1::usb0[1234::5678::SERIAL::0]::INSTR",
+        "TCPIP::1.1.1.1::gpib,5::INSTR",
+        "TCPIP::1.1.1.1::gpib,5",
+        "TCPIP0::company::hislip0,port::INSTR",
+        "tcpip3::10.0.0.1::USB0::instr",
+        "TCP::myMachine::1234",
+        "TCPIP0::testMachine1::COM1,488::INSTR",
+    ],
+)
+def test_parse_address_invalid(address: str) -> None:
+    assert parse_hislip_address(address) is None
+
+
+@pytest.mark.parametrize(
+    ("address", "expected"),
+    [
+        ("TCPIP::1.2.3.4::HiSLIP0::INSTR", (0, "1.2.3.4", "HiSLIP0", PORT)),
+        ("TCPIP::company::hislip1,3::INSTR", (0, "company", "hislip1", 3)),
+        ("tcpip::company::hislip1,30000::INSTR", (0, "company", "hislip1", 30000)),
+        ("TCPIP0::1.2.3.4::hislip0", (0, "1.2.3.4", "hislip0", PORT)),
+        ("TCPIP1::company::hislip0,4880::INSTR", (1, "company", "hislip0", 4880)),
+        ("TCPIP2::192.168.1.100::hislip10,30000::INSTR", (2, "192.168.1.100", "hislip10", 30000)),
+    ],
+)
+def test_parse_address_valid(address: str, expected: tuple[int, str, str, int]) -> None:
+    parsed = parse_hislip_address(address)
+    board, host, name, port = expected
+    assert parsed is not None
+    assert parsed.board == board
+    assert parsed.host == host
+    assert parsed.name == name
+    assert parsed.port == port
+
+
+def test_protocol() -> None:
     address = "127.0.0.1"
     port = get_available_port()
 
@@ -131,16 +139,12 @@ def test_protocol():
     t.start()
     time.sleep(0.1)  # allow some time for the server to start
 
-    record = EquipmentRecord(
-        connection=ConnectionRecord(address="TCPIP::{}::hislip0,{}".format(address, port), properties={"timeout": 5})
-    )
+    connection = Connection(f"TCPIP::{address}::hislip0,{port}", timeout=1)
 
-    dev = record.connect()
-    assert dev.port == port
-    assert dev.host == address
-    assert dev.timeout == 5
-    assert dev.asynchronous.get_timeout() == 5
-    assert dev.synchronous.get_timeout() == 5
+    dev: HiSLIP = connection.connect()
+    assert dev.timeout == 1
+    assert dev.asynchronous.get_timeout() == 1
+    assert dev.synchronous.get_timeout() == 1
     assert dev.lock_timeout == 0
     assert dev.read_termination is None
     assert dev.write_termination is None
@@ -148,7 +152,7 @@ def test_protocol():
 
     dev.timeout = -1
     assert dev.timeout is None
-    assert dev.asynchronous.get_timeout() is None
+    assert dev.asynchronous.get_timeout() is None  # type: ignore[unreachable]
     assert dev.synchronous.get_timeout() is None
 
     dev.timeout = 0
@@ -167,17 +171,17 @@ def test_protocol():
     assert dev.synchronous.get_timeout() == 1.1
 
     dev.lock_timeout = -2.1
-    assert dev.lock_timeout == 86400.0
+    assert dev.lock_timeout == 0
     assert dev.asynchronous.get_timeout() == 1.1  # gets updated during async_lock_request()
     assert dev.synchronous.get_timeout() == 1.1  # not changed, lock timeout only used for asynchronous request
 
     dev.lock_timeout = None
-    assert dev.lock_timeout == 86400.0
+    assert dev.lock_timeout == 0
     assert dev.asynchronous.get_timeout() == 1.1  # gets updated during async_lock_request()
     assert dev.synchronous.get_timeout() == 1.1  # not changed, lock timeout only used for asynchronous request
 
     dev.lock_timeout = 0
-    assert dev.lock_timeout == 0.0
+    assert dev.lock_timeout == 0
     assert dev.asynchronous.get_timeout() == 1.1  # gets updated during async_lock_request()
     assert dev.synchronous.get_timeout() == 1.1  # not changed, lock timeout only used for asynchronous request
 
@@ -188,80 +192,64 @@ def test_protocol():
 
     dev.disconnect()
 
-    assert dev.asynchronous is None
-    assert dev.synchronous is None
+    assert dev.asynchronous.socket is None
+    assert dev.synchronous.socket is None
 
 
-def test_exceptions():
+def test_exceptions() -> None:
     address = "127.0.0.1"
 
     # server not running
     port = get_available_port()
-    record = EquipmentRecord(
-        connection=ConnectionRecord(
-            address="TCPIP0::{}::hislip0,{}::INSTR".format(address, port), properties={"timeout": 1, "rstrip": True}
-        )
-    )
-    if sys.platform == "win32":
-        match = r"Timeout occurred after 1.0 second\(s\)"
-    else:
-        match = "Connection refused"
-    with pytest.raises(MSLConnectionError, match=match):
-        record.connect()
+    connection = Connection(f"TCPIP0::{address}::hislip0,{port}::INSTR", timeout=1, rstrip=True)
+
+    error = MSLTimeoutError if IS_WINDOWS else MSLConnectionError
+    with pytest.raises(error):
+        _ = connection.connect()
 
     # server hangs during a query (after the connection is established)
     port = get_available_port()
-    record = EquipmentRecord(
-        connection=ConnectionRecord(
-            address="TCPIP0::{}::hislip0,{}::INSTR".format(address, port), properties={"timeout": 1, "rstrip": True}
-        )
-    )
-    t = threading.Thread(target=server, args=(address, port, "sleep"))
-    t.daemon = True
+    connection = Connection(f"TCPIP0::{address}::hislip0,{port}::INSTR", timeout=1, rstrip=True)
+
+    t = threading.Thread(target=server, args=(address, port, "sleep"), daemon=True)
     t.start()
     time.sleep(0.1)  # allow some time for the server to start
-    dev = record.connect()
+
+    dev: HiSLIP = connection.connect()
     with pytest.raises(MSLTimeoutError, match=r"Timeout occurred after 1.0 second\(s\)"):
-        dev.query("sleep")
+        _ = dev.query("sleep")
     t.join()
 
     # server returns a bad header (after the connection is established)
     port = get_available_port()
-    record = EquipmentRecord(
-        connection=ConnectionRecord(
-            address="TCPIP0::{}::hislip0,{}::INSTR".format(address, port), properties={"timeout": 1, "rstrip": True}
-        )
-    )
+    connection = Connection(f"TCPIP0::{address}::hislip0,{port}::INSTR", timeout=1, rstrip=True)
+
     t = threading.Thread(target=server, args=(address, port, "bad-header"))
     t.daemon = True
     t.start()
     time.sleep(0.1)  # allow some time for the server to start
-    dev = record.connect()
-    with pytest.raises(MSLConnectionError, match="The reply header is != 16 bytes"):
-        dev.query("bad-header")
+    dev = connection.connect()
+    with pytest.raises(MSLConnectionError, match=r"The reply header is != 16 bytes"):
+        _ = dev.query("bad-header")
     t.join()
 
 
-def test_str():
-    assert str(Message()) == "Message<type=None control_code=0 parameter=0 payload=b''>"
-    assert repr(Message()) == "Message<type=None control_code=0 parameter=0 payload=b''>"
+def test_invalid_address() -> None:
+    with pytest.raises(ValueError, match=r"Invalid HiSLIP address"):
+        _ = HiSLIP(Equipment(connection=Connection("COM2")))
+
+
+def test_message_as_string() -> None:
+    assert str(Message()) == "Message(type=UNDEFINED, control_code=0, parameter=0, payload=b'')"
+    assert repr(Message()) == "Message(type=UNDEFINED, control_code=0, parameter=0, payload=b'')"
 
     msg = AsyncInitialize(4, 3, b"x" * 25)
-    if sys.version_info.major == 2:
-        assert str(msg) == "Message<type=AsyncInitialize control_code=4 parameter=3 payload=xxxxxxxxxxxxxxxxxxxxxxxxx>"
-    else:
-        assert (
-            str(msg) == "Message<type=AsyncInitialize control_code=4 parameter=3 payload=b'xxxxxxxxxxxxxxxxxxxxxxxxx'>"
-        )
+    assert (
+        str(msg) == "Message(type=AsyncInitialize, control_code=4, parameter=3, payload=b'xxxxxxxxxxxxxxxxxxxxxxxxx')"
+    )
 
     msg = AsyncInitialize(payload=b"abcdefghijklmnopqrstuvwxyz" * 4)
-    if sys.version_info.major == 2:
-        assert (
-            str(msg) == "Message<type=AsyncInitialize control_code=0 parameter=0 "
-            "payload[104]=abcdefghijklmnopqrstuvwxy...bcdefghijklmnopqrstuvwxyz>"
-        )
-    else:
-        assert (
-            str(msg) == "Message<type=AsyncInitialize control_code=0 parameter=0 "
-            "payload[104]=b'abcdefghijklmnopqrstuvwxy'...b'bcdefghijklmnopqrstuvwxyz'>"
-        )
+    assert (
+        str(msg)
+        == "Message(type=AsyncInitialize, control_code=0, parameter=0, payload[len=104]=b'abcdefghijklmnopqrstuvwxy'...b'bcdefghijklmnopqrstuvwxyz')"  # cSpell: ignore bcdefghijklmnopqrstuvwxyz  # noqa: E501
+    )

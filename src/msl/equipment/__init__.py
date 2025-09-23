@@ -6,7 +6,7 @@ from .__about__ import __version__, version_tuple
 from .config import Config
 from .enumerations import Backend, DataBits, Parity, StopBits
 from .exceptions import MSLConnectionError
-from .interfaces import GPIB, NIDAQ, SDK, VXI11, MessageBased, MSLTimeoutError, Prologix, PyVISA, Serial, Socket
+from .interfaces import GPIB, NIDAQ, SDK, VXI11, HiSLIP, MessageBased, MSLTimeoutError, Prologix, PyVISA, Serial, Socket
 from .record_types import ConnectionRecord, EquipmentRecord
 from .schema import (
     AcceptanceCriteria,
@@ -76,6 +76,7 @@ __all__: list[str] = [
     "File",
     "Financial",
     "Firmware",
+    "HiSLIP",
     "Interface",
     "IssuingLaboratory",
     "MSLConnectionError",

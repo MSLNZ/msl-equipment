@@ -9,6 +9,7 @@ Although this package contains many classes and functions, the classes that you 
 The following interfaces are available to communicate with equipment,
 
 * [GPIB][msl.equipment.interfaces.gpib.GPIB] &mdash; Base class for GPIB communication
+* [HiSLIP][msl.equipment.interfaces.hislip.HiSLIP] &mdash; Base class for the [HiSLIP](https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf) communication protocol
 * [Prologix][msl.equipment.interfaces.prologix.Prologix] &mdash; Use [Prologix](https://prologix.biz/) hardware to establish a connection
 * [SDK][msl.equipment.interfaces.sdk.SDK] &mdash; Use the Software Development Kit (SDK) provided by the manufacturer
 * [Serial][msl.equipment.interfaces.serial.Serial] &mdash; Base class for equipment that is connected through a serial port

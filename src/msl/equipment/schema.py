@@ -2730,7 +2730,7 @@ class Register:
         >>> register["unknown-alias"]
         Traceback (most recent call last):
         ...
-        ValueError: No equipment exists with an alias or id of 'unknown-alias'
+        ValueError: No equipment exists with the alias or id 'unknown-alias'
 
         >>> register[243]
         Traceback (most recent call last):

@@ -1,0 +1,61 @@
+[project]
+name = "msl-equipment-validate"
+dynamic = ["version"]
+requires-python = ">=3.8"
+description = "Validate XML documents for msl-equipment"
+license = {file = "LICENSE.txt"}
+readme = "README.md"
+dependencies = [
+    "gtc",
+    "lxml",
+]
+keywords = [
+    "MSL",
+    "equipment",
+    "measurement",
+    "acquisition",
+    "17025",
+]
+authors = [
+    {name = "Measurement Standards Laboratory of New Zealand", email = "info@measurement.govt.nz"},
+]
+maintainers = [
+    {name = "Joseph Borbely", email = "joseph.borbely@measurement.govt.nz"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development",
+]
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+msl-equipment = { workspace = true }
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/msl"]
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/msl/equipment/validate/_version.py"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.version.raw-options]
+root = "../.."
+git_describe_command = ["git", "describe", "--dirty", "--tags", "--long", "--match", "validate-v*"]

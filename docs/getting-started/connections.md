@@ -6,6 +6,10 @@ The information about how to interface with equipment for computer control is de
 
 ### Schema {: #connections-xml-schema}
 
+```xml
+--8<-- "packages/validate/src/msl/equipment/validate/schema/connections.xsd"
+```
+
 ### Example {: #connections-xml-example}
 
 ## Address Syntax

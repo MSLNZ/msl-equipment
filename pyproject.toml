@@ -56,6 +56,9 @@ msl-equipment = "msl.equipment.cli:cli"
 resources = [
     "msl-equipment-resources",
 ]
+validate = [
+    "msl-equipment-validate",
+]
 
 [dependency-groups]
 doc = [
@@ -69,8 +72,6 @@ lint = [
     "ruff>=0.12.5",
 ]
 test = [
-    "gtc>=1.5.1",
-    "lxml>=6.0.0",
     "msl-io>=0.1.0",
     "nidaqmx>=1.0.2",
     "pytest>=8.3.5",
@@ -100,6 +101,7 @@ members = ["packages/*"]
 
 [tool.uv.sources]
 msl-equipment-resources = { workspace = true }
+msl-equipment-validate = { workspace = true }
 
 [tool.hatch.version]
 source = "vcs"

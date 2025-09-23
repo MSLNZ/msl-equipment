@@ -308,8 +308,7 @@ def test_timeout(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
     assert dev.socket is not None
 
     # 1 day is considered equivalent to blocking mode
-    blocking_timeout = 86400.0  # wait forever to acquire a lock
-    blocking_timeout_ms = int(blocking_timeout * 1000)
+    blocking_timeout_ms = int(vxi11.ONE_DAY * 1000)
 
     dev.timeout = -1
     assert dev._timeout is None  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
@@ -332,14 +331,14 @@ def test_timeout(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
     assert dev.socket.gettimeout() == 1.0 + 1.1 + 0.0  # 1 + io_timeout + lock_timeout
 
     dev.lock_timeout = -2.1
-    assert dev._lock_timeout == blocking_timeout  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    assert dev._lock_timeout == vxi11.ONE_DAY  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     assert dev._lock_timeout_ms == blocking_timeout_ms  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
-    assert dev.socket.gettimeout() == 1.0 + 1.1 + 86400.0  # 1 + io_timeout + lock_timeout
+    assert dev.socket.gettimeout() == 1.0 + 1.1 + vxi11.ONE_DAY  # 1 + io_timeout + lock_timeout
 
     dev.lock_timeout = None
-    assert dev._lock_timeout == blocking_timeout  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    assert dev._lock_timeout == vxi11.ONE_DAY  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     assert dev._lock_timeout_ms == blocking_timeout_ms  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
-    assert dev.socket.gettimeout() == 1.0 + 1.1 + 86400.0  # 1 + io_timeout + lock_timeout
+    assert dev.socket.gettimeout() == 1.0 + 1.1 + vxi11.ONE_DAY  # 1 + io_timeout + lock_timeout
 
     dev.lock_timeout = 0
     assert dev._lock_timeout == 0.0  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001

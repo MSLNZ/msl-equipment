@@ -42,6 +42,8 @@ REGEX = re.compile(
     flags=re.IGNORECASE,
 )
 
+ONE_DAY = 86400.0  # use 1 day as equivalent to waiting forever for a lock
+
 # VXI-11 program numbers
 DEVICE_ASYNC = 0x0607B0
 DEVICE_CORE = 0x0607AF
@@ -803,7 +805,7 @@ class VXI11(MessageBased, regex=REGEX):
 
         Attributes: Connection Properties:
             buffer_size (int): The maximum number of bytes to read at a time. _Default: `4096`_
-            lock_timeout (float): The timeout (in seconds) to wait for a lock. _Default: `0`_
+            lock_timeout (float): The timeout (in seconds) to wait for a lock (0 means wait forever). _Default: `0`_
             port (int): The port to use instead of calling the RPC Port Mapper function.
         """
         # the following must be defined before calling super()
@@ -1112,14 +1114,18 @@ class VXI11(MessageBased, regex=REGEX):
 
     @property
     def lock_timeout(self) -> float:
-        """The time, in seconds, to wait to acquire a lock."""
+        """The time, in seconds, to wait to acquire a lock.
+
+        Setting the value to &le;0 (or `None`) means _wait forever_.
+        """
+        if self._lock_timeout == ONE_DAY:
+            return 0.0
         return self._lock_timeout
 
     @lock_timeout.setter
     def lock_timeout(self, value: float | None) -> None:  # pyright: ignore[reportPropertyTypeMismatch]
         if value is None or value < 0:
-            # use 1 day as equivalent to "wait forever for a lock"
-            self._lock_timeout = 86400.0
+            self._lock_timeout = ONE_DAY
         else:
             self._lock_timeout = float(value)
         self._lock_timeout_ms = int(self._lock_timeout * 1000)

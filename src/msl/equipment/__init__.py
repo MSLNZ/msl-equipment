@@ -5,8 +5,20 @@ from __future__ import annotations
 from .__about__ import __version__, version_tuple
 from .config import Config
 from .enumerations import Backend, DataBits, Parity, StopBits
-from .exceptions import MSLConnectionError
-from .interfaces import GPIB, NIDAQ, SDK, VXI11, HiSLIP, MessageBased, MSLTimeoutError, Prologix, PyVISA, Serial, Socket
+from .interfaces import (
+    GPIB,
+    NIDAQ,
+    SDK,
+    VXI11,
+    HiSLIP,
+    MessageBased,
+    MSLConnectionError,
+    MSLTimeoutError,
+    Prologix,
+    PyVISA,
+    Serial,
+    Socket,
+)
 from .record_types import ConnectionRecord, EquipmentRecord
 from .schema import (
     AcceptanceCriteria,

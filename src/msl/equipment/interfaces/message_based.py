@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, overload
 
 import serial
 
-from msl.equipment.exceptions import MSLConnectionError
 from msl.equipment.schema import Interface
 from msl.equipment.utils import from_bytes, logger, to_bytes
 
@@ -259,7 +258,7 @@ class MessageBased(Interface, append=False):
            [MSLTimeoutError][msl.equipment.interfaces.message_based.MSLTimeoutError] is raised.
         4. [max_read_size][msl.equipment.interfaces.message_based.MessageBased.max_read_size]
            bytes have been received. If the maximum number of bytes have been read, an
-           [MSLConnectionError][msl.equipment.exceptions.MSLConnectionError] is raised.
+           [MSLConnectionError][msl.equipment.interfaces.message_based.MSLConnectionError] is raised.
 
         !!! tip
             You may also want to set the [rstrip][msl.equipment.interfaces.message_based.MessageBased.rstrip]
@@ -416,6 +415,20 @@ class MessageBased(Interface, append=False):
             self._write_termination = termination
         else:
             self._write_termination = termination.encode(self._encoding)
+
+
+class MSLConnectionError(OSError):
+    """Base class for connection-related exceptions."""
+
+    def __init__(self, interface: Interface, message: str) -> None:
+        """Base class for connection-related exceptions.
+
+        Args:
+            interface: An interface subclass.
+            message: A message to append to the generic error message.
+        """
+        logger.error("%r %s", interface, message)
+        super().__init__(f"{interface!r}\n{message}")
 
 
 class MSLTimeoutError(TimeoutError):

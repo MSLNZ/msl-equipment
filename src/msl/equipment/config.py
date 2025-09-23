@@ -45,7 +45,6 @@ def _sources(text: str | None, tag: Literal["register", "connections"]) -> list[
     return sources
 
 
-
 class Config:
     """Load a configuration file."""
 

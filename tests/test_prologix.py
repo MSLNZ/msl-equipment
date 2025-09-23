@@ -4,8 +4,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from msl.equipment import Connection, Equipment, MessageBased, Prologix
-from msl.equipment.exceptions import MSLConnectionError
+from msl.equipment import Connection, Equipment, MessageBased, MSLConnectionError, Prologix
 from msl.equipment.interfaces.prologix import find_prologix, parse_prologix_address
 
 if TYPE_CHECKING:

@@ -8,10 +8,10 @@ import sys
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, overload
 
-from msl.equipment.exceptions import MSLConnectionError
 from msl.equipment.schema import Connection, Equipment, Interface
 from msl.equipment.utils import ipv4_addresses, logger
 
+from .message_based import MSLConnectionError
 from .serial import Serial
 from .socket import Socket
 

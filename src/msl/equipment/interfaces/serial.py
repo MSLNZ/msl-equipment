@@ -9,10 +9,9 @@ from typing import TYPE_CHECKING, NamedTuple
 import serial
 
 from msl.equipment.enumerations import DataBits, Parity, StopBits
-from msl.equipment.exceptions import MSLConnectionError
 from msl.equipment.utils import to_enum
 
-from .message_based import MessageBased, MSLTimeoutError
+from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from typing import Any

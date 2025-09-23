@@ -8,10 +8,9 @@ from typing import TYPE_CHECKING, NamedTuple
 import zmq
 from zmq.constants import SocketType
 
-from msl.equipment.exceptions import MSLConnectionError
 from msl.equipment.utils import to_enum
 
-from .message_based import MessageBased
+from .message_based import MessageBased, MSLConnectionError
 
 if TYPE_CHECKING:
     from zmq.sugar.context import Context

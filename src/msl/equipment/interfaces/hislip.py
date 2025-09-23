@@ -17,9 +17,7 @@ from enum import IntEnum
 from struct import Struct, pack, unpack
 from typing import TYPE_CHECKING
 
-from msl.equipment.exceptions import MSLConnectionError
-
-from .message_based import MessageBased, MSLTimeoutError
+from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from typing import Any, ClassVar, TypeVar

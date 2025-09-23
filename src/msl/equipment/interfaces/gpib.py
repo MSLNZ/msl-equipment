@@ -12,11 +12,10 @@ from dataclasses import dataclass
 from functools import partial
 from typing import TYPE_CHECKING
 
-from msl.equipment.exceptions import GPIBLibraryError, MSLConnectionError
 from msl.equipment.utils import logger
 from msl.loadlib import LoadLibrary
 
-from .message_based import MessageBased
+from .message_based import MessageBased, MSLConnectionError
 
 if TYPE_CHECKING:
     from ctypes import _NamedFuncPointer, _Pointer  # pyright: ignore[reportPrivateUsage]
@@ -382,6 +381,22 @@ def _convert_timeout(value: float | None) -> int:
         return _TIMEOUTS.index(value)
     except ValueError:
         return min(bisect_right(_TIMEOUTS, value), len(_TIMEOUTS) - 1)
+
+
+class GPIBLibraryError(OSError):
+    """Exception from the GPIB library."""
+
+    def __init__(self, *, message: str, name: str = "", ibsta: int = 0, iberr: int = 0) -> None:
+        """Exception from the GPIB library.
+
+        Args:
+            message: The error message.
+            name: The GPIB function name.
+            ibsta: The status value.
+            iberr: The error code.
+        """
+        msg = message if not name else f"{message} [{name}(), ibsta:{hex(ibsta)}, iberr:{hex(iberr)}]"
+        super().__init__(msg)
 
 
 class GPIB(MessageBased, regex=REGEX):

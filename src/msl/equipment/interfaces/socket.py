@@ -7,9 +7,7 @@ import socket
 import time
 from typing import TYPE_CHECKING, NamedTuple
 
-from msl.equipment.exceptions import MSLConnectionError
-
-from .message_based import MessageBased, MSLTimeoutError
+from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from msl.equipment.schema import Equipment

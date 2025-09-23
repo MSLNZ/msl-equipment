@@ -29,9 +29,9 @@ from enum import IntEnum
 from struct import Struct, pack, unpack
 from typing import TYPE_CHECKING, overload
 
-from msl.equipment.exceptions import MSLConnectionError
-from msl.equipment.interfaces.message_based import MessageBased, MSLTimeoutError
 from msl.equipment.utils import LXIDevice, ipv4_addresses, logger, parse_lxi_webserver
+
+from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from msl.equipment.schema import Equipment

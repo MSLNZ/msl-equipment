@@ -124,6 +124,7 @@ addopts = [
     "--doctest-modules",
     "--doctest-glob=*.md",
     "--import-mode=importlib",
+    "--ignore=src/msl/equipment/_types.py",
     "--ignore=packages/",
 ]
 doctest_optionflags = "ELLIPSIS"

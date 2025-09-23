@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 from collections.abc import Sequence
 from enum import Enum
-from typing import Literal, Protocol, TypeAlias, TypeVar, Union  # pyright: ignore[reportDeprecated]
+from typing import Literal, Protocol, TypeVar, Union  # pyright: ignore[reportDeprecated]
 
 import numpy as np
 
@@ -23,7 +23,7 @@ class SupportsRead(Protocol[_T_co]):
 PathLike = Union[str, bytes, os.PathLike[str], os.PathLike[bytes]]  # pyright: ignore[reportDeprecated]
 """A [path-like object][]."""
 
-XMLSource: TypeAlias = Union[int, PathLike, SupportsRead[bytes] | SupportsRead[str]]  # pyright: ignore[reportDeprecated]
+XMLSource = Union[int, PathLike, SupportsRead[bytes] | SupportsRead[str]]  # pyright: ignore[reportDeprecated]
 """A [path-like object][] or a [file-like object][] for parsing XML content."""
 
 MessageFormat = Literal["ascii", "hp", "ieee"]

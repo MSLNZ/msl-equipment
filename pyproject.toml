@@ -134,6 +134,9 @@ doctest_optionflags = "ELLIPSIS"
 [tool.coverage.run]
 branch = true
 data_file = ".cache/coverage/.coverage"
+omit = [
+    "src/msl/equipment/_types.py",
+]
 
 [tool.coverage.report]
 exclude_lines = [

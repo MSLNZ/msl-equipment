@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING
 from msl.equipment.utils import logger
 from msl.loadlib import LoadLibrary
 
-from .message_based import MessageBased, MSLConnectionError
+from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from ctypes import _NamedFuncPointer, _Pointer  # pyright: ignore[reportPrivateUsage]
@@ -31,8 +31,6 @@ IS_LINUX: bool = sys.platform == "linux"
 IS_DARWIN: bool = sys.platform == "darwin"
 
 REGEX = re.compile(r"GPIB(?P<board>\d{0,2})(::((?P<pad>\d+)|(?P<name>[^\s:]+)))?(::(?P<sad>\d+))?", flags=re.IGNORECASE)
-
-_gpib_library: LoadLibrary | None = None
 
 # NI VI_GPIB
 REN_DEASSERT = 0
@@ -128,31 +126,31 @@ _TIMEOUTS = (
     30e-3,
     100e-3,
     300e-3,
-    1,
-    3,
-    10,
-    30,
-    100,
-    300,
-    1000,
+    1.0,
+    3.0,
+    10.0,
+    30.0,
+    100.0,
+    300.0,
+    1000.0,
 )
 
 
-def _load_library(errcheck: Callable[[int, _NamedFuncPointer, tuple[int, ...]], int] | None = None) -> None:  # noqa: C901, PLR0912, PLR0915
+def _load_library(errcheck: Callable[[int, _NamedFuncPointer, tuple[int, ...]], int]) -> None:  # noqa: C901, PLR0912, PLR0915
     """Load a GPIB library.
 
     Args:
         errcheck: A callable function assigned to ctypes._FuncPtr.errcheck for each function in
             the GPIB library that returns the ibsta status value.
     """
-    global _gpib_library  # noqa: PLW0603
-    if _gpib_library is not None:
+    if GPIB.gpib_library is not None:
         return
 
+    _library: LoadLibrary | None = None
     env_lib = os.getenv("GPIB_LIBRARY")
     libtype = "windll" if IS_WINDOWS else "cdll"
     if env_lib:
-        _gpib_library = LoadLibrary(env_lib, libtype=libtype)  # type: ignore[arg-type]
+        _library = LoadLibrary(env_lib, libtype=libtype)  # type: ignore[arg-type]
     else:
         files: list[str] = []
         if IS_WINDOWS:
@@ -179,12 +177,12 @@ def _load_library(errcheck: Callable[[int, _NamedFuncPointer, tuple[int, ...]], 
 
         for file in files:
             try:
-                _gpib_library = LoadLibrary(file, libtype=libtype)  # type: ignore[arg-type]
+                _library = LoadLibrary(file, libtype=libtype)  # type: ignore[arg-type]
                 break
             except OSError:
                 pass
 
-        if _gpib_library is None:
+        if _library is None:
             msg = (
                 f"Cannot load a GPIB library: {', '.join(files)}\n"
                 f"If you have a GPIB library available, create a GPIB_LIBRARY environment variable "
@@ -192,42 +190,8 @@ def _load_library(errcheck: Callable[[int, _NamedFuncPointer, tuple[int, ...]], 
             )
             raise OSError(msg)
 
-    lib = _gpib_library.lib
-
-    if errcheck is None:
-
-        def _error_check(result: int, func: _NamedFuncPointer, arguments: tuple[int, ...]) -> int:
-            logger.debug("gpib.%s%s -> 0x%x", func.__name__, arguments, result)
-            if result & TIMO:
-                msg = (
-                    "If you are confident that the GPIB device received a\n"
-                    "valid message, you may want to check the manual to "
-                    "determine if the device sets the EOI line\nat the end "
-                    "of a message transfer. If EOI is not set, you may "
-                    "need to specify a value for the\nread_termination "
-                    "character."
-                )
-                raise TimeoutError(msg)
-
-            if result & ERR:
-                # mimic _SetGpibError in linux-gpib-user/language/python/gpibinter.c
-                iberr = lib.ThreadIberr()
-                if iberr in {EDVR, EFSO}:
-                    iberr = lib.ibcntl()
-                    if IS_LINUX:
-                        try:
-                            message = os.strerror(iberr)
-                        except (OverflowError, ValueError):
-                            message = "Invalid os.strerror code"
-                    else:
-                        message = _ERRORS.get(iberr, "Unknown error")
-                else:
-                    message = _ERRORS.get(iberr, "Unknown error")
-                raise GPIBLibraryError(message=message, name=func.__name__, ibsta=result, iberr=iberr)
-
-            return result
-
-        errcheck = _error_check
+    GPIB.gpib_library = _library
+    lib = _library.lib
 
     definitions: list[tuple[str, bool, type[c_int] | None, tuple[ArgType, ...]]] = [
         ("ibask", True, c_int, (c_int, c_int, POINTER(c_int))),
@@ -273,9 +237,9 @@ def _load_library(errcheck: Callable[[int, _NamedFuncPointer, tuple[int, ...]], 
             function = getattr(lib, fcn)
         except AttributeError:
 
-            def not_implement(f: str = fcn) -> Never:
+            def not_implement(*_: int, f: str = fcn) -> Never:
                 msg = f"{f!r} is not implement on {sys.platform!r}"
-                raise GPIBLibraryError(message=msg)
+                raise RuntimeError(msg)
 
             setattr(lib, fcn, partial(not_implement, f=fcn))
             continue
@@ -293,7 +257,7 @@ def _load_library(errcheck: Callable[[int, _NamedFuncPointer, tuple[int, ...]], 
         lib.ibcntl = lib.ThreadIbcnt
 
 
-def find_listeners(*, include_sad: bool = True) -> list[str]:  # noqa: C901, PLR0915
+def find_listeners(*, include_sad: bool = False) -> list[str]:  # noqa: C901
     """Find GPIB listeners.
 
     Args:
@@ -335,8 +299,8 @@ def find_listeners(*, include_sad: bool = True) -> list[str]:  # noqa: C901, PLR
         logger.debug(str(e).splitlines()[0])
         return devices
 
-    assert _gpib_library is not None  # noqa: S101
-    lib = _gpib_library.lib
+    assert GPIB.gpib_library is not None  # noqa: S101
+    lib = GPIB.gpib_library.lib
     asked = c_int()
     exists = c_short()
     for board in range(16):
@@ -357,13 +321,12 @@ def find_listeners(*, include_sad: bool = True) -> list[str]:  # noqa: C901, PLR
 
             if exists.value:
                 devices.append(f"GPIB{board}::{pad}::INSTR")
-                continue
 
             if include_sad:
                 for sad in range(96, 127):
                     if lib.ibln(board, pad, sad, byref(exists)) & ERR:
                         continue
-                    if exists.value > 0:
+                    if exists.value:
                         devices.append(f"GPIB{board}::{pad}::{sad}::INSTR")
 
         # close handle
@@ -383,26 +346,10 @@ def _convert_timeout(value: float | None) -> int:
         return min(bisect_right(_TIMEOUTS, value), len(_TIMEOUTS) - 1)
 
 
-class GPIBLibraryError(OSError):
-    """Exception from the GPIB library."""
-
-    def __init__(self, *, message: str, name: str = "", ibsta: int = 0, iberr: int = 0) -> None:
-        """Exception from the GPIB library.
-
-        Args:
-            message: The error message.
-            name: The GPIB function name.
-            ibsta: The status value.
-            iberr: The error code.
-        """
-        msg = message if not name else f"{message} [{name}(), ibsta:{hex(ibsta)}, iberr:{hex(iberr)}]"
-        super().__init__(msg)
-
-
 class GPIB(MessageBased, regex=REGEX):
     """Base class for GPIB communication."""
 
-    _gpib_library: LoadLibrary | None = None
+    gpib_library: LoadLibrary | None = None
 
     def __init__(self, equipment: Equipment) -> None:
         """Base class for GPIB communication.
@@ -421,6 +368,7 @@ class GPIB(MessageBased, regex=REGEX):
         """
         self._own: bool = True
         self._handle: int = -1
+        super().__init__(equipment)
 
         assert equipment.connection is not None  # noqa: S101
         info = parse_gpib_address(equipment.connection.address)
@@ -431,9 +379,9 @@ class GPIB(MessageBased, regex=REGEX):
         props = equipment.connection.properties
         _ = props.setdefault("read_termination", None)
 
-        _load_library()
-        assert _gpib_library is not None  # noqa: S101
-        self._lib: Any = _gpib_library.lib
+        _load_library(self._error_check)
+        assert GPIB.gpib_library is not None  # noqa: S101
+        self._lib: Any = GPIB.gpib_library.lib
 
         if info.name:
             # a board or device object from a name in a gpib.conf file
@@ -448,7 +396,6 @@ class GPIB(MessageBased, regex=REGEX):
             eos_mode = int(props.get("eos_mode", 0))
             sad = 0 if info.sad is None else info.sad
             if sad != 0 and sad < 0x60:  # noqa: PLR2004
-                # NI's unfortunate convention of adding 0x60 to secondary addresses
                 sad += 0x60
             info.sad = sad
             timeout = _convert_timeout(props.get("timeout", None))
@@ -462,11 +409,12 @@ class GPIB(MessageBased, regex=REGEX):
         self._is_board: bool
         try:
             self._is_board = bool(self.ask(0xA))  # IbaSC = 0xa
-        except GPIBLibraryError:
+        except MSLConnectionError:
             # asking IbaSC for a GPIB device raises EHDL error
             self._is_board = False
 
-        super().__init__(equipment)
+        if not self._is_board:
+            self._set_interface_timeout()
 
     def _get_ibdev_handle(self, *args: int) -> int:
         # board_index, pad, sad, timeout, send_eoi, eos_mode
@@ -485,8 +433,44 @@ class GPIB(MessageBased, regex=REGEX):
             raise MSLConnectionError(self, message=msg)
         return handle
 
+    def _error_check(self, result: int, func: _NamedFuncPointer, arguments: tuple[int, ...]) -> int:
+        logger.debug("gpib.%s%s -> 0x%x", func.__name__, arguments, result)
+        if result & TIMO:
+            msg = (
+                "If you are confident that the GPIB device received a\n"
+                "valid message, you may want to check the manual to "
+                "determine if the device sets the EOI line\nat the end "
+                "of a message transfer. If EOI is not set, you may "
+                "need to specify a value for the\nread_termination "
+                "character."
+            )
+            raise MSLTimeoutError(self, msg)
+
+        if result & ERR:
+            # mimic _SetGpibError in linux-gpib-user/language/python/gpibinter.c
+            iberr = self._lib.ThreadIberr()
+            if iberr in {EDVR, EFSO}:
+                iberr = self._lib.ibcntl()
+                if IS_LINUX:
+                    try:
+                        message = os.strerror(iberr)
+                    except (OverflowError, ValueError):
+                        message = "Invalid os.strerror code"
+                else:
+                    message = _ERRORS.get(iberr, "Unknown error")
+            else:
+                message = _ERRORS.get(iberr, "Unknown error")
+
+            msg = f"{message} [{func.__name__}, ibsta:{hex(result)}, iberr:{hex(iberr)}]"
+            raise MSLConnectionError(self, msg)
+
+        return result
+
     def _set_interface_timeout(self) -> None:  # pyright: ignore[reportImplicitOverride]
         """Overrides method in MessageBased."""
+        if not hasattr(self, "_is_board"):
+            return
+
         if self._is_board:
             msg = "Cannot set a timeout value for a GPIB board"
             raise MSLConnectionError(self, message=msg)
@@ -696,9 +680,9 @@ class GPIB(MessageBased, regex=REGEX):
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
         """Close the GPIB connection."""
         if self._own and self._handle > 0:
-            with contextlib.suppress(GPIBLibraryError):
+            with contextlib.suppress(MSLConnectionError):
                 _ = self.online(state=False, handle=self._handle)
-            self._own = False
+            self._handle = -1
             super().disconnect()
 
     @property
@@ -725,12 +709,6 @@ class GPIB(MessageBased, regex=REGEX):
             handle = self._handle
         ibsta: int = self._lib.ibsic(handle)
         return ibsta
-
-    @property
-    def library_path(self) -> str:
-        """Returns the path to the GPIB library."""
-        assert _gpib_library is not None  # noqa: S101
-        return _gpib_library.path
 
     def lines(self, *, handle: int | None = None) -> int:
         """Returns the status of the control and handshaking bus lines (board).
@@ -855,6 +833,9 @@ class GPIB(MessageBased, regex=REGEX):
 
     @read_termination.setter
     def read_termination(self, termination: str | bytes | None) -> None:  # pyright: ignore[reportPropertyTypeMismatch]
+        if not hasattr(self, "_lib"):
+            return
+
         if isinstance(termination, str):
             termination = termination.encode()
 

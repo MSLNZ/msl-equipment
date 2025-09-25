@@ -1005,9 +1005,13 @@ def parse_gpib_address(address: str) -> ParsedGPIBAddress | None:
     if not match:
         return None
 
+    name = match["name"]
+    if name and name.upper() == "INTFC":
+        name = None
+
     return ParsedGPIBAddress(
         board=int(match["board"]) if match["board"] else 0,
-        name=match["name"] if match["name"] != "INTFC" else None,
+        name=name,
         pad=int(match["pad"]) if match["pad"] else None,
         sad=int(match["sad"]) if match["sad"] else None,
     )

@@ -53,6 +53,7 @@ def test_parse_address_invalid(address: str) -> None:
         ("GPIB10::2::96", ParsedGPIBAddress(board=10, name=None, pad=2, sad=96)),
         ("GPIB::1::0::INSTR", ParsedGPIBAddress(board=0, name=None, pad=1, sad=0)),
         ("GPIB2::INTFC", ParsedGPIBAddress(board=2, name=None, pad=None, sad=None)),
+        ("gpib1::intfc", ParsedGPIBAddress(board=1, name=None, pad=None, sad=None)),
     ],
 )
 def test_parse_address_valid(address: str, expected: ParsedGPIBAddress) -> None:

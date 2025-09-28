@@ -279,8 +279,8 @@ def find_lxi(*, ip: Sequence[str] | None = None, timeout: float = 1) -> dict[str
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 1)
         sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 255)
-        sock.bind((host, 0))
         try:
+            sock.bind((host, 0))
             _ = sock.sendto(message, (MDNS_ADDR, MDNS_PORT))
         except OSError:
             return

@@ -1270,7 +1270,10 @@ def find_vxi11(  # noqa: C901, PLR0915
     def broadcast(host: str) -> None:  # noqa: C901
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        sock.bind((host, 0))
+        try:
+            sock.bind((host, 0))
+        except OSError:
+            return
         _ = sock.sendto(broadcast_msg, ("255.255.255.255", PMAP_PORT))
         select_timeout = min(timeout * 0.1, 0.1)
         t0 = time.time()

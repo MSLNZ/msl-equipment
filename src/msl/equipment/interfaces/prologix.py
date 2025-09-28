@@ -519,8 +519,7 @@ def find_prologix(  # noqa: C901, PLR0915
         The information about the Prologix ENET-GPIB devices that were found.
     """
     all_ips = ipv4_addresses() if not ip else set(ip)
-
-    logger.debug("find Prologix ENET-GPIB devices: interfaces=%s, port=%s, timeout=%s", all_ips, port, timeout)
+    logger.debug("Broadcasting for Prologix ENET-GPIB Controllers: %s", all_ips)
 
     if sys.platform == "win32":
         mac_regex = re.compile(r"([0-9a-fA-F]{2}(?:-[0-9a-fA-F]{2}){5})")

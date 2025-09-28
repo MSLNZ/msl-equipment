@@ -1264,8 +1264,7 @@ def find_vxi11(  # noqa: C901, PLR0915
         The information about the VXI-11 devices that were found.
     """
     all_ips = ipv4_addresses() if not ip else set(ip)
-
-    logger.debug("find VXI-11 devices: interfaces:=%s, timeout=%s", all_ips, timeout)
+    logger.debug("Broadcasting for VXI-11 devices: %s", all_ips)
 
     def broadcast(host: str) -> None:  # noqa: C901
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)

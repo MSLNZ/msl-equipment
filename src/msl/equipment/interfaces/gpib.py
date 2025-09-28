@@ -266,7 +266,7 @@ def find_listeners(*, include_sad: bool = False) -> list[str]:  # noqa: C901
     Returns:
         The GPIB addresses that were found.
     """
-    logger.debug("find GPIB listeners: include_sad=%s", include_sad)
+    logger.debug("Searching for GPIB devices (include_sad=%s)", include_sad)
     devices: list[str] = []
 
     def error_check(result: int, func: _NamedFuncPointer, arguments: tuple[int, ...]) -> int:

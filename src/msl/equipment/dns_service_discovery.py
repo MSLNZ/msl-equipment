@@ -234,7 +234,7 @@ def find_lxi(*, ip: Sequence[str] | None = None, timeout: float = 1) -> dict[str
             Each _key_ is the IPv4 address of the LXI device.
     """
     all_ips = ipv4_addresses() if not ip else set(ip)
-    logger.debug("find LXI devices: interfaces=%s, timeout=%s", all_ips, timeout)
+    logger.debug("Broadcasting for LXI devices: %s", all_ips)
 
     services = [
         # VXI-11 Discovery and Identification Extended Function (Revision 1.1), Section 10.1.5

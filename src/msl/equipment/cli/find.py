@@ -163,7 +163,8 @@ def print_stdout(found: list[Device]) -> None:
     devices = sorted(found, key=lambda v: v.description)
     types = sorted({d.type for d in devices})
     for typ in types:
-        print(f"{typ.name} Devices")
+        kind = "Ports" if typ == DeviceType.ASRL else "Devices"
+        print(f"{typ.name} {kind}")
         for device in devices:
             if device.type != typ:
                 continue

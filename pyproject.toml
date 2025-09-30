@@ -50,7 +50,7 @@ Issues = "https://github.com/MSLNZ/msl-equipment/issues"
 Source = "https://github.com/MSLNZ/msl-equipment"
 
 [project.scripts]
-msl-equipment = "msl.equipment.cli:cli"
+msl-equipment = "msl.equipment.cli:main"
 
 [project.optional-dependencies]
 resources = [
@@ -127,7 +127,9 @@ addopts = [
     "--doctest-glob=*.md",
     "--import-mode=importlib",
     "--ignore=src/msl/equipment/_types.py",
-    "--ignore=packages/",
+    "--ignore=packages/resources/examples",
+    "--ignore=packages/resources/src/msl/equipment/resources",
+    "--ignore=packages/resources/tests",
 ]
 doctest_optionflags = "ELLIPSIS"
 
@@ -136,6 +138,9 @@ branch = true
 data_file = ".cache/coverage/.coverage"
 omit = [
     "src/msl/equipment/_types.py",
+]
+patch = [
+    "subprocess",
 ]
 
 [tool.coverage.report]
@@ -225,6 +230,9 @@ ignore = [
     "INP001", # implicit-namespace-package
     "PLR2004",  # magic-value-comparison
     "S101", # Use of `assert` detected
+]
+"src/msl/equipment/cli/find.py" = [
+    "T201",  # Allow print statements
 ]
 
 [tool.ruff.lint.pydocstyle]

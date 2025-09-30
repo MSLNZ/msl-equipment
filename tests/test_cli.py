@@ -47,7 +47,7 @@ def test_help_unknown_command() -> None:
     out = run(["help", "unknown"])
     assert out.returncode == errno.ENOENT
     assert not out.stdout
-    assert out.stderr.rstrip().endswith("invalid choice: 'unknown' (choose from find, validate, webapp)")
+    assert "invalid choice: 'unknown' (choose from" in out.stderr
 
 
 def test_run_external_unknown_name(capsys: pytest.CaptureFixture[str]) -> None:

@@ -191,7 +191,7 @@ def test_find_print_stdout(capsys: pytest.CaptureFixture[str]) -> None:
     assert not captured.err
     assert (
         captured.out
-        == """ASRL Devices
+        == """ASRL Ports
   COM1 [Communications Port (COM1)]
   COM2 [Communications Port (COM2)]
   COM3 [Intel(R) Active Management Technology - SOL (COM3)]

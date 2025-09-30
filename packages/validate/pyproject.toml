@@ -40,6 +40,9 @@ classifiers = [
     "Topic :: Software Development",
 ]
 
+[project.scripts]
+msl-equipment-validate = "msl.equipment_validate:main"
+
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
@@ -51,7 +54,7 @@ msl-equipment = { workspace = true }
 packages = ["src/msl"]
 
 [tool.hatch.build.hooks.vcs]
-version-file = "src/msl/equipment/validate/_version.py"
+version-file = "src/msl/equipment_validate/_version.py"
 
 [tool.hatch.version]
 source = "vcs"

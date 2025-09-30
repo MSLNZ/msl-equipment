@@ -62,6 +62,8 @@ class Summary:
     """Keeps tracks of the number of files validated, errors, and elements that were skipped."""
 
     num_files: int = 0
+    num_equipment: int = 0
+    num_connection: int = 0
     num_errors: int = 0
     num_skipped: int = 0
 
@@ -122,12 +124,9 @@ def log_error(
         msg = f"{file}:{line}:{column}\n  {message}"
     else:
         # https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
-        if uri_scheme == "vscode":
-            uri = f"vscode://file/{file}:{line}:{column}"
-        else:
-            uri = f"{uri_scheme}://open?file={file}&line={line}&column={column}"
-
         label = f"{file}:{line}:{column}"
+        resolved = Path(file).resolve()
+        uri = f"{uri_scheme}://file/{resolved}:{line}:{column}"
         msg = f"\033]8;;{uri}\033\\{label}\033]8;;\033\\\n  {message}"
 
     log.error(msg)
@@ -154,6 +153,12 @@ def schema_validate(*, path: str, xml: ElementTree, schema: XMLSchema, exit_firs
     """Validate an XML file against a schema."""
     log.info("Validating %s", path)
     Summary.num_files += 1
+
+    root = xml.getroot()
+    if root.tag == "connections":
+        Summary.num_connection += len(root)
+    else:
+        Summary.num_equipment += len(root)
 
     if schema.validate(xml):
         return
@@ -261,7 +266,7 @@ def validate(  # noqa: C901, PLR0911, PLR0912, PLR0913
     for equipment in tree.xpath("//reg:equipment", namespaces=ns_map):
         id_, manufacturer, model, serial = equipment[:4]  # schema forces order
         ids[id_.text] = (path, id_.sourceline)
-        name = f"{manufacturer.text} {model.text} {serial.text}"
+        name = f"{manufacturer.text}|{model.text}|{serial.text}"
         info = Info(url=path, exit_first=exit_first, uri_scheme=uri_scheme, debug_name=name)
         for digital_report in equipment.xpath(".//reg:digitalReport", namespaces=ns_map):
             if skip_checksum:

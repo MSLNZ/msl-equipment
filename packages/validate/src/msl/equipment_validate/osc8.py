@@ -1,6 +1,8 @@
 """Hyperlinks (a.k.a. HTML-like anchors) in terminal emulators.
 
 See this [gist](https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda) for an overview.
+
+OSC (operating system command) is typically ESC ].
 """
 
 from __future__ import annotations
@@ -11,24 +13,30 @@ from pathlib import Path
 from subprocess import Popen
 from typing import Callable
 
-regex = re.compile(
-    r"(?P<scheme>[^:]+)://open/?\?file=(?P<file>[^&]+)(&line=(?P<line>[^&]+))?(&column=(?P<column>[^&]+))?",
-)
+schemes = ("vs", "vscode", "pycharm", "n++")
+
+regexp = re.compile(r"(?P<scheme>[^:]+)://file/(?P<file>([a-zA-Z]:)?[^:]+)(:(?P<line>\d+))?(:(?P<column>\d+))?")
 
 
 def register_uri_scheme(name: str) -> None:
     """Register a custom URI Scheme handler in the Windows Registry.
 
     Args:
-        name: URI scheme name (e.g., PyCharm).
+        name: URI scheme name.
 
     Raises:
         PermissionError: If Python is not running within an elevated terminal.
     """
     import winreg  # noqa: PLC0415
 
+    name = name.lower()
+
+    # Visual Studio Code creates the vscode URI scheme handler in the Windows Registry when it is installed
+    if name == "vscode":
+        return
+
     root = winreg.OpenKey(winreg.HKEY_CLASSES_ROOT, "")
-    winreg.SetValue(root, name, winreg.REG_SZ, f"URL:{name.lower()}")
+    winreg.SetValue(root, name, winreg.REG_SZ, f"URL:{name}")
 
     key = winreg.CreateKey(root, name)
     winreg.SetValueEx(key, "URL Protocol", 0, winreg.REG_SZ, "")
@@ -56,6 +64,13 @@ def unregister_uri_scheme(name: str) -> None:
     """
     import winreg  # noqa: PLC0415
 
+    name = name.lower()
+
+    # Visual Studio Code creates the vscode URI scheme handler in the Windows Registry when it is installed
+    # So we should not remove it
+    if name == "vscode":
+        return
+
     _open = winreg.OpenKey(winreg.HKEY_CLASSES_ROOT, f"{name}\\shell\\open")
     winreg.DeleteKey(_open, "command")
     winreg.CloseKey(_open)
@@ -71,7 +86,7 @@ def unregister_uri_scheme(name: str) -> None:
     winreg.DeleteKey(winreg.HKEY_CLASSES_ROOT, name)
 
 
-def pycharm_uri_scheme_handler(file: str, line: str | None, column: str | None) -> None:
+def pycharm_uri_scheme_handler(file: str, line: int, column: int) -> None:
     """Handles [OSC-8 Hyperlinks] in the Windows Terminal to open a file in PyCharm.
 
     The PyCharm URI Scheme must first be registered using `register_uri_scheme(name="PyCharm")`
@@ -88,15 +103,15 @@ def pycharm_uri_scheme_handler(file: str, line: str | None, column: str | None) 
             if exe.is_file():
                 cmd: list[str] = [str(exe)]
                 if line:
-                    cmd.extend(["--line", line])
+                    cmd.extend(["--line", str(line)])
                 if column:
-                    cmd.extend(["--column", column])
+                    cmd.extend(["--column", str(column)])
                 cmd.append(file)
                 _ = Popen(cmd)  # noqa: S603
                 return
 
 
-def vs_uri_scheme_handler(file: str, line: str | None, column: str | None) -> None:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG001
+def vs_uri_scheme_handler(file: str, line: int, column: int) -> None:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG001
     """Handles [OSC-8 Hyperlinks] in the Windows Terminal to open a file in Visual Studio.
 
     The Visual Studio URI Scheme must first be registered using `register_uri_scheme(name="VS")`
@@ -107,9 +122,32 @@ def vs_uri_scheme_handler(file: str, line: str | None, column: str | None) -> No
         for path in Path(pf).glob("Microsoft Visual Studio\\*\\Community\\Common7\\IDE"):
             exe = path / "devenv.exe"
             if exe.is_file():
+                cmd = [str(exe), "/Edit", file]
+                if line:
+                    cmd.extend(["/Command", f"Edit.GoTo {line}"])
                 # `column` is currently not supported by the GoTo option
-                _ = Popen([str(exe), "/Edit", file, "/Command", f"Edit.GoTo {line or ''}"])  # noqa: S603
+                _ = Popen(cmd)  # noqa: S603
                 return
+
+
+def notepad_pp_uri_scheme_handler(file: str, line: int, column: int) -> None:
+    """Handles [OSC-8 Hyperlinks] in the Windows Terminal to open a file in Notepad++.
+
+    The Notepad++ URI Scheme must first be registered using `register_uri_scheme(name="npp")`
+
+    [OSC-8 Hyperlinks]: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
+    """
+    for pf in ["C:\\Program Files", "C:\\Program Files (x86)"]:
+        exe = Path(pf) / "Notepad++" / "notepad++.exe"
+        if exe.is_file():
+            cmd = [str(exe)]
+            if line:
+                cmd.append(f"-n{line}")
+            if column:
+                cmd.append(f"-c{column}")
+            cmd.append(file)
+            _ = Popen(cmd)  # noqa: S603
+            return
 
 
 def uri_scheme_handler(command: str) -> None:
@@ -120,21 +158,25 @@ def uri_scheme_handler(command: str) -> None:
     Args:
         command: The URI Scheme command stored in the Windows Registry.
     """
-    match = regex.match(command)
+    match = regexp.match(command)
     if match is None:
         return
 
-    handler = handler_map.get(match["scheme"])
+    scheme = match["scheme"].lower()
+    handler = handler_map.get(scheme)
     if handler is None:
-        msg = f"A URI Scheme handler for {command!r} does not exist"
-        raise ValueError(msg)
+        return
 
-    handler(match["file"], match["line"], match["column"])
+    line = int(match["line"]) if match["line"] is not None else 0
+    column = int(match["column"]) if match["column"] is not None else 0
+    handler(match["file"], line, column)
 
 
-handler_map: dict[str, Callable[[str, str | None, str | None], None]] = {
+handler_map: dict[str, Callable[[str, int, int], None]] = {
     "pycharm": pycharm_uri_scheme_handler,
     "vs": vs_uri_scheme_handler,
+    "n++": notepad_pp_uri_scheme_handler,
+    # vscode has its own handler
 }
 
 if __name__ == "__main__":

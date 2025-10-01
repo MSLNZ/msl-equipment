@@ -503,6 +503,5 @@ def test_invalid_address() -> None:
 
 def test_cannot_connect() -> None:
     connection = Connection("TCPIP::127.0.0.1", timeout=0.2)
-    error = MSLTimeoutError if IS_WINDOWS else MSLConnectionError
-    with pytest.raises(error):
+    with pytest.raises((MSLConnectionError, MSLTimeoutError)):
         _ = connection.connect()

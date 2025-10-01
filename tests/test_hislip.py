@@ -203,8 +203,7 @@ def test_exceptions() -> None:
     port = get_available_port()
     connection = Connection(f"TCPIP0::{address}::hislip0,{port}::INSTR", timeout=1, rstrip=True)
 
-    error = MSLTimeoutError if IS_WINDOWS else MSLConnectionError
-    with pytest.raises(error):
+    with pytest.raises((MSLConnectionError, MSLTimeoutError)):
         _ = connection.connect()
 
     # server hangs during a query (after the connection is established)

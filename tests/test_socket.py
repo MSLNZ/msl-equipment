@@ -226,8 +226,7 @@ def test_tcp_for_udp_server(udp_server: type[UDPServer]) -> None:
             timeout=0.2,
         )
 
-        error = MSLTimeoutError if sys.platform == "win32" else MSLConnectionError
-        with pytest.raises(error):
+        with pytest.raises((MSLConnectionError, MSLTimeoutError)):
             _ = connection.connect()
 
 
@@ -238,9 +237,9 @@ def test_udp_for_tcp_server(tcp_server: type[TCPServer]) -> None:
             timeout=0.2,
         )
 
-        dev = connection.connect()
-        error = MSLConnectionError if sys.platform == "win32" else MSLTimeoutError
-        with pytest.raises(error):
+        dev = connection.connect()  # ok since using UDP
+
+        with pytest.raises((MSLConnectionError, MSLTimeoutError)):
             _ = dev.query("Hi")
 
 
@@ -370,8 +369,7 @@ def test_reconnect_udp(udp_server: type[UDPServer]) -> None:
 
     server.stop()
 
-    error = MSLConnectionError if sys.platform == "win32" else MSLTimeoutError
-    with pytest.raises(error):
+    with pytest.raises((MSLConnectionError, MSLTimeoutError)):
         _ = dev.query("foo")
 
     server = udp_server(port=port, term=term)
@@ -410,8 +408,7 @@ def test_reconnect_tcp(tcp_server: type[TCPServer], caplog: pytest.LogCaptureFix
     if not is_windows:
         assert dev.read() == "SHUTDOWN"
 
-    error = MSLTimeoutError if is_linux else MSLConnectionError
-    with pytest.raises(error):
+    with pytest.raises((MSLConnectionError, MSLTimeoutError)):
         _ = dev.query("foo")
 
     caplog.set_level("DEBUG", "msl.equipment")

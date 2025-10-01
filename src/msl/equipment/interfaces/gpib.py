@@ -269,28 +269,7 @@ def find_listeners(*, include_sad: bool = False) -> list[str]:  # noqa: C901
     logger.debug("Searching for GPIB devices (include_sad=%s)", include_sad)
     devices: list[str] = []
 
-    def error_check(result: int, func: _NamedFuncPointer, arguments: tuple[int, ...]) -> int:
-        if result & ERR:
-            iberr = lib.ThreadIberr()
-            if iberr in {EDVR, EFSO}:
-                iberr = lib.ibcntl()
-                if IS_LINUX:
-                    try:
-                        message = os.strerror(iberr)
-                    except (OverflowError, ValueError):
-                        message = "Invalid os.strerror code"
-                else:
-                    message = _ERRORS.get(iberr, "Unknown error")
-            else:
-                message = _ERRORS.get(iberr, "Unknown error")
-            name = func.__name__
-            if name == "ibln":
-                arguments = arguments[:3]
-            elif name == "ibask":
-                arguments = arguments[:2]
-            elif name == "ibpct":
-                arguments = arguments[:1]
-            logger.debug("gpib.%s%s -> %s | %s (iberr: %s)", name, arguments, hex(result), message, hex(iberr))
+    def error_check(result: int, *_: object) -> int:
         return result
 
     try:

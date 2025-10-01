@@ -202,19 +202,21 @@ def test_logging(pty_server: type[PTYServer], caplog: pytest.LogCaptureFixture) 
         timeout=timeout,
     )
 
-    with caplog.at_level("DEBUG"):
-        dev: Serial = connection.connect()
-        dev.rstrip = True
-        assert dev.query("foo", delay=timeout * 2) == "foo"  # delay doesn't impact timeout
-        dev.disconnect()
-        dev.disconnect()  # multiple times is ok and only logs "Disconnected from ..." once
-        dev.disconnect()
-        assert caplog.messages == [
-            f"Connecting to Serial<|| at {address}>",
-            "Serial<||>.write(b'foo\\n')",
-            "Serial<||>.read() -> b'foo\\n'",
-            f"Disconnected from Serial<|| at {address}>",
-        ]
+    caplog.set_level("DEBUG", "msl.equipment")
+    caplog.clear()
+
+    dev: Serial = connection.connect()
+    dev.rstrip = True
+    assert dev.query("foo", delay=timeout * 2) == "foo"  # delay doesn't impact timeout
+    dev.disconnect()
+    dev.disconnect()  # multiple times is ok and only logs "Disconnected from ..." once
+    dev.disconnect()
+    assert caplog.messages == [
+        f"Connecting to Serial<|| at {address}>",
+        "Serial<||>.write(b'foo\\n')",
+        "Serial<||>.read() -> b'foo\\n'",
+        f"Disconnected from Serial<|| at {address}>",
+    ]
 
     server.stop()
 

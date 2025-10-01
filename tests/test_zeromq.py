@@ -125,21 +125,24 @@ def test_logging_messages(zmq_server: type[ZMQServer], caplog: pytest.LogCapture
     with zmq_server() as server:
         address = f"ZMQ::{server.host}::{server.port}"
         c = Connection(address)
-        with caplog.at_level("DEBUG"):
-            zmq: ZeroMQ = c.connect()
-            assert zmq.query("hello") == "hello"
-            assert zmq.query("hello", size=2) == "he"
-            zmq.disconnect()
-            zmq.disconnect()  # multiple times is ok and only logs "Disconnected from ..." once
-            zmq.disconnect()
-            assert caplog.messages == [
-                f"Connecting to ZeroMQ<|| at {address}>",
-                "ZeroMQ<||>.write(b'hello')",
-                "ZeroMQ<||>.read() -> b'hello'",
-                "ZeroMQ<||>.write(b'hello')",
-                "ZeroMQ<||>.read(size=2) -> b'he'",
-                f"Disconnected from ZeroMQ<|| at {address}>",
-            ]
+
+        caplog.set_level("DEBUG", "msl.equipment")
+        caplog.clear()
+
+        zmq: ZeroMQ = c.connect()
+        assert zmq.query("hello") == "hello"
+        assert zmq.query("hello", size=2) == "he"
+        zmq.disconnect()
+        zmq.disconnect()  # multiple times is ok and only logs "Disconnected from ..." once
+        zmq.disconnect()
+        assert caplog.messages == [
+            f"Connecting to ZeroMQ<|| at {address}>",
+            "ZeroMQ<||>.write(b'hello')",
+            "ZeroMQ<||>.read() -> b'hello'",
+            "ZeroMQ<||>.write(b'hello')",
+            "ZeroMQ<||>.read(size=2) -> b'he'",
+            f"Disconnected from ZeroMQ<|| at {address}>",
+        ]
 
 
 def test_set_interface(zmq_server: type[ZMQServer]) -> None:

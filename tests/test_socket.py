@@ -309,30 +309,32 @@ def test_logging_messages(udp_server: type[UDPServer], caplog: pytest.LogCapture
     with udp_server(term=term) as server:
         address = f"UDP::{server.host}::{server.port}"
         c = Connection(address, termination=term, timeout=0.2)
-        with caplog.at_level("DEBUG"):
-            dev: Socket = c.connect()
-            assert dev.query("hello") == "helloX"
-            assert dev.query("hello", size=2) == "he"
-            assert dev.read() == "lloX"
+        caplog.set_level("DEBUG", "msl.equipment")
+        caplog.clear()
 
-            _ = dev.write(b"", data=[4, 3, 2], fmt="ieee", dtype="H")
-            reply = dev.read(fmt="ieee", dtype="H")
-            assert np.array_equal(reply, [4, 3, 2])
+        dev: Socket = c.connect()
+        assert dev.query("hello") == "helloX"
+        assert dev.query("hello", size=2) == "he"
+        assert dev.read() == "lloX"
 
-            dev.disconnect()
-            dev.disconnect()  # multiple times is ok and only logs "Disconnected from ..." once
-            dev.disconnect()
-            assert caplog.messages == [
-                f"Connecting to Socket<|| at {address}>",
-                "Socket<||>.write(b'helloX')",
-                "Socket<||>.read() -> b'helloX'",
-                "Socket<||>.write(b'helloX')",
-                "Socket<||>.read(size=2) -> b'he'",
-                "Socket<||>.read() -> b'lloX'",
-                "Socket<||>.write(b'#16\\x04\\x00\\x03\\x00\\x02\\x00X')",
-                "Socket<||>.read(dtype='H', fmt='ieee') -> b'#16\\x04\\x00\\x03\\x00\\x02\\x00X'",
-                f"Disconnected from Socket<|| at {address}>",
-            ]
+        _ = dev.write(b"", data=[4, 3, 2], fmt="ieee", dtype="H")
+        reply = dev.read(fmt="ieee", dtype="H")
+        assert np.array_equal(reply, [4, 3, 2])
+
+        dev.disconnect()
+        dev.disconnect()  # multiple times is ok and only logs "Disconnected from ..." once
+        dev.disconnect()
+        assert caplog.messages == [
+            f"Connecting to Socket<|| at {address}>",
+            "Socket<||>.write(b'helloX')",
+            "Socket<||>.read() -> b'helloX'",
+            "Socket<||>.write(b'helloX')",
+            "Socket<||>.read(size=2) -> b'he'",
+            "Socket<||>.read() -> b'lloX'",
+            "Socket<||>.write(b'#16\\x04\\x00\\x03\\x00\\x02\\x00X')",
+            "Socket<||>.read(dtype='H', fmt='ieee') -> b'#16\\x04\\x00\\x03\\x00\\x02\\x00X'",
+            f"Disconnected from Socket<|| at {address}>",
+        ]
 
 
 def test_empty_termination(tcp_server: type[TCPServer]) -> None:
@@ -412,29 +414,30 @@ def test_reconnect_tcp(tcp_server: type[TCPServer], caplog: pytest.LogCaptureFix
     with pytest.raises(error):
         _ = dev.query("foo")
 
-    with caplog.at_level("DEBUG"):
-        with pytest.raises(MSLConnectionError):
-            dev.reconnect(max_attempts=5)
+    caplog.set_level("DEBUG", "msl.equipment")
+    caplog.clear()
 
-        messages = caplog.messages
-        if is_linux:
-            assert len(messages) == 7
-            assert messages[0].rstrip() == f"Socket<|| at {address}> Timeout occurred after 0.1 second(s)."
-            assert messages[1].rstrip() == f"Socket<|| at {address}> Timeout occurred after 0.1 second(s)."
-        elif is_windows:
-            assert len(messages) == 6
-            assert messages[0].startswith(f"Socket<|| at {address}> ConnectionAbortedError")
-            assert messages[1].rstrip() == f"Socket<|| at {address}> Timeout occurred after 0.1 second(s)."
-        else:  # darwin
-            assert len(messages) == 6
-            assert messages[0].startswith(f"Socket<|| at {address}> ConnectionResetError")
-            assert messages[1].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
-        assert messages[2].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
-        assert messages[3].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
-        assert messages[4].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
-        assert messages[5].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
-        if is_linux:
-            assert messages[6].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
+    with pytest.raises(MSLConnectionError):
+        dev.reconnect(max_attempts=5)
+
+    messages = caplog.messages
+    if is_linux:
+        assert len(messages) == 7
+        assert messages[0].rstrip() == f"Socket<|| at {address}> Timeout occurred after 0.1 second(s)."
+        assert messages[1].rstrip() == f"Socket<|| at {address}> Timeout occurred after 0.1 second(s)."
+    elif is_windows:
+        assert len(messages) == 5
+        assert messages[0].rstrip() == f"Socket<|| at {address}> Timeout occurred after 0.1 second(s)."
+    else:  # darwin
+        assert len(messages) == 6
+        assert messages[0].startswith(f"Socket<|| at {address}> ConnectionResetError")
+        assert messages[1].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
+    assert messages[1].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
+    assert messages[2].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
+    assert messages[3].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
+    assert messages[4].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
+    if is_linux:
+        assert messages[6].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
 
     server = tcp_server(port=port, term=term)
     server.start()

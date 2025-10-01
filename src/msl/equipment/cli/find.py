@@ -172,7 +172,7 @@ def print_stdout(found: list[Device]) -> None:
                 print("  " + "\n  ".join(device.addresses))
             elif typ == DeviceType.ASRL:
                 print(f"  {device.addresses[0]} [{device.description}]")
-            elif typ in (DeviceType.PROLOGIX, DeviceType.LXI, DeviceType.VXI11):
+            else:
                 webserver = f" [webserver: {device.webserver}]" if device.webserver else ""
                 print(f"  {device.description}{webserver}")
                 if device.addresses:

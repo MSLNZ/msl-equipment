@@ -158,6 +158,6 @@ def cli(argv: Sequence[str] | None = None) -> int:
     return run_external(args.command, *sub_args)
 
 
-def main() -> NoReturn:
+def main(argv: Sequence[str] | None = None) -> NoReturn:
     """Main CLI entry point."""
-    sys.exit(cli(sys.argv[1:]))
+    sys.exit(cli(argv))

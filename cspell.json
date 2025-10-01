@@ -36,6 +36,7 @@
         "calcsize",
         "Callendar",
         "CALLIT",
+        "capfd",
         "caplog",
         "capsys",
         "cbrt",

@@ -2953,23 +2953,24 @@ class Connections:
         """Remove all connections from the mapping."""
         self._connections.clear()
 
-    def _from_xml(self, element: Element[str]) -> Connection:
+    def _from_xml(self, element: Element[str]) -> Connection:  # noqa: C901
         """Convert a <connection> from a connections XML file."""
-        # schema requires that eid and address are the first two elements
-        eid = element[0].text or ""
-        address = element[1].text or ""
-        # the other elements are optional (minOccurs="0")
-        backend, manufacturer, model, serial = Backend.MSL, "", "", ""
+        eid, address, backend, manufacturer, model, serial = "", "", Backend.MSL, "", "", ""
         properties: dict[str, bool | float | str | None] = {}
-        for e in element[2:]:
-            if e.tag == "backend":
-                backend = Backend[e.text or "MSL"]
+        for e in element:
+            tag, text = e.tag, e.text or ""
+            if tag == "eid":
+                eid = text
+            elif tag == "address":
+                address = text
+            elif e.tag == "backend":
+                backend = Backend[text or "MSL"]
             elif e.tag == "manufacturer":
-                manufacturer = e.text or ""
+                manufacturer = text
             elif e.tag == "model":
-                model = e.text or ""
+                model = text
             elif e.tag == "serial":
-                serial = e.text or ""
+                serial = text
             else:
                 for child in e:
                     if child.tag.endswith("termination"):

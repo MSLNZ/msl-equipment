@@ -5,7 +5,7 @@
             <xsd:sequence minOccurs="0" maxOccurs="unbounded">
                 <xsd:element name="connection">
                     <xsd:complexType>
-                        <xsd:sequence>
+                        <xsd:all>
                             <xsd:element name="eid" type="xsd:string">
                                 <xsd:annotation>
                                     <xsd:documentation>
@@ -68,7 +68,7 @@
                                     </xsd:sequence>
                                 </xsd:complexType>
                             </xsd:element>
-                        </xsd:sequence>
+                        </xsd:all>
                     </xsd:complexType>
                 </xsd:element>
             </xsd:sequence>

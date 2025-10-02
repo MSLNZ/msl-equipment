@@ -1481,11 +1481,11 @@ class PerformanceCheck:
         checked_by: The name of the person who checked the information in the `<performanceCheck>` element.
         checked_date: The date that the information in the `<performanceCheck>` element was last checked.
         conditions: The conditions under which the performance check is valid.
-        cvd_equations: Performance-check data is expressed as coefficients for the Callendar-Van Dusen equation.
-        equations: Performance-check data is expressed as an equation.
-        files: Performance-check data is stored in another file (not in the equipment register).
-        deserialised: Performance-check data is stored in a serialised format and deserialised.
-        tables: Performance-check data is expressed as a CSV table in the equipment register.
+        cvd_equations: Performance-check data is expressed as Callendar-Van Dusen equations.
+        deserialisers: Performance-check data is stored in serialised formats and deserialised.
+        equations: Performance-check data is expressed as equations.
+        files: Performance-check data is stored in other files (not in the equipment register).
+        tables: Performance-check data is stored as Comma Separated Values (CSV) tables.
     """
 
     completed_date: _date
@@ -1507,19 +1507,59 @@ class PerformanceCheck:
     """The conditions under which the performance check is valid."""
 
     cvd_equations: tuple[CVDEquation, ...] = ()
-    """Performance-check data is expressed as coefficients for the Callendar-Van Dusen equation."""
+    """Performance-check data is expressed as Callendar-Van Dusen equations."""
+
+    deserialisers: tuple[Deserialised, ...] = ()
+    """Performance-check data is stored in serialised formats and deserialised."""
 
     equations: tuple[Equation, ...] = ()
-    """Performance-check data is expressed as an equation."""
+    """Performance-check data is expressed as equations."""
 
     files: tuple[File, ...] = ()
-    """Performance-check data is stored in another file (not in the equipment register)."""
-
-    deserialised: tuple[Deserialised, ...] = ()
-    """Performance-check data is stored in a serialised format and deserialised."""
+    """Performance-check data is stored in other files (not in the equipment register)."""
 
     tables: tuple[Table, ...] = ()
-    """Performance-check data is expressed as a CSV table in the equipment register."""
+    """Performance-check data is stored as Comma Separated Values (CSV) tables."""
+
+    @property
+    def cvd_equation(self) -> CVDEquation:
+        """Returns the first item in the [cvd_equations][msl.equipment.schema.Report.cvd_equations] [tuple][].
+
+        Raises [IndexError][] if the performance check does not contain Callendar-Van Dusen equations.
+        """
+        return self.cvd_equations[0]
+
+    @property
+    def deserialised(self) -> Deserialised:
+        """Returns the first item in the [deserialisers][msl.equipment.schema.Report.deserialisers] [tuple][].
+
+        Raises [IndexError][] if the performance check does not contain serialised data.
+        """
+        return self.deserialisers[0]
+
+    @property
+    def equation(self) -> Equation:
+        """Returns the first item in the [equations][msl.equipment.schema.Report.equations] [tuple][].
+
+        Raises [IndexError][] if the performance check does not contain equations.
+        """
+        return self.equations[0]
+
+    @property
+    def file(self) -> File:
+        """Returns the first item in the [files][msl.equipment.schema.Report.files] [tuple][].
+
+        Raises [IndexError][] if the performance check does not contain files.
+        """
+        return self.files[0]
+
+    @property
+    def table(self) -> Table:
+        """Returns the first item in the [tables][msl.equipment.schema.Report.tables] [tuple][].
+
+        Raises [IndexError][] if the performance check does not contain tables.
+        """
+        return self.tables[0]
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> PerformanceCheck:
@@ -1538,7 +1578,7 @@ class PerformanceCheck:
         cvd_equations: list[CVDEquation] = []
         equations: list[Equation] = []
         files: list[File] = []
-        deserialised: list[Deserialised] = []
+        deserialisers: list[Deserialised] = []
         tables: list[Table] = []
         for child in element[2:]:
             tag = child.tag
@@ -1551,7 +1591,7 @@ class PerformanceCheck:
             elif tag.endswith("file"):
                 files.append(File.from_xml(child))
             else:
-                deserialised.append(Deserialised.from_xml(child))
+                deserialisers.append(Deserialised.from_xml(child))
 
         a = element.attrib
         return cls(
@@ -1562,9 +1602,9 @@ class PerformanceCheck:
             competency=Competency.from_xml(element[0]),
             conditions=Conditions.from_xml(element[1]),
             cvd_equations=tuple(cvd_equations),
+            deserialisers=tuple(deserialisers),
             equations=tuple(equations),
             files=tuple(files),
-            deserialised=tuple(deserialised),
             tables=tuple(tables),
         )
 
@@ -1587,7 +1627,7 @@ class PerformanceCheck:
         e.extend(table.to_xml() for table in self.tables)
         e.extend(cvd.to_xml() for cvd in self.cvd_equations)
         e.extend(file.to_xml() for file in self.files)
-        e.extend(deserialised.to_xml() for deserialised in self.deserialised)
+        e.extend(deserialised.to_xml() for deserialised in self.deserialisers)
         return e
 
 
@@ -1650,11 +1690,11 @@ class Report:
         checked_date: The date that the information in the `<report>` element was last checked.
         conditions: The conditions under which the report is valid.
         acceptance_criteria: Acceptance criteria for the calibration report.
-        cvd_equations: Calibration data is expressed as coefficients for the Callendar-Van Dusen equation.
-        equations: Calibration data is expressed as an equation.
-        files: Calibration data is stored in another file (not in the equipment register).
-        deserialised: Calibration data is stored in a serialised format and deserialised.
-        tables: Calibration data is expressed as a CSV table in the equipment register.
+        cvd_equations: Calibration data is expressed as Callendar-Van Dusen equations.
+        deserialisers: Calibration data is stored in serialised formats and deserialised.
+        equations: Calibration data is expressed as equations.
+        files: Calibration data is stored in other files (not in the equipment register).
+        tables: Calibration data is stored as Comma Separated Values (CSV) tables.
     """
 
     id: str
@@ -1691,19 +1731,59 @@ class Report:
     """Acceptance criteria for the calibration report."""
 
     cvd_equations: tuple[CVDEquation, ...] = ()
-    """Calibration data is expressed as coefficients for the Callendar-Van Dusen equation."""
+    """Calibration data is expressed as Callendar-Van Dusen equations."""
+
+    deserialisers: tuple[Deserialised, ...] = ()
+    """Calibration data is stored in serialised formats and deserialised."""
 
     equations: tuple[Equation, ...] = ()
-    """Calibration data is expressed as an equation."""
+    """Calibration data is expressed as equations."""
 
     files: tuple[File, ...] = ()
-    """Calibration data is stored in another file (not in the equipment register)."""
-
-    deserialised: tuple[Deserialised, ...] = ()
-    """Calibration data is stored in a serialised format and deserialised."""
+    """Calibration data is stored in other files (not in the equipment register)."""
 
     tables: tuple[Table, ...] = ()
-    """Calibration data is expressed as a CSV table in the equipment register."""
+    """Calibration data is stored as Comma Separated Values (CSV) tables."""
+
+    @property
+    def cvd_equation(self) -> CVDEquation:
+        """Returns the first item in the [cvd_equations][msl.equipment.schema.Report.cvd_equations] [tuple][].
+
+        Raises [IndexError][] if the report does not contain Callendar-Van Dusen equations.
+        """
+        return self.cvd_equations[0]
+
+    @property
+    def deserialised(self) -> Deserialised:
+        """Returns the first item in the [deserialisers][msl.equipment.schema.Report.deserialisers] [tuple][].
+
+        Raises [IndexError][] if the report does not contain serialised data.
+        """
+        return self.deserialisers[0]
+
+    @property
+    def equation(self) -> Equation:
+        """Returns the first item in the [equations][msl.equipment.schema.Report.equations] [tuple][].
+
+        Raises [IndexError][] if the report does not contain equations.
+        """
+        return self.equations[0]
+
+    @property
+    def file(self) -> File:
+        """Returns the first item in the [files][msl.equipment.schema.Report.files] [tuple][].
+
+        Raises [IndexError][] if the report does not contain files.
+        """
+        return self.files[0]
+
+    @property
+    def table(self) -> Table:
+        """Returns the first item in the [tables][msl.equipment.schema.Report.tables] [tuple][].
+
+        Raises [IndexError][] if the report does not contain tables.
+        """
+        return self.tables[0]
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Report:
@@ -1719,9 +1799,9 @@ class Report:
         # allows sub-elements to appear (or not appear) in any order, for the data elements.
         # Using str.endswith() allows for ignoring XML namespaces that may be associated with each tag
         cvd_equations: list[CVDEquation] = []
+        deserialisers: list[Deserialised] = []
         equations: list[Equation] = []
         files: list[File] = []
-        deserialised: list[Deserialised] = []
         tables: list[Table] = []
         for child in element[7:]:
             tag = child.tag
@@ -1734,7 +1814,7 @@ class Report:
             elif tag.endswith("file"):
                 files.append(File.from_xml(child))
             else:
-                deserialised.append(Deserialised.from_xml(child))
+                deserialisers.append(Deserialised.from_xml(child))
 
         a = element.attrib
         return cls(
@@ -1750,9 +1830,9 @@ class Report:
             conditions=Conditions.from_xml(element[5]),
             acceptance_criteria=AcceptanceCriteria.from_xml(element[6]),
             cvd_equations=tuple(cvd_equations),
+            deserialisers=tuple(deserialisers),
             equations=tuple(equations),
             files=tuple(files),
-            deserialised=tuple(deserialised),
             tables=tuple(tables),
         )
 
@@ -1790,7 +1870,7 @@ class Report:
         e.extend(table.to_xml() for table in self.tables)
         e.extend(cvd.to_xml() for cvd in self.cvd_equations)
         e.extend(file.to_xml() for file in self.files)
-        e.extend(deserialised.to_xml() for deserialised in self.deserialised)
+        e.extend(deserialised.to_xml() for deserialised in self.deserialisers)
         return e
 
 
@@ -2413,9 +2493,9 @@ class Equipment:
                         checked_date=check.checked_date,
                         conditions=check.conditions,
                         cvd_equations=check.cvd_equations,
+                        deserialisers=check.deserialisers,
                         equations=check.equations,
                         files=check.files,
-                        deserialised=check.deserialised,
                         tables=check.tables,
                     )
 
@@ -2484,9 +2564,9 @@ class Equipment:
                         conditions=report.conditions,
                         acceptance_criteria=report.acceptance_criteria,
                         cvd_equations=report.cvd_equations,
+                        deserialisers=report.deserialisers,
                         equations=report.equations,
                         files=report.files,
-                        deserialised=report.deserialised,
                         tables=report.tables,
                     )
 
@@ -2643,7 +2723,7 @@ class Register:
             for table in item.tables:
                 if regex.search(table.comment) is not None:
                     return True
-            return any(regex.search(deserialised.comment) is not None for deserialised in item.deserialised)
+            return any(regex.search(deserialised.comment) is not None for deserialised in item.deserialisers)
 
         def task_search(m: Maintenance) -> bool:
             for c in m.completed:

@@ -63,11 +63,11 @@ equipment = Equipment(
                             equations=(
                                 Equation(
                                     value=Evaluable(
-                                        equation="0.9999862*v + 1.0241e-5",
+                                        equation="0.9999862*v + 1.024e-5",
                                         variables=("v",),
                                         ranges={"v": Range(1, 10)}
                                     ),
-                                    uncertainty=Evaluable(equation="3.2e-7"),
+                                    uncertainty=Evaluable(equation="3.2e-6"),
                                     unit="V",
                                 ),
                             ),
@@ -79,15 +79,15 @@ equipment = Equipment(
     ),
 )
 
-# Connect to the digital multimeter to query its identity
+# Connect to the digital multimeter and query its identity
 dmm = equipment.connect()
 print(dmm.query("ID?"))
 
-# You can fetch DC voltage readings from the multimeter
+# Configure the multimeter, fetch voltage readings, convert to float(s)
 voltages = ...
 
-# and apply the calibration equation to correct the voltages
-correction = equipment.latest_report().equations[0]
+# Apply the calibration equation to correct the voltage readings
+correction = equipment.latest_report().equation
 print(correction.value(v=voltages))
 print(correction.uncertainty(v=voltages))
 ```

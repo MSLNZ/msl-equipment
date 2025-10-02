@@ -1272,10 +1272,20 @@ def test_performance_check_minimal() -> None:
     assert pc.conditions.text is None
     assert len(pc.conditions) == 0
     assert len(pc.cvd_equations) == 0
+    with pytest.raises(IndexError):
+        _ = pc.cvd_equation
     assert len(pc.equations) == 0
+    with pytest.raises(IndexError):
+        _ = pc.equation
     assert len(pc.files) == 0
-    assert len(pc.deserialised) == 0
+    with pytest.raises(IndexError):
+        _ = pc.file
+    assert len(pc.deserialisers) == 0
+    with pytest.raises(IndexError):
+        _ = pc.deserialised
     assert len(pc.tables) == 0
+    with pytest.raises(IndexError):
+        _ = pc.table
     assert tostring(pc.to_xml()) == text
 
 
@@ -1336,10 +1346,15 @@ def test_performance_check() -> None:
     assert pc.conditions[0].attrib == {"unit": "C"}
     assert pc.conditions[0].text == "25"
     assert len(pc.cvd_equations) == 1
+    assert pc.cvd_equation is pc.cvd_equations[0]
     assert len(pc.equations) == 1
+    assert pc.equation is pc.equations[0]
     assert len(pc.files) == 1
-    assert len(pc.deserialised) == 1
+    assert pc.file is pc.files[0]
+    assert len(pc.deserialisers) == 1
+    assert pc.deserialised is pc.deserialisers[0]
     assert len(pc.tables) == 1
+    assert pc.table is pc.tables[0]
 
     _Indent.table_data = 3
     assert tostring(pc.to_xml()) == text
@@ -1394,10 +1409,20 @@ def test_report_minimal() -> None:
     assert r.acceptance_criteria.text is None
     assert len(r.acceptance_criteria) == 0
     assert len(r.cvd_equations) == 0
+    with pytest.raises(IndexError):
+        _ = r.cvd_equation
     assert len(r.equations) == 0
+    with pytest.raises(IndexError):
+        _ = r.equation
     assert len(r.files) == 0
-    assert len(r.deserialised) == 0
+    with pytest.raises(IndexError):
+        _ = r.file
+    assert len(r.deserialisers) == 0
+    with pytest.raises(IndexError):
+        _ = r.deserialised
     assert len(r.tables) == 0
+    with pytest.raises(IndexError):
+        _ = r.table
     assert tostring(r.to_xml()) == text
 
 
@@ -1469,10 +1494,15 @@ def test_report() -> None:
     assert r.acceptance_criteria[0].attrib == {"unit": "K"}
     assert r.acceptance_criteria[0].text == "300"
     assert len(r.cvd_equations) == 1
+    assert r.cvd_equation is r.cvd_equations[0]
     assert len(r.equations) == 1
+    assert r.equation is r.equations[0]
     assert len(r.files) == 1
-    assert len(r.deserialised) == 1
+    assert r.file is r.files[0]
+    assert len(r.deserialisers) == 1
+    assert r.deserialised is r.deserialisers[0]
     assert len(r.tables) == 1
+    assert r.table is r.tables[0]
 
     _Indent.table_data = 6
     assert tostring(r.to_xml()) == text

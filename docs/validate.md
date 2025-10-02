@@ -1,6 +1,6 @@
 # Validate
 
-You may use any XML validating tool to validate [equipment registers][] and [connection][connections] files against the schema; however, some of the values of the XML elements are not _completely_ validated by the schema alone. For example, the value of an element in an equipment register could be the SHA-256 checksum of a file. The schema will validate that the SHA-256 checksum value has the correct string length and that the checksum only contains the allowed alphanumeric characters, but, the schema does not validate that the checksum value is correct for the associated file. For these additional validation steps, another tool must be used. The `msl-equipment-validate` command-line tool provides these additional validation steps.
+You may use any XML validating tool to validate [equipment registers][] and [connection][connections] files against the schema; however, some of the values of the XML elements are not _completely_ validated by the schema alone. For example, the value of an element in an equipment register could be the SHA-256 checksum of a file. The schema will validate that the SHA-256 checksum value has the correct string length and that the checksum only contains the allowed alphanumeric characters, but, the schema does not validate that the checksum value is correct for the associated file. For these additional validation steps, another tool must be used. The `msl-equipment-validate` command-line tool validates the XML files against the schema and also provides the additional validation steps.
 
 ## Install {: #validate-install }
 
@@ -46,7 +46,7 @@ You may also want to create a command alias, since the executable name `msl-equi
     Open (or create) the `Microsoft.PowerShell_profile.ps1` file that was displayed in the previous command in a text editor and add the following line
 
     ```powershell
-    Set-Alias check C:\path\to\msl-equipment-validate.exe
+    Set-Alias check C:\Update\to\be\the\path\to\msl-equipment-validate.exe
     ```
 
     save it then open a new terminal (or run `. $PROFILE` in the current terminal to reload the PowerShell profile).
@@ -81,7 +81,7 @@ msl-equipment-validate my/equipment/register.xml
 msl-equipment-validate my/equipment/connections.xml
 ```
 
-If the `msl-equipment` package is also installed, you can use its command-line interface to validate documents (*note the removal of the hyphen between `equipment` and `validate`*)
+If the `msl-equipment` package is also installed, you can use its command-line interface to validate documents. *(Note the removal of the hyphen between `equipment` and `validate`.)*
 
 ```console
 msl-equipment validate

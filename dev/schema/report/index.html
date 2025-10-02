@@ -347,6 +347,25 @@
   
   
     <li class="md-tabs__item">
+      <a href="../../validate/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Validate
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../../webapp/" class="md-tabs__link">
         
   
@@ -2053,6 +2072,28 @@
   
   
     <li class="md-nav__item">
+      <a href="../../validate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Validate
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../webapp/" class="md-nav__link">
         
   
@@ -2359,7 +2400,6 @@
 <a href="#msl.equipment.schema.Report" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">Report</span><span class="p">(</span>
     <span class="nb">id</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
-    <span class="n">entered_by</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
     <span class="n">report_issue_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span><span class="p">,</span>
     <span class="n">measurement_start_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span><span class="p">,</span>
     <span class="n">measurement_stop_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span><span class="p">,</span>
@@ -2375,6 +2415,7 @@
       dataclass
    (msl.equipment.schema.IssuingLaboratory)" href="#msl.equipment.schema.IssuingLaboratory">IssuingLaboratory</a></span><span class="p">(),</span>
     <span class="n">technical_procedure</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">entered_by</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">checked_by</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">checked_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">conditions</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Conditions (msl.equipment.schema.Conditions)" href="../conditions/#msl.equipment.schema.Conditions">Conditions</a></span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="            Conditions (msl.equipment.schema.Conditions)" href="../conditions/#msl.equipment.schema.Conditions">Conditions</a></span><span class="p">(),</span>
@@ -2434,22 +2475,6 @@
             <td>
               <div class="doc-md-description">
                 <p>The report identification number.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>entered_by</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The name of the person who initially entered the <code>&lt;report&gt;</code> element in the register.</p>
               </div>
             </td>
             <td>
@@ -2540,6 +2565,22 @@
             <td>
               <div class="doc-md-description">
                 <p>The technical procedure(s) that was(were) followed to perform the calibration.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>entered_by</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The name of the person who initially entered the <code>&lt;report&gt;</code> element in the register.</p>
               </div>
             </td>
             <td>
@@ -2902,11 +2943,12 @@
 
 
   <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#msl.equipment.schema.Report.entered_by" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">entered_by</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">entered_by</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">

@@ -347,6 +347,25 @@
   
   
     <li class="md-tabs__item">
+      <a href="../../validate/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Validate
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../../webapp/" class="md-tabs__link">
         
   
@@ -648,33 +667,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#xml-schema" class="md-nav__link">
+  <a href="#er-schema" class="md-nav__link">
     <span class="md-ellipsis">
       XML Schema
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="XML Schema">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#validation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Validation
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#non-iso-labs" class="md-nav__link">
+  <a href="#er-python-module" class="md-nav__link">
     <span class="md-ellipsis">
-      Non ISO/IEC 17025 labs
+      Python Module
     </span>
   </a>
   
@@ -1858,6 +1862,28 @@
   
   
     <li class="md-nav__item">
+      <a href="../../validate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Validate
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../webapp/" class="md-nav__link">
         
   
@@ -1900,33 +1926,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#xml-schema" class="md-nav__link">
+  <a href="#er-schema" class="md-nav__link">
     <span class="md-ellipsis">
       XML Schema
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="XML Schema">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#validation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Validation
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#non-iso-labs" class="md-nav__link">
+  <a href="#er-python-module" class="md-nav__link">
     <span class="md-ellipsis">
-      Non ISO/IEC 17025 labs
+      Python Module
     </span>
   </a>
   
@@ -1952,60 +1963,86 @@
 
 
 <h1 id="equipment-registers">Equipment Registers<a class="headerlink" href="#equipment-registers" title="Permanent link">¤</a></h1>
-<p>Laboratories that use equipment for traceable calibration measurements are required to manage information about the equipment by following the <a href="https://www.iso.org/ISO-IEC-17025-testing-and-calibration-laboratories.html" target="_blank">ISO/IEC 17025</a> standard. An equipment register is in the eXtensible Markup Language (XML) file format, and, as such, it may be parsed by many programming languages.</p>
-<p>An equipment register may be defined in a single XML file or distributed across multiple XML files (for the same <em>team</em>). You can also define the information directly in a <a class="autorefs autorefs-internal" title="Non ISO/IEC 17025 labs" href="#non-iso-labs">Python module</a> instead of in XML files.</p>
-<p>The <a class="autorefs autorefs-internal" href="../../schema/#schema-classes">Schema Classes</a> section of the documentation shows how each of the XML elements that are contained in an equipment register can be used in a Python program.</p>
-<h2 id="xml-schema">XML Schema<a class="headerlink" href="#xml-schema" title="Permanent link">¤</a></h2>
+<p>Laboratories that use equipment for traceable calibration measurements are required to manage information about the equipment by following the <a href="https://www.iso.org/ISO-IEC-17025-testing-and-calibration-laboratories.html" target="_blank">ISO/IEC 17025</a> standard. This information is saved in files that are referred to as <em>equipment registers</em>.</p>
+<p>An equipment register is based on the definitions in the <a class="autorefs autorefs-internal" title="XML Schema" href="#er-schema">Schema</a> and may either be saved in the eXtensible Markup Language (XML) file format or in a <a class="autorefs autorefs-internal" title="Python Module" href="#er-python-module">Python module</a>. Using the XML format is the preferred way to save the information since XML files can be easily <a class="autorefs autorefs-internal" title="Validate" href="../../validate/#validate">validated</a> against the <a class="autorefs autorefs-internal" title="XML Schema" href="#er-schema">Schema</a> to ensure data integrity and it allows for equipment registers to be parsed by many programming languages. An equipment register can be saved in a single XML file or distributed across multiple XML files.</p>
+<p>The <a class="autorefs autorefs-internal" href="../../schema/#schema-classes">Schema Classes</a> section of the documentation shows how an equipment register can be used in a Python program.</p>
+<h2 id="er-schema">XML Schema<a class="headerlink" href="#er-schema" title="Permanent link">¤</a></h2>
 <p>The documentation for the equipment-register schema is available <a href="https://mslnz.github.io/equipment-register-schema/latest/" target="_blank">here</a> and development of the schema is performed in the <a href="https://github.com/MSLNZ/equipment-register-schema" target="_blank">repository</a>.</p>
 <p>Currently, the schema is targeting equipment that is located at the Measurement Standards Laboratory of New Zealand (in particular, enumeration values and pattern-string matches). If you work at a calibration laboratory and are interested in using the schema within your Quality Management System, please <a href="https://www.measurement.govt.nz/contact-us" target="_blank">contact us</a> or open an <a href="https://github.com/MSLNZ/equipment-register-schema/issues" target="_blank">issue</a>.</p>
-<h3 id="validation">Validation<a class="headerlink" href="#validation" title="Permanent link">¤</a></h3>
-<p>You may use any XML-validating tool to validate an equipment register against the schema; however, some of the values of the XML elements are not <em>completely</em> validated by the schema alone. For example, the value of an element in an equipment register could be the SHA256 checksum of a file. The schema will validate that the SHA256 checksum value has the correct string length and that the checksum only contains the allowed alphanumeric characters, but, the schema does not validate that the checksum value is correct for the associated file. For these additional validation steps, another tool must be used.</p>
-<p>To validate <em>all</em> elements within an equipment register, you can install <code>msl-equipment-validate</code></p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">pip</label><label for="__tabbed_1_2">pipx</label><label for="__tabbed_1_3">uv</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="go">pip install msl-equipment-validate</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="go">pipx install msl-equipment-validate</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="go">uv tool install msl-equipment-validate</span>
-</code></pre></div>
-</div>
-</div>
-</div>
-<p>This will install a command-line tool that you can use to validate the content in an equipment register.</p>
-<p>TODO show how to use tool...</p>
-<h2 id="non-iso-labs">Non ISO/IEC 17025 labs<a class="headerlink" href="#non-iso-labs" title="Permanent link">¤</a></h2>
-<p>If your laboratory is not bound to the <a href="https://www.iso.org/ISO-IEC-17025-testing-and-calibration-laboratories.html" target="_blank">ISO/IEC 17025</a> standard and you are primarily interested in interfacing with equipment, you can define <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> classes in a Python module to connect to the equipment</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">Equipment</span>
+<p>See <a class="autorefs autorefs-internal" title="Validate" href="../../validate/#validate">this section</a> for details on how to validate the contents of an equipment register against the schema.</p>
+<h2 id="er-python-module">Python Module<a class="headerlink" href="#er-python-module" title="Permanent link">¤</a></h2>
+<p>You may save the information about the equipment you are using in Python modules instead of in XML files.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span>
 
-<span class="n">equipment</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;dmm&quot;</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">(</span>
-        <span class="n">manufacturer</span><span class="o">=</span><span class="s2">&quot;HP&quot;</span><span class="p">,</span>
-        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;34401A&quot;</span><span class="p">,</span>
-        <span class="n">serial</span><span class="o">=</span><span class="s2">&quot;123456789&quot;</span><span class="p">,</span>
-        <span class="n">connection</span><span class="o">=</span><span class="n">Connection</span><span class="p">(</span>
-            <span class="n">address</span><span class="o">=</span><span class="s2">&quot;COM3&quot;</span><span class="p">,</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CompletedTask</span><span class="p">,</span>
+    <span class="n">Component</span><span class="p">,</span>
+    <span class="n">Connection</span><span class="p">,</span>
+    <span class="n">Equation</span><span class="p">,</span>
+    <span class="n">Equipment</span><span class="p">,</span>
+    <span class="n">Evaluable</span><span class="p">,</span>
+    <span class="n">Maintenance</span><span class="p">,</span>
+    <span class="n">Measurand</span><span class="p">,</span>
+    <span class="n">Range</span><span class="p">,</span>
+    <span class="n">Report</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">equipment</span> <span class="o">=</span> <span class="n">Equipment</span><span class="p">(</span>
+    <span class="n">manufacturer</span><span class="o">=</span><span class="s2">&quot;HP&quot;</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;3458A&quot;</span><span class="p">,</span>
+    <span class="n">connection</span><span class="o">=</span><span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;GPIB::22&quot;</span><span class="p">),</span>
+    <span class="n">maintenance</span><span class="o">=</span><span class="n">Maintenance</span><span class="p">(</span>
+        <span class="n">completed</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">CompletedTask</span><span class="p">(</span>
+                <span class="n">task</span><span class="o">=</span><span class="s2">&quot;Clean fan&quot;</span><span class="p">,</span>
+                <span class="n">due_date</span><span class="o">=</span><span class="n">date</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+                <span class="n">completed_date</span><span class="o">=</span><span class="n">date</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+                <span class="n">performed_by</span><span class="o">=</span><span class="s2">&quot;John&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="n">calibrations</span><span class="o">=</span><span class="p">(</span>
+        <span class="n">Measurand</span><span class="p">(</span>
+            <span class="n">quantity</span><span class="o">=</span><span class="s2">&quot;Voltage DC&quot;</span><span class="p">,</span>
+            <span class="n">calibration_interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">components</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">Component</span><span class="p">(</span>
+                    <span class="n">reports</span><span class="o">=</span><span class="p">(</span>
+                        <span class="n">Report</span><span class="p">(</span>
+                            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;Report No.&quot;</span><span class="p">,</span>
+                            <span class="n">report_issue_date</span><span class="o">=</span><span class="n">date</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">13</span><span class="p">),</span>
+                            <span class="n">measurement_start_date</span><span class="o">=</span><span class="n">date</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+                            <span class="n">measurement_stop_date</span><span class="o">=</span><span class="n">date</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+                            <span class="n">equations</span><span class="o">=</span><span class="p">(</span>
+                                <span class="n">Equation</span><span class="p">(</span>
+                                    <span class="n">value</span><span class="o">=</span><span class="n">Evaluable</span><span class="p">(</span>
+                                        <span class="n">equation</span><span class="o">=</span><span class="s2">&quot;0.9999862*v + 1.0241e-5&quot;</span><span class="p">,</span>
+                                        <span class="n">variables</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">,),</span>
+                                        <span class="n">ranges</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="n">Range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)}</span>
+                                    <span class="p">),</span>
+                                    <span class="n">uncertainty</span><span class="o">=</span><span class="n">Evaluable</span><span class="p">(</span><span class="n">equation</span><span class="o">=</span><span class="s2">&quot;3.2e-7&quot;</span><span class="p">),</span>
+                                    <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;V&quot;</span><span class="p">,</span>
+                                <span class="p">),</span>
+                            <span class="p">),</span>
+                        <span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
         <span class="p">),</span>
     <span class="p">),</span>
-    <span class="s2">&quot;scope&quot;</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">(</span>
-        <span class="n">manufacturer</span><span class="o">=</span><span class="s2">&quot;Pico Technology&quot;</span><span class="p">,</span>
-        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;5244B&quot;</span><span class="p">,</span>
-        <span class="n">serial</span><span class="o">=</span><span class="s2">&quot;XY135/001&quot;</span><span class="p">,</span>
-        <span class="n">connection</span><span class="o">=</span><span class="n">Connection</span><span class="p">(</span>
-            <span class="n">address</span><span class="o">=</span><span class="s2">&quot;SDK::ps5000a.dll&quot;</span><span class="p">,</span>
-            <span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;16bit&quot;</span><span class="p">,</span>
-        <span class="p">),</span>
-    <span class="p">),</span>
-<span class="p">}</span>
+<span class="p">)</span>
 
-<span class="c1"># Connect to the digital multimeter</span>
-<span class="n">dmm</span> <span class="o">=</span> <span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;dmm&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
-<span class="n">identity</span> <span class="o">=</span> <span class="n">dmm</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">)</span>
+<span class="c1"># # Connect to the digital multimeter to query its identity</span>
+<span class="n">dmm</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dmm</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;ID?&quot;</span><span class="p">))</span>
+
+<span class="c1"># You can fetch DC voltage readings from the multimeter</span>
+<span class="n">voltages</span> <span class="o">=</span> <span class="o">...</span>
+
+<span class="c1"># and apply the calibration equation to correct the voltages</span>
+<span class="n">correction</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">latest_report</span><span class="p">()</span><span class="o">.</span><span class="n">equations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">correction</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="n">voltages</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">correction</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="n">voltages</span><span class="p">))</span>
 </code></pre></div>
 
 

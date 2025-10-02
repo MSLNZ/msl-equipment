@@ -347,6 +347,25 @@
   
   
     <li class="md-tabs__item">
+      <a href="../../validate/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Validate
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../../webapp/" class="md-tabs__link">
         
   
@@ -3391,6 +3410,28 @@
   
   
     <li class="md-nav__item">
+      <a href="../../validate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Validate
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../webapp/" class="md-nav__link">
         
   
@@ -5110,23 +5151,23 @@
 
                   <details class="quote">
                     <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2976</span>
-<span class="normal">2977</span>
-<span class="normal">2978</span>
-<span class="normal">2979</span>
-<span class="normal">2980</span>
-<span class="normal">2981</span>
-<span class="normal">2982</span>
-<span class="normal">2983</span>
-<span class="normal">2984</span>
-<span class="normal">2985</span>
-<span class="normal">2986</span>
-<span class="normal">2987</span>
-<span class="normal">2988</span>
-<span class="normal">2989</span>
-<span class="normal">2990</span>
-<span class="normal">2991</span>
-<span class="normal">2992</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2996</span>
+<span class="normal">2997</span>
+<span class="normal">2998</span>
+<span class="normal">2999</span>
+<span class="normal">3000</span>
+<span class="normal">3001</span>
+<span class="normal">3002</span>
+<span class="normal">3003</span>
+<span class="normal">3004</span>
+<span class="normal">3005</span>
+<span class="normal">3006</span>
+<span class="normal">3007</span>
+<span class="normal">3008</span>
+<span class="normal">3009</span>
+<span class="normal">3010</span>
+<span class="normal">3011</span>
+<span class="normal">3012</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all interfaces.</span>
 
 <span class="sd">    Args:</span>
@@ -5219,23 +5260,23 @@ instance gets garbage collected, which happens when the reference count is 0.</p
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3053</span>
-<span class="normal">3054</span>
-<span class="normal">3055</span>
-<span class="normal">3056</span>
-<span class="normal">3057</span>
-<span class="normal">3058</span>
-<span class="normal">3059</span>
-<span class="normal">3060</span>
-<span class="normal">3061</span>
-<span class="normal">3062</span>
-<span class="normal">3063</span>
-<span class="normal">3064</span>
-<span class="normal">3065</span>
-<span class="normal">3066</span>
-<span class="normal">3067</span>
-<span class="normal">3068</span>
-<span class="normal">3069</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3073</span>
+<span class="normal">3074</span>
+<span class="normal">3075</span>
+<span class="normal">3076</span>
+<span class="normal">3077</span>
+<span class="normal">3078</span>
+<span class="normal">3079</span>
+<span class="normal">3080</span>
+<span class="normal">3081</span>
+<span class="normal">3082</span>
+<span class="normal">3083</span>
+<span class="normal">3084</span>
+<span class="normal">3085</span>
+<span class="normal">3086</span>
+<span class="normal">3087</span>
+<span class="normal">3088</span>
+<span class="normal">3089</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the equipment.</span>
 
 <span class="sd">    This method can be overridden in the subclass if the subclass must implement</span>
@@ -5791,23 +5832,23 @@ instance gets garbage collected, which happens when the reference count is 0.</p
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3053</span>
-<span class="normal">3054</span>
-<span class="normal">3055</span>
-<span class="normal">3056</span>
-<span class="normal">3057</span>
-<span class="normal">3058</span>
-<span class="normal">3059</span>
-<span class="normal">3060</span>
-<span class="normal">3061</span>
-<span class="normal">3062</span>
-<span class="normal">3063</span>
-<span class="normal">3064</span>
-<span class="normal">3065</span>
-<span class="normal">3066</span>
-<span class="normal">3067</span>
-<span class="normal">3068</span>
-<span class="normal">3069</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3073</span>
+<span class="normal">3074</span>
+<span class="normal">3075</span>
+<span class="normal">3076</span>
+<span class="normal">3077</span>
+<span class="normal">3078</span>
+<span class="normal">3079</span>
+<span class="normal">3080</span>
+<span class="normal">3081</span>
+<span class="normal">3082</span>
+<span class="normal">3083</span>
+<span class="normal">3084</span>
+<span class="normal">3085</span>
+<span class="normal">3086</span>
+<span class="normal">3087</span>
+<span class="normal">3088</span>
+<span class="normal">3089</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the equipment.</span>
 
 <span class="sd">    This method can be overridden in the subclass if the subclass must implement</span>
@@ -13317,23 +13358,23 @@ instance gets garbage collected, which happens when the reference count is 0.</p
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3053</span>
-<span class="normal">3054</span>
-<span class="normal">3055</span>
-<span class="normal">3056</span>
-<span class="normal">3057</span>
-<span class="normal">3058</span>
-<span class="normal">3059</span>
-<span class="normal">3060</span>
-<span class="normal">3061</span>
-<span class="normal">3062</span>
-<span class="normal">3063</span>
-<span class="normal">3064</span>
-<span class="normal">3065</span>
-<span class="normal">3066</span>
-<span class="normal">3067</span>
-<span class="normal">3068</span>
-<span class="normal">3069</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3073</span>
+<span class="normal">3074</span>
+<span class="normal">3075</span>
+<span class="normal">3076</span>
+<span class="normal">3077</span>
+<span class="normal">3078</span>
+<span class="normal">3079</span>
+<span class="normal">3080</span>
+<span class="normal">3081</span>
+<span class="normal">3082</span>
+<span class="normal">3083</span>
+<span class="normal">3084</span>
+<span class="normal">3085</span>
+<span class="normal">3086</span>
+<span class="normal">3087</span>
+<span class="normal">3088</span>
+<span class="normal">3089</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the equipment.</span>
 
 <span class="sd">    This method can be overridden in the subclass if the subclass must implement</span>

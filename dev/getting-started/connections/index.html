@@ -347,6 +347,25 @@
   
   
     <li class="md-tabs__item">
+      <a href="../../validate/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Validate
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../../webapp/" class="md-tabs__link">
         
   
@@ -673,21 +692,12 @@
         <li class="md-nav__item">
   <a href="#connections-xml" class="md-nav__link">
     <span class="md-ellipsis">
-      XML
+      XML Schema
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="XML">
+    <nav class="md-nav" aria-label="XML Schema">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#connections-xml-schema" class="md-nav__link">
-    <span class="md-ellipsis">
-      Schema
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#connections-xml-example" class="md-nav__link">
@@ -737,9 +747,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#connections-python-example" class="md-nav__link">
+  <a href="#connections-python-module" class="md-nav__link">
     <span class="md-ellipsis">
-      Python Example
+      Python Module
     </span>
   </a>
   
@@ -1900,6 +1910,28 @@
   
   
     <li class="md-nav__item">
+      <a href="../../validate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Validate
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../webapp/" class="md-nav__link">
         
   
@@ -1944,21 +1976,12 @@
         <li class="md-nav__item">
   <a href="#connections-xml" class="md-nav__link">
     <span class="md-ellipsis">
-      XML
+      XML Schema
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="XML">
+    <nav class="md-nav" aria-label="XML Schema">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#connections-xml-schema" class="md-nav__link">
-    <span class="md-ellipsis">
-      Schema
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#connections-xml-example" class="md-nav__link">
@@ -2008,9 +2031,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#connections-python-example" class="md-nav__link">
+  <a href="#connections-python-module" class="md-nav__link">
     <span class="md-ellipsis">
-      Python Example
+      Python Module
     </span>
   </a>
   
@@ -2036,12 +2059,111 @@
 
 
 <h1 id="connections">Connections<a class="headerlink" href="#connections" title="Permanent link">¤</a></h1>
-<p>The information about how to interface with equipment for computer control is defined in the eXtensible Markup Language (XML) file format. You specify the XML file that contains the connection information as a <code>&lt;connections&gt;</code> element in your <a class="autorefs autorefs-internal" title="Configuration Files" href="../configuration-files/#configuration-files">configuration file</a>. When the configuration file is loaded, it links a <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instance with the corresponding <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> instance. You may also define the connection information directly in a <a class="autorefs autorefs-internal" title="Non ISO/IEC 17025 labs" href="../equipment-registers/#non-iso-labs">Python module</a>, instead of in XML files.</p>
-<h2 id="connections-xml">XML<a class="headerlink" href="#connections-xml" title="Permanent link">¤</a></h2>
-<h3 id="connections-xml-schema">Schema<a class="headerlink" href="#connections-xml-schema" title="Permanent link">¤</a></h3>
-<div class="highlight"><pre><span></span><code>
+<p>The information about how to interface with equipment for computer control is based on the definitions in the <a class="autorefs autorefs-internal" title="XML Schema" href="#connections-xml">Schema</a> and may either be saved in the eXtensible Markup Language (XML) file format or in a <a class="autorefs autorefs-internal" title="Python Module" href="#connections-python-module">Python module</a>. When using the XML format, you would specify the XML file that contains the connection information as a <code>&lt;connections&gt;</code> element in your <a class="autorefs autorefs-internal" title="Configuration Files" href="../configuration-files/#configuration-files">configuration file</a>. When the configuration file is loaded (via <a class="autorefs autorefs-internal" href="../../api/config/#config">Config</a>), it links a <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instance with the corresponding <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> instance based on the equipment id.</p>
+<h2 id="connections-xml">XML Schema<a class="headerlink" href="#connections-xml" title="Permanent link">¤</a></h2>
+<p>Schema definition for connection information. See <a class="autorefs autorefs-internal" title="Validate" href="../../validate/#validate">this section</a> for details on how to validate the contents of a connections XML file against the schema.</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="nt">&lt;xsd:schema</span><span class="w"> </span><span class="na">version=</span><span class="s">&quot;1.0.0&quot;</span><span class="w"> </span><span class="na">xmlns:xsd=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;connections&quot;</span><span class="nt">&gt;</span>
+<span class="w">        </span><span class="nt">&lt;xsd:complexType&gt;</span>
+<span class="w">            </span><span class="nt">&lt;xsd:sequence</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">maxOccurs=</span><span class="s">&quot;unbounded&quot;</span><span class="nt">&gt;</span>
+<span class="w">                </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;connection&quot;</span><span class="nt">&gt;</span>
+<span class="w">                    </span><span class="nt">&lt;xsd:complexType&gt;</span>
+<span class="w">                        </span><span class="nt">&lt;xsd:all&gt;</span>
+<span class="w">                            </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;eid&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xsd:string&quot;</span><span class="nt">&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;xsd:annotation&gt;</span>
+<span class="w">                                    </span><span class="nt">&lt;xsd:documentation&gt;</span>
+<span class="w">                                        </span>The<span class="w"> </span>equipment<span class="w"> </span>ID<span class="w"> </span>from<span class="w"> </span>an<span class="w"> </span>equipment<span class="w"> </span>register.
+<span class="w">                                    </span><span class="nt">&lt;/xsd:documentation&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
+<span class="w">                            </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">                            </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;address&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xsd:string&quot;</span><span class="nt">&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;xsd:annotation&gt;</span>
+<span class="w">                                    </span><span class="nt">&lt;xsd:documentation&gt;</span>
+<span class="w">                                        </span>The<span class="w"> </span>VISA-style<span class="w"> </span>address<span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span>for<span class="w"> </span>the<span class="w"> </span>connection.
+<span class="w">                                    </span><span class="nt">&lt;/xsd:documentation&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
+<span class="w">                            </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">                            </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;backend&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;xsd:annotation&gt;</span>
+<span class="w">                                    </span><span class="nt">&lt;xsd:documentation&gt;</span>
+<span class="w">                                        </span>The<span class="w"> </span>backend<span class="w"> </span>package<span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span>to<span class="w"> </span>communicate<span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span>equipment.
+<span class="w">                                        </span>Default<span class="w"> </span>is<span class="w"> </span>MSL<span class="w"> </span>if<span class="w"> </span>not<span class="w"> </span>defined.
+<span class="w">                                    </span><span class="nt">&lt;/xsd:documentation&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;xsd:simpleType&gt;</span>
+<span class="w">                                    </span><span class="nt">&lt;xsd:restriction</span><span class="w"> </span><span class="na">base=</span><span class="s">&quot;xsd:string&quot;</span><span class="nt">&gt;</span>
+<span class="w">                                        </span><span class="nt">&lt;xsd:enumeration</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;MSL&quot;</span><span class="nt">/&gt;</span>
+<span class="w">                                        </span><span class="nt">&lt;xsd:enumeration</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;PyVISA&quot;</span><span class="nt">/&gt;</span>
+<span class="w">                                        </span><span class="nt">&lt;xsd:enumeration</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;NIDAQ&quot;</span><span class="nt">/&gt;</span>
+<span class="w">                                    </span><span class="nt">&lt;/xsd:restriction&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;/xsd:simpleType&gt;</span>
+<span class="w">                            </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">                            </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;manufacturer&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xsd:string&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;xsd:annotation&gt;</span>
+<span class="w">                                    </span><span class="nt">&lt;xsd:documentation&gt;</span>
+<span class="w">                                        </span>The<span class="w"> </span>name<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>manufacturer<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>equipment.
+<span class="w">                                    </span><span class="nt">&lt;/xsd:documentation&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
+<span class="w">                            </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">                            </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;model&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xsd:string&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;xsd:annotation&gt;</span>
+<span class="w">                                    </span><span class="nt">&lt;xsd:documentation&gt;</span>
+<span class="w">                                        </span>The<span class="w"> </span>model<span class="w"> </span>number<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>equipment.
+<span class="w">                                    </span><span class="nt">&lt;/xsd:documentation&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
+<span class="w">                            </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">                            </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;serial&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xsd:string&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;xsd:annotation&gt;</span>
+<span class="w">                                    </span><span class="nt">&lt;xsd:documentation&gt;</span>
+<span class="w">                                        </span>The<span class="w"> </span>serial<span class="w"> </span>number<span class="w"> </span>(or<span class="w"> </span>unique<span class="w"> </span>identifier)<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>equipment.
+<span class="w">                                    </span><span class="nt">&lt;/xsd:documentation&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
+<span class="w">                            </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">                            </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;properties&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;xsd:annotation&gt;</span>
+<span class="w">                                    </span><span class="nt">&lt;xsd:documentation&gt;</span>
+<span class="w">                                        </span>Additional<span class="w"> </span>name-value<span class="w"> </span>pairs<span class="w"> </span>that<span class="w"> </span>are<span class="w"> </span>required<span class="w"> </span>to<span class="w"> </span>communicate<span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span>equipment.
+<span class="w">                                    </span><span class="nt">&lt;/xsd:documentation&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;xsd:complexType&gt;</span>
+<span class="w">                                    </span><span class="nt">&lt;xsd:sequence&gt;</span>
+<span class="w">                                        </span><span class="nt">&lt;xsd:any</span><span class="w"> </span><span class="na">processContents=</span><span class="s">&quot;skip&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">maxOccurs=</span><span class="s">&quot;unbounded&quot;</span><span class="nt">/&gt;</span>
+<span class="w">                                    </span><span class="nt">&lt;/xsd:sequence&gt;</span>
+<span class="w">                                </span><span class="nt">&lt;/xsd:complexType&gt;</span>
+<span class="w">                            </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">                        </span><span class="nt">&lt;/xsd:all&gt;</span>
+<span class="w">                    </span><span class="nt">&lt;/xsd:complexType&gt;</span>
+<span class="w">                </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">            </span><span class="nt">&lt;/xsd:sequence&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/xsd:complexType&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="nt">&lt;/xsd:schema&gt;</span>
 </code></pre></div>
 <h3 id="connections-xml-example">Example<a class="headerlink" href="#connections-xml-example" title="Permanent link">¤</a></h3>
+<p>Example XML file to specify connection information. Only the <code>&lt;eid&gt;</code> and <code>&lt;address&gt;</code> elements are required, all other elements are optional.</p>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<span class="nt">&lt;connections&gt;</span>
+<span class="w">    </span><span class="nt">&lt;connection&gt;</span>
+<span class="w">        </span><span class="nt">&lt;eid&gt;</span>MSLE.M.041<span class="nt">&lt;/eid&gt;</span>
+<span class="w">        </span><span class="nt">&lt;address&gt;</span>TCPIP::192.168.1.10::hislip0<span class="nt">&lt;/address&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/connection&gt;</span>
+<span class="w">    </span><span class="nt">&lt;connection&gt;</span>
+<span class="w">        </span><span class="nt">&lt;eid&gt;</span>MSLE.M.023<span class="nt">&lt;/eid&gt;</span>
+<span class="w">        </span><span class="nt">&lt;address&gt;</span>ASRL/dev/ttyS1<span class="nt">&lt;/address&gt;</span>
+<span class="w">        </span><span class="nt">&lt;backend&gt;</span>PyVISA<span class="nt">&lt;/backend&gt;</span>
+<span class="w">        </span><span class="nt">&lt;manufacturer&gt;</span>Manufacturer<span class="nt">&lt;/manufacturer&gt;</span>
+<span class="w">        </span><span class="nt">&lt;model&gt;</span>Model<span class="nt">&lt;/model&gt;</span>
+<span class="w">        </span><span class="nt">&lt;serial&gt;</span>Serial<span class="nt">&lt;/serial&gt;</span>
+<span class="w">        </span><span class="nt">&lt;properties&gt;</span>
+<span class="w">            </span><span class="nt">&lt;baud_rate&gt;</span>19200<span class="nt">&lt;/baud_rate&gt;</span>
+<span class="w">            </span><span class="nt">&lt;read_termination&gt;</span>\r<span class="nt">&lt;/read_termination&gt;</span>
+<span class="w">            </span><span class="nt">&lt;write_termination&gt;</span>\r<span class="nt">&lt;/write_termination&gt;</span>
+<span class="w">            </span><span class="nt">&lt;timeout&gt;</span>10<span class="nt">&lt;/timeout&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/properties&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/connection&gt;</span>
+<span class="nt">&lt;/connections&gt;</span>
+</code></pre></div>
 <h2 id="address-syntax">Address Syntax<a class="headerlink" href="#address-syntax" title="Permanent link">¤</a></h2>
 <p>The following are examples of VISA-style addresses that may be used to connect to equipment.</p>
 <table>
@@ -2193,7 +2315,33 @@
 <h3 id="connections-backend">Backends<a class="headerlink" href="#connections-backend" title="Permanent link">¤</a></h3>
 <p>When a <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instance is created, the <code>backend</code> keyword argument decides which backend to use when interfacing with the equipment. There are different <a class="autorefs autorefs-internal" title="            Backend" href="../../api/enumerations/#msl.equipment.enumerations.Backend">Backend</a>s to choose from: <code>MSL</code> (default), <code>PyVISA</code> or <code>NIDAQ</code>.</p>
 <p>The <a class="autorefs autorefs-internal" title="Interfaces" href="#connections-interfaces">interface class</a> can be used if the <code>backend</code> is <code>MSL</code>. The corresponding interface classes for the external backends are <a class="autorefs autorefs-internal" title="            PyVISA" href="../../api/interfaces/#msl.equipment.interfaces.pyvisa.PyVISA">PyVISA</a> and <a class="autorefs autorefs-internal" title="            NIDAQ" href="../../api/interfaces/#msl.equipment.interfaces.nidaq.NIDAQ">NIDAQ</a>.</p>
-<h2 id="connections-python-example">Python Example<a class="headerlink" href="#connections-python-example" title="Permanent link">¤</a></h2>
+<h2 id="connections-python-module">Python Module<a class="headerlink" href="#connections-python-module" title="Permanent link">¤</a></h2>
+<p>If you are primarily interested in using <code>msl-equipment</code> for interfacing with equipment (and not the <a class="autorefs autorefs-internal" href="../equipment-registers/#equipment-registers">Equipment Registers</a> aspect), the simplest approach is to create <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instances in a module and call the <a class="autorefs autorefs-internal" title="            connect" href="../../api/connection/#msl.equipment.schema.Connection.connect">connect</a> method.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span>
+
+<span class="n">device</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;COM3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
+</code></pre></div>
+<p>If you have multiple equipment that you want to communicate with and you also want to include some additional metadata so that you can keep track of which device is associated with the corresponding address, you could do something like the following.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span>
+
+<span class="c1"># Assign custom names to associate with each equipment</span>
+<span class="n">connections</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;alice&quot;</span><span class="p">:</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;GPIB::22&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;3458A&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;bob&quot;</span><span class="p">:</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;COM3&quot;</span><span class="p">,</span> <span class="n">manufacturer</span><span class="o">=</span><span class="s2">&quot;HP&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;34401A&quot;</span><span class="p">),</span>
+
+    <span class="c1"># not used below but is available to use for another day</span>
+    <span class="s2">&quot;eve&quot;</span><span class="p">:</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;SDK::company.dll&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;Scope-20&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;16bit&quot;</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="c1"># Connect to the equipment using the names that were assigned</span>
+<span class="n">alice</span> <span class="o">=</span> <span class="n">connections</span><span class="p">[</span><span class="s2">&quot;alice&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="n">bob</span> <span class="o">=</span> <span class="n">connections</span><span class="p">[</span><span class="s2">&quot;bob&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+
+<span class="c1"># Query the identity</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">alice</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;ID?&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bob</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
+</code></pre></div>
 
 
 

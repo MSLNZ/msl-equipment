@@ -99,6 +99,7 @@ nav:
     - api/utils.md
   - Resources:
     - resources/index.md
+  - Validate: validate.md
   - WebApp: webapp.md
 
 markdown_extensions:

@@ -2074,17 +2074,17 @@ class SpecifiedRequirements(Any):
 class Latest:
     """Base class for [LatestReport][msl.equipment.schema.LatestReport] and [LatestPerformanceCheck][msl.equipment.schema.LatestPerformanceCheck]."""  # noqa: E501
 
-    calibration_interval: float
+    calibration_interval: float = 0.0
     """The number of years that may pass between a calibration or a performance check.
 
     For equipment that do not have a required and periodic interval, but are calibrated on demand,
     the value is `0`.
     """
 
-    name: str
+    name: str = ""
     """The [Component][msl.equipment.schema.Component] name."""
 
-    next_calibration_date: _date
+    next_calibration_date: _date = _date(1875, 5, 20)
     """The date that the equipment is due for a re-calibration.
 
     If the [calibration_interval][msl.equipment.schema.Latest.calibration_interval] is `0`,
@@ -2092,7 +2092,7 @@ class Latest:
     the equipment was last calibrated.
     """
 
-    quantity: str
+    quantity: str = ""
     """The [Measurand][msl.equipment.schema.Measurand] quantity."""
 
     def is_calibration_due(self, months: int = 0) -> bool:
@@ -2113,18 +2113,12 @@ class Latest:
 
 
 @dataclass(frozen=True)
-class LatestReport(Latest):
-    """Latest calibration report."""
-
-    report: Report
+class LatestReport(Latest, Report):
     """Latest calibration report."""
 
 
 @dataclass(frozen=True)
-class LatestPerformanceCheck(Latest):
-    """Latest performance check."""
-
-    performance_check: PerformanceCheck
+class LatestPerformanceCheck(Latest, PerformanceCheck):
     """Latest performance check."""
 
 
@@ -2411,8 +2405,18 @@ class Equipment:
                         calibration_interval=m.calibration_interval,
                         name=c.name,
                         next_calibration_date=_future_date(latest, m.calibration_interval),
-                        performance_check=check,
                         quantity=m.quantity,
+                        completed_date=check.completed_date,
+                        competency=check.competency,
+                        entered_by=check.entered_by,
+                        checked_by=check.checked_by,
+                        checked_date=check.checked_date,
+                        conditions=check.conditions,
+                        cvd_equations=check.cvd_equations,
+                        equations=check.equations,
+                        files=check.files,
+                        deserialised=check.deserialised,
+                        tables=check.tables,
                     )
 
     def latest_performance_check(self, *, quantity: str = "", name: str = "") -> LatestPerformanceCheck | None:
@@ -2467,8 +2471,23 @@ class Equipment:
                         calibration_interval=m.calibration_interval,
                         name=c.name,
                         next_calibration_date=_future_date(latest, m.calibration_interval),
-                        report=report,
                         quantity=m.quantity,
+                        id=report.id,
+                        report_issue_date=report.report_issue_date,
+                        measurement_start_date=report.measurement_start_date,
+                        measurement_stop_date=report.measurement_stop_date,
+                        issuing_laboratory=report.issuing_laboratory,
+                        technical_procedure=report.technical_procedure,
+                        entered_by=report.entered_by,
+                        checked_by=report.checked_by,
+                        checked_date=report.checked_date,
+                        conditions=report.conditions,
+                        acceptance_criteria=report.acceptance_criteria,
+                        cvd_equations=report.cvd_equations,
+                        equations=report.equations,
+                        files=report.files,
+                        deserialised=report.deserialised,
+                        tables=report.tables,
                     )
 
     def latest_report(

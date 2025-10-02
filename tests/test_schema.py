@@ -1873,25 +1873,25 @@ def test_latest_report_single_measurand_and_component(value: str, expect: str) -
     assert len(reports) == 1
     assert reports[0].quantity == "1"
     assert reports[0].name == "2"
-    assert reports[0].report.id == expect
+    assert reports[0].id == expect
 
     # Don't specify `quantity` or `name` and the correct report is returned
     latest = e.latest_report(date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
     assert latest is not None
-    assert latest.report.id == expect
+    assert latest.id == expect
 
     # Can specify `quantity` and/or `name` provided that the value matches a report
     latest = e.latest_report(quantity="1", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
     assert latest is not None
-    assert latest.report.id == expect
+    assert latest.id == expect
 
     latest = e.latest_report(name="2", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
     assert latest is not None
-    assert latest.report.id == expect
+    assert latest.id == expect
 
     latest = e.latest_report(quantity="1", name="2", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
     assert latest is not None
-    assert latest.report.id == expect
+    assert latest.id == expect
 
     # If `quantity` and/or `name` are specified then the Report must match accordingly
     latest = e.latest_report(quantity="Anything", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
@@ -1943,25 +1943,27 @@ def test_latest_performance_check_single_measurand_and_component() -> None:
     assert len(checks) == 1
     assert checks[0].quantity == "Temperature"
     assert checks[0].name == "Probe"
-    assert checks[0].performance_check.entered_by == "C"
+    assert checks[0].entered_by == "C"
+    assert checks[0].completed_date == date(2024, 3, 4)
+    assert checks[0].competency == Competency(worker="Me", checker="You", technical_procedure="A")
 
     # Don't specify `quantity` or `name` and the correct report is returned
     latest = e.latest_performance_check()
     assert latest is not None
-    assert latest.performance_check.entered_by == "C"
+    assert latest.entered_by == "C"
 
     # Can specify `quantity` and/or `name` provided that the value matches a report
     latest = e.latest_performance_check(quantity="Temperature")
     assert latest is not None
-    assert latest.performance_check.entered_by == "C"
+    assert latest.entered_by == "C"
 
     latest = e.latest_performance_check(name="Probe")
     assert latest is not None
-    assert latest.performance_check.entered_by == "C"
+    assert latest.entered_by == "C"
 
     latest = e.latest_performance_check(quantity="Temperature", name="Probe")
     assert latest is not None
-    assert latest.performance_check.entered_by == "C"
+    assert latest.entered_by == "C"
 
     # If `quantity` and/or `name` are specified then the Report must match accordingly
     latest = e.latest_performance_check(quantity="Anything")
@@ -1991,7 +1993,7 @@ def test_latest_report_multiple_measurand_and_components() -> None:
                             ),
                             Report(
                                 id="B",
-                                entered_by="",
+                                entered_by="Me",
                                 report_issue_date=date(2024, 10, 23),
                                 measurement_start_date=date(2024, 2, 15),
                                 measurement_stop_date=date(2024, 2, 16),
@@ -2098,19 +2100,23 @@ def test_latest_report_multiple_measurand_and_components() -> None:
     assert len(reports) == 4
     assert reports[0].quantity == "Temperature"
     assert reports[0].name == "Probe 1"
-    assert reports[0].report.id == "B"
+    assert reports[0].id == "B"
+    assert reports[0].entered_by == "Me"
+    assert reports[0].report_issue_date == date(2024, 10, 23)
+    assert reports[0].measurement_start_date == date(2024, 2, 15)
+    assert reports[0].measurement_stop_date == date(2024, 2, 16)
 
     assert reports[1].quantity == "Temperature"
     assert reports[1].name == "Probe 2"
-    assert reports[1].report.id == "E"
+    assert reports[1].id == "E"
 
     assert reports[2].quantity == "Humidity"
     assert reports[2].name == "Probe 1"
-    assert reports[2].report.id == "b"
+    assert reports[2].id == "b"
 
     assert reports[3].quantity == "Humidity"
     assert reports[3].name == "Probe 2"
-    assert reports[3].report.id == "e"
+    assert reports[3].id == "e"
 
     report = e.latest_report()
     assert report is None
@@ -2123,19 +2129,19 @@ def test_latest_report_multiple_measurand_and_components() -> None:
 
     report = e.latest_report(quantity="Temperature", name="Probe 1")
     assert report is not None
-    assert report.report.id == "B"
+    assert report.id == "B"
 
     report = e.latest_report(quantity="Temperature", name="Probe 1", date="start")
     assert report is not None
-    assert report.report.id == "B"
+    assert report.id == "B"
 
     report = e.latest_report(quantity="Temperature", name="Probe 1", date="issue")
     assert report is not None
-    assert report.report.id == "C"
+    assert report.id == "C"
 
     report = e.latest_report(quantity="Humidity", name="Probe 2", date="issue")
     assert report is not None
-    assert report.report.id == "f"
+    assert report.id == "f"
 
 
 def test_latest_performance_check_multiple_measurand_and_components() -> None:
@@ -2240,19 +2246,21 @@ def test_latest_performance_check_multiple_measurand_and_components() -> None:
     assert len(checks) == 4
     assert checks[0].quantity == "Temperature"
     assert checks[0].name == "Probe 1"
-    assert checks[0].performance_check.entered_by == "B"
+    assert checks[0].entered_by == "B"
+    assert checks[0].completed_date == date(2024, 2, 16)
+    assert checks[0].competency == Competency(worker="Me", checker="You", technical_procedure="A")
 
     assert checks[1].quantity == "Temperature"
     assert checks[1].name == "Probe 2"
-    assert checks[1].performance_check.entered_by == "E"
+    assert checks[1].entered_by == "E"
 
     assert checks[2].quantity == "Humidity"
     assert checks[2].name == "Probe 1"
-    assert checks[2].performance_check.entered_by == "a"
+    assert checks[2].entered_by == "a"
 
     assert checks[3].quantity == "Humidity"
     assert checks[3].name == "Probe 2"
-    assert checks[3].performance_check.entered_by == "e"
+    assert checks[3].entered_by == "e"
 
     check = e.latest_performance_check()
     assert check is None
@@ -2265,19 +2273,19 @@ def test_latest_performance_check_multiple_measurand_and_components() -> None:
 
     check = e.latest_performance_check(quantity="Temperature", name="Probe 1")
     assert check is not None
-    assert check.performance_check.entered_by == "B"
+    assert check.entered_by == "B"
 
     check = e.latest_performance_check(quantity="Temperature", name="Probe 2")
     assert check is not None
-    assert check.performance_check.entered_by == "E"
+    assert check.entered_by == "E"
 
     check = e.latest_performance_check(quantity="Humidity", name="Probe 1")
     assert check is not None
-    assert check.performance_check.entered_by == "a"
+    assert check.entered_by == "a"
 
     check = e.latest_performance_check(quantity="Humidity", name="Probe 2")
     assert check is not None
-    assert check.performance_check.entered_by == "e"
+    assert check.entered_by == "e"
 
 
 def test_latest_report_no_reports() -> None:

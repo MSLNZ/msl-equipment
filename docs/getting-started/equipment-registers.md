@@ -79,7 +79,7 @@ equipment = Equipment(
     ),
 )
 
-# # Connect to the digital multimeter to query its identity
+# Connect to the digital multimeter to query its identity
 dmm = equipment.connect()
 print(dmm.query("ID?"))
 

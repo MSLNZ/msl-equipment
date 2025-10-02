@@ -1,72 +1,93 @@
 # Equipment Registers
 
-Laboratories that use equipment for traceable calibration measurements are required to manage information about the equipment by following the [ISO/IEC 17025]{:target="_blank"} standard. An equipment register is in the eXtensible Markup Language (XML) file format, and, as such, it may be parsed by many programming languages.
+Laboratories that use equipment for traceable calibration measurements are required to manage information about the equipment by following the [ISO/IEC 17025](https://www.iso.org/ISO-IEC-17025-testing-and-calibration-laboratories.html){:target="_blank"} standard. This information is saved in files that are referred to as *equipment registers*.
 
-An equipment register may be defined in a single XML file or distributed across multiple XML files (for the same _team_). You can also define the information directly in a [Python module][non-iso-labs] instead of in XML files.
+An equipment register is based on the definitions in the [Schema][er-schema] and may either be saved in the eXtensible Markup Language (XML) file format or in a [Python module][er-python-module]. Using the XML format is the preferred way to save the information since XML files can be easily [validated][validate] against the [Schema][er-schema] to ensure data integrity and it allows for equipment registers to be parsed by many programming languages. An equipment register can be saved in a single XML file or distributed across multiple XML files.
 
-The [Schema Classes][] section of the documentation shows how each of the XML elements that are contained in an equipment register can be used in a Python program.
+The [Schema Classes][] section of the documentation shows how an equipment register can be used in a Python program.
 
-## XML Schema
+## XML Schema {: #er-schema }
 
 The documentation for the equipment-register schema is available [here](https://mslnz.github.io/equipment-register-schema/latest/){:target="_blank"} and development of the schema is performed in the [repository](https://github.com/MSLNZ/equipment-register-schema){:target="_blank"}.
 
 Currently, the schema is targeting equipment that is located at the Measurement Standards Laboratory of New Zealand (in particular, enumeration values and pattern-string matches). If you work at a calibration laboratory and are interested in using the schema within your Quality Management System, please [contact us](https://www.measurement.govt.nz/contact-us){:target="_blank"} or open an [issue](https://github.com/MSLNZ/equipment-register-schema/issues){:target="_blank"}.
 
-### Validation
+See [this section][validate] for details on how to validate the contents of an equipment register against the schema.
 
-You may use any XML-validating tool to validate an equipment register against the schema; however, some of the values of the XML elements are not _completely_ validated by the schema alone. For example, the value of an element in an equipment register could be the SHA256 checksum of a file. The schema will validate that the SHA256 checksum value has the correct string length and that the checksum only contains the allowed alphanumeric characters, but, the schema does not validate that the checksum value is correct for the associated file. For these additional validation steps, another tool must be used.
+## Python Module {: #er-python-module }
 
-To validate _all_ elements within an equipment register, you can install `msl-equipment-validate`
-
-=== "pip"
-    ```console
-    pip install msl-equipment-validate
-    ```
-
-=== "pipx"
-    ```console
-    pipx install msl-equipment-validate
-    ```
-
-=== "uv"
-    ```console
-    uv tool install msl-equipment-validate
-    ```
-
-This will install a command-line tool that you can use to validate the content in an equipment register.
-
-TODO show how to use tool...
-
-## Non ISO/IEC 17025 labs {: #non-iso-labs }
-
-If your laboratory is not bound to the [ISO/IEC 17025]{:target="_blank"} standard and you are primarily interested in interfacing with equipment, you can define [Equipment][] classes in a Python module to connect to the equipment
+You may save the information about the equipment you are using in Python modules instead of in XML files.
 
 ```python
-from msl.equipment import Connection, Equipment
+from datetime import date
 
-equipment = {
-    "dmm": Equipment(
-        manufacturer="HP",
-        model="34401A",
-        serial="123456789",
-        connection=Connection(
-            address="COM3",
+from msl.equipment import (
+    CompletedTask,
+    Component,
+    Connection,
+    Equation,
+    Equipment,
+    Evaluable,
+    Maintenance,
+    Measurand,
+    Range,
+    Report,
+)
+
+equipment = Equipment(
+    manufacturer="HP",
+    model="3458A",
+    connection=Connection("GPIB::22"),
+    maintenance=Maintenance(
+        completed=(
+            CompletedTask(
+                task="Clean fan",
+                due_date=date(2025, 3, 4),
+                completed_date=date(2025, 3, 5),
+                performed_by="John",
+            ),
+        )
+    ),
+    calibrations=(
+        Measurand(
+            quantity="Voltage DC",
+            calibration_interval=1,
+            components=(
+                Component(
+                    reports=(
+                        Report(
+                            id="Report No.",
+                            report_issue_date=date(2024, 8, 13),
+                            measurement_start_date=date(2024, 8, 5),
+                            measurement_stop_date=date(2024, 8, 6),
+                            equations=(
+                                Equation(
+                                    value=Evaluable(
+                                        equation="0.9999862*v + 1.0241e-5",
+                                        variables=("v",),
+                                        ranges={"v": Range(1, 10)}
+                                    ),
+                                    uncertainty=Evaluable(equation="3.2e-7"),
+                                    unit="V",
+                                ),
+                            ),
+                        ),
+                    )
+                ),
+            ),
         ),
     ),
-    "scope": Equipment(
-        manufacturer="Pico Technology",
-        model="5244B",
-        serial="XY135/001",
-        connection=Connection(
-            address="SDK::ps5000a.dll",
-            resolution="16bit",
-        ),
-    ),
-}
+)
 
-# Connect to the digital multimeter
-dmm = equipment["dmm"].connect()
-identity = dmm.query("*IDN?")
+# # Connect to the digital multimeter to query its identity
+dmm = equipment.connect()
+print(dmm.query("ID?"))
+
+# You can fetch DC voltage readings from the multimeter
+voltages = ...
+
+# and apply the calibration equation to correct the voltages
+correction = equipment.latest_report().equations[0]
+print(correction.value(v=voltages))
+print(correction.uncertainty(v=voltages))
 ```
-
-[ISO/IEC 17025]: https://www.iso.org/ISO-IEC-17025-testing-and-calibration-laboratories.html

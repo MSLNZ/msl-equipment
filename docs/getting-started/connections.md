@@ -1,16 +1,42 @@
 # Connections
 
-The information about how to interface with equipment for computer control is defined in the eXtensible Markup Language (XML) file format. You specify the XML file that contains the connection information as a `<connections>` element in your [configuration file][configuration-files]. When the configuration file is loaded, it links a [Connection][] instance with the corresponding [Equipment][] instance. You may also define the connection information directly in a [Python module][non-iso-labs], instead of in XML files.
+The information about how to interface with equipment for computer control is based on the definitions in the [Schema][connections-xml] and may either be saved in the eXtensible Markup Language (XML) file format or in a [Python module][connections-python-module]. When using the XML format, you would specify the XML file that contains the connection information as a `<connections>` element in your [configuration file][configuration-files]. When the configuration file is loaded (via [Config][]), it links a [Connection][] instance with the corresponding [Equipment][] instance based on the equipment id.
 
-## XML {: #connections-xml}
+## XML Schema {: #connections-xml }
 
-### Schema {: #connections-xml-schema}
+Schema definition for connection information. See [this section][validate] for details on how to validate the contents of a connections XML file against the schema.
 
 ```xml
---8<-- "packages/validate/src/msl/equipment/validate/schema/connections.xsd"
+--8<-- "packages/validate/src/msl/equipment_validate/schema/connections.xsd"
 ```
 
-### Example {: #connections-xml-example}
+### Example {: #connections-xml-example }
+
+Example XML file to specify connection information. Only the `<eid>` and `<address>` elements are required, all other elements are optional.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<connections>
+    <connection>
+        <eid>MSLE.M.041</eid>
+        <address>TCPIP::192.168.1.10::hislip0</address>
+    </connection>
+    <connection>
+        <eid>MSLE.M.023</eid>
+        <address>ASRL/dev/ttyS1</address>
+        <backend>PyVISA</backend>
+        <manufacturer>Manufacturer</manufacturer>
+        <model>Model</model>
+        <serial>Serial</serial>
+        <properties>
+            <baud_rate>19200</baud_rate>
+            <read_termination>\r</read_termination>
+            <write_termination>\r</write_termination>
+            <timeout>10</timeout>
+        </properties>
+    </connection>
+</connections>
+```
 
 ## Address Syntax
 
@@ -151,7 +177,7 @@ The following are examples of VISA-style addresses that may be used to connect t
 
 National Instruments also provides [examples](https://www.ni.com/docs/en-US/bundle/ni-visa/page/visa-resource-syntax-and-examples.html){:target="_blank"} if you are using [PyVISA](https://pyvisa.readthedocs.io/en/stable/){:target="_blank"} as the [backend][connections-backend].
 
-## Interfaces {: #connections-interfaces}
+## Interfaces {: #connections-interfaces }
 
 The following interface classes are available
 
@@ -164,10 +190,42 @@ The following interface classes are available
 * [VXI11][msl.equipment.interfaces.vxi11.VXI11] &mdash; Base class for the [VXI-11](http://www.vxibus.org/specifications.html) communication protocol
 * [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] &mdash; Communicate via the [ZeroMQ](https://zeromq.org/) protocol
 
-### Backends {: #connections-backend}
+### Backends {: #connections-backend }
 
 When a [Connection][] instance is created, the `backend` keyword argument decides which backend to use when interfacing with the equipment. There are different [Backend][msl.equipment.enumerations.Backend]s to choose from: `MSL` (default), `PyVISA` or `NIDAQ`.
 
 The [interface class][connections-interfaces] can be used if the `backend` is `MSL`. The corresponding interface classes for the external backends are [PyVISA][msl.equipment.interfaces.pyvisa.PyVISA] and [NIDAQ][msl.equipment.interfaces.nidaq.NIDAQ].
 
-## Python Example {: #connections-python-example}
+## Python Module {: #connections-python-module }
+
+If you are primarily interested in using `msl-equipment` for interfacing with equipment (and not the [Equipment Registers][] aspect), the simplest approach is to create [Connection][] instances in a module and call the [connect][msl.equipment.schema.Connection.connect] method.
+
+```python
+from msl.equipment import Connection
+
+device = Connection("COM3").connect()
+print(device.query("*IDN?"))
+```
+
+If you have multiple equipment that you want to communicate with and you also want to include some additional metadata so that you can keep track of which device is associated with the corresponding address, you could do something like the following.
+
+```python
+from msl.equipment import Connection
+
+# Assign custom names to associate with each equipment
+connections = {
+    "alice": Connection("GPIB::22", model="3458A"),
+    "bob": Connection("COM3", manufacturer="HP", model="34401A"),
+
+    # not used below but is available to use for another day
+    "eve": Connection("SDK::company.dll", model="Scope-20", resolution="16bit"),
+}
+
+# Connect to the equipment using the names that were assigned
+alice = connections["alice"].connect()
+bob = connections["bob"].connect()
+
+# Query the identity
+print(alice.query("ID?"))
+print(bob.query("*IDN?"))
+```

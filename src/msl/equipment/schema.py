@@ -1494,7 +1494,7 @@ class PerformanceCheck:
     competency: Competency
     """The competent people who accomplished the performance check and the technical procedure that was executed."""
 
-    entered_by: str
+    entered_by: str = ""
     """The name of the person who initially entered the `<performanceCheck>` element in the register."""
 
     checked_by: str = ""
@@ -1640,12 +1640,12 @@ class Report:
 
     Args:
         id: The report identification number.
-        entered_by: The name of the person who initially entered the `<report>` element in the register.
         report_issue_date: The date that the report was issued.
         measurement_start_date: The date that the calibration measurement started.
         measurement_stop_date: The date that the calibration measurement stopped.
         issuing_laboratory: Information about the laboratory that issued the calibration report.
         technical_procedure: The technical procedure(s) that was(were) followed to perform the calibration.
+        entered_by: The name of the person who initially entered the `<report>` element in the register.
         checked_by: The name of the person who checked the information in the `<report>` element.
         checked_date: The date that the information in the `<report>` element was last checked.
         conditions: The conditions under which the report is valid.
@@ -1659,9 +1659,6 @@ class Report:
 
     id: str
     """The report identification number."""
-
-    entered_by: str
-    """The name of the person who initially entered the `<report>` element in the register."""
 
     report_issue_date: _date
     """The date that the report was issued."""
@@ -1677,6 +1674,9 @@ class Report:
 
     technical_procedure: str = ""
     """The technical procedure(s) that was(were) followed to perform the calibration."""
+
+    entered_by: str = ""
+    """The name of the person who initially entered the `<report>` element in the register."""
 
     checked_by: str = ""
     """The name of the person who checked the information in the `<report>` element."""

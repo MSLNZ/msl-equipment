@@ -1,0 +1,2974 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema version="0.2.0"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+            xmlns:gtc="https://measurement.govt.nz/gtc/xml"
+            xmlns:msl="https://measurement.govt.nz/equipment-register"
+            elementFormDefault="qualified"
+            vc:minVersion="1.0"
+            targetNamespace="https://measurement.govt.nz/equipment-register">
+
+    <xsd:import namespace="https://measurement.govt.nz/gtc/xml" schemaLocation="./external/gtc.xsd"/>
+
+    <xsd:annotation>
+        <xsd:documentation>
+            Copyright &#169; 2025, [Measurement Standards Laboratory of New Zealand](https://www.measurement.govt.nz/).
+
+            XML Schema Definition for the vocabulary and structure of an Equipment Register.
+
+            An Equipment Register contains information about equipment to satisfy
+            ISO/IEC 17025:2017 Clauses 6.4.4, 6.4.10, 6.4.13 and _some_ of 7.8.2.1 as well as
+            Section 4.3.6 of the MSL Quality Manual.
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <!-- Root element -->
+    <xsd:element name="register">
+        <xsd:annotation>
+            <xsd:documentation>
+                Root element that contains zero or more [equipment](#type_equipment) elements.
+
+                **Examples**
+
+                The `xmlns` attribute specifies the XML namespace for the document and must be included
+                ```xml
+                {?xml version="1.0" encoding="utf-8"?}
+                {register team="Light" xmlns="https://measurement.govt.nz/equipment-register"}
+                  {equipment enteredBy="Neil Swift"}...{/equipment}
+                  {equipment enteredBy="Ellie Molloy"}...{/equipment}
+                  {equipment enteredBy="Yang Yenn Tan"}...{/equipment}
+                {/register}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="equipment" type="msl:equipment">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Contains information about equipment to satisfy ISO/IEC 17025:2017
+                            Clauses 6.4.4, 6.4.10, 6.4.13 and _some_ of 7.8.2.1 as well as
+                            Section 4.3.6 of the MSL Quality Manual.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="team" type="msl:teamEnumerationString" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The team that is responsible for the equipment register.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+        <xsd:unique name="uniqueID">
+            <xsd:selector xpath="msl:equipment/msl:id"/>
+            <xsd:field xpath="."/>
+        </xsd:unique>
+    </xsd:element>
+
+    <xsd:simpleType name="teamEnumerationString">
+        <xsd:annotation>
+            <xsd:documentation>
+                The team that is responsible for the equipment register
+                (an attribute of the [register](#element_register) element).
+
+                **Examples**
+
+                ```xml
+                {register team="Mass" xmlns="https://measurement.govt.nz/equipment-register"}
+                  {equipment enteredBy="Rebecca Hawke"}...{/equipment}
+                {/register}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Electrical"/>
+            <xsd:enumeration value="Humidity"/>
+            <xsd:enumeration value="Length"/>
+            <xsd:enumeration value="Light"/>
+            <xsd:enumeration value="Mass"/>
+            <xsd:enumeration value="Pressure"/>
+            <xsd:enumeration value="Temperature"/>
+            <xsd:enumeration value="Time"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="labEnumerationString">
+        <xsd:annotation>
+            <xsd:documentation>
+                The name of the laboratory that the equipment is usually located in.
+
+                **Examples**
+
+                A lab of the Photometry &amp; Radiometry team
+                ```xml
+                {location}Cryogenic Radiometer{/location}
+                ```
+
+                A lab of the Temperature team
+                ```xml
+                {location}MicroK 2 resistance bath{/location}
+                ```
+
+                If the equipment is not at MSL (e.g., at another institute,
+                at the landfill, ...) then there is only one option available,
+                `Not at MSL`, and you should document the actual location
+                where the equipment is located somewhere else in the equipment register
+                (such as in a [maintenance](#type_maintenance) task).
+                ```xml
+                {location}Not at MSL{/location}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="CMM Lab"/>
+            <xsd:enumeration value="Contact thermometry lab"/>
+            <xsd:enumeration value="Cryogenic Radiometer"/>
+            <xsd:enumeration value="Detector Responsivity"/>
+            <xsd:enumeration value="Fixed point lab"/>
+            <xsd:enumeration value="Flexible Optics"/>
+            <xsd:enumeration value="Furnace assembly room"/>
+            <xsd:enumeration value="Goniospectrophotometer"/>
+            <xsd:enumeration value="Hilger Lab"/>
+            <xsd:enumeration value="Kibble Balance"/>
+            <xsd:enumeration value="Laser Lab"/>
+            <xsd:enumeration value="Long Room"/>
+            <xsd:enumeration value="Mass Standards Laboratories"/>
+            <xsd:enumeration value="MI bridge resistance bath"/>
+            <xsd:enumeration value="MicroK 1 resistance bath"/>
+            <xsd:enumeration value="MicroK 2 resistance bath"/>
+            <xsd:enumeration value="Not at MSL"/>
+            <xsd:enumeration value="Photometric Bench"/>
+            <xsd:enumeration value="Pressure Standards Laboratories"/>
+            <xsd:enumeration value="Radiation thermometry calibration lab"/>
+            <xsd:enumeration value="Radiation thermometry research lab"/>
+            <xsd:enumeration value="Single Photon"/>
+            <xsd:enumeration value="Spectrophotometer"/>
+            <xsd:enumeration value="Thermocouple lab"/>
+            <xsd:enumeration value="Underground Tape Tunnel"/>
+            <xsd:enumeration value="Water lab"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="digitalFormatEnumerationString">
+        <xsd:annotation>
+            <xsd:documentation>
+                The format of a [digitalReport](#type_digitalReport).
+
+                **Examples**
+
+                ```xml
+                {digitalReport format="MSL PDF/A-3" id="Pressure/2025/092"}...{/digitalReport}
+                {digitalReport format="PTB DCC" id="PTB 4434/18"}...{/digitalReport}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="MSL PDF/A-3"/>
+            <xsd:enumeration value="PTB DCC"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="staffEnumerationString">
+        <xsd:annotation>
+            <xsd:documentation>
+                The name of the MSL staff member who either entered or checked the content of an
+                element in the equipment register.
+
+                **Examples**
+
+                ```xml
+                {register team="Temperature" xmlns="https://measurement.govt.nz/equipment-register"}
+                  {equipment enteredBy="Ellie Molloy" checkedBy="Peter Saunders" checkedDate="2025-07-18"}...{/equipment}
+                {/register}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Adam Dunford"/>
+            <xsd:enumeration value="Adam Knight"/>
+            <xsd:enumeration value="Ana Rakonjac"/>
+            <xsd:enumeration value="Ben Sherson"/>
+            <xsd:enumeration value="Blair Hall"/>
+            <xsd:enumeration value="Cheng Yang"/>
+            <xsd:enumeration value="Chris Young"/>
+            <xsd:enumeration value="Darrin Jack"/>
+            <xsd:enumeration value="Ellie Molloy"/>
+            <xsd:enumeration value="François Shindo"/>
+            <xsd:enumeration value="Greg Reid"/>
+            <xsd:enumeration value="Guy Dubuis"/>
+            <xsd:enumeration value="Hamish Edgar"/>
+            <xsd:enumeration value="Johan Grand"/>
+            <xsd:enumeration value="Joseph Borbely"/>
+            <xsd:enumeration value="Keith Jones"/>
+            <xsd:enumeration value="Lenice Evergreen"/>
+            <xsd:enumeration value="Lucy Forde"/>
+            <xsd:enumeration value="Minyu Zhang"/>
+            <xsd:enumeration value="Murray Early"/>
+            <xsd:enumeration value="Neil Swift"/>
+            <xsd:enumeration value="Peter McDowall"/>
+            <xsd:enumeration value="Peter Saunders"/>
+            <xsd:enumeration value="Rebecca Hawke"/>
+            <xsd:enumeration value="Stefaan Janssens"/>
+            <xsd:enumeration value="Tim Lawson"/>
+            <xsd:enumeration value="Tom Stewart"/>
+            <xsd:enumeration value="Vladimir Bubanja"/>
+            <xsd:enumeration value="Yang Yenn Tan"/>
+            <xsd:enumeration value="Yin Hsien Fung"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="keywordsList">
+        <xsd:annotation>
+            <xsd:documentation>
+                Keywords that may be used to describe the [equipment](#type_equipment).
+
+                Each keyword is separated by whitespace.
+
+                **Examples**
+
+                ```xml
+                {equipment enteredBy="Guy Dubuis" keywords="Source Voltage AC DC"}...{/equipment}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:list>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="AC"/>
+                    <xsd:enumeration value="Amplifier"/>
+                    <xsd:enumeration value="Aperture"/>
+                    <xsd:enumeration value="Balance"/>
+                    <xsd:enumeration value="Barometer"/>
+                    <xsd:enumeration value="Block"/>
+                    <xsd:enumeration value="Bridge"/>
+                    <xsd:enumeration value="Comparator"/>
+                    <xsd:enumeration value="Component"/>
+                    <xsd:enumeration value="Current"/>
+                    <xsd:enumeration value="DAQ"/>
+                    <xsd:enumeration value="DC"/>
+                    <xsd:enumeration value="DMM"/>
+                    <xsd:enumeration value="Detector"/>
+                    <xsd:enumeration value="Driver"/>
+                    <xsd:enumeration value="Gateway"/>
+                    <xsd:enumeration value="Gauge"/>
+                    <xsd:enumeration value="Infrared"/>
+                    <xsd:enumeration value="Interferometer"/>
+                    <xsd:enumeration value="Hygrometer"/>
+                    <xsd:enumeration value="Lamp"/>
+                    <xsd:enumeration value="Laser"/>
+                    <xsd:enumeration value="Linescale"/>
+                    <xsd:enumeration value="Lock-in"/>
+                    <xsd:enumeration value="Measure"/>
+                    <xsd:enumeration value="Mechanical"/>
+                    <xsd:enumeration value="Meter"/>
+                    <xsd:enumeration value="Monochromator"/>
+                    <xsd:enumeration value="Multiplexor"/>
+                    <xsd:enumeration value="Motor"/>
+                    <xsd:enumeration value="Network"/>
+                    <xsd:enumeration value="Optical"/>
+                    <xsd:enumeration value="Oscilloscope"/>
+                    <xsd:enumeration value="Photomultiplier"/>
+                    <xsd:enumeration value="Power"/>
+                    <xsd:enumeration value="PRT"/>
+                    <xsd:enumeration value="Pyro"/>
+                    <xsd:enumeration value="Radiation"/>
+                    <xsd:enumeration value="Resistance"/>
+                    <xsd:enumeration value="Rule"/>
+                    <xsd:enumeration value="Sample"/>
+                    <xsd:enumeration value="Set"/>
+                    <xsd:enumeration value="Source"/>
+                    <xsd:enumeration value="SPRT"/>
+                    <xsd:enumeration value="Stage"/>
+                    <xsd:enumeration value="Stepper"/>
+                    <xsd:enumeration value="Tape"/>
+                    <xsd:enumeration value="Thermocouple"/>
+                    <xsd:enumeration value="Thermometer"/>
+                    <xsd:enumeration value="Tile"/>
+                    <xsd:enumeration value="Trap"/>
+                    <xsd:enumeration value="Translation"/>
+                    <xsd:enumeration value="Voltage"/>
+                    <xsd:enumeration value="Weight"/>
+                    <xsd:enumeration value="UV"/>
+                    <xsd:enumeration value="Visible"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:list>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="statusEnumerationString">
+        <xsd:annotation>
+            <xsd:documentation>
+                The status of the equipment is an indication of whether the
+                equipment is _active_ (in use) or _inactive_ (not in use).
+
+                A single value indicates that the equipment is _active_:
+
+                * **Active**: The equipment is operable and may be used
+
+                The following values indicate that the equipment is _inactive_, but
+                provide more context as to the reason why it is _inactive_:
+
+                * **Damaged**: The equipment is damaged and is no longer usable
+                * **Disposed**: The equipment has been disposed of and is no longer at MSL
+                  (e.g. the equipment was sent to the landfill or to be recycled)
+                * **Dormant**: The equipment is still operable, it is no longer in use but may be used again
+                  (e.g., the equipment was replaced with a newer model, and it is kept as a backup)
+                * **Lost**: The equipment is lost, but if found may be put back into service.
+                * **Retired**: The equipment is still operable, but there are no intentions of using it again
+                  (e.g., the equipment depends on other equipment that is not available or is no longer manufactured)
+
+                **Examples**
+
+                ```xml
+                {status}Active{/status}
+                ```
+
+                ```xml
+                {status}Damaged{/status}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Active"/>
+            <xsd:enumeration value="Damaged"/>
+            <xsd:enumeration value="Disposed"/>
+            <xsd:enumeration value="Dormant"/>
+            <xsd:enumeration value="Lost"/>
+            <xsd:enumeration value="Retired"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="quantityEnumerationString">
+        <xsd:annotation>
+            <xsd:documentation>
+                The quantity intended to be measured (for the [measurand](#type_measurand) element).
+
+                _NOTE: Consider adopting the
+                [measurand taxonomy](https://github.com/NCSLI-MII/measurand-taxonomy)
+                proposed by [NCSLI](https://ncsli.org/) and [MII](http://miiknowledge.wikidot.com/)
+                (see the [approved taxons](https://measurand-taxonomy.readthedocs.io/en/latest/approved.html)
+                for examples)._
+
+                **Examples**
+
+                ```xml
+                {measurand quantity="Wavelength" calibrationInterval="1"}...{/measurand}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Angle"/>
+            <xsd:enumeration value="Angularity"/>
+            <xsd:enumeration value="BRDF"/>
+            <xsd:enumeration value="BTDF"/>
+            <xsd:enumeration value="Capacitance"/>
+            <xsd:enumeration value="Colour"/>
+            <xsd:enumeration value="Current AC"/>
+            <xsd:enumeration value="Current DC"/>
+            <xsd:enumeration value="Cylindricity"/>
+            <xsd:enumeration value="Deviation in Length"/>
+            <xsd:enumeration value="Diameter"/>
+            <xsd:enumeration value="Flatness"/>
+            <xsd:enumeration value="Frequency"/>
+            <xsd:enumeration value="Gloss"/>
+            <xsd:enumeration value="Haze"/>
+            <xsd:enumeration value="Humidity"/>
+            <xsd:enumeration value="Illuminance"/>
+            <xsd:enumeration value="Illuminance Responsivity"/>
+            <xsd:enumeration value="Isotope"/>
+            <xsd:enumeration value="Length"/>
+            <xsd:enumeration value="Luminance"/>
+            <xsd:enumeration value="Luminance Responsivity"/>
+            <xsd:enumeration value="Luminous Intensity"/>
+            <xsd:enumeration value="Mass"/>
+            <xsd:enumeration value="Parallelism"/>
+            <xsd:enumeration value="Perpendicularity"/>
+            <xsd:enumeration value="Pressure"/>
+            <xsd:enumeration value="Radius"/>
+            <xsd:enumeration value="Reflectance"/>
+            <xsd:enumeration value="Resistance AC"/>
+            <xsd:enumeration value="Resistance DC"/>
+            <xsd:enumeration value="Roundness"/>
+            <xsd:enumeration value="Runout"/>
+            <xsd:enumeration value="Spectral Irradiance"/>
+            <xsd:enumeration value="Spectral Irradiance Responsivity"/>
+            <xsd:enumeration value="Sphericity"/>
+            <xsd:enumeration value="Straightness"/>
+            <xsd:enumeration value="Temperature"/>
+            <xsd:enumeration value="Total Runout"/>
+            <xsd:enumeration value="Transmittance"/>
+            <xsd:enumeration value="Variation in Length"/>
+            <xsd:enumeration value="Voltage AC"/>
+            <xsd:enumeration value="Voltage DC"/>
+            <xsd:enumeration value="Wavelength"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="idPatternString">
+        <xsd:annotation>
+            <xsd:documentation>
+                Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                a) the identity of equipment ...
+
+                The identity pattern shall consist of
+                * the upper-case letters **MSLE**
+                * followed by one period **.** (0x2E)
+                * followed by one of the following letters
+                    * **E**: Electrical
+                    * **F**: Frequency (Time)
+                    * **H**: Humidity
+                    * **L**: Length
+                    * **M**: Mass
+                    * **O**: Optics (Light)
+                    * **P**: Pressure
+                    * **T**: Temperature
+                * followed by one period **.** (0x2E)
+                * followed by one or more upper-case letters and/or digits
+
+                **Examples**
+
+                ```xml
+                MSLE.P.024
+                ```
+
+                ```xml
+                MSLE.F.061
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="MSLE\.[EFHLMOPT]\.[A-Z0-9]+"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="technicalProcedurePatternString">
+        <xsd:annotation>
+            <xsd:documentation>
+                The pattern for an MSL technical procedure shall consist of
+                * the upper-case letters **MSLT**
+                * followed by one period **.** (0x2E)
+                * followed by one of the following letters
+                    * **E**: Electrical
+                    * **F**: Frequency (Time)
+                    * **H**: Humidity
+                    * **L**: Length
+                    * **M**: Mass
+                    * **O**: Optics (Light)
+                    * **P**: Pressure
+                    * **T**: Temperature
+                * followed by one period **.** (0x2E)
+                * followed by one or more digits [0-9]
+                * optionally, followed by one period **.** (0x2E) and one or more digits [0-9]
+
+                **Examples**
+
+                ```xml
+                MSLT.O.009
+                ```
+
+                ```xml
+                MSLT.E.028.017
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="MSLT\.[EFHLMOPT]\.[0-9]+(\.[0-9]+)?"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="nonEmptyString">
+        <xsd:annotation>
+            <xsd:documentation>
+                A non-empty string that shall not contain the line feed (0x0A)
+                nor carriage return (0x0D) characters.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value=".*\S.*"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="tokenizedString">
+        <xsd:annotation>
+            <xsd:documentation>
+                A non-empty string that shall not
+                * contain the tab (0x09), line feed (0x0A) nor carriage return (0x0D) characters,
+                * contain sequences of two or more spaces (0x20),
+                * have leading or trailing spaces.
+
+                This implementation is what [xsd:token](https://www.w3.org/TR/xmlschema-2/#token)
+                indicates; however, to achieve the desired validation outcome, string normalisation
+                must not occur before validation. This is the reason why the _base_ class is
+                [xsd:string](https://www.w3.org/TR/xmlschema-2/#string) (with a _pattern_ facet)
+                and not [xsd:token](https://www.w3.org/TR/xmlschema-2/#token). The
+                [lexical space](https://www.w3.org/TR/xmlschema-2/#lexical-space)
+                is not what is in the raw XML document, it is what you get after applying
+                _pre-lexical_ normalisations.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\S(\S*( ?)\S+)*"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="variables">
+        <xsd:annotation>
+            <xsd:documentation>
+                A list of variable(s) in an [equation](#type_equation).
+
+                Each variable must begin with a letter and may be
+                followed by zero or more letter, digit or underscore
+                characters.
+
+                Whitespace shall be used to separate each variable.
+
+                If no variables are used in the [equation](#type_equation)
+                (i.e., the equation is a constant numerical value), the `variables`
+                attribute must still exist, but the value is empty.
+
+                **Examples**
+
+                If the [equation](#type_equation) does not require variables, then
+                the `variables` attribute must be set to an empty string
+                ```xml
+                {equation}
+                  {value variables=""}0.52{/value}
+                  ...
+                {/equation}
+                ```
+
+                The [equation](#type_equation) requires one variable `x`
+                ```xml
+                {equation}
+                  {value variables="x"}0.52 + 7.3*x{/value}
+                  ...
+                {/equation}
+                ```
+
+                The [equation](#type_equation) requires two variables `temp` and `rh`
+                ```xml
+                {equation}
+                  {value variables="temp rh"}4.21*temp + 0.2/rh{/value}
+                  ...
+                {/equation}
+                ```
+                where the variable names are separated by whitespace in the attribute value.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:list>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:pattern value="[a-zA-Z][a-zA-Z0-9_]*"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:list>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="degreeFreedomDouble">
+        <xsd:annotation>
+            <xsd:documentation>
+               The degrees of freedom. If not specified, the degrees of freedom
+               shall be considered to be \\(+\infty\\).
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:double">
+            <xsd:minInclusive value="1"/>
+            <xsd:maxInclusive value="INF"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="nonNegativeDecimal">
+        <xsd:annotation>
+            <xsd:documentation>
+                A decimal number that is &#8805; 0.
+
+                Derived from [xsd:decimal](https://www.w3.org/TR/xmlschema-2/#decimal)
+                by setting the value of _minInclusive_ to be 0.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:decimal">
+            <xsd:minInclusive value="0"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="currencyEnumerationString">
+        <xsd:annotation>
+            <xsd:documentation>
+                The currency of a [capitalExpenditure](#type_capitalExpenditure) asset.
+
+                The value is an [ISO 4217](https://www.iso.org/iso-4217-currency-codes.html) currency code.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="AUD"/>
+            <xsd:enumeration value="EUR"/>
+            <xsd:enumeration value="GBP"/>
+            <xsd:enumeration value="JPY"/>
+            <xsd:enumeration value="NZD"/>
+            <xsd:enumeration value="USD"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="equipment">
+        <xsd:annotation>
+            <xsd:documentation>
+                Contains information about equipment to satisfy ISO/IEC 17025:2017
+                Clauses 6.4.4, 6.4.10, 6.4.13 and _some_ of 7.8.2.1 as well as
+                Section 4.3.6 of the MSL Quality Manual.
+
+                **Examples**
+
+                An `equipment` element showing the minimal child elements that must
+                contain values so that the equipment register remains valid
+                ```xml
+                {equipment enteredBy="Peter McDowall"}
+                  {id}MSLE.P.001{/id}
+                  {manufacturer}MSL{/manufacturer}
+                  {model}ABC{/model}
+                  {serial}123{/serial}
+                  {description}A short description about the equipment{/description}
+                  {specifications/}
+                  {location}CMM Lab{/location}
+                  {status}Active{/status}
+                  {loggable/}
+                  {traceable}false{/traceable}
+                  {calibrations/}
+                  {maintenance/}
+                  {alterations/}
+                  {firmware/}
+                  {specifiedRequirements/}
+                  {referenceMaterials/}
+                  {qualityManual/}
+                {/equipment}
+                ```
+
+                The following shows different ways that attributes may be specified
+                ```xml
+                {equipment enteredBy="Adam Dunford"}...{/equipment}
+                {equipment enteredBy="Tim Lawson" alias="bench-top probe"}...{/equipment}
+                {equipment enteredBy="Ben Sherson" keywords="Thermometer Hygrometer"}...{/equipment}
+                {equipment enteredBy="Tom Stewart" alias="main" keywords="Source Voltage AC DC"}...{/equipment}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="id" type="msl:idPatternString">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                        a) the identity of equipment ...
+
+                        The content must uniquely identify the equipment and must match
+                        the expected pattern.
+
+                        _Attention: This XSD document validates the content of an XML document
+                        (e.g., that the `id` element exists, the content matches the expected
+                        pattern and that the `id` is unique within a **single** equipment-register
+                        file). It does not validate that the `id` is universally (within MSL)
+                        unique, for example, if an equipment-register for a team is distributed
+                        across multiple XML files. To validate the universal uniqueness of the
+                        `id` content, you must use another tool._
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="manufacturer" type="msl:tokenizedString">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                        b) the manufacturer's name ...
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="model" type="msl:tokenizedString">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                        b) the manufacturer's ... type identification ...
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="serial" type="msl:tokenizedString">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                        b) the manufacturer's ... serial number or other unique identification
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="description" type="msl:tokenizedString">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Satisfy a _shall_ item in Section 4.3.6 of the MSL Quality Manual. \
+                        A short description about the equipment.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="specifications" type="msl:any">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Specifications provided by the manufacturer of the equipment.
+
+                        Typically, the specifications are specified on the website,
+                        datasheet and/or technical notes that a manufacturer provides.
+
+                        **Examples**
+
+                        Specify the current range for a diode laser
+                        ```xml
+                        {specifications}
+                          {lasingCurrent unit="mA"}15{/lasingCurrent}
+                          {maximumCurrent unit="mA"}120{/maximumCurrent}
+                        {/specifications}
+                        ```
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="location" type="msl:labEnumerationString">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                        d) the current location
+
+                        While the Clause states the _current_ location, this is interpreted
+                        as the _usual_ location (laboratory) that the equipment is found in.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="status" type="msl:statusEnumerationString">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The status of the equipment is an indication of whether the
+                        equipment is _active_ (in use) or _inactive_ (not in use).
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="loggable" type="xsd:boolean" default="false">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Whether measurements from the equipment should be logged.
+
+                        Equipment that monitor (for example) pressure, temperature
+                        or humidity of a laboratory environment are considered as loggable.
+
+                        The default value is `false`, but the XML element must be defined.
+
+                        **Examples**
+
+                        Equipment that _is not_ loggable
+                        ```xml
+                        {loggable/}
+                        {loggable}0{/loggable}
+                        {loggable}false{/loggable}
+                        ```
+
+                        Equipment that _is_ loggable
+                        ```xml
+                        {loggable}1{/loggable}
+                        {loggable}true{/loggable}
+                        ```
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="traceable" type="xsd:boolean">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Whether the equipment is used for a traceable measurement.
+
+                        If the equipment is part of a traceability chain, the equipment
+                        must have [calibrations](#type_calibrations) specified.
+
+                        **Examples**
+
+                        Equipment that _is not_ traceable
+                        ```xml
+                        {traceable}0{/traceable}
+                        {traceable}false{/traceable}
+                        ```
+
+                        Equipment that _is_ traceable
+                        ```xml
+                        {traceable}1{/traceable}
+                        {traceable}true{/traceable}
+                        ```
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="calibrations" type="msl:calibrations">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                        e) calibration dates, results of calibrations, adjustments, acceptance criteria, and the due date of the next calibration or the calibration interval
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:unique name="uniqueMeasurandQuantity">
+                    <xsd:selector xpath="msl:measurand"/>
+                    <xsd:field xpath="@quantity"/>
+                </xsd:unique>
+            </xsd:element>
+            <xsd:element name="maintenance" type="msl:maintenance">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                        g) the maintenance plan and maintenance carried out to date, where relevant to the performance of the equipment
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="alterations" type="msl:alterations">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                        h) details of any damage, malfunction, modification to, or repair of, the equipment
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="firmware" type="msl:firmware">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                        a) ... software and firmware version
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="specifiedRequirements" type="msl:any">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                        c) evidence of verification that equipment conforms with specified requirements
+
+                        and/or
+
+                        Clause 6.4.4 \
+                        The laboratory shall verify that equipment conforms to specified requirements
+                        before being placed or returned into service.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="referenceMaterials" type="msl:any">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                        f) documentation of reference materials, results, acceptance criteria, relevant dates and the period of validity
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="qualityManual" type="msl:qualityManual">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The _optional_ information that is specified in Section 4.3.6
+                        of the MSL Quality Manual, plus additional _optional_ elements.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="enteredBy" type="msl:staffEnumerationString" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The name of the person who initially entered the `equipment` element
+                    in the register.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="checkedBy" type="msl:staffEnumerationString">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The name of the person who checked the information in the `equipment` element.
+                    When modified, the `checkedDate` attribute should also be updated.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="checkedDate" type="xsd:date">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The date that the information in the `equipment` element was last checked.
+                    When modified, the `checkedBy` attribute should also be updated.
+
+                    The date must be in the YYYY-MM-DD format (see
+                    [xsd:date](https://www.w3.org/TR/xmlschema-2/#date) for details).
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="alias" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>
+                    _Optional:_ An alternative name to associate with the equipment.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="keywords" type="msl:keywordsList">
+            <xsd:annotation>
+                <xsd:documentation>
+                    _Optional:_ Keywords that describe the equipment.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="comment">
+        <xsd:annotation>
+            <xsd:documentation>
+                A non-empty string that shall not contain the line feed (0x0A)
+                nor carriage return (0x0D) characters and shall have a date
+                as an attribute. The date must be in the YYYY-MM-DD format (see
+                [xsd:date](https://www.w3.org/TR/xmlschema-2/#date) for details).
+
+                **Examples**
+
+                ```xml
+                {comment date="2024-12-19"}Replaced the gas tube of the Ar+ laser{/comment}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:extension base="msl:tokenizedString">
+                <xsd:attribute name="date" type="xsd:date" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The date in the YYYY-MM-DD format (see
+                            [xsd:date](https://www.w3.org/TR/xmlschema-2/#date) for details).
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="maintenance">
+        <xsd:annotation>
+            <xsd:documentation>
+                Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                g) the maintenance plan and maintenance carried out to date, where relevant to the performance of the equipment
+
+                **Examples**
+
+                No maintenance plan is required
+                ```xml
+                {maintenance/}
+                ```
+
+                Some maintenance tasks are planned but none have been completed
+                ```xml
+                {maintenance}
+                  {planned}
+                    {task dueDate="2024-12-01"}Refill helium gas{/task}
+                    {task dueDate="2025-05-15" performedBy="Company X"}Service laser{/task}
+                  {/planned}
+                  {completed/}
+                {/maintenance}
+                ```
+
+                Some maintenance tasks are planned and some have been completed
+                ```xml
+                {maintenance}
+                  {planned}
+                    {task dueDate="2025-05-15" performedBy="Company X"}Service laser{/task}
+                  {/planned}
+                  {completed}
+                    {task dueDate="2024-12-01" completedDate="2024-12-02" performedBy="Tom Stewart"}Refill helium gas{/task}
+                  {/completed}
+                {/maintenance}
+                ```
+
+                No maintenance tasks are planned and some have been completed
+                ```xml
+                {maintenance}
+                  {planned/}
+                  {completed}
+                    {task dueDate="2025-05-15" completedDate="2025-05-15" performedBy="Company X"}Service laser{/task}
+                    {task dueDate="2024-12-01" completedDate="2024-12-02" performedBy="Tom Stewart"}Refill helium gas{/task}
+                  {/completed}
+                {/maintenance}
+                ```
+
+                Although the `performedBy` value may be any string, if the task is to be
+                performed (or was performed) by an MSL staff member then you are encouraged
+                to use one of the [staffEnumerationString](#type_staffEnumerationString) values.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence minOccurs="0">
+            <xsd:element name="planned">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        A sequence of planned maintenance tasks to be performed.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+                        <xsd:element name="task" type="msl:plannedTask">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    A planned maintenance task to be performed.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="completed">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        A sequence of completed maintenance tasks that have been performed.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+                        <xsd:element name="task" type="msl:completedTask">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    A planned maintenance task that was completed.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="plannedTask">
+        <xsd:annotation>
+            <xsd:documentation>
+                A planned maintenance task to be performed.
+
+                **Examples**
+
+                The `performedBy` attribute may be omitted if the value is not known
+                ```xml
+                {plannedTask dueDate="2025-06-15"}Buy replacement air filter{/plannedTask}
+                ```
+
+                or if it is known who will perform the task
+                ```xml
+                {plannedTask dueDate="2025-06-15" performedBy="Darrin Jack"}Buy replacement air filter{/plannedTask}
+                ```
+
+                Although the `performedBy` value may be any string, if the planned task is to be
+                performed by an MSL staff member then you are encouraged to use one of the
+                [staffEnumerationString](#type_staffEnumerationString) values.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:extension base="msl:tokenizedString">
+                <xsd:attribute name="dueDate" type="xsd:date" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The date that the planned maintenance task is due to be completed.
+                            The date must be in the YYYY-MM-DD format (see
+                            [xsd:date](https://www.w3.org/TR/xmlschema-2/#date) for details).
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="performedBy" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            _Optional:_ The person or company that will perform the planned maintenance task.
+
+                            Although the `performedBy` value may be any string, if the planned task is to be
+                            performed by an MSL staff member then you are encouraged to use one of the
+                            [staffEnumerationString](#type_staffEnumerationString) values.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="completedTask">
+        <xsd:annotation>
+            <xsd:documentation>
+                A planned maintenance task that was completed.
+
+                **Examples**
+
+                ```xml
+                {completedTask dueDate="2022-08-10" completedDate="2022-08-04" performedBy="Adam Knight"}Clean fan{/completedTask}
+                ```
+
+                Although the `performedBy` value may be any string, if the completed task was
+                performed by an MSL staff member then you are encouraged to use one of the
+                [staffEnumerationString](#type_staffEnumerationString) values.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:extension base="msl:tokenizedString">
+                <xsd:attribute name="dueDate" type="xsd:date" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The date that the planned maintenance task was due to be completed.
+                            The date must be in the YYYY-MM-DD format (see
+                            [xsd:date](https://www.w3.org/TR/xmlschema-2/#date) for details).
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="completedDate" type="xsd:date" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The date that the planned maintenance task was completed.
+                            The date must be in the YYYY-MM-DD format (see
+                            [xsd:date](https://www.w3.org/TR/xmlschema-2/#date) for details).
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="performedBy" type="msl:tokenizedString" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The person or company that performed the planned maintenance task.
+
+                            Although the `performedBy` value may be any string, if the completed
+                            task was performed by an MSL staff member then you are encouraged to
+                            use one of the [staffEnumerationString](#type_staffEnumerationString)
+                            values.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="alterations">
+        <xsd:annotation>
+            <xsd:documentation>
+                Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                h) details of any damage, malfunction, modification to, or repair of, the equipment
+
+                **Examples**
+
+                No alterations have been performed
+                ```xml
+                {alterations/}
+                ```
+
+                Some alterations have been performed
+                ```xml
+                {alterations}
+                  {alteration date="2024-10-16" performedBy="Chris Young"}Replace blown op-amp with LMP7721{/alteration}
+                  {alteration date="2022-06-23" performedBy="Chris Young"}Attach heatsink to voltage regulator{/alteration}
+                {/alterations}
+                ```
+
+                Although the `performedBy` value may be any string, if the alteration was
+                performed by an MSL staff member then you are encouraged to use one of the
+                [staffEnumerationString](#type_staffEnumerationString) values.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="alteration" type="msl:alteration">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The details of the alteration. Such as any damage, malfunction, modification to, or repair of, the equipment.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="alteration">
+        <xsd:annotation>
+            <xsd:documentation>
+                The details of the alteration. Such as any damage, malfunction,
+                modification to, or repair of, the equipment.
+
+                **Examples**
+
+                ```xml
+                {alteration date="2024-10-16" performedBy="Chris Young"}Replace blown op-amp with LMP7721{/alteration}
+                ```
+
+                Although the `performedBy` value may be any string, if the alteration was
+                performed by an MSL staff member then you are encouraged to use one of the
+                [staffEnumerationString](#type_staffEnumerationString) values.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:extension base="msl:tokenizedString">
+                <xsd:attribute name="date" type="xsd:date" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The date that the alteration was performed.
+                            The date must be in the YYYY-MM-DD format (see
+                            [xsd:date](https://www.w3.org/TR/xmlschema-2/#date) for details).
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="performedBy" type="msl:tokenizedString" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The person or company that performed the alteration.
+
+                            Although the `performedBy` value may be any string, if the alteration was
+                            performed by an MSL staff member then you are encouraged to use one of the
+                            [staffEnumerationString](#type_staffEnumerationString) values.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="firmware">
+        <xsd:annotation>
+            <xsd:documentation>
+                Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                a) ... software and firmware version
+
+                A distinction is made between _software_ and _firmware_ version.
+
+                **Software**: May be provided by the manufacturer of the equipment
+                and may be installed/updated by an end user on _any_ computer. The
+                manufacturer of the equipment may provide this software as, for
+                example, a graphical user interface (GUI) and/or as a software
+                development kit (SDK) to interface with the equipment. Software
+                could also refer to the version of the bespoke code that is written
+                by a metrologist to control the equipment. Both the manufacturer and
+                the bespoke software version are important to document, but it shall
+                not be specified in the equipment register. It shall be documented in a
+                different manner, e.g., as metadata in a file during data acquisition.
+
+                **Firmware**: Embedded within the equipment. May be updated by either
+                the manufacturer and/or the end user. If applicable, it shall be
+                specified in the equipment register.
+
+                The primary difference is that the _firmware_ version has a single
+                value of truth (it is independent of where the equipment
+                is physically located and independent of which computer is used to
+                interface with it) whereas the _software_ version depends on which
+                computer (perhaps even on which executable is run on the same computer)
+                is used to interface with the equipment and therefore there may not be
+                a single value of truth that can be defined in the equipment register.
+
+                For equipment that support the `*IDN?` query, the firmware version is
+                typically found as the fourth item in the reply: _manufacturer,model,serial,firmware_
+
+                **Examples**
+
+                ```xml
+                {firmware}
+                  {version date="2025-01-14"}1.4.0{/version}
+                  {version date="2023-06-14"}1.3.2{/version}
+                {/firmware}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="version" type="msl:comment">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The firmware version number and the date (in the YYYY-MM-DD format)
+                        when the firmware was installed or upgraded.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="financial">
+        <xsd:annotation>
+            <xsd:documentation>
+                Includes the _optional_ financial information about the equipment
+                to satisfy Section 4.3.6 of the MSL Quality Manual.
+
+                The child elements, if specified, may appear in any order and
+                are each optional.
+
+                **Examples**
+
+                No financial information is specified
+                ```xml
+                {financial/}
+                ```
+
+                Specify only the date that the warranty expires
+                ```xml
+                {financial}
+                  {warrantyExpirationDate}2025-03-15{/warrantyExpirationDate}
+                {/financial}
+                ```
+
+                Specify only the year that the equipment was purchased
+                ```xml
+                {financial}
+                  {purchaseYear}2010{/purchaseYear}
+                {/financial}
+                ```
+
+                Specify all financial information (the equipment is a capital asset)
+                ```xml
+                {financial}
+                  {purchaseYear}2025{/purchaseYear}
+                  {warrantyExpirationDate}2026-07-31{/warrantyExpirationDate}
+                  {capitalExpenditure}
+                    {assetNumber}7265817{/assetNumber}
+                    {depreciationEndYear}2033{/depreciationEndYear}
+                    {price currency="NZD"}150e3{/price}
+                  {/capitalExpenditure}
+                {/financial}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:all>
+            <xsd:element name="capitalExpenditure" type="msl:capitalExpenditure" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        _Optional_: The equipment is a capital expenditure.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="purchaseYear" type="xsd:gYear" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        _Optional_: The (approximate) year that the equipment was purchased.
+                        The year must be in the YYYY format (see
+                        [xsd:gYear](https://www.w3.org/TR/xmlschema-2/#gYear) for details).
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="warrantyExpirationDate" type="xsd:date" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        _Optional_: Approximate date that the warranty expires.
+                        The date must be in the YYYY-MM-DD format (see
+                        [xsd:date](https://www.w3.org/TR/xmlschema-2/#date) for details).
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="capitalExpenditure">
+        <xsd:annotation>
+            <xsd:documentation>
+                _Optional:_ The equipment is a capital expenditure (for the [financial](#type_financial) element).
+
+                The order of the elements must be `assetNumber`, `depreciationEndYear` then `price`.
+
+                **Examples**
+
+                The `assetNumber` may be empty, if, for example, there is a delay with the
+                Finance Department issuing an asset number
+                ```xml
+                {capitalExpenditure}
+                  {assetNumber/}
+                  {depreciationEndYear}2030{/depreciationEndYear}
+                  {price currency="NZD"}48000{/price}
+                {/capitalExpenditure}
+                ```
+
+                The `assetNumber` is known and the `price` is specified in scientific notation
+                ```xml
+                {capitalExpenditure}
+                  {assetNumber}0123456789{/assetNumber}
+                  {depreciationEndYear}2032{/depreciationEndYear}
+                  {price currency="NZD"}400e3{/price}
+                {/capitalExpenditure}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="assetNumber" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The asset number in the financial system.
+
+                        The `assetNumber` element must exist, but the value may be empty.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="depreciationEndYear" type="xsd:gYear">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The year (inclusive) that depreciation ends for the asset.
+
+                        If the asset was purchased in _2020_ and the lifetime of the asset
+                        is _8_ years, then depreciation will end in `2028`.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="price">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The purchase price of the asset. Do _not_ include the currency symbol, e.g. `$`, in the value.
+
+                        You may use scientific notation, so `150e3` is equivalent to `150000`.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:float">
+                            <xsd:attribute name="currency" type="msl:currencyEnumerationString" use="required"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="technicalProcedures">
+        <xsd:annotation>
+            <xsd:documentation>
+                _Optional:_ The MSL technical procedure(s) that depend on this equipment.
+
+                The motivation for specifying the technical procedure(s) is to help identify
+                where there are risks due to an equipment failing which result in calibration
+                service(s) shutting down until suitable replacement equipment is acquired.
+
+                **Examples**
+
+                ```xml
+                {technicalProcedures}
+                  {id}MSLT.O.032{/id}
+                  {id}MSLT.O.025{/id}
+                  {id}MSLT.O.006{/id}
+                {/technicalProcedures}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="id" type="msl:technicalProcedurePatternString">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The identity of an MSL technical procedure that depends on the equipment
+                        for a calibration service to be available.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="qualityManual">
+        <xsd:annotation>
+            <xsd:documentation>
+                The _optional_ information that is specified in Section 4.3.6
+                of the MSL Quality Manual, plus additional _optional_ information.
+
+                The child elements, if specified, may appear in any order and are each optional.
+
+                **Examples**
+
+                ```xml
+                {qualityManual}
+                  {documentation}https://www.keysight.com/us/en/product/34401A/digital-multimeter-6-digit.html{/documentation}
+                  {serviceAgent}Keysight{/serviceAgent}
+                {/qualityManual}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:all minOccurs="0">
+            <xsd:element name="accessories" type="msl:any" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        _Optional:_ Additional accessories that may be required to use the
+                        equipment, as specified in Section 4.3.6 of the MSL Quality Manual.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="documentation" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        _Optional:_ Information (such as URLs) about the manuals, datasheets, etc.
+                        for the equipment, as specified in Section 4.3.6 of the MSL Quality Manual.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="financial" type="msl:financial" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        _Optional:_ Financial information about the equipment,
+                        as specified in Section 4.3.6 of the MSL Quality Manual.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="personnelRestrictions" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        _Optional:_ Information about the people (or team) who are
+                        qualified to use the equipment, as specified in Section 4.3.6 of
+                        the MSL Quality Manual.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="serviceAgent" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        _Optional:_ Information about the people or company that are
+                        qualified to perform alterations and/or maintenance to the equipment,
+                        as specified in Section 4.3.6 of the MSL Quality Manual.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="technicalProcedures" type="msl:technicalProcedures" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        _Optional:_ The MSL technical procedure(s) that depend on this equipment.
+
+                        The motivation for specifying the technical procedure(s) is to be able to
+                        identify where there are risks due to a single equipment failing that results
+                        in calibration service(s) shutting down until a suitable replacement equipment
+                        is acquired.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="any">
+        <xsd:annotation>
+            <xsd:documentation>
+                Anything. May contain zero or more child elements and each child element
+                may contain zero or more attributes and zero or more grandchildren, etc.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:any processContents="lax"/>
+        </xsd:sequence>
+        <xsd:anyAttribute processContents="lax"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="calibrations">
+        <xsd:annotation>
+            <xsd:documentation>
+                Contains zero or more [measurand](#type_measurand) elements.
+
+                **Examples**
+
+                No calibrations have been performed
+                ```xml
+                {calibrations/}
+                ```
+
+                Calibrations for both humidity and temperature
+                ```xml
+                {calibrations}
+                  {measurand quantity="Humidity" calibrationInterval="5"}...{/measurand}
+                  {measurand quantity="Temperature" calibrationInterval="5"}...{/measurand}
+                {/calibrations}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="measurand" type="msl:measurand">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The quantity intended to be measured.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:unique name="uniqueComponentName">
+                    <xsd:selector xpath="msl:component"/>
+                    <xsd:field xpath="@name"/>
+                </xsd:unique>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="measurand">
+        <xsd:annotation>
+            <xsd:documentation>
+                The quantity intended to be measured.
+
+                **Examples**
+
+                ```xml
+                {measurand quantity="Wavelength" calibrationInterval="1"}
+                  {component name="Grating1"}...{/component}
+                  {component name="Grating2"}...{/component}
+                {/measurand}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="component" type="msl:component">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        A component of the equipment that measures the `quantity` attribute.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="quantity" type="msl:quantityEnumerationString" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The kind of quantity that is measured.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="calibrationInterval" type="msl:nonNegativeDecimal" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The number of years that may pass between a calibration or a performance
+                    check. For equipment that do not have a required and periodic interval, but
+                    are calibrated _on demand_, use the value 0.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="component">
+        <xsd:annotation>
+            <xsd:documentation>
+                A component of the equipment that measures the [quantity](#type_quantityEnumerationString).
+
+                Contains a sequence of reports (either digital and/or non-digital reports),
+                adjustments and performance checks for the measured [quantity](#type_quantityEnumerationString).
+
+                **Examples**
+
+                The `name` attribute must be defined, but it may be an empty string
+                ```xml
+                {component name=""}
+                  {report id="Electrical/2024/618" enteredBy="Greg Reid"}...{/report}
+                {/component}
+                ```
+
+                The sequence of child elements can be in any order, but it may make sense to
+                order the elements chronologically (latest first)
+                ```xml
+                {component name="Probe 1"}
+                  {adjustment date="2024-10-17"}Cleaned the filter{/adjustment}
+                  {report id="Humidity/2023/583" enteredBy="François Shindo"}...{/report}
+                  {performanceCheck completedDate="2021-11-20" enteredBy="Yin Hsien Fung"}...{/performanceCheck}
+                  {report id="Humidity/2019/421" enteredBy="Chris Young"}...{/report}
+                  {report id="Humidity/2015/183" enteredBy="Lucy Forde"}...{/report}
+                {/component}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:choice>
+                <xsd:element name="adjustment" type="msl:comment">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                            e) calibration ... adjustments ...
+
+                            An example of an _adjustment_ is cleaning the equipment
+                            (e.g., a spectral filter) and then performing another calibration
+                            measurement.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="digitalReport" type="msl:digitalReport">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A digital calibration report for this `component`.
+
+                            A digital calibration report contains embedded
+                            metadata and data that is required by ISO/IEC 17025:2017
+                            Clause 7.8.2.1 (and perhaps additional information).
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="performanceCheck" type="msl:performanceCheck">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Satisfy ISO/IEC 17025:2017 Clause 6.4.10 \
+                            When intermediate checks are necessary to maintain
+                            confidence in the performance of the equipment, these
+                            checks shall be carried out according to a procedure.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="report" type="msl:report">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A (non-digital) calibration report for this `component`.
+
+                            Since the report is not digital (does not contain embedded
+                            metadata and data) _some_ of the information that is required
+                            by ISO/IEC 17025:2017 Clause 7.8.2.1 must be explicitly
+                            included in the equipment register.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:choice>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The name to associate with this `component`. The value must
+                    be unique amongst the other `component` elements within
+                    the _same_ `measurand` element. An empty string is permitted.
+
+                    **Examples**
+
+                    A digital multimeter
+                    ```xml
+                    {component name="Front"}
+                    {component name="Rear terminal"}
+                    ```
+
+                    A data acquisition (DAQ) system
+                    ```xml
+                    {component name="AO1"}
+                    {component name="Analog In 1"}
+                    {component name="PFI2"}
+                    {component name="Counter 1"}
+                    ```
+
+                    A scanner or multiplexer
+                    ```xml
+                    {component name="Ch1"}
+                    {component name="Channel 2"}
+                    ```
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="digitalReport">
+        <xsd:annotation>
+            <xsd:documentation>
+                A digital calibration report.
+
+                A digital calibration report contains embedded
+                metadata and data that is required by ISO/IEC 17025:2017
+                Clause 7.8.2.1 (and perhaps additional information).
+
+                **Examples**
+
+                ```xml
+                {digitalReport format="MSL PDF/A-3" id="Pressure/2025/092"}
+                  {url}reports\2025\job092.pdf{/url}
+                  {sha256}76e4e036da8722b55362912396a01a07bb61e6260c7c4b6150d431e613529a54{/sha256}
+                {/digitalReport}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="msl:file">
+                <xsd:attribute name="format" type="msl:digitalFormatEnumerationString" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The format of the digital calibration report.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="id" type="msl:nonEmptyString" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The report identification (also referred to as the *report number* in MSL terminology).
+
+                            Satisfy ISO/IEC 17025:2017 Clause 7.8.2.1 \
+                            d) unique identification that all its components are recognized
+                               as a portion of a complete report and a clear identification of the end
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="performanceCheck">
+        <xsd:annotation>
+            <xsd:documentation>
+                Satisfy ISO/IEC 17025:2017 Clause 6.4.10 \
+                When intermediate checks are necessary to maintain
+                confidence in the performance of the equipment, these
+                checks shall be carried out according to a procedure.
+
+                **Examples**
+
+                ```xml
+                {performanceCheck completedDate="2023-04-02" enteredBy="Ana Rakonjac" checkedBy="Hamish Edgar" checkedDate="2023-04-04"}
+                  {competency}...{/competency}
+                  {conditions/}
+                  {equation}...{/equation}
+                {/performanceCheck}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="competency" type="msl:competency">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The competent people who accomplished the performance check
+                        and the technical procedure that was executed.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="conditions" type="msl:any">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The conditions under which the performance check is valid.
+
+                        Some examples of user-defined child elements that may be specified are
+                        * the temperature of the equipment must be within a certain range
+                        * the temperature and/or humidity of the lab must be within a certain range
+                        * the minimum warm-up time required for the equipment to reach steady state
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:choice maxOccurs="unbounded">
+                <xsd:element name="cvdCoefficients" type="msl:cvdCoefficients">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Performance-check data is expressed as coefficients for the
+                            Callendar-Van Dusen equation.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="equation" type="msl:equation">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Performance-check data is expressed as an equation.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="file" type="msl:file">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Performance-check data is stored in another file.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="serialised" type="msl:serialised">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Performance-check data is stored in a serialised format.
+
+                            Serialisation (also known as marshalling) is the process of
+                            translating a data structure or object state into a format
+                            that can be stored and reconstructed later.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="table" type="msl:table">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Performance-check data is expressed as a CSV table.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:choice>
+        </xsd:sequence>
+        <xsd:attribute name="completedDate" type="xsd:date" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The date that the performance check was completed. \
+                    The date must be in the YYYY-MM-DD format (see
+                    [xsd:date](https://www.w3.org/TR/xmlschema-2/#date) for details).
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="enteredBy" type="msl:staffEnumerationString" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The name of the person who initially entered the `performanceCheck`
+                    element in the register.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="checkedBy" type="msl:staffEnumerationString">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The name of the person who checked the information in the
+                    `performanceCheck` element. When modified, the `checkedDate`
+                    attribute should also be updated.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="checkedDate" type="xsd:date">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The date that the information in the `performanceCheck` element
+                    was last checked. When modified, the `checkedBy` attribute
+                    should also be updated.
+
+                    The date must be in the YYYY-MM-DD format (see
+                    [xsd:date](https://www.w3.org/TR/xmlschema-2/#date) for details).
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="competency">
+        <xsd:annotation>
+            <xsd:documentation>
+                The competent people who accomplished the performance check
+                and the technical procedure that was executed.
+
+                **Examples**
+
+                ```xml
+                {competency}
+                  {worker}Minyu Zhang{/worker}
+                  {checker}Tim Lawson{/checker}
+                  {technicalProcedure}MSLT.E.048.005{/technicalProcedure}
+                {/competency}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="worker" type="msl:staffEnumerationString">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The competent person who executed the technical
+                        procedure to accomplish the performance check.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="checker" type="msl:staffEnumerationString">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The competent person who reviewed the work done by the `worker`.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="technicalProcedure" type="msl:technicalProcedurePatternString">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The technical procedure that was executed to accomplish
+                        the performance check.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="report">
+        <xsd:annotation>
+            <xsd:documentation>
+                A (non-digital) calibration report.
+
+                Since the report is not digital (does not contain embedded
+                metadata and data) _some_ of the information that is required
+                by ISO/IEC 17025:2017 Clause 7.8.2.1 must be explicitly
+                included in the equipment register.
+
+                **Examples**
+
+                ```xml
+                {report id="Humidity/2023/1024" enteredBy="Lenice Evergreen"}
+                  {reportIssueDate}2023-08-18{/reportIssueDate}
+                  {measurementStartDate}2023-08-08{/measurementStartDate}
+                  {measurementStopDate}2023-08-14{/measurementStopDate}
+                  {issuingLaboratory}MSL{/issuingLaboratory}
+                  {technicalProcedure}MSLT.H.062{/technicalProcedure}
+                  {conditions/}
+                  {acceptanceCriteria/}
+                  {equation}
+                    {value variables="R t"}R - 7.1e-2 - 3.9e-2*R + 3e-4*pow(R,2) + 2.4e-3*t + 1.03e-3*R*t - 5.2e-6*pow(R,2)*t{/value}
+                    {uncertainty variables=""}0.355{/uncertainty}
+                    {unit}%rh{/unit}
+                    {ranges}
+                      {range variable="R"}
+                        {minimum}30{/minimum}
+                        {maximum}80{/maximum}
+                      {/range}
+                      {range variable="t"}
+                        {minimum}15{/minimum}
+                        {maximum}25{/maximum}
+                      {/range}
+                    {/ranges}
+                  {/equation}
+                {/report}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="reportIssueDate" type="xsd:date">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The date that the report was issued.
+                        The date must be in the YYYY-MM-DD format (see
+                        [xsd:date](https://www.w3.org/TR/xmlschema-2/#date) for details).
+
+                        Satisfy ISO/IEC 17025:2017 Clause 7.8.2.1 \
+                        j) the date of issue of the report
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="measurementStartDate" type="xsd:date">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The date that the calibration measurement started.
+                        The date must be in the YYYY-MM-DD format (see
+                        [xsd:date](https://www.w3.org/TR/xmlschema-2/#date) for details).
+
+                        Satisfy ISO/IEC 17025:2017 Clause 7.8.2.1 \
+                        i) the date(s) of performance of the laboratory activity
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="measurementStopDate" type="xsd:date">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The date that the calibration measurement stopped.
+                        The date must be in the YYYY-MM-DD format (see
+                        [xsd:date](https://www.w3.org/TR/xmlschema-2/#date) for details).
+
+                        Satisfy ISO/IEC 17025:2017 Clause 7.8.2.1 \
+                        i) the date(s) of performance of the laboratory activity
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="issuingLaboratory">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The laboratory that issued the report.
+
+                        If the issuing laboratory is a National Metrology Institute,
+                        it is recommended to specify the laboratory acronym, such as,
+                        _MSL_ instead of _Measurement Standards Laboratory_.
+
+                        Satisfy ISO/IEC 17025:2017 Clause 7.8.2.1 \
+                        b) the name ... of the laboratory
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="msl:tokenizedString">
+                            <xsd:attribute name="person" type="msl:tokenizedString">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        _Optional:_ A person at the issuing laboratory that
+                                        authorised the report. The attribute does not need to be
+                                        specified, but, if it is specified, the value cannot be empty.
+
+                                        This may be useful as a means of identifying a contact person
+                                        at another laboratory if the report is not from MSL.
+
+                                        Satisfy ISO/IEC 17025:2017 Clause 7.8.2.1 \
+                                        o) identification of the person(s) authorizing the report
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="technicalProcedure" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The technical procedure(s) that was(were) followed to perform the calibration.
+
+                        Satisfy ISO/IEC 17025:2017 Clause 7.8.2.1 \
+                        f) identification of the method used \
+                        n) additions to, deviations, or exclusions from the method
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="conditions" type="msl:any">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The conditions under which the calibration report is valid.
+
+                        Some examples of user-defined child elements that may be specified are
+                        * the temperature of the equipment must be within a certain range
+                        * the temperature and/or humidity of the lab must be within a certain range
+                        * the minimum warm-up time required for the equipment to reach steady state
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="acceptanceCriteria" type="msl:any">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Satisfy ISO/IEC 17025:2017 Clause 6.4.13 \
+                        e) calibration ... acceptance criteria ...
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:choice maxOccurs="unbounded">
+                <xsd:element name="cvdCoefficients" type="msl:cvdCoefficients">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Calibration data is expressed as coefficients for the
+                            Callendar-Van Dusen equation.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="equation" type="msl:equation">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Calibration data is expressed as an equation.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="file" type="msl:file">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Calibration data is stored in another file.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="serialised" type="msl:serialised">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Calibration data is stored in a serialised format.
+
+                            Serialisation (also known as marshalling) is the process of
+                            translating a data structure or object state into a format
+                            that can be stored and reconstructed later.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="table" type="msl:table">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Calibration data is expressed as a CSV table.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:choice>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="msl:nonEmptyString" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The report identification (also referred to as the *report number* in MSL terminology).
+
+                    Satisfy ISO/IEC 17025:2017 Clause 7.8.2.1 \
+                    d) unique identification that all its components are recognized
+                       as a portion of a complete report and a clear identification of the end
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="enteredBy" type="msl:staffEnumerationString" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The name of the person who initially entered the `report`
+                    element in the register.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="checkedBy" type="msl:staffEnumerationString">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The name of the person who checked the information in the
+                    `report` element. When modified, the `checkedDate`
+                    attribute should also be updated.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="checkedDate" type="xsd:date">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The date that the information in the `report` element
+                    was last checked. When modified, the `checkedBy` attribute
+                    should also be updated.
+
+                    The date must be in the YYYY-MM-DD format (see
+                    [xsd:date](https://www.w3.org/TR/xmlschema-2/#date) for details).
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="equation">
+        <xsd:annotation>
+            <xsd:documentation>
+                The calibration is expressed as an equation. Both the `value` and the
+                `uncertainty` may be expressed as an equation.
+
+                The content of the equation to parse may contain
+                * the space (0x20) and tab (0x09) characters
+                * integer and floating-point numbers (e.g., 100, 100.0, 1e2, 1.0E+02)
+                * the following brackets: `(` `)`
+                * the following (unary) operators: `+` `-` `*` `/`
+                * the following names to represent the corresponding numerical value:
+                  - pi = 3.14159...
+                * the following functions:
+                  - pow
+                  - sqrt
+                  - sin
+                  - asin
+                  - cos
+                  - acos
+                  - tan
+                  - atan
+                  - exp
+                  - log (natural logarithm, base _e_ )
+                  - log10 (common logarithm, base _10_ )
+
+                Depending on the programming language that is used to parse an equation,
+                a search and replace may need to be performed. If the programming language
+                does not support the `pow(x,y)` function to raise `x` to the power of `y`,
+                you may use the following [regular expression](https://en.wikipedia.org/wiki/Regular_expression)
+                (which uses a named capture group for the `x` and `y` value)
+                ```r
+                pow\(\s*(?{x}[^,]+),\s*(?{y}[^)]+)\)
+                ```
+                to perform a search and replace.
+
+                _Attention: This XSD document validates the content of an XML document
+                (e.g., that the `value` and `uncertainty` elements exist and the content
+                is a [nonEmptyString](#type_nonEmptyString)). It does not validate that
+                the equation syntax is correct (e.g., whether the equation is missing
+                a closing bracket). You must use another tool to validate the syntax._
+
+                **Examples**
+
+                A temperature probe was calibrated between \\(15~^{\circ}\text{C}\\) and
+                \\(25~^{\circ}\text{C}\\). The _corrected_ temperature `value` is expressed
+                as a second-order polynomial and the _expanded_ `uncertainty` is a constant
+                \\(0.45~^{\circ}\text{C}\\), within the calibration temperature range, with
+                a coverage factor \\(k=2\\).
+
+                ```xml
+                {equation}
+                  {value variables="T"}T + (-10.66 + 1.58e-2*T + 1.212e-3*pow(T,2)){/value}
+                  {uncertainty variables=""}0.45/2{/uncertainty}
+                  {unit}&#8451;{/unit}
+                  {ranges}
+                    {range variable="T"}
+                      {minimum}15{/minimum}
+                      {maximum}25{/maximum}
+                    {/range}
+                  {/ranges}
+                {/equation}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="value">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The equation to parse to calculate the corrected `value`.
+
+                        If the `value` is a constant numerical value (i.e., an offset),
+                        set the `variables` attribute value to be empty (the `variables`
+                        attribute must still be defined).
+
+                        See the documentation of [equation](#type_equation) for
+                        more details about the characters that may be used.
+
+                        See the documentation of [variables](#type_variables) for
+                        more details about the `variables` attribute.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="msl:nonEmptyString">
+                            <xsd:attribute name="variables" type="msl:variables" use="required">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        The variable(s) that are required to evaluate the `value`.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="uncertainty">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The equation to parse to calculate the standard uncertainty.
+
+                        If the `uncertainty` is a constant numerical value, set the
+                        `variables` attribute value to be empty (the `variables`
+                        attribute must still be defined).
+
+                        A calibration report may state the expanded uncertainty and
+                        the coverage factor. The parsed `uncertainty` equation must
+                        return the standard uncertainty. If you want to specify
+                        the expanded uncertainty and the coverage factor in your XML
+                        document, you may define the `uncertainty` equation as
+
+                        `expanded_uncertainty / coverage_factor`
+
+                        where, you must replace `expanded_uncertainty` and
+                        `coverage_factor` with the actual numerical value.
+
+                        See the documentation of [equation](#type_equation) for
+                        more details about the characters that may be used.
+
+                        See the documentation of [variables](#type_variables) for
+                        more details about the `variables` attribute.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="msl:nonEmptyString">
+                            <xsd:attribute name="variables" type="msl:variables" use="required">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        The variable(s) that are required to evaluate the `uncertainty`.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="unit" type="msl:tokenizedString">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The unit of the measured quantity.
+
+                        Satisfy ISO/IEC 17025:2017 Clause 7.8.2.1 \
+                        m) the results with, where appropriate, the units of measurement
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ranges" type="msl:ranges">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The numeric range for each variable that an `equation` is valid for.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="degreeFreedom" type="msl:degreeFreedomDouble" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The degrees of freedom. If not specified, the degrees of freedom
+                        shall be considered to be \\(+\infty\\).
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="comment" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>
+                    _Optional:_ A comment to associate with the `equation`.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="cvdCoefficients">
+        <xsd:annotation>
+            <xsd:documentation>
+                The calibration is expressed as coefficients for the Callendar-Van Dusen (CVD) equation.
+
+                This equation describes the relationship between resistance, \\(R\\), and temperature,
+                \\(t\\), of platinum resistance thermometers.
+
+                If \\(R(t) \geq R_0\\)
+                \begin{equation}
+                    \frac{R(t)}{R_0} = 1 + A \cdot t + B \cdot t^2 + D \cdot t^3 \\
+                \end{equation}
+
+                and if \\(R(t) \lt R_0\\)
+                \begin{equation}
+                    \frac{R(t)}{R_0} = 1 + A \cdot t + B \cdot t^2 + C \cdot t^3 \cdot (t-100) \\
+                \end{equation}
+
+                where, \\(R_0=R(0~^{\circ}\text{C})\\) is the measured resistance at \\(t = 0~^{\circ}\text{C}\\)
+                and \\(A\\), \\(B\\), \\(C\\) and \\(D\\) are the CVD coefficients. The \\(D\\) coefficient is
+                typically zero but may be non-zero if \\(t \gtrsim 200~^{\circ}\text{C}\\). If a calibration
+                report does not specify the \\(D\\) coefficient, set the value to be \\(0\\).
+
+                **Examples**
+
+                A PT100 was calibrated between \\(-10~^{\circ}\text{C}\\) and \\(70~^{\circ}\text{C}\\).
+                The _expanded_ `uncertainty` is \\(0.0056~^{\circ}\text{C}\\) with a coverage factor \\(k=2\\).
+
+                ```xml
+                {cvdCoefficients}
+                  {R0}100.0189{/R0}
+                  {A}3.913e-3{/A}
+                  {B}-6.056e-7{/B}
+                  {C}1.372e-12{/C}
+                  {D}0{/D}
+                  {uncertainty variables=""}0.0056/2{/uncertainty}
+                  {range}
+                    {minimum}-10{/minimum}
+                    {maximum}70{/maximum}
+                  {/range}
+                {/cvdCoefficients}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="R0" type="msl:nonNegativeDecimal">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The value, in \\(\Omega\\), of the resistance at \\(0~^{\circ}\text{C}\\), \\(R_0\\).
+
+                        *NOTE: This value does not accept scientific notation.
+                        For example, use `100.0189` instead of `1.000189e+02`*
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="A" type="xsd:double">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The value, in \\((^{\circ}\text{C})^{-1}\\), of the \\(A\\) coefficient, \\(A \cdot t\\).
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="B" type="xsd:double">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The value, in \\((^{\circ}\text{C})^{-2}\\), of the \\(B\\) coefficient, \\(B \cdot t^2\\).
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="C" type="xsd:double">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The value, in \\((^{\circ}\text{C})^{-4}\\), of the \\(C\\) coefficient, \\(C \cdot t^3 \cdot (t-100)\\).
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="D" type="xsd:double">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The value, in \\((^{\circ}\text{C})^{-3}\\), of the \\(D\\) coefficient, \\(D \cdot t^3\\).
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="uncertainty">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The equation to parse to calculate the standard uncertainty.
+
+                        If the `uncertainty` is a constant numerical value, set the
+                        `variables` attribute value to be empty (the `variables`
+                        attribute must still be defined).
+
+                        A calibration report may state the expanded uncertainty and
+                        the coverage factor. The parsed `uncertainty` equation must
+                        return the standard uncertainty. If you want to specify
+                        the expanded uncertainty and the coverage factor in your XML
+                        document, you may define the `uncertainty` equation as
+
+                        `expanded_uncertainty / coverage_factor`
+
+                        where, you must replace `expanded_uncertainty` and
+                        `coverage_factor` with the actual numerical value.
+
+                        See the documentation of [equation](#type_equation) for
+                        more details about the characters that may be used.
+
+                        See the documentation of [variables](#type_variables) for
+                        more details about the `variables` attribute.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="msl:nonEmptyString">
+                            <xsd:attribute name="variables" type="msl:variables" use="required">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        The variable(s) that are required to evaluate the `uncertainty`.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="range">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The temperature range, in \\(^{\circ}\text{C}\\), that the Callendar-Van Dusen coefficients are valid.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="minimum" type="xsd:double">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The minimum temperature value, in \\(^{\circ}\text{C}\\).
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="maximum" type="xsd:double">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The maximum temperature value, in \\(^{\circ}\text{C}\\).
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="degreeFreedom" type="msl:degreeFreedomDouble" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The degrees of freedom. If not specified, the degrees of freedom
+                        shall be considered to be \\(+\infty\\).
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="comment" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>
+                    _Optional:_ A comment to associate with the `cvdCoefficients` element.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="file">
+        <xsd:annotation>
+            <xsd:documentation>
+                Calibration data is stored in another file.
+
+                Specifying an absolute path in an equipment register should only be
+                performed if the location of the file will remain constant for an
+                extended period of time. This is not typically the case, as MSL has
+                had to migrate data multiple times (i.e., a network drive, then Google Drive,
+                then Sharepoint, then back to a network drive).
+
+                One option is to think of the file-system path as a combination of two parts
+
+                ```console
+                root \ {url}
+                ```
+
+                where,
+                * *root*: This is not stored in an equipment register. Instead, it is stored
+                          in a separate file. How and where this is stored is up to the individual.
+                * *url*: This is the value of the `url` element in an equipment register.
+
+                For example, consider the following absolute path
+                ```
+                C:\Users\username\OneDrive - My Company Name\Length\Quality\Equipment\register.xml
+                ```
+                each part could be broken down as follows
+
+                * *root* = `C:\Users\username\OneDrive - My Company Name\`
+                  - this value could be stored, for example, in a file in the user's home directory
+                    or as a constant in the analysis software
+                * *url* = `Length\Quality\Equipment\register.xml`
+
+                Whenever someone needs to load the file, the `root` is read from a local
+                file and the `url` is read from the equipment register and then
+                the absolute path is constructed.
+
+                _Attention: This XSD document validates the content of an XML document
+                (e.g., that the `url` element exists and the content is a
+                [nonEmptyString](#type_nonEmptyString)). It does not attempt to validate
+                that the file exists nor if the SHA-256 checksum is correct for the file
+                (although the general format of the checksum, i.e., has the proper length
+                and contains only allowed characters, is validated). You must use another
+                tool to validate the existence of the file and the validity of the
+                checksum value._
+
+                **Examples**
+
+                The data is stored in an Excel file that is located at a _relative_ path
+                ```xml
+                {file}
+                  {url sheet="2024-May" cells="B2:D25"}relative\path\data.xlsx{/url}
+                  {sha256}70d79d2eb24dc2515faaf4ab7fa3540e5a73ca6080181908a0ea87a309293609{/sha256}
+                {/file}
+                ```
+
+                The data is stored in a digital calibration certificate on a network drive
+                ```xml
+                {file comment="calibration of second grating"}
+                  {url}\\msl-nas\Light\Calibrations\job123456.xml{/url}
+                  {sha256}8392e473a047543773138653b98037956fa2086e4a54fc882d913f10cc217728{/sha256}
+                {/file}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="url">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The location of the file.
+                        May contain zero or more attributes.
+
+                        The syntax of the Uniform Resource Locator (URL) follows
+                        [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738)
+                        ```
+                        scheme:scheme-specific-part
+                        ```
+                        except, if the `scheme:` is not specified, it is assumed to be `file:`,
+                        which is used to designate files accessible on a particular host computer.
+
+                        Including the `scheme:` is required if a particular protocol must be used
+                        to access the file, for example, `ftp:` or `https:`. Custom MSL-standardised
+                        schemes (which do not exist yet) may also be implemented, such as,
+                        `onedrive:` or `gdrive:`.
+
+                        **Examples**
+
+                        The data is stored in a digital calibration report on a network drive
+                        ```xml
+                        {url}\\msl-nas\Light\Calibrations\job123456.pdf{/url}
+                        ```
+
+                        The data is stored in an Excel file that is located at a local _relative_ path
+                        ```xml
+                        {url sheet="2024-May" cell="B2:D25"}relative\path\data.xlsx{/url}
+                        ```
+                        where the _absolute_ path may be constructed using the _root_-directory
+                        concept (discussed in the [file](#type_file)-element documentation),
+                        for example, the _absolute_ path is constructed as
+                        ```
+                        root\relative\path\data.xlsx
+                        ```
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="msl:nonEmptyString">
+                            <xsd:anyAttribute processContents="skip"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="sha256">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The SHA-256 checksum of the file.
+
+                        On a Windows computer, the SHA-256 checksum can be calculated using a
+                        terminal (e.g., PowerShell or Command Prompt) using
+
+                        ```console
+                        CertUtil -hashfile "path_to_your_file" SHA256
+                        ```
+
+                        On UNIX-based computers, the SHA-256 checksum can be calculated using
+
+                        ```console
+                        shasum -a 256 "path_to_your_file"
+                        ```
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="[a-fA-F0-9]{64}"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="comment" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>
+                    _Optional:_ A comment to associate with the `file`.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="serialised">
+        <xsd:annotation>
+            <xsd:documentation>
+                Calibration data is stored in a serialised format.
+
+                Serialisation (also known as marshalling) is the process of
+                translating a data structure or object state into a format
+                that can be stored and reconstructed later.
+
+                **Examples**
+
+                A `GTC` archive in XML format
+                ```xml
+                {serialised}
+                  {gtcArchive version="1.5.0" xmlns="https://measurement.govt.nz/gtc/xml"}
+                    {leafNodes}...{/leafNodes}
+                    {taggedReals}...{/taggedReals}
+                    {untaggedReals}...{/untaggedReals}
+                    {taggedComplexes}...{/taggedComplexes}
+                    {intermediates}...{/intermediates}
+                  {/gtcArchive}
+                {/serialised}
+                ```
+
+                A `GTC` archive in JSON format
+                ```xml
+                {serialised}
+                  {gtcArchiveJSON}\{"CLASS": "Archive", ...\}{/gtcArchiveJSON}
+                {/serialised}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:choice>
+            <xsd:element ref="gtc:gtcArchive">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Calibration data is stored as a
+                        [GUM Tree Calculator (GTC)](https://gtc.readthedocs.io/en/stable/index.html)
+                        [Archive](https://gtc.readthedocs.io/en/stable/API/persistence.html#persistence.Archive)
+                        in XML format.
+
+                        If you want to serialise an `Archive` into a _string_ that can be
+                        copied-pasted into an equipment-register file, you may use the
+                        [dumps_xml](https://gtc.readthedocs.io/en/stable/API/persistence.html#persistence.dumps_xml)
+                        function
+
+                        ```python
+                        from GTC import ureal, pr
+
+                        # create an Archive and add items to it
+                        archive = pr.Archive()
+                        archive.add(x=ureal(1, 0.1))
+                        archive.add(y=ureal(2, 0.2))
+
+                        # print the archive to be able to copy-paste the output
+                        print(pr.dumps_xml(
+                            archive,
+                            indent=4,
+                            encoding="unicode",
+                            xml_declaration=None
+                        ))
+                        ```
+
+                        `GTC` has an XML Schema Definition file to validate the serialised format of an `Archive`.
+
+                        **Examples**
+
+                        ```xml
+                        {serialised}
+                          {gtcArchive version="1.5.0" xmlns="https://measurement.govt.nz/gtc/xml"}
+                            ...
+                          {/gtcArchive}
+                        {/serialised}
+                        ```
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="gtcArchiveJSON">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Calibration data is stored as a
+                        [GUM Tree Calculator (GTC)](https://gtc.readthedocs.io/en/stable/index.html)
+                        [Archive](https://gtc.readthedocs.io/en/stable/API/persistence.html#persistence.Archive)
+                        in JSON format.
+
+                        If you want to serialise an `Archive` into a _string_ that can be
+                        copied-pasted into an equipment-register file, you may use the
+                        [dumps_json](https://gtc.readthedocs.io/en/stable/API/persistence.html#persistence.dumps_json)
+                        function
+
+                        ```python
+                        from GTC import ureal, pr
+
+                        # create an Archive and add items to it
+                        archive = pr.Archive()
+                        archive.add(x=ureal(1, 0.1))
+                        archive.add(y=ureal(2, 0.2))
+
+                        # print the archive to be able to copy-paste the output
+                        print(pr.dumps_json(archive, indent=4))
+                        ```
+
+                        _Attention: This XSD document validates the content of an XML document
+                        (e.g., that the `gtcArchiveJSON` element has content that may be any
+                        string). It does not attempt to validate that the content is a valid
+                        string that can be used to create an `Archive` object. You must use
+                        `GTC` to validate the content._
+
+                        **Examples**
+
+                        ```xml
+                        {serialised}
+                          {gtcArchiveJSON}\{"CLASS": "Archive", ...\}{/gtcArchiveJSON}
+                        {/serialised}
+                        ```
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:anyAttribute processContents="skip"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:choice>
+        <xsd:attribute name="comment" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>
+                    _Optional:_ A comment to associate with the `serialised` data.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="table">
+        <xsd:annotation>
+            <xsd:documentation>
+                Calibration data is expressed as a CSV table.
+
+                _Attention: This XSD document validates the content of an XML document
+                (e.g., that the `header` element exists and that the content matches
+                the allowed pattern). It does not attempt to validate that the table
+                is structurally correct (e.g., whether `type`, `unit`, `header` and
+                `data` contain the same number of columns). You must use another tool
+                to validate the structure of the table._
+
+                **Examples**
+
+                ```xml
+                {table}
+                  {type}              int        ,    double      ,   double         {/type}
+                  {unit}              nm        ,    W/m^2     ,   W/m^2        {/unit}
+                  {header} Wavelength, Irradiance   , u(Irradiance) {/header}
+                  {data}            250       ,    0.01818    ,   0.02033
+                                          300       ,    0.18478    ,   0.01755
+                                          350       ,    0.80845    ,   0.01606
+                                          400       ,    2.21355    ,   0.01405
+                                          450       ,    4.49004    ,   0.01250
+                                          500       ,    7.45135    ,   0.01200
+                                          550       ,  10.75753    ,   0.01152
+                                          600       ,  14.03809    ,   0.01102
+                                          650       ,  16.99469    ,   0.01103
+                                          700       ,  19.44093    ,   0.01077
+                  {/data}
+                {/table}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="type">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The data type of each column in the `table`.
+                        Each data type shall be separated by a comma.
+                        Whitespace may be used.
+
+                        Allowed data types are: **bool**, **int**, **double**, **string**
+
+                        ```
+                          Data    Size                      Description
+                          Type   (bytes)
+                         ------  -------  -----------------------------------------------------
+                         bool       1     Value is one of: true True TRUE 1 false False FALSE 0
+                         int        4     Values from -2147483648 to +2147483647 (inclusive)
+                         double     8     Approx. 2E-308 to 2E+308 (15-16 digits of precision)
+                         string           Unicode character string
+                        ```
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="\s*(bool|int|double|string)\s*(,\s*(bool|int|double|string)\s*)*"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="unit" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The unit of each column in the `table`.
+                        Each unit shall be separated by a comma.
+                        If a column does not have a unit (for example, a column is for comments),
+                        the unit for that column may be an empty string.
+                        Whitespace may be used.
+
+                        Satisfy ISO/IEC 17025:2017 Clause 7.8.2.1 \
+                        m) the results with, where appropriate, the units of measurement
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="header">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The label of each column in the `table`.
+                        Each label shall be separated by a comma.
+                        Whitespace may be used.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="[^,]+(,[^,]+)*"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="data">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The data in the `table`.
+                        Each row shall be separated by a line-feed character (0x0A).
+                        Each column in a row shall be separated by a comma.
+
+                        If splitting the content by a line-feed character results in
+                        an empty row or a row that contains only whitespace characters,
+                        that row shall be ignored by analysis software.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="[^,]+(,[^,\n][^,]*)*"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="comment" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>
+                    _Optional:_ A comment to associate with the `table`.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="ranges">
+        <xsd:annotation>
+            <xsd:documentation>
+                The numeric range for each variable that an [equation](#type_equation)
+                is valid for.
+
+                **Examples**
+
+                If the [equation](#type_equation) does not depend on any variables
+                ```xml
+                {ranges/}
+                ```
+
+                If the [equation](#type_equation) depends on one variable `t`
+                ```xml
+                {ranges}
+                  {range variable="t"}
+                    {minimum}15{/minimum}
+                    {maximum}25{/maximum}
+                  {/range}
+                {/ranges}
+                ```
+
+                If the [equation](#type_equation) depends on two variables `R` and `t`
+                ```xml
+                {ranges}
+                  {range variable="R"}
+                    {minimum}30{/minimum}
+                    {maximum}80{/maximum}
+                  {/range}
+                  {range variable="t"}
+                    {minimum}15{/minimum}
+                    {maximum}25{/maximum}
+                  {/range}
+                {/ranges}
+                ```
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="range">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The numeric range for each `variable` that the `equation` is valid for.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="minimum" type="xsd:double">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The minimum value of the `variable` that the `equation` is valid for.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="maximum" type="xsd:double">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The maximum value of the `variable` that the `equation` is valid for.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:attribute name="variable" type="msl:tokenizedString" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The variable in the `equation` that this `range` applies to.
+
+                                _Attention: This XSD document validates the content of an XML document
+                                (e.g., that the `variable` attribute exist and the content
+                                is a [tokenizedString](#type_tokenizedString)). It does not attempt to
+                                validate that the range for every `variable` is defined.
+                                You must use another tool to validate that every `variable` is
+                                uniquely defined._
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

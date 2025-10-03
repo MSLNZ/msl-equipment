@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema version="1.5.0"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+            xmlns:gtc="https://measurement.govt.nz/gtc/xml"
+            vc:minVersion="1.0"
+            elementFormDefault="qualified"
+            targetNamespace="https://measurement.govt.nz/gtc/xml">
+
+    <xsd:annotation>
+        <xsd:documentation>
+            XML Schema Definition for GTC archive.
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:simpleType name="degreesOfFreedom">
+        <xsd:restriction base="xsd:double">
+            <xsd:minInclusive value="1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="elementaryUID">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\(\d+,\s*\d+\)"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="intermediateUID">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\(\d+,\s*\d+,\s*0\)"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="uncertainty">
+        <xsd:restriction base="xsd:double">
+            <xsd:minInclusive value="0"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="emptyWithElementaryUID">
+        <xsd:attribute name="uid" type="gtc:elementaryUID" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="doubleWithElementaryUID">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:double">
+                <xsd:attribute name="uid" type="gtc:elementaryUID" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="doubleWithIntermediateUID">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:double">
+                <xsd:attribute name="uid" type="gtc:intermediateUID" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="elementaryVector">
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="component" type="gtc:doubleWithElementaryUID"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="intermediateVector">
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="component" type="gtc:doubleWithIntermediateUID"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="correlation">
+        <xsd:simpleContent>
+            <xsd:restriction base="gtc:doubleWithElementaryUID">
+                <xsd:minInclusive value="-1"/>
+                <xsd:maxInclusive value="1"/>
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="elementaryReal">
+        <xsd:all>
+            <xsd:element name="value" type="xsd:double"/>
+        </xsd:all>
+        <xsd:attribute name="tag" type="xsd:string" use="required"/>
+        <xsd:attribute name="uid" type="gtc:elementaryUID" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="intermediateReal">
+        <xsd:all>
+            <xsd:element name="value" type="xsd:double"/>
+            <xsd:element name="label" type="xsd:string"/>
+            <xsd:element name="uComponents" type="gtc:elementaryVector"/>
+            <xsd:element name="dComponents" type="gtc:elementaryVector"/>
+            <xsd:element name="iComponents" type="gtc:intermediateVector"/>
+        </xsd:all>
+        <xsd:attribute name="tag" type="xsd:string" use="required"/>
+        <xsd:attribute name="uid" type="gtc:intermediateUID" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="reals">
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:choice>
+                <xsd:element name="elementaryReal" type="gtc:elementaryReal"/>
+                <xsd:element name="intermediateReal" type="gtc:intermediateReal"/>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="taggedComplexes">
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="complex">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="label" type="xsd:string"/>
+                    </xsd:all>
+                    <xsd:attribute name="tag" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="intermediates">
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="intermediate">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="label" type="xsd:string"/>
+                        <xsd:element name="u" type="gtc:uncertainty"/>
+                        <xsd:element name="df" type="gtc:degreesOfFreedom"/>
+                    </xsd:all>
+                    <xsd:attribute name="uid" type="gtc:intermediateUID" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="leafNodes">
+        <xsd:sequence maxOccurs="unbounded">
+            <xsd:element name="leafNode">
+                <xsd:complexType>
+                    <xsd:all>
+                        <xsd:element name="u" type="gtc:uncertainty"/>
+                        <xsd:element name="df" type="gtc:degreesOfFreedom"/>
+                        <xsd:element name="label" type="xsd:string"/>
+                        <xsd:element name="independent" type="xsd:boolean"/>
+                        <xsd:element name="complex" minOccurs="0">
+                            <xsd:complexType>
+                                <xsd:all>
+                                    <xsd:element name="real" type="gtc:emptyWithElementaryUID"/>
+                                    <xsd:element name="imag" type="gtc:emptyWithElementaryUID"/>
+                                </xsd:all>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="correlations" minOccurs="0">
+                            <xsd:complexType>
+                                <xsd:sequence maxOccurs="unbounded">
+                                    <xsd:element name="correlation" type="gtc:correlation"/>
+                                </xsd:sequence>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="ensemble" minOccurs="0">
+                            <xsd:complexType>
+                                <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+                                    <xsd:element name="node" type="gtc:emptyWithElementaryUID"/>
+                                </xsd:sequence>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:all>
+                    <xsd:attribute name="uid" type="gtc:elementaryUID" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- Root element -->
+    <xsd:element name="gtcArchive">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element name="leafNodes" type="gtc:leafNodes"/>
+                <xsd:element name="taggedReals" type="gtc:reals"/>
+                <xsd:element name="untaggedReals" type="gtc:reals"/>
+                <xsd:element name="taggedComplexes" type="gtc:taggedComplexes"/>
+                <xsd:element name="intermediates" type="gtc:intermediates"/>
+            </xsd:all>
+            <xsd:attribute name="version" type="xsd:string" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>

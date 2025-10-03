@@ -2016,11 +2016,11 @@
                             <span class="n">equations</span><span class="o">=</span><span class="p">(</span>
                                 <span class="n">Equation</span><span class="p">(</span>
                                     <span class="n">value</span><span class="o">=</span><span class="n">Evaluable</span><span class="p">(</span>
-                                        <span class="n">equation</span><span class="o">=</span><span class="s2">&quot;0.9999862*v + 1.0241e-5&quot;</span><span class="p">,</span>
+                                        <span class="n">equation</span><span class="o">=</span><span class="s2">&quot;0.9999862*v + 1.024e-5&quot;</span><span class="p">,</span>
                                         <span class="n">variables</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">,),</span>
                                         <span class="n">ranges</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="n">Range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)}</span>
                                     <span class="p">),</span>
-                                    <span class="n">uncertainty</span><span class="o">=</span><span class="n">Evaluable</span><span class="p">(</span><span class="n">equation</span><span class="o">=</span><span class="s2">&quot;3.2e-7&quot;</span><span class="p">),</span>
+                                    <span class="n">uncertainty</span><span class="o">=</span><span class="n">Evaluable</span><span class="p">(</span><span class="n">equation</span><span class="o">=</span><span class="s2">&quot;3.2e-6&quot;</span><span class="p">),</span>
                                     <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;V&quot;</span><span class="p">,</span>
                                 <span class="p">),</span>
                             <span class="p">),</span>
@@ -2032,15 +2032,15 @@
     <span class="p">),</span>
 <span class="p">)</span>
 
-<span class="c1"># Connect to the digital multimeter to query its identity</span>
+<span class="c1"># Connect to the digital multimeter and query its identity</span>
 <span class="n">dmm</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">dmm</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;ID?&quot;</span><span class="p">))</span>
 
-<span class="c1"># You can fetch DC voltage readings from the multimeter</span>
+<span class="c1"># Configure the multimeter, fetch voltage readings, convert to float(s)</span>
 <span class="n">voltages</span> <span class="o">=</span> <span class="o">...</span>
 
-<span class="c1"># and apply the calibration equation to correct the voltages</span>
-<span class="n">correction</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">latest_report</span><span class="p">()</span><span class="o">.</span><span class="n">equations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1"># Apply the calibration equation to correct the voltage readings</span>
+<span class="n">correction</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">latest_report</span><span class="p">()</span><span class="o">.</span><span class="n">equation</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">correction</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="n">voltages</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">correction</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="n">voltages</span><span class="p">))</span>
 </code></pre></div>

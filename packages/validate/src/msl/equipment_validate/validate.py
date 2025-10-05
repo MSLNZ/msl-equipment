@@ -29,6 +29,14 @@ if TYPE_CHECKING:
 
 log = logging.getLogger(__package__)
 
+RED = "\033[91m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+BLUE = "\033[94m"
+PURPLE = "\033[95m"
+CYAN = "\033[96m"
+RESET = "\033[0m"
+
 booleans = {"true", "True", "TRUE", "1", "false", "False", "FALSE", "0"}
 namespace = "https://measurement.govt.nz/equipment-register"
 
@@ -54,18 +62,26 @@ class Info:
 
     url: str
     exit_first: bool
-    uri_scheme: URIScheme = None
-    debug_name: str = ""
+    uri_scheme: URIScheme
+    debug_name: str
+    no_colour: bool
 
 
 class Summary:
-    """Keeps tracks of the number of files validated, errors, and elements that were skipped."""
+    """Keeps tracks of the number of files validated, errors, and elements."""
 
-    num_files: int = 0
+    num_registers: int = 0
     num_equipment: int = 0
-    num_connection: int = 0
     num_errors: int = 0
     num_skipped: int = 0
+
+    num_connection: int = 0
+    num_cvd: int = 0
+    num_digital_report: int = 0
+    num_equation: int = 0
+    num_file: int = 0
+    num_serialised: int = 0
+    num_table: int = 0
 
     def __init__(self, *, exit_first: bool) -> None:
         """Keeps tracks of the number of files validated, errors, and elements that were skipped."""
@@ -110,13 +126,56 @@ dtype_value_check = {
 }
 
 
-def log_error(
+def log_debug(
+    fmt: str,
+    *args: object,
+    no_colour: bool,
+) -> None:
+    """Log a DEBUG message."""
+    if not log.isEnabledFor(logging.DEBUG):
+        return
+
+    msg = fmt % args
+    (colour, reset) = ("", "") if no_colour else (CYAN, RESET)
+    log.debug("%sDEBUG%s %s", colour, reset, msg)
+
+
+def log_info(
+    fmt: str,
+    *args: object,
+    no_colour: bool,
+) -> None:
+    """Log an INFO message."""
+    if not log.isEnabledFor(logging.INFO):
+        return
+
+    msg = fmt % args
+    (colour, reset) = ("", "") if no_colour else (BLUE, RESET)
+    log.info("%sINFO%s  %s", colour, reset, msg)
+
+
+def log_warn(
+    fmt: str,
+    *args: object,
+    no_colour: bool,
+) -> None:
+    """Log a WARN message."""
+    if not log.isEnabledFor(logging.WARNING):
+        return
+
+    msg = fmt % args
+    (colour, reset) = ("", "") if no_colour else (YELLOW, RESET)
+    log.warning("%sWARN%s  %s", colour, reset, msg)
+
+
+def log_error(  # noqa: PLR0913
     *,
     file: str | Path,
     line: int,
-    column: int = 0,
-    message: str = "",
+    no_colour: bool,
     uri_scheme: URIScheme,
+    message: str,
+    column: int = 0,
 ) -> None:
     """Log an ERROR message."""
     # errors are always shown, so no need to use % formatting
@@ -129,11 +188,12 @@ def log_error(
         uri = f"{uri_scheme}://file/{resolved}:{line}:{column}"
         msg = f"\033]8;;{uri}\033\\{label}\033]8;;\033\\\n  {message}"
 
-    log.error(msg)
+    (colour, reset) = ("", "") if no_colour else (RED, RESET)
+    log.error("%sERROR%s %s", colour, reset, msg)
     Summary.num_errors += 1
 
 
-def parse(*, file: Path, uri_scheme: URIScheme) -> ElementTree | None:
+def parse(*, file: Path, uri_scheme: URIScheme, no_colour: bool) -> ElementTree | None:
     """Parse an XML file into an ElementTree.
 
     Returns `None` if there was an error.
@@ -141,18 +201,20 @@ def parse(*, file: Path, uri_scheme: URIScheme) -> ElementTree | None:
     try:
         return etree.parse(file)
     except OSError:
-        log_error(file=file, line=0, message=f"Cannot parse {file}", uri_scheme=uri_scheme)
+        log_error(file=file, line=0, message=f"Cannot parse {file}", uri_scheme=uri_scheme, no_colour=no_colour)
     except etree.XMLSyntaxError as e:
         line, column = e.position
-        log_error(file=file, line=line, column=column, message=e.msg, uri_scheme=uri_scheme)
+        log_error(file=file, line=line, column=column, message=e.msg, uri_scheme=uri_scheme, no_colour=no_colour)
 
     return None
 
 
-def schema_validate(*, path: str, xml: ElementTree, schema: XMLSchema, exit_first: bool, uri_scheme: URIScheme) -> None:
+def schema_validate(  # noqa: PLR0913
+    *, path: str, xml: ElementTree, schema: XMLSchema, exit_first: bool, uri_scheme: URIScheme, no_colour: bool
+) -> None:
     """Validate an XML file against a schema."""
-    log.info("Validating %s", path)
-    Summary.num_files += 1
+    log_info("Validating %s", path, no_colour=no_colour)
+    Summary.num_registers += 1
 
     root = xml.getroot()
     if root.tag == "connections":
@@ -168,8 +230,9 @@ def schema_validate(*, path: str, xml: ElementTree, schema: XMLSchema, exit_firs
             file=path,
             line=error.line,
             column=error.column,
-            message=error.message.replace(f"{namespace}", ""),
+            message=error.message.replace(f"{{{namespace}}}", ""),
             uri_scheme=uri_scheme,
+            no_colour=no_colour,
         )
         if exit_first:
             break
@@ -186,6 +249,7 @@ def recursive_validate(  # noqa: C901, PLR0913
     exit_first: bool,
     uri_scheme: URIScheme,
     skip_checksum: bool,
+    no_colour: bool,
 ) -> Summary:
     """Recursively validate files.
 
@@ -197,11 +261,12 @@ def recursive_validate(  # noqa: C901, PLR0913
         exit_first: Whether to return on the first error.
         uri_scheme: Used for clickable links in the terminal.
         skip_checksum: Whether to skip <file> and <digitalReport> validations.
+        no_colour: Suppress coloured output.
     """
     all_ids: dict[str, tuple[str, int]] = {}  # id: (file, sourceline)
     summary = Summary(exit_first=exit_first)
     for file in files:
-        tree = parse(file=file, uri_scheme=uri_scheme)
+        tree = parse(file=file, uri_scheme=uri_scheme, no_colour=no_colour)
         if tree is None:
             if summary.check_exit():
                 return summary
@@ -210,7 +275,9 @@ def recursive_validate(  # noqa: C901, PLR0913
         path = str(file)
         tag = tree.getroot().tag
         if tag == f"{{{namespace}}}register":
-            schema_validate(path=path, xml=tree, schema=er_schema, exit_first=exit_first, uri_scheme=uri_scheme)
+            schema_validate(
+                path=path, xml=tree, schema=er_schema, exit_first=exit_first, uri_scheme=uri_scheme, no_colour=no_colour
+            )
             if summary.check_exit():
                 return summary
 
@@ -221,6 +288,7 @@ def recursive_validate(  # noqa: C901, PLR0913
                 exit_first=exit_first,
                 uri_scheme=uri_scheme,
                 skip_checksum=skip_checksum,
+                no_colour=no_colour,
             )
             if summary.check_exit():
                 return summary
@@ -229,24 +297,33 @@ def recursive_validate(  # noqa: C901, PLR0913
                 if id_ in ids:
                     file2, line2 = ids[id_]
                     msg = f"Duplicate equipment ID ({id_}) also found in {file1}, line {line1}"
-                    log_error(file=file2, line=line2, message=msg, uri_scheme=uri_scheme)
+                    log_error(file=file2, line=line2, message=msg, uri_scheme=uri_scheme, no_colour=no_colour)
                     if summary.check_exit():
                         return summary
 
             all_ids.update(ids)
 
         elif tag == "connections":
-            schema_validate(path=path, xml=tree, schema=c_schema, exit_first=exit_first, uri_scheme=uri_scheme)
+            schema_validate(
+                path=path, xml=tree, schema=c_schema, exit_first=exit_first, uri_scheme=uri_scheme, no_colour=no_colour
+            )
             if summary.check_exit():
                 return summary
         else:
-            log.debug("Ignoring unsupported msl-equipment XML file %s [root tag: %r]", file, tag)
+            log_debug("Ignoring unsupported msl-equipment XML file %s [root tag: %r]", file, tag, no_colour=no_colour)
 
     return summary
 
 
 def validate(  # noqa: C901, PLR0911, PLR0912, PLR0913
-    *, path: str, tree: ElementTree, roots: list[str], exit_first: bool, uri_scheme: URIScheme, skip_checksum: bool
+    *,
+    path: str,
+    tree: ElementTree,
+    roots: list[str],
+    exit_first: bool,
+    uri_scheme: URIScheme,
+    skip_checksum: bool,
+    no_colour: bool,
 ) -> dict[str, tuple[str, int]]:
     """Validate an equipment register for things that the schema does not validate.
 
@@ -257,6 +334,7 @@ def validate(  # noqa: C901, PLR0911, PLR0912, PLR0913
         exit_first: Whether to return on the first error.
         uri_scheme: Used for clickable links in the terminal.
         skip_checksum: Whether to skip <file> and <digitalReport> validations.
+        no_colour: Whether to suppress coloured output.
 
     Returns:
         A mapping between the equipment id and (sourceline of the equipment id, file path).
@@ -267,34 +345,42 @@ def validate(  # noqa: C901, PLR0911, PLR0912, PLR0913
         id_, manufacturer, model, serial = equipment[:4]  # schema forces order
         ids[id_.text] = (path, id_.sourceline)
         name = f"{manufacturer.text}|{model.text}|{serial.text}"
-        info = Info(url=path, exit_first=exit_first, uri_scheme=uri_scheme, debug_name=name)
+        info = Info(url=path, exit_first=exit_first, uri_scheme=uri_scheme, debug_name=name, no_colour=no_colour)
         for digital_report in equipment.xpath(".//reg:digitalReport", namespaces=ns_map):
+            Summary.num_digital_report += 1
             if skip_checksum:
                 Summary.num_skipped += 1
+                log_warn("Skipped validation of <digitalReport> for %r", name, no_colour=no_colour)
                 continue
             ok = validate_file(digital_report, roots=roots, info=info, name="digitalReport")
             if (not ok) and exit_first:
                 return ids
         for equation in equipment.xpath(".//reg:equation", namespaces=ns_map):
+            Summary.num_equation += 1
             ok = validate_equation(equation, ns_map=ns_map, info=info)
             if (not ok) and exit_first:
                 return ids
         for file in equipment.xpath(".//reg:file", namespaces=ns_map):
+            Summary.num_file += 1
             if skip_checksum:
                 Summary.num_skipped += 1
+                log_warn("Skipped validation of <file> for %r", name, no_colour=no_colour)
                 continue
             ok = validate_file(file, roots=roots, info=info, name="file")
             if (not ok) and exit_first:
                 return ids
         for serialised in equipment.xpath(".//reg:serialised", namespaces=ns_map):
+            Summary.num_serialised += 1
             ok = validate_serialised(serialised, info=info)
             if (not ok) and exit_first:
                 return ids
         for table in equipment.xpath(".//reg:table", namespaces=ns_map):
+            Summary.num_table += 1
             ok = validate_table(table, info=info)
             if (not ok) and exit_first:
                 return ids
         for coefficients in equipment.xpath(".//reg:cvdCoefficients", namespaces=ns_map):
+            Summary.num_cvd += 1
             ok = validate_cvd(coefficients, info=info)
             if (not ok) and exit_first:
                 return ids
@@ -306,7 +392,7 @@ def validate_equation(equation: Element, *, ns_map: dict[str, str], info: Info) 
 
     Returns whether the element is valid.
     """
-    log.debug("[%s] Validating <equation> element", info.debug_name)
+    log_debug("Validating <equation> for %r", info.debug_name, no_colour=info.no_colour)
     line = equation.sourceline or 0
     is_valid = True
 
@@ -322,7 +408,7 @@ def validate_equation(equation: Element, *, ns_map: dict[str, str], info: Info) 
     range_name_set = set(range_names)
     if len(range_names) != len(range_name_set):
         msg = f"The names of the range variables are not unique for {info.debug_name!r}: {sorted(range_names)}"
-        log_error(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme)
+        log_error(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour)
         is_valid = False
         if info.exit_first:
             return False
@@ -333,7 +419,7 @@ def validate_equation(equation: Element, *, ns_map: dict[str, str], info: Info) 
             f"  equation variables: {', '.join(sorted(names))}\n"
             f"  range variables   : {', '.join(sorted(range_names))}"
         )
-        log_error(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme)
+        log_error(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour)
         is_valid = False
         if info.exit_first:
             return False
@@ -358,7 +444,7 @@ def _eval(*, text: str, names: list[str], info: Info, line: int) -> bool:
         _ = eval(text, None, _locals)  # noqa: S307
     except (SyntaxError, NameError) as e:
         msg = f"Invalid equation syntax for {info.debug_name!r} [equation={text!r}]: {e}"
-        log_error(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme)
+        log_error(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour)
         return False
     except ZeroDivisionError:  # valid equation, using value=1.0 was unlucky
         pass
@@ -371,7 +457,7 @@ def validate_file(file: Element, *, roots: list[str], info: Info, name: str) -> 
 
     Returns whether the element is valid.
     """
-    log.debug("[%s] Validating <%s> element", info.debug_name, name)
+    log_debug("Validating <%s> for %r", info.debug_name, name, no_colour=info.no_colour)
 
     url, checksum = file[:2]  # schema forces order
     assert isinstance(url.text, str)  # noqa: S101
@@ -380,7 +466,9 @@ def validate_file(file: Element, *, roots: list[str], info: Info, name: str) -> 
     # check len() > 1 to ignore a Windows drive letter being interpreted as a scheme
     if len(u.scheme) > 1 and u.scheme != "file":
         msg = f"The url scheme {u.scheme!r} is not yet supported for validation [url={url.text!r}]"
-        log_error(file=info.url, line=url.sourceline or 0, message=msg, uri_scheme=info.uri_scheme)
+        log_error(
+            file=info.url, line=url.sourceline or 0, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour
+        )
         return False
 
     path: Path | None = Path(url.text)
@@ -399,12 +487,14 @@ def validate_file(file: Element, *, roots: list[str], info: Info, name: str) -> 
             path = None
 
     if path is None:
-        msg = f"Cannot find {url.text!r}"
+        msg = f"Cannot find '{url.text}'"
         if roots:
             msg += f", using the roots: {', '.join(roots)}"
         else:
             msg += ", include --root arguments if the url is a relative path"
-        log_error(file=info.url, line=url.sourceline or 0, message=msg, uri_scheme=info.uri_scheme)
+        log_error(
+            file=info.url, line=url.sourceline or 0, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour
+        )
         return False
 
     sha = sha256()
@@ -424,7 +514,13 @@ def validate_file(file: Element, *, roots: list[str], info: Info, name: str) -> 
             f"  expected: {expected}\n"
             f"  <sha256>: {specified}"
         )
-        log_error(file=info.url, line=checksum.sourceline or 0, message=msg, uri_scheme=info.uri_scheme)
+        log_error(
+            file=info.url,
+            line=checksum.sourceline or 0,
+            message=msg,
+            uri_scheme=info.uri_scheme,
+            no_colour=info.no_colour,
+        )
         return False
 
     return True
@@ -441,29 +537,29 @@ def validate_serialised(serialised: Element, *, info: Info) -> bool:
     assert isinstance(tag, str)  # noqa: S101
     try:
         if tag.endswith("gtcArchive"):
-            log.debug("[%s] Validating gtcArchive", info.debug_name)
+            log_debug("Validating <gtcArchive> for %r", info.debug_name, no_colour=info.no_colour)
             xml_to_archive(fmt)
         elif tag.endswith("gtcArchiveJSON"):
-            log.debug("[%s] Validating gtcArchiveJSON", info.debug_name)
+            log_debug("Validating <gtcArchiveJSON> for %r", info.debug_name, no_colour=info.no_colour)
             loads_json(fmt.text)
         else:
             msg = f"Don't know how to deserialize {tag!r}"
-            log_error(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme)
+            log_error(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour)
             return False
     except Exception as e:  # noqa: BLE001
         msg = f"Invalid serialised {tag!r} for {info.debug_name!r}: {e}"
-        log_error(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme)
+        log_error(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour)
         return False
     else:
         return True
 
 
-def validate_table(table: Element, *, info: Info) -> bool:  # noqa: C901, PLR0912
+def validate_table(table: Element, *, info: Info) -> bool:  # noqa: C901, PLR0911, PLR0912, PLR0915
     """Validates that the data types, header and data are valid.
 
     Returns whether the element is valid.
     """
-    log.debug("[%s] Validating <table> element", info.debug_name)
+    log_debug("Validating <table> for %r", info.debug_name, no_colour=info.no_colour)
 
     e_types, e_unit, e_header, e_data = table[:4]  # schema forces order
     assert e_types.text is not None  # noqa: S101
@@ -482,7 +578,13 @@ def validate_table(table: Element, *, info: Info) -> bool:  # noqa: C901, PLR091
             f"  type: {types}\n"
             f"  unit: {units}"
         )
-        log_error(file=info.url, line=e_unit.sourceline or 0, message=msg, uri_scheme=info.uri_scheme)
+        log_error(
+            file=info.url,
+            line=e_unit.sourceline or 0,
+            message=msg,
+            uri_scheme=info.uri_scheme,
+            no_colour=info.no_colour,
+        )
         is_valid = False
         if info.exit_first:
             return False
@@ -493,23 +595,58 @@ def validate_table(table: Element, *, info: Info) -> bool:  # noqa: C901, PLR091
             f"  type  : {types}\n"
             f"  header: {header}"
         )
-        log_error(file=info.url, line=e_header.sourceline or 0, message=msg, uri_scheme=info.uri_scheme)
+        log_error(
+            file=info.url,
+            line=e_header.sourceline or 0,
+            message=msg,
+            uri_scheme=info.uri_scheme,
+            no_colour=info.no_colour,
+        )
         is_valid = False
         if info.exit_first:
             return False
 
     len_types = len(types)
-    for row_line in e_data.text.split("\n"):
-        row_stripped = row_line.strip()
+    sourceline = e_data.sourceline or 0
+    all_rows = e_data.text.split("\n")
+
+    # it's ok to have empty rows before and after the table data but not in-between rows
+    start, stop = None, None
+    for i, row_data in enumerate(all_rows):
+        if row_data.strip():
+            if start is None:
+                start = i
+            stop = i + 1
+
+    sourceline += start or 0
+    for row_data in all_rows[start:stop]:
+        row_stripped = row_data.strip()
         if not row_stripped:
+            log_error(
+                file=info.url,
+                line=sourceline,
+                message=f"The table <data> cannot have an empty row for {info.debug_name!r}",
+                uri_scheme=info.uri_scheme,
+                no_colour=info.no_colour,
+            )
+            is_valid = False
+            if info.exit_first:
+                return False
             continue
+
         row = [col.strip() for col in row_stripped.split(",")]
         if len_types != len(row):
             msg = (
                 f"The table <data> does not have the expected number of columns for {info.debug_name!r}\n"
                 f"  Expected {len_types} columns, row data is {row_stripped!r}"
             )
-            log_error(file=info.url, line=e_data.sourceline or 0, message=msg, uri_scheme=info.uri_scheme)
+            log_error(
+                file=info.url,
+                line=sourceline,
+                message=msg,
+                uri_scheme=info.uri_scheme,
+                no_colour=info.no_colour,
+            )
             is_valid = False
             if info.exit_first:
                 return False
@@ -519,17 +656,31 @@ def validate_table(table: Element, *, info: Info) -> bool:  # noqa: C901, PLR091
                 dtype_value_check[typ](col)
             except ValueError as e:  # noqa: PERF203
                 msg = f"Invalid table <data> for {info.debug_name!r}: {e}"
-                log_error(file=info.url, line=e_data.sourceline or 0, message=msg, uri_scheme=info.uri_scheme)
+                log_error(
+                    file=info.url,
+                    line=sourceline,
+                    message=msg,
+                    uri_scheme=info.uri_scheme,
+                    no_colour=info.no_colour,
+                )
                 is_valid = False
                 if info.exit_first:
                     return False
             except KeyError:
                 allowed = ", ".join(dtype_value_check)
                 msg = f"Invalid table <type> {typ!r} for {info.debug_name!r}, must be one of: {allowed}"
-                log_error(file=info.url, line=e_data.sourceline or 0, message=msg, uri_scheme=info.uri_scheme)
+                log_error(
+                    file=info.url,
+                    line=sourceline,
+                    message=msg,
+                    uri_scheme=info.uri_scheme,
+                    no_colour=info.no_colour,
+                )
                 is_valid = False
                 if info.exit_first:
                     return False
+
+        sourceline += 1
 
     return is_valid
 

@@ -21,7 +21,8 @@
         "mkdocs.yml",
         "pyproject.toml",
         "CHANGELOG.md",
-        "tests/resources"
+        "tests/resources",
+        "packages/validate/src/msl/equipment_validate/schema/equipment-register.xsd"
     ],
     "words": [
         "allclose",

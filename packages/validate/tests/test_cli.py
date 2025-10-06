@@ -13,11 +13,12 @@ from msl.equipment_validate import (
     recursive,
 )
 from msl.equipment_validate.validate import Summary
+from msl.io import is_admin
 
 
 def test_recursive() -> None:
     files = recursive(Path("tests"))
-    assert files == [
+    assert sorted(files) == [
         Path("tests/resources/config.xml"),
         Path("tests/resources/connections.xml"),
         Path("tests/resources/light/register.xml"),
@@ -64,8 +65,14 @@ def test_modify_windows_registry_add(caplog: pytest.LogCaptureFixture) -> None:
     logger = configure_logging(quiet=0, verbose=0)
     caplog.set_level(logging.INFO, "msl")
 
-    result = modify_windows_registry(log=logger, remove=False, add=True)
-    assert result == 1
+    code = modify_windows_registry(log=logger, remove=False, add=True)
+
+    if IS_WINDOWS and is_admin():  # GHA runs tests with an admin account
+        assert code == 0
+        assert len(caplog.records) == 0
+        return
+
+    assert code == 1
 
     if IS_WINDOWS:
         msg = "You must use an elevated (admin) terminal to modify the Windows Registry"
@@ -238,9 +245,16 @@ def test_main(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[st
         _ = r[28]
 
 
-def test_cli_winreg_non_windows(caplog: pytest.LogCaptureFixture) -> None:
+def test_cli_add_winreg_keys(caplog: pytest.LogCaptureFixture) -> None:
     caplog.set_level(logging.INFO, "msl")
+
     code = cli(["--add-winreg-keys"])
+
+    if IS_WINDOWS and is_admin():  # GHA runs tests with an admin account
+        assert code == 0
+        assert len(caplog.records) == 0
+        return
+
     assert code == 1
 
     r = caplog.records

@@ -120,9 +120,9 @@ cache_dir = ".cache/pytest"
 consider_namespace_packages = true
 addopts = [
     "--cov=src",
+    "--cov=packages/validate",
     "--cov-report=html",
     "--cov-config=pyproject.toml",
-    "--verbose",
     "--doctest-modules",
     "--doctest-glob=*.md",
     "--import-mode=importlib",
@@ -138,6 +138,7 @@ branch = true
 data_file = ".cache/coverage/.coverage"
 omit = [
     "src/msl/equipment/_types.py",
+    "**/_version.py",
 ]
 
 [tool.coverage.report]
@@ -221,7 +222,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*.py" = [
+"**/tests/*.py" = [
     "D100", # Missing docstring in public module
     "D103", # Missing docstring in public function
     "INP001", # implicit-namespace-package

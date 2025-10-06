@@ -62,3 +62,42 @@ source = "vcs"
 [tool.hatch.version.raw-options]
 root = "../.."
 git_describe_command = ["git", "describe", "--dirty", "--tags", "--long", "--match", "validate-v*"]
+
+[tool.mypy]
+cache_dir = ".cache/mypy"
+platform = "win32"
+strict = true
+strict_bytes = true
+
+# with the environment variable MYPYPATH=src defined, namespace_packages=true and
+# explicit_package_bases=true, the following error goes away
+#   Source file found twice under different module names: "equipment" and "msl.equipment"
+# https://mypy.readthedocs.io/en/stable/running_mypy.html#mapping-file-paths-to-modules
+namespace_packages = true
+explicit_package_bases = true
+
+allow_redefinition = false
+allow_untyped_globals = false
+disallow_any_decorated = true
+disallow_any_explicit = false  # true
+disallow_any_expr = false  # true
+disallow_any_unimported = true
+ignore_missing_imports = false
+implicit_optional = false
+local_partial_types = true
+scripts_are_modules = true
+warn_no_return = true
+warn_unreachable = true
+
+[tool.basedpyright]
+failOnWarnings = true
+typeCheckingMode = "recommended"
+useLibraryCodeForTypes = false
+pythonPlatform = "Windows"
+exclude = [
+    "**/.*",
+    "**/__pycache__",
+    "**/_version.py",
+]
+reportAny = false
+reportExplicitAny = false

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
+import platform
 import sys
 from argparse import SUPPRESS, ArgumentParser, RawTextHelpFormatter
 from importlib.metadata import version
@@ -39,17 +40,24 @@ def recursive(directory: Path) -> list[Path]:
     return files
 
 
-def configure_logging(*, quiet: bool, verbose: bool) -> logging.Logger:
+def configure_logging(*, quiet: int, verbose: int) -> logging.Logger:
     """Configure logging."""
-    if (quiet and verbose) or (not (quiet or verbose)):
+    n = verbose - quiet
+    if n > 0:
+        level = logging.DEBUG
+    elif n == 0:
         level = logging.INFO
-    elif quiet:
+    elif n == -1:
+        level = logging.WARNING
+    elif n == -2:  # noqa: PLR2004
         level = logging.ERROR
     else:
-        level = logging.DEBUG
+        level = logging.CRITICAL
 
     logging.basicConfig(level=level, format="%(message)s")
-    return logging.getLogger(__package__)
+    logger = logging.getLogger(__package__)
+    logger.setLevel(level)
+    return logger
 
 
 def modify_windows_registry(*, log: logging.Logger, remove: bool, add: bool) -> int:
@@ -61,6 +69,9 @@ def modify_windows_registry(*, log: logging.Logger, remove: bool, add: bool) -> 
             except PermissionError:  # noqa: PERF203
                 log.error("You must use an elevated (admin) terminal to modify the Windows Registry")  # noqa: TRY400
                 return 1
+            except ModuleNotFoundError:
+                log.error("Unregistering a URI Scheme is only supported on Windows")  # noqa: TRY400
+                return 1
             except FileNotFoundError:  # already removed
                 continue
         return 0
@@ -71,6 +82,9 @@ def modify_windows_registry(*, log: logging.Logger, remove: bool, add: bool) -> 
                 register_uri_scheme(scheme)
             except PermissionError:  # noqa: PERF203
                 log.error("You must use an elevated (admin) terminal to modify the Windows Registry")  # noqa: TRY400
+                return 1
+            except ModuleNotFoundError:
+                log.error("Registering a URI Scheme is only supported on Windows")  # noqa: TRY400
                 return 1
 
     return 0
@@ -85,7 +99,7 @@ def maybe_enable_ansi() -> None:
     # inside an instance of Windows Terminal.
     # https://support.microsoft.com/en-us/windows/command-prompt-and-windows-powershell-6453ce98-da91-476f-8651-5c14d5777c20
     if (
-        (sys.platform != "win32")  # UNIX terminal
+        (not IS_WINDOWS)  # UNIX terminal
         or ("WT_SESSION" in os.environ)  # Windows Terminal
         or ("PYCHARM_HOSTED" in os.environ)  # PyCharm terminal
         or (os.getenv("TERMINAL_EMULATOR", "").startswith("JetBrains"))  # PyCharm terminal
@@ -94,13 +108,13 @@ def maybe_enable_ansi() -> None:
         return
 
     # The following fixes ANSI escape sequences if Windows PowerShell or Command Prompt
-    # is still being used outside of Windows Terminal
+    # is still being used outside of Windows Terminal (prefer to not have a dependency on colorama)
     # https://bugs.python.org/issue30075
     _ = os.system("")  # noqa: S605, S607
 
 
-def cli(argv: Sequence[str] | None = None) -> int:  # noqa: PLR0911, PLR0915
-    """CLI entry point."""
+def configure_parser() -> ArgumentParser:
+    """Create and configure the argument parser."""
     parser = ArgumentParser(
         description="Validate equipment registers and connection files.",
         formatter_class=RawTextHelpFormatter,
@@ -111,42 +125,47 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: PLR0911, PLR0915
         "path",
         nargs="?",
         help=(
-            "The path to an equipment-register file, a connections file or\n"
-            "a directory containing multiple files to recursively validate.\n"
-            "Default is to recursively validate XML files starting from the\n"
-            "current working directory."
+            "Path to an equipment-register file, a connections file\n"
+            "or a directory containing multiple files to recursively\n"
+            "validate. Default is to recursively validate XML files\n"
+            "starting from the current working directory."
         ),
     )
     _ = parser.add_argument(
         "-s",
         "--schema",
         help=(
-            "Path to an alternative equipment-register schema file to use\n"
-            "for validation."
+            "Path to an alternative equipment-register schema file\n"
+            "to use for validation."
         ),
     )
     _ = parser.add_argument(
         "-r",
         "--root",
         default=[],
-        action="append",
+        action="extend",
+        nargs="*",
+        type=str,
         help=(
-            "Root directory to use when validating <file> or <digitalReport>\n"
-            "elements and the <url> is a relative path. Can be specified\n"
-            "multiple times if multiple roots are required."
+            "Root directory to use when validating <digitalReport>\n"
+            "or <file> elements and the <url> is a relative path.\n"
+            "Can be specified multiple times if multiple roots are\n"
+            "required. If a directory contains whitespace, surround\n"
+            r'the value with quotes, e.g., --root "C:\Path\With Space"'
         ),
     )
     _ = parser.add_argument(
-        "-o",
-        "--open",
+        "-l",
+        "--link",
         choices=schemes,
         help=(
             (
-                "Use clickable (Ctrl + click) hyperlinks to open Visual Studio\n"
-                "(VS), VS Code, PyCharm or Notepad++ to fix issues. You must first\n"
-                "run with the --add-winreg-keys flag from an elevated (admin)\n"
-                "terminal before clickable links work and you must use a terminal\n"
-                "that supports OSC-8 hyperlinks (e.g., Windows Terminal)."
+                "Use clickable (Ctrl + click) hyperlinks to open Visual\n"
+                "Studio, Visual Studio Code, PyCharm or Notepad++ to fix\n"
+                "issues. You must first run with the --add-winreg-keys\n"
+                "flag from an elevated (admin) terminal before clickable\n"
+                "links work and you must use a terminal that supports\n"
+                "OSC-8 hyperlinks, e.g., Windows Terminal."
             )
             if IS_WINDOWS
             else SUPPRESS
@@ -158,10 +177,11 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: PLR0911, PLR0915
         action="store_true",
         help=(
             (
-                "Add Keys to the Windows Registry to open VS, VS Code, PyCharm\n"
-                "or Notepad++ to fix issues and then exit (does not continue\n"
-                "to validate files). You must run the command from an elevated\n"
-                "(admin) terminal to modify the Windows Registry."
+                "Add Keys to the Windows Registry to open Visual Studio,\n"
+                "Visual Studio Code, PyCharm or Notepad++ to fix issues\n"
+                "and exit (does not continue to validate files). You\n"
+                "must run the command from an elevated (admin) terminal\n"
+                "to modify the Windows Registry."
             )
             if IS_WINDOWS
             else SUPPRESS
@@ -173,10 +193,10 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: PLR0911, PLR0915
         action="store_true",
         help=(
             (
-                "Remove the Keys from the Windows Registry that were added by\n"
-                "--add-winreg-keys and then exit (does not continue to validate\n"
-                "files). You must run the command from an elevated (admin)\n"
-                "terminal to modify the Windows Registry."
+                "Remove the Keys from the Windows Registry that were added\n"
+                "by --add-winreg-keys and exit (does not continue to\n"
+                "validate files). You must run the command from an elevated\n"
+                "(admin) terminal to modify the Windows Registry."
             )
             if IS_WINDOWS
             else SUPPRESS
@@ -185,14 +205,19 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: PLR0911, PLR0915
     _ = parser.add_argument(
         "-v",
         "--verbose",
-        action="store_true",
-        help="Show more information while validating (include DEBUG messages).",
+        action="count",
+        default=0,
+        help="Show more information while validating.",
     )
     _ = parser.add_argument(
         "-q",
         "--quiet",
-        action="store_true",
-        help="Show less information while validating (only ERROR messages).",
+        action="count",
+        default=0,
+        help=("Show less information while validating. Option is additive\n"
+              "and can be used up to 3 times (suppressing INFO, WARN and\n"
+              "ERROR logging levels)."
+        ),
     )
     _ = parser.add_argument(
         "-x",
@@ -204,19 +229,19 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: PLR0911, PLR0915
         "-c",
         "--skip-checksum",
         action="store_true",
-        help="Skip <file> and <digitalReport> SHA-256 checksum validations.",
-    )
-    _ = parser.add_argument(
-        "-V",
-        "--version",
-        action="store_true",
-        help="Show version information and exit.",
+        help="Skip <file> and <digitalReport> SHA256 checksum validation.",
     )
     _ = parser.add_argument(
         "-n",
         "--no-colour",
         action="store_true",
         help="Suppress coloured output.",
+    )
+    _ = parser.add_argument(
+        "-V",
+        "--version",
+        action="store_true",
+        help="Show version information and exit.",
     )
     _ = parser.add_argument(
         "-h",
@@ -226,7 +251,12 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: PLR0911, PLR0915
         default=SUPPRESS
     )
     # fmt: on
+    return parser
 
+
+def cli(argv: Sequence[str] | None = None) -> int:  # noqa: PLR0915
+    """CLI entry point."""
+    parser = configure_parser()
     args = parser.parse_args(argv)
 
     log = configure_logging(quiet=args.quiet, verbose=args.verbose)
@@ -236,27 +266,29 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: PLR0911, PLR0915
 
     if args.remove_winreg_keys or args.add_winreg_keys:
         if not IS_WINDOWS:
-            log.error("Creating clickable links is only valid on Windows")
+            log.error("Modifying the Windows Registry is only valid on Windows")
             return 1
         return modify_windows_registry(log=log, remove=args.remove_winreg_keys, add=args.add_winreg_keys)
 
     schema_dir = Path(__file__).parent / "schema"
     er_tree = parse(
-        file=args.schema or schema_dir / "equipment-register.xsd", uri_scheme=args.open, no_colour=args.no_colour
+        file=args.schema or schema_dir / "equipment-register.xsd", uri_scheme=args.link, no_colour=args.no_colour
     )
     if er_tree is None:
         return 1
 
-    c_tree = parse(file=schema_dir / "connections.xsd", uri_scheme=args.open, no_colour=args.no_colour)
-    if c_tree is None:
-        return 1
+    c_tree = parse(file=schema_dir / "connections.xsd", uri_scheme=args.link, no_colour=args.no_colour)
+    assert c_tree is not None  # noqa: S101
 
-    log.info("%s validation starts %s", "=" * 30, "=" * 30)
+    log.info("%s Validation Starts %s", "=" * 30, "=" * 30)
+    log.info("platform: Python %s (%s)", platform.python_version(), platform.system())
     log.info("msl-equipment-validate: %s", __version__)
     log.info("lxml: %s", version("lxml"))
     log.info("GTC: %s", version("GTC"))
     log.info("equipment-register: %s", er_tree.getroot().get("version", "UNKNOWN"))
     log.info("connections: %s", c_tree.getroot().get("version", "UNKNOWN"))
+    if args.root:
+        log.info("roots: %s", "\n       ".join(args.root))
     log.info("")
     if args.version:
         return 0
@@ -275,40 +307,39 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: PLR0911, PLR0915
         c_schema=c_schema,
         roots=args.root,
         exit_first=args.exit_first,
-        uri_scheme=args.open,
+        uri_scheme=args.link,
         skip_checksum=args.skip_checksum,
         no_colour=args.no_colour,
     )
 
     log.info("")
-    log.info("%s summary %s", "=" * 35, "=" * 35)
-    log.info("errors: %d", summary.num_errors)
-    log.info("skipped: %d", summary.num_skipped)
-    log.info("registers: %d", summary.num_registers)
-    log.info("equipment: %d", summary.num_equipment)
-    log.info("connections: %d", summary.num_connection)
-    log.info("cvdCoefficients: %d", summary.num_cvd)
-    log.info("digitalReports: %d", summary.num_digital_report)
-    log.info("equations: %d", summary.num_equation)
-    log.info("files: %d", summary.num_file)
-    log.info("serialised: %d", summary.num_serialised)
-    log.info("tables: %d", summary.num_table)
+    log.info("%s Summary %s", "=" * 35, "=" * 35)
+    log.info("issues: %d [skipped %d]", summary.num_issues, summary.num_skipped)
+    log.info("<connection> %d", summary.num_connection)
+    log.info("<cvdCoefficients> %d", summary.num_cvd)
+    log.info("<digitalReport> %d", summary.num_digital_report)
+    log.info("<equation> %d", summary.num_equation)
+    log.info("<equipment> %d", summary.num_equipment)
+    log.info("<file> %d", summary.num_file)
+    log.info("<register> %d", summary.num_register)
+    log.info("<serialised> %d", summary.num_serialised)
+    log.info("<table> %d", summary.num_table)
     log.info("")
 
-    if summary.num_errors == 0:
+    if summary.num_issues == 0:
         green, yellow, reset = ("", "", "") if args.no_colour else (GREEN, YELLOW, RESET)
-        msg = "Success, no errors found!"
+        msg = "Success, no issues found!"
         if summary.num_skipped == 0:
             print(f"{green}{msg}{reset}")  # noqa: T201
         else:
             print(f"{green}{msg}{reset} [{yellow}skipped: {summary.num_skipped}{reset}]")  # noqa: T201
     else:
         colour, reset = ("", "") if args.no_colour else (RED, RESET)
-        print(f"{colour}Found {summary.num_errors} errors{reset}")  # noqa: T201
+        print(f"{colour}Found {summary.num_issues} issues{reset}")  # noqa: T201
 
-    return summary.num_errors
+    return summary.num_issues
 
 
-def main() -> NoReturn:
+def main(argv: Sequence[str] | None = None) -> NoReturn:
     """Main CLI entry point."""
-    sys.exit(cli(sys.argv[1:]))
+    sys.exit(cli(argv))

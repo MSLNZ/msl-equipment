@@ -68,13 +68,12 @@ class Info:
 
 
 class Summary:
-    """Keeps tracks of the number of files validated, errors, and elements."""
+    """Keeps tracks of the number of files validated, issues, and elements."""
 
-    num_registers: int = 0
-    num_equipment: int = 0
-    num_errors: int = 0
+    num_issues: int = 0
     num_skipped: int = 0
-
+    num_register: int = 0
+    num_equipment: int = 0
     num_connection: int = 0
     num_cvd: int = 0
     num_digital_report: int = 0
@@ -89,7 +88,7 @@ class Summary:
 
     def check_exit(self) -> bool:
         """Check if validation should exit early."""
-        return self.exit_first and self.num_errors > 0
+        return self.exit_first and self.num_issues > 0
 
 
 def _bool(value: str) -> None:
@@ -190,7 +189,7 @@ def log_error(  # noqa: PLR0913
 
     (colour, reset) = ("", "") if no_colour else (RED, RESET)
     log.error("%sERROR%s %s", colour, reset, msg)
-    Summary.num_errors += 1
+    Summary.num_issues += 1
 
 
 def parse(*, file: Path, uri_scheme: URIScheme, no_colour: bool) -> ElementTree | None:
@@ -214,7 +213,6 @@ def schema_validate(  # noqa: PLR0913
 ) -> None:
     """Validate an XML file against a schema."""
     log_info("Validating %s", path, no_colour=no_colour)
-    Summary.num_registers += 1
 
     root = xml.getroot()
     if root.tag == "connections":
@@ -273,8 +271,9 @@ def recursive_validate(  # noqa: C901, PLR0913
             continue
 
         path = str(file)
-        tag = tree.getroot().tag
-        if tag == f"{{{namespace}}}register":
+        tag = str(tree.getroot().tag)
+        if tag.endswith("register"):
+            Summary.num_register += 1
             schema_validate(
                 path=path, xml=tree, schema=er_schema, exit_first=exit_first, uri_scheme=uri_scheme, no_colour=no_colour
             )

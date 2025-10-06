@@ -94,9 +94,21 @@ nav:
     - api/connection.md
     - api/enumerations.md
     - api/exceptions.md
-    - api/interfaces.md
     - api/types.md
-    - api/utils.md
+    - Interfaces:
+      - api/interfaces/index.md
+      - api/interfaces/gpib.md
+      - api/interfaces/hislip.md
+      - api/interfaces/prologix.md
+      - api/interfaces/sdk.md
+      - api/interfaces/serial.md
+      - api/interfaces/socket.md
+      - api/interfaces/vxi11.md
+      - api/interfaces/zeromq.md
+    - Backends:
+      - api/backends/index.md
+      - api/backends/nidaq.md
+      - api/backends/pyvisa.md
   - Resources:
     - resources/index.md
   - Validate: validate.md
@@ -127,7 +139,7 @@ plugins:
               domains: [std, py]
             - url: https://numpy.org/doc/stable/objects.inv
               domains: [std, py]
-            - url: https://mslnz.github.io/equipment-register-schema/develop/objects.inv
+            - url: https://mslnz.github.io/equipment-register-schema/latest/objects.inv
               domains: [xsd]
             - url: https://gtc.readthedocs.io/en/stable/objects.inv
             - url: https://mslnz.github.io/msl-io/latest/objects.inv

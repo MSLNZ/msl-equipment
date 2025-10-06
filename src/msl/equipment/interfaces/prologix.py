@@ -228,7 +228,7 @@ class Prologix(Interface, regex=REGEX):
         delay: float = 0.0,
         decode: Literal[True] = True,
         dtype: None = None,
-        fmt: MessageFormat | None = ...,
+        fmt: MessageFormat = ...,
         size: int | None = ...,
     ) -> str: ...
 
@@ -240,7 +240,7 @@ class Prologix(Interface, regex=REGEX):
         delay: float = 0.0,
         decode: Literal[False] = False,
         dtype: None = None,
-        fmt: MessageFormat | None = ...,
+        fmt: MessageFormat = ...,
         size: int | None = ...,
     ) -> bytes: ...
 
@@ -252,7 +252,7 @@ class Prologix(Interface, regex=REGEX):
         delay: float = 0.0,
         decode: bool = ...,
         dtype: MessageDataType = ...,
-        fmt: MessageFormat | None = ...,
+        fmt: MessageFormat = ...,
         size: int | None = ...,
     ) -> NumpyArray1D: ...
 
@@ -263,7 +263,7 @@ class Prologix(Interface, regex=REGEX):
         delay: float = 0.0,
         decode: bool = True,
         dtype: MessageDataType | None = None,
-        fmt: MessageFormat | None = None,
+        fmt: MessageFormat = None,
         size: int | None = None,
     ) -> bytes | str | NumpyArray1D:
         """Convenience method for performing a [write][msl.equipment.interfaces.prologix.Prologix.write]
@@ -274,13 +274,13 @@ class Prologix(Interface, regex=REGEX):
             delay: Time delay, in seconds, to wait between the _write_ and _read_ operations.
             decode: Whether to decode the returned message (i.e., convert the message to a [str][])
                 or keep the message as [bytes][]. Ignored if `dtype` is not `None`.
-            dtype: The data type of the elements in the returned message. Can be any object
-                that numpy [dtype][numpy.dtype] supports. See [from_bytes][msl.equipment.utils.from_bytes]
-                for more details. For messages that are of scalar type (i.e., a single number)
+            dtype: The data type of the elements in the returned message. Can be any object that numpy
+                [dtype][numpy.dtype] supports. For messages that are of scalar type (i.e., a single number)
                 it is more efficient to not specify `dtype` but to pass the returned message to the
                 [int][] or [float][] class to convert the message to the appropriate numeric type.
+                See [MessageDataType][msl.equipment._types.MessageDataType] for more details.
             fmt: The format that the returned message data is in. Ignored if `dtype` is `None`.
-                 See [from_bytes][msl.equipment.utils.from_bytes] for more details.
+                See [MessageFormat][msl.equipment._types.MessageFormat] for more details.
             size: The number of bytes to read. Ignored if the value is `None`.
 
         Returns:
@@ -293,7 +293,7 @@ class Prologix(Interface, regex=REGEX):
         if self._query_auto:
             _ = self._controller.write(b"++auto 1")
 
-        reply = self._controller.query(message, delay=delay, decode=decode, dtype=dtype, fmt=fmt, size=size)  # type: ignore[misc, arg-type]
+        reply = self._controller.query(message, delay=delay, decode=decode, dtype=dtype, fmt=fmt, size=size)  # type: ignore[arg-type]
 
         if self._query_auto:
             _ = self._controller.write(b"++auto 0")
@@ -317,7 +317,7 @@ class Prologix(Interface, regex=REGEX):
         *,
         decode: Literal[True] = True,
         dtype: None = None,
-        fmt: MessageFormat | None = ...,
+        fmt: MessageFormat = ...,
         size: int | None = ...,
     ) -> str: ...
 
@@ -327,7 +327,7 @@ class Prologix(Interface, regex=REGEX):
         *,
         decode: Literal[False] = False,
         dtype: None = None,
-        fmt: MessageFormat | None = ...,
+        fmt: MessageFormat = ...,
         size: int | None = ...,
     ) -> bytes: ...
 
@@ -337,7 +337,7 @@ class Prologix(Interface, regex=REGEX):
         *,
         decode: bool = ...,
         dtype: MessageDataType = ...,
-        fmt: MessageFormat | None = ...,
+        fmt: MessageFormat = ...,
         size: int | None = ...,
     ) -> NumpyArray1D: ...
 
@@ -346,7 +346,7 @@ class Prologix(Interface, regex=REGEX):
         *,
         decode: bool = True,
         dtype: MessageDataType | None = None,
-        fmt: MessageFormat | None = None,
+        fmt: MessageFormat = None,
         size: int | None = None,
     ) -> bytes | str | NumpyArray1D:
         """Read a message from the equipment.
@@ -356,13 +356,13 @@ class Prologix(Interface, regex=REGEX):
         Args:
             decode: Whether to decode the message (i.e., convert the message to a [str][])
                 or keep the message as [bytes][]. Ignored if `dtype` is not `None`.
-            dtype: The data type of the elements in the message. Can be any object
-                that numpy [dtype][numpy.dtype] supports. See [from_bytes][msl.equipment.utils.from_bytes]
-                for more details. For messages that are of scalar type (i.e., a single number)
+            dtype: The data type of the elements in the returned message. Can be any object that numpy
+                [dtype][numpy.dtype] supports. For messages that are of scalar type (i.e., a single number)
                 it is more efficient to not specify `dtype` but to pass the returned message to the
                 [int][] or [float][] class to convert the message to the appropriate numeric type.
-            fmt: The format that the message data is in. Ignored if `dtype` is `None`.
-                 See [from_bytes][msl.equipment.utils.from_bytes] for more details.
+                See [MessageDataType][msl.equipment._types.MessageDataType] for more details.
+            fmt: The format that the returned message data is in. Ignored if `dtype` is `None`.
+                See [MessageFormat][msl.equipment._types.MessageFormat] for more details.
             size: The number of bytes to read. Ignored if the value is `None`.
 
         Returns:
@@ -418,18 +418,18 @@ class Prologix(Interface, regex=REGEX):
         *,
         data: Sequence1D | None = None,
         dtype: MessageDataType = "<f",
-        fmt: MessageFormat | None = "ieee",
+        fmt: MessageFormat = "ieee",
     ) -> int:
         """Write a message to the equipment.
 
         Args:
             message: The message to write to the equipment.
-            data: The data to append to `message`. See [to_bytes][msl.equipment.utils.to_bytes]
-                for more details.
+            data: The data to append to `message`.
             dtype: The data type to use to convert each element in `data` to bytes. Ignored
-                if `data` is `None`. See [to_bytes][msl.equipment.utils.to_bytes] for more details.
+                if `data` is `None`. See [MessageDataType][msl.equipment._types.MessageDataType]
+                for more details.
             fmt: The format to use to convert `data` to bytes. Ignored if `data` is `None`.
-                See [to_bytes][msl.equipment.utils.to_bytes] for more details.
+                See [MessageFormat][msl.equipment._types.MessageFormat] for more details.
 
         Returns:
             The number of bytes written.

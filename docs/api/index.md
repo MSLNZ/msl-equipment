@@ -2,22 +2,23 @@
 
 Although this package contains many classes and functions, the classes that you may typically create instances of are
 
-* [Config][]
-* [Connection][]
-* [Equipment][] &mdash; possibly a [Register][] if you only want to load an equipment register (i.e., you don't need to create [Connection][]s)
+* [Config][] &mdash; if you want to load equipment registers and communicate with equipment
+* [Connection][] &mdash; if you are only interested in communicating with equipment
+* [Register][] &mdash; if you only want to load an equipment register
 
-The following interfaces are available to communicate with equipment,
+and there are [enumeration][enumerations] classes.
 
-* [GPIB][msl.equipment.interfaces.gpib.GPIB] &mdash; Base class for GPIB communication
-* [HiSLIP][msl.equipment.interfaces.hislip.HiSLIP] &mdash; Base class for the [HiSLIP](https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf) communication protocol
-* [Prologix][msl.equipment.interfaces.prologix.Prologix] &mdash; Use [Prologix](https://prologix.biz/) hardware to establish a connection
-* [SDK][msl.equipment.interfaces.sdk.SDK] &mdash; Use the Software Development Kit (SDK) provided by the manufacturer
-* [Serial][msl.equipment.interfaces.serial.Serial] &mdash; Base class for equipment that is connected through a serial port
-* [Socket][msl.equipment.interfaces.socket.Socket] &mdash; Base class for equipment that is connected through a socket
-* [VXI11][msl.equipment.interfaces.vxi11.VXI11] &mdash; Base class for the [VXI-11](http://www.vxibus.org/specifications.html) communication protocol
-* [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] &mdash; Base class for equipment that use the [ZeroMQ](https://zeromq.org/) communication protocol
+[Interfaces][] are available to communicate with equipment, [Backends][] may be used to interface with equipment using external packages and possibly [Resources][] may be available.
 
-and the following classes may be used to interface with equipment using external packages
+!!! tip
+    You do not need to create instances of these communication classes. Calling the [Equipment.connect()][msl.equipment.schema.Equipment.connect] or [Connection.connect()][msl.equipment.schema.Connection.connect] method will automatically use the correct object for communication.
 
-* [NIDAQ][msl.equipment.interfaces.nidaq.NIDAQ] &mdash; Use the [NIDAQmx](https://nidaqmx-python.readthedocs.io/en/stable/index.html) package to establish a connection to the equipment
-* [PyVISA][msl.equipment.interfaces.pyvisa.PyVISA] &mdash; Use the [PyVISA](https://pyvisa.readthedocs.io/en/stable/index.html) package to establish a connection to the equipment
+    If you are using type annotations and/or an editor that supports code completion, you can annotate the type of the returned object to get support for these features, for example,
+
+    ```python
+    from msl.equipment import GPIB, Connection
+
+    device: GPIB = Connection("GPIB::22").connect()
+    ```
+
+The [MSLConnectionError][msl.equipment.interfaces.message_based.MSLConnectionError] and [MSLTimeoutError][msl.equipment.interfaces.message_based.MSLTimeoutError] classes are raised if there are issues when communicating with equipment.

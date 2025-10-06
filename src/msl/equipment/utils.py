@@ -91,51 +91,13 @@ def to_primitive(text: str | bytes) -> bool | float | str:
     return text
 
 
-def to_bytes(seq: Sequence1D, *, fmt: MessageFormat | None = None, dtype: MessageDataType = "<f") -> bytes:
+def to_bytes(seq: Sequence1D, *, fmt: MessageFormat = None, dtype: MessageDataType = "<f") -> bytes:
     """Convert a sequence of numbers into bytes.
 
     Args:
         seq: A 1-dimensional sequence of numbers (not a multidimensional array).
-        fmt: The format to use to convert the sequence. Possible values are:
-
-            * `None` &mdash; convert `seq` to bytes without a header.
-
-              !!! example
-                 `<byte><byte><byte>...`
-
-            * `ascii` &mdash; comma-separated ASCII characters, see the
-                  `<PROGRAM DATA SEPARATOR>` standard that is defined in Section 7.4.2.2 of
-                  [IEEE 488.2-1992](https://standards.ieee.org/ieee/488.2/718/).
-
-               !!! example
-                   `<string>,<string>,<string>,...`
-
-            * `ieee` &mdash; arbitrary block data for `SCPI` messages, see the
-                  `<DEFINITE LENGTH ARBITRARY BLOCK RESPONSE DATA>` standard that is defined in
-                  Section 8.7.9 of [IEEE 488.2-1992](https://standards.ieee.org/ieee/488.2/718/).
-
-               !!! example
-                   `#<length of num bytes value><num bytes><byte><byte><byte>...`
-
-            * `hp` &mdash; the HP-IB data transfer standard, i.e., the `FORM#` command
-                  option. See the programming guide for an
-                  [HP 8530A](https://www.keysight.com/us/en/product/8530A/microwave-receiver.html#resources)
-                  for more details.
-
-               !!! example
-                   `#A<num bytes as uint16><byte><byte><byte>...`
-
-        dtype: The data type to use to convert each element in `seq` to. If `fmt` is
-            `ascii` then `dtype` must be of type [str][] and it is used as the `format_spec`
-            argument in [format][] to first convert each element in `seq` to a string,
-            and then it is encoded (e.g., ``'.2e'`` converts each element to scientific
-            notation with two digits after the decimal point). If `dtype` includes a
-            byte-order character, it is ignored. For all other values of `fmt`, the
-            `dtype` can be any object that [numpy.dtype][] supports (e.g., `'H'`,
-            `'uint16'` and [numpy.ushort][] are equivalent values to convert each element
-            to an `unsigned short`). If a byte-order character is specified then it
-            is used, otherwise the native byte order of the CPU architecture is used.
-            See [struct-format-strings][] for more details.
+        fmt: The format to use to convert the sequence.
+        dtype: The data type to use to convert each element in `seq` to.
 
     Returns:
         The `seq` converted to bytes.
@@ -173,15 +135,14 @@ def to_bytes(seq: Sequence1D, *, fmt: MessageFormat | None = None, dtype: Messag
 
 
 def from_bytes(  # noqa: C901, PLR0912, PLR0915
-    buffer: bytes | bytearray | str, fmt: MessageFormat | None = "ieee", dtype: MessageDataType = "<f"
+    buffer: bytes | bytearray | str, fmt: MessageFormat = "ieee", dtype: MessageDataType = "<f"
 ) -> NumpyArray1D:
     """Convert bytes into an array.
 
     Args:
         buffer: A byte buffer. Can be an already-decoded buffer of type [str][], but only if `fmt` is `"ascii"`.
-        fmt: The format that `buffer` is in. See [to_bytes][msl.equipment.utils.to_bytes] for more details.
-        dtype: The data type of each element in `buffer`. Can be any object that [numpy.dtype][] supports.
-            See [to_bytes][msl.equipment.utils.to_bytes] for more details.
+        fmt: The format that `buffer` is in.
+        dtype: The data type of each element in `buffer`.
 
     Returns:
         The input buffer as a numpy array.

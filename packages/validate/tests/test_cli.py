@@ -18,7 +18,7 @@ from msl.io import is_admin
 
 def test_recursive() -> None:
     files = recursive(Path("tests"))
-    assert sorted(files) == [
+    assert files == [
         Path("tests/resources/config.xml"),
         Path("tests/resources/connections.xml"),
         Path("tests/resources/light/register.xml"),

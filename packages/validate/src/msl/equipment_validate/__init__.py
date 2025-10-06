@@ -37,7 +37,7 @@ def recursive(directory: Path) -> list[Path]:
             continue
         files.append(file)
 
-    return files
+    return sorted(files)
 
 
 def configure_logging(*, quiet: int, verbose: int) -> logging.Logger:

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
+    <equipment enteredBy="Joseph Borbely">
+        <id>MSLE.M.001</id>
+        <manufacturer>Sky-net</manufacturer>
+        <model>T-1000</model>
+        <serial>00000000001</serial>
+        <description>A mimetic poly-alloy (liquid metal)</description>
+        <specifications/>
+        <location>Kibble Balance</location>
+        <status>Active</status>
+        <loggable>false</loggable>
+        <traceable>true</traceable>
+        <calibrations/>
+        <maintenance/>
+        <alterations/>
+        <firmware/>
+        <specifiedRequirements/>
+        <referenceMaterials/>
+        <qualityManual/>
+    </equipment>
+    <equipment enteredBy="Joseph Borbely">
+        <id>MSLE.M.003</id>
+        <manufacturer>Sky-net</manufacturer>
+        <model>T-1000</model>
+        <serial>00000000003</serial>
+        <description>A mimetic poly-alloy (liquid metal)</description>
+        <specifications/>
+        <location>Kibble Balance</location>
+        <status>Active</status>
+        <loggable>false</loggable>
+        <traceable>true</traceable>
+        <calibrations/>
+        <maintenance/>
+        <alterations/>
+        <firmware/>
+        <specifiedRequirements/>
+        <referenceMaterials/>
+        <qualityManual/>
+    </equipment>
+    <equipment enteredBy="Joseph Borbely">
+        <id>MSLE.M.002</id>
+        <manufacturer>Sky-net</manufacturer>
+        <model>T-1000</model>
+        <serial>00000000002</serial>
+        <description>A mimetic poly-alloy (liquid metal)</description>
+        <specifications/>
+        <location>Kibble Balance</location>
+        <status>Active</status>
+        <loggable>false</loggable>
+        <traceable>true</traceable>
+        <calibrations/>
+        <maintenance/>
+        <alterations/>
+        <firmware/>
+        <specifiedRequirements/>
+        <referenceMaterials/>
+        <qualityManual/>
+    </equipment>
+</register>

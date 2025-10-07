@@ -3,12 +3,10 @@
 from __future__ import annotations
 
 import logging
-import sys
 from dataclasses import dataclass
 from hashlib import sha256
 from pathlib import Path
 from typing import TYPE_CHECKING
-from urllib.parse import urlparse
 
 import numpy as np
 from GTC.persistence import (  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
@@ -94,7 +92,7 @@ class Summary:
 def _bool(value: str) -> None:
     """A bool in the table data must only be allowed to have certain values."""
     if value not in booleans:
-        expected = ", ".join(booleans)
+        expected = ", ".join(sorted(booleans))
         msg = f"Invalid bool value {value}, must be one of: {expected}"
         raise ValueError(msg)
 
@@ -295,7 +293,7 @@ def recursive_validate(  # noqa: C901, PLR0913
             for id_, (file1, line1) in all_ids.items():
                 if id_ in ids:
                     file2, line2 = ids[id_]
-                    msg = f"Duplicate equipment ID ({id_}) also found in {file1}, line {line1}"
+                    msg = f"Duplicate equipment ID '{id_}' also found in {file1}, line {line1}"
                     log_error(file=file2, line=line2, message=msg, uri_scheme=uri_scheme, no_colour=no_colour)
                     if summary.check_exit():
                         return summary
@@ -451,7 +449,7 @@ def _eval(*, text: str, names: list[str], info: Info, line: int) -> bool:
     return True
 
 
-def validate_file(file: Element, *, roots: list[str], info: Info, name: str) -> bool:  # noqa: C901, PLR0912
+def validate_file(file: Element, *, roots: list[str], info: Info, name: str) -> bool:  # noqa: C901
     """Validates that the file exists and that the SHA-256 checksum is correct.
 
     Returns whether the element is valid.
@@ -460,32 +458,32 @@ def validate_file(file: Element, *, roots: list[str], info: Info, name: str) -> 
 
     url, checksum = file[:2]  # schema forces order
     assert isinstance(url.text, str)  # noqa: S101
-    u = urlparse(url.text)
+
+    index = url.text.find(":")
+    if (index == -1) or (
+        index == 1 and url.text[0].lower() in "abcdefghijklmnopqrstuvwxyz"  # assume Windows drive letter
+    ):
+        scheme, text = "", url.text
+    else:
+        scheme, text = url.text[:index], url.text[index + 1 :].lstrip("/")
 
     # check len() > 1 to ignore a Windows drive letter being interpreted as a scheme
-    if len(u.scheme) > 1 and u.scheme != "file":
-        msg = f"The url scheme {u.scheme!r} is not yet supported for validation [url={url.text!r}]"
+    if len(scheme) > 1 and scheme != "file":
+        msg = f"The url scheme {scheme!r} is not yet supported for validation [url={url.text}]"
         log_error(
             file=info.url, line=url.sourceline or 0, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour
         )
         return False
 
-    path: Path | None = Path(url.text)
-    if not path or not path.is_file():
-        path = None
+    path = Path(text)
+    if not path.is_file():
         for root in roots:
-            path = Path(root)
-            if u.netloc:
-                if ":" in u.netloc:
-                    path /= u.netloc
-                else:
-                    path /= f"//{u.netloc}"
-            path /= u.path.lstrip("/") if sys.platform == "win32" else u.path
-            if path.is_file():
+            p = Path(root) / path
+            if p.is_file():
+                path = p
                 break
-            path = None
 
-    if path is None:
+    if not path.is_file():
         msg = f"Cannot find '{url.text}'"
         if roots:
             msg += f", using the roots: {', '.join(roots)}"
@@ -670,7 +668,7 @@ def validate_table(table: Element, *, info: Info) -> bool:  # noqa: C901, PLR091
                 msg = f"Invalid table <type> {typ!r} for {info.debug_name!r}, must be one of: {allowed}"
                 log_error(
                     file=info.url,
-                    line=sourceline,
+                    line=e_types.sourceline or 0,
                     message=msg,
                     uri_scheme=info.uri_scheme,
                     no_colour=info.no_colour,

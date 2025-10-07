@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 from pathlib import Path
 
@@ -14,6 +16,8 @@ from msl.equipment_validate import (
 )
 from msl.equipment_validate.validate import Summary
 from msl.io import is_admin
+
+root_path = Path(__file__).parent.parent.parent.parent / "tests"
 
 
 def test_recursive() -> None:
@@ -146,7 +150,7 @@ def test_main(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[st
     caplog.set_level(logging.INFO, "msl")
 
     with pytest.raises(SystemExit) as e:
-        main([])
+        main([str(root_path)])
 
     assert e.value.code == 3  # 3 issues
 
@@ -309,22 +313,38 @@ def test_cli_version_roots(caplog: pytest.LogCaptureFixture, capsys: pytest.Capt
         _ = r[9]
 
 
-def test_cli_missing_xml_file(caplog: pytest.LogCaptureFixture) -> None:
-    caplog.set_level(logging.INFO, "msl")
+def test_cli_missing_xml_file(caplog: pytest.LogCaptureFixture, reset_summary: None) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+    caplog.set_level(logging.ERROR, "msl")
 
     code = cli(["missing.xml"])
     assert code == 1
 
     r = caplog.records
-    assert r[-1].levelname == "ERROR"
-    assert r[-1].message.endswith("missing.xml does not exist")
+    assert r[0].levelname == "ERROR"
+    assert r[0].message.endswith("Cannot parse missing.xml")
+
+
+def test_cli_missing_directory(caplog: pytest.LogCaptureFixture, reset_summary: None) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+    caplog.set_level(logging.ERROR, "msl")
+
+    code = cli(["missing"])
+    assert code == 1
+
+    r = caplog.records
+    assert r[0].levelname == "ERROR"
+    assert r[0].message.endswith("Directory not found")
+    assert len(r) == 1
 
 
 def test_cli_no_colour(reset_summary: None, capsys: pytest.CaptureFixture[str]) -> None:
     assert reset_summary is None
     assert Summary.num_issues == 0
 
-    code = cli(["--no-colour"])
+    code = cli(["--no-colour", str(root_path)])
     assert code == 3
 
     out, err = capsys.readouterr()
@@ -336,7 +356,7 @@ def test_cli_success_skipped(reset_summary: None, capsys: pytest.CaptureFixture[
     assert reset_summary is None
     assert Summary.num_issues == 0
 
-    code = cli(["--skip-checksum", "-n"])
+    code = cli(["--skip-checksum", "-n", str(root_path)])
     assert code == 0
 
     out, err = capsys.readouterr()
@@ -354,3 +374,76 @@ def test_cli_success(reset_summary: None, capsys: pytest.CaptureFixture[str]) ->
     out, err = capsys.readouterr()
     assert not err
     assert out == "Success, no issues found!\n"
+
+
+def test_duplicate_eid_exit_first(reset_summary: None, caplog: pytest.LogCaptureFixture) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    caplog.set_level("ERROR", "msl.equipment_validate")
+
+    registers = Path(__file__).parent / "registers"
+    assert cli([str(registers), str(root_path), "--no-colour", "--exit-first"]) == 1
+
+    register_a = registers / "duplicate_id_a.xml"
+    register_b = registers / "duplicate_id_b.xml"
+
+    r = caplog.records
+    assert r[0].message == (
+        f"ERROR {register_b}:23:0\n  Duplicate equipment ID 'MSLE.M.002' also found in {register_a}, line 42"
+    )
+    assert len(r) == 1
+
+
+def test_duplicate_eid_different_directories(reset_summary: None, caplog: pytest.LogCaptureFixture) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    caplog.set_level("ERROR", "msl.equipment_validate")
+
+    registers_path = Path(__file__).parent / "registers"
+
+    # 2 <id> errors
+    # 3 <file> errors
+    assert cli(["--no-colour", str(registers_path), str(root_path)]) == 5
+
+    register_a = registers_path / "duplicate_id_a.xml"
+    register_b = registers_path / "duplicate_id_b.xml"
+
+    r = caplog.records
+    assert r[0].message == (
+        f"ERROR {register_b}:23:0\n  Duplicate equipment ID 'MSLE.M.002' also found in {register_a}, line 42"
+    )
+
+    assert r[1].levelname == "ERROR"
+    lines = r[1].message.splitlines()
+    assert lines[0].endswith("register.xml:127:0")
+    assert lines[1].startswith("  The SHA-256 checksum")
+    assert lines[2] == "  expected: 7a91267cfb529388a99762b891ee4b7a12463e83b5d55809f76a0c8e76c71886"
+    assert lines[3] == "  <sha256>: 70d79d2eb24dc2515faaf4ab7fa3540e5a73ca6080181908a0ea87a309293609"
+
+    mass_register = Path(root_path) / "resources" / "mass" / "register.xml"
+    assert r[2].message == (
+        f"ERROR {mass_register}:4:0\n  Duplicate equipment ID 'MSLE.M.001' also found in {register_a}, line 4"
+    )
+
+    assert r[3].levelname == "ERROR"
+    lines = r[3].message.splitlines()
+    assert lines[0].endswith("register2.xml:32:0")
+    assert lines[1].startswith("  Cannot find")
+
+    assert r[4].levelname == "ERROR"
+    lines = r[4].message.splitlines()
+    assert lines[0].endswith("register2.xml:26:0")
+    assert lines[1].startswith("  Cannot find")
+
+    assert len(r) == 5
+
+
+def test_no_paths(reset_summary: None) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    # 2 <id> errors
+    # 3 <file> errors
+    assert cli([]) == 5

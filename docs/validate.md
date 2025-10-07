@@ -27,7 +27,7 @@ If you used a package manager that does not automatically add the `msl-equipment
 
 ### Command alias
 
-You may also want to create a command alias, since the executable name `msl-equipment-validate` is rather long. The following assigns an alias `check` for the `msl-equipment-validate` executable.
+You may also want to create a command alias, since the executable name `msl-equipment-validate` is rather long. The following assigns an alias `check` for the `msl-equipment-validate` executable, but you should pick an alias that you prefer.
 
 === "Unix"
     Add the following to your `.bashrc` (or `.zshrc`) file
@@ -92,3 +92,7 @@ or to display the help
 ```console
 msl-equipment help validate
 ```
+
+## Release Notes {: #validate-release-notes }
+
+--8<-- "packages/validate/CHANGELOG.md"

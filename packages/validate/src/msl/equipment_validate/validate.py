@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import sys
 from dataclasses import dataclass
 from hashlib import sha256
 from pathlib import Path
@@ -34,6 +35,8 @@ BLUE = "\033[94m"
 PURPLE = "\033[95m"
 CYAN = "\033[96m"
 RESET = "\033[0m"
+
+IS_WINDOWS = sys.platform == "win32"
 
 booleans = {"true", "True", "TRUE", "1", "false", "False", "FALSE", "0"}
 namespace = "https://measurement.govt.nz/equipment-register"
@@ -449,7 +452,7 @@ def _eval(*, text: str, names: list[str], info: Info, line: int) -> bool:
     return True
 
 
-def validate_file(file: Element, *, roots: list[str], info: Info, name: str) -> bool:  # noqa: C901
+def validate_file(file: Element, *, roots: list[str], info: Info, name: str) -> bool:  # noqa: C901, PLR0912
     """Validates that the file exists and that the SHA-256 checksum is correct.
 
     Returns whether the element is valid.
@@ -465,7 +468,11 @@ def validate_file(file: Element, *, roots: list[str], info: Info, name: str) -> 
     ):
         scheme, text = "", url.text
     else:
-        scheme, text = url.text[:index], url.text[index + 1 :].lstrip("/")
+        scheme, text = url.text[:index], url.text[index + 1 :]
+        if IS_WINDOWS:
+            text = text.lstrip("/")
+        elif text[:2] == "//":
+            text = text[2:]
 
     # check len() > 1 to ignore a Windows drive letter being interpreted as a scheme
     if len(scheme) > 1 and scheme != "file":

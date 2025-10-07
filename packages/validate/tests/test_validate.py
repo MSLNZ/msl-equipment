@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import pytest
@@ -722,7 +723,6 @@ def test_file_invalid_scheme(info: Info, caplog: pytest.LogCaptureFixture) -> No
         "",
         "file:",  # rfc8089#appendix-E.2
         "file://",
-        "file:///",
     ],
 )
 def test_file_relative(info: Info, scheme: str) -> None:
@@ -735,6 +735,19 @@ def test_file_relative(info: Info, scheme: str) -> None:
 
     registers = Path(__file__).parent / "registers"
     assert validate_file(etree.XML(file), info=info, roots=["nope", str(registers)], name="file")
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="only test on Windows")
+def test_file_relative_windows(info: Info) -> None:
+    file = """
+        <file>
+            <url>file:///duplicate_id_a.xml</url>
+            <sha256>90dce307101101c307f40d9aa688401339d4cc6ea39704459e68a6146984dded</sha256>
+        </file>
+    """
+
+    registers = Path(__file__).parent / "registers"
+    assert validate_file(etree.XML(file), info=info, roots=[str(registers)], name="file")
 
 
 def test_file_cannot_find_with_roots(info: Info, caplog: pytest.LogCaptureFixture) -> None:
@@ -778,7 +791,6 @@ def test_file_cannot_find_without_roots(info: Info, caplog: pytest.LogCaptureFix
         "",
         "file:",  # rfc8089#appendix-E.2
         "file://",
-        "file:///",
     ],
 )
 def test_file_absolute(info: Info, scheme: str) -> None:
@@ -792,3 +804,18 @@ def test_file_absolute(info: Info, scheme: str) -> None:
     """
 
     assert validate_file(etree.XML(file), info=info, roots=[], name="file")
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="only test on Windows")
+def test_file_absolute_windows(info: Info) -> None:
+    register = (Path(__file__).parent / "registers" / "duplicate_id_a.xml").resolve()
+
+    file = f"""
+        <file>
+            <url>file:///{register}</url>
+            <sha256>90dce307101101c307f40d9aa688401339d4cc6ea39704459e68a6146984dded</sha256>
+        </file>
+    """
+
+    registers = Path(__file__).parent / "registers"
+    assert validate_file(etree.XML(file), info=info, roots=[str(registers)], name="file")

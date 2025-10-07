@@ -160,4 +160,4 @@ def cli(argv: Sequence[str] | None = None) -> int:
 
 def main(argv: Sequence[str] | None = None) -> NoReturn:
     """Main CLI entry point."""
-    sys.exit(cli(argv))
+    sys.exit(cli(argv or sys.argv[1:]))

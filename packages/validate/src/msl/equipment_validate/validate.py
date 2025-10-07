@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import sys
 from dataclasses import dataclass
 from hashlib import sha256
 from pathlib import Path
@@ -35,8 +34,6 @@ BLUE = "\033[94m"
 PURPLE = "\033[95m"
 CYAN = "\033[96m"
 RESET = "\033[0m"
-
-IS_WINDOWS = sys.platform == "win32"
 
 booleans = {"true", "True", "TRUE", "1", "false", "False", "FALSE", "0"}
 namespace = "https://measurement.govt.nz/equipment-register"
@@ -464,18 +461,20 @@ def validate_file(file: Element, *, roots: list[str], info: Info, name: str) -> 
 
     index = url.text.find(":")
     if (index == -1) or (
-        index == 1 and url.text[0].lower() in "abcdefghijklmnopqrstuvwxyz"  # assume Windows drive letter
+        index == 1 and len(url.text) > 2 and url.text[2] in ("/", "\\")  # noqa: PLR2004
     ):
-        scheme, text = "", url.text
+        scheme, text = "", url.text  # assume Windows drive letter
     else:
         scheme, text = url.text[:index], url.text[index + 1 :]
-        if IS_WINDOWS:
-            text = text.lstrip("/")
-        elif text[:2] == "//":
+        if text[:2] == "//":
             text = text[2:]
 
-    # check len() > 1 to ignore a Windows drive letter being interpreted as a scheme
-    if len(scheme) > 1 and scheme != "file":
+        # Check for "/c:/path/to/file.txt", which could come from "file:///c:/path/to/file.txt"
+        # https://www.rfc-editor.org/rfc/rfc8089.html#appendix-E.2
+        if text.startswith("/") and len(text) > 3 and text[2] == ":" and text[3] in ("/", "\\"):  # noqa: PLR2004
+            text = text.lstrip("/")
+
+    if scheme and scheme != "file":
         msg = f"The url scheme {scheme!r} is not yet supported for validation [url={url.text}]"
         log_error(
             file=info.url, line=url.sourceline or 0, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour

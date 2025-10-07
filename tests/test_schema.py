@@ -573,6 +573,9 @@ def test_file() -> None:
         ("filename.xls", ""),
         (":filename.xls", ""),
         (r"C:\filename.xls", ""),
+        ("C:", "C"),  # `:` is not followed by `/` or `\`
+        ("C:/filename.xls", ""),
+        ("C:filename.xls", "C"),
         (r"ab:\filename.xls", "ab"),
         ("file://host/path", "file"),
         ("https://www.measurement.govt.nz/", "https"),

@@ -717,6 +717,25 @@ def test_file_invalid_scheme(info: Info, caplog: pytest.LogCaptureFixture) -> No
     assert len(r) == 1
 
 
+def test_file_fixing_scheme_and_windows_drive(info: Info, caplog: pytest.LogCaptureFixture) -> None:
+    file = """
+        <file>
+            <url>c://host/file</url>
+            <sha256>abc</sha256>
+        </file>
+    """
+
+    assert not validate_file(etree.XML(file), info=info, roots=[], name="file")
+
+    r = caplog.records
+
+    assert r[0].message == (
+        "ERROR register.xml:3:0\n  Cannot find 'c://host/file', include --root arguments if the url is a relative path"
+    )
+
+    assert len(r) == 1
+
+
 @pytest.mark.parametrize(
     "scheme",
     [
@@ -737,19 +756,6 @@ def test_file_relative(info: Info, scheme: str) -> None:
     assert validate_file(etree.XML(file), info=info, roots=["nope", str(registers)], name="file")
 
 
-@pytest.mark.skipif(sys.platform != "win32", reason="only test on Windows")
-def test_file_relative_windows(info: Info) -> None:
-    file = """
-        <file>
-            <url>file:///do_not_modify_this_file.txt</url>
-            <sha256>699521aa6d52651ef35ee84232f657490eb870543119810f2af8bc68496d693c</sha256>
-        </file>
-    """
-
-    registers = Path(__file__).parent / "registers"
-    assert validate_file(etree.XML(file), info=info, roots=[str(registers)], name="file")
-
-
 def test_file_cannot_find_with_roots(info: Info, caplog: pytest.LogCaptureFixture) -> None:
     file = """
         <file>
@@ -761,9 +767,7 @@ def test_file_cannot_find_with_roots(info: Info, caplog: pytest.LogCaptureFixtur
     assert not validate_file(etree.XML(file), info=info, roots=["nope", "never/here"], name="file")
 
     r = caplog.records
-    assert r[0].message == (
-        "ERROR register.xml:4:0\n  Cannot find 'file.xml', using the roots: nope, never/here"
-    )
+    assert r[0].message == ("ERROR register.xml:4:0\n  Cannot find 'file.xml', using the roots: nope, never/here")
     assert len(r) == 1
 
 
@@ -779,8 +783,7 @@ def test_file_cannot_find_without_roots(info: Info, caplog: pytest.LogCaptureFix
 
     r = caplog.records
     assert r[0].message == (
-        "ERROR register.xml:4:0\n"
-        "  Cannot find 'file.xml', include --root arguments if the url is a relative path"
+        "ERROR register.xml:4:0\n  Cannot find 'file.xml', include --root arguments if the url is a relative path"
     )
     assert len(r) == 1
 
@@ -806,16 +809,28 @@ def test_file_absolute(info: Info, scheme: str) -> None:
     assert validate_file(etree.XML(file), info=info, roots=[], name="file")
 
 
-@pytest.mark.skipif(sys.platform != "win32", reason="only test on Windows")
-def test_file_absolute_windows(info: Info) -> None:
+def test_file_absolute_rfc8089_e_2_1(info: Info) -> None:
+    # rfc8089#appendix-E.2.1
+    # file:///c:/path/to/file.txt
     register = (Path(__file__).parent / "registers" / "do_not_modify_this_file.txt").resolve()
-
     file = f"""
         <file>
             <url>file:///{register}</url>
             <sha256>699521aa6d52651ef35ee84232f657490eb870543119810f2af8bc68496d693c</sha256>
         </file>
     """
-
     registers = Path(__file__).parent / "registers"
-    assert validate_file(etree.XML(file), info=info, roots=[str(registers)], name="file")
+    result = validate_file(etree.XML(file), info=info, roots=[str(registers)], name="file")
+    assert result is (sys.platform == "win32")
+
+
+def test_file_relative_rfc8089_e_2_1(info: Info) -> None:
+    # rfc8089#appendix-E.2.1, but with a relative path
+    file = """
+        <file>
+            <url>file:///do_not_modify_this_file.txt</url>
+            <sha256>699521aa6d52651ef35ee84232f657490eb870543119810f2af8bc68496d693c</sha256>
+        </file>
+    """
+    registers = Path(__file__).parent / "registers"
+    assert not validate_file(etree.XML(file), info=info, roots=[str(registers)], name="file")

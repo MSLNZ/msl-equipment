@@ -864,8 +864,8 @@ class File:
             return ""
 
         scheme = self.url[:index]
-        if index == 1 and scheme.lower() in "abcdefghijklmnopqrstuvwxyz":  # assume Windows drive letter
-            return ""
+        if index == 1 and len(self.url) > 2 and self.url[2] in ("/", "\\"):  # noqa: PLR2004
+            return ""  # assume Windows drive letter
 
         return scheme
 

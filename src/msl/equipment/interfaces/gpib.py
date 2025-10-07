@@ -341,7 +341,9 @@ class GPIB(MessageBased, regex=REGEX):
         [MessageBased][msl.equipment.interfaces.message_based.MessageBased].
 
         Attributes: Connection Properties:
-            eos_mode (int): The end-of-string mode. _Default: `0`_
+            eos_mode (int): Specifies the end-of-string character and mode
+                (see [eos](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibeos.html) for details).
+                _Default: `0`_
             send_eoi (bool): Whether to enable (`True`) or disable (`False`) the assertion of the EOI signal.
                 _Default: `True`_
         """

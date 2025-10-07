@@ -22,3 +22,54 @@ and there are [enumeration][enumerations] classes.
     ```
 
 The [MSLConnectionError][msl.equipment.interfaces.message_based.MSLConnectionError] and [MSLTimeoutError][msl.equipment.interfaces.message_based.MSLTimeoutError] classes are raised if there are issues when communicating with equipment.
+
+## Command Line Interface
+
+A command-line interface is also available to find equipment, [validate][] XML files against the schema or start the [web application][]. Validation and the web application require that the `msl-equipment-validate` and `msl-equipment-webapp` packages are installed.
+
+To see the help, run
+
+```console
+msl-equipment help
+```
+
+or to display the help for a specific command
+
+```console
+msl-equipment help find
+```
+
+### find
+
+Run the `find` command to find equipment (or Serial ports) that are available.
+
+```console
+msl-equipment find
+```
+
+This will display a description about the interface, the equipment and the address(es) that may be used to connect to the equipment. An example output is the following.
+
+```console
+ASRL Ports
+  COM1 [Communications Port (COM1)]
+  COM2 [Communications Port (COM2)]
+  COM3 [Intel(R) Active Management Technology - SOL (COM3)]
+GPIB Devices
+  GPIB0::5::INSTR
+LXI Devices
+  315W Multi Range Triple Output PSU [webserver: http://169.254.100.2]
+    TCPIP::169.254.100.2::9221::SOCKET
+    TCPIP::169.254.100.2::inst0::INSTR
+  34465A Digital Multimeter [webserver: http://169.254.100.3]
+    TCPIP::169.254.100.3::5025::SOCKET
+    TCPIP::169.254.100.3::hislip0::INSTR
+    TCPIP::169.254.100.3::inst0::INSTR
+VXI11 Devices
+  34972A Data Acquisition / Switch Unit [webserver: http://10.12.102.15]
+    TCPIP::10.12.102.15::5025::SOCKET
+    TCPIP::10.12.102.15::inst0::INSTR
+  E5810 (00-21-B3-1F-01-CD) [webserver: http://10.12.102.31]
+    TCPIP::10.12.102.31::inst0::INSTR
+  E5810 (43:8E:5A:06:23:EE) [webserver: http://10.12.102.2]
+    TCPIP::10.12.102.2::inst0::INSTR
+```

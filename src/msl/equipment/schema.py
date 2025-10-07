@@ -61,6 +61,8 @@ numpy_schema_map = {
     "O": "string",
 }
 
+extra_dataclass_kwargs = {} if sys.version_info[:2] < (3, 10) else {"kw_only": True, "slots": True}
+
 
 class _Indent:
     table_data: int = 0
@@ -185,7 +187,7 @@ class Accessories(Any):
     """The element's name."""
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class Alteration:
     """Represents the [alteration][type_alteration] element in an equipment register.
 
@@ -255,7 +257,7 @@ class Conditions(Any):
     """The element's name."""
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class CapitalExpenditure:
     """Represents the [capitalExpenditure][type_capitalExpenditure] element in an equipment register.
 
@@ -317,7 +319,7 @@ class CapitalExpenditure:
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class Financial:
     """Represents the [financial][type_financial] element in an equipment register.
 
@@ -381,7 +383,7 @@ class Financial:
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class Firmware:
     """Represents a [firmware][type_firmware] `<version>` sub-element in an equipment register.
 
@@ -420,7 +422,7 @@ class Firmware:
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class CompletedTask:
     """Represents the [completedTask][type_completedTask] element in an equipment register.
 
@@ -477,7 +479,7 @@ class CompletedTask:
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class PlannedTask:
     """Represents the [plannedTask][type_plannedTask] element in an equipment register.
 
@@ -527,7 +529,7 @@ class PlannedTask:
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class Maintenance:
     """Represents the [maintenance][type_maintenance] element in an equipment register.
 
@@ -613,7 +615,7 @@ class Range(NamedTuple):
         return True
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class Evaluable:
     r"""Represents the `<value>` and `<uncertainty>` XML elements in an [equation][type_equation].
 
@@ -665,7 +667,7 @@ class Evaluable:
         return out
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class Equation:
     """Represents the [equation][type_equation] element in an equipment register.
 
@@ -752,7 +754,7 @@ class Equation:
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class Competency:
     """Represents the [competency][type_competency] element in an equipment register.
 
@@ -804,7 +806,7 @@ class Competency:
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class File:
     """Represents the [file][type_file] element in an equipment register.
 
@@ -884,7 +886,7 @@ class File:
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class Deserialised:
     """Represents the opposite of the [serialised][type_serialised] element in an equipment register.
 
@@ -958,7 +960,7 @@ class Deserialised:
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class Adjustment:
     """An adjustment of the equipment.
 
@@ -1002,7 +1004,7 @@ class Adjustment:
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class DigitalReport:
     """Represents the [digitalReport][type_digitalReport] element in an equipment register.
 
@@ -1086,7 +1088,7 @@ def _cvd_resistance(  # noqa: PLR0913
     )
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class CVDEquation:
     r"""The Callendar-Van Dusen (CVD) equation based on the [cvdCoefficients][type_cvdCoefficients] element in an equipment register.
 
@@ -1469,7 +1471,7 @@ class Table(np.ndarray):
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class PerformanceCheck:
     """Represents the [performanceCheck][type_performanceCheck] element in an equipment register.
 
@@ -1631,7 +1633,7 @@ class PerformanceCheck:
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class IssuingLaboratory:
     """Information about the laboratory that issued a calibration report.
 
@@ -1674,7 +1676,7 @@ class IssuingLaboratory:
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class Report:
     """Represents the [report][type_report] element in an equipment register.
 
@@ -1874,7 +1876,7 @@ class Report:
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class Component:
     """Represents the [component][type_component] element in an equipment register.
 
@@ -1953,7 +1955,7 @@ class Component:
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class Measurand:
     """Represents the [measurand][type_measurand] element in an equipment register.
 
@@ -2006,7 +2008,7 @@ class Measurand:
         return e
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class QualityManual:
     """Represents the [qualityManual][type_qualityManual] element in an equipment register.
 
@@ -2192,17 +2194,17 @@ class Latest:
         return ask_date >= self.next_calibration_date
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class LatestReport(Latest, Report):
     """Latest calibration report."""
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **extra_dataclass_kwargs)
 class LatestPerformanceCheck(Latest, PerformanceCheck):
     """Latest performance check."""
 
 
-@dataclass(frozen=True, repr=False)
+@dataclass(frozen=True, repr=False, **extra_dataclass_kwargs)
 class Equipment:
     """Represents the [equipment][type_equipment] element in an equipment register.
 
@@ -2342,7 +2344,8 @@ class Equipment:
     def connect(self) -> _Any:  # noqa: ANN401
         """Connect to the equipment."""
         if self.connection is None:
-            super().__setattr__("connection", connections[self.id])
+            # Cannot simply call super(). Must specify (type, object) since the dataclass uses slots=True
+            super(Equipment, self).__setattr__("connection", connections[self.id])  # noqa: UP008
             assert self.connection is not None  # noqa: S101
 
         for backend in backends:

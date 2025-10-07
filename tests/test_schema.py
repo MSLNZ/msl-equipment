@@ -659,7 +659,7 @@ def test_range_bounds_invalid(value: float | ArrayLike) -> None:
 
 
 def test_evaluable_constant() -> None:
-    e = Evaluable("0.5/2", ())
+    e = Evaluable(equation="0.5/2", variables=())
     assert e.equation == "0.5/2"
     assert e.ranges == {}
     assert e() == 0.5 / 2
@@ -667,7 +667,7 @@ def test_evaluable_constant() -> None:
 
 def test_evaluable_constant_broadcasted() -> None:
     expect = 0.5 / 2
-    e = Evaluable("0.5/2", ())
+    e = Evaluable(equation="0.5/2", variables=())
     assert e.equation == "0.5/2"
     assert e.ranges == {}
     assert e() == expect
@@ -682,12 +682,12 @@ def test_evaluable_constant_broadcasted() -> None:
 
 
 def test_evaluable_1d_no_range() -> None:
-    e = Evaluable("2*pi*sin(x+0.1) - cos(x/2)", ("x",))
+    e = Evaluable(equation="2*pi*sin(x+0.1) - cos(x/2)", variables=("x",))
     assert e(x=0.1) == 2 * np.pi * np.sin(0.1 + 0.1) - np.cos(0.1 / 2)
 
 
 def test_evaluable_1d() -> None:
-    e = Evaluable("2*pi*sin(x+0.1) - cos(x/2)", ("x",), ranges={"x": Range(0, 1)})
+    e = Evaluable(equation="2*pi*sin(x+0.1) - cos(x/2)", variables=("x",), ranges={"x": Range(0, 1)})
     assert e(x=0.1) == 2 * np.pi * np.sin(0.1 + 0.1) - np.cos(0.1 / 2)
 
     # ok to include unused variables
@@ -711,7 +711,7 @@ def test_evaluable_1d() -> None:
 def test_evaluable_2d() -> None:
     eqn = "rh - 7.131e-2 - 3.951e-2*rh + 3.412e-4*pow(rh,2) + 2.465e-3*t + 1.034e-3*rh*t - 5.297e-6*pow(rh,2)*t"
     ranges = {"rh": Range(30, 80), "t": Range(15, 25)}
-    e = Evaluable(eqn, ("rh", "t"), ranges=ranges)
+    e = Evaluable(equation=eqn, variables=("rh", "t"), ranges=ranges)
     rh, t = 45, 21.3
     expect = (
         rh

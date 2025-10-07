@@ -15,7 +15,7 @@ from lxml import etree
 
 from ._version import __version__
 from .osc8 import register_uri_scheme, schemes, unregister_uri_scheme
-from .validate import GREEN, RED, RESET, YELLOW, parse, recursive_validate
+from .validate import GREEN, RED, RESET, YELLOW, log_error, parse, recursive_validate
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -122,13 +122,14 @@ def configure_parser() -> ArgumentParser:
     )
     # fmt: off
     _ = parser.add_argument(
-        "path",
-        nargs="?",
+        "paths",
+        nargs="*",
         help=(
             "Path to an equipment-register file, a connections file\n"
             "or a directory containing multiple files to recursively\n"
-            "validate. Default is to recursively validate XML files\n"
-            "starting from the current working directory."
+            "validate. Can specify multiple paths. Default is to\n"
+            "recursively validate XML files starting from the current\n"
+            "working directory."
         ),
     )
     _ = parser.add_argument(
@@ -254,7 +255,7 @@ def configure_parser() -> ArgumentParser:
     return parser
 
 
-def cli(argv: Sequence[str] | None = None) -> int:  # noqa: PLR0915
+def cli(argv: Sequence[str] | None = None) -> int:  # noqa: C901, PLR0912, PLR0915
     """CLI entry point."""
     parser = configure_parser()
     args = parser.parse_args(argv)
@@ -293,14 +294,27 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: PLR0915
     if args.version:
         return 0
 
-    path = Path(args.path or "").expanduser()
-    if not path.exists():
-        log.error("%s does not exist", path)
-        return 1
+    paths = [Path(p).expanduser() for p in args.paths]
+    if not paths:
+        files: list[Path] = recursive(Path())
+    else:
+        files = []
+        for path in paths:
+            if path.suffix:
+                files.append(path)
+            elif path.is_dir():
+                files.extend(recursive(path))
+            else:
+                log_error(
+                    file=path,
+                    line=0,
+                    no_colour=args.no_colour,
+                    uri_scheme=args.link,
+                    message="Directory not found",
+                )
 
     er_schema = etree.XMLSchema(er_tree)
     c_schema = etree.XMLSchema(c_tree)
-    files = [path] if path.is_file() else recursive(path)
     summary = recursive_validate(
         files=files,
         er_schema=er_schema,

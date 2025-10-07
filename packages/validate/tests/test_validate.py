@@ -728,8 +728,8 @@ def test_file_invalid_scheme(info: Info, caplog: pytest.LogCaptureFixture) -> No
 def test_file_relative(info: Info, scheme: str) -> None:
     file = f"""
         <file>
-            <url>{scheme}duplicate_id_a.xml</url>
-            <sha256>90dce307101101c307f40d9aa688401339d4cc6ea39704459e68a6146984dded</sha256>
+            <url>{scheme}do_not_modify_this_file.txt</url>
+            <sha256>699521aa6d52651ef35ee84232f657490eb870543119810f2af8bc68496d693c</sha256>
         </file>
     """
 
@@ -741,8 +741,8 @@ def test_file_relative(info: Info, scheme: str) -> None:
 def test_file_relative_windows(info: Info) -> None:
     file = """
         <file>
-            <url>file:///duplicate_id_a.xml</url>
-            <sha256>90dce307101101c307f40d9aa688401339d4cc6ea39704459e68a6146984dded</sha256>
+            <url>file:///do_not_modify_this_file.txt</url>
+            <sha256>699521aa6d52651ef35ee84232f657490eb870543119810f2af8bc68496d693c</sha256>
         </file>
     """
 
@@ -754,15 +754,15 @@ def test_file_cannot_find_with_roots(info: Info, caplog: pytest.LogCaptureFixtur
     file = """
         <file>
 
-            <url>duplicate_id_a.xml</url>
-            <sha256>90dce307101101c307f40d9aa688401339d4cc6ea39704459e68a6146984dded</sha256>
+            <url>file.xml</url>
+            <sha256>whatever</sha256>
         </file>
     """
     assert not validate_file(etree.XML(file), info=info, roots=["nope", "never/here"], name="file")
 
     r = caplog.records
     assert r[0].message == (
-        "ERROR register.xml:4:0\n  Cannot find 'duplicate_id_a.xml', using the roots: nope, never/here"
+        "ERROR register.xml:4:0\n  Cannot find 'file.xml', using the roots: nope, never/here"
     )
     assert len(r) == 1
 
@@ -771,8 +771,8 @@ def test_file_cannot_find_without_roots(info: Info, caplog: pytest.LogCaptureFix
     file = """
         <file>
 
-            <url>duplicate_id_a.xml</url>
-            <sha256>90dce307101101c307f40d9aa688401339d4cc6ea39704459e68a6146984dded</sha256>
+            <url>file.xml</url>
+            <sha256>whatever</sha256>
         </file>
     """
     assert not validate_file(etree.XML(file), info=info, roots=[], name="file")
@@ -780,7 +780,7 @@ def test_file_cannot_find_without_roots(info: Info, caplog: pytest.LogCaptureFix
     r = caplog.records
     assert r[0].message == (
         "ERROR register.xml:4:0\n"
-        "  Cannot find 'duplicate_id_a.xml', include --root arguments if the url is a relative path"
+        "  Cannot find 'file.xml', include --root arguments if the url is a relative path"
     )
     assert len(r) == 1
 
@@ -794,12 +794,12 @@ def test_file_cannot_find_without_roots(info: Info, caplog: pytest.LogCaptureFix
     ],
 )
 def test_file_absolute(info: Info, scheme: str) -> None:
-    register = (Path(__file__).parent / "registers" / "duplicate_id_a.xml").resolve()
+    register = (Path(__file__).parent / "registers" / "do_not_modify_this_file.txt").resolve()
 
     file = f"""
         <file>
             <url>{scheme}{register}</url>
-            <sha256>90dce307101101c307f40d9aa688401339d4cc6ea39704459e68a6146984dded</sha256>
+            <sha256>699521aa6d52651ef35ee84232f657490eb870543119810f2af8bc68496d693c</sha256>
         </file>
     """
 
@@ -808,12 +808,12 @@ def test_file_absolute(info: Info, scheme: str) -> None:
 
 @pytest.mark.skipif(sys.platform != "win32", reason="only test on Windows")
 def test_file_absolute_windows(info: Info) -> None:
-    register = (Path(__file__).parent / "registers" / "duplicate_id_a.xml").resolve()
+    register = (Path(__file__).parent / "registers" / "do_not_modify_this_file.txt").resolve()
 
     file = f"""
         <file>
             <url>file:///{register}</url>
-            <sha256>90dce307101101c307f40d9aa688401339d4cc6ea39704459e68a6146984dded</sha256>
+            <sha256>699521aa6d52651ef35ee84232f657490eb870543119810f2af8bc68496d693c</sha256>
         </file>
     """
 

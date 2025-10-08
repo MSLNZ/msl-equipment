@@ -41,13 +41,13 @@ msl-equipment help find
 
 ### find
 
-Run the `find` command to find equipment (or Serial ports) that are available.
+Run the `find` command to find equipment (and serial ports) that are available.
 
 ```console
 msl-equipment find
 ```
 
-This will display a description about the interface, the equipment and the address(es) that may be used to connect to the equipment. An example output is the following.
+This will display a description about the type of interface, the equipment that was found for each interface and the address(es) that may be used to connect to the equipment.
 
 ```console
 ASRL Ports

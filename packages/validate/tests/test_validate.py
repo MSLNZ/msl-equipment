@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import pytest
@@ -24,7 +23,6 @@ from msl.equipment_validate.validate import (
     validate_table,
 )
 
-is_windows = sys.platform == "win32"
 schema_dir = Path(__file__).parent.parent / "src" / "msl" / "equipment_validate" / "schema"
 
 
@@ -846,11 +844,7 @@ def test_file_absolute_rfc8089_e_2_1(info: Info) -> None:
         </file>
     """
     registers = Path(__file__).parent / "registers"
-    result = validate_file(etree.XML(file), info=info, roots=[str(registers)], name="file")
-    if is_windows:
-        assert result
-    else:
-        assert not result
+    assert validate_file(etree.XML(file), info=info, roots=[str(registers)], name="file")
 
 
 def test_file_relative_rfc8089_e_2_1(info: Info) -> None:

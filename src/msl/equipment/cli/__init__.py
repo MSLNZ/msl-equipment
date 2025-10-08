@@ -81,10 +81,11 @@ def configure_find(parser: ArgumentParser) -> None:
 def configure_parser() -> tuple[ArgumentParser, ArgumentParser]:
     """Configure the main parser."""
     parser = ArgumentParser(
+        prog="msl-equipment",
         add_help=False,  # add later so that capitalization and periods are consistent in the help
         description="Manage information about equipment and find equipment that support computer control.",
         formatter_class=RawTextHelpFormatter,
-        usage="msl-equipment [OPTIONS] COMMAND [ARGS]...",
+        usage="%(prog)s [OPTIONS] COMMAND [ARGS]...",
     )
 
     subparser = parser.add_subparsers(dest="command", title=SUPPRESS, metavar="\b\bCommands:")
@@ -114,8 +115,7 @@ def configure_parser() -> tuple[ArgumentParser, ArgumentParser]:
 def run_external(name: str, *args: str) -> int:
     """Run an `msl-equipment-NAME` executable with `args`."""
     try:
-        # don't capture stdout, since statements won't be displayed until the subprocess ends
-        out = subprocess.run((f"msl-equipment-{name}", *args), check=True, stderr=subprocess.PIPE, text=True)  # noqa: S603
+        out = subprocess.run((f"msl-equipment-{name}", *args), check=False)  # noqa: S603
     except FileNotFoundError as e:
         msg = (
             f"Please install the `msl-equipment-{name}` package.\n\n"
@@ -124,9 +124,6 @@ def run_external(name: str, *args: str) -> int:
         )
         _ = sys.stdout.write(msg)
         return e.errno or errno.ENOENT
-    except subprocess.CalledProcessError as e:
-        _ = sys.stderr.write(e.stderr)
-        return e.returncode
     else:
         return out.returncode
 

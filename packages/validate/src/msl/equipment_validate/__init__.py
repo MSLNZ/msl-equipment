@@ -116,6 +116,7 @@ def maybe_enable_ansi() -> None:
 def configure_parser() -> ArgumentParser:
     """Create and configure the argument parser."""
     parser = ArgumentParser(
+        prog="msl-equipment-validate",
         description="Validate equipment registers and connection files.",
         formatter_class=RawTextHelpFormatter,
         add_help=False,

@@ -96,10 +96,10 @@ def test_run_external_unknown_name(capsys: pytest.CaptureFixture[str]) -> None:
     ]
 
 
-def test_run_external_unknown_arg(capsys: pytest.CaptureFixture[str]) -> None:
+def test_run_external_unknown_arg(capfd: pytest.CaptureFixture[str]) -> None:
     assert run_external("validate", "file.xml", "--carrot") == errno.ENOENT
 
-    out, err = capsys.readouterr()
+    out, err = capfd.readouterr()
     assert not out
     assert err.rstrip().endswith("msl-equipment-validate: error: unrecognized arguments: --carrot")
 

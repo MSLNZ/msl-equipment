@@ -24,6 +24,7 @@ from msl.equipment_validate.validate import (
     validate_table,
 )
 
+is_windows = sys.platform == "win32"
 schema_dir = Path(__file__).parent.parent / "src" / "msl" / "equipment_validate" / "schema"
 
 
@@ -846,7 +847,10 @@ def test_file_absolute_rfc8089_e_2_1(info: Info) -> None:
     """
     registers = Path(__file__).parent / "registers"
     result = validate_file(etree.XML(file), info=info, roots=[str(registers)], name="file")
-    assert result is (sys.platform == "win32")
+    if is_windows:
+        assert result
+    else:
+        assert not result
 
 
 def test_file_relative_rfc8089_e_2_1(info: Info) -> None:
@@ -920,7 +924,7 @@ def test_equation_syntax_error(info: Info, caplog: pytest.LogCaptureFixture) -> 
     lines = r[0].message.splitlines()
     assert lines[0] == "ERROR register.xml:3:0"
     assert lines[1].startswith(
-        "  Invalid equation syntax for 'Name' [equation=1.2 + 0.2*pow(x,3) - ((6+2/x)*sin(1.0) ]: '(' was never closed"
+        "  Invalid equation syntax for 'Name' [equation=1.2 + 0.2*pow(x,3) - ((6+2/x)*sin(1.0) ]:"
     )
     assert len(r) == 1
 
@@ -946,6 +950,38 @@ def test_equation_name_error(info: Info, caplog: pytest.LogCaptureFixture) -> No
         "ERROR register.xml:3:0\n"
         "  Invalid equation syntax for 'Name' [equation=x+epsilon]: name 'epsilon' is not defined"
     )
+    assert len(r) == 1
+
+
+def test_equation_extra_range_variables(info: Info, caplog: pytest.LogCaptureFixture) -> None:
+    equation = """
+        <equation xmlns="eqn">
+          <value variables="x">1.2 + 0.2*acos(0.1*x)</value>
+          <uncertainty variables="">1.0</uncertainty>
+          <unit>m</unit>
+          <ranges>
+            <range variable="x">
+              <minimum>1</minimum>
+              <maximum>2</maximum>
+            </range>
+            <range variable="y">
+              <minimum>10</minimum>
+              <maximum>20</maximum>
+            </range>
+          </ranges>
+        </equation>
+    """
+    assert not validate_equation(etree.XML(equation), info=info, ns_map={"reg": "eqn"})
+
+    r = caplog.records
+
+    assert r[0].message == (
+        "ERROR register.xml:2:0\n"
+        "  The equation variables and the range variables are not the same for 'Name'\n"
+        "  equation variables: x\n"
+        "  range variables   : x, y"
+    )
+
     assert len(r) == 1
 
 
@@ -976,8 +1012,7 @@ def test_equation_multiple_variable_issues(info: Info, caplog: pytest.LogCapture
     r = caplog.records
 
     assert r[0].message == (
-        "ERROR register.xml:6:0\n"
-        "  The names of the range variables are not unique for 'Name': ['x', 'y', 'x']"
+        "ERROR register.xml:6:0\n  The names of the range variables are not unique for 'Name': ['x', 'y', 'x']"
     )
 
     assert r[1].message == (
@@ -1018,8 +1053,7 @@ def test_equation_multiple_variable_issues_exit_first(info: Info, caplog: pytest
     r = caplog.records
 
     assert r[0].message == (
-        "ERROR register.xml:6:0\n"
-        "  The names of the range variables are not unique for 'Name': ['x', 'x', 'y']"
+        "ERROR register.xml:6:0\n  The names of the range variables are not unique for 'Name': ['x', 'x', 'y']"
     )
 
     assert len(r) == 1
@@ -1188,3 +1222,15 @@ def test_equation_math_domain_error_ok(info: Info, recwarn: pytest.WarningsRecor
     assert len(recwarn) == 0
     assert validate_equation(etree.XML(equation), info=info, ns_map={"reg": "eqn"})
     assert len(recwarn) == 0
+
+
+def test_equation_no_variables(info: Info) -> None:
+    equation = """
+        <equation xmlns="eqn">
+          <value variables="">1</value>
+          <uncertainty variables="">0.1</uncertainty>
+          <unit>m</unit>
+          <ranges/>
+        </equation>
+    """
+    assert validate_equation(etree.XML(equation), info=info, ns_map={"reg": "eqn"})

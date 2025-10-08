@@ -2607,10 +2607,7 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 
                   <details class="quote">
                     <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2922</span>
-<span class="normal">2923</span>
-<span class="normal">2924</span>
-<span class="normal">2925</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2925</span>
 <span class="normal">2926</span>
 <span class="normal">2927</span>
 <span class="normal">2928</span>
@@ -2659,7 +2656,10 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 <span class="normal">2971</span>
 <span class="normal">2972</span>
 <span class="normal">2973</span>
-<span class="normal">2974</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
+<span class="normal">2974</span>
+<span class="normal">2975</span>
+<span class="normal">2976</span>
+<span class="normal">2977</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -2921,16 +2921,16 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2980</span>
-<span class="normal">2981</span>
-<span class="normal">2982</span>
-<span class="normal">2983</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2983</span>
 <span class="normal">2984</span>
 <span class="normal">2985</span>
 <span class="normal">2986</span>
 <span class="normal">2987</span>
 <span class="normal">2988</span>
-<span class="normal">2989</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Any</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
+<span class="normal">2989</span>
+<span class="normal">2990</span>
+<span class="normal">2991</span>
+<span class="normal">2992</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Any</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Connect to the equipment.&quot;&quot;&quot;</span>
     <span class="n">equipment</span> <span class="o">=</span> <span class="n">Equipment</span><span class="p">(</span>
         <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eid</span><span class="p">,</span>

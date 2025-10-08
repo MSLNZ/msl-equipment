@@ -2191,6 +2191,38 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#command-line-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command Line Interface
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Command Line Interface">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#find" class="md-nav__link">
+    <span class="md-ellipsis">
+      find
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -2227,6 +2259,42 @@
 </code></pre></div>
 </div>
 <p>The <a class="autorefs autorefs-internal" title="            MSLConnectionError" href="exceptions/#msl.equipment.interfaces.message_based.MSLConnectionError">MSLConnectionError</a> and <a class="autorefs autorefs-internal" title="            MSLTimeoutError" href="exceptions/#msl.equipment.interfaces.message_based.MSLTimeoutError">MSLTimeoutError</a> classes are raised if there are issues when communicating with equipment.</p>
+<h2 id="command-line-interface">Command Line Interface<a class="headerlink" href="#command-line-interface" title="Permanent link">¤</a></h2>
+<p>A command-line interface is also available to find equipment, <a class="autorefs autorefs-internal" title="Validate" href="../validate/#validate">validate</a> XML files against the schema or start the <a class="autorefs autorefs-internal" title="Web Application" href="../webapp/#web-application">web application</a>. Validation and the web application require that the <code>msl-equipment-validate</code> and <code>msl-equipment-webapp</code> packages are installed.</p>
+<p>To see the help, run</p>
+<div class="highlight"><pre><span></span><code><span class="go">msl-equipment help</span>
+</code></pre></div>
+<p>or to display the help for a specific command</p>
+<div class="highlight"><pre><span></span><code><span class="go">msl-equipment help find</span>
+</code></pre></div>
+<h3 id="find">find<a class="headerlink" href="#find" title="Permanent link">¤</a></h3>
+<p>Run the <code>find</code> command to find equipment (or Serial ports) that are available.</p>
+<div class="highlight"><pre><span></span><code><span class="go">msl-equipment find</span>
+</code></pre></div>
+<p>This will display a description about the interface, the equipment and the address(es) that may be used to connect to the equipment. An example output is the following.</p>
+<div class="highlight"><pre><span></span><code><span class="go">ASRL Ports</span>
+<span class="go">  COM1 [Communications Port (COM1)]</span>
+<span class="go">  COM2 [Communications Port (COM2)]</span>
+<span class="go">  COM3 [Intel(R) Active Management Technology - SOL (COM3)]</span>
+<span class="go">GPIB Devices</span>
+<span class="go">  GPIB0::5::INSTR</span>
+<span class="go">LXI Devices</span>
+<span class="go">  315W Multi Range Triple Output PSU [webserver: http://169.254.100.2]</span>
+<span class="go">    TCPIP::169.254.100.2::9221::SOCKET</span>
+<span class="go">    TCPIP::169.254.100.2::inst0::INSTR</span>
+<span class="go">  34465A Digital Multimeter [webserver: http://169.254.100.3]</span>
+<span class="go">    TCPIP::169.254.100.3::5025::SOCKET</span>
+<span class="go">    TCPIP::169.254.100.3::hislip0::INSTR</span>
+<span class="go">    TCPIP::169.254.100.3::inst0::INSTR</span>
+<span class="go">VXI11 Devices</span>
+<span class="go">  34972A Data Acquisition / Switch Unit [webserver: http://10.12.102.15]</span>
+<span class="go">    TCPIP::10.12.102.15::5025::SOCKET</span>
+<span class="go">    TCPIP::10.12.102.15::inst0::INSTR</span>
+<span class="go">  E5810 (00-21-B3-1F-01-CD) [webserver: http://10.12.102.31]</span>
+<span class="go">    TCPIP::10.12.102.31::inst0::INSTR</span>
+<span class="go">  E5810 (43:8E:5A:06:23:EE) [webserver: http://10.12.102.2]</span>
+<span class="go">    TCPIP::10.12.102.2::inst0::INSTR</span>
+</code></pre></div>
 
 
 

@@ -2727,9 +2727,7 @@ the index of a column. If you prefer to work with unstructured data, call
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1389</span>
-<span class="normal">1390</span>
-<span class="normal">1391</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1391</span>
 <span class="normal">1392</span>
 <span class="normal">1393</span>
 <span class="normal">1394</span>
@@ -2780,7 +2778,9 @@ the index of a column. If you prefer to work with unstructured data, call
 <span class="normal">1439</span>
 <span class="normal">1440</span>
 <span class="normal">1441</span>
-<span class="normal">1442</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1442</span>
+<span class="normal">1443</span>
+<span class="normal">1444</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Table][msl.equipment.schema.Table] instance.</span>
 
@@ -2881,9 +2881,7 @@ the index of a column. If you prefer to work with unstructured data, call
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1444</span>
-<span class="normal">1445</span>
-<span class="normal">1446</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1446</span>
 <span class="normal">1447</span>
 <span class="normal">1448</span>
 <span class="normal">1449</span>
@@ -2906,7 +2904,9 @@ the index of a column. If you prefer to work with unstructured data, call
 <span class="normal">1466</span>
 <span class="normal">1467</span>
 <span class="normal">1468</span>
-<span class="normal">1469</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">1469</span>
+<span class="normal">1470</span>
+<span class="normal">1471</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Table][msl.equipment.schema.Table] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
@@ -3054,9 +3054,7 @@ numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1359</span>
-<span class="normal">1360</span>
-<span class="normal">1361</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1361</span>
 <span class="normal">1362</span>
 <span class="normal">1363</span>
 <span class="normal">1364</span>
@@ -3082,7 +3080,9 @@ numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
 <span class="normal">1384</span>
 <span class="normal">1385</span>
 <span class="normal">1386</span>
-<span class="normal">1387</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unstructured</span><span class="p">(</span>
+<span class="normal">1387</span>
+<span class="normal">1388</span>
+<span class="normal">1389</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unstructured</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

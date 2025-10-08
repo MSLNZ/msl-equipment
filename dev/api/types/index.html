@@ -2499,43 +2499,43 @@
 
 <a href="#msl.equipment._types.MessageDataType" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="n">MessageDataType</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-type">type</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-type">type</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-type">type</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="numpy.number" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.number">number</a></span><span class="p">]</span>
+    <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-type">type</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-type">type</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-type">type</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="numpy.number" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.number">number</a></span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
 <span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>Data type to use to read(write) bytes from(to) equipment.</p>
-<p>The data type to use to convert each element in <a class="autorefs autorefs-internal" title="            Sequence1D
+<p>The data type to use to convert each element in a <a class="autorefs autorefs-internal" title="            Sequence1D
 
 
   
       module-attribute
   " href="#msl.equipment._types.Sequence1D">Sequence1D</a>
-to. If <a class="autorefs autorefs-internal" title="            MessageFormat
+to. If the corresponding <a class="autorefs autorefs-internal" title="            MessageFormat
 
 
   
       module-attribute
-  " href="#msl.equipment._types.MessageFormat">MessageFormat</a> is <code>ascii</code> then <code>dtype</code> must
-be of type <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> and it is used as the <code>format_spec</code> argument in <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#format">format</a> to first convert
-each element in <a class="autorefs autorefs-internal" title="            Sequence1D
+  " href="#msl.equipment._types.MessageFormat">MessageFormat</a> is <code>ascii</code> then the
+data type value must be of type <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> and it is used as the <code>format_spec</code> argument in <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#format">format</a>
+to first convert each element in <a class="autorefs autorefs-internal" title="            Sequence1D
 
 
   
       module-attribute
-  " href="#msl.equipment._types.Sequence1D">Sequence1D</a> to a string, and then it is
-encoded (e.g., <code>'.2e'</code> converts each element to scientific notation with two digits after the
-decimal point). If the data type includes a byte-order character, it is ignored. For all other
-values of <a class="autorefs autorefs-internal" title="            MessageFormat
+  " href="#msl.equipment._types.Sequence1D">Sequence1D</a> to a string, and
+then it is encoded (e.g., <code>'.2e'</code> converts each element to scientific notation with two digits
+after the decimal point). If the data type includes a byte-order character, it is ignored. For
+all other values of <a class="autorefs autorefs-internal" title="            MessageFormat
 
 
   
       module-attribute
-  " href="#msl.equipment._types.MessageFormat">MessageFormat</a>, the data type can be any object
-that <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype">numpy.dtype</a> supports (e.g., <code>'H'</code>, <code>'uint16'</code> and <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.ushort">numpy.ushort</a> are equivalent
-values to convert each element to an <em>unsigned short</em>). If a byte-order character is specified
-then it is used, otherwise the native byte order of the CPU architecture is used. See
+  " href="#msl.equipment._types.MessageFormat">MessageFormat</a>, the data type can be any
+object that numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype">dtype</a> supports (e.g., <code>'H'</code>, <code>'uint16'</code> and <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.ushort">ushort</a>
+are equivalent values to convert each element to an <em>unsigned short</em>). If a byte-order character is
+specified then it is used, otherwise the native byte order of the CPU architecture is used. See
 <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/struct.html#struct-format-strings">struct-format-strings</a> for more details.</p>
 
     </div>
@@ -2622,7 +2622,7 @@ then it is used, otherwise the native byte order of the CPU architecture is used
 
     <div class="doc doc-contents ">
 
-        <p>A 1-dimensional <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html#numpy.array">numpy.array</a> of numbers.</p>
+        <p>A 1-dimensional numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a> of numbers.</p>
 
     </div>
 

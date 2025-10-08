@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import warnings
 from dataclasses import dataclass
 from hashlib import sha256
 from pathlib import Path
@@ -404,8 +405,9 @@ def validate_equation(equation: Element, *, ns_map: dict[str, str], info: Info) 
     range_names = equation.xpath(".//reg:range/@variable", namespaces=ns_map)
     range_name_set = set(range_names)
     if len(range_names) != len(range_name_set):
-        msg = f"The names of the range variables are not unique for {info.debug_name!r}: {sorted(range_names)}"
-        log_error(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour)
+        ranges_line = equation[3].sourceline or line
+        msg = f"The names of the range variables are not unique for {info.debug_name!r}: {range_names}"
+        log_error(file=info.url, line=ranges_line, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour)
         is_valid = False
         if info.exit_first:
             return False
@@ -413,8 +415,8 @@ def validate_equation(equation: Element, *, ns_map: dict[str, str], info: Info) 
     if len(names) != len(range_names) or names_set.difference(range_name_set):
         msg = (
             f"The equation variables and the range variables are not the same for {info.debug_name!r}\n"
-            f"  equation variables: {', '.join(sorted(names))}\n"
-            f"  range variables   : {', '.join(sorted(range_names))}"
+            f"  equation variables: {', '.join(names)}\n"
+            f"  range variables   : {', '.join(range_names)}"
         )
         log_error(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour)
         is_valid = False
@@ -438,12 +440,14 @@ def _eval(*, text: str, names: list[str], info: Info, line: int) -> bool:
     _locals.update(equation_map)
 
     try:
-        _ = eval(text, None, _locals)  # noqa: S307
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            _ = eval(text, None, _locals)  # noqa: S307
     except (SyntaxError, NameError) as e:
-        msg = f"Invalid equation syntax for {info.debug_name!r} [equation={text!r}]: {e}"
+        msg = f"Invalid equation syntax for {info.debug_name!r} [equation={text}]: {e}"
         log_error(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour)
         return False
-    except ZeroDivisionError:  # valid equation, using value=1.0 was unlucky
+    except ZeroDivisionError:  # valid equation, but using value=1.0 was an unlucky choice
         pass
 
     return True

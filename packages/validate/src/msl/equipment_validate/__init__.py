@@ -329,7 +329,6 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: C901, PLR0912, PLR09
 
     log.info("")
     log.info("%s Summary %s", "=" * 35, "=" * 35)
-    log.info("issues: %d [skipped %d]", summary.num_issues, summary.num_skipped)
     log.info("<connection> %d", summary.num_connection)
     log.info("<cvdCoefficients> %d", summary.num_cvd)
     log.info("<digitalReport> %d", summary.num_digital_report)
@@ -350,7 +349,10 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: C901, PLR0912, PLR09
             print(f"{green}{msg}{reset} [{yellow}skipped: {summary.num_skipped}{reset}]")  # noqa: T201
     else:
         colour, reset = ("", "") if args.no_colour else (RED, RESET)
-        print(f"{colour}Found {summary.num_issues} issues{reset}")  # noqa: T201
+        other = summary.num_issues - summary.num_schema_issues
+        print(  # noqa: T201
+            f"{colour}Found {summary.num_issues} issues [{summary.num_schema_issues} schema, {other} other]{reset}"
+        )
 
     return summary.num_issues
 

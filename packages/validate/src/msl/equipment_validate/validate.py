@@ -69,7 +69,8 @@ class Info:
 class Summary:
     """Keeps tracks of the number of files validated, issues, and elements."""
 
-    num_issues: int = 0
+    num_issues: int = 0  # the total number of issues
+    num_schema_issues: int = 0  # the number of issues that the schema catches
     num_skipped: int = 0
     num_register: int = 0
     num_equipment: int = 0
@@ -223,6 +224,7 @@ def schema_validate(  # noqa: PLR0913
         return
 
     for error in schema.error_log:
+        Summary.num_schema_issues += 1
         log_error(
             file=path,
             line=error.line,

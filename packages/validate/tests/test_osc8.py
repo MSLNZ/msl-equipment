@@ -1,3 +1,5 @@
+import sys
+
 import pytest
 from msl.equipment_validate import osc8
 
@@ -48,9 +50,11 @@ def test_uri_scheme_handler_vscode() -> None:
     assert not osc8.uri_scheme_handler(f"vscode://file/{file}")
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="only test on Windows, requires winreg")
 def test_register_uri_scheme_vscode() -> None:
     assert not osc8.register_uri_scheme("vscode")
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="only test on Windows, requires winreg")
 def test_unregister_uri_scheme_vscode() -> None:
     assert not osc8.unregister_uri_scheme("vscode")

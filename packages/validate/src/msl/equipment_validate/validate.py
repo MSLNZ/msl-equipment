@@ -210,7 +210,7 @@ def parse(*, file: Path, uri_scheme: URIScheme, no_colour: bool) -> ElementTree 
 
 def schema_validate(  # noqa: PLR0913
     *, path: str, xml: ElementTree, schema: XMLSchema, exit_first: bool, uri_scheme: URIScheme, no_colour: bool
-) -> None:
+) -> bool:
     """Validate an XML file against a schema."""
     log_info("Validating %s", path, no_colour=no_colour)
 
@@ -221,7 +221,7 @@ def schema_validate(  # noqa: PLR0913
         Summary.num_equipment += len(root)
 
     if schema.validate(xml):
-        return
+        return True
 
     for error in schema.error_log:
         Summary.num_schema_issues += 1
@@ -236,10 +236,10 @@ def schema_validate(  # noqa: PLR0913
         if exit_first:
             break
 
-    return
+    return False
 
 
-def recursive_validate(  # noqa: C901, PLR0913
+def recursive_validate(  # noqa: C901, PLR0912, PLR0913
     *,
     files: list[Path],
     er_schema: XMLSchema,
@@ -275,11 +275,14 @@ def recursive_validate(  # noqa: C901, PLR0913
         tag = str(tree.getroot().tag)
         if tag.endswith("register"):
             Summary.num_register += 1
-            schema_validate(
+            valid = schema_validate(
                 path=path, xml=tree, schema=er_schema, exit_first=exit_first, uri_scheme=uri_scheme, no_colour=no_colour
             )
             if summary.check_exit():
                 return summary
+
+            if not valid:
+                continue
 
             ids = validate(
                 path=path,
@@ -304,7 +307,7 @@ def recursive_validate(  # noqa: C901, PLR0913
             all_ids.update(ids)
 
         elif tag == "connections":
-            schema_validate(
+            _ = schema_validate(
                 path=path, xml=tree, schema=c_schema, exit_first=exit_first, uri_scheme=uri_scheme, no_colour=no_colour
             )
             if summary.check_exit():

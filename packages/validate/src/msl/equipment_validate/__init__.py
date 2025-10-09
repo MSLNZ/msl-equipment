@@ -65,7 +65,7 @@ def modify_windows_registry(*, log: logging.Logger, remove: bool, add: bool) -> 
     if remove:
         for scheme in schemes:
             try:
-                unregister_uri_scheme(scheme)
+                _ = unregister_uri_scheme(scheme)
             except PermissionError:  # noqa: PERF203
                 log.error("You must use an elevated (admin) terminal to modify the Windows Registry")  # noqa: TRY400
                 return 1
@@ -79,7 +79,7 @@ def modify_windows_registry(*, log: logging.Logger, remove: bool, add: bool) -> 
     if add:
         for scheme in schemes:
             try:
-                register_uri_scheme(scheme)
+                _ = register_uri_scheme(scheme)
             except PermissionError:  # noqa: PERF203
                 log.error("You must use an elevated (admin) terminal to modify the Windows Registry")  # noqa: TRY400
                 return 1

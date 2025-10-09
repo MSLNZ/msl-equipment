@@ -18,11 +18,14 @@ schemes = ("vs", "vscode", "pycharm", "n++")
 regexp = re.compile(r"(?P<scheme>[^:]+)://file/(?P<file>([a-zA-Z]:)?[^:]+)(:(?P<line>\d+))?(:(?P<column>\d+))?")
 
 
-def register_uri_scheme(name: str) -> None:
+def register_uri_scheme(name: str) -> bool:
     """Register a custom URI Scheme handler in the Windows Registry.
 
     Args:
         name: URI scheme name.
+
+    Returns:
+        Whether registering the URI scheme was successful.
 
     Raises:
         PermissionError: If Python is not running within an elevated terminal.
@@ -33,7 +36,7 @@ def register_uri_scheme(name: str) -> None:
 
     # Visual Studio Code creates the vscode URI scheme handler in the Windows Registry when it is installed
     if name == "vscode":
-        return
+        return False
 
     root = winreg.OpenKey(winreg.HKEY_CLASSES_ROOT, "")
     winreg.SetValue(root, name, winreg.REG_SZ, f"URL:{name}")
@@ -50,13 +53,17 @@ def register_uri_scheme(name: str) -> None:
     winreg.CloseKey(shell)
     winreg.CloseKey(key)
     winreg.CloseKey(root)
+    return True
 
 
-def unregister_uri_scheme(name: str) -> None:
+def unregister_uri_scheme(name: str) -> bool:
     """Unregister a custom URI Scheme handler from the Windows Registry.
 
     Args:
         name: URI scheme name.
+
+    Returns:
+        Whether unregistering the URI scheme was successful.
 
     Raises:
         PermissionError: If Python is not running within an elevated terminal.
@@ -69,7 +76,7 @@ def unregister_uri_scheme(name: str) -> None:
     # Visual Studio Code creates the vscode URI scheme handler in the Windows Registry when it is installed
     # So we should not remove it
     if name == "vscode":
-        return
+        return False
 
     _open = winreg.OpenKey(winreg.HKEY_CLASSES_ROOT, f"{name}\\shell\\open")
     winreg.DeleteKey(_open, "command")
@@ -84,6 +91,7 @@ def unregister_uri_scheme(name: str) -> None:
     winreg.CloseKey(key)
 
     winreg.DeleteKey(winreg.HKEY_CLASSES_ROOT, name)
+    return True
 
 
 def pycharm_uri_scheme_handler(file: str, line: int, column: int) -> None:
@@ -97,7 +105,10 @@ def pycharm_uri_scheme_handler(file: str, line: int, column: int) -> None:
     [OSC-8 Hyperlinks]: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
     [this]: https://github.com/anthraxx/intellij-awesome-console/pull/102#issuecomment-2069122744
     """
-    for pf in ["C:\\Program Files", "C:\\Program Files (x86)"]:
+    if not Path(file).is_file():
+        return
+
+    for pf in ["C:\\Program Files", "C:\\Program Files (x86)"]:  # pragma: no cover
         for path in Path(pf).glob("JetBrains\\*\\bin"):
             exe = path / "pycharm64.exe"
             if exe.is_file():
@@ -118,7 +129,10 @@ def vs_uri_scheme_handler(file: str, line: int, column: int) -> None:  # pyright
 
     [OSC-8 Hyperlinks]: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
     """
-    for pf in ["C:\\Program Files", "C:\\Program Files (x86)"]:
+    if not Path(file).is_file():
+        return
+
+    for pf in ["C:\\Program Files", "C:\\Program Files (x86)"]:  # pragma: no cover
         for path in Path(pf).glob("Microsoft Visual Studio\\*\\Community\\Common7\\IDE"):
             exe = path / "devenv.exe"
             if exe.is_file():
@@ -137,7 +151,10 @@ def notepad_pp_uri_scheme_handler(file: str, line: int, column: int) -> None:
 
     [OSC-8 Hyperlinks]: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
     """
-    for pf in ["C:\\Program Files", "C:\\Program Files (x86)"]:
+    if not Path(file).is_file():
+        return
+
+    for pf in ["C:\\Program Files", "C:\\Program Files (x86)"]:  # pragma: no cover
         exe = Path(pf) / "Notepad++" / "notepad++.exe"
         if exe.is_file():
             cmd = [str(exe)]
@@ -150,7 +167,7 @@ def notepad_pp_uri_scheme_handler(file: str, line: int, column: int) -> None:
             return
 
 
-def uri_scheme_handler(command: str) -> None:
+def uri_scheme_handler(command: str) -> bool:
     """Handles [OSC-8 Hyperlinks] in the Windows Terminal to open a file.
 
     [OSC-8 Hyperlinks]: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
@@ -160,16 +177,17 @@ def uri_scheme_handler(command: str) -> None:
     """
     match = regexp.match(command)
     if match is None:
-        return
+        return False
 
     scheme = match["scheme"].lower()
     handler = handler_map.get(scheme)
     if handler is None:
-        return
+        return False
 
     line = int(match["line"]) if match["line"] is not None else 0
     column = int(match["column"]) if match["column"] is not None else 0
     handler(match["file"], line, column)
+    return True
 
 
 handler_map: dict[str, Callable[[str, int, int], None]] = {
@@ -181,4 +199,4 @@ handler_map: dict[str, Callable[[str, int, int], None]] = {
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        uri_scheme_handler(sys.argv[1])
+        _ = uri_scheme_handler(sys.argv[1])

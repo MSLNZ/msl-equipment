@@ -1228,3 +1228,580 @@ def test_equation_no_variables(info: Info) -> None:
         </equation>
     """
     assert validate_equation(etree.XML(equation), info=info, ns_map={"reg": "eqn"})
+
+
+@pytest.mark.parametrize("exit_first", [False, True])
+def test_recursive_with_serialised(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    reset_summary: None,
+    exit_first: bool,  # noqa: FBT001
+) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    archive = pr.Archive()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    archive.add(x=ureal(1, 0.1))  # pyright: ignore[reportUnknownMemberType]
+    string = pr.dumps_json(archive)  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+
+    register = tmp_path / "register.xml"
+    _ = register.write_text(f"""<?xml version='1.0' encoding='utf-8'?>
+<register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
+    <equipment enteredBy="Joseph Borbely">
+        <id>MSLE.P.001</id>
+        <manufacturer>MSL</manufacturer>
+        <model>ABC</model>
+        <serial>123</serial>
+        <description>Something</description>
+        <specifications/>
+        <location>CMM Lab</location>
+        <status>Active</status>
+        <loggable/>
+        <traceable>false</traceable>
+        <calibrations>
+            <measurand quantity="Humidity" calibrationInterval="5">
+                <component name="">
+                    <report id="Humidity/2023/1024" enteredBy="Joseph Borbely">
+                        <reportIssueDate>2023-08-18</reportIssueDate>
+                        <measurementStartDate>2023-08-08</measurementStartDate>
+                        <measurementStopDate>2023-08-14</measurementStopDate>
+                        <issuingLaboratory>MSL</issuingLaboratory>
+                        <technicalProcedure>MSLT.H.062</technicalProcedure>
+                        <conditions/>
+                        <acceptanceCriteria/>
+                        <serialised>
+                            <gtcArchiveJSON>X{string}</gtcArchiveJSON>
+                        </serialised>
+                        <serialised>
+                            <gtcArchiveJSON>{string}</gtcArchiveJSON>
+                        </serialised>
+                        <serialised>
+                            <gtcArchiveJSON>X{string}</gtcArchiveJSON>
+                        </serialised>
+                    </report>
+                </component>
+            </measurand>
+        </calibrations>
+        <maintenance/>
+        <alterations/>
+        <firmware/>
+        <specifiedRequirements/>
+        <referenceMaterials/>
+        <qualityManual/>
+    </equipment>
+</register>
+""")
+
+    caplog.set_level("ERROR", "msl.equipment_validate")
+
+    er_schema = etree.XMLSchema(file=schema_dir / "equipment-register.xsd")
+    c_schema = etree.XMLSchema(file=schema_dir / "connections.xsd")
+
+    summary = recursive_validate(
+        files=[register],
+        er_schema=er_schema,
+        c_schema=c_schema,
+        roots=[],
+        exit_first=exit_first,
+        uri_scheme=None,
+        skip_checksum=False,
+        no_colour=True,
+    )
+
+    r = caplog.records
+    assert r[0].message.startswith(f"ERROR {register}:26:0\n  Invalid serialised")
+    if exit_first:
+        assert len(r) == 1
+        assert summary.num_issues == 1
+    else:
+        assert r[1].message.startswith(f"ERROR {register}:32:0\n  Invalid serialised")
+        assert len(r) == 2
+        assert summary.num_issues == 2
+
+
+@pytest.mark.parametrize("exit_first", [False, True])
+def test_recursive_with_digital_report(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    reset_summary: None,
+    exit_first: bool,  # noqa: FBT001
+) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    url = (Path(__file__).parent / "registers" / "do_not_modify_this_file.txt").resolve()
+
+    register = tmp_path / "register.xml"
+    _ = register.write_text(f"""<?xml version='1.0' encoding='utf-8'?>
+<register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
+    <equipment enteredBy="Joseph Borbely">
+        <id>MSLE.P.001</id>
+        <manufacturer>MSL</manufacturer>
+        <model>ABC</model>
+        <serial>123</serial>
+        <description>Something</description>
+        <specifications/>
+        <location>CMM Lab</location>
+        <status>Active</status>
+        <loggable/>
+        <traceable>false</traceable>
+        <calibrations>
+            <measurand quantity="Humidity" calibrationInterval="5">
+                <component name="">
+                    <digitalReport format="MSL PDF/A-3" id="Pressure/2025/092">
+                        <url>{url}</url>
+                        <sha256>{"a" * 64}</sha256>
+                    </digitalReport>
+                    <digitalReport format="MSL PDF/A-3" id="Pressure/2025/092">
+                        <url>{url}</url>
+                        <sha256>{"a" * 64}</sha256>
+                    </digitalReport>
+                </component>
+            </measurand>
+        </calibrations>
+        <maintenance/>
+        <alterations/>
+        <firmware/>
+        <specifiedRequirements/>
+        <referenceMaterials/>
+        <qualityManual/>
+    </equipment>
+</register>
+""")
+
+    caplog.set_level("ERROR", "msl.equipment_validate")
+
+    er_schema = etree.XMLSchema(file=schema_dir / "equipment-register.xsd")
+    c_schema = etree.XMLSchema(file=schema_dir / "connections.xsd")
+
+    summary = recursive_validate(
+        files=[register],
+        er_schema=er_schema,
+        c_schema=c_schema,
+        roots=[],
+        exit_first=exit_first,
+        uri_scheme=None,
+        skip_checksum=False,
+        no_colour=True,
+    )
+
+    r = caplog.records
+    assert r[0].message.startswith(f"ERROR {register}:19:0\n  The SHA-256 checksum")
+    if exit_first:
+        assert len(r) == 1
+        assert summary.num_issues == 1
+    else:
+        assert r[1].message.startswith(f"ERROR {register}:23:0\n  The SHA-256 checksum")
+        assert len(r) == 2
+        assert summary.num_issues == 2
+
+
+@pytest.mark.parametrize("exit_first", [False, True])
+def test_recursive_with_equation(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    reset_summary: None,
+    exit_first: bool,  # noqa: FBT001
+) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    register = tmp_path / "register.xml"
+    _ = register.write_text("""<?xml version='1.0' encoding='utf-8'?>
+<register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
+    <equipment enteredBy="Joseph Borbely">
+        <id>MSLE.P.001</id>
+        <manufacturer>MSL</manufacturer>
+        <model>ABC</model>
+        <serial>123</serial>
+        <description>Something</description>
+        <specifications/>
+        <location>CMM Lab</location>
+        <status>Active</status>
+        <loggable/>
+        <traceable>false</traceable>
+        <calibrations>
+            <measurand quantity="Humidity" calibrationInterval="5">
+                <component name="">
+                    <report id="Humidity/2023/1024" enteredBy="Joseph Borbely">
+                        <reportIssueDate>2023-08-18</reportIssueDate>
+                        <measurementStartDate>2023-08-08</measurementStartDate>
+                        <measurementStopDate>2023-08-14</measurementStopDate>
+                        <issuingLaboratory>MSL</issuingLaboratory>
+                        <technicalProcedure>MSLT.H.062</technicalProcedure>
+                        <conditions/>
+                        <acceptanceCriteria/>
+                        <equation>
+                            <value variables="x">1</value>
+                            <uncertainty variables="">0.1</uncertainty>
+                            <unit>m</unit>
+                            <ranges/>
+                        </equation>
+                        <equation>
+                            <value variables="x">1</value>
+                            <uncertainty variables="">0.1</uncertainty>
+                            <unit>m</unit>
+                            <ranges/>
+                        </equation>
+                    </report>
+                </component>
+            </measurand>
+        </calibrations>
+        <maintenance/>
+        <alterations/>
+        <firmware/>
+        <specifiedRequirements/>
+        <referenceMaterials/>
+        <qualityManual/>
+    </equipment>
+</register>
+""")
+
+    caplog.set_level("ERROR", "msl.equipment_validate")
+
+    er_schema = etree.XMLSchema(file=schema_dir / "equipment-register.xsd")
+    c_schema = etree.XMLSchema(file=schema_dir / "connections.xsd")
+
+    summary = recursive_validate(
+        files=[register],
+        er_schema=er_schema,
+        c_schema=c_schema,
+        roots=[],
+        exit_first=exit_first,
+        uri_scheme=None,
+        skip_checksum=False,
+        no_colour=True,
+    )
+
+    r = caplog.records
+    assert r[0].message.startswith(f"ERROR {register}:25:0\n  The equation variables")
+    if exit_first:
+        assert len(r) == 1
+        assert summary.num_issues == 1
+    else:
+        assert r[1].message.startswith(f"ERROR {register}:31:0\n  The equation variables")
+        assert len(r) == 2
+        assert summary.num_issues == 2
+
+
+@pytest.mark.parametrize("exit_first", [False, True])
+def test_recursive_with_file(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    reset_summary: None,
+    exit_first: bool,  # noqa: FBT001
+) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    url = (Path(__file__).parent / "registers" / "do_not_modify_this_file.txt").resolve()
+
+    register = tmp_path / "register.xml"
+    _ = register.write_text(f"""<?xml version='1.0' encoding='utf-8'?>
+<register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
+    <equipment enteredBy="Joseph Borbely">
+        <id>MSLE.P.001</id>
+        <manufacturer>MSL</manufacturer>
+        <model>ABC</model>
+        <serial>123</serial>
+        <description>Something</description>
+        <specifications/>
+        <location>CMM Lab</location>
+        <status>Active</status>
+        <loggable/>
+        <traceable>false</traceable>
+        <calibrations>
+            <measurand quantity="Humidity" calibrationInterval="5">
+                <component name="">
+                    <report id="Humidity/2023/1024" enteredBy="Joseph Borbely">
+                        <reportIssueDate>2023-08-18</reportIssueDate>
+                        <measurementStartDate>2023-08-08</measurementStartDate>
+                        <measurementStopDate>2023-08-14</measurementStopDate>
+                        <issuingLaboratory>MSL</issuingLaboratory>
+                        <technicalProcedure>MSLT.H.062</technicalProcedure>
+                        <conditions/>
+                        <acceptanceCriteria/>
+                        <file>
+                            <url>{url}</url>
+                            <sha256>{"a" * 64}</sha256>
+                        </file>
+                        <file>
+                            <url>{url}</url>
+                            <sha256>{"a" * 64}</sha256>
+                        </file>
+                    </report>
+                </component>
+            </measurand>
+        </calibrations>
+        <maintenance/>
+        <alterations/>
+        <firmware/>
+        <specifiedRequirements/>
+        <referenceMaterials/>
+        <qualityManual/>
+    </equipment>
+</register>
+""")
+
+    caplog.set_level("ERROR", "msl.equipment_validate")
+
+    er_schema = etree.XMLSchema(file=schema_dir / "equipment-register.xsd")
+    c_schema = etree.XMLSchema(file=schema_dir / "connections.xsd")
+
+    summary = recursive_validate(
+        files=[register],
+        er_schema=er_schema,
+        c_schema=c_schema,
+        roots=[],
+        exit_first=exit_first,
+        uri_scheme=None,
+        skip_checksum=False,
+        no_colour=True,
+    )
+
+    r = caplog.records
+    assert r[0].message.startswith(f"ERROR {register}:27:0\n  The SHA-256 checksum")
+    if exit_first:
+        assert len(r) == 1
+        assert summary.num_issues == 1
+    else:
+        assert r[1].message.startswith(f"ERROR {register}:31:0\n  The SHA-256 checksum")
+        assert len(r) == 2
+        assert summary.num_issues == 2
+
+
+@pytest.mark.parametrize("exit_first", [False, True])
+def test_recursive_with_table(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    reset_summary: None,
+    exit_first: bool,  # noqa: FBT001
+) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    register = tmp_path / "register.xml"
+    _ = register.write_text("""<?xml version='1.0' encoding='utf-8'?>
+<register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
+    <equipment enteredBy="Joseph Borbely">
+        <id>MSLE.P.001</id>
+        <manufacturer>MSL</manufacturer>
+        <model>ABC</model>
+        <serial>123</serial>
+        <description>Something</description>
+        <specifications/>
+        <location>CMM Lab</location>
+        <status>Active</status>
+        <loggable/>
+        <traceable>false</traceable>
+        <calibrations>
+            <measurand quantity="Humidity" calibrationInterval="5">
+                <component name="">
+                    <report id="Humidity/2023/1024" enteredBy="Joseph Borbely">
+                        <reportIssueDate>2023-08-18</reportIssueDate>
+                        <measurementStartDate>2023-08-08</measurementStartDate>
+                        <measurementStopDate>2023-08-14</measurementStopDate>
+                        <issuingLaboratory>MSL</issuingLaboratory>
+                        <technicalProcedure>MSLT.H.062</technicalProcedure>
+                        <conditions/>
+                        <acceptanceCriteria/>
+                        <table>
+                            <type>bool,int</type>
+                            <unit>a,b</unit>
+                            <header>a,b</header>
+                            <data>1, 0, s</data>
+                        </table>
+                        <table>
+                            <type>bool,int</type>
+                            <unit>a,b</unit>
+                            <header>a,b</header>
+                            <data>
+
+                            1, 0, s
+
+                            </data>
+                        </table>
+                    </report>
+                </component>
+            </measurand>
+        </calibrations>
+        <maintenance/>
+        <alterations/>
+        <firmware/>
+        <specifiedRequirements/>
+        <referenceMaterials/>
+        <qualityManual/>
+    </equipment>
+</register>
+""")
+
+    caplog.set_level("ERROR", "msl.equipment_validate")
+
+    er_schema = etree.XMLSchema(file=schema_dir / "equipment-register.xsd")
+    c_schema = etree.XMLSchema(file=schema_dir / "connections.xsd")
+
+    summary = recursive_validate(
+        files=[register],
+        er_schema=er_schema,
+        c_schema=c_schema,
+        roots=[],
+        exit_first=exit_first,
+        uri_scheme=None,
+        skip_checksum=False,
+        no_colour=True,
+    )
+
+    r = caplog.records
+    assert r[0].message.startswith(f"ERROR {register}:29:0\n  The table <data>")
+    if exit_first:
+        assert len(r) == 1
+        assert summary.num_issues == 1
+    else:
+        assert r[1].message.startswith(f"ERROR {register}:37:0\n  The table <data>")
+        assert len(r) == 2
+        assert summary.num_issues == 2
+
+
+@pytest.mark.parametrize("exit_first", [False, True])
+def test_recursive_with_cvd(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    reset_summary: None,
+    exit_first: bool,  # noqa: FBT001
+) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    register = tmp_path / "register.xml"
+    _ = register.write_text("""<?xml version='1.0' encoding='utf-8'?>
+<register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
+    <equipment enteredBy="Joseph Borbely">
+        <id>MSLE.P.001</id>
+        <manufacturer>MSL</manufacturer>
+        <model>ABC</model>
+        <serial>123</serial>
+        <description>Something</description>
+        <specifications/>
+        <location>CMM Lab</location>
+        <status>Active</status>
+        <loggable/>
+        <traceable>false</traceable>
+        <calibrations>
+            <measurand quantity="Humidity" calibrationInterval="5">
+                <component name="">
+                    <report id="Humidity/2023/1024" enteredBy="Joseph Borbely">
+                        <reportIssueDate>2023-08-18</reportIssueDate>
+                        <measurementStartDate>2023-08-08</measurementStartDate>
+                        <measurementStopDate>2023-08-14</measurementStopDate>
+                        <issuingLaboratory>MSL</issuingLaboratory>
+                        <technicalProcedure>MSLT.H.062</technicalProcedure>
+                        <conditions/>
+                        <acceptanceCriteria/>
+                        <cvdCoefficients>
+                            <R0>100.0189</R0>
+                            <A>3.913e-3</A>
+                            <B>-6.056e-7</B>
+                            <C>1.372e-12</C>
+                            <D>0</D>
+                            <uncertainty variables="">0.0056*x</uncertainty>
+                            <range>
+                                <minimum>-10</minimum>
+                                <maximum>70</maximum>
+                            </range>
+                        </cvdCoefficients>
+                        <cvdCoefficients>
+                            <R0>100.0189</R0>
+                            <A>3.913e-3</A>
+                            <B>-6.056e-7</B>
+                            <C>1.372e-12</C>
+                            <D>0</D>
+                            <uncertainty variables="">0.0056*x</uncertainty>
+                            <range>
+                                <minimum>-10</minimum>
+                                <maximum>70</maximum>
+                            </range>
+                        </cvdCoefficients>
+                    </report>
+                </component>
+            </measurand>
+        </calibrations>
+        <maintenance/>
+        <alterations/>
+        <firmware/>
+        <specifiedRequirements/>
+        <referenceMaterials/>
+        <qualityManual/>
+    </equipment>
+</register>
+""")
+
+    caplog.set_level("ERROR", "msl.equipment_validate")
+
+    er_schema = etree.XMLSchema(file=schema_dir / "equipment-register.xsd")
+    c_schema = etree.XMLSchema(file=schema_dir / "connections.xsd")
+
+    summary = recursive_validate(
+        files=[register],
+        er_schema=er_schema,
+        c_schema=c_schema,
+        roots=[],
+        exit_first=exit_first,
+        uri_scheme=None,
+        skip_checksum=False,
+        no_colour=True,
+    )
+
+    r = caplog.records
+    assert r[0].message.startswith(f"ERROR {register}:31:0\n  Invalid equation syntax")
+    if exit_first:
+        assert len(r) == 1
+        assert summary.num_issues == 1
+    else:
+        assert r[1].message.startswith(f"ERROR {register}:43:0\n  Invalid equation syntax")
+        assert len(r) == 2
+        assert summary.num_issues == 2
+
+
+@pytest.mark.parametrize("exit_first", [False, True])
+def test_recursive_with_connections(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    reset_summary: None,
+    exit_first: bool,  # noqa: FBT001
+) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    register = tmp_path / "register.xml"
+    _ = register.write_text("""<?xml version='1.0' encoding='utf-8'?>
+<connections>
+  <connection/>
+  <connection><apple>8</apple></connection>
+</connections>
+""")
+
+    caplog.set_level("ERROR", "msl.equipment_validate")
+
+    er_schema = etree.XMLSchema(file=schema_dir / "equipment-register.xsd")
+    c_schema = etree.XMLSchema(file=schema_dir / "connections.xsd")
+
+    summary = recursive_validate(
+        files=[register],
+        er_schema=er_schema,
+        c_schema=c_schema,
+        roots=[],
+        exit_first=exit_first,
+        uri_scheme=None,
+        skip_checksum=False,
+        no_colour=True,
+    )
+
+    r = caplog.records
+    assert r[0].message.startswith(f"ERROR {register}:3:0\n  Element 'connection': Missing child element(s)")
+    if exit_first:
+        assert len(r) == 1
+        assert summary.num_issues == 1
+    else:
+        assert r[1].message.startswith(f"ERROR {register}:4:0\n  Element 'apple': This element is not expected. ")
+        assert len(r) == 2
+        assert summary.num_issues == 2

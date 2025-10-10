@@ -212,7 +212,7 @@ def test_registers_directory() -> None:
     # The "bad" XML file in tests/resources/mass/.hidden is ignored
     c = Config(StringIO(text))
     assert len(c.registers) == 1
-    assert str(c.registers["Mass"]) == "<Register team='Mass' (3 equipment)>"
+    assert str(c.registers["Mass"]) == "Register(team='Mass' (3 equipment))"
 
 
 def test_registers_file() -> None:
@@ -224,7 +224,7 @@ def test_registers_file() -> None:
     """
     c = Config(StringIO(text))
     assert len(c.registers) == 1
-    assert str(c.registers["Mass"]) == "<Register team='Mass' (2 equipment)>"
+    assert str(c.registers["Mass"]) == "Register(team='Mass' (2 equipment))"
 
 
 def test_source_types() -> None:

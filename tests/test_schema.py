@@ -1290,6 +1290,7 @@ def test_performance_check_minimal() -> None:
     with pytest.raises(IndexError):
         _ = pc.table
     assert tostring(pc.to_xml()) == text
+    assert str(pc) == "PerformanceCheck(completed_date=2023-04-02)"
 
 
 def test_performance_check() -> None:
@@ -1358,6 +1359,10 @@ def test_performance_check() -> None:
     assert pc.deserialised is pc.deserialisers[0]
     assert len(pc.tables) == 1
     assert pc.table is pc.tables[0]
+    assert (
+        str(pc)
+        == "PerformanceCheck(completed_date=2023-04-02 (1 cvd equation, 1 deserialiser, 1 equation, 1 file, 1 table))"
+    )
 
     _Indent.table_data = 3
     assert tostring(pc.to_xml()) == text
@@ -1427,6 +1432,7 @@ def test_report_minimal() -> None:
     with pytest.raises(IndexError):
         _ = r.table
     assert tostring(r.to_xml()) == text
+    assert str(r) == "Report(id='ABC')"
 
 
 def test_report() -> None:
@@ -1506,6 +1512,7 @@ def test_report() -> None:
     assert r.deserialised is r.deserialisers[0]
     assert len(r.tables) == 1
     assert r.table is r.tables[0]
+    assert str(r) == "Report(id='ABC' (1 cvd equation, 1 deserialiser, 1 equation, 1 file, 1 table))"
 
     _Indent.table_data = 6
     assert tostring(r.to_xml()) == text
@@ -1520,6 +1527,7 @@ def test_component_empty() -> None:
     assert len(c.digital_reports) == 0
     assert len(c.performance_checks) == 0
     assert tostring(c.to_xml()) == text
+    assert str(c) == "Component(name='')"
 
 
 def test_component() -> None:
@@ -1557,6 +1565,7 @@ def test_component() -> None:
     assert len(c.digital_reports) == 1
     assert len(c.performance_checks) == 1
     assert tostring(c.to_xml()) == text
+    assert str(c) == "Component(name='Probe 1' (1 adjustment, 1 digital report, 1 performance check, 1 report))"
 
 
 def test_measurand_empty() -> None:
@@ -1566,6 +1575,7 @@ def test_measurand_empty() -> None:
     assert m.calibration_interval == 1.0
     assert len(m.components) == 0
     assert tostring(m.to_xml()) == text
+    assert str(m) == "Measurand(quantity='Wavelength', calibration_interval=1.0 (0 components))"
 
 
 def test_measurand() -> None:
@@ -1600,6 +1610,7 @@ def test_measurand() -> None:
     m = Measurand.from_xml(XML(text))
     assert m.quantity == "Wavelength"
     assert m.calibration_interval == 1.0
+    assert str(m) == "Measurand(quantity='Wavelength', calibration_interval=1.0 (1 component))"
 
     assert len(m.components) == 1
     c = m.components[0]
@@ -1643,7 +1654,7 @@ def test_register_empty() -> None:
     assert len(r) == 0
     assert r._equipment == []  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     assert r._index_map == {}  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
-    assert str(r) == "<Register team='Length' (0 equipment)>"
+    assert str(r) == "Register(team='Length' (0 equipment))"
 
     with pytest.raises(ValueError, match=r"the alias or id 'invalid'"):
         _ = r["invalid"]
@@ -1721,11 +1732,11 @@ def test_register_from_file() -> None:  # noqa: PLR0915
     assert len(r) == 2
     assert r._equipment == [None, None]  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     assert r._index_map == {"Bob": 1, "MSLE.M.001": 0, "MSLE.M.092": 1}  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
-    assert str(r) == "<Register team='Mass' (2 equipment)>"
+    assert str(r) == "Register(team='Mass' (2 equipment))"
 
     first = r[0]
     assert isinstance(first, Equipment)
-    assert str(first) == "<Equipment manufacturer='MSL', model='ABC', serial='123'>"
+    assert str(first) == "Equipment(manufacturer='MSL', model='ABC', serial='123')"
     assert first.entered_by == "Peter McDowall"  # cSpell:ignore Dowall
     assert first.checked_by == ""
     assert first.checked_date is None
@@ -1784,7 +1795,7 @@ def test_register_from_file() -> None:  # noqa: PLR0915
 
     assert isinstance(second, Equipment)
     assert second is not None
-    assert str(second) == "<Equipment manufacturer='The Company Name', model='Model', serial='Serial' (4 reports)>"
+    assert str(second) == "Equipment(manufacturer='The Company Name', model='Model', serial='Serial' (4 reports))"
     assert second is not first
     assert r["Bob"] is second
     assert r["MSLE.M.092"] is second
@@ -1907,6 +1918,7 @@ def test_latest_report_single_measurand_and_component(value: str, expect: str) -
     assert reports[0].quantity == "1"
     assert reports[0].name == "2"
     assert reports[0].id == expect
+    assert str(reports[0]) == f"LatestReport(name='2', quantity='1', id={expect!r})"
 
     # Don't specify `quantity` or `name` and the correct report is returned
     latest = e.latest_report(date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
@@ -1979,6 +1991,7 @@ def test_latest_performance_check_single_measurand_and_component() -> None:
     assert checks[0].entered_by == "C"
     assert checks[0].completed_date == date(2024, 3, 4)
     assert checks[0].competency == Competency(worker="Me", checker="You", technical_procedure="A")
+    assert str(checks[0]) == "LatestPerformanceCheck(name='Probe', quantity='Temperature', completed_date=2024-03-04)"
 
     # Don't specify `quantity` or `name` and the correct report is returned
     latest = e.latest_performance_check()
@@ -2593,15 +2606,15 @@ def test_equipment_repr() -> None:
     r = Register(path / "register.xml", path / "register2.xml")
     assert r.team == "Mass"
     assert len(r) == 3
-    assert str(r) == "<Register team='Mass' (3 equipment)>"
-    assert repr(r["MSLE.M.001"]) == "<Equipment manufacturer='MSL', model='ABC', serial='123'>"
+    assert str(r) == "Register(team='Mass' (3 equipment))"
+    assert repr(r["MSLE.M.001"]) == "Equipment(manufacturer='MSL', model='ABC', serial='123')"
     assert (
         repr(r["MSLE.M.092"])
-        == "<Equipment manufacturer='The Company Name', model='Model', serial='Serial' (4 reports)>"
+        == "Equipment(manufacturer='The Company Name', model='Model', serial='Serial' (4 reports))"
     )
     assert (
         repr(r["MSLE.M.100"])
-        == "<Equipment manufacturer='Measurement', model='Stds', serial='Lab' (2 adjustments, 1 digital report, 1 performance check, 1 report)>"  # noqa: E501
+        == "Equipment(manufacturer='Measurement', model='Stds', serial='Lab' (2 adjustments, 1 digital report, 1 performance check, 1 report))"  # noqa: E501
     )
 
 
@@ -2610,15 +2623,15 @@ def test_equipment_str_element_sources() -> None:
     r = Register(str(path / "register.xml"), XML((path / "register2.xml").read_text()))
     assert r.team == "Mass"
     assert len(r) == 3
-    assert str(r) == "<Register team='Mass' (3 equipment)>"
-    assert repr(r["MSLE.M.001"]) == "<Equipment manufacturer='MSL', model='ABC', serial='123'>"
+    assert str(r) == "Register(team='Mass' (3 equipment))"
+    assert repr(r["MSLE.M.001"]) == "Equipment(manufacturer='MSL', model='ABC', serial='123')"
     assert (
         repr(r["MSLE.M.092"])
-        == "<Equipment manufacturer='The Company Name', model='Model', serial='Serial' (4 reports)>"
+        == "Equipment(manufacturer='The Company Name', model='Model', serial='Serial' (4 reports))"
     )
     assert (
         repr(r["MSLE.M.100"])
-        == "<Equipment manufacturer='Measurement', model='Stds', serial='Lab' (2 adjustments, 1 digital report, 1 performance check, 1 report)>"  # noqa: E501
+        == "Equipment(manufacturer='Measurement', model='Stds', serial='Lab' (2 adjustments, 1 digital report, 1 performance check, 1 report))"  # noqa: E501
     )
 
 

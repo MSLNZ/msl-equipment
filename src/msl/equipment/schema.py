@@ -107,6 +107,38 @@ def _latest(*, items: list[L], quantity: str, name: str) -> L | None:
     return None
 
 
+def _tuple_summary(obj: Report | PerformanceCheck) -> str:
+    """Counts the number of cvd equations, deserialisers, equations, files and tables to generate a count summary."""
+    info: list[str] = []
+
+    if obj.cvd_equations:
+        n = len(obj.cvd_equations)
+        s = "" if n == 1 else "s"
+        info.append(f"{n} cvd equation{s}")
+
+    if obj.deserialisers:
+        n = len(obj.deserialisers)
+        s = "" if n == 1 else "s"
+        info.append(f"{n} deserialiser{s}")
+
+    if obj.equations:
+        n = len(obj.equations)
+        s = "" if n == 1 else "s"
+        info.append(f"{n} equation{s}")
+
+    if obj.files:
+        n = len(obj.files)
+        s = "" if n == 1 else "s"
+        info.append(f"{n} file{s}")
+
+    if obj.tables:
+        n = len(obj.tables)
+        s = "" if n == 1 else "s"
+        info.append(f"{n} table{s}")
+
+    return "" if not info else f" ({', '.join(info)})"
+
+
 class Status(Enum):
     """Represents the [status][type_statusEnumerationString] enumeration in an equipment register.
 
@@ -1471,7 +1503,7 @@ class Table(np.ndarray):
         return e
 
 
-@dataclass(frozen=True, **extra_dataclass_kwargs)
+@dataclass(frozen=True, repr=False, **extra_dataclass_kwargs)
 class PerformanceCheck:
     """Represents the [performanceCheck][type_performanceCheck] element in an equipment register.
 
@@ -1522,6 +1554,11 @@ class PerformanceCheck:
 
     tables: tuple[Table, ...] = ()
     """Performance-check data is stored as Comma Separated Values (CSV) tables."""
+
+    def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
+        """Returns the string representation."""
+        summary = _tuple_summary(self)
+        return f"{self.__class__.__name__}(completed_date={self.completed_date}{summary})"
 
     @property
     def cvd_equation(self) -> CVDEquation:
@@ -1676,7 +1713,7 @@ class IssuingLaboratory:
         return e
 
 
-@dataclass(frozen=True, **extra_dataclass_kwargs)
+@dataclass(frozen=True, repr=False, **extra_dataclass_kwargs)
 class Report:
     """Represents the [report][type_report] element in an equipment register.
 
@@ -1746,6 +1783,11 @@ class Report:
 
     tables: tuple[Table, ...] = ()
     """Calibration data is stored as Comma Separated Values (CSV) tables."""
+
+    def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
+        """Returns the string representation."""
+        summary = _tuple_summary(self)
+        return f"{self.__class__.__name__}(id={self.id!r}{summary})"
 
     @property
     def cvd_equation(self) -> CVDEquation:
@@ -1876,7 +1918,7 @@ class Report:
         return e
 
 
-@dataclass(frozen=True, **extra_dataclass_kwargs)
+@dataclass(frozen=True, repr=False, **extra_dataclass_kwargs)
 class Component:
     """Represents the [component][type_component] element in an equipment register.
 
@@ -1903,6 +1945,32 @@ class Component:
 
     reports: tuple[Report, ...] = ()
     """The history of calibration reports."""
+
+    def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
+        """Returns the string representation."""
+        info: list[str] = []
+        if self.adjustments:
+            n = len(self.adjustments)
+            s = "" if n == 1 else "s"
+            info.append(f"{n} adjustment{s}")
+
+        if self.digital_reports:
+            n = len(self.digital_reports)
+            s = "" if n == 1 else "s"
+            info.append(f"{n} digital report{s}")
+
+        if self.performance_checks:
+            n = len(self.performance_checks)
+            s = "" if n == 1 else "s"
+            info.append(f"{n} performance check{s}")
+
+        if self.reports:
+            n = len(self.reports)
+            s = "" if n == 1 else "s"
+            info.append(f"{n} report{s}")
+
+        summary = "" if not info else f" ({', '.join(info)})"
+        return f"{self.__class__.__name__}(name={self.name!r}{summary})"
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Component:
@@ -1955,7 +2023,7 @@ class Component:
         return e
 
 
-@dataclass(frozen=True, **extra_dataclass_kwargs)
+@dataclass(frozen=True, repr=False, **extra_dataclass_kwargs)
 class Measurand:
     """Represents the [measurand][type_measurand] element in an equipment register.
 
@@ -1979,6 +2047,15 @@ class Measurand:
 
     components: tuple[Component, ...] = ()
     """The components of the equipment that measure the `quantity`."""
+
+    def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
+        """Returns the string representation."""
+        n = len(self.components)
+        s = "" if n == 1 else "s"
+        return (
+            f"{self.__class__.__name__}(quantity={self.quantity!r}, "
+            f"calibration_interval={self.calibration_interval} ({n} component{s}))"
+        )
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Measurand:
@@ -2194,14 +2271,27 @@ class Latest:
         return ask_date >= self.next_calibration_date
 
 
-@dataclass(frozen=True, **extra_dataclass_kwargs)
+@dataclass(frozen=True, repr=False, **extra_dataclass_kwargs)
 class LatestReport(Latest, Report):
     """Latest calibration report."""
+
+    def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
+        """Returns the string representation."""
+        summary = _tuple_summary(self)
+        return f"{self.__class__.__name__}(name={self.name!r}, quantity={self.quantity!r}, id={self.id!r}{summary})"
 
 
 @dataclass(frozen=True, **extra_dataclass_kwargs)
 class LatestPerformanceCheck(Latest, PerformanceCheck):
     """Latest performance check."""
+
+    def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
+        """Returns the string representation."""
+        summary = _tuple_summary(self)
+        return (
+            f"{self.__class__.__name__}(name={self.name!r}, quantity={self.quantity!r}, "
+            f"completed_date={self.completed_date}{summary})"
+        )
 
 
 @dataclass(frozen=True, repr=False, **extra_dataclass_kwargs)
@@ -2313,32 +2403,32 @@ class Equipment:
 
     def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the string representation."""
-        items: list[str] = []
+        info: list[str] = []
 
-        na = sum(1 for m in self.calibrations for c in m.components for _ in c.adjustments)
-        if na > 0:
-            plural = "" if na == 1 else "s"
-            items.append(f"{na} adjustment{plural}")
+        n = sum(1 for m in self.calibrations for c in m.components for _ in c.adjustments)
+        if n > 0:
+            s = "" if n == 1 else "s"
+            info.append(f"{n} adjustment{s}")
 
-        ndr = sum(1 for m in self.calibrations for c in m.components for _ in c.digital_reports)
-        if ndr > 0:
-            plural = "" if ndr == 1 else "s"
-            items.append(f"{ndr} digital report{plural}")
+        n = sum(1 for m in self.calibrations for c in m.components for _ in c.digital_reports)
+        if n > 0:
+            s = "" if n == 1 else "s"
+            info.append(f"{n} digital report{s}")
 
-        npc = sum(1 for m in self.calibrations for c in m.components for _ in c.performance_checks)
-        if npc > 0:
-            plural = "" if npc == 1 else "s"
-            items.append(f"{npc} performance check{plural}")
+        n = sum(1 for m in self.calibrations for c in m.components for _ in c.performance_checks)
+        if n > 0:
+            s = "" if n == 1 else "s"
+            info.append(f"{n} performance check{s}")
 
-        nr = sum(1 for m in self.calibrations for c in m.components for _ in c.reports)
-        if nr > 0:
-            plural = "" if nr == 1 else "s"
-            items.append(f"{nr} report{plural}")
+        n = sum(1 for m in self.calibrations for c in m.components for _ in c.reports)
+        if n > 0:
+            s = "" if n == 1 else "s"
+            info.append(f"{n} report{s}")
 
-        summary = "" if not items else " (" + ", ".join(items) + ")"
+        summary = "" if not info else f" ({', '.join(info)})"
         return (
-            f"<{self.__class__.__name__} manufacturer={self.manufacturer!r}, "
-            f"model={self.model!r}, serial={self.serial!r}{summary}>"
+            f"{self.__class__.__name__}(manufacturer={self.manufacturer!r}, "
+            f"model={self.model!r}, serial={self.serial!r}{summary})"
         )
 
     def connect(self) -> _Any:  # noqa: ANN401
@@ -2666,7 +2756,7 @@ class Register:
 
     def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the string representation."""
-        return f"<{self.__class__.__name__} team={self.team!r} ({len(self)} equipment)>"
+        return f"{self.__class__.__name__}(team={self.team!r} ({len(self)} equipment))"
 
     def add(self, equipment: Equipment) -> None:
         """Add equipment to the register.

@@ -122,8 +122,8 @@ You can then access the equipment [registers][msl.equipment.config.Config.regist
 ```pycon
 >>> for team, register in cfg.registers.items():
 ...    print(f"{team}:", register)
-Mass: <Register team='Mass' (3 equipment)>
-Light: <Register team='Light' (4 equipment)>
+Mass: Register(team='Mass' (3 equipment))
+Light: Register(team='Light' (4 equipment))
 
 ```
 

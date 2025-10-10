@@ -4,7 +4,7 @@ You may use any XML validating tool to validate [equipment registers][] and [con
 
 ## Install {: #validate-install }
 
-`msl-equipment-validate` is available on [PyPI](https://pypi.org/project/msl-equipment-validate/) and can be installed with a variety of Python package managers
+`msl-equipment-validate` is available on [PyPI](https://pypi.org/project/msl-equipment-validate/) and can be installed with a variety of Python package managers.
 
 === "pip"
     ```console
@@ -62,6 +62,8 @@ You may also want to create a command alias, since the executable name `msl-equi
 
 ## Usage {: #validate-usage }
 
+The tool first validates XML files against the schema and once there are no schema-related issues continues to process the additional validation steps (correct SHA-256 checksum values, tables are well formatted, equations contain valid syntax, etc.), therefore, it is possible that the number of issues found increases after the schema-related issues are fixed.
+
 To see the help for the tool run
 
 ```console
@@ -74,11 +76,16 @@ To recursively validate all XML files (that are used by `msl-equipment`) in the 
 msl-equipment-validate
 ```
 
-or specify a specific file to validate
+or specify specific files to validate
 
 ```console
-msl-equipment-validate my/equipment/register.xml
-msl-equipment-validate my/equipment/connections.xml
+msl-equipment-validate my/equipment/register.xml my/equipment/connections.xml
+```
+
+or specify a specific folder to validate
+
+```console
+msl-equipment-validate my/equipment
 ```
 
 If the `msl-equipment` package is also installed, you can use its command-line interface to validate documents. *(Note the removal of the hyphen between `equipment` and `validate`.)*

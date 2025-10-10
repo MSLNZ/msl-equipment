@@ -349,9 +349,10 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: C901, PLR0912, PLR09
             print(f"{green}{msg}{reset} [{yellow}skipped: {summary.num_skipped}{reset}]")  # noqa: T201
     else:
         colour, reset = ("", "") if args.no_colour else (RED, RESET)
-        other = summary.num_issues - summary.num_schema_issues
+        n = summary.num_issues - summary.num_schema_issues
+        issues = "issue" if summary.num_issues == 1 else "issues"
         print(  # noqa: T201
-            f"{colour}Found {summary.num_issues} issues [{summary.num_schema_issues} schema, {other} other]{reset}"
+            f"{colour}Found {summary.num_issues} {issues} [{summary.num_schema_issues} schema, {n} additional]{reset}"
         )
 
     return summary.num_issues

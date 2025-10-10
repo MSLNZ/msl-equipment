@@ -346,7 +346,7 @@ def test_cli_no_colour(reset_summary: None, capsys: pytest.CaptureFixture[str]) 
 
     out, err = capsys.readouterr()
     assert not err
-    assert out == "Found 3 issues [0 schema, 3 other]\n"
+    assert out == "Found 3 issues [0 schema, 3 additional]\n"
 
 
 def test_cli_success_skipped(reset_summary: None, capsys: pytest.CaptureFixture[str]) -> None:

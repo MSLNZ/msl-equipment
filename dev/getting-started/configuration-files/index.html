@@ -2410,8 +2410,8 @@
   " href="../../api/config/#msl.equipment.config.Config.registers">registers</a>,</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">team</span><span class="p">,</span> <span class="n">register</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">registers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 <span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">team</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">,</span> <span class="n">register</span><span class="p">)</span>
-<span class="go">Mass: &lt;Register team=&#39;Mass&#39; (3 equipment)&gt;</span>
-<span class="go">Light: &lt;Register team=&#39;Light&#39; (4 equipment)&gt;</span>
+<span class="go">Mass: Register(team=&#39;Mass&#39; (3 equipment))</span>
+<span class="go">Light: Register(team=&#39;Light&#39; (4 equipment))</span>
 </code></pre></div>
 <p>iterate over and access <code>&lt;equipment/&gt;</code> elements that have been defined in the configuration file to access the <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> instances,</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">equipment</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">:</span>

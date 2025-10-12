@@ -2281,7 +2281,7 @@ class LatestReport(Latest, Report):
         return f"{self.__class__.__name__}(name={self.name!r}, quantity={self.quantity!r}, id={self.id!r}{summary})"
 
 
-@dataclass(frozen=True, **extra_dataclass_kwargs)
+@dataclass(frozen=True, repr=False, **extra_dataclass_kwargs)
 class LatestPerformanceCheck(Latest, PerformanceCheck):
     """Latest performance check."""
 
@@ -2427,7 +2427,7 @@ class Equipment:
 
         summary = "" if not info else f" ({', '.join(info)})"
         return (
-            f"{self.__class__.__name__}(manufacturer={self.manufacturer!r}, "
+            f"{self.__class__.__name__}(id={self.id!r}, manufacturer={self.manufacturer!r}, "
             f"model={self.model!r}, serial={self.serial!r}{summary})"
         )
 

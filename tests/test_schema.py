@@ -1736,7 +1736,7 @@ def test_register_from_file() -> None:  # noqa: PLR0915
 
     first = r[0]
     assert isinstance(first, Equipment)
-    assert str(first) == "Equipment(manufacturer='MSL', model='ABC', serial='123')"
+    assert str(first) == "Equipment(id='MSLE.M.001', manufacturer='MSL', model='ABC', serial='123')"
     assert first.entered_by == "Peter McDowall"  # cSpell:ignore Dowall
     assert first.checked_by == ""
     assert first.checked_date is None
@@ -1795,7 +1795,10 @@ def test_register_from_file() -> None:  # noqa: PLR0915
 
     assert isinstance(second, Equipment)
     assert second is not None
-    assert str(second) == "Equipment(manufacturer='The Company Name', model='Model', serial='Serial' (4 reports))"
+    assert (
+        str(second)
+        == "Equipment(id='MSLE.M.092', manufacturer='The Company Name', model='Model', serial='Serial' (4 reports))"
+    )
     assert second is not first
     assert r["Bob"] is second
     assert r["MSLE.M.092"] is second
@@ -2607,14 +2610,14 @@ def test_equipment_repr() -> None:
     assert r.team == "Mass"
     assert len(r) == 3
     assert str(r) == "Register(team='Mass' (3 equipment))"
-    assert repr(r["MSLE.M.001"]) == "Equipment(manufacturer='MSL', model='ABC', serial='123')"
+    assert repr(r["MSLE.M.001"]) == "Equipment(id='MSLE.M.001', manufacturer='MSL', model='ABC', serial='123')"
     assert (
         repr(r["MSLE.M.092"])
-        == "Equipment(manufacturer='The Company Name', model='Model', serial='Serial' (4 reports))"
+        == "Equipment(id='MSLE.M.092', manufacturer='The Company Name', model='Model', serial='Serial' (4 reports))"
     )
     assert (
         repr(r["MSLE.M.100"])
-        == "Equipment(manufacturer='Measurement', model='Stds', serial='Lab' (2 adjustments, 1 digital report, 1 performance check, 1 report))"  # noqa: E501
+        == "Equipment(id='MSLE.M.100', manufacturer='Measurement', model='Stds', serial='Lab' (2 adjustments, 1 digital report, 1 performance check, 1 report))"  # noqa: E501
     )
 
 
@@ -2624,14 +2627,14 @@ def test_equipment_str_element_sources() -> None:
     assert r.team == "Mass"
     assert len(r) == 3
     assert str(r) == "Register(team='Mass' (3 equipment))"
-    assert repr(r["MSLE.M.001"]) == "Equipment(manufacturer='MSL', model='ABC', serial='123')"
+    assert repr(r["MSLE.M.001"]) == "Equipment(id='MSLE.M.001', manufacturer='MSL', model='ABC', serial='123')"
     assert (
         repr(r["MSLE.M.092"])
-        == "Equipment(manufacturer='The Company Name', model='Model', serial='Serial' (4 reports))"
+        == "Equipment(id='MSLE.M.092', manufacturer='The Company Name', model='Model', serial='Serial' (4 reports))"
     )
     assert (
         repr(r["MSLE.M.100"])
-        == "Equipment(manufacturer='Measurement', model='Stds', serial='Lab' (2 adjustments, 1 digital report, 1 performance check, 1 report))"  # noqa: E501
+        == "Equipment(id='MSLE.M.100', manufacturer='Measurement', model='Stds', serial='Lab' (2 adjustments, 1 digital report, 1 performance check, 1 report))"  # noqa: E501
     )
 
 

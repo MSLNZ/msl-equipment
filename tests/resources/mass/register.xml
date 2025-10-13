@@ -21,9 +21,9 @@
     </equipment>
     <equipment enteredBy="Joseph Borbely" checkedBy="Adam Dunford" checkedDate="2025-08-12" alias="Bob" keywords="Thermometer Hygrometer">
         <id>MSLE.M.092</id>
-        <manufacturer>The Company Name</manufacturer>
-        <model>Model</model>
-        <serial>Serial</serial>
+        <manufacturer>XYZ</manufacturer>
+        <model>A</model>
+        <serial>b</serial>
         <description>Monitors the ambient lab temperature and humidity</description>
         <specifications>
             <foo bar="baz">bar</foo>

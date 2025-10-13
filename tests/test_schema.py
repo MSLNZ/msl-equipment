@@ -1797,7 +1797,7 @@ def test_register_from_file() -> None:  # noqa: PLR0915
     assert second is not None
     assert (
         str(second)
-        == "Equipment(id='MSLE.M.092', manufacturer='The Company Name', model='Model', serial='Serial' (4 reports))"
+        == "Equipment(id='MSLE.M.092', manufacturer='XYZ', model='A', serial='b' (4 reports))"
     )
     assert second is not first
     assert r["Bob"] is second
@@ -1810,9 +1810,9 @@ def test_register_from_file() -> None:  # noqa: PLR0915
     assert second.alias == "Bob"
     assert second.keywords == ("Thermometer", "Hygrometer")
     assert second.id == "MSLE.M.092"
-    assert second.manufacturer == "The Company Name"
-    assert second.model == "Model"
-    assert second.serial == "Serial"
+    assert second.manufacturer == "XYZ"
+    assert second.model == "A"
+    assert second.serial == "b"
     assert second.description == "Monitors the ambient lab temperature and humidity"
     assert len(second.specifications) == 1
     assert second.specifications[0].tag == "foo"
@@ -2613,7 +2613,7 @@ def test_equipment_repr() -> None:
     assert repr(r["MSLE.M.001"]) == "Equipment(id='MSLE.M.001', manufacturer='MSL', model='ABC', serial='123')"
     assert (
         repr(r["MSLE.M.092"])
-        == "Equipment(id='MSLE.M.092', manufacturer='The Company Name', model='Model', serial='Serial' (4 reports))"
+        == "Equipment(id='MSLE.M.092', manufacturer='XYZ', model='A', serial='b' (4 reports))"
     )
     assert (
         repr(r["MSLE.M.100"])
@@ -2630,7 +2630,7 @@ def test_equipment_str_element_sources() -> None:
     assert repr(r["MSLE.M.001"]) == "Equipment(id='MSLE.M.001', manufacturer='MSL', model='ABC', serial='123')"
     assert (
         repr(r["MSLE.M.092"])
-        == "Equipment(id='MSLE.M.092', manufacturer='The Company Name', model='Model', serial='Serial' (4 reports))"
+        == "Equipment(id='MSLE.M.092', manufacturer='XYZ', model='A', serial='b' (4 reports))"
     )
     assert (
         repr(r["MSLE.M.100"])
@@ -2644,7 +2644,7 @@ def test_equipment_str_element_sources() -> None:
         ("ambient", "092"),  # description
         ("Measurement", "100"),  # manufacturer
         ("ABC", "001"),  # model
-        ("Serial", "092"),  # serial
+        ("^b$", "092"),  # serial
         (r"M\.1", "100"),  # equipment id
         ("CMM", "001"),  # location
         ("Voltage", "100"),  # quantity

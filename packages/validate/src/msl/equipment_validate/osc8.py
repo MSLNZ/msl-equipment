@@ -110,16 +110,17 @@ def pycharm_uri_scheme_handler(file: str, line: int, column: int) -> None:
 
     for pf in ["C:\\Program Files", "C:\\Program Files (x86)"]:  # pragma: no cover
         for path in Path(pf).glob("JetBrains\\*\\bin"):
-            exe = path / "pycharm64.exe"
-            if exe.is_file():
-                cmd: list[str] = [str(exe)]
-                if line:
-                    cmd.extend(["--line", str(line)])
-                if column:
-                    cmd.extend(["--column", str(column)])
-                cmd.append(file)
-                _ = Popen(cmd)  # noqa: S603
-                return
+            for pycharm in ["pycharm64.exe", "pycharm.exe"]:
+                exe = path / pycharm
+                if exe.is_file():
+                    cmd: list[str] = [str(exe)]
+                    if line:
+                        cmd.extend(["--line", str(line)])
+                    if column:
+                        cmd.extend(["--column", str(column)])
+                    cmd.append(file)
+                    _ = Popen(cmd)  # noqa: S603
+                    return
 
 
 def vs_uri_scheme_handler(file: str, line: int, column: int) -> None:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG001

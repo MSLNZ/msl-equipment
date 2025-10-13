@@ -1,6 +1,6 @@
 # Register
 
-An equipment register can be stored in a single XML file or distributed across multiple XML files.
+An equipment register can be stored in a single XML file or distributed across multiple XML files. In this example we load a single XML file.
 
 ```pycon
 >>> from msl.equipment import Register
@@ -18,7 +18,7 @@ Register(team='Mass' (2 equipment))
 
 ```
 
-A register behaves like a sequence of [Equipment][] items. You can iterate over the sequence,
+A register behaves like a sequence of [Equipment][] items. You can get the number of items in the sequence and iterate over the sequence,
 
 ```pycon
 >>> len(register)
@@ -74,7 +74,7 @@ LatestReport(name='Probe 1', quantity='Humidity', id='Humidity/2023/583' (1 equa
 
 ```
 
-We see that the calibration report contains one [Equation][]. We can use the equation to apply a correction to measured values and calculate the uncertainty.
+We see that the calibration report contains one [Equation][]. We can use the equation to apply a correction to measured values and to calculate the uncertainty.
 
 ```pycon
 >>> value = report.equation.value
@@ -84,6 +84,8 @@ We see that the calibration report contains one [Equation][]. We can use the equ
 array([45.1121266, 45.7099039])
 >>> report.equation.uncertainty(R=[45.5, 46.1], t=[20.1, 20.0])
 array([0.355, 0.355])
+>>> report.equation.unit
+'%rh'
 
 ```
 

@@ -2700,10 +2700,8 @@ class Register:
         files for the same team. Not specifying a source creates a new (empty) register.
 
         Args:
-            sources: The [path-like][path-like object],
-                [file-like][file-like object] or
-                [Element][xml.etree.ElementTree.Element]
-                objects that are equipment registers.
+            sources: The [path-like][path-like object], [file-like][file-like object] or
+                [Element][xml.etree.ElementTree.Element] objects that represent an equipment register.
         """
         team = ""
         self._elements: list[Element[str]] = []

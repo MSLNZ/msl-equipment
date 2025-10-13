@@ -4,7 +4,7 @@ Laboratories that use equipment for traceable calibration measurements are requi
 
 An equipment register is based on the definitions in the [Schema][er-schema] and may either be saved in the eXtensible Markup Language (XML) file format or in a [Python module][er-python-module]. Using the XML format is the preferred way to save the information since XML files can be easily [validated][validate] against the [Schema][er-schema] to ensure data integrity and it allows for equipment registers to be parsed by many programming languages. An equipment register can be saved in a single XML file or distributed across multiple XML files.
 
-The [Schema Classes][] section of the documentation shows how an equipment register can be used in a Python program.
+The [Schema Classes][] section of the documentation shows how an equipment register can be used in a Python program. The [Register][] class loads an equipment register, or when using a [configuration file][configuration-files] the [registers][msl.equipment.config.Config.registers] attribute provides access to multiple equipment registers.
 
 ## XML Schema {: #er-schema }
 

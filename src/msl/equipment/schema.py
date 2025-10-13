@@ -2432,7 +2432,7 @@ class Equipment:
         )
 
     def connect(self) -> _Any:  # noqa: ANN401
-        """Connect to the equipment."""
+        """Connect to the equipment for computer control."""
         if self.connection is None:
             # Cannot simply call super(). Must specify (type, object) since the dataclass uses slots=True
             super(Equipment, self).__setattr__("connection", connections[self.id])  # noqa: UP008
@@ -3071,7 +3071,7 @@ class Connection:
         return f"{self.__class__.__name__}(eid={self.eid!r} address={self.address!r})"
 
     def connect(self) -> _Any:  # noqa: ANN401
-        """Connect to the equipment."""
+        """Connect to the equipment for computer control."""
         equipment = Equipment(
             id=self.eid,
             manufacturer=self.manufacturer,

@@ -435,3 +435,8 @@ def test_reconnect_tcp(tcp_server: type[TCPServer], caplog: pytest.LogCaptureFix
     dev.disconnect()
 
     server.stop()
+
+
+def test_no_connection_instance() -> None:
+    with pytest.raises(TypeError, match=r"A Connection is not associated"):
+        _ = Socket(Equipment())

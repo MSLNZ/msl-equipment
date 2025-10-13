@@ -90,3 +90,8 @@ def test_logging_messages(caplog: pytest.LogCaptureFixture) -> None:
         "SDK.add(c_float(1.0), c_float(1.0)) -> None",
         "Disconnected from SDK<MSL|| at >",
     ]
+
+
+def test_no_connection_instance() -> None:
+    with pytest.raises(TypeError, match=r"A Connection is not associated"):
+        _ = SDK(Equipment())

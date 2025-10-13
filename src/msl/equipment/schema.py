@@ -3170,16 +3170,17 @@ class Interface:
         Args:
             equipment: An [Equipment][] instance.
         """
-        assert equipment.connection is not None  # noqa: S101
+        # __str__ and __repr__ can be called often for logging message, cache the values
+        self._str: str = f"{self.__class__.__name__}<{equipment.manufacturer}|{equipment.model}|{equipment.serial}>"
+        self._repr: str = self._str  # updated later
+
         self._equipment: Equipment = equipment
 
-        # __str__ and __repr__ can be called often for logging message, cache values
-        self.__str: str = f"{self.__class__.__name__}<{equipment.manufacturer}|{equipment.model}|{equipment.serial}>"
-        self.__repr: str = (
-            f"{self.__class__.__name__}"
-            f"<{equipment.manufacturer}|{equipment.model}|{equipment.serial} at {equipment.connection.address}>"
-        )
+        if equipment.connection is None:
+            msg = f"A Connection is not associated with {equipment}"
+            raise TypeError(msg)
 
+        self._repr = self._repr[:-1] + f" at {equipment.connection.address}>"
         logger.debug("Connecting to %r", self)
 
     def __del__(self) -> None:
@@ -3230,11 +3231,11 @@ class Interface:
 
     def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the representation."""
-        return self.__repr
+        return self._repr
 
     def __str__(self) -> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the string representation."""
-        return self.__str
+        return self._str
 
     @property
     def equipment(self) -> Equipment:

@@ -44,3 +44,8 @@ def test_equivalent_to_importing_nidaqmx() -> None:
 
     with pytest.raises(AttributeError):
         _ = daq.doesnotexist
+
+
+def test_no_connection_instance() -> None:
+    with pytest.raises(TypeError, match=r"A Connection is not associated"):
+        _ = NIDAQ(Equipment())

@@ -8,7 +8,7 @@ import pytest
 from pyvisa.attributes import AttrVI_ATTR_TMO_VALUE
 from pyvisa.resources.tcpip import TCPIPSocket
 
-from msl.equipment import Backend, Connection, Parity, StopBits
+from msl.equipment import Backend, Connection, Equipment, Parity, PyVISA, StopBits
 from msl.equipment.interfaces.pyvisa import _prepare_kwargs  # pyright: ignore[reportPrivateUsage]
 
 if TYPE_CHECKING:
@@ -172,3 +172,8 @@ def test_timeout_and_termination_2(tcp_server: type[TCPServer]) -> None:
 
     dev.disconnect()
     server.stop()
+
+
+def test_no_connection_instance() -> None:
+    with pytest.raises(TypeError, match=r"A Connection is not associated"):
+        _ = PyVISA(Equipment())

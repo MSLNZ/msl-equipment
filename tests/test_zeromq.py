@@ -175,3 +175,8 @@ def test_set_interface(zmq_server: type[ZMQServer]) -> None:
             assert dev.timeout is None
             assert dev.socket.getsockopt(zmq.RCVTIMEO) == -1
             assert dev.socket.getsockopt(zmq.SNDTIMEO) == -1
+
+
+def test_no_connection_instance() -> None:
+    with pytest.raises(TypeError, match=r"A Connection is not associated"):
+        _ = ZeroMQ(Equipment())

@@ -179,3 +179,8 @@ def test_socket(tcp_server: type[TCPServer]) -> None:
         pro.disconnect()
         with pytest.raises(MSLConnectionError, match=r"Disconnected from Prologix GPIB device"):
             _ = pro.read()
+
+
+def test_no_connection_instance() -> None:
+    with pytest.raises(TypeError, match=r"A Connection is not associated"):
+        _ = Prologix(Equipment())

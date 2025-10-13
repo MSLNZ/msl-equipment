@@ -234,3 +234,8 @@ def test_mock_logging(mock_gpib: None, caplog: pytest.LogCaptureFixture) -> None
     assert dev.gpib_library is not None
     assert caplog.messages[-2] == "gpib.ibonl(3, 0) -> 0x1a"
     assert caplog.messages[-1] == "Disconnected from GPIB<|| at GPIB::5>"
+
+
+def test_no_connection_instance() -> None:
+    with pytest.raises(TypeError, match=r"A Connection is not associated"):
+        _ = GPIB(Equipment())

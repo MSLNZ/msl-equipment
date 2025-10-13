@@ -252,3 +252,8 @@ def test_message_as_string() -> None:
         str(msg)
         == "Message(type=AsyncInitialize, control_code=0, parameter=0, payload[len=104]=b'abcdefghijklmnopqrstuvwxy'...b'bcdefghijklmnopqrstuvwxyz')"  # cSpell: ignore bcdefghijklmnopqrstuvwxyz  # noqa: E501
     )
+
+
+def test_no_connection_instance() -> None:
+    with pytest.raises(TypeError, match=r"A Connection is not associated"):
+        _ = HiSLIP(Equipment())

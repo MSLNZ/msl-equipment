@@ -505,3 +505,8 @@ def test_cannot_connect() -> None:
     connection = Connection("TCPIP::127.0.0.1", timeout=0.2)
     with pytest.raises((MSLConnectionError, MSLTimeoutError)):
         _ = connection.connect()
+
+
+def test_no_connection_instance() -> None:
+    with pytest.raises(TypeError, match=r"A Connection is not associated"):
+        _ = VXI11(Equipment())

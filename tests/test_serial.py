@@ -299,3 +299,8 @@ def test_init_serial_stop_bits(properties: dict[str, int | str]) -> None:
 def test_init_serial_xon_xoff(properties: dict[str, bool]) -> None:
     s = _init_serial("A", properties)
     assert s.xonxoff is True
+
+
+def test_no_connection_instance() -> None:
+    with pytest.raises(TypeError, match=r"A Connection is not associated"):
+        _ = Serial(Equipment())

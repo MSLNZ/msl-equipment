@@ -1795,10 +1795,7 @@ def test_register_from_file() -> None:  # noqa: PLR0915
 
     assert isinstance(second, Equipment)
     assert second is not None
-    assert (
-        str(second)
-        == "Equipment(id='MSLE.M.092', manufacturer='XYZ', model='A', serial='b' (4 reports))"
-    )
+    assert str(second) == "Equipment(id='MSLE.M.092', manufacturer='XYZ', model='A', serial='b' (4 reports))"
     assert second is not first
     assert r["Bob"] is second
     assert r["MSLE.M.092"] is second
@@ -2611,10 +2608,7 @@ def test_equipment_repr() -> None:
     assert len(r) == 3
     assert str(r) == "Register(team='Mass' (3 equipment))"
     assert repr(r["MSLE.M.001"]) == "Equipment(id='MSLE.M.001', manufacturer='MSL', model='ABC', serial='123')"
-    assert (
-        repr(r["MSLE.M.092"])
-        == "Equipment(id='MSLE.M.092', manufacturer='XYZ', model='A', serial='b' (4 reports))"
-    )
+    assert repr(r["MSLE.M.092"]) == "Equipment(id='MSLE.M.092', manufacturer='XYZ', model='A', serial='b' (4 reports))"
     assert (
         repr(r["MSLE.M.100"])
         == "Equipment(id='MSLE.M.100', manufacturer='Measurement', model='Stds', serial='Lab' (2 adjustments, 1 digital report, 1 performance check, 1 report))"  # noqa: E501
@@ -2628,10 +2622,7 @@ def test_equipment_str_element_sources() -> None:
     assert len(r) == 3
     assert str(r) == "Register(team='Mass' (3 equipment))"
     assert repr(r["MSLE.M.001"]) == "Equipment(id='MSLE.M.001', manufacturer='MSL', model='ABC', serial='123')"
-    assert (
-        repr(r["MSLE.M.092"])
-        == "Equipment(id='MSLE.M.092', manufacturer='XYZ', model='A', serial='b' (4 reports))"
-    )
+    assert repr(r["MSLE.M.092"]) == "Equipment(id='MSLE.M.092', manufacturer='XYZ', model='A', serial='b' (4 reports))"
     assert (
         repr(r["MSLE.M.100"])
         == "Equipment(id='MSLE.M.100', manufacturer='Measurement', model='Stds', serial='Lab' (2 adjustments, 1 digital report, 1 performance check, 1 report))"  # noqa: E501

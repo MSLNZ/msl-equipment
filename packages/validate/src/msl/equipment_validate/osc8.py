@@ -132,6 +132,14 @@ def vs_uri_scheme_handler(file: str, line: int, column: int) -> None:  # pyright
     if not Path(file).is_file():
         return
 
+    # The "/Command Edit.GoTo LINE" option works when VS is not currently open. If an instance of
+    # VS is already running, the devenv.exe tool ignores the /Command option. The file is still
+    # opened but remains at line 1. This is a known bug that Microsoft hasn't fixed for many years
+    # https://learn.microsoft.com/en-us/answers/questions/919213/vs2019-open-file-and-goto-line
+
+    # There is another way to open a file at the specified line by using the "VisualStudio.DTE" COM object
+    # https://stackoverflow.com/questions/350323/open-a-file-in-visual-studio-at-a-specific-line-number
+
     for pf in ["C:\\Program Files", "C:\\Program Files (x86)"]:  # pragma: no cover
         for path in Path(pf).glob("Microsoft Visual Studio\\*\\Community\\Common7\\IDE"):
             exe = path / "devenv.exe"

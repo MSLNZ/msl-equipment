@@ -2397,6 +2397,132 @@
 
 
 <h1 id="register">Register<a class="headerlink" href="#register" title="Permanent link">¤</a></h1>
+<p>An equipment register can be stored in a single XML file or distributed across multiple XML files.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Register</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">register</span> <span class="o">=</span> <span class="n">Register</span><span class="p">(</span><span class="s2">&quot;tests/resources/mass/register.xml&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>Printing the <code>register</code> object shows the name of the <a class="autorefs autorefs-internal" title="            team
+
+
+  
+      property
+      writable
+  " href="#msl.equipment.schema.Register.team">team</a> that is responsible for the equipment register and the number of <a class="autorefs autorefs-internal" href="../equipment/#equipment">Equipment</a> items that are in the register.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">register</span>
+<span class="go">Register(team=&#39;Mass&#39; (2 equipment))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">register</span><span class="o">.</span><span class="n">team</span>
+<span class="go">&#39;Mass&#39;</span>
+</code></pre></div>
+<p>A register behaves like a sequence of <a class="autorefs autorefs-internal" href="../equipment/#equipment">Equipment</a> items. You can iterate over the sequence,</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">register</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">equipment</span> <span class="ow">in</span> <span class="n">register</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">equipment</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">MSLE.M.001</span>
+<span class="go">MSLE.M.092</span>
+</code></pre></div>
+<p>access equipment by its index, its equipment <a class="autorefs autorefs-internal" title="            id
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="../equipment/#msl.equipment.schema.Equipment.id">id</a> or its <a class="autorefs autorefs-internal" title="            alias
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="../equipment/#msl.equipment.schema.Equipment.alias">alias</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">register</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># index</span>
+<span class="go">&#39;MSLE.M.092&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">register</span><span class="p">[</span><span class="s2">&quot;MSLE.M.092&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># equipment id</span>
+<span class="go">&#39;MSLE.M.092&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">register</span><span class="p">[</span><span class="s2">&quot;Bob&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># alias</span>
+<span class="go">&#39;MSLE.M.092&#39;</span>
+</code></pre></div>
+<p>The <a class="autorefs autorefs-internal" title="            get" href="#msl.equipment.schema.Register.get">get</a> method will attempt to get the <a class="autorefs autorefs-internal" href="../equipment/#equipment">Equipment</a> at the specified index, <a class="autorefs autorefs-internal" title="            id
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="../equipment/#msl.equipment.schema.Equipment.id">id</a> or <a class="autorefs autorefs-internal" title="            alias
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="../equipment/#msl.equipment.schema.Equipment.alias">alias</a>, but will return <code>None</code> (instead of raising an exception) if the <a class="autorefs autorefs-internal" href="../equipment/#equipment">Equipment</a> cannot be found in the register.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">register</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>  <span class="c1"># invalid index</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">register</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MSLE.M.999&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>  <span class="c1"># invalid equipment id</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">register</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Bob&quot;</span><span class="p">)</span>  <span class="c1"># valid alias</span>
+<span class="go">Equipment(id=&#39;MSLE.M.092&#39;, manufacturer=&#39;XYZ&#39;, model=&#39;A&#39;, serial=&#39;b&#39; (4 reports))</span>
+</code></pre></div>
+<p>The <a class="autorefs autorefs-internal" title="            find" href="#msl.equipment.schema.Register.find">find</a> method searches the register to find equipment that contain certain text. You may use a <a href="https://regexr.com/">regular-expression pattern</a> to find matching equipment items. Here we find all equipment that have the text <code>Hygrometer</code> in one of the <a class="autorefs autorefs-internal" href="../equipment/#equipment">Equipment</a> attribute values that are considered in the search.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">hygrometer</span> <span class="ow">in</span> <span class="n">register</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Hygrometer&quot;</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">hygrometer</span><span class="p">)</span>
+<span class="go">Equipment(id=&#39;MSLE.M.092&#39;, manufacturer=&#39;XYZ&#39;, model=&#39;A&#39;, serial=&#39;b&#39; (4 reports))</span>
+</code></pre></div>
+<p>We see that one equipment was found and that there are four calibration reports associated with the equipment. From the <a class="autorefs autorefs-internal" href="../equipment/#equipment">Equipment</a> instance, we can get the latest calibration report for a certain <a class="autorefs autorefs-internal" title="            Component
+
+
+  
+      dataclass
+  " href="../component/#msl.equipment.schema.Component">Component</a> <a class="autorefs autorefs-internal" title="            name
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="../component/#msl.equipment.schema.Component.name">name</a> and <a class="autorefs autorefs-internal" title="            Measurand
+
+
+  
+      dataclass
+  " href="../measurand/#msl.equipment.schema.Measurand">Measurand</a> <a class="autorefs autorefs-internal" title="            quantity
+
+
+  
+      instance-attribute
+  " href="../measurand/#msl.equipment.schema.Measurand.quantity">quantity</a>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If the equipment contains only one <a class="autorefs autorefs-internal" title="            Measurand
+
+
+  
+      dataclass
+  " href="../measurand/#msl.equipment.schema.Measurand">Measurand</a> and one <a class="autorefs autorefs-internal" title="            Component
+
+
+  
+      dataclass
+  " href="../component/#msl.equipment.schema.Component">Component</a> you do not need to specify the <em>name</em> and <em>quantity</em> keyword arguments.</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">report</span> <span class="o">=</span> <span class="n">hygrometer</span><span class="o">.</span><span class="n">latest_report</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Probe 1&quot;</span><span class="p">,</span> <span class="n">quantity</span><span class="o">=</span><span class="s2">&quot;Humidity&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">report</span>
+<span class="go">LatestReport(name=&#39;Probe 1&#39;, quantity=&#39;Humidity&#39;, id=&#39;Humidity/2023/583&#39; (1 equation))</span>
+</code></pre></div>
+<p>We see that the calibration report contains one <a class="autorefs autorefs-internal" href="../equation/#equation">Equation</a>. We can use the equation to apply a correction to measured values and calculate the uncertainty.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">value</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="n">equation</span><span class="o">.</span><span class="n">value</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">value</span><span class="o">.</span><span class="n">equation</span>
+<span class="go">&#39;R - 7.131e-2 - 3.951e-2*R + 3.412e-4*pow(R,2) + 2.465e-3*t + 1.034e-3*R*t - 5.297e-6*pow(R,2)*t&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">value</span><span class="p">(</span><span class="n">R</span><span class="o">=</span><span class="p">[</span><span class="mf">45.5</span><span class="p">,</span> <span class="mf">46.1</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="p">[</span><span class="mf">20.1</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">])</span>
+<span class="go">array([45.1121266, 45.7099039])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">report</span><span class="o">.</span><span class="n">equation</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">(</span><span class="n">R</span><span class="o">=</span><span class="p">[</span><span class="mf">45.5</span><span class="p">,</span> <span class="mf">46.1</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="p">[</span><span class="mf">20.1</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">])</span>
+<span class="go">array([0.355, 0.355])</span>
+</code></pre></div>
+<p>From the <a class="autorefs autorefs-internal" title="            LatestReport
+
+
+  
+      dataclass
+  " href="../equipment/#msl.equipment.schema.LatestReport">LatestReport</a> instance, we can, for example, get the date when the next calibration is due.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">report</span><span class="o">.</span><span class="n">next_calibration_date</span>
+<span class="go">datetime.date(2028, 8, 14)</span>
+</code></pre></div>
 
 
 <div class="doc doc-object doc-class">

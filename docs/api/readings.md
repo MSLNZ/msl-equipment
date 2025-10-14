@@ -71,7 +71,7 @@ When converting the [Readings][msl.equipment.readings.Readings] to a string, the
 '8.00016518(80)'
 >>> f"{r:.2B}" # equivalent to previous
 '8.00016518(80)'
->>> f"{r:.3PU}"  # retain 3 digits, +/- notation, unicode characters
+>>> f"{r:.3PU}"  # retain 3 digits, +/- mode, unicode style
 '8.000165175±0.000000798'
 
 ```
@@ -86,7 +86,7 @@ The grammar for the format specification is defined as,
 [[fill]align][sign][z][#][0][width][grouping][.digits][type][mode][style][si]
 ```
 
-where we note the use of *digits* (not *precision*) and the additional *mode*, *style* and *si* options. *digits* refers to the number of significant digits to retain in the uncertainty. The *mode* option specifies how the value and the uncertainty are separated: `B` (bracket notation, default) or `P` (plus-minus sign). There are two *style* options: `L` ($\LaTeX$) or `U` (unicode). The *si* option can only be `S` and if it is specified the appropriate [SI prefix symbol](https://en.wikipedia.org/wiki/Metric_prefix) replaces the Base-10 component.
+where we note the use of *digits* (not *precision*) and the additional *mode*, *style* and *si* options. *digits* refers to the number of significant digits to retain in the uncertainty. The *mode* option specifies how the value and the uncertainty are separated: `B` (bracket mode, default) or `P` (plus-minus sign). There are two *style* options: `L` ($\LaTeX$) or `U` (unicode). The *si* option can only be `S` and if it is specified the appropriate [SI prefix symbol](https://en.wikipedia.org/wiki/Metric_prefix) replaces the Base-10 component.
 
 We can also create a [Readings][] instance by specifying the mean, standard deviation and size keyword arguments
 
@@ -104,21 +104,21 @@ We can also create a [Readings][] instance by specifying the mean, standard devi
 Here are some examples on how to use the custom format specification
 
 ```pycon
->>> f"{r}"  # default is to retain 2 digits with bracket notation
+>>> f"{r}"  # default is to retain 2 digits with bracket mode
 '0.000003456(13)'
->>> f"{r:P}"  # +/- notation
+>>> f"{r:P}"  # +/- mode
 '0.000003456+/-0.000000013'
->>> f"{r:PU}"  # +/- notation with unicode
+>>> f"{r:PU}"  # +/- mode, unicode style
 '0.000003456±0.000000013'
 >>> f"{r:e}"  # exponent form
 '3.456(13)e-06'
 >>> f"{r:S}" # SI prefix
 '3.456(13) u'
->>> f"{r:US}" # unicode and SI prefix
+>>> f"{r:US}" # unicode style, SI prefix
 '3.456(13) µ'
->>> f"{r:.1eU}" # 1 digit, exponent form, unicode
+>>> f"{r:.1eU}" # 1 digit, exponent form, unicode style
 '3.46(1)×10⁻⁶'
->>> f"{r:eL}" # exponent form in LaTeX notation
+>>> f"{r:eL}" # exponent form, LaTeX style
 '3.456\\left(13\\right)\\times10^{-6}'
 >>> f"{r:=^+30.4e}"  # fill with '=', align center, include + sign, 30 characters in total, 4 digits, exponent form
 '======+3.45620(1334)e-06======'

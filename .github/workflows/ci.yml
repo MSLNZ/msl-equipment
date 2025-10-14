@@ -19,6 +19,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+      - name: Install locales (Ubuntu)
+        if: ${{ matrix.os == 'ubuntu' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y language-pack-en language-pack-de
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:

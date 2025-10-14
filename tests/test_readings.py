@@ -277,9 +277,14 @@ def test_parse() -> None:
     assert _parse("02.0") == expect(zero="0", width="2", precision="0")
     assert _parse(".10") == expect(precision="10")
     assert _parse("07.2f") == expect(zero="0", width="7", precision="2", type="f")
-    assert _parse("*<-z06,.4E") == expect(
-        fill="*", align="<", sign="-", z="z", zero="0", width="6", grouping=",", precision="4", type="E"
+    assert _parse("*<-06,.4E") == expect(
+        fill="*", align="<", sign="-", zero="0", width="6", grouping=",", precision="4", type="E"
     )
+
+    if sys.version_info[:2] >= (3, 11):
+        assert _parse("*<-z06,.4E") == expect(
+            fill="*", align="<", sign="-", z="z", zero="0", width="6", grouping=",", precision="4", type="E"
+        )
 
     # custom fields
     assert _parse("B", check=False) == expect(mode="B")
@@ -1852,22 +1857,13 @@ def test_type_n_swiss() -> None:
     _ = locale.setlocale(locale.LC_NUMERIC, loc)
 
     r = Readings(mean=1.23456789, std=0.987654321, size=1)
-    if is_darwin:
-        assert f"{r:n}" == "1,23(99)"
-    else:
-        assert f"{r:n}" == "1.23(99)"
+    assert f"{r:n}" == "1.23(99)"
 
     r = Readings(mean=1.2345678987e6, std=0.987654321, size=1)
-    if is_darwin:
-        assert f"{r:.4n}" == "1234567,8987(9877)"
-    else:
-        assert f"{r:.4n}" == "1’234’567.8987(9877)"  # noqa: RUF001
+    assert f"{r:.4n}" == "1’234’567.8987(9877)"  # noqa: RUF001
 
     r = Readings(mean=12345.6789, std=9876.54321, size=1)
-    if is_darwin:
-        assert f"{r:.8n}" == "12345,6789(9876,5432)"
-    else:
-        assert f"{r:.8n}" == "12’345.6789(9’876.5432)"  # noqa: RUF001
+    assert f"{r:.8n}" == "12’345.6789(9’876.5432)"  # noqa: RUF001
 
     _ = locale.setlocale(locale.LC_NUMERIC, original_loc)
 
@@ -1885,16 +1881,10 @@ def test_type_n_german() -> None:
     assert f"{r:n}" == "1,23(99)"
 
     r = Readings(mean=1.2345678987e6, std=0.987654321, size=1)
-    if is_darwin:
-        assert f"{r:.4n}" == "1234567,8987(9877)"
-    else:
-        assert f"{r:.4n}" == "1.234.567,8987(9877)"
+    assert f"{r:.4n}" == "1.234.567,8987(9877)"
 
     r = Readings(mean=12345.6789, std=9876.54321, size=1)
-    if is_darwin:
-        assert f"{r:.8n}" == "12345,6789(9876,5432)"
-    else:
-        assert f"{r:.8n}" == "12.345,6789(9.876,5432)"
+    assert f"{r:.8n}" == "12.345,6789(9.876,5432)"
 
     r = Readings(mean=2345, std=1234, size=1)
     assert f"{r:#.1n}" == "2,(1,)e+03"
@@ -1977,10 +1967,8 @@ def test_type_n_afrikaans() -> None:
         assert f"{r:n}" == "1,23(99)"
 
     r = Readings(mean=1.2345678987e6, std=0.987654321, size=1)
-    if is_windows:
+    if is_windows or is_darwin:
         assert f"{r:.4n}" == "1\xa0234\xa0567,8987(9877)"
-    elif is_darwin:
-        assert f"{r:.4n}" == "1.234.567,8987(9877)"
     else:
         assert f"{r:.4n}" == "1,234,567.8987(9877)"
 

@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 # The regular expression to parse a format specification (format_spec)
 # with additional (and optional) characters at the end for custom fields.
 #
-# format_spec ::= [[fill]align][sign][#][0][width][grouping][.precision][type][mode][style][si]
+# format_spec ::= [[fill]align][sign][z][#][0][width][grouping][.precision][type][mode][style][si]
 # https://docs.python.org/3/library/string.html#format-specification-mini-language
 _format_spec_regex = re.compile(
     # the builtin grammar fields

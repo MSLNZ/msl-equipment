@@ -1963,16 +1963,16 @@ def test_type_n_afrikaans() -> None:
         assert f"{r:n}" == "1,23(99)"
 
     r = Readings(mean=1.2345678987e6, std=0.987654321, size=1)
-    if is_windows or is_darwin:
-        assert f"{r:.4n}" == "1\xa0234\xa0567,8987(9877)"
-    else:
+    if is_linux:
         assert f"{r:.4n}" == "1,234,567.8987(9877)"
+    else:
+        assert f"{r:.4n}" == "1\xa0234\xa0567,8987(9877)"
 
     r = Readings(mean=12345.6789, std=9876.54321, size=1)
-    if is_windows or is_darwin:
-        assert f"{r:.8n}" == "12\xa0345,6789(9\xa0876,5432)"
-    else:
+    if is_linux:
         assert f"{r:.8n}" == "12,345.6789(9,876.5432)"
+    else:
+        assert f"{r:.8n}" == "12\xa0345,6789(9\xa0876,5432)"
 
     _ = locale.setlocale(locale.LC_NUMERIC, original_loc)
 

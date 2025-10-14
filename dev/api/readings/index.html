@@ -2470,7 +2470,7 @@
 <span class="go">&#39;8.00016518(80)&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.2B</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># equivalent to previous</span>
 <span class="go">&#39;8.00016518(80)&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.3PU</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># retain 3 digits, +/- notation, unicode characters</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.3PU</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># retain 3 digits, +/- mode, unicode style</span>
 <span class="go">&#39;8.000165175±0.000000798&#39;</span>
 </code></pre></div>
 <h2 id="format-specification">Format Specification<a class="headerlink" href="#format-specification" title="Permanent link">¤</a></h2>
@@ -2478,7 +2478,7 @@
 <p>The grammar for the format specification is defined as,</p>
 <div class="highlight"><pre><span></span><code>[[fill]align][sign][z][#][0][width][grouping][.digits][type][mode][style][si]
 </code></pre></div>
-<p>where we note the use of <em>digits</em> (not <em>precision</em>) and the additional <em>mode</em>, <em>style</em> and <em>si</em> options. <em>digits</em> refers to the number of significant digits to retain in the uncertainty. The <em>mode</em> option specifies how the value and the uncertainty are separated: <code>B</code> (bracket notation, default) or <code>P</code> (plus-minus sign). There are two <em>style</em> options: <code>L</code> (<span class="arithmatex">\(\LaTeX\)</span>) or <code>U</code> (unicode). The <em>si</em> option can only be <code>S</code> and if it is specified the appropriate <a href="https://en.wikipedia.org/wiki/Metric_prefix">SI prefix symbol</a> replaces the Base-10 component.</p>
+<p>where we note the use of <em>digits</em> (not <em>precision</em>) and the additional <em>mode</em>, <em>style</em> and <em>si</em> options. <em>digits</em> refers to the number of significant digits to retain in the uncertainty. The <em>mode</em> option specifies how the value and the uncertainty are separated: <code>B</code> (bracket mode, default) or <code>P</code> (plus-minus sign). There are two <em>style</em> options: <code>L</code> (<span class="arithmatex">\(\LaTeX\)</span>) or <code>U</code> (unicode). The <em>si</em> option can only be <code>S</code> and if it is specified the appropriate <a href="https://en.wikipedia.org/wiki/Metric_prefix">SI prefix symbol</a> replaces the Base-10 component.</p>
 <p>We can also create a <a class="autorefs autorefs-internal" href="#readings">Readings</a> instance by specifying the mean, standard deviation and size keyword arguments</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">Readings</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="mf">3.4562e-6</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">4.218e-8</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">mean</span>
@@ -2489,21 +2489,21 @@
 <span class="go">1.3338487170590222e-08</span>
 </code></pre></div>
 <p>Here are some examples on how to use the custom format specification</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># default is to retain 2 digits with bracket notation</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># default is to retain 2 digits with bracket mode</span>
 <span class="go">&#39;0.000003456(13)&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">P</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># +/- notation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">P</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># +/- mode</span>
 <span class="go">&#39;0.000003456+/-0.000000013&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">PU</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># +/- notation with unicode</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">PU</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># +/- mode, unicode style</span>
 <span class="go">&#39;0.000003456±0.000000013&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">e</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># exponent form</span>
 <span class="go">&#39;3.456(13)e-06&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">S</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># SI prefix</span>
 <span class="go">&#39;3.456(13) u&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">US</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># unicode and SI prefix</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">US</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># unicode style, SI prefix</span>
 <span class="go">&#39;3.456(13) µ&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.1eU</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># 1 digit, exponent form, unicode</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.1eU</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># 1 digit, exponent form, unicode style</span>
 <span class="go">&#39;3.46(1)×10⁻⁶&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">eL</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># exponent form in LaTeX notation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">eL</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># exponent form, LaTeX style</span>
 <span class="go">&#39;3.456\\left(13\\right)\\times10^{-6}&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">=^+30.4e</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># fill with &#39;=&#39;, align center, include + sign, 30 characters in total, 4 digits, exponent form</span>
 <span class="go">&#39;======+3.45620(1334)e-06======&#39;</span>

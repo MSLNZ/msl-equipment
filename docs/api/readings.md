@@ -38,10 +38,10 @@ We can create a [Readings][msl.equipment.readings.Readings] instance from the fe
 We can treat the readings as a numpy [ndarray][numpy.ndarray] and call [ndarray][numpy.ndarray] attributes
 
 ```pycon
->>> r.max()
-np.float64(8.000167847)
->>> r.min()
-np.float64(8.000163241)
+>>> print(r.max())
+8.000167847
+>>> print(r.min())
+8.000163241
 
 ```
 

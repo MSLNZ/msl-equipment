@@ -1523,6 +1523,8 @@
       
         
       
+        
+      
     
     
     
@@ -1605,6 +1607,29 @@
   
   <span class="md-ellipsis">
     Connection
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Readings
     
   </span>
   
@@ -1726,7 +1751,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -1743,14 +1768,14 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_4_7" id="__nav_4_7_label" tabindex="0">
+              <label class="md-nav__link md-nav__link--active" for="__nav_4_8" id="__nav_4_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_7_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4_7">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_8">
             <span class="md-nav__icon md-icon"></span>
             Interfaces
           </label>
@@ -1978,7 +2003,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_9" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -1995,14 +2020,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4_8" id="__nav_4_8_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4_9" id="__nav_4_9_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_8">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_9">
             <span class="md-nav__icon md-icon"></span>
             Backends
           </label>
@@ -2441,7 +2466,9 @@
 
                   <details class="quote">
                     <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3169</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3167</span>
+<span class="normal">3168</span>
+<span class="normal">3169</span>
 <span class="normal">3170</span>
 <span class="normal">3171</span>
 <span class="normal">3172</span>
@@ -2456,23 +2483,23 @@
 <span class="normal">3181</span>
 <span class="normal">3182</span>
 <span class="normal">3183</span>
-<span class="normal">3184</span>
-<span class="normal">3185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">3184</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all interfaces.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
+    <span class="c1"># __str__ and __repr__ can be called often for logging message, cache the values</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">manufacturer</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">serial</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_repr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_str</span>  <span class="c1"># updated later</span>
+
     <span class="bp">self</span><span class="o">.</span><span class="n">_equipment</span><span class="p">:</span> <span class="n">Equipment</span> <span class="o">=</span> <span class="n">equipment</span>
 
-    <span class="c1"># __str__ and __repr__ can be called often for logging message, cache values</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">__str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">manufacturer</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">serial</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">__repr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">manufacturer</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">serial</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
-    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A Connection is not associated with </span><span class="si">{</span><span class="n">equipment</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
+    <span class="bp">self</span><span class="o">.</span><span class="n">_repr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_repr</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; at </span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Connecting to </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
                   </details>
@@ -2550,7 +2577,8 @@ instance gets garbage collected, which happens when the reference count is 0.</p
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3246</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3245</span>
+<span class="normal">3246</span>
 <span class="normal">3247</span>
 <span class="normal">3248</span>
 <span class="normal">3249</span>
@@ -2565,8 +2593,7 @@ instance gets garbage collected, which happens when the reference count is 0.</p
 <span class="normal">3258</span>
 <span class="normal">3259</span>
 <span class="normal">3260</span>
-<span class="normal">3261</span>
-<span class="normal">3262</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">3261</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the equipment.</span>
 
 <span class="sd">    This method can be overridden in the subclass if the subclass must implement</span>
@@ -3122,7 +3149,8 @@ instance gets garbage collected, which happens when the reference count is 0.</p
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3246</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3245</span>
+<span class="normal">3246</span>
 <span class="normal">3247</span>
 <span class="normal">3248</span>
 <span class="normal">3249</span>
@@ -3137,8 +3165,7 @@ instance gets garbage collected, which happens when the reference count is 0.</p
 <span class="normal">3258</span>
 <span class="normal">3259</span>
 <span class="normal">3260</span>
-<span class="normal">3261</span>
-<span class="normal">3262</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">3261</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the equipment.</span>
 
 <span class="sd">    This method can be overridden in the subclass if the subclass must implement</span>

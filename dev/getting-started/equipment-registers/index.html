@@ -1586,6 +1586,8 @@
       
         
       
+        
+      
     
     
     
@@ -1665,6 +1667,29 @@
   
   <span class="md-ellipsis">
     Connection
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/readings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Readings
     
   </span>
   
@@ -1784,7 +1809,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_8" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -1801,14 +1826,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4_7" id="__nav_4_7_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4_8" id="__nav_4_8_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_7">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_8">
             <span class="md-nav__icon md-icon"></span>
             Interfaces
           </label>
@@ -2036,7 +2061,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_9" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -2053,14 +2078,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4_8" id="__nav_4_8_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4_9" id="__nav_4_9_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_8">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_9">
             <span class="md-nav__icon md-icon"></span>
             Backends
           </label>
@@ -2297,7 +2322,12 @@
 <h1 id="equipment-registers">Equipment Registers<a class="headerlink" href="#equipment-registers" title="Permanent link">¤</a></h1>
 <p>Laboratories that use equipment for traceable calibration measurements are required to manage information about the equipment by following the <a href="https://www.iso.org/ISO-IEC-17025-testing-and-calibration-laboratories.html" target="_blank">ISO/IEC 17025</a> standard. This information is saved in files that are referred to as <em>equipment registers</em>.</p>
 <p>An equipment register is based on the definitions in the <a class="autorefs autorefs-internal" title="XML Schema" href="#er-schema">Schema</a> and may either be saved in the eXtensible Markup Language (XML) file format or in a <a class="autorefs autorefs-internal" title="Python Module" href="#er-python-module">Python module</a>. Using the XML format is the preferred way to save the information since XML files can be easily <a class="autorefs autorefs-internal" title="Validate" href="../../validate/#validate">validated</a> against the <a class="autorefs autorefs-internal" title="XML Schema" href="#er-schema">Schema</a> to ensure data integrity and it allows for equipment registers to be parsed by many programming languages. An equipment register can be saved in a single XML file or distributed across multiple XML files.</p>
-<p>The <a class="autorefs autorefs-internal" href="../../schema/#schema-classes">Schema Classes</a> section of the documentation shows how an equipment register can be used in a Python program.</p>
+<p>The <a class="autorefs autorefs-internal" href="../../schema/#schema-classes">Schema Classes</a> section of the documentation shows how an equipment register can be used in a Python program. The <a class="autorefs autorefs-internal" href="../../schema/register/#register">Register</a> class loads an equipment register, or when using a <a class="autorefs autorefs-internal" title="Configuration Files" href="../configuration-files/#configuration-files">configuration file</a> the <a class="autorefs autorefs-internal" title="            registers
+
+
+  
+      property
+  " href="../../api/config/#msl.equipment.config.Config.registers">registers</a> attribute provides access to multiple equipment registers.</p>
 <h2 id="er-schema">XML Schema<a class="headerlink" href="#er-schema" title="Permanent link">¤</a></h2>
 <p>The documentation for the equipment-register schema is available <a href="https://mslnz.github.io/equipment-register-schema/latest/" target="_blank">here</a> and development of the schema is performed in the <a href="https://github.com/MSLNZ/equipment-register-schema" target="_blank">repository</a>.</p>
 <p>Currently, the schema is targeting equipment that is located at the Measurement Standards Laboratory of New Zealand (in particular, enumeration values and pattern-string matches). If you work at a calibration laboratory and are interested in using the schema within your Quality Management System, please <a href="https://www.measurement.govt.nz/contact-us" target="_blank">contact us</a> or open an <a href="https://github.com/MSLNZ/equipment-register-schema/issues" target="_blank">issue</a>.</p>

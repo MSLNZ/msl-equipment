@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://github.com/MSLNZ/msl-equipment/dev/api/exceptions/">
+        <link rel="canonical" href="https://github.com/MSLNZ/msl-equipment/dev/api/readings/">
       
       
-        <link rel="prev" href="../enumerations/">
+        <link rel="prev" href="../connection/">
       
       
-        <link rel="next" href="../types/">
+        <link rel="next" href="../enumerations/">
       
       
       <link rel="icon" href="../../assets/images/favicon.ico">
@@ -24,7 +24,7 @@
     
     
       
-        <title>exceptions - MSL Equipment</title>
+        <title>Readings - MSL Equipment</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#exceptions" class="md-skip">
+        <a href="#readings" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              exceptions
+              Readings
             
           </span>
         </div>
@@ -1621,10 +1621,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../readings/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Readings
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1635,6 +1657,95 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#format-specification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Format Specification
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#msl.equipment.readings.Readings" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Readings
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" Readings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.readings.Readings.data" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.readings.Readings.mean" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;mean
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.readings.Readings.overload" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;overload
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.readings.Readings.std" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;std
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.readings.Readings.std_mean" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;std_mean
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1667,32 +1778,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    exceptions
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../exceptions/" class="md-nav__link">
         
   
   
@@ -1703,44 +1792,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#msl.equipment.interfaces.message_based.MSLConnectionError" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;MSLConnectionError
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#msl.equipment.interfaces.message_based.MSLTimeoutError" class="md-nav__link">
-    <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;MSLTimeoutError
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2283,20 +2334,71 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#msl.equipment.interfaces.message_based.MSLConnectionError" class="md-nav__link">
+  <a href="#format-specification" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;MSLConnectionError
+      Format Specification
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#msl.equipment.interfaces.message_based.MSLTimeoutError" class="md-nav__link">
+  <a href="#msl.equipment.readings.Readings" class="md-nav__link">
     <span class="md-ellipsis">
-      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;MSLTimeoutError
+      <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;Readings
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label=" Readings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.readings.Readings.data" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.readings.Readings.mean" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;mean
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.readings.Readings.overload" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;overload
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.readings.Readings.std" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;std
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment.readings.Readings.std_mean" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;std_mean
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2319,27 +2421,132 @@
   
 
 
-<h1 id="exceptions">exceptions<a class="headerlink" href="#exceptions" title="Permanent link">¤</a></h1>
+<h1 id="readings">Readings<a class="headerlink" href="#readings" title="Permanent link">¤</a></h1>
+<p>The <a class="autorefs autorefs-internal" title="            Readings" href="#msl.equipment.readings.Readings">Readings</a> class may be used after requesting measurement data from equipment. It calculates the mean, standard deviation and the standard deviation of the mean and provides a user-friendly way to display the information.</p>
+<!--
+>>> class Connection:
+...     def query(self, ignore):
+...         return " 8.000167847E+00, 8.000164032E+00, 8.000163241E+00, 8.000165864E+00, 8.000164893E+00\r\n"
+>>> dmm = Connection()
+
+-->
+
+<p>Suppose we have a <a class="autorefs autorefs-internal" title="Connections" href="../../getting-started/connections/#connections">Connection</a> to a digital multimeter, <code>dmm</code>, and we fetch some readings</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">dmm</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;FETCH?&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span>
+<span class="go">&#39; 8.000167847E+00, 8.000164032E+00, 8.000163241E+00, 8.000165864E+00, 8.000164893E+00\r\n&#39;</span>
+</code></pre></div>
+<p>We can create a <a class="autorefs autorefs-internal" title="            Readings" href="#msl.equipment.readings.Readings">Readings</a> instance from the fetched data and then get statistical information about the data</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Readings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">Readings</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">mean</span>
+<span class="go">8.0001651754</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">std</span>
+<span class="go">1.784701179552952e-06</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">std_mean</span>
+<span class="go">7.981426314008917e-07</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="go">5</span>
+</code></pre></div>
+<p>We can treat the readings as a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a> and call <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a> attributes</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="go">np.float64(8.000167847)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="go">np.float64(8.000163241)</span>
+</code></pre></div>
+<p>or access the numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a> directly</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">data</span>
+<span class="go">array([8.00016785, 8.00016403, 8.00016324, 8.00016586, 8.00016489])</span>
+</code></pre></div>
+<p>Unpacking the <a class="autorefs autorefs-internal" title="            Readings" href="#msl.equipment.readings.Readings">Readings</a> instance returns the mean and the standard deviation of the mean</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">mean</span><span class="p">,</span> <span class="n">std_mean</span> <span class="o">=</span> <span class="n">r</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mean</span>
+<span class="go">8.0001651754</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">std_mean</span>
+<span class="go">7.981426314008917e-07</span>
+</code></pre></div>
+<p>When converting the <a class="autorefs autorefs-internal" title="            Readings" href="#msl.equipment.readings.Readings">Readings</a> to a string, the custom <a class="autorefs autorefs-internal" title="Format Specification" href="#format-specification">format specification</a> is used and it displays the value (mean) with the uncertainty (standard deviation of the mean)</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># use the default options</span>
+<span class="go">&#39;8.00016518(80)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.2B</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># equivalent to previous</span>
+<span class="go">&#39;8.00016518(80)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.3PU</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># retain 3 digits, +/- notation, unicode characters</span>
+<span class="go">&#39;8.000165175±0.000000798&#39;</span>
+</code></pre></div>
+<h2 id="format-specification">Format Specification<a class="headerlink" href="#format-specification" title="Permanent link">¤</a></h2>
+<p>The format specification is similar to the built-in Python <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/string.html#formatspec">specification</a>, but with additional options (<em>mode</em>, <em>style</em> and <em>si</em>). The number of significant digits for the value (mean) and the uncertainty (standard deviation of the mean) can be controlled, based on the uncertainty.</p>
+<p>The grammar for the format specification is defined as,</p>
+<div class="highlight"><pre><span></span><code>[[fill]align][sign][z][#][0][width][grouping][.digits][type][mode][style][si]
+</code></pre></div>
+<p>where we note the use of <em>digits</em> (not <em>precision</em>) and the additional <em>mode</em>, <em>style</em> and <em>si</em> options. <em>digits</em> refers to the number of significant digits to retain in the uncertainty. The <em>mode</em> option specifies how the value and the uncertainty are separated: <code>B</code> (bracket notation, default) or <code>P</code> (plus-minus sign). There are two <em>style</em> options: <code>L</code> (<span class="arithmatex">\(\LaTeX\)</span>) or <code>U</code> (unicode). The <em>si</em> option can only be <code>S</code> and if it is specified the appropriate <a href="https://en.wikipedia.org/wiki/Metric_prefix">SI prefix symbol</a> replaces the Base-10 component.</p>
+<p>We can also create a <a class="autorefs autorefs-internal" href="#readings">Readings</a> instance by specifying the mean, standard deviation and size keyword arguments</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">Readings</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="mf">3.4562e-6</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">4.218e-8</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">mean</span>
+<span class="go">3.4562e-06</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">std</span>
+<span class="go">4.218e-08</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">std_mean</span>  <span class="c1"># 4.218e-8 / sqrt(10)</span>
+<span class="go">1.3338487170590222e-08</span>
+</code></pre></div>
+<p>Here are some examples on how to use the custom format specification</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># default is to retain 2 digits with bracket notation</span>
+<span class="go">&#39;0.000003456(13)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">P</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># +/- notation</span>
+<span class="go">&#39;0.000003456+/-0.000000013&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">PU</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># +/- notation with unicode</span>
+<span class="go">&#39;0.000003456±0.000000013&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">e</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># exponent form</span>
+<span class="go">&#39;3.456(13)e-06&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">S</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># SI prefix</span>
+<span class="go">&#39;3.456(13) u&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">US</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># unicode and SI prefix</span>
+<span class="go">&#39;3.456(13) µ&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.1eU</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># 1 digit, exponent form, unicode</span>
+<span class="go">&#39;3.46(1)×10⁻⁶&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">eL</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># exponent form in LaTeX notation</span>
+<span class="go">&#39;3.456\\left(13\\right)\\times10^{-6}&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">=^+30.4e</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># fill with &#39;=&#39;, align center, include + sign, 30 characters in total, 4 digits, exponent form</span>
+<span class="go">&#39;======+3.45620(1334)e-06======&#39;</span>
+</code></pre></div>
+<p>If the standard deviation of the mean is zero, the uncertainty component is not included in the output and the format applies only to the mean</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">Readings</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="mf">3.4562e-6</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># default is 2 decimal places in floating-point, f, notation</span>
+<span class="go">&#39;0.00&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">e</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="go">&#39;3.46e-06&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># 4 decimals (uses built-in specification since no custom options are used)</span>
+<span class="go">&#39;3.4562e-06&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.4eUS</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># 4 digits (uses custom specification since custom options are included)</span>
+<span class="go">&#39;3.456 µ&#39;</span>
+</code></pre></div>
 
 
 <div class="doc doc-object doc-class">
 
 
 
-<h2 id="msl.equipment.interfaces.message_based.MSLConnectionError" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">MSLConnectionError</span>
+<h2 id="msl.equipment.readings.Readings" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Readings</span>
 
 
-<a href="#msl.equipment.interfaces.message_based.MSLConnectionError" class="headerlink" title="Permanent link">¤</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">MSLConnectionError</span><span class="p">(</span><span class="n">interface</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Interface (msl.equipment.schema.Interface)" href="../interfaces/#msl.equipment.schema.Interface">Interface</a></span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">)</span>
+<a href="#msl.equipment.readings.Readings" class="headerlink" title="Permanent link">¤</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">Readings</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="p">(</span>
+        <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="collections.abc.Sequence" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence">Sequence</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.NDArray" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.NDArray">NDArray</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="numpy.number" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.number">number</a></span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">mean</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">std</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">size</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">overload</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mf">1e30</span><span class="p">,</span>
+    <span class="n">delimiter</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
+<span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents first">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#OSError">OSError</a></code></p>
 
 
-        <p>Base class for connection-related exceptions.</p>
+        <p>A formatting-friendly convenience class for measurement data.</p>
 
 
 
@@ -2356,34 +2563,103 @@
       <tbody>
           <tr class="doc-section-item">
             <td>
-                <code>interface</code>
+                <code>data</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            Interface (msl.equipment.schema.Interface)" href="../interfaces/#msl.equipment.schema.Interface">Interface</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="collections.abc.Sequence" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence">Sequence</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a>] | <a class="autorefs autorefs-external" title="numpy.typing.NDArray" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.NDArray">NDArray</a>[<a class="autorefs autorefs-external" title="numpy.number" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.number">number</a>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>An interface subclass.</p>
+                <p>The measurement data.</p>
               </div>
             </td>
             <td>
-                <em>required</em>
+                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>message</code>
+                <code>mean</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A message to append to the generic error message.</p>
+                <p>If specified, then the mean is not calculated from the <code>data</code>.</p>
               </div>
             </td>
             <td>
-                <em>required</em>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>std</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If specified, then the standard deviation is not calculated from the <code>data</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>size</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If specified, then the number of items is not determined from the <code>data</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>overload</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>For some devices, like a digital multimeter, if the input signal is
+greater than the range can measure, the device returns a large value
+(e.g., 9.9E+37) to indicate a measurement overload. If the absolute value of
+the mean is greater than <code>overload</code> then the mean and standard deviation become
+<code>NaN</code>. Setting <code>overload</code> to <code>None</code> disables this check.</p>
+              </div>
+            </td>
+            <td>
+                  <code>1e+30</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>delimiter</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The character used to separate values (only used if <code>data</code> is of type <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>).
+The value <code>None</code> corresponds to whitespace.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;,&#39;</code>
             </td>
           </tr>
       </tbody>
@@ -2397,24 +2673,110 @@
 
 
                   <details class="quote">
-                    <summary>Source code in <code>src/msl/equipment/interfaces/message_based.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">423</span>
-<span class="normal">424</span>
-<span class="normal">425</span>
-<span class="normal">426</span>
-<span class="normal">427</span>
-<span class="normal">428</span>
-<span class="normal">429</span>
-<span class="normal">430</span>
-<span class="normal">431</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface</span><span class="p">:</span> <span class="n">Interface</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for connection-related exceptions.</span>
+                    <summary>Source code in <code>src/msl/equipment/readings.py</code></summary>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">mean</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">std</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">overload</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mf">1e30</span><span class="p">,</span>
+    <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A formatting-friendly convenience class for measurement data.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        interface: An interface subclass.</span>
-<span class="sd">        message: A message to append to the generic error message.</span>
+<span class="sd">        data: The measurement data.</span>
+<span class="sd">        mean: If specified, then the mean is not calculated from the `data`.</span>
+<span class="sd">        std: If specified, then the standard deviation is not calculated from the `data`.</span>
+<span class="sd">        size: If specified, then the number of items is not determined from the `data`.</span>
+<span class="sd">        overload: For some devices, like a digital multimeter, if the input signal is</span>
+<span class="sd">            greater than the range can measure, the device returns a large value</span>
+<span class="sd">            (e.g., 9.9E+37) to indicate a measurement overload. If the absolute value of</span>
+<span class="sd">            the mean is greater than `overload` then the mean and standard deviation become</span>
+<span class="sd">            `NaN`. Setting `overload` to `None` disables this check.</span>
+<span class="sd">        delimiter: The character used to separate values (only used if `data` is of type [str][]).</span>
+<span class="sd">            The value `None` corresponds to whitespace.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%r</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">interface</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
-    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">interface</span><span class="si">!r}</span><span class="se">\n</span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">a</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">,</span> <span class="n">size</span><span class="p">)):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot specify data and the mean, std or size&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">stripped</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">stripped</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="n">stripped</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">size</span> <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">size</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_overload</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">overload</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">overload</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_std</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">std</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">mean</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_overload</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -2428,124 +2790,125 @@
 
 
 
+<div class="doc doc-object doc-attribute">
 
 
 
+<h3 id="msl.equipment.readings.Readings.data" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">data</span>
 
 
-  </div>
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#msl.equipment.readings.Readings.data" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">data</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.NDArray" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.NDArray">NDArray</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="numpy.float64" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64">float64</a></span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Returns the data.</p>
 
     </div>
 
 </div>
 
-<div class="doc doc-object doc-class">
+<div class="doc doc-object doc-attribute">
 
 
 
-<h2 id="msl.equipment.interfaces.message_based.MSLTimeoutError" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">MSLTimeoutError</span>
+<h3 id="msl.equipment.readings.Readings.mean" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">mean</span>
 
 
-<a href="#msl.equipment.interfaces.message_based.MSLTimeoutError" class="headerlink" title="Permanent link">¤</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">MSLTimeoutError</span><span class="p">(</span><span class="n">interface</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageBased (msl.equipment.interfaces.message_based.MessageBased)" href="../interfaces/#msl.equipment.interfaces.message_based.MessageBased">MessageBased</a></span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#msl.equipment.readings.Readings.mean" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">mean</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
 </code></pre></div>
 
-    <div class="doc doc-contents first">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#TimeoutError">TimeoutError</a></code></p>
+    <div class="doc doc-contents ">
 
+        <p>Returns the mean.</p>
 
-        <p>A timeout exception for I/O operations.</p>
+    </div>
 
+</div>
 
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>interface</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-internal" title="            MessageBased (msl.equipment.interfaces.message_based.MessageBased)" href="../interfaces/#msl.equipment.interfaces.message_based.MessageBased">MessageBased</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>A message-based interface subclass.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>message</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>An optional message to append to the generic timeout error message.</p>
-              </div>
-            </td>
-            <td>
-                  <code>&#39;&#39;</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+<div class="doc doc-object doc-attribute">
 
 
 
+<h3 id="msl.equipment.readings.Readings.overload" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">overload</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#msl.equipment.readings.Readings.overload" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">overload</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">|</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Returns the overload value.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
 
 
 
+<h3 id="msl.equipment.readings.Readings.std" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">std</span>
 
 
-                  <details class="quote">
-                    <summary>Source code in <code>src/msl/equipment/interfaces/message_based.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">437</span>
-<span class="normal">438</span>
-<span class="normal">439</span>
-<span class="normal">440</span>
-<span class="normal">441</span>
-<span class="normal">442</span>
-<span class="normal">443</span>
-<span class="normal">444</span>
-<span class="normal">445</span>
-<span class="normal">446</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interface</span><span class="p">:</span> <span class="n">MessageBased</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A timeout exception for I/O operations.</span>
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        interface: A message-based interface subclass.</span>
-<span class="sd">        message: An optional message to append to the generic timeout error message.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Timeout occurred after </span><span class="si">{</span><span class="n">interface</span><span class="o">.</span><span class="n">timeout</span><span class="si">}</span><span class="s2"> second(s). </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%r</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">interface</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
-    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">interface</span><span class="si">!r}</span><span class="se">\n</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-                  </details>
+<a href="#msl.equipment.readings.Readings.std" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">std</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Returns the <em>sample</em> standard deviation (uses <span class="arithmatex">\(N-1\)</span> in the denominator).</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
 
 
 
-  <div class="doc doc-children">
+<h3 id="msl.equipment.readings.Readings.std_mean" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">std_mean</span>
 
 
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
 
+<a href="#msl.equipment.readings.Readings.std_mean" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">std_mean</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
+</code></pre></div>
 
+    <div class="doc doc-contents ">
 
+        <p>Returns the standard deviation of the mean.</p>
 
+    </div>
+
+</div>
 
 
 
@@ -2592,7 +2955,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../enumerations/" class="md-footer__link md-footer__link--prev" aria-label="Previous: enumerations">
+          <a href="../connection/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Connection">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2602,20 +2965,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                enumerations
+                Connection
               </div>
             </div>
           </a>
         
         
           
-          <a href="../types/" class="md-footer__link md-footer__link--next" aria-label="Next: types">
+          <a href="../enumerations/" class="md-footer__link md-footer__link--next" aria-label="Next: enumerations">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                types
+                enumerations
               </div>
             </div>
             <div class="md-footer__button md-icon">

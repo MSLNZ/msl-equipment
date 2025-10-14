@@ -19,6 +19,7 @@ from .interfaces import (
     Serial,
     Socket,
 )
+from .readings import Readings
 from .record_types import ConnectionRecord, EquipmentRecord
 from .schema import (
     AcceptanceCriteria,
@@ -103,6 +104,7 @@ __all__: list[str] = [
     "PyVISA",
     "QualityManual",
     "Range",
+    "Readings",
     "ReferenceMaterials",
     "Register",
     "Report",

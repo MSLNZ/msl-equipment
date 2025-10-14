@@ -92,6 +92,7 @@ nav:
     - api/index.md
     - api/config.md
     - api/connection.md
+    - api/readings.md
     - api/enumerations.md
     - api/exceptions.md
     - api/types.md

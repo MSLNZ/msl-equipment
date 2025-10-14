@@ -6,7 +6,7 @@ Although this package contains many classes and functions, the classes that you 
 * [Connection][] &mdash; if you are only interested in communicating with equipment
 * [Register][] &mdash; if you only want to load an equipment register
 
-and there are [enumeration][enumerations] classes.
+and there are [enumeration][enumerations] classes and a [Readings][] class.
 
 [Interfaces][] are available to communicate with equipment, [Backends][] may be used to interface with equipment using external packages and possibly [Resources][] may be available.
 

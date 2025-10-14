@@ -1315,7 +1315,9 @@ def test_grouping_field() -> None:
     assert f"{r:_.1}" == "123_500_000(100_000)"
 
 
+@pytest.mark.skipif(sys.version_info[:2] < (3, 10), reason="requires Python 3.10+")
 def test_zero_field() -> None:
+    # https://bugs.python.org/issue27772 was fixed in Python 3.10
     r = Readings(mean=1.342, std=0.0041, size=1)
     assert f"{r:015.1}" == "1.342(4)0000000"
     assert f"{r:>+024.3}" == "00000000000+1.34200(410)"
@@ -1910,16 +1912,10 @@ def test_type_n_india() -> None:
     assert f"{r:n}" == "1.23(99)"
 
     r = Readings(mean=1.2345678987e6, std=0.987654321, size=1)
-    if is_darwin:
-        assert f"{r:.4n}" == "12,345,67.8987(9877)"
-    else:
-        assert f"{r:.4n}" == "12,34,567.8987(9877)"
+    assert f"{r:.4n}" == "12,34,567.8987(9877)"
 
     r = Readings(mean=12345.6789, std=9876.54321, size=1)
-    if is_darwin:
-        assert f"{r:.8n}" == "123,45.6789(98,76.5432)"
-    else:
-        assert f"{r:.8n}" == "12,345.6789(9,876.5432)"
+    assert f"{r:.8n}" == "12,345.6789(9,876.5432)"
 
     _ = locale.setlocale(locale.LC_NUMERIC, original_loc)
 
@@ -1973,10 +1969,8 @@ def test_type_n_afrikaans() -> None:
         assert f"{r:.4n}" == "1,234,567.8987(9877)"
 
     r = Readings(mean=12345.6789, std=9876.54321, size=1)
-    if is_windows:
+    if is_windows or is_darwin:
         assert f"{r:.8n}" == "12\xa0345,6789(9\xa0876,5432)"
-    elif is_darwin:
-        assert f"{r:.8n}" == "12.345,6789(9.876,5432)"
     else:
         assert f"{r:.8n}" == "12,345.6789(9,876.5432)"
 

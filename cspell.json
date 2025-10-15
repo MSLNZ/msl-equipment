@@ -175,6 +175,7 @@
         "Schar",
         "SCPI",
         "setflags",
+        "setpoint",
         "SEVENBITS",
         "SIXBITS",
         "SNDTIMEO",

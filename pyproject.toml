@@ -233,6 +233,11 @@ ignore = [
 "src/msl/equipment/cli/find.py" = [
     "T201",  # Allow print statements
 ]
+"packages/resources/examples/*.py" = [
+    "ERA001", # commented-out-code
+    "INP001", # implicit-namespace-package
+    "T201",  # Allow print statements
+]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

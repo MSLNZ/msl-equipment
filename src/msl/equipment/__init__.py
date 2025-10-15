@@ -118,3 +118,5 @@ __all__: list[str] = [
     "__version__",
     "version_tuple",
 ]
+
+from . import resources as resources

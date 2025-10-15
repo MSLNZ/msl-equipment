@@ -112,6 +112,8 @@ nav:
       - api/backends/pyvisa.md
   - Resources:
     - resources/index.md
+    - Aim-TTi:
+      - resources/aim-tti/mx_series.md
   - Validate: validate.md
   - WebApp: webapp.md
 

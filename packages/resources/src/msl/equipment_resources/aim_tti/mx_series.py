@@ -1,4 +1,4 @@
-"""Connect to an MX100QP, MX100TP or MX180TP DC power supply from [Aim and Thurlby Thandar Instruments].
+"""Connect to an MX100QP, MX100TP, MX103QP or MX180TP DC power supply from [Aim and Thurlby Thandar Instruments].
 
 [Aim and Thurlby Thandar Instruments]: https://www.aimtti.com/
 """
@@ -57,28 +57,38 @@ EXECUTION_ERROR_CODES = {
 
 class MXSeries(
     Interface,
-    manufacturer=r"(Aim)?\s*[-&_]?\s*(and)?\s*T(hurlby)?\s*T(handar)?\s*I(nstruments)?",
-    model=r"MX1[80]0[TQ]P",
+    manufacturer=r"Aim\s*[-&_]?\s*(and)?\s*T(hurlby)?\s*T(handar)?\s*I(nstruments)?",
+    model=r"MX1[80][03][TQ]P",
     flags=re.IGNORECASE,
 ):
-    """Connect to an MX100QP, MX100TP or MX180TP DC power supply."""
+    """Connect to an MX100QP, MX100TP, MX103QP or MX180TP DC power supply."""
 
     def __init__(self, equipment: Equipment) -> None:
-        """Connect to an MX100QP, MX100TP or MX180TP DC power supply from [Aim and Thurlby Thandar Instruments].
+        """Connect to an MX100QP, MX100TP, MX103QP or MX180TP DC power supply from [Aim and Thurlby Thandar Instruments].
 
         [Aim and Thurlby Thandar Instruments]: https://www.aimtti.com/
 
         Args:
             equipment: An [Equipment][] instance.
-        """
+        """  # noqa: E501
         super().__init__(equipment)
 
         # This equipment supports multiple interfaces: GPIB, RS232, Virtual COM, Socket
         # Let the address decide which interface to use
         c = equipment.connection
         assert c is not None  # noqa: S101
-        self._interface: MessageBased = Connection(c.address, **c.properties).connect()
+
+        try:
+            self._interface: MessageBased = Connection(c.address, **c.properties).connect()
+        except MSLConnectionError as e:
+            lines = str(e).splitlines()
+            raise MSLConnectionError(self, message="\n".join(lines[1:])) from None
+
         self._interface.rstrip = True
+
+        # These improve logging.DEBUG messages
+        self._interface._repr = self._repr  # noqa: SLF001
+        self._interface._str = self._str  # noqa: SLF001
 
     def _check_event_status_register(self, command: str) -> None:
         """Check the value of the standard event status register for an error.
@@ -150,7 +160,8 @@ class MXSeries(
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
         """Disconnect from the equipment."""
-        self._interface.disconnect()
+        if hasattr(self, "_interface"):
+            self._interface.disconnect()
 
     def event_status_register(self) -> int:
         """Read and clear the standard event status register.
@@ -170,7 +181,7 @@ class MXSeries(
             The output current (in Amps).
         """
         reply = self._query_and_check(f"I{channel}O?")
-        return float(reply[:-1])  # the reply ends with an 'A'
+        return float(reply[:-1])  # the reply ends with 'A'
 
     def get_current_limit(self, channel: int) -> float:
         """Get the current limit of the output channel.
@@ -236,7 +247,7 @@ class MXSeries(
             The output voltage (in Volts).
         """
         reply = self._query_and_check(f"V{channel}O?")
-        return float(reply[:-1])
+        return float(reply[:-1])  # the reply ends with 'V'
 
     def get_voltage_range(self, channel: int) -> int:
         """Get the output voltage range index of the output channel.

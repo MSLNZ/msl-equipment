@@ -427,7 +427,7 @@ class MSLConnectionError(OSError):
             interface: An interface subclass.
             message: A message to append to the generic error message.
         """
-        logger.error("%r %s", interface, message)
+        logger.debug("%r %s", interface, message)
         super().__init__(f"{interface!r}\n{message}")
 
 
@@ -442,5 +442,5 @@ class MSLTimeoutError(TimeoutError):
             message: An optional message to append to the generic timeout error message.
         """
         msg = f"Timeout occurred after {interface.timeout} second(s). {message}"
-        logger.error("%r %s", interface, msg)
+        logger.debug("%r %s", interface, msg)
         super().__init__(f"{interface!r}\n{msg}")

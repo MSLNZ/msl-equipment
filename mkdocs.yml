@@ -116,6 +116,8 @@ nav:
       - resources/aim-tti/mx_series.md
     - Avantes:
       - resources/avantes/avaspec.md
+    - CMI:
+      - resources/cmi/sia3.md
   - Validate: validate.md
   - WebApp: webapp.md
 

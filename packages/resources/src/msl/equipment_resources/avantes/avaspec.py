@@ -750,8 +750,8 @@ class AvaSpec(SDK, manufacturer=r"Avantes", model=r"."):
         ] = {
             "AVS_Init": (c_int32, self._err_check, [("a_Port", c_int16)]),
             "AVS_Done": (c_int32, self._err_check, []),
-            "AVS_GetNrOfDevices": (c_int32, self.log_errcheck, []),
-            "AVS_UpdateUSBDevices": (c_int32, self.log_errcheck, []),
+            "AVS_GetNrOfDevices": (c_int32, self._log_errcheck, []),
+            "AVS_UpdateUSBDevices": (c_int32, self._log_errcheck, []),
             "AVS_UpdateETHDevices": (
                 c_int32,
                 self._err_check,
@@ -937,12 +937,12 @@ class AvaSpec(SDK, manufacturer=r"Avantes", model=r"."):
             self.activate()
 
     def _check_bool(self, result: bool, func: object, arguments: tuple[object, ...]) -> None:  # noqa: FBT001
-        self.log_errcheck(result, func, arguments)
+        self._log_errcheck(result, func, arguments)
         if not result:
             raise MSLConnectionError(self, f"The {func} function returned False")
 
     def _err_check(self, result: int, func: object, arguments: tuple[object, ...]) -> int:
-        self.log_errcheck(result, func, arguments)
+        self._log_errcheck(result, func, arguments)
         if result < 0:
             error_name, msg = ERROR_CODES.get(result, ("UNKNOWN_ERROR", f"Unknown error [code={result}]"))
             raise MSLConnectionError(self, f"{error_name}: {msg}")

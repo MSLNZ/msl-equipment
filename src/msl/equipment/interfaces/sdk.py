@@ -24,7 +24,7 @@ REGEX = re.compile(r"SDK::(?P<path>.+)", flags=re.IGNORECASE)
 class SDK(Interface, regex=REGEX):
     """Base class for equipment that use the manufacturer's Software Development Kit (SDK)."""
 
-    def __init__(self, equipment: Equipment, libtype: LibType | None = None, path: PathLike | None = None) -> None:
+    def __init__(self, equipment: Equipment, *, libtype: LibType | None = None, path: PathLike | None = None) -> None:
         """Base class for equipment that use the manufacturer's Software Development Kit (SDK).
 
         You can use the [configuration file][config-xml-example] to add the directory that the SDK
@@ -49,11 +49,6 @@ class SDK(Interface, regex=REGEX):
         self._load_library: LoadLibrary = LoadLibrary(path, libtype)
         self._sdk: Any = self._load_library.lib
 
-    @property
-    def assembly(self) -> Any:  # noqa: ANN401
-        """[assembly][msl.loadlib.load_library.LoadLibrary.assembly] &mdash; The reference to the .NET assembly."""
-        return self._load_library.assembly
-
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
         """Cleanup references to the SDK library."""
         if hasattr(self, "_sdk") and self._sdk is not None:
@@ -61,20 +56,10 @@ class SDK(Interface, regex=REGEX):
             self._sdk = None
             super().disconnect()
 
-    @property
-    def gateway(self) -> Any:  # noqa: ANN401
-        """[gateway][msl.loadlib.load_library.LoadLibrary.gateway] &mdash; The reference to the JAVA gateway."""
-        return self._load_library.gateway
-
-    def log_errcheck(self, result: Any, func: Any, arguments: tuple[Any, ...]) -> Any:  # noqa: ANN401
+    def _log_errcheck(self, result: Any, func: Any, arguments: tuple[Any, ...]) -> Any:  # noqa: ANN401
         """Convenience method for logging an [errcheck][ctypes._CFuncPtr.errcheck] from [ctypes][]."""
         logger.debug("%s.%s%s -> %s", self.__class__.__name__, func.__name__, arguments, result)
         return result
-
-    @property
-    def path(self) -> str:
-        """[str][] &mdash; The path to the SDK file."""
-        return self._load_library.path
 
     @property
     def sdk(self) -> Any:  # noqa: ANN401

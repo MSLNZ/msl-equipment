@@ -52,9 +52,9 @@ def test_connect() -> None:
     e = Equipment(connection=Connection(f"SDK::{path}"))
     c = e.connect()
     assert isinstance(c, SDK)
-    assert c.assembly is None
-    assert c.gateway is None
-    assert c.path.startswith(str(path))
+    assert c._load_library.assembly is None  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    assert c._load_library.gateway is None  # pyright: ignore[reportPrivateUsage] # noqa: SLF001
+    assert c._load_library.path.startswith(str(path))  # pyright: ignore[reportPrivateUsage] # noqa: SLF001
     assert c.sdk.add(1, 1) == 2
 
 
@@ -67,9 +67,9 @@ def test_direct_path() -> None:
     # Connection.address is ignored if `path` is specified
     path = EXAMPLES_DIR / f"cpp_lib{suffix}"
     with SDK(Equipment(connection=Connection("")), libtype="cdll", path=path) as sdk:
-        assert sdk.assembly is None
-        assert sdk.gateway is None
-        assert sdk.path.startswith(str(path))
+        assert sdk._load_library.assembly is None  # pyright: ignore[reportPrivateUsage] # noqa: SLF001
+        assert sdk._load_library.gateway is None  # pyright: ignore[reportPrivateUsage] # noqa: SLF001
+        assert sdk._load_library.path.startswith(str(path))  # pyright: ignore[reportPrivateUsage] # noqa: SLF001
         assert sdk.sdk.add(1, 1) == 2
 
 
@@ -80,13 +80,13 @@ def test_logging_messages(caplog: pytest.LogCaptureFixture) -> None:
     caplog.clear()
 
     sdk = SDK(Equipment(manufacturer="MSL", connection=Connection("")), libtype="cdll", path=path)
-    assert sdk.log_errcheck(None, sdk.sdk.add, (ctypes.c_float(1), ctypes.c_float(1))) is None
+    assert sdk._log_errcheck(None, sdk.sdk.add, (ctypes.c_float(1), ctypes.c_float(1))) is None  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     sdk.disconnect()
     sdk.disconnect()  # multiple times is ok and only logs "Disconnected from ..." once
     sdk.disconnect()
     assert caplog.messages == [
         "Connecting to SDK<MSL|| at >",
-        f"Loaded {sdk.path}",
+        f"Loaded {sdk._load_library.path}",  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
         "SDK.add(c_float(1.0), c_float(1.0)) -> None",
         "Disconnected from SDK<MSL|| at >",
     ]

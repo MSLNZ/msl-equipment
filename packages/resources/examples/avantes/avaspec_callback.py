@@ -1,56 +1,53 @@
+"""Example showing how to use a callback with an AvaSpec-2048L spectrometer.
+
+The AvaSpec shared library may require a Visual C++ Redistributable Package to be installed (on Windows).
 """
-Example showing how to use a callback with an AvaSpec-2048L spectrometer.
-"""
-import sys
+
+from __future__ import annotations
+
 import time
+from typing import TYPE_CHECKING
 
-from msl.equipment import (
-    EquipmentRecord,
-    ConnectionRecord,
-    Backend,
-)
-from msl.equipment.resources.avantes import MeasureCallback
+from msl.equipment import Connection
+from msl.equipment.resources import avantes
 
-# You can either add the directory where the avaspecx64.dll file is located
-# to sys.path or specify the full path to the SDK in the address attribute
-sys.path.append('D:/AvaSpecX64-DLL_9.7')
+if TYPE_CHECKING:
+    from ctypes import _Pointer, c_int32  # pyright: ignore[reportPrivateUsage]
 
-record = EquipmentRecord(
-    manufacturer='Avantes',
-    model='AvaSpec-2048L',  # update for your device
-    serial='1807344U1',  # update for your device
-    connection=ConnectionRecord(
-        # only specify the SDK filename since the directory was added to sys.path (see above)
-        address='SDK::avaspecx64.dll',
-        backend=Backend.MSL,
-    )
-)
+    from msl.equipment.resources import AvaSpec
 
 
-@MeasureCallback
-def callback_fcn(handle, info):
-    # this function will be called every time a measurement scan is available
-    print('The DLL handle is: {}'.format(handle.contents.value))
+@avantes.avaspec_callback
+def callback(handle: _Pointer[c_int32], info: _Pointer[c_int32]) -> None:
+    """This function is called every time a measurement scan is available."""
+    print(f"The DLL handle is: {handle.contents.value}")
     if info.contents.value == 0:  # equals 0 if everything is okay (see manual)
-        print('  callback data: {}'.format(ava.get_data()))
+        print(f"  callback data: {ava.get_data()}")
 
+
+connection = Connection(
+    "SDK::C:/Path/to/avaspecx64.dll",  # update path to avaspec library
+    manufacturer="Avantes",
+    model="AvaSpec-2048L",  # update for your device
+    serial="1807344U1",  # update for your device
+)
 
 # initializes the Avantes SDK and establishes the connection to the spectrometer
-ava = record.connect()
+ava: AvaSpec = connection.connect()
 
 # get the number of pixels that the spectrometer has
 num_pixels = ava.get_num_pixels()
-print('The spectrometer has {} pixels'.format(num_pixels))
+print(f"The spectrometer has {num_pixels} pixels")
 
 # get the wavelength value of each pixel
 wavelengths = ava.get_lambda()
 
 # enable the 16-bit AD converter
-ava.use_high_res_adc(True)
+ava.use_high_res_adc(enable=True)
 
 # prepare the measurement type of the spectrometer
 # (the values of just a few parameters are updated here, see the manual for more details)
-cfg = ava.MeasConfigType()
+cfg = avantes.MeasConfigType()
 cfg.m_StopPixel = num_pixels - 1
 cfg.m_IntegrationTime = 5  # in milliseconds
 cfg.m_NrAverages = 1  # number of averages
@@ -58,7 +55,7 @@ ava.prepare_measure(cfg)
 
 # start continuous measurements
 # (use a callback function to be notified when a measurement is ready)
-ava.measure_callback(-1, callback_fcn)
+ava.measure_callback(-1, callback)
 
 # get as many scans as possible for 2 seconds
 time.sleep(2)

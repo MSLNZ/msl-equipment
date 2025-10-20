@@ -3058,7 +3058,7 @@ class Connection:
         self.properties: dict[str, _Any] = properties
         """Additional key-value pairs to use when communicating with the equipment.
 
-        For example, the _baud_rate_ and _parity_ values for an _RS-232_ connection.
+        For example, the *baud_rate* and *parity* values for an *RS-232* connection.
         """
 
         self.serial: str = serial

@@ -3066,7 +3066,7 @@ class Connection:
 
     def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the string representation."""
-        return f"{self.__class__.__name__}(eid={self.eid!r} address={self.address!r})"
+        return f"{self.__class__.__name__}(eid={self.eid!r}, address={self.address!r})"
 
     def connect(self) -> _Any:  # noqa: ANN401
         """Connect to the equipment for computer control."""

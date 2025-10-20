@@ -41,7 +41,7 @@ def test_from_config() -> None:
         "empty": None,
     }
 
-    assert str(connections["MSLE.M.092"]) == "Connection(eid='MSLE.M.092' address='COM1')"
+    assert str(connections["MSLE.M.092"]) == "Connection(eid='MSLE.M.092', address='COM1')"
 
     with pytest.raises(KeyError, match=r"eid='unknown' cannot be found"):
         _ = connections["unknown"]

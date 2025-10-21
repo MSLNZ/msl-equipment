@@ -1,32 +1,35 @@
-"""
-Example showing how to communicate with a TC Series
-Temperature Controller from Electron Dynamics Ltd.
-"""
-from msl.equipment import (
-    EquipmentRecord,
-    ConnectionRecord,
-    Backend,
+"""Example showing how to communicate with a TC Series Temperature Controller from Electron Dynamics Ltd."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from msl.equipment import Connection
+from msl.equipment.resources import electron_dynamics as ed
+
+if TYPE_CHECKING:
+    from msl.equipment.resources import TCSeries
+
+
+connection = Connection(
+    "COM5",  # update for your controller
+    manufacturer="Electron Dynamics",
+    model="TC Lite",
 )
 
-record = EquipmentRecord(
-    manufacturer='Electron Dynamics',
-    model='TC Lite',
-    connection=ConnectionRecord(
-        address='COM5',
-        backend=Backend.MSL,
-    )
-)
+# Connect to the Temperature Controller
+tc: TCSeries = connection.connect()
 
-# connect to the Temperature Controller
-tc = record.connect()
+# Get all available information about the Temperature Controller
+print(f"alarm: {tc.get_alarm()}")
+print(f"control: {tc.get_control()}")
+print(f"output: {tc.get_output()}")
+print(f"sensor: {tc.get_sensor()}")
+print(f"setpoint: {tc.get_setpoint()}")
+print(f"status: {tc.get_status()}")
 
-# get all available information about the Temperature Controller
-print('alarm: {}'.format(tc.get_alarm()))
-print('control: {}'.format(tc.get_control()))
-print('sensor: {}'.format(tc.get_sensor()))
-print('output: {}'.format(tc.get_output()))
-print('status: {}'.format(tc.get_status()))
-print('setpoint: {}'.format(tc.get_setpoint()))
+# Set the sensor to be PT100
+tc.set_sensor(ed.Sensor(type=ed.SensorType.PT100, x2=0, x=0.722, c=0.02, unit=ed.Unit.C, averaging=False))
 
-# set the sensor to be PT100
-tc.set_sensor(1, 0, 0.722, 0, 'C', 0)
+# Disconnect from the Controller
+tc.disconnect()

@@ -241,8 +241,8 @@ class Sensor:
         type: Sensor type.
         x2: See `c` description.
         x: See `c` description.
-        c: The `x2`, `x` and `c` parameters are the quadratic coefficients than can be used
-            to convert the sensor voltage into a temperature, i.e.,
+        c: The `x2`, `x` and `c` parameters are the quadratic, linear and constant coefficients that
+            are used to convert the sensor voltage into a temperature, i.e.,
             `temperature = (v * v * x2) + (v * x) + c`, where `v` is the measured sensor voltage.
             For *NTC thermistors*, `x2` is the beta value as specified for the thermistor type,
             `x` is the resistance at $25~^\circ\text{C}$, and `c` is still the offset.
@@ -455,10 +455,10 @@ class TCSeries(Serial, manufacturer=r"Electron Dynamics", model=r"TC\s*[M|L]", f
         )
 
     def set_alarm(self, alarm: Alarm) -> None:
-        """Set the alarm settings.
+        """Set the alarm parameters.
 
         Args:
-            alarm: The alarm settings.
+            alarm: The alarm parameters.
         """
         data = (
             f"{alarm.type};{alarm.alarm_min:.3f};{alarm.alarm_max:.3f};{alarm.ok_min:.3f};"

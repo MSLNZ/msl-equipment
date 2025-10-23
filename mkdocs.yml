@@ -124,6 +124,7 @@ nav:
       - resources/energetiq/eq99.md
     - Greisinger:
       - resources/greisinger/gmh3000.md
+    - resources/multi_message_based.md
   - Validate: validate.md
   - WebApp: webapp.md
 

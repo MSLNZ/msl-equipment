@@ -16,3 +16,9 @@ pip install msl-equipment-resources
 ```
 
 ## Create a new resource
+
+TODO...
+
+## Multiple interfaces
+
+If the equipment supports multiple interfaces for message-based protocols (e.g., [Socket][msl.equipment.interfaces.socket.Socket], [Serial][msl.equipment.interfaces.serial.Serial], [GPIB][msl.equipment.interfaces.gpib.GPIB], ...) you can create a resource that inherits from the [MultiMessageBased][msl.equipment_resources.multi_message_based.MultiMessageBased] class. Upon calling [super][] in the subclass, the connection is established with the appropriate protocol class.

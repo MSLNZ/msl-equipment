@@ -11,13 +11,13 @@ import re
 import time
 from typing import TYPE_CHECKING
 
+from msl.equipment_resources.multi_message_based import MultiMessageBased
+
 from msl.equipment.interfaces import MSLConnectionError
-from msl.equipment.schema import Connection, Interface
 
 if TYPE_CHECKING:
     from typing import Literal
 
-    from msl.equipment.interfaces import MessageBased
     from msl.equipment.schema import Equipment
 
 
@@ -58,7 +58,7 @@ EXECUTION_ERROR_CODES = {
 
 
 class MXSeries(
-    Interface,
+    MultiMessageBased,
     manufacturer=r"Aim\s*[-&_]?\s*(and)?\s*T(hurlby)?\s*T(handar)?\s*I(nstruments)?",
     model=r"MX1[80][03][TQ]P",
     flags=re.IGNORECASE,
@@ -74,23 +74,7 @@ class MXSeries(
             equipment: An [Equipment][] instance.
         """  # noqa: E501
         super().__init__(equipment)
-
-        # This equipment supports multiple interfaces: GPIB, RS232, Virtual COM, Socket
-        # Let the address decide which interface to use
-        c = equipment.connection
-        assert c is not None  # noqa: S101
-
-        try:
-            self._interface: MessageBased = Connection(c.address, **c.properties).connect()
-        except MSLConnectionError as e:
-            lines = str(e).splitlines()
-            raise MSLConnectionError(self, message="\n".join(lines[1:])) from None
-
-        self._interface.rstrip = True
-
-        # These improve logging.DEBUG messages
-        self._interface._repr = self._repr  # noqa: SLF001
-        self._interface._str = self._str  # noqa: SLF001
+        self.rstrip: bool = True
 
     def _check_event_status_register(self, command: str) -> None:
         """Check the value of the standard event status register for an error.
@@ -106,7 +90,7 @@ class MXSeries(
             err_type = "CommandError"
             err_msg = "A syntax error is detected in a command or parameter"
         elif status & (1 << 4):  # Bit 4 - Execution Error
-            code = int(self._interface.query("EER?"))
+            code = int(self.query("EER?"))
             err_type, err_msg = EXECUTION_ERROR_CODES.get(code, ("UndefinedError", f"Unknown error code {code}"))
         elif status & (1 << 3):  # Bit 3 - Verify Timeout Error
             err_type = "VerifyTimeoutError"
@@ -125,7 +109,7 @@ class MXSeries(
     def _query_and_check(self, command: str) -> str:
         """Query the command. If there is an error when querying then check the event status register for an error."""
         try:
-            return self._interface.query(command)
+            return self.query(command)
         except:
             self._check_event_status_register(command)
             # if checking the event status register does not raise an exception
@@ -134,12 +118,12 @@ class MXSeries(
 
     def _write_and_check(self, command: str) -> None:
         """Write the command and check the event status register for an error."""
-        _ = self._interface.write(command)
+        _ = self.write(command)
         self._check_event_status_register(command)
 
     def clear(self) -> None:
         """Send the clear command, `*CLS`."""
-        _ = self._interface.write("*CLS")
+        _ = self.write("*CLS")
 
     def decrement_current(self, channel: int) -> None:
         """Decrement the current limit by step size of the output channel.
@@ -160,18 +144,13 @@ class MXSeries(
         v = "V" if verify else ""
         self._write_and_check(f"DECV{channel}{v}")
 
-    def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
-        """Disconnect from the equipment."""
-        if hasattr(self, "_interface"):
-            self._interface.disconnect()
-
     def event_status_register(self) -> int:
         """Read and clear the standard event status register.
 
         Returns:
             The event status register value.
         """
-        return int(self._interface.query("*ESR?"))
+        return int(self.query("*ESR?"))
 
     def get_current(self, channel: int) -> float:
         """Get the output current of the output channel.
@@ -345,11 +324,11 @@ class MXSeries(
 
     def reset(self) -> None:
         """Send the reset command, `*RST`."""
-        _ = self._interface.write("*RST")
+        _ = self.write("*RST")
 
     def reset_trip(self) -> None:
         """Attempt to clear all trip conditions."""
-        _ = self._interface.write("TRIPRST")
+        _ = self.write("TRIPRST")
 
     def save(self, channel: int, index: int) -> None:
         """Save the present settings of the output channel to the store.
@@ -503,19 +482,6 @@ class MXSeries(
             mode: The voltage tracking mode. See the manual for more details.
         """
         self._write_and_check(f"CONFIG {mode}")
-
-    @property
-    def timeout(self) -> float | None:
-        """The timeout, in seconds, for [read][msl.equipment.interfaces.message_based.MessageBased.read]
-        and [write][msl.equipment.interfaces.message_based.MessageBased.write] operations.
-
-        A value &lt;0 will set the timeout to be `None` (blocking mode).
-        """  # noqa: D205
-        return self._interface.timeout
-
-    @timeout.setter
-    def timeout(self, value: float | None) -> None:
-        self._interface.timeout = value
 
     def turn_off(self, channel: int) -> None:
         """Turn the output channel off.

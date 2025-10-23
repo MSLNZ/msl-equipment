@@ -94,6 +94,7 @@
         "GETPORT",
         "GPIB",
         "gpibinter",
+        "Greisinger",
         "gtrsim",
         "highlevel",
         "HISLIP",

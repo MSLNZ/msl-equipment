@@ -44,7 +44,7 @@ theme:
         icon: material/weather-night
         name: Switch to system preference
 
-watch: [src, CHANGELOG.md]
+watch: [packages, src, CHANGELOG.md]
 
 nav:
   - Overview:
@@ -122,6 +122,8 @@ nav:
       - resources/electron_dynamics/tc_series.md
     - Energetiq:
       - resources/energetiq/eq99.md
+    - Greisinger:
+      - resources/greisinger/gmh3000.md
   - Validate: validate.md
   - WebApp: webapp.md
 

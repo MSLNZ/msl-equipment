@@ -7,8 +7,10 @@ from .aim_tti import MXSeries
 from .avantes import AvaSpec
 from .cmi import SIA3
 from .electron_dynamics import TCSeries
+from .energetiq import EQ99
 
 __all__: list[str] = [
+    "EQ99",
     "SIA3",
     "AvaSpec",
     "MXSeries",

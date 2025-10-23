@@ -120,6 +120,8 @@ nav:
       - resources/cmi/sia3.md
     - Electron Dynamics:
       - resources/electron_dynamics/tc_series.md
+    - Energetiq:
+      - resources/energetiq/eq99.md
   - Validate: validate.md
   - WebApp: webapp.md
 

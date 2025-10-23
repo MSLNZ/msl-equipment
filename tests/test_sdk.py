@@ -54,7 +54,7 @@ def test_connect() -> None:
     assert isinstance(c, SDK)
     assert c._load_library.assembly is None  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     assert c._load_library.gateway is None  # pyright: ignore[reportPrivateUsage] # noqa: SLF001
-    assert c._load_library.path.startswith(str(path))  # pyright: ignore[reportPrivateUsage] # noqa: SLF001
+    assert c.path.startswith(str(path))
     assert c.sdk.add(1, 1) == 2
 
 
@@ -69,7 +69,7 @@ def test_direct_path() -> None:
     with SDK(Equipment(connection=Connection("")), libtype="cdll", path=path) as sdk:
         assert sdk._load_library.assembly is None  # pyright: ignore[reportPrivateUsage] # noqa: SLF001
         assert sdk._load_library.gateway is None  # pyright: ignore[reportPrivateUsage] # noqa: SLF001
-        assert sdk._load_library.path.startswith(str(path))  # pyright: ignore[reportPrivateUsage] # noqa: SLF001
+        assert sdk.path.startswith(str(path))
         assert sdk.sdk.add(1, 1) == 2
 
 
@@ -86,7 +86,7 @@ def test_logging_messages(caplog: pytest.LogCaptureFixture) -> None:
     sdk.disconnect()
     assert caplog.messages == [
         "Connecting to SDK<MSL|| at >",
-        f"Loaded {sdk._load_library.path}",  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+        f"Loaded {sdk.path}",
         "SDK.add(c_float(1.0), c_float(1.0)) -> None",
         "Disconnected from SDK<MSL|| at >",
     ]

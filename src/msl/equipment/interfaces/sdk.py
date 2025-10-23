@@ -66,6 +66,11 @@ class SDK(Interface, regex=REGEX):
         """[lib][msl.loadlib.load_library.LoadLibrary.lib] &mdash; The reference to the SDK object."""
         return self._sdk
 
+    @property
+    def path(self) -> str:
+        """[str][] &mdash; The path to the library file."""
+        return self._load_library.path
+
 
 @dataclass
 class ParsedSDKAddress:

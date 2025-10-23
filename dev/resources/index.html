@@ -2116,6 +2116,8 @@
       
         
       
+        
+      
     
     
     
@@ -2618,6 +2620,29 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="multi_message_based/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    MultiMessageBased
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2713,6 +2738,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#multiple-interfaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multiple interfaces
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2744,6 +2778,9 @@
 <div class="highlight"><pre><span></span><code><span class="go">pip install msl-equipment-resources</span>
 </code></pre></div>
 <h2 id="create-a-new-resource">Create a new resource<a class="headerlink" href="#create-a-new-resource" title="Permanent link">¤</a></h2>
+<p>TODO...</p>
+<h2 id="multiple-interfaces">Multiple interfaces<a class="headerlink" href="#multiple-interfaces" title="Permanent link">¤</a></h2>
+<p>If the equipment supports multiple interfaces for message-based protocols (e.g., <a class="autorefs autorefs-internal" title="            Socket" href="../api/interfaces/socket/#msl.equipment.interfaces.socket.Socket">Socket</a>, <a class="autorefs autorefs-internal" title="            Serial" href="../api/interfaces/serial/#msl.equipment.interfaces.serial.Serial">Serial</a>, <a class="autorefs autorefs-internal" title="            GPIB" href="../api/interfaces/gpib/#msl.equipment.interfaces.gpib.GPIB">GPIB</a>, ...) you can create a resource that inherits from the <a class="autorefs autorefs-internal" title="            MultiMessageBased" href="multi_message_based/#msl.equipment_resources.multi_message_based.MultiMessageBased">MultiMessageBased</a> class. Upon calling <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#super">super</a> in the subclass, the connection is established with the appropriate protocol class.</p>
 
 
 

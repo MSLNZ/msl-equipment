@@ -11,12 +11,14 @@ import re
 import time
 from typing import TYPE_CHECKING
 
-from msl.equipment import Connection, Interface, MSLConnectionError
+from msl.equipment.interfaces import MSLConnectionError
+from msl.equipment.schema import Connection, Interface
 
 if TYPE_CHECKING:
     from typing import Literal
 
-    from msl.equipment import Equipment, MessageBased
+    from msl.equipment.interfaces import MessageBased
+    from msl.equipment.schema import Equipment
 
 
 EXECUTION_ERROR_CODES = {

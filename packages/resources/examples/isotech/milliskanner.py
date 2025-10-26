@@ -1,51 +1,40 @@
-"""
-Example showing how to communicate with an IsoTech milliK Precision Thermometer,
-with any number of connected millisKanners.
-"""
-import logging
-logging.basicConfig(level=logging.INFO)
+"""Example showing how to communicate with an IsoTech millisKanner (via a milliK)."""
 
-from msl.equipment import ConnectionRecord, EquipmentRecord
+from __future__ import annotations
 
+from typing import TYPE_CHECKING
 
-record = EquipmentRecord(
-    manufacturer='IsoTech',
-    model='milliK',
-    connection=ConnectionRecord(
-        address='COM9',  # change for your device
-        timeout=5,
-        properties={
-            'baud_rate': 9600,
-            'parity': None,
-            'start_bits': 1,
-            'stop_bits': 1,
-            'data_bits': 8,
-        }  # Optional: change for your device
-    )
+from msl.equipment import Connection
+
+if TYPE_CHECKING:
+    from msl.equipment.resources import MilliK
+
+connection = Connection(
+    "COM6",  # could also be a Socket, e.g., "TCP::10.12.102.30::1000"
+    manufacturer="IsoTech",
+    model="milliK",
 )
 
-thermometer = record.connect()
+# Connect to the milliK device (automatically configures for REMOTE mode)
+thermometer: MilliK = connection.connect()
 
 # Print information about the device
-print('Number of devices connected:', thermometer.num_devices)
-print('Connected devices:', thermometer.connected_devices)
-print('Available channel numbers:', thermometer.channel_numbers)
+print("Number of devices connected:", thermometer.num_devices)
+print("Connected devices:", thermometer.connected_devices)
+print("Available channel numbers:", thermometer.channel_numbers)
 
-# Configure channels using approximate resistance values for each channel
-r = [13000, 470, 220, 820, 3300, 100, 1800, 100]
-for i, res in enumerate(r, start=10):  # here the sensors are all on the first millisKanner only
-    thermometer.configure_resistance_measurement(channel=i, meas_range=res, norm=True, fourwire=True)
+# Configure channels using the largest resistance value that is expected for that channel
+resistances = [13000, 470, 220, 820, 3300, 100, 1800, 100]
+for i, r in enumerate(resistances, start=10):  # here the sensors are all on the first millisKanner only
+    thermometer.configure_resistance_measurement(channel=i, resistance=r)
 
-# Read resistance for a specific channel, returning n readings
-i = 13
-print(f'Resistance value for Channel {i}:', thermometer.read_channel(i, n=5))
+# Read resistance for a specific channel, returning 5 readings
+print("Resistance values for Channel 13:", thermometer.read_channel(13, n=5))
 
-# print(thermometer.channel_configuration)
+# Once the desired channels have been configured, you can yield values from them all
+# Here, we request the average resistance of 5 readings for every configured channel
+for ch, resistance in thermometer.read_all_channels(n=5):
+    print(f"Channel {ch}:", resistance)
 
-# Once the desired channels have been configured, then you can read them all at once
-ch, res = thermometer.read_all_channels()
-print("Configured channels:", ch)
-print('Resistance values:', res)
-
-# Disconnect from the milliK device and return the device to LOCAL mode
+# Disconnect from the milliK device (automatically configures for LOCAL mode)
 thermometer.disconnect()

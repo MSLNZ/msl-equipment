@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from . import avantes, cmi, electron_dynamics, isotech
+from . import avantes, cmi, electron_dynamics, isotech, mks
 from .aim_tti import MXSeries
 from .avantes import AvaSpec
 from .cmi import SIA3
@@ -10,10 +10,12 @@ from .electron_dynamics import TCSeries
 from .energetiq import EQ99
 from .greisinger import GMH3000
 from .isotech import MilliK
+from .mks import PR4000B
 
 __all__: list[str] = [
     "EQ99",
     "GMH3000",
+    "PR4000B",
     "SIA3",
     "AvaSpec",
     "MXSeries",
@@ -23,4 +25,5 @@ __all__: list[str] = [
     "cmi",
     "electron_dynamics",
     "isotech",
+    "mks",
 ]

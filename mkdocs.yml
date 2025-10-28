@@ -128,6 +128,8 @@ nav:
       - resources/isotech/millik.md
     - MKS:
       - resources/mks/pr4000b.md
+    - NKT:
+      - resources/nkt/nktpdll.md
     - resources/multi_message_based.md
   - Validate: validate.md
   - WebApp: webapp.md

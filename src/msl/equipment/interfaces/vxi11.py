@@ -671,7 +671,7 @@ class CoreClient(VXIClient):
         self.write()
         _ = self.read_reply()
 
-    def device_read(  # noqa: PLR0913
+    def device_read(
         self,
         *,
         lid: int,

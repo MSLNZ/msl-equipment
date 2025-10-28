@@ -167,7 +167,7 @@ class MessageBased(Interface, append=False):
         size: int | None = ...,
     ) -> NumpyArray1D: ...
 
-    def query(  # noqa: PLR0913
+    def query(
         self,
         message: bytes | str,
         *,

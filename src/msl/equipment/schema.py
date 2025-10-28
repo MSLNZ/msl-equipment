@@ -1106,7 +1106,7 @@ class DigitalReport:
         return e
 
 
-def _cvd_resistance(  # noqa: PLR0913
+def _cvd_resistance(
     temperature: float | np.ndarray, r0: float, a: float, b: float, c: float, d: float
 ) -> NDArray[np.float64]:
     """Calculate resistance from temperature."""
@@ -3010,7 +3010,7 @@ class Connection:
         "serial",
     )
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         address: str,
         *,
@@ -3195,7 +3195,7 @@ class Interface:
         """Exit the context manager."""
         self.disconnect()
 
-    def __init_subclass__(  # noqa: PLR0913
+    def __init_subclass__(
         cls,
         *,
         manufacturer: str = "",

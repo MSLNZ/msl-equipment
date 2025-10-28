@@ -265,7 +265,7 @@ class Format:
 class Readings:
     """A formatting-friendly convenience class for measurement data."""
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         data: str | Sequence[str | float] | NDArray[np.number] | None = None,
         *,

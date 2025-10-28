@@ -222,6 +222,9 @@ ignore = [
     "ISC001", # single-line-implicit-string-concatenation
 ]
 
+[tool.ruff.lint.pylint]
+max-args = 7
+
 [tool.ruff.lint.per-file-ignores]
 "**/tests/*.py" = [
     "D100", # Missing docstring in public module

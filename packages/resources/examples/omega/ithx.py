@@ -1,34 +1,29 @@
-"""
-Example showing how to communicate with an OMEGA iTHX Series
-Temperature and Humidity Chart Recorder.
-"""
-from msl.equipment import (
-    EquipmentRecord,
-    ConnectionRecord,
-    Backend,
+"""Example showing how to communicate with an OMEGA iTHX Series Temperature and Humidity Chart Recorder."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from msl.equipment import Connection
+
+if TYPE_CHECKING:
+    from msl.equipment.resources import ITHX
+
+
+connection = Connection(
+    "TCP::192.168.1.100::2000",  # update for your OMEGA iServer
+    manufacturer="OMEGA",
+    model="iTHX-W3",  # update for your OMEGA iServer
+    timeout=2,
 )
 
-# update these values for your OMEGA iServer
-address = '192.168.1.200'
-port = 2000
-model = 'iTHX-W3'
+# Connect to the iServer
+ithx: ITHX = connection.connect()
 
-record = EquipmentRecord(
-    manufacturer='OMEGA',
-    model=model,
-    connection=ConnectionRecord(
-        address='TCP::{}::{}'.format(address, port),
-        backend=Backend.MSL,
-        properties=dict(
-            termination='\r',
-            timeout=2
-        ),
-    )
-)
+# Read the temperature, relative humidity and dewpoint
+print(f"T {ithx.temperature()} °C")
+print(f"H {ithx.humidity()} %")
+print(f"DP {ithx.dewpoint(celsius=False)} °F")
 
-omega = record.connect()
-print('T {} deg C'.format(omega.temperature()))
-print('H {}%'.format(omega.humidity()))
-print('DP {} deg F'.format(omega.dewpoint(celsius=False)))
-print('T {} deg C, H {}%'.format(*omega.temperature_humidity()))
-print('T {} deg C, H {}%, DP {} deg C'.format(*omega.temperature_humidity_dewpoint()))
+# Disconnect from the iServer
+ithx.disconnect()

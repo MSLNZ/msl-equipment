@@ -126,10 +126,12 @@ nav:
       - resources/greisinger/gmh3000.md
     - Isotech:
       - resources/isotech/millik.md
-    - MKS:
+    - MKS Instruments:
       - resources/mks/pr4000b.md
-    - NKT:
+    - NKT Photonics:
       - resources/nkt/nktpdll.md
+    - OMEGA:
+      - resources/omega/ithx.md
     - resources/multi_message_based.md
   - Validate: validate.md
   - WebApp: webapp.md

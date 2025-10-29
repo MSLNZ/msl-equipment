@@ -12,10 +12,12 @@ from .greisinger import GMH3000
 from .isotech import MilliK
 from .mks import PR4000B
 from .nkt import NKT
+from .omega import ITHX
 
 __all__: list[str] = [
     "EQ99",
     "GMH3000",
+    "ITHX",
     "NKT",
     "PR4000B",
     "SIA3",

@@ -4,6 +4,9 @@ Resources are custom classes for interfacing with specific equipment. In previou
 
 Some of the resources might not work in your application because the resource might depend on an external dependency, e.g., the Software Development Kit (SDK) provided by a manufacturer, and this external dependency might not be available for your operating system.
 
+!!! examples
+    There are examples on how to use the resources in the [repository](https://github.com/MSLNZ/msl-equipment/tree/main/packages/resources/examples){:target="_blank"}.
+
 !!! danger "Attention"
     Companies that sell equipment that are used for scientific research are identified in this guide in order to illustrate how to adequately use `msl-equipment-resources` in your application. Such identification is not intended to imply recommendation or endorsement by the Measurement Standards Laboratory of New Zealand, nor is it intended to imply that the companies identified are necessarily the best for the purpose.
 

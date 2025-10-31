@@ -14,6 +14,7 @@ from .mks import PR4000B
 from .nkt import NKT
 from .omega import ITHX
 from .optosigma import SHOT702
+from .raicol import RaicolTEC
 
 __all__: list[str] = [
     "EQ99",
@@ -26,6 +27,7 @@ __all__: list[str] = [
     "AvaSpec",
     "MXSeries",
     "MilliK",
+    "RaicolTEC",
     "TCSeries",
     "avantes",
     "cmi",

@@ -531,7 +531,7 @@ class NKT(Interface, manufacturer=r"^NKT"):
                 module type as the keys and its corresponding device ID as the value.
         """
         if NKT._SDK is None:
-            msg = "You must first call NKT.load_sdk()"
+            msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
         if not ports:
@@ -834,7 +834,7 @@ class NKT(Interface, manufacturer=r"^NKT"):
             A list of port names.
         """
         if NKT._SDK is None:
-            msg = "You must first call NKT.load_sdk()"
+            msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
         length = c_ushort(size)
@@ -862,7 +862,7 @@ class NKT(Interface, manufacturer=r"^NKT"):
             `True` if in legacy mode, `False` if in normal mode.
         """
         if NKT._SDK is None:
-            msg = "You must first call NKT.load_sdk()"
+            msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
         return bool(NKT._SDK.getLegacyBusScanning())
@@ -878,7 +878,7 @@ class NKT(Interface, manufacturer=r"^NKT"):
             A list of port names that are already open.
         """
         if NKT._SDK is None:
-            msg = "You must first call NKT.load_sdk()"
+            msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
         length = c_ushort(size)
@@ -931,7 +931,7 @@ class NKT(Interface, manufacturer=r"^NKT"):
                 methods.
         """
         if NKT._SDK is None:
-            msg = "You must first call NKT.load_sdk()"
+            msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
         _names = b",".join(name.encode() for name in names)
@@ -1706,7 +1706,7 @@ class NKT(Interface, manufacturer=r"^NKT"):
                 Some older modules do not accept _masterIds_ other than 66 (0x42).
         """
         if NKT._SDK is None:
-            msg = "You must first call NKT.load_sdk()"
+            msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
         NKT._SDK.setLegacyBusScanning(int(bool(mode)))
@@ -1727,11 +1727,11 @@ class NKT(Interface, manufacturer=r"^NKT"):
             callback: A callback function. Pass in `None` to disable the device-status callback.
         """
         if NKT._SDK is None:
-            msg = "You must first call NKT.load_sdk()"
+            msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
         if callback is not None and not isinstance(callback, DeviceStatusCallback):
-            msg = "Must pass in a DeviceStatusCallback object"
+            msg = "NKTError: Must pass in a DeviceStatusCallback object"
             raise TypeError(msg)
 
         NKT._SDK.setCallbackPtrDeviceInfo(callback)
@@ -1755,11 +1755,11 @@ class NKT(Interface, manufacturer=r"^NKT"):
             callback: A callback function. Pass in `None` to disable the port-status callback.
         """
         if NKT._SDK is None:
-            msg = "You must first call NKT.load_sdk()"
+            msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
         if callback is not None and not isinstance(callback, PortStatusCallback):
-            msg = "Must pass in a PortStatusCallback object"
+            msg = "NKTError: Must pass in a PortStatusCallback object"
             raise TypeError(msg)
 
         NKT._SDK.setCallbackPtrPortInfo(callback)
@@ -1780,11 +1780,11 @@ class NKT(Interface, manufacturer=r"^NKT"):
             callback: A callback function. Pass in `None` to disable the register-status callback.
         """
         if NKT._SDK is None:
-            msg = "You must first call NKT.load_sdk()"
+            msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
         if callback is not None and not isinstance(callback, RegisterStatusCallback):
-            msg = "Must pass in a RegisterStatusCallback object"
+            msg = "NKTError: Must pass in a RegisterStatusCallback object"
             raise TypeError(msg)
 
         NKT._SDK.setCallbackPtrRegisterInfo(callback)
@@ -1862,7 +1862,7 @@ def __check_port_result(result: Any, func: Any, arguments: tuple[Any, ...]) -> A
     _log_debug(result, func, arguments)
     if result != 0:
         err, msg = _port_errors.get(result, ("UnknownError", f"Unknown error [code={result}]"))
-        message = f"{err}: {msg}"
+        message = f"NKTError: {err}: {msg}"
         raise RuntimeError(message)
     return result
 
@@ -1871,7 +1871,7 @@ def __check_p2p_result(result: Any, func: Any, arguments: tuple[Any, ...]) -> An
     _log_debug(result, func, arguments)
     if result != 0:
         err, msg = _p2p_errors.get(result, ("UnknownError", f"Unknown error [code={result}]"))
-        message = f"{err}: {msg}"
+        message = f"NKTError: {err}: {msg}"
         raise RuntimeError(message)
     return result
 
@@ -1880,7 +1880,7 @@ def __check_device_result(result: Any, func: Any, arguments: tuple[Any, ...]) ->
     _log_debug(result, func, arguments)
     if result != 0:
         err, msg = _device_errors.get(result, ("UnknownError", f"Unknown error [code={result}]"))
-        message = f"{err}: {msg}"
+        message = f"NKTError: {err}: {msg}"
         raise RuntimeError(message)
     return result
 
@@ -1889,7 +1889,7 @@ def __check_register_result(result: Any, func: Any, arguments: tuple[Any, ...]) 
     _log_debug(result, func, arguments)
     if result != 0:
         err, msg = _register_errors.get(result, ("UnknownError", f"Unknown error [code={result}]"))
-        message = f"{err}: {msg}"
+        message = f"NKTError: {err}: {msg}"
         raise RuntimeError(message)
     return result
 

@@ -172,6 +172,8 @@
         "nktpdll",
         "nprobes",
         "numpy",
+        "Opto",
+        "optosigma",
         "PMAP",
         "PMAPPROC",
         "PROC",

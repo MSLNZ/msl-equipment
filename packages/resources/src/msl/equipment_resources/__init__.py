@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from . import avantes, cmi, electron_dynamics, isotech, mks, nkt
+from . import avantes, cmi, electron_dynamics, isotech, mks, nkt, optosigma
 from .aim_tti import MXSeries
 from .avantes import AvaSpec
 from .cmi import SIA3
@@ -13,6 +13,7 @@ from .isotech import MilliK
 from .mks import PR4000B
 from .nkt import NKT
 from .omega import ITHX
+from .optosigma import SHOT702
 
 __all__: list[str] = [
     "EQ99",
@@ -20,6 +21,7 @@ __all__: list[str] = [
     "ITHX",
     "NKT",
     "PR4000B",
+    "SHOT702",
     "SIA3",
     "AvaSpec",
     "MXSeries",
@@ -31,4 +33,5 @@ __all__: list[str] = [
     "isotech",
     "mks",
     "nkt",
+    "optosigma",
 ]

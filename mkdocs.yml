@@ -132,6 +132,8 @@ nav:
       - resources/nkt/nktpdll.md
     - OMEGA:
       - resources/omega/ithx.md
+    - OptoSigma:
+      - resources/optosigma/shot702.md
     - resources/multi_message_based.md
   - Validate: validate.md
   - WebApp: webapp.md

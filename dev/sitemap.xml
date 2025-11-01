@@ -121,6 +121,10 @@
          <lastmod>2025-11-01</lastmod>
     </url>
     <url>
+         <loc>https://github.com/MSLNZ/msl-equipment/dev/resources/types/</loc>
+         <lastmod>2025-11-01</lastmod>
+    </url>
+    <url>
          <loc>https://github.com/MSLNZ/msl-equipment/dev/resources/aim-tti/mx_series/</loc>
          <lastmod>2025-11-01</lastmod>
     </url>
@@ -170,6 +174,14 @@
     </url>
     <url>
          <loc>https://github.com/MSLNZ/msl-equipment/dev/resources/raicol/tec/</loc>
+         <lastmod>2025-11-01</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/MSLNZ/msl-equipment/dev/resources/vaisala/ptb330/</loc>
+         <lastmod>2025-11-01</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/MSLNZ/msl-equipment/dev/resources/vaisala/ptu300/</loc>
          <lastmod>2025-11-01</lastmod>
     </url>
     <url>

@@ -41,8 +41,10 @@ if TYPE_CHECKING:
     from ctypes import CDLL, _CFunctionType  # pyright: ignore[reportPrivateUsage]
     from typing import Any
 
-    from msl.equipment._types import NKTDeviceStatusCallback, NKTPortStatusCallback, NKTRegisterStatusCallback, PathLike
+    from msl.equipment._types import PathLike
     from msl.equipment.schema import Equipment
+
+    from ..types import NKTDeviceStatusCallback, NKTPortStatusCallback, NKTRegisterStatusCallback  # noqa: TID252
 
 
 # The example code that comes with the SDK uses NKTP_SDK_PATH
@@ -59,7 +61,7 @@ PortStatusCallback = CFUNCTYPE(None, c_char_p, c_ubyte, c_ubyte, c_ubyte, c_ubyt
 
 
 def port_status_callback(f: NKTPortStatusCallback) -> _CFunctionType:
-    """Used as a decorator for a callback function when the status of a port changes.
+    """Use as a decorator for a callback function when the status of a port changes.
 
     See [superk_callback.py](https://github.com/MSLNZ/msl-equipment/blob/main/packages/resources/examples/nkt/superk_callback.py)
     for an example usage.
@@ -72,7 +74,7 @@ DeviceStatusCallback = CFUNCTYPE(None, c_char_p, c_ubyte, c_ubyte, c_ubyte, c_vo
 
 
 def device_status_callback(f: NKTDeviceStatusCallback) -> _CFunctionType:
-    """Used as a decorator for a callback function when the status of a device changes.
+    """Use as a decorator for a callback function when the status of a device changes.
 
     See [superk_callback.py](https://github.com/MSLNZ/msl-equipment/blob/main/packages/resources/examples/nkt/superk_callback.py)
     for an example usage.
@@ -85,7 +87,7 @@ RegisterStatusCallback = CFUNCTYPE(None, c_char_p, c_ubyte, c_ubyte, c_ubyte, c_
 
 
 def register_status_callback(f: NKTRegisterStatusCallback) -> _CFunctionType:
-    """Used as a decorator for a callback function when the status of a register changes.
+    """Use as a decorator for a callback function when the status of a register changes.
 
     See [superk_callback.py](https://github.com/MSLNZ/msl-equipment/blob/main/packages/resources/examples/nkt/superk_callback.py)
     for an example usage.

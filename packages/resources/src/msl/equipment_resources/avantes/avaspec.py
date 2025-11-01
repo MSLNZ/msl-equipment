@@ -39,8 +39,9 @@ if TYPE_CHECKING:
 
     from numpy.typing import NDArray
 
-    from msl.equipment._types import AvaSpecCallback
     from msl.equipment.schema import Equipment
+
+    from ..types import AvaSpecCallback  # noqa: TID252
 
 
 IS_WINDOWS = sys.platform == "win32"
@@ -59,7 +60,7 @@ MeasureCallback: type[_CFunctionType] = func_type(None, POINTER(c_int32), POINTE
 
 
 def avaspec_callback(f: AvaSpecCallback) -> _CFunctionType:
-    """Used as a decorator for a callback function when a measurement scan is available.
+    """Use as a decorator for a callback function when a measurement scan is available.
 
     See [avaspec_callback.py](https://github.com/MSLNZ/msl-equipment/blob/main/packages/resources/examples/avantes/avaspec_callback.py)
     for an example usage.

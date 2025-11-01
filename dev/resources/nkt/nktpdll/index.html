@@ -2130,6 +2130,8 @@
       
         
       
+        
+      
     
     
     
@@ -3938,7 +3940,7 @@
   
   
   <span class="md-ellipsis">
-    Raicol Crystals
+    Princeton Instruments
     
   </span>
   
@@ -3948,6 +3950,82 @@
         
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_13_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_13">
+            <span class="md-nav__icon md-icon"></span>
+            Princeton Instruments
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../princeton_instruments/arc_instrument/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ARC Instrument SDK
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_14" id="__nav_5_14_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Raicol Crystals
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_14">
             <span class="md-nav__icon md-icon"></span>
             Raicol Crystals
           </label>
@@ -6185,7 +6263,7 @@ module type as the keys and its corresponding device ID as the value.</p>
 <span class="sd">            module type as the keys and its corresponding device ID as the value.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">ports</span><span class="p">:</span>
@@ -7980,7 +8058,7 @@ using this function, since it will do a dedicated read.</p>
 <span class="sd">        A list of port names.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">length</span> <span class="o">=</span> <span class="n">c_ushort</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
@@ -8057,7 +8135,7 @@ using this function, since it will do a dedicated read.</p>
 <span class="sd">        `True` if in legacy mode, `False` if in normal mode.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">getLegacyBusScanning</span><span class="p">())</span>
@@ -8270,7 +8348,7 @@ using this function, since it will do a dedicated read.</p>
 <span class="sd">        A list of port names that are already open.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">length</span> <span class="o">=</span> <span class="n">c_ushort</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
@@ -8652,7 +8730,7 @@ methods.</p>
 <span class="sd">            methods.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">_names</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">)</span>
@@ -15002,11 +15080,11 @@ made to a function in the DLL the function will raise an exception.</p>
 <span class="sd">        callback: A callback function. Pass in `None` to disable the device-status callback.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">DeviceStatusCallback</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Must pass in a DeviceStatusCallback object&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: Must pass in a DeviceStatusCallback object&quot;</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">setCallbackPtrDeviceInfo</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
@@ -15146,11 +15224,11 @@ made to a function in the DLL the function will raise an exception.</p>
 <span class="sd">        callback: A callback function. Pass in `None` to disable the port-status callback.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">PortStatusCallback</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Must pass in a PortStatusCallback object&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: Must pass in a PortStatusCallback object&quot;</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">setCallbackPtrPortInfo</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
@@ -15272,11 +15350,11 @@ made to a function in the DLL the function will raise an exception.</p>
 <span class="sd">        callback: A callback function. Pass in `None` to disable the register-status callback.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">RegisterStatusCallback</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Must pass in a RegisterStatusCallback object&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: Must pass in a RegisterStatusCallback object&quot;</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">setCallbackPtrRegisterInfo</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
@@ -15370,7 +15448,7 @@ Some older modules do not accept <em>masterIds</em> other than 66 (0x42).</p>
 <span class="sd">            Some older modules do not accept _masterIds_ other than 66 (0x42).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">setLegacyBusScanning</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">mode</span><span class="p">)))</span>

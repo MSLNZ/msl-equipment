@@ -134,6 +134,8 @@ nav:
       - resources/omega/ithx.md
     - OptoSigma:
       - resources/optosigma/shot702.md
+    - Princeton Instruments:
+      - resources/princeton_instruments/arc_instrument.md
     - Raicol Crystals:
       - resources/raicol/tec.md
     - resources/multi_message_based.md

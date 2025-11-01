@@ -239,6 +239,7 @@ max-args = 7
 "packages/resources/examples/*.py" = [
     "ERA001", # commented-out-code
     "INP001", # implicit-namespace-package
+    "PERF203", # try-except-in-loop
     "T201",  # Allow print statements
 ]
 

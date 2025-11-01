@@ -1,28 +1,28 @@
-"""
-Example showing how to find all devices from Princeton Instruments.
-"""
-from msl.equipment.exceptions import PrincetonInstrumentsError
-from msl.equipment.resources import PrincetonInstruments as PI
+"""Example showing how to find all devices from Princeton Instruments."""
+
+from msl.equipment.resources import PrincetonInstruments
 
 # Load the SDK (update the path for your computer)
-PI.init(r'C:\Program Files (x86)\Princeton Instruments\ARC_Instrument_x64.dll')
-print('Using version {}.{}.{} of the SDK'.format(*PI.ver()))
+PrincetonInstruments.init(r"C:\Program Files (x86)\Princeton Instruments\ARC_Instrument_x64.dll")
+
+major, minor, build = PrincetonInstruments.ver()
+print(f"Using version {major}.{minor}.{build} of the SDK")
 
 # Find all devices from Princeton Instruments
-num_found = PI.search_for_inst()
-print('Found {} device(s):'.format(num_found))
+num_found = PrincetonInstruments.search_for_inst()
+print(f"Found {num_found} device(s):")
 for enum in range(num_found):
-    model = PI.get_enum_preopen_model(enum)
-    serial = PI.get_enum_preopen_serial(enum)
-    port = PI.get_enum_preopen_com(enum)
-    print('  Model#: {!r}, Serial#: {} -> at COM{}'.format(model, serial, port))
+    model = PrincetonInstruments.get_enum_preopen_model(enum)
+    serial = PrincetonInstruments.get_enum_preopen_serial(enum)
+    port = PrincetonInstruments.get_enum_preopen_com(enum)
+    print(f"  Model#: {model!r}, Serial#: {serial} -> at COM{port}")
 
-# List all Monochromators that are available
-print('Monochromators available:')
+# List all Monochromator's that are available
+print("Monochromator's available:")
 for enum in range(num_found):
     try:
-        model = PI.get_mono_preopen_model(enum)
-    except PrincetonInstrumentsError:
-        pass
+        model = PrincetonInstruments.get_mono_preopen_model(enum)
+    except RuntimeError:
+        continue
     else:
-        print('  {!r} at COM{}'.format(model, PI.get_enum_preopen_com(enum)))
+        print(f"  {model!r} at COM{PrincetonInstruments.get_enum_preopen_com(enum)}")

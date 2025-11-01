@@ -138,6 +138,9 @@ nav:
       - resources/princeton_instruments/arc_instrument.md
     - Raicol Crystals:
       - resources/raicol/tec.md
+    - Vaisala:
+      - resources/vaisala/ptb330.md
+      - resources/vaisala/ptu300.md
     - resources/multi_message_based.md
     - resources/types.md
   - Validate: validate.md

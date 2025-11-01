@@ -16,6 +16,7 @@ from .omega import ITHX
 from .optosigma import SHOT702
 from .princeton_instruments import PrincetonInstruments
 from .raicol import RaicolTEC
+from .vaisala import PTB330, PTU300
 
 __all__: list[str] = [
     "EQ99",
@@ -23,6 +24,8 @@ __all__: list[str] = [
     "ITHX",
     "NKT",
     "PR4000B",
+    "PTB330",
+    "PTU300",
     "SHOT702",
     "SIA3",
     "AvaSpec",

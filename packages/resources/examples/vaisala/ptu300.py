@@ -1,48 +1,42 @@
-"""
-Example showing how to communicate with a Vaisala Barometer which reads pressure, temperature, and relative humidity,
-e.g. of type PTU300
-"""
+"""Example showing how to communicate with a Vaisala PTU300-series Barometer."""
+
+from __future__ import annotations
+
 from pprint import pprint
+from typing import TYPE_CHECKING
 
-from msl.equipment import (
-    EquipmentRecord,
-    ConnectionRecord,
+from msl.equipment import Connection
+
+if TYPE_CHECKING:
+    from msl.equipment.resources import PTU300
+
+
+connection = Connection(
+    "COM3",  # update for your device
+    manufacturer="Vaisala",
+    model="PTU300",
+    serial="P4040154",
 )
 
-record = EquipmentRecord(
-    manufacturer='Vaisala',
-    model='PTU300',
-    serial='P4040154',
-    connection=ConnectionRecord(
-        address='COM3',  # change for your device
-        timeout=5,
-    )
-)
+# Connect to the device
+ptu: PTU300 = connection.connect()
 
-vaisala = record.connect()
+# Display information about the device
+pprint(ptu.device_info)
 
-# display information about the device
-pprint(vaisala.device_info)
+# A mapping between a quantity and the unit to use for the quantity
+ptu.set_units({"P": "hPa", "P3h": "hPa", "T": "'C", "RH": "%RH"})
+print("Units set:", ptu.units)
 
-vaisala.check_for_errors()
-
-desired_units = {
-    "P":    'hPa',
-    "P3h":  'hPa',
-    "T":    "'C",
-    "RH":   "%RH"
-}
-vaisala.set_units(desired_units=desired_units)
-print("Units set:", vaisala.units)
-
-format = '4.3 P " " U5 " " 3.3 T " " U5" "  3.3 RH " " U5" "  SN " " #r #n'
-vaisala.set_format(format=format)
+# Set the format that data will be returned as
+ptu.set_format('4.3 P " " U5 " " 3.3 T " " U5" "  3.3 RH " " U5" "  SN " " #r #n')
 
 # There are two ways to check the format string that has been set
-print(vaisala.get_format())
-print(vaisala.device_info["Output format"])
+print(ptu.get_format())
+print(ptu.device_info["Output format"])
 
-# Get reading from device
-print(vaisala.get_reading_str())
+# Get a reading from the device (in the specified format)
+print(ptu.get_reading_str())
 
-vaisala.disconnect()
+# Disconnect from the device
+ptu.disconnect()

@@ -1,47 +1,42 @@
-"""
-Example showing how to communicate with a Vaisala Barometer which reads pressure
-e.g. of type PTB330
-"""
+"""Example showing how to communicate with a Vaisala PTB330 Barometer."""
+
+from __future__ import annotations
+
 from pprint import pprint
+from typing import TYPE_CHECKING
 
-from msl.equipment import (
-    EquipmentRecord,
-    ConnectionRecord,
+from msl.equipment import Connection
+
+if TYPE_CHECKING:
+    from msl.equipment.resources import PTB330
+
+
+connection = Connection(
+    "COM3",  # update for your device
+    manufacturer="Vaisala",
+    model="PTB330",
+    serial="L2310094",
 )
 
-record = EquipmentRecord(
-    manufacturer='Vaisala',
-    model='PTB330',
-    serial='L2310094',
-    connection=ConnectionRecord(
-        address='COM3',  # change for your device
-        timeout=5,
-    )
-)
+# Connect to the device
+ptb: PTB330 = connection.connect()
 
-vaisala = record.connect()
+# Display information about the device
+pprint(ptb.device_info)
 
-# display information about the device
-pprint(vaisala.device_info)
+# A mapping between a quantity and the unit to use for the quantity
+ptb.set_units({"P": "hPa", "P3h": "mbar", "TP1": "'C"})
+print("Units set:", ptb.units)
 
-vaisala.check_for_errors()
-
-desired_units = {
-    "P":    'hPa',
-    "P3h":  'mbar',
-    "TP1":    "'C"
-}
-vaisala.set_units(desired_units=desired_units)
-print("Units set:", vaisala.units)
-
-format = '4.3 P " " 4.3 P3h " " 2.1 TP1 #r #n'
-vaisala.set_format(format=format)
+# Set the format that data will be returned as
+ptb.set_format('4.3 P " " 4.3 P3h " " 2.1 TP1 #r #n')
 
 # There are two ways to check the format string that has been set
-print(vaisala.get_format())
-print(vaisala.device_info["Output format"])
+print(ptb.get_format())
+print(ptb.device_info["Output format"])
 
-# Get reading from device
-print(vaisala.get_reading_str())
+# Get a reading from the device (in the specified format)
+print(ptb.get_reading_str())
 
-vaisala.disconnect()
+# Disconnect from the device
+ptb.disconnect()

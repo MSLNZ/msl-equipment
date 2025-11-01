@@ -241,6 +241,7 @@ max-args = 7
     "INP001", # implicit-namespace-package
     "PERF203", # try-except-in-loop
     "T201",  # Allow print statements
+    "T203",  # Allpw pprint statements
 ]
 
 [tool.ruff.lint.pydocstyle]

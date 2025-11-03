@@ -508,6 +508,11 @@ class GPIB(MessageBased, regex=REGEX):
         self._lib.ibask(handle, option, byref(setting))
         return setting.value
 
+    @property
+    def board(self) -> int:
+        """Returns the board descriptor."""
+        return self._address_info.board
+
     def clear(self, *, handle: int | None = None) -> int:
         """Send the clear command (device).
 
@@ -927,16 +932,22 @@ class GPIB(MessageBased, regex=REGEX):
         ibsta: int = self._lib.ibwait(handle, mask)
         return ibsta
 
-    def wait_for_srq(self, *, handle: int | None = None) -> int:
-        """Wait for the SRQ line to be asserted (board or device).
+    def wait_for_srq(self, *, board: int | None = None) -> int:
+        """Wait for the SRQ interrupt (SRQI, 0x1000) line to be asserted (board).
+
+        This method will return when the board receives a service request from *any* device.
+        If there are multiple devices connected to the board, you must determine which
+        device asserted the service request.
 
         Args:
-            handle: Board or device descriptor. Default is the handle of the instantiated class.
+            board: Board descriptor. Default is the board descriptor of the instantiated class.
 
         Returns:
             The status value (`ibsta`).
         """
-        return self.wait(0x1000, handle=handle)  # SRQI = 0x1000
+        if board is None:
+            board = self._address_info.board
+        return self.wait(0x1000, handle=board)  # SRQI = 0x1000
 
     def write_async(self, message: bytes, *, handle: int | None = None) -> int:
         """Write a message asynchronously (board or device).

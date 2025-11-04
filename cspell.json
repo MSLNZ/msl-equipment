@@ -25,6 +25,7 @@
         "packages/validate/src/msl/equipment_validate/schema/equipment-register.xsd"
     ],
     "words": [
+        "activex",
         "allclose",
         "arithmatex",
         "ASRL",
@@ -174,8 +175,10 @@
         "nktpdll",
         "nprobes",
         "numpy",
+        "olxxa",
         "Opto",
         "optosigma",
+        "Optronic",
         "Peltier",
         "PMAP",
         "PMAPPROC",
@@ -201,6 +204,7 @@
         "savetxt",
         "Schar",
         "SCPI",
+        "SDKACTIVEX",
         "setflags",
         "setpoint",
         "SEVENBITS",

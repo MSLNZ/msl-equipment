@@ -195,6 +195,9 @@ def test_socket(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
             for _ in range(2):  # clear the write("++read 10") that is written in the 2 pro.read()'s above
                 assert pro.controller.read() == "++read 10\n"
 
+            pro.query_auto = False
+            assert pro.query("foo", delay=0.05) == "foo\n"
+
             pro.group_execute_trigger()
             assert pro.read() == "++trg\n"
             assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
@@ -219,11 +222,13 @@ def test_socket(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
             assert pro.read() == "++llo\n"
             assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
 
+            pro.query_auto = True
             server.add_response(b"The following commands are available:\n")
             server.add_response(b"++help -- description\n")
             reply = pro.prologix_help()
             assert reply == [("++help", "description")]
             assert pro.controller.read() == "++auto 0\n"  # leftover from pro.query() inside pro.prologix_help()
+            pro.query_auto = False
 
             server.add_response(b"32\n")
             assert pro.serial_poll() == 32
@@ -252,8 +257,6 @@ def test_socket(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
             with pytest.raises(TimeoutError, match=r"0.1 seconds"):
                 pro.wait_for_srq(timeout=0.1)
 
-            pro.query_auto = False
-            assert pro.query("foo", delay=0.05) == "foo\n"
         finally:
             _ = pro.write(b"SHUTDOWN")
 

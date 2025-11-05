@@ -860,7 +860,7 @@ class GPIB(MessageBased, regex=REGEX):
             handle: Board or device descriptor. Default is the handle of the instantiated class.
 
         Returns:
-            The status byte.
+            The [status byte](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html).
         """
         if handle is None:
             handle = self._handle

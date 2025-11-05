@@ -4413,13 +4413,13 @@ CONTROLLER mode. <em>Default: <code>100</code></em></p>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;++eos </span><span class="si">{</span><span class="n">eos</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="n">eot_char</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eot_char&quot;</span><span class="p">)</span>  <span class="c1"># MODES AVAILABLE: CONTROLLER, DEVICE</span>
-    <span class="k">if</span> <span class="n">eot_char</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">eot_char</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no branch</span>
         <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;++eot_char </span><span class="si">{</span><span class="n">eot_char</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="n">eot_enable</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eot_enable&quot;</span><span class="p">,</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">eot_char</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># MODES AVAILABLE: CONTROLLER, DEVICE</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;++eot_enable </span><span class="si">{</span><span class="n">eot_enable</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># MODES AVAILABLE: CONTROLLER</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># MODES AVAILABLE: CONTROLLER  # pragma: no branch</span>
         <span class="n">read_tmo_ms</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;read_tmo_ms&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
         <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;++read_tmo_ms </span><span class="si">{</span><span class="n">read_tmo_ms</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -5024,7 +5024,7 @@ least 150 microseconds.</p>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">cmd</span><span class="p">,</span> <span class="n">msg</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">strip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">))</span>
         <span class="n">h</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cmd</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;++help&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;++help&quot;</span><span class="p">:</span>  <span class="c1"># pragma: no branch</span>
             <span class="k">return</span> <span class="n">h</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5673,7 +5673,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_gpib_address_selected</span><span class="p">()</span>
     <span class="n">read_termination</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="o">.</span><span class="n">read_termination</span>
-    <span class="n">term</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">read_termination</span><span class="p">)</span> <span class="k">if</span> <span class="n">read_termination</span> <span class="k">else</span> <span class="s2">&quot;eoi&quot;</span>
+    <span class="n">term</span> <span class="o">=</span> <span class="n">read_termination</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">read_termination</span> <span class="k">else</span> <span class="s2">&quot;eoi&quot;</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;++read </span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">decode</span><span class="o">=</span><span class="n">decode</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="n">fmt</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
 </code></pre></div></td></tr></table></div>
@@ -5774,7 +5774,12 @@ secondary address of the instantiated class.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/interfaces/prologix.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">459</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span>
+<span class="normal">457</span>
+<span class="normal">458</span>
+<span class="normal">459</span>
 <span class="normal">460</span>
 <span class="normal">461</span>
 <span class="normal">462</span>
@@ -5787,12 +5792,7 @@ secondary address of the instantiated class.</p>
 <span class="normal">469</span>
 <span class="normal">470</span>
 <span class="normal">471</span>
-<span class="normal">472</span>
-<span class="normal">473</span>
-<span class="normal">474</span>
-<span class="normal">475</span>
-<span class="normal">476</span>
-<span class="normal">477</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">serial_poll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pad</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sad</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="normal">472</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">serial_poll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pad</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sad</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read status byte / serial poll.</span>
 
 <span class="sd">    Args:</span>
@@ -5809,7 +5809,7 @@ secondary address of the instantiated class.</p>
     <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;++spoll </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;++spoll </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
-    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
         <span class="k">return</span> <span class="mi">0</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5866,17 +5866,17 @@ secondary address of the instantiated class.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/interfaces/prologix.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">479</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">474</span>
+<span class="normal">475</span>
+<span class="normal">476</span>
+<span class="normal">477</span>
+<span class="normal">478</span>
+<span class="normal">479</span>
 <span class="normal">480</span>
 <span class="normal">481</span>
 <span class="normal">482</span>
 <span class="normal">483</span>
-<span class="normal">484</span>
-<span class="normal">485</span>
-<span class="normal">486</span>
-<span class="normal">487</span>
-<span class="normal">488</span>
-<span class="normal">489</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_status_byte</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">484</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_status_byte</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the device status byte to be returned when serial polled by a GPIB controller (device mode).</span>
 
 <span class="sd">    Args:</span>
@@ -5911,10 +5911,10 @@ secondary address of the instantiated class.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/interfaces/prologix.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">507</span>
-<span class="normal">508</span>
-<span class="normal">509</span>
-<span class="normal">510</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">502</span>
+<span class="normal">503</span>
+<span class="normal">504</span>
+<span class="normal">505</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger device (controller mode).&quot;&quot;&quot;</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;++trg </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_pad</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sad</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;++trg </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_pad</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_sad</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controller</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
@@ -5977,7 +5977,12 @@ if the SRQ line is not asserted. A value of <code>None</code> means wait forever
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/interfaces/prologix.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">512</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">507</span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span>
+<span class="normal">511</span>
+<span class="normal">512</span>
 <span class="normal">513</span>
 <span class="normal">514</span>
 <span class="normal">515</span>
@@ -5993,12 +5998,7 @@ if the SRQ line is not asserted. A value of <code>None</code> means wait forever
 <span class="normal">525</span>
 <span class="normal">526</span>
 <span class="normal">527</span>
-<span class="normal">528</span>
-<span class="normal">529</span>
-<span class="normal">530</span>
-<span class="normal">531</span>
-<span class="normal">532</span>
-<span class="normal">533</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">wait_for_srq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">528</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">wait_for_srq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wait for the SRQ interrupt line to be asserted (controller mode).</span>
 
 <span class="sd">    This method will return when the Prologix Controller receives a service request</span>
@@ -6195,7 +6195,12 @@ See <a class="autorefs autorefs-internal" title="            MessageFormat
 
             <details class="quote">
               <summary>Source code in <code>src/msl/equipment/interfaces/prologix.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">535</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">530</span>
+<span class="normal">531</span>
+<span class="normal">532</span>
+<span class="normal">533</span>
+<span class="normal">534</span>
+<span class="normal">535</span>
 <span class="normal">536</span>
 <span class="normal">537</span>
 <span class="normal">538</span>
@@ -6213,12 +6218,7 @@ See <a class="autorefs autorefs-internal" title="            MessageFormat
 <span class="normal">550</span>
 <span class="normal">551</span>
 <span class="normal">552</span>
-<span class="normal">553</span>
-<span class="normal">554</span>
-<span class="normal">555</span>
-<span class="normal">556</span>
-<span class="normal">557</span>
-<span class="normal">558</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span>
+<span class="normal">553</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">message</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>

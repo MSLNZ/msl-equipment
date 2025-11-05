@@ -106,6 +106,13 @@ class Prologix(Interface, regex=REGEX):
                 `read_tmo_ms` timeout value is not to be confused with the total time for which data is
                 read. The `read_tmo_ms` value must be between 1 and 3000 milliseconds and is only valid for
                 CONTROLLER mode. _Default: `100`_
+
+        !!! important
+            The Prologix Connection Properties are the same for _all_ equipment that are attached to the
+            Prologix hardware. If different equipment require different properties you must manage the
+            settings appropriately, such as by writing `++eoi 0` to disable the use of the End or
+            Identify line before reading from the equipment and then perhaps writing `++eoi 1`
+            to re-enable it afterwards.
         """
         self._addr: str = ""
         super().__init__(equipment)
@@ -400,9 +407,20 @@ class Prologix(Interface, regex=REGEX):
         fmt: MessageFormat = None,
         size: int | None = None,
     ) -> bytes | str | NumpyArray1D:
-        """Read a message from the equipment (controller mode).
+        r"""Read a message from the equipment (controller mode).
 
-        See [MessageBased.read()][msl.equipment.interfaces.message_based.MessageBased.read] for more details.
+        !!! important
+            The `++read <eoi|char>` message is written to the equipment before reading bytes. If the
+            [read_termination][msl.equipment.interfaces.prologix.Prologix.read_termination] character
+            is `None` then `++read eoi` is written, otherwise the *last*
+            [read_termination][msl.equipment.interfaces.prologix.Prologix.read_termination] character
+            is written. For example, `++read 10` is written if the
+            [read_termination][msl.equipment.interfaces.prologix.Prologix.read_termination] characters
+            are `\r\n` &mdash; note that only `\n` (ASCII 10) is used and `\r` (ASCII 13) is ignored
+            since Prologix only supports a single character.
+
+        See [MessageBased.read()][msl.equipment.interfaces.message_based.MessageBased.read] for more
+        details about when this method returns.
 
         Args:
             decode: Whether to decode the message (i.e., convert the message to a [str][])

@@ -153,13 +153,13 @@ class Prologix(Interface, regex=REGEX):
         _ = self._controller.write(f"++eos {eos}")
 
         eot_char = props.get("eot_char")  # MODES AVAILABLE: CONTROLLER, DEVICE
-        if eot_char is not None:
+        if eot_char is not None:  # pragma: no branch
             _ = self._controller.write(f"++eot_char {eot_char}")
 
         eot_enable = props.get("eot_enable", 0 if eot_char is None else 1)  # MODES AVAILABLE: CONTROLLER, DEVICE
         _ = self._controller.write(f"++eot_enable {eot_enable}")
 
-        if mode == 1:  # MODES AVAILABLE: CONTROLLER
+        if mode == 1:  # MODES AVAILABLE: CONTROLLER  # pragma: no branch
             read_tmo_ms = props.get("read_tmo_ms", 100)
             _ = self._controller.write(f"++read_tmo_ms {read_tmo_ms}")
 
@@ -268,7 +268,7 @@ class Prologix(Interface, regex=REGEX):
         while True:
             cmd, msg = map(str.strip, self._controller.read().split("--"))
             h.append((cmd, msg))
-            if cmd == "++help":
+            if cmd == "++help":  # pragma: no branch
                 return h
 
     @overload
@@ -468,7 +468,7 @@ class Prologix(Interface, regex=REGEX):
         cmd = f"++spoll {p} {s}" if s is not None else f"++spoll {p}"
         try:
             return int(self._controller.query(cmd, decode=False))
-        except ValueError:
+        except ValueError:  # pragma: no cover
             return 0
 
     def set_status_byte(self, value: int) -> None:

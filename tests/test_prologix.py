@@ -77,7 +77,20 @@ def test_connection_message_based_attributes() -> None:
             continue
         assert attr in dir_p
 
-    ignore = {"controller", "group_execute_trigger", "query_auto"}
+    ignore = {
+        "clear",
+        "controller",
+        "group_execute_trigger",
+        "interface_clear",
+        "local",
+        "local_lockout",
+        "prologix_help",
+        "query_auto",
+        "serial_poll",
+        "set_status_byte",
+        "trigger",
+        "wait_for_srq",
+    }
     for attr in dir_p:
         if attr.startswith("_") or attr in ignore:
             continue
@@ -131,48 +144,116 @@ def test_connect_invalid_port() -> None:
         _ = c.connect()
 
 
-def test_socket(tcp_server: type[TCPServer]) -> None:
+def test_socket(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
     term = b"\n"
     with tcp_server(term=term) as server:
         c = Connection(
             f"Prologix::{server.host}::{server.port}::6",
             timeout=1,
             read_tmo_ms=1000,
+            eot_char=13,
         )
         pro: Prologix = c.connect()
         try:
             assert not pro.rstrip
-            pro.rstrip = True
-            assert pro.rstrip
+            pro.rstrip = False
+            assert not pro.rstrip
+            assert not pro.controller.rstrip
             pro.read_termination = term
             assert pro.read_termination == term
+            assert pro.controller.read_termination == term
             pro.write_termination = term
             assert pro.write_termination == term
+            assert pro.controller.write_termination == term
             pro.encoding = "ascii"
             assert pro.encoding == "ascii"
+            assert pro.controller.encoding == "ascii"
             pro.timeout = 0.9
             assert pro.timeout == 0.9
+            assert pro.controller.timeout == 0.9
             pro.max_read_size = 1024
             assert pro.max_read_size == 1024
+            assert pro.controller.max_read_size == 1024
             assert hasattr(pro.controller, "socket")
 
-            assert pro.read() == "++mode 1"
-            assert pro.read() == "++read_tmo_ms 1000"
-            assert pro.read() == "++addr 6"
+            assert pro.read() == "++mode 1\r\n"
+            assert pro.read() == "++eoi 1\r\n"
+            assert pro.read() == "++eos 3\r\n"
+            assert pro.read() == "++eot_char 13\r\n"
+            assert pro.read() == "++eot_enable 1\r\n"
+            assert pro.read() == "++read_tmo_ms 1000\r\n"
+            assert pro.read() == "++addr 6\r\n"
+
+            for _ in range(7):  # clear the write("++read 10") that is written in the 7 pro.read()'s above
+                assert pro.controller.read() == "++read 10\n"
 
             assert pro.query_auto
-            assert pro.query("AUTO") == "++auto 1"
-            assert pro.read() == "AUTO"
-            assert pro.read() == "++auto 0"
+            assert pro.query("AUTO") == "++auto 1\n"
+            assert pro.read() == "AUTO\n"
+            assert pro.read() == "++auto 0\n"
 
-            assert pro.group_execute_trigger() == 6
-            assert pro.read() == "++trg"
+            for _ in range(2):  # clear the write("++read 10") that is written in the 2 pro.read()'s above
+                assert pro.controller.read() == "++read 10\n"
 
-            assert pro.group_execute_trigger(1, 2, 3) == 12
-            assert pro.read() == "++trg 1 2 3"
+            pro.group_execute_trigger()
+            assert pro.read() == "++trg\n"
+            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
+
+            pro.group_execute_trigger(1, 2, 3)
+            assert pro.read() == "++trg 1 2 3\n"
+            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
+
+            pro.clear()
+            assert pro.read() == "++clr\n"
+            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
+
+            pro.interface_clear()
+            assert pro.read() == "++ifc\n"
+            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
+
+            pro.local()
+            assert pro.read() == "++loc\n"
+            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
+
+            pro.local_lockout()
+            assert pro.read() == "++llo\n"
+            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
+
+            server.add_response(b"The following commands are available:\n")
+            server.add_response(b"++help -- description\n")
+            reply = pro.prologix_help()
+            assert reply == [("++help", "description")]
+            assert pro.controller.read() == "++auto 0\n"  # leftover from pro.query() inside pro.prologix_help()
+
+            server.add_response(b"32\n")
+            assert pro.serial_poll() == 32
+
+            pro.set_status_byte(16)
+            assert pro.read() == "++status 16\n"
+            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
+
+            for value in [-1, 256]:
+                with pytest.raises(ValueError, match=r"must be in range"):
+                    pro.set_status_byte(value)
+
+            pro.trigger()
+            assert pro.read() == "++trg 6\n"
+            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
+
+            server.add_response(b"0\n")
+            server.add_response(b"0\n")
+            server.add_response(b"0\n")
+            server.add_response(b"1\n")
+            pro.wait_for_srq()
+
+            server.add_response(b"0\n")
+            server.add_response(b"0\n")
+            server.add_response(b"0\n")
+            with pytest.raises(TimeoutError, match=r"0.1 seconds"):
+                pro.wait_for_srq(timeout=0.1)
 
             pro.query_auto = False
-            assert pro.query("foo", delay=0.05) == "foo"
+            assert pro.query("foo", delay=0.05) == "foo\n"
         finally:
             _ = pro.write(b"SHUTDOWN")
 

@@ -248,12 +248,14 @@ def test_socket(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
             server.add_response(b"0\n")
             server.add_response(b"1\n")
             pro.wait_for_srq()
+            server.clear_response_queue()
 
             server.add_response(b"0\n")
             server.add_response(b"0\n")
             server.add_response(b"0\n")
             with pytest.raises(TimeoutError, match=r"0.1 seconds"):
                 pro.wait_for_srq(timeout=0.1)
+            server.clear_response_queue()
 
             pro.read_termination = None  # force EOI
             pro.trigger()

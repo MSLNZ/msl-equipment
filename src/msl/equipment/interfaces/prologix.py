@@ -423,7 +423,7 @@ class Prologix(Interface, regex=REGEX):
         """
         self._ensure_gpib_address_selected()
         read_termination = self._controller.read_termination
-        term = ord(read_termination) if read_termination else "eoi"
+        term = read_termination[-1] if read_termination else "eoi"
         _ = self._controller.write(f"++read {term}")
         return self._controller.read(decode=decode, dtype=dtype, fmt=fmt, size=size)  # type: ignore[arg-type]
 
@@ -440,11 +440,6 @@ class Prologix(Interface, regex=REGEX):
 
     @read_termination.setter
     def read_termination(self, termination: str | bytes | None) -> None:  # pyright: ignore[reportPropertyTypeMismatch]
-        if termination and len(termination) > 1:
-            # The Prologix manual states: ++read [eoi|<char>] where <char> is a decimal value less than 256
-            msg = f"A Prologix Controller only supports a single read termination character, got {termination}"
-            raise ValueError(msg)
-
         self._controller.read_termination = termination
 
     @property

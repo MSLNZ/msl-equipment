@@ -12,13 +12,15 @@ if TYPE_CHECKING:
 
 
 connection = Connection(
-    address="TCP::169.254.100.2::9221",  # if using the LAN port (update the IP address)
-    # address="COM5", # if using the USB or RS232 port (update the port number)
-    # address="GPIB::5",  # if using the GPIB port (must also disable termination characters)
+    "COM5",  # if using the USB or RS232 port (update the port number)
+    # "TCP::169.254.100.2::9221",  # if using the LAN port (update the IP address)
+    # "GPIB::5",  # if using the GPIB port (must also disable termination characters)
+    # "Prologix::169.254.100.5::1234::GPIB::5",  # if using Prologix hardware (update the hardware address)
     manufacturer="Aim-TTi",
     model="MX100TP",
     timeout=5,
-    # termination=None, # disable termination characters if using GPIB
+    # termination=None, # uncomment if using GPIB
+    # escape_characters=False,  # uncomment if using Prologix
 )
 
 # The output channel to use

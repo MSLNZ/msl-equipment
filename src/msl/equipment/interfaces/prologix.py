@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, overload
 
 from msl.equipment.schema import Connection, Equipment, Interface
-from msl.equipment.utils import ipv4_addresses, logger
+from msl.equipment.utils import ipv4_addresses, logger, to_bytes
 
 from .message_based import MSLConnectionError
 from .serial import Serial
@@ -37,6 +37,22 @@ MIN_READ_TIMEOUT_MS = 1
 MAX_READ_TIMEOUT_MS = 3000
 
 
+def _char_to_int(char: bytes | str | int) -> int:
+    """Convert an char to an integer.
+
+    Args:
+        char: Must be an ASCII value in range [0..255].
+    """
+    if isinstance(char, (bytes, str)):
+        char = ord(char)
+
+    if char < 0 or char > 255:  # noqa: PLR2004
+        msg = f"The <char> value must be in the range [0..255], got {char}"
+        raise ValueError(msg)
+
+    return char
+
+
 class PrologixEthernet(Socket, append=False):
     """Prologix GPIB-ETHERNET Controller."""
 
@@ -51,7 +67,7 @@ class Prologix(Interface, regex=REGEX):
     _controllers: ClassVar[dict[str, Serial | Socket]] = {}
     """A mapping of all Prologix Controllers that are being used to communicate with GPIB devices."""
 
-    _selected_addresses: ClassVar[dict[str, str]] = {}
+    _selected_addresses: ClassVar[dict[str, bytes]] = {}
     """A mapping of the currently-selected GPIB address for all Prologix Controllers."""
 
     def __init__(self, equipment: Equipment) -> None:
@@ -86,20 +102,27 @@ class Prologix(Interface, regex=REGEX):
             equipment: An [Equipment][] instance.
 
         A [Connection][msl.equipment.schema.Connection] instance supports the following _properties_
-        for using Prologix hardware, as well as the _properties_ defined in,
+        for using Prologix hardware, as well as the _properties_ defined in
         [Serial][msl.equipment.interfaces.serial.Serial] (for a GPIB-USB Controller) and in
         [Socket][msl.equipment.interfaces.socket.Socket] (for a GPIB-ETHERNET Controller).
 
         Attributes: Connection Properties:
-            eoi (int): Whether to use the End or Identify line, either `0` (disable) or `1` (enable).
-                _Default: `1`_
-            eos (int): GPIB termination character(s): `0` (CR+LF), `1` (CR), `2` (LF) or `3` (no termination).
-                _Default: `3`_
-            eot_char (int): A user-specified character to append to network output when `eot_enable`
-                is set to 1 and EOI is detected. Must be an ASCII value &lt;256, e.g., `eot_char=42`
-                appends `*` (ASCII 42) when EOI is detected.
-            eot_enable (int): Enables (`1`) or disables (`0`) the appending of a user-specified character, `eot_char`.
-                If `eot_char` is specified, `eot_enable` will be enabled automatically if not explicitly specified.
+            eoi (bool): Whether to assert the End or Identify (EOI) line. _Default: `True`_
+            eos (int): GPIB termination character(s) to append to the message that is sent
+                to the equipment. _Default: `3`_
+
+                * `0`: CR+LF
+                * `1`: CR
+                * `2`: LF
+                * `3`: no termination
+
+            eot_char (int | str): A user-specified character to append to the reply that the Prologix hardware
+                sends back to the computer when `eot_enable` is `True` and EOI is detected. Must be an ASCII
+                value &lt;256, e.g., `eot_char=42` appends `*` (ASCII 42) when EOI is detected. _Default: `0`_
+            eot_enable (bool): Enable or disable the appending of a user-specified character, `eot_char`,
+                when the Prologix hardware sends a reply back to the computer. _Default: `False`_
+            escape_characters (bool): Whether to escape the `LF`, `CR`, `ESC` and `+` characters when writing
+                a message to the Prologix hardware. _Default: `True`_
             mode (int): Configure the Prologix hardware to be a CONTROLLER (`1`) or DEVICE (`0`). _Default: `1`_
             read_tmo_ms (int): The inter-character timeout value, in milliseconds, to be used in the *read*
                 command and the *serial_poll* command, i.e., the delay since the last character was read. The
@@ -114,7 +137,7 @@ class Prologix(Interface, regex=REGEX):
             Identify line before reading from the equipment and then perhaps writing `++eoi 1`
             to re-enable it afterwards.
         """
-        self._addr: str = ""
+        self._addr: bytes = b""
         super().__init__(equipment)
 
         assert equipment.connection is not None  # noqa: S101
@@ -133,10 +156,10 @@ class Prologix(Interface, regex=REGEX):
             msg = f"Invalid secondary GPIB address {sad}, must be in the range [{MIN_SAD_ADDRESS}, {MAX_SAD_ADDRESS}]"
             raise ValueError(msg)
 
-        self._addr = f"++addr {pad}" if sad is None else f"++addr {pad} {sad}"
+        self._addr = f"++addr {pad}\n".encode() if sad is None else f"++addr {pad} {sad}\n".encode()
         self._pad: int = pad
         self._sad: int | None = sad
-        self._query_auto: bool = True
+        self._plus_plus_read_char: int | str = "eoi"
         self._hw_address: str = info.hw_address
 
         props = equipment.connection.properties
@@ -148,27 +171,39 @@ class Prologix(Interface, regex=REGEX):
             e = Equipment(connection=Connection(address, **props))
             self._controller = PrologixEthernet(e) if info.enet_port else PrologixUSB(e)
             Prologix._controllers[self._hw_address] = self._controller
-            Prologix._selected_addresses[self._hw_address] = ""
+            Prologix._selected_addresses[self._hw_address] = b""
+
+        # There are two steps involved when writing a message to the equipment
+        # 1) Computer -> Prologix
+        # 2) Prologix -> Equipment
+        # The Prologix needs to know when a message has been received in full, but cannot
+        # consume any termination characters that are meant to be passed on to the Equipment.
+        # If the same termination character is required by Prologix and the Equipment then there would be issues.
+        # To avoid these potential issues Prologix passes a character on to the Equipment if a character is
+        # preceded by the escape character, ESC (ASCII 27). All un-escaped LF, CR and ESC and + characters in
+        # Step 1 are discarded by Prologix.
+
+        # Set the controller backend to be un-escaped LF to signify that Prologix has received the full message
+        self._write_termination: bytes | None = self._controller.write_termination  # termination for Equipment (Step 2)
+        self._controller.write_termination = b"\n"  # termination for Prologix (Step 1)
+
+        self._escape_characters: bool = bool(props.get("escape_characters", True))
 
         mode = int(props.get("mode", 1))
-        _ = self._controller.write(f"++mode {mode}")
+        _ = self._controller.write(f"++mode {mode}\n")
 
-        eoi = props.get("eoi", 1)  # MODES AVAILABLE: CONTROLLER, DEVICE
-        _ = self._controller.write(f"++eoi {eoi}")
+        eoi = 1 if props.get("eoi", True) else 0  # MODES AVAILABLE: CONTROLLER, DEVICE
+        _ = self._controller.write(f"++eoi {eoi}\n")
 
         eos = props.get("eos", 3)  # MODES AVAILABLE: CONTROLLER, DEVICE
-        _ = self._controller.write(f"++eos {eos}")
+        _ = self._controller.write(f"++eos {eos}\n")
 
-        eot_char = props.get("eot_char")  # MODES AVAILABLE: CONTROLLER, DEVICE
-        if eot_char is not None:  # pragma: no branch
-            _ = self._controller.write(f"++eot_char {eot_char}")
+        self.set_eot_char(props.get("eot_char", 0))  # MODES AVAILABLE: CONTROLLER, DEVICE
+        self.set_eot_enable(props.get("eot_enable", False))  # MODES AVAILABLE: CONTROLLER, DEVICE
 
-        eot_enable = props.get("eot_enable", 0 if eot_char is None else 1)  # MODES AVAILABLE: CONTROLLER, DEVICE
-        _ = self._controller.write(f"++eot_enable {eot_enable}")
-
-        if mode == 1:  # MODES AVAILABLE: CONTROLLER  # pragma: no branch
+        if mode == 1:  # MODES AVAILABLE: CONTROLLER
             read_tmo_ms = props.get("read_tmo_ms", 100)
-            _ = self._controller.write(f"++read_tmo_ms {read_tmo_ms}")
+            _ = self._controller.write(f"++read_tmo_ms {read_tmo_ms}\n")
 
         self._ensure_gpib_address_selected()
 
@@ -182,10 +217,30 @@ class Prologix(Interface, regex=REGEX):
             Prologix._selected_addresses[self._hw_address] = self._addr
             _ = self._controller.write(self._addr)
 
+    def _read(self, size: int | None) -> bytes:
+        # Called in MultiMessageBased
+        # Don't call self._controller.read because "++read eoi" must be sent
+        return self.read(size=size, decode=False)
+
+    def _set_interface_max_read_size(self) -> None:
+        # Called in MultiMessageBased.__init__().
+        # Here it's a no operation since self._controller gets the appropriate max_read_size when it is created.
+        return
+
+    def _set_interface_timeout(self) -> None:
+        # Called in MultiMessageBased.__init__().
+        # Here it's a no operation since self._controller gets the appropriate timeout when it is created.
+        return
+
+    def _write(self, message: bytes) -> int:
+        # Called in MultiMessageBased
+        # Don't call self._controller.write because the message must be checked for characters that must be escaped
+        return self.write(message)
+
     def clear(self) -> None:
         """Send the Selected Device Clear (SDC) command (controller mode)."""
         self._ensure_gpib_address_selected()
-        _ = self._controller.write("++clr")
+        _ = self._controller.write("++clr\n")
 
     @property
     def controller(self) -> Serial | Socket:
@@ -193,6 +248,8 @@ class Prologix(Interface, regex=REGEX):
 
         The returned type depends on whether a GPIB-USB or a GPIB-ETHERNET Controller is used to communicate
         with the equipment.
+
+        Use this property if you want more direct access to the Prologix Controller.
         """
         return self._controller
 
@@ -205,7 +262,7 @@ class Prologix(Interface, regex=REGEX):
         devices that are attached to the Controller.
         """
         if self._addr:
-            self._addr = ""
+            self._addr = b""
             super().disconnect()
 
     @property
@@ -218,6 +275,17 @@ class Prologix(Interface, regex=REGEX):
     @encoding.setter
     def encoding(self, encoding: str) -> None:
         self._controller.encoding = encoding
+
+    @property
+    def escape_characters(self) -> bool:
+        r"""Whether to escape the `\n` (ASCII 10), `\r` (ASCII 13), `ESC` (ASCII 27) and `+` (ASCII 43)
+        characters before a [write][msl.equipment.interfaces.prologix.Prologix.write] operation.
+        """  # noqa: D205
+        return self._escape_characters
+
+    @escape_characters.setter
+    def escape_characters(self, enable: bool) -> None:
+        self._escape_characters = bool(enable)
 
     def group_execute_trigger(self, *addresses: int) -> None:
         """Send the Group Execute Trigger command to equipment at the specified addresses (controller mode).
@@ -243,17 +311,17 @@ class Prologix(Interface, regex=REGEX):
         Resets the GPIB bus by asserting the *interface clear* (IFC) bus line for a duration of at
         least 150 microseconds.
         """
-        _ = self._controller.write("++ifc")
+        _ = self._controller.write("++ifc\n")
 
     def local(self) -> None:
         """Enables front panel operation of the device, `GTL` GPIB command (controller mode)."""
         self._ensure_gpib_address_selected()
-        _ = self._controller.write("++loc")
+        _ = self._controller.write("++loc\n")
 
     def local_lockout(self) -> None:
         """Disables front panel operation of the device, `LLO` GPIB command (controller mode)."""
         self._ensure_gpib_address_selected()
-        _ = self._controller.write("++llo")
+        _ = self._controller.write("++llo\n")
 
     @property
     def max_read_size(self) -> int:
@@ -271,7 +339,7 @@ class Prologix(Interface, regex=REGEX):
             The help as a [list][] of `(command, description)` [tuple][]s.
         """
         h: list[tuple[str, str]] = []
-        _ = self.query("++help")  # ignore the first reply, "The following commands are available:"
+        _ = self._controller.query("++help\n")  # ignore the first reply, "The following commands are available:"
         while True:
             cmd, msg = map(str.strip, self._controller.read().split("--"))
             h.append((cmd, msg))
@@ -348,26 +416,12 @@ class Prologix(Interface, regex=REGEX):
         """  # noqa: D205
         self._ensure_gpib_address_selected()
 
-        if self._query_auto:
-            _ = self._controller.write(b"++auto 1")
-
-        reply = self._controller.query(message, delay=delay, decode=decode, dtype=dtype, fmt=fmt, size=size)  # type: ignore[arg-type]
-
-        if self._query_auto:
-            _ = self._controller.write(b"++auto 0")
-
-        return reply
-
-    @property
-    def query_auto(self) -> bool:
-        """Whether to send `++auto 1` before and `++auto 0` after a
-        [query][msl.equipment.interfaces.prologix.Prologix.query] to the Prologix Controller.
-        """  # noqa: D205
-        return self._query_auto
-
-    @query_auto.setter
-    def query_auto(self, enabled: bool) -> None:
-        self._query_auto = bool(enabled)
+        _ = self.write(message)
+        if delay > 0:
+            time.sleep(delay)
+        if dtype:
+            return self.read(dtype=dtype, fmt=fmt, size=size)
+        return self.read(decode=decode, size=size)
 
     @overload
     def read(  # pyright: ignore[reportOverlappingOverload]  # pragma: no cover
@@ -409,18 +463,11 @@ class Prologix(Interface, regex=REGEX):
     ) -> bytes | str | NumpyArray1D:
         r"""Read a message from the equipment (controller mode).
 
-        !!! important
-            The `++read <eoi|char>` message is written to the equipment before reading bytes. If the
-            [read_termination][msl.equipment.interfaces.prologix.Prologix.read_termination] character
-            is `None` then `++read eoi` is written, otherwise the *last*
-            [read_termination][msl.equipment.interfaces.prologix.Prologix.read_termination] character
-            is written. For example, `++read 10` is written if the
-            [read_termination][msl.equipment.interfaces.prologix.Prologix.read_termination] characters
-            are `\r\n` &mdash; note that only `\n` (ASCII 10) is used and `\r` (ASCII 13) is ignored
-            since Prologix only supports a single character.
-
         See [MessageBased.read()][msl.equipment.interfaces.message_based.MessageBased.read] for more
         details about when this method returns.
+
+        !!! note "See Also"
+            [set_plus_plus_read_char][msl.equipment.interfaces.prologix.Prologix.set_plus_plus_read_char]
 
         Args:
             decode: Whether to decode the message (i.e., convert the message to a [str][])
@@ -440,9 +487,7 @@ class Prologix(Interface, regex=REGEX):
                 is returned as a [str][], otherwise the message is returned as [bytes][].
         """
         self._ensure_gpib_address_selected()
-        read_termination = self._controller.read_termination
-        term = read_termination[-1] if read_termination else "eoi"
-        _ = self._controller.write(f"++read {term}")
+        _ = self._controller.write(f"++read {self._plus_plus_read_char}\n")
         return self._controller.read(decode=decode, dtype=dtype, fmt=fmt, size=size)  # type: ignore[arg-type]
 
     @property
@@ -489,17 +534,39 @@ class Prologix(Interface, regex=REGEX):
         except ValueError:  # pragma: no cover
             return 0
 
-    def set_status_byte(self, value: int) -> None:
-        """Set the device status byte to be returned when serial polled by a GPIB controller (device mode).
+    def set_eot_char(self, char: bytes | str | int) -> None:
+        """Set a user-specified character to append to the reply from the Prologix Controller back to the computer.
+
+        This character is appended only if `eot_enable` is `True` and EOI is detected.
+
+        !!! note "See Also"
+            [set_eot_enable][msl.equipment.interfaces.prologix.Prologix.set_eot_enable]
 
         Args:
-            value: The status byte. Must be in range [0..255].
+            char: Must be an ASCII value &lt;256, e.g., `42` appends `*` (ASCII 42) when EOI is detected.
         """
-        if value < 0 or value > 255:  # noqa: PLR2004
-            msg = f"The status byte must be in range [0, 255], got {value}"
-            raise ValueError(msg)
+        _ = self._controller.write(f"++eot_char {_char_to_int(char)}\n")
 
-        _ = self._controller.write(f"++status {value}")
+    def set_eot_enable(self, enable: bool | int) -> None:  # noqa: FBT001
+        """Enables or disables the appending of a user-specified character.
+
+        !!! note "See Also"
+            [set_eot_char][msl.equipment.interfaces.prologix.Prologix.set_eot_char]
+
+        Args:
+            enable: Whether to enable or disable the appending of a user-specified character.
+        """
+        state = 1 if enable else 0
+        _ = self._controller.write(f"++eot_enable {state}\n")
+
+    def set_plus_plus_read_char(self, char: bytes | str | int | None = None) -> None:
+        """Set the character to send when the `++read eoi|<char>` message is written in [read][msl.equipment.interfaces.prologix.Prologix.read].
+
+        Args:
+            char: If `None` then the `++read eoi` message is sent, otherwise `++read <char>`.
+                The decimal value of `char` must be in the range [0..255].
+        """  # noqa: E501
+        self._plus_plus_read_char = "eoi" if char is None else _char_to_int(char)
 
     @property
     def timeout(self) -> float | None:
@@ -519,7 +586,7 @@ class Prologix(Interface, regex=REGEX):
 
     def trigger(self) -> None:
         """Trigger device (controller mode)."""
-        cmd = f"++trg {self._pad}" if self._sad is None else f"++trg {self._pad} {self._sad}"
+        cmd = f"++trg {self._pad}\n" if self._sad is None else f"++trg {self._pad} {self._sad}\n"
         _ = self._controller.write(cmd)
 
     def wait_for_srq(self, timeout: float | None = None) -> None:
@@ -536,7 +603,7 @@ class Prologix(Interface, regex=REGEX):
         t0 = time.time()
         while True:
             while True:
-                if int(self._controller.query("++srq")) == 1:
+                if int(self._controller.query("++srq\n")) == 1:
                     return
 
                 if timeout and time.time() > t0 + timeout:
@@ -568,7 +635,26 @@ class Prologix(Interface, regex=REGEX):
             The number of bytes written.
         """
         self._ensure_gpib_address_selected()
-        return self._controller.write(message, data=data, fmt=fmt, dtype=dtype)
+
+        if not isinstance(message, bytes):
+            message = message.encode(encoding=self._controller.encoding)
+
+        if data is not None:
+            message += to_bytes(data, fmt=fmt, dtype=dtype)
+
+        if self._write_termination and not message.endswith(self._write_termination):
+            message += self._write_termination
+
+        if self._escape_characters:
+            # Escape \n \r ESC + characters so that Prologix does not consume them but passes them on to the Equipment
+            # ASCII code ESC is decimal 27 (octal 033, hexadecimal 0x1B)
+            message = message.replace(b"\033", b"\033\033")  # must be first
+            message = message.replace(b"\n", b"\033\n")
+            message = message.replace(b"\r", b"\033\r")
+            message = message.replace(b"+", b"\033+")
+
+        # Add the un-escaped \n for Prologix to know it has received the full message from the Computer
+        return self._controller.write(message + b"\n")
 
     @property
     def write_termination(self) -> bytes | None:
@@ -578,11 +664,15 @@ class Prologix(Interface, regex=REGEX):
         If you set the `write_termination` to be equal to a variable of type
         [str][], it will be encoded as [bytes][].
         """  # noqa: D205
-        return self._controller.write_termination
+        return self._write_termination
 
     @write_termination.setter
     def write_termination(self, termination: str | bytes | None) -> None:  # pyright: ignore[reportPropertyTypeMismatch]
-        self._controller.write_termination = termination
+        # termination character sequence sent from Prologix to the Equipment (Step 2)
+        if termination is None or isinstance(termination, bytes):
+            self._write_termination = termination
+        else:
+            self._write_termination = termination.encode(self._controller.encoding)
 
 
 @dataclass

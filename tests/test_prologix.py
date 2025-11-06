@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-import contextlib
 from typing import TYPE_CHECKING
 
 import pytest
 
 from msl.equipment import Connection, Equipment, MessageBased, MSLConnectionError, Prologix
-from msl.equipment.interfaces import MSLTimeoutError
 from msl.equipment.interfaces.prologix import find_prologix, parse_prologix_address
 
 if TYPE_CHECKING:
@@ -82,14 +80,16 @@ def test_connection_message_based_attributes() -> None:
     ignore = {
         "clear",
         "controller",
+        "escape_characters",
         "group_execute_trigger",
         "interface_clear",
         "local",
         "local_lockout",
         "prologix_help",
-        "query_auto",
         "serial_poll",
-        "set_status_byte",
+        "set_eot_char",
+        "set_eot_enable",
+        "set_plus_plus_read_char",
         "trigger",
         "wait_for_srq",
     }
@@ -97,6 +97,12 @@ def test_connection_message_based_attributes() -> None:
         if attr.startswith("_") or attr in ignore:
             continue
         assert attr in dir_mb
+
+    # as well as these private methods that are called by MultiMessageBased
+    assert "_read" in dir_p
+    assert "_set_interface_max_read_size" in dir_p
+    assert "_set_interface_timeout" in dir_p
+    assert "_write" in dir_p
 
 
 def test_find_prologix(tcp_server: type[TCPServer]) -> None:
@@ -157,16 +163,18 @@ def test_socket(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
         )
         pro: Prologix = c.connect()
         try:
-            assert not pro.rstrip
             pro.rstrip = False
             assert not pro.rstrip
             assert not pro.controller.rstrip
             pro.read_termination = term
             assert pro.read_termination == term
             assert pro.controller.read_termination == term
-            pro.write_termination = term
-            assert pro.write_termination == term
-            assert pro.controller.write_termination == term
+            pro.write_termination = b"\r"
+            assert pro.write_termination == b"\r"
+            assert pro.controller.write_termination == b"\n"  # does not change
+            pro.write_termination = "\n"
+            assert pro.write_termination == b"\n"
+            assert pro.controller.write_termination == b"\n"
             pro.encoding = "ascii"
             assert pro.encoding == "ascii"
             assert pro.controller.encoding == "ascii"
@@ -178,73 +186,59 @@ def test_socket(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
             assert pro.controller.max_read_size == 1024
             assert hasattr(pro.controller, "socket")
 
-            assert pro.read() == "++mode 1\r\n"
-            assert pro.read() == "++eoi 1\r\n"
-            assert pro.read() == "++eos 3\r\n"
-            assert pro.read() == "++eot_char 13\r\n"
-            assert pro.read() == "++eot_enable 1\r\n"
-            assert pro.read() == "++read_tmo_ms 1000\r\n"
-            assert pro.read() == "++addr 6\r\n"
+            assert pro.read() == "++mode 1\n"
+            assert pro.read() == "++eoi 1\n"
+            assert pro.read() == "++eos 3\n"
+            assert pro.read() == "++eot_char 13\n"
+            assert pro.read() == "++eot_enable 0\n"
+            assert pro.read() == "++read_tmo_ms 1000\n"
+            assert pro.read() == "++addr 6\n"
 
-            for _ in range(7):  # clear the write("++read 10") that is written in the 7 pro.read()'s above
-                assert pro.controller.read() == "++read 10\n"
+            for _ in range(7):  # clear the write("++read eoi") that is written in the 7 pro.read()'s above
+                assert pro.controller.read() == "++read eoi\n"
 
-            assert pro.query_auto
-            assert pro.query("AUTO") == "++auto 1\n"
-            assert pro.read() == "AUTO\n"
-            assert pro.read() == "++auto 0\n"
+            assert pro.query("A\x1bUT+O\r") == "A\x1b\x1bUT\x1b+O\x1b\r\x1b\n"  # escaped: + \n \r \x1b
+            assert pro.controller.read() == "\n"  # this is the termination character for the Prologix hardware
+            assert pro.controller.read() == "++read eoi\n"
 
-            for _ in range(2):  # clear the write("++read 10") that is written in the 2 pro.read()'s above
-                assert pro.controller.read() == "++read 10\n"
-
-            server.add_response(b"The following commands are available:\n")
-            server.add_response(b"++help -- description\n")
+            server.add_response(b"The following commands are available:\n++help -- description\n")
             reply = pro.prologix_help()
             assert reply == [("++help", "description")]
-            with contextlib.suppress(MSLTimeoutError):  # flaky assert
-                assert pro.controller.read() == "++auto 0\n"  # leftover from pro.query() inside pro.prologix_help()
 
-            pro.query_auto = False
-            assert pro.query("foo", delay=0.05) == "foo\n"
+            assert pro.query("foo", delay=0.05) == "foo\x1b\n"
+            assert pro.controller.read() == "\n"  # this is the termination character for the Prologix hardware
+            assert pro.controller.read() == "++read eoi\n"
 
             pro.group_execute_trigger()
             assert pro.read() == "++trg\n"
-            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
+            assert pro.controller.read() == "++read eoi\n"
 
             pro.group_execute_trigger(1, 2, 3)
             assert pro.read() == "++trg 1 2 3\n"
-            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
+            assert pro.controller.read() == "++read eoi\n"
 
             pro.clear()
             assert pro.read() == "++clr\n"
-            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
+            assert pro.controller.read() == "++read eoi\n"
 
             pro.interface_clear()
             assert pro.read() == "++ifc\n"
-            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
+            assert pro.controller.read() == "++read eoi\n"
 
             pro.local()
             assert pro.read() == "++loc\n"
-            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
+            assert pro.controller.read() == "++read eoi\n"
 
             pro.local_lockout()
             assert pro.read() == "++llo\n"
-            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
+            assert pro.controller.read() == "++read eoi\n"
 
             server.add_response(b"32\n")
             assert pro.serial_poll() == 32
 
-            pro.set_status_byte(16)
-            assert pro.read() == "++status 16\n"
-            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
-
-            for value in [-1, 256]:
-                with pytest.raises(ValueError, match=r"must be in range"):
-                    pro.set_status_byte(value)
-
             pro.trigger()
             assert pro.read() == "++trg 6\n"
-            assert pro.controller.read() == "++read 10\n"  # clear the write("++read 10") that is written in pro.read()
+            assert pro.controller.read() == "++read eoi\n"
 
             server.add_response(b"0\n")
             server.add_response(b"0\n")
@@ -260,10 +254,33 @@ def test_socket(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
                 pro.wait_for_srq(timeout=0.1)
             server.clear_response_queue()
 
-            pro.read_termination = None  # force EOI
+            with pytest.raises(TypeError, match=r"ord\(\)"):
+                pro.set_plus_plus_read_char("xx")
+
+            with pytest.raises(TypeError, match=r"ord\(\)"):
+                pro.set_plus_plus_read_char(b"xx")
+
+            with pytest.raises(ValueError, match=r"range \[0..255\]"):
+                pro.set_plus_plus_read_char(-1)
+
+            with pytest.raises(TypeError, match=r"ord\(\)"):
+                pro.set_eot_char("xx")
+
+            with pytest.raises(TypeError, match=r"ord\(\)"):
+                pro.set_eot_char(b"xx")
+
+            with pytest.raises(ValueError, match=r"range \[0..255\]"):
+                pro.set_eot_char(-1)
+
+            pro.set_plus_plus_read_char("*")
             pro.trigger()
-            assert pro.read(size=8) == "++trg 6\n"
-            assert pro.controller.read(size=11) == "++read eoi\n"  # eoi
+            assert pro.read() == "++trg 6\n"
+            assert pro.controller.read() == f"++read {ord('*')}\n"
+
+            pro.set_plus_plus_read_char(None)
+            pro.trigger()
+            assert pro.read() == "++trg 6\n"
+            assert pro.controller.read() == "++read eoi\n"
 
         finally:
             _ = pro.write(b"SHUTDOWN")

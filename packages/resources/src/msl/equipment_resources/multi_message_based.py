@@ -63,7 +63,7 @@ class MultiMessageBased(MessageBased, append=False):
             self._interface._set_interface_timeout()  # noqa: SLF001
 
     def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
-        """The subclass must override this method."""
+        """Write the message."""
         return self._interface._write(message)  # noqa: SLF001
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]

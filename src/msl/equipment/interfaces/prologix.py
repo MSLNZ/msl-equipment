@@ -7,6 +7,7 @@ import re
 import sys
 import time
 from dataclasses import dataclass
+from threading import Lock
 from typing import TYPE_CHECKING, overload
 
 from msl.equipment.schema import Connection, Equipment, Interface
@@ -56,15 +57,19 @@ def _char_to_int(char: bytes | str | int) -> int:
 class PrologixEthernet(Socket, append=False):
     """Prologix GPIB-ETHERNET Controller."""
 
+    lock: Lock = Lock()
+
 
 class PrologixUSB(Serial, append=False):
     """Prologix GPIB-USB Controller."""
+
+    lock: Lock = Lock()
 
 
 class Prologix(Interface, regex=REGEX):
     """Use [Prologix](https://prologix.biz/) hardware to establish a connection."""
 
-    _controllers: ClassVar[dict[str, Serial | Socket]] = {}
+    _controllers: ClassVar[dict[str, PrologixUSB | PrologixEthernet]] = {}
     """A mapping of all Prologix Controllers that are being used to communicate with GPIB devices."""
 
     _selected_addresses: ClassVar[dict[str, bytes]] = {}
@@ -166,7 +171,7 @@ class Prologix(Interface, regex=REGEX):
         props = equipment.connection.properties
 
         try:
-            self._controller: Serial | Socket = Prologix._controllers[self._hw_address]
+            self._controller: PrologixUSB | PrologixEthernet = Prologix._controllers[self._hw_address]
         except KeyError:
             address = f"TCP::{self._hw_address}::{info.enet_port}" if info.enet_port else f"ASRL{self._hw_address}"
             e = Equipment(connection=Connection(address, **props))
@@ -240,8 +245,9 @@ class Prologix(Interface, regex=REGEX):
 
     def clear(self) -> None:
         """Send the Selected Device Clear (SDC) command."""
-        self._ensure_gpib_address_selected()
-        _ = self._controller.write(b"++clr\n")
+        with self._controller.lock:
+            self._ensure_gpib_address_selected()
+            _ = self._controller.write(b"++clr\n")
 
     @property
     def controller(self) -> Serial | Socket:
@@ -316,8 +322,9 @@ class Prologix(Interface, regex=REGEX):
 
     def local(self) -> None:
         """Enables front panel operation of the device, `GTL` GPIB command."""
-        self._ensure_gpib_address_selected()
-        _ = self._controller.write(b"++loc\n")
+        with self._controller.lock:
+            self._ensure_gpib_address_selected()
+            _ = self._controller.write(b"++loc\n")
 
     @property
     def max_read_size(self) -> int:
@@ -421,8 +428,9 @@ class Prologix(Interface, regex=REGEX):
         if message.startswith(b"++"):  # message is (probably) for the Prologix hardware
             if not message.endswith(b"\n"):
                 message += b"\n"
-            self._ensure_gpib_address_selected()
-            return self._controller.query(message, delay=delay, decode=decode, dtype=dtype, fmt=fmt, size=size)
+            with self._controller.lock:
+                self._ensure_gpib_address_selected()
+                return self._controller.query(message, delay=delay, decode=decode, dtype=dtype, fmt=fmt, size=size)
 
         _ = self.write(message)
         if delay > 0:
@@ -494,9 +502,10 @@ class Prologix(Interface, regex=REGEX):
                 as a numpy [ndarray][numpy.ndarray], if `decode` is `True` then the message
                 is returned as a [str][], otherwise the message is returned as [bytes][].
         """
-        self._ensure_gpib_address_selected()
-        _ = self._controller.write(f"++read {self._plus_plus_read_char}\n")
-        return self._controller.read(decode=decode, dtype=dtype, fmt=fmt, size=size)  # type: ignore[arg-type]
+        with self._controller.lock:
+            self._ensure_gpib_address_selected()
+            _ = self._controller.write(f"++read {self._plus_plus_read_char}\n")
+            return self._controller.read(decode=decode, dtype=dtype, fmt=fmt, size=size)  # type: ignore[arg-type]
 
     @property
     def read_termination(self) -> bytes | None:
@@ -520,8 +529,9 @@ class Prologix(Interface, regex=REGEX):
             state: If `True`, the device goes to remote mode (local lockout), `False` for local mode.
         """
         if state:
-            self._ensure_gpib_address_selected()
-            _ = self._controller.write(b"++llo\n")
+            with self._controller.lock:
+                self._ensure_gpib_address_selected()
+                _ = self._controller.write(b"++llo\n")
         else:
             self.local()
 
@@ -716,7 +726,9 @@ class Prologix(Interface, regex=REGEX):
         if not isinstance(message, bytes):
             message = message.encode(encoding=self._controller.encoding)
 
-        if message.startswith(b"++"):  # message is (probably) for the Prologix hardware
+        if message.startswith(b"++"):
+            # The message is (probably) for the Prologix hardware
+            # Prologix termination is b"\n" not self._write_termination (which is for the Equipment)
             if not message.endswith(b"\n"):
                 message += b"\n"
             return self._controller.write(message, data=data, dtype=dtype, fmt=fmt)
@@ -735,9 +747,10 @@ class Prologix(Interface, regex=REGEX):
             message = message.replace(b"\r", b"\033\r")
             message = message.replace(b"+", b"\033+")
 
-        # Add the un-escaped \n for Prologix to know it has received the full message from the Computer
-        self._ensure_gpib_address_selected()
-        return self._controller.write(message + b"\n")
+        with self._controller.lock:
+            self._ensure_gpib_address_selected()
+            # Add an un-escaped \n for Prologix to know it has received the full message from the Computer
+            return self._controller.write(message + b"\n")
 
     @property
     def write_termination(self) -> bytes | None:

@@ -833,7 +833,7 @@ class GPIB(MessageBased, regex=REGEX):
             # set end-of-string character, IbcEOSchar = 0xf
             _ = self.config(0xF, self._read_termination[-1])
 
-    def remote_enable(self, *, state: bool, handle: int | None = None) -> int:
+    def remote_enable(self, state: bool, *, handle: int | None = None) -> int:  # noqa: FBT001
         """Set remote enable (board).
 
         This method is the [ibsre](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibsre.html)
@@ -844,7 +844,8 @@ class GPIB(MessageBased, regex=REGEX):
                 The board must be the system controller.
             handle: Board or device descriptor. Default is the handle of the instantiated class.
 
-        Returns: The status value (`ibsta`).
+        Returns:
+            The status value (`ibsta`).
         """
         # ibsre was removed from ni4882.dll, use ibconfig instead (IbcSRE = 0xb)
         ibsta: int = self.config(0xB, int(state), handle=handle)
@@ -860,7 +861,7 @@ class GPIB(MessageBased, regex=REGEX):
             handle: Board or device descriptor. Default is the handle of the instantiated class.
 
         Returns:
-            The [status byte](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html).
+            The [status value](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html).
         """
         if handle is None:
             handle = self._handle

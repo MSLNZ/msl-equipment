@@ -135,7 +135,8 @@ class Prologix(Interface, regex=REGEX):
             Prologix hardware. If different equipment require different properties you must manage the
             settings appropriately, such as by writing `++eoi 0` to disable the use of the End or
             Identify line before reading from the equipment and then perhaps writing `++eoi 1`
-            to re-enable it afterwards.
+            to re-enable it afterwards. Only the `escape_characters` property is associated with the
+            [Prologix][] instance.
         """
         self._addr: bytes = b""
         super().__init__(equipment)
@@ -238,9 +239,9 @@ class Prologix(Interface, regex=REGEX):
         return self.write(message)
 
     def clear(self) -> None:
-        """Send the Selected Device Clear (SDC) command (controller mode)."""
+        """Send the Selected Device Clear (SDC) command."""
         self._ensure_gpib_address_selected()
-        _ = self._controller.write("++clr\n")
+        _ = self._controller.write(b"++clr\n")
 
     @property
     def controller(self) -> Serial | Socket:
@@ -288,7 +289,7 @@ class Prologix(Interface, regex=REGEX):
         self._escape_characters = bool(enable)
 
     def group_execute_trigger(self, *addresses: int) -> None:
-        """Send the Group Execute Trigger command to equipment at the specified addresses (controller mode).
+        """Send the Group Execute Trigger command to equipment at the specified addresses.
 
         Up to 15 addresses may be specified. If no address is specified then the
         Group Execute Trigger command is issued to the currently-addressed equipment.
@@ -306,22 +307,17 @@ class Prologix(Interface, regex=REGEX):
         _ = self._controller.write(command)
 
     def interface_clear(self) -> None:
-        """Perform interface clear (controller mode).
+        """Perform interface clear.
 
         Resets the GPIB bus by asserting the *interface clear* (IFC) bus line for a duration of at
         least 150 microseconds.
         """
-        _ = self._controller.write("++ifc\n")
+        _ = self._controller.write(b"++ifc\n")
 
     def local(self) -> None:
-        """Enables front panel operation of the device, `GTL` GPIB command (controller mode)."""
+        """Enables front panel operation of the device, `GTL` GPIB command."""
         self._ensure_gpib_address_selected()
-        _ = self._controller.write("++loc\n")
-
-    def local_lockout(self) -> None:
-        """Disables front panel operation of the device, `LLO` GPIB command (controller mode)."""
-        self._ensure_gpib_address_selected()
-        _ = self._controller.write("++llo\n")
+        _ = self._controller.write(b"++loc\n")
 
     @property
     def max_read_size(self) -> int:
@@ -332,14 +328,19 @@ class Prologix(Interface, regex=REGEX):
     def max_read_size(self, size: int) -> None:
         self._controller.max_read_size = size
 
+    @property
+    def pad(self) -> int:
+        """Returns the primary GPIB address."""
+        return self._pad
+
     def prologix_help(self) -> list[tuple[str, str]]:
-        """Get the command-syntax help for the Prologix hardware (controller or device mode).
+        """Get the command-syntax help for the Prologix hardware.
 
         Returns:
             The help as a [list][] of `(command, description)` [tuple][]s.
         """
         h: list[tuple[str, str]] = []
-        _ = self._controller.query("++help\n")  # ignore the first reply, "The following commands are available:"
+        _ = self._controller.query(b"++help\n")  # ignore the first reply, "The following commands are available:"
         while True:
             cmd, msg = map(str.strip, self._controller.read().split("--"))
             h.append((cmd, msg))
@@ -414,7 +415,14 @@ class Prologix(Interface, regex=REGEX):
                 returned as an [numpy.ndarray][], if `decode` is `True` then the message
                 is returned as a [str][], otherwise the message is returned as [bytes][].
         """  # noqa: D205
-        self._ensure_gpib_address_selected()
+        if not isinstance(message, bytes):
+            message = message.encode(encoding=self._controller.encoding)
+
+        if message.startswith(b"++"):  # message is (probably) for the Prologix hardware
+            if not message.endswith(b"\n"):
+                message += b"\n"
+            self._ensure_gpib_address_selected()
+            return self._controller.query(message, delay=delay, decode=decode, dtype=dtype, fmt=fmt, size=size)
 
         _ = self.write(message)
         if delay > 0:
@@ -461,7 +469,7 @@ class Prologix(Interface, regex=REGEX):
         fmt: MessageFormat = None,
         size: int | None = None,
     ) -> bytes | str | NumpyArray1D:
-        r"""Read a message from the equipment (controller mode).
+        r"""Read a message from the equipment.
 
         See [MessageBased.read()][msl.equipment.interfaces.message_based.MessageBased.read] for more
         details about when this method returns.
@@ -505,6 +513,25 @@ class Prologix(Interface, regex=REGEX):
     def read_termination(self, termination: str | bytes | None) -> None:  # pyright: ignore[reportPropertyTypeMismatch]
         self._controller.read_termination = termination
 
+    def remote_enable(self, state: bool) -> None:  # noqa: FBT001
+        """Whether to enable or disable front panel operation of the device.
+
+        Args:
+            state: If `True`, the device goes to remote mode (local lockout), `False` for local mode.
+        """
+        if state:
+            self._ensure_gpib_address_selected()
+            _ = self._controller.write(b"++llo\n")
+        else:
+            self.local()
+
+    def reset_controller(self) -> None:
+        """Performs a power-on reset of the Prologix Controller.
+
+        It takes about five seconds for the Controller to reboot.
+        """
+        _ = self._controller.write(b"++rst\n")
+
     @property
     def rstrip(self) -> bool:
         """Whether to remove trailing whitespace from [read][msl.equipment.interfaces.prologix.Prologix.read] messages."""  # noqa: E501
@@ -513,6 +540,11 @@ class Prologix(Interface, regex=REGEX):
     @rstrip.setter
     def rstrip(self, value: bool) -> None:
         self._controller.rstrip = value
+
+    @property
+    def sad(self) -> int | None:
+        """Returns the secondary GPIB address."""
+        return self._sad
 
     def serial_poll(self, pad: int | None = None, sad: int | None = None) -> int:
         """Read status byte / serial poll.
@@ -524,7 +556,7 @@ class Prologix(Interface, regex=REGEX):
                 secondary address of the instantiated class.
 
         Returns:
-            The [status byte](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html).
+            The [status value](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html).
         """
         p = self._pad if pad is None else pad
         s = self._sad if sad is None else sad
@@ -585,32 +617,76 @@ class Prologix(Interface, regex=REGEX):
         self._controller.timeout = value
 
     def trigger(self) -> None:
-        """Trigger device (controller mode)."""
+        """Trigger device."""
         cmd = f"++trg {self._pad}\n" if self._sad is None else f"++trg {self._pad} {self._sad}\n"
         _ = self._controller.write(cmd)
 
-    def wait_for_srq(self, timeout: float | None = None) -> None:
-        """Wait for the SRQ interrupt line to be asserted (controller mode).
+    def wait(
+        self,
+        mask: int,
+        *,
+        delay: float = 0.05,
+        pad: int | None = None,
+        sad: int | None = None,
+        timeout: float | None = None,
+    ) -> int:
+        """Wait for an event.
+
+        Args:
+            mask: Wait until one of the conditions specified in `mask` is true.
+                See [here](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html)
+                for the bit values that the `mask` supports. If `mask=0`,
+                then this method will return immediately.
+            delay: The number of seconds to wait between checking for an event.
+            pad: The primary GPIB address to poll. If not specified, uses the
+                primary address of the instantiated class.
+            sad: The secondary GPIB address to poll. If not specified, uses the
+                secondary address of the instantiated class.
+            timeout: The maximum number of seconds to wait before raising [TimeoutError][]
+                if an event has not occurred. A value of `None` means wait forever.
+
+        Returns:
+            The [status value](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html).
+        """
+        p = self._pad if pad is None else pad
+        s = self._sad if sad is None else sad
+        t0 = time.time()
+        while True:
+            status = self.serial_poll(pad=p, sad=s)
+            if (status & mask) or (mask == 0):
+                return status
+
+            if timeout and time.time() > t0 + timeout:
+                msg = f"An event has not occurred after {timeout} seconds"
+                raise TimeoutError(msg)
+
+            time.sleep(delay)
+
+    def wait_for_srq(self, *, delay: float = 0.05, timeout: float | None = None) -> int:
+        """Wait for the SRQ interrupt line to be asserted.
 
         This method will return when the Prologix Controller receives a service request
         from *any* device. If there are multiple devices connected to the Prologix Controller,
         you must determine which device asserted the service request.
 
         Args:
+            delay: The number of seconds to wait between checking if SRQ has been asserted.
             timeout: The maximum number of seconds to wait before raising [TimeoutError][]
                 if the SRQ line is not asserted. A value of `None` means wait forever.
+
+        Returns:
+            The [status value](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html).
         """
         t0 = time.time()
         while True:
-            while True:
-                if int(self._controller.query("++srq\n")) == 1:
-                    return
+            if int(self._controller.query(b"++srq\n")) == 1:
+                return self.serial_poll()
 
-                if timeout and time.time() > t0 + timeout:
-                    msg = f"SRQ line has not been asserted after {timeout} seconds"
-                    raise TimeoutError(msg)
+            if timeout and time.time() > t0 + timeout:
+                msg = f"SRQ line has not been asserted after {timeout} seconds"
+                raise TimeoutError(msg)
 
-                time.sleep(0.05)
+            time.sleep(delay)
 
     def write(
         self,
@@ -621,6 +697,9 @@ class Prologix(Interface, regex=REGEX):
         fmt: MessageFormat = "ieee",
     ) -> int:
         """Write a message to the equipment.
+
+        !!! note "See Also"
+            [escape_characters][msl.equipment.interfaces.prologix.Prologix.escape_characters]
 
         Args:
             message: The message to write to the equipment.
@@ -634,10 +713,13 @@ class Prologix(Interface, regex=REGEX):
         Returns:
             The number of bytes written.
         """
-        self._ensure_gpib_address_selected()
-
         if not isinstance(message, bytes):
             message = message.encode(encoding=self._controller.encoding)
+
+        if message.startswith(b"++"):  # message is (probably) for the Prologix hardware
+            if not message.endswith(b"\n"):
+                message += b"\n"
+            return self._controller.write(message, data=data, dtype=dtype, fmt=fmt)
 
         if data is not None:
             message += to_bytes(data, fmt=fmt, dtype=dtype)
@@ -654,6 +736,7 @@ class Prologix(Interface, regex=REGEX):
             message = message.replace(b"+", b"\033+")
 
         # Add the un-escaped \n for Prologix to know it has received the full message from the Computer
+        self._ensure_gpib_address_selected()
         return self._controller.write(message + b"\n")
 
     @property

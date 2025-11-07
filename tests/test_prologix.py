@@ -84,13 +84,17 @@ def test_connection_message_based_attributes() -> None:
         "group_execute_trigger",
         "interface_clear",
         "local",
-        "local_lockout",
+        "pad",
         "prologix_help",
+        "remote_enable",
+        "reset_controller",
+        "sad",
         "serial_poll",
         "set_eot_char",
         "set_eot_enable",
         "set_plus_plus_read_char",
         "trigger",
+        "wait",
         "wait_for_srq",
     }
     for attr in dir_p:
@@ -152,7 +156,7 @@ def test_connect_invalid_port() -> None:
         _ = c.connect()
 
 
-def test_socket(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
+def test_messages(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
     term = b"\n"
     with tcp_server(term=term) as server:
         c = Connection(
@@ -185,6 +189,8 @@ def test_socket(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
             assert pro.max_read_size == 1024
             assert pro.controller.max_read_size == 1024
             assert hasattr(pro.controller, "socket")
+            assert pro.pad == 6
+            assert pro.sad is None
 
             assert pro.read() == "++mode 1\n"
             assert pro.read() == "++eoi 1\n"
@@ -229,8 +235,12 @@ def test_socket(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
             assert pro.read() == "++loc\n"
             assert pro.controller.read() == "++read eoi\n"
 
-            pro.local_lockout()
+            pro.remote_enable(state=True)
             assert pro.read() == "++llo\n"
+            assert pro.controller.read() == "++read eoi\n"
+
+            pro.remote_enable(state=False)
+            assert pro.read() == "++loc\n"
             assert pro.controller.read() == "++read eoi\n"
 
             server.add_response(b"32\n")
@@ -243,15 +253,29 @@ def test_socket(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
             server.add_response(b"0\n")
             server.add_response(b"0\n")
             server.add_response(b"0\n")
-            server.add_response(b"1\n")
-            pro.wait_for_srq()
+            server.add_response(b"1\n16\n")
+            assert pro.wait_for_srq() == 16
+
+            server.add_response(b"0\n")
+            server.add_response(b"0\n")
+            server.add_response(b"0\n")
+            server.add_response(b"0\n")
+            with pytest.raises((TimeoutError, ValueError), match=r"0.1 seconds|invalid literal for int"):
+                _ = pro.wait_for_srq(timeout=0.1)
+            assert pro.controller.read() == "0\n"
             server.clear_response_queue()
 
             server.add_response(b"0\n")
             server.add_response(b"0\n")
             server.add_response(b"0\n")
+            server.add_response(b"32\n")
+            assert pro.wait(32) == 32
+
+            server.add_response(b"0\n")
+            server.add_response(b"64\n")
+            server.add_response(b"0\n")
             with pytest.raises(TimeoutError, match=r"0.1 seconds"):
-                pro.wait_for_srq(timeout=0.1)
+                _ = pro.wait(1024, timeout=0.1)
             server.clear_response_queue()
 
             with pytest.raises(TypeError, match=r"ord\(\)"):
@@ -281,6 +305,21 @@ def test_socket(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
             pro.trigger()
             assert pro.read() == "++trg 6\n"
             assert pro.controller.read() == "++read eoi\n"
+
+            assert pro.write("++whatever 3") == len("++whatever 3\n")
+            assert pro.controller.read() == "++whatever 3\n"
+            assert pro.write(b"++eoi 0\n") == len("++eoi 0\n")
+            assert pro.controller.read() == "++eoi 0\n"
+
+            assert pro.write("+whatever +3") == len("\x1b+whatever \x1b+3\x1b\n\n")
+            assert pro.controller.read() == "\x1b+whatever \x1b+3\x1b\n"
+            assert pro.controller.read() == "\n"
+
+            assert pro.query("++eos") == "++eos\n"
+            assert pro.query(b"++eos\n") == "++eos\n"
+
+            pro.reset_controller()
+            assert pro.controller.read() == "++rst\n"
 
         finally:
             _ = pro.write(b"SHUTDOWN")

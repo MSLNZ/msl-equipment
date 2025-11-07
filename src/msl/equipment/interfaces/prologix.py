@@ -57,13 +57,19 @@ def _char_to_int(char: bytes | str | int) -> int:
 class PrologixEthernet(Socket, append=False):
     """Prologix GPIB-ETHERNET Controller."""
 
-    lock: Lock = Lock()
+    def __init__(self, equipment: Equipment) -> None:
+        """Prologix GPIB-ETHERNET Controller."""
+        super().__init__(equipment)
+        self.lock: Lock = Lock()
 
 
 class PrologixUSB(Serial, append=False):
     """Prologix GPIB-USB Controller."""
 
-    lock: Lock = Lock()
+    def __init__(self, equipment: Equipment) -> None:
+        """Prologix GPIB-USB Controller."""
+        super().__init__(equipment)
+        self.lock: Lock = Lock()
 
 
 class Prologix(Interface, regex=REGEX):

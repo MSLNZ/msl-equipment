@@ -162,7 +162,7 @@ def test_messages(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
         c = Connection(
             f"Prologix::{server.host}::{server.port}::6",
             timeout=1,
-            read_tmo_ms=1000,
+            read_tmo_ms=50,
             eot_char=13,
         )
         pro: Prologix = c.connect()
@@ -193,14 +193,15 @@ def test_messages(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
             assert pro.sad is None
 
             assert pro.read() == "++mode 1\n"
+            assert pro.read() == "++auto 0\n"
             assert pro.read() == "++eoi 1\n"
             assert pro.read() == "++eos 3\n"
             assert pro.read() == "++eot_char 13\n"
             assert pro.read() == "++eot_enable 0\n"
-            assert pro.read() == "++read_tmo_ms 1000\n"
+            assert pro.read() == "++read_tmo_ms 50\n"
             assert pro.read() == "++addr 6\n"
 
-            for _ in range(7):  # clear the write("++read eoi") that is written in the 7 pro.read()'s above
+            for _ in range(8):  # clear the write("++read eoi") that is written in the 8 pro.read()'s above
                 assert pro.controller.read() == "++read eoi\n"
 
             assert pro.query("A\x1bUT+O\r") == "A\x1b\x1bUT\x1b+O\x1b\r\x1b\n"  # escaped: + \n \r \x1b

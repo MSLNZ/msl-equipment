@@ -180,6 +180,7 @@ class Prologix(Interface, regex=REGEX):
             address = f"TCP::{self._hw_address}::{info.enet_port}" if info.enet_port else f"ASRL{self._hw_address}"
             e = Equipment(connection=Connection(address, **props))
             self._controller = PrologixEthernet(e) if info.enet_port else PrologixUSB(e)
+            self._controller._str = f"Prologix<{info.hw_address}>"  # noqa: SLF001
             Prologix._controllers[self._hw_address] = self._controller
             Prologix._selected_addresses[self._hw_address] = b""
 

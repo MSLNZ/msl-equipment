@@ -3742,6 +3742,17 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;nd_filter&quot;</span><span class="p">)</span>
 <span class="go">&#39;OD: 2.0&#39;</span>
 </code></pre></div>
+<p>If the equipment supports computer control, you can call the <a class="autorefs autorefs-internal" title="            connect" href="../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect</a> method of the <a class="autorefs autorefs-internal" title="            Equipment
+
+
+  
+      dataclass
+  " href="../../schema/equipment/#msl.equipment.schema.Equipment">Equipment</a> instance to establish communication.</p>
+<div class="highlight"><pre><span></span><code><span class="n">dmm</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;dmm&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dmm</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
+<span class="n">dmm</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+</code></pre></div>
+<p>See <a class="autorefs autorefs-internal" title="Python Examples" href="../connections/#connections-python-examples">this section</a> for more details about communicating with equipment.</p>
 
 
 

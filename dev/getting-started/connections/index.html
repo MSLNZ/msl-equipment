@@ -747,9 +747,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#connections-python-module" class="md-nav__link">
+  <a href="#connections-python-examples" class="md-nav__link">
     <span class="md-ellipsis">
-      Python Module
+      Python Examples
     </span>
   </a>
   
@@ -3663,9 +3663,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#connections-python-module" class="md-nav__link">
+  <a href="#connections-python-examples" class="md-nav__link">
     <span class="md-ellipsis">
-      Python Module
+      Python Examples
     </span>
   </a>
   
@@ -3691,7 +3691,7 @@
 
 
 <h1 id="connections">Connections<a class="headerlink" href="#connections" title="Permanent link">¤</a></h1>
-<p>The information about how to interface with equipment for computer control is based on the definitions in the <a class="autorefs autorefs-internal" title="XML Schema" href="#connections-xml">Schema</a> and may either be saved in the eXtensible Markup Language (XML) file format or in a <a class="autorefs autorefs-internal" title="Python Module" href="#connections-python-module">Python module</a>. When using the XML format, you would specify the XML file that contains the connection information as a <code>&lt;connections&gt;</code> element in your <a class="autorefs autorefs-internal" title="Configuration Files" href="../configuration-files/#configuration-files">configuration file</a>. When the configuration file is loaded (via <a class="autorefs autorefs-internal" href="../../api/config/#config">Config</a>), it links a <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instance with the corresponding <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> instance based on the equipment id.</p>
+<p>The information about how to interface with equipment for computer control is based on the definitions in the <a class="autorefs autorefs-internal" title="XML Schema" href="#connections-xml">Schema</a> and may either be saved in the eXtensible Markup Language (XML) file format or in a <a class="autorefs autorefs-internal" title="Python Examples" href="#connections-python-examples">Python module</a>. When using the XML format, you would specify the XML file that contains the connection information as a <code>&lt;connections&gt;</code> element in your <a class="autorefs autorefs-internal" title="Configuration Files" href="../configuration-files/#configuration-files">configuration file</a>. When the configuration file is loaded (via <a class="autorefs autorefs-internal" href="../../api/config/#config">Config</a>), it links a <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instance with the corresponding <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> instance based on the equipment id.</p>
 <h2 id="connections-xml">XML Schema<a class="headerlink" href="#connections-xml" title="Permanent link">¤</a></h2>
 <p>Schema definition for connection information. See <a class="autorefs autorefs-internal" title="Validate" href="../../validate/#validate">this section</a> for details on how to validate the contents of a connections XML file against the schema.</p>
 <div class="highlight"><pre><span></span><code><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
@@ -3947,14 +3947,21 @@
 <h3 id="connections-backend">Backends<a class="headerlink" href="#connections-backend" title="Permanent link">¤</a></h3>
 <p>When a <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instance is created, the <code>backend</code> keyword argument decides which backend to use when interfacing with the equipment. There are different <a class="autorefs autorefs-internal" title="            Backend" href="../../api/enumerations/#msl.equipment.enumerations.Backend">Backend</a>s to choose from: <code>MSL</code> (default), <code>PyVISA</code> or <code>NIDAQ</code>.</p>
 <p>The <a class="autorefs autorefs-internal" title="Interfaces" href="#connections-interfaces">interface class</a> can be used if the <code>backend</code> is <code>MSL</code>. The corresponding interface classes for the external backends are <a class="autorefs autorefs-internal" title="            PyVISA" href="../../api/backends/pyvisa/#msl.equipment.interfaces.pyvisa.PyVISA">PyVISA</a> and <a class="autorefs autorefs-internal" title="            NIDAQ" href="../../api/backends/nidaq/#msl.equipment.interfaces.nidaq.NIDAQ">NIDAQ</a>.</p>
-<h2 id="connections-python-module">Python Module<a class="headerlink" href="#connections-python-module" title="Permanent link">¤</a></h2>
-<p>If you are primarily interested in using <code>msl-equipment</code> for interfacing with equipment (and not the <a class="autorefs autorefs-internal" href="../equipment-registers/#equipment-registers">Equipment Registers</a> aspect), the simplest approach is to create <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instances in a module and call the <a class="autorefs autorefs-internal" title="            connect" href="../../api/connection/#msl.equipment.schema.Connection.connect">connect</a> method.</p>
+<h2 id="connections-python-examples">Python Examples<a class="headerlink" href="#connections-python-examples" title="Permanent link">¤</a></h2>
+<p>If you are primarily interested in using <code>msl-equipment</code> to interface with equipment (and not the <a class="autorefs autorefs-internal" href="../equipment-registers/#equipment-registers">Equipment Registers</a> aspect), the simplest approach is to create <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instances in a module and call the <a class="autorefs autorefs-internal" title="            connect" href="../../api/connection/#msl.equipment.schema.Connection.connect">connect</a> method (which is equivalent to calling <a class="autorefs autorefs-internal" title="            connect" href="../../schema/equipment/#msl.equipment.schema.Equipment.connect">Equipment.connect()</a> if you are using <a class="autorefs autorefs-internal" href="../equipment-registers/#equipment-registers">Equipment Registers</a>).</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span>
 
 <span class="n">device</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;COM3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
+<span class="n">device</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 </code></pre></div>
-<p>If you have multiple equipment that you want to communicate with and you also want to include some additional metadata so that you can keep track of which device is associated with the corresponding address, you could do something like the following.</p>
+<p>All <a class="autorefs autorefs-internal" title="Interfaces" href="#connections-interfaces">interfaces</a> can be used as a <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/compound_stmts.html#with" target="_blank">context manager</a>, where the <a class="autorefs autorefs-internal" title="            disconnect" href="../../api/interfaces/#msl.equipment.schema.Interface.disconnect">disconnect</a> method is called when exiting the code block. The previous example is equivalent to the following.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span>
+
+<span class="k">with</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;COM3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
+</code></pre></div>
+<p>If you have multiple equipment that you want to interface with and you also want to include some additional metadata so that you can keep track of which device is associated with the corresponding address, you could do something like the following. Also, for some interfaces, such as when using a manufacturer's <a class="autorefs autorefs-internal" href="../../api/interfaces/sdk/#sdk">SDK</a>, the serial number must be passed to the <a class="autorefs autorefs-internal" href="../../api/interfaces/sdk/#sdk">SDK</a> when opening the connection and therefore the serial number must be specified as a keyword argument (or as an element in a connections <a class="autorefs autorefs-internal" title="XML Schema" href="#connections-xml">XML</a> file).</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span>
 
 <span class="c1"># Assign custom names to associate with each equipment</span>
@@ -3963,7 +3970,7 @@
     <span class="s2">&quot;bob&quot;</span><span class="p">:</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;COM3&quot;</span><span class="p">,</span> <span class="n">manufacturer</span><span class="o">=</span><span class="s2">&quot;HP&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;34401A&quot;</span><span class="p">),</span>
 
     <span class="c1"># not used below but is available to use for another day</span>
-    <span class="s2">&quot;eve&quot;</span><span class="p">:</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;SDK::company.dll&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;Scope-20&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;16bit&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;eve&quot;</span><span class="p">:</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;SDK::company.dll&quot;</span><span class="p">,</span> <span class="n">manufacturer</span><span class="o">=</span><span class="s2">&quot;ABC&quot;</span><span class="p">,</span> <span class="n">serial</span><span class="o">=</span><span class="s2">&quot;4621&quot;</span><span class="p">),</span>
 <span class="p">}</span>
 
 <span class="c1"># Connect to the equipment using the names that were assigned</span>
@@ -3973,6 +3980,26 @@
 <span class="c1"># Query the identity</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">alice</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;ID?&quot;</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">bob</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
+
+<span class="c1"># Disconnect when finished</span>
+<span class="n">alice</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+<span class="n">bob</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+</code></pre></div>
+<p>The <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#module-logging" target="_blank">logging</a> module may be used to help debug communication issues, especially when interfacing with multiple equipment. By enabling the <code>DEBUG</code> <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#levels" target="_blank">level</a> you will be able to capture the bytes that are written to and read from the equipment.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2"> </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;COM3&quot;</span><span class="p">,</span> <span class="n">manufacturer</span><span class="o">=</span><span class="s2">&quot;HP&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;34401A&quot;</span><span class="p">,</span> <span class="n">serial</span><span class="o">=</span><span class="s2">&quot;3146A&quot;</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">c</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">dmm</span><span class="p">:</span>
+    <span class="n">identity</span> <span class="o">=</span> <span class="n">dmm</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>Running the previous example would display something similar to the following.</p>
+<div class="highlight"><pre><span></span><code><span class="go">DEBUG Connecting to Serial&lt;HP|34401A|3146A at COM3&gt;</span>
+<span class="go">DEBUG Serial&lt;HP|34401A|3146A&gt;.write(b&#39;*IDN?\r\n&#39;)</span>
+<span class="go">DEBUG Serial&lt;HP|34401A|3146A&gt;.read() -&gt; b&#39;Hewlett Packard,34401A,3146A,A03-02\n&#39;</span>
+<span class="go">DEBUG Disconnected from Serial&lt;HP|34401A|3146A at COM3&gt;</span>
 </code></pre></div>
 
 

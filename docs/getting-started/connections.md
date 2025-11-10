@@ -1,6 +1,6 @@
 # Connections
 
-The information about how to interface with equipment for computer control is based on the definitions in the [Schema][connections-xml] and may either be saved in the eXtensible Markup Language (XML) file format or in a [Python module][connections-python-module]. When using the XML format, you would specify the XML file that contains the connection information as a `<connections>` element in your [configuration file][configuration-files]. When the configuration file is loaded (via [Config][]), it links a [Connection][] instance with the corresponding [Equipment][] instance based on the equipment id.
+The information about how to interface with equipment for computer control is based on the definitions in the [Schema][connections-xml] and may either be saved in the eXtensible Markup Language (XML) file format or in a [Python module][connections-python-examples]. When using the XML format, you would specify the XML file that contains the connection information as a `<connections>` element in your [configuration file][configuration-files]. When the configuration file is loaded (via [Config][]), it links a [Connection][] instance with the corresponding [Equipment][] instance based on the equipment id.
 
 ## XML Schema {: #connections-xml }
 
@@ -196,18 +196,28 @@ When a [Connection][] instance is created, the `backend` keyword argument decide
 
 The [interface class][connections-interfaces] can be used if the `backend` is `MSL`. The corresponding interface classes for the external backends are [PyVISA][msl.equipment.interfaces.pyvisa.PyVISA] and [NIDAQ][msl.equipment.interfaces.nidaq.NIDAQ].
 
-## Python Module {: #connections-python-module }
+## Python Examples {: #connections-python-examples }
 
-If you are primarily interested in using `msl-equipment` for interfacing with equipment (and not the [Equipment Registers][] aspect), the simplest approach is to create [Connection][] instances in a module and call the [connect][msl.equipment.schema.Connection.connect] method.
+If you are primarily interested in using `msl-equipment` to interface with equipment (and not the [Equipment Registers][] aspect), the simplest approach is to create [Connection][] instances in a module and call the [connect][msl.equipment.schema.Connection.connect] method (which is equivalent to calling [Equipment.connect()][msl.equipment.schema.Equipment.connect] if you are using [Equipment Registers][]).
 
 ```python
 from msl.equipment import Connection
 
 device = Connection("COM3").connect()
 print(device.query("*IDN?"))
+device.disconnect()
 ```
 
-If you have multiple equipment that you want to communicate with and you also want to include some additional metadata so that you can keep track of which device is associated with the corresponding address, you could do something like the following.
+All [interfaces][connections-interfaces] can be used as a [context manager][with]{:target="_blank"}, where the [disconnect][msl.equipment.schema.Interface.disconnect] method is called when exiting the code block. The previous example is equivalent to the following.
+
+```python
+from msl.equipment import Connection
+
+with Connection("COM3").connect() as device:
+  print(device.query("*IDN?"))
+```
+
+If you have multiple equipment that you want to interface with and you also want to include some additional metadata so that you can keep track of which device is associated with the corresponding address, you could do something like the following. Also, for some interfaces, such as when using a manufacturer's [SDK][], the serial number must be passed to the [SDK][] when opening the connection and therefore the serial number must be specified as a keyword argument (or as an element in a connections [XML][connections-xml] file).
 
 ```python
 from msl.equipment import Connection
@@ -218,7 +228,7 @@ connections = {
     "bob": Connection("COM3", manufacturer="HP", model="34401A"),
 
     # not used below but is available to use for another day
-    "eve": Connection("SDK::company.dll", model="Scope-20", resolution="16bit"),
+    "eve": Connection("SDK::company.dll", manufacturer="ABC", serial="4621"),
 }
 
 # Connect to the equipment using the names that were assigned
@@ -228,4 +238,30 @@ bob = connections["bob"].connect()
 # Query the identity
 print(alice.query("ID?"))
 print(bob.query("*IDN?"))
+
+# Disconnect when finished
+alice.disconnect()
+bob.disconnect()
+```
+
+The [logging][]{:target="_blank"} module may be used to help debug communication issues, especially when interfacing with multiple equipment. By enabling the `DEBUG` [level][levels]{:target="_blank"} you will be able to capture the bytes that are written to and read from the equipment.
+
+```python
+import logging
+from msl.equipment import Connection
+
+logging.basicConfig(level=logging.DEBUG, format="%(levelname)s %(message)s")
+
+c = Connection("COM3", manufacturer="HP", model="34401A", serial="3146A")
+with c.connect() as dmm:
+    identity = dmm.query("*IDN?")
+```
+
+Running the previous example would display something similar to the following.
+
+```console
+DEBUG Connecting to Serial<HP|34401A|3146A at COM3>
+DEBUG Serial<HP|34401A|3146A>.write(b'*IDN?\r\n')
+DEBUG Serial<HP|34401A|3146A>.read() -> b'Hewlett Packard,34401A,3146A,A03-02\n'
+DEBUG Disconnected from Serial<HP|34401A|3146A at COM3>
 ```

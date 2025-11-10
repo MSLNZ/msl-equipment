@@ -167,3 +167,13 @@ True
 'OD: 2.0'
 
 ```
+
+If the equipment supports computer control, you can call the [connect][msl.equipment.schema.Equipment.connect] method of the [Equipment][msl.equipment.schema.Equipment] instance to establish communication.
+
+```python
+dmm = cfg.equipment["dmm"].connect()
+print(dmm.query("*IDN?"))
+dmm.disconnect()
+```
+
+See [this section][connections-python-examples] for more details about communicating with equipment.

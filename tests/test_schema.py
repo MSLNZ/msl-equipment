@@ -754,6 +754,51 @@ def test_equation_value_uncertainty_unit() -> None:
     assert tostring(e.to_xml()) == text
 
 
+def test_equation_single_variable_args() -> None:
+    text = (
+        b"<equation>"
+        b'<value variables="x">1+x</value>'
+        b'<uncertainty variables="">0.5/2</uncertainty>'
+        b"<unit>C</unit>"
+        b"<ranges>"
+        b'<range variable="x"><minimum>0.0</minimum><maximum>1.0</maximum></range>'
+        b"</ranges>"
+        b"</equation>"
+    )
+    e = Equation.from_xml(XML(text))
+    assert e.value(0) == 1
+    assert e.value(np.float32(0.5)) == 1.5
+    assert np.array_equal(e.value(0, 0.1), [1.0, 1.1])
+    assert np.array_equal(e.value([0, 0.1]), [1.0, 1.1])
+    assert np.array_equal(e.value((0.5, 0.6, 0.7)), [1.5, 1.6, 1.7])
+    assert np.array_equal(e.value(np.array([0, 1])), [1.0, 2.0])
+
+    # The following is discourage from a type checker, but is still valid at runtime
+    assert np.array_equal(e.value([[0.1, 0.2], [0.3, 0.4]]), [[1.1, 1.2], [1.3, 1.4]])  # type: ignore[list-item]  # pyright: ignore[reportArgumentType]
+
+    with pytest.raises(ValueError, match=r"inhomogeneous shape"):
+        _ = e.value(0, [0.1, 0.2])
+
+    with pytest.raises(ValueError, match=r"single sequence"):
+        _ = e.value([0, 1], [0.1, 0.2])
+
+    with pytest.raises(ValueError, match=r"single sequence"):
+        _ = e.value([0, 1], 0)
+
+    with pytest.raises(ValueError, match=r"argument and a keyword argument"):
+        _ = e.value(0.5, x=[0.4])
+
+    with pytest.raises(ValueError, match=r"not within the range"):
+        _ = e.value(3.2)
+
+    expect = 0.5 / 2
+    assert e.uncertainty() == expect
+    assert e.uncertainty(0.1) == expect
+    assert e.uncertainty(np.float64(0.1)) == expect
+    assert np.array_equal(e.uncertainty(0.9, 0.8, 0.7), [expect, expect, expect])
+    assert np.array_equal(e.uncertainty([0.9, 0.8, 0.7]), [expect, expect, expect])
+
+
 def test_equation() -> None:
     text = (
         b'<equation comment="3D">'
@@ -781,6 +826,9 @@ def test_equation() -> None:
     assert e.degree_freedom == 100.2
     assert e.comment == "3D"
     assert tostring(e.to_xml()) == text
+
+    with pytest.raises(ValueError, match=r"multi-variable equation"):
+        _ = e.value(0.1)
 
 
 def test_serialised_gtc_xml() -> None:

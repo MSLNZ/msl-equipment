@@ -34,7 +34,7 @@ Suppose you have a variable named `equation` (which is an instance of [Equation]
 </equation>
 ```
 
-You can access the *unit*, *degrees of freedom* and *comment* as attributes of `equation`
+You can access the *unit*, *degrees of freedom* and *comment* as attributes of `equation`.
 
 ```pycon
 >>> equation.unit
@@ -46,7 +46,7 @@ inf
 
 ```
 
-To evaluate an equation, call the appropriate attribute with the variable(s) that are required to evaluate the equation with
+To evaluate an equation, call the appropriate attribute with the variable(s) that are required to evaluate the equation.
 
 ```pycon
 >>> equation.value.variables
@@ -57,6 +57,9 @@ To evaluate an equation, call the appropriate attribute with the variable(s) tha
 >>> assert equation.uncertainty() == 0.355
 
 ```
+
+!!! tip
+    If the equation contains a single variable, you do not need to specify the variable name as a keyword argument. For example, if the above equation only depended on `t` you could evaluate it using `equation.value(20.4)` or `equation.value(t=20.4)` since these function calls are equivalent.
 
 A variable can have multiple values. Any sequence of numbers, i.e., a [list][]{:target="_blank"}, [tuple][]{:target="_blank"}, [ndarray][numpy.ndarray]{:target="_blank"}, etc., may be used *(tip: using [ndarray][numpy.ndarray]{:target="_blank"} will improve performance since a copy of the values is not required)*,
 
@@ -75,7 +78,7 @@ array([[49.8211466, 51.6104604],
 
 ```
 
-and the array broadcasting rules of numpy also apply, i.e., multiple `r` values and a single `t` value
+and the array broadcasting rules of numpy also apply, i.e., multiple `r` values and a single `t` value.
 
 ```pycon
 >>> equation.value(r=(50.3, 52.1, 48.7), t=20.4)
@@ -93,7 +96,8 @@ NameError: name 't' is not defined
 
 ```
 
-however, if you specify more variables than are required to evaluate the equation, the additional variables are ignored
+however, if you specify more variables than are required to evaluate the equation, the additional variables are ignored.
+
 ```pycon
 >>> equation.uncertainty(r=50.3, t=20.4)
 array(0.355)
@@ -102,7 +106,7 @@ array(0.355)
 
 Notice in the last returned value that the result was printed as `array(0.355)` even though a single `r` and `t` value was specified *(although these variables were ignored in this particular example, since the standard uncertainty is a constant, the principle remains the same if they were not ignored)*. All evaluated returned types are an instance of a numpy [ndarray][numpy.ndarray]{:target="_blank"} even if a single value is specified. These particular returned array instances are referred to as 0-dimensional [array scalars][arrays.scalars]{:target="_blank"} in numpy terminology.
 
-When evaluating an equation, the value(s) of the input variables are checked to ensure that the value(s) are within the ranges that the equation is valid for. The XML data above shows that the temperature, `t`, value must be in the range `15` to `25`. If you evaluate the corrected value at `t=30` a [ValueError][]{:target="_blank"} is raised
+When evaluating an equation, the value(s) of the input variables are checked to ensure that the value(s) are within the ranges that the equation is valid for. The XML data above shows that the temperature, `t`, value must be in the range `15` to `25`. If you evaluate the corrected value at `t=30` a [ValueError][]{:target="_blank"} is raised.
 
 ```pycon
 >>> equation.value.ranges

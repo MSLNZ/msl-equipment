@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
     from numpy.typing import ArrayLike, DTypeLike, NDArray
 
-    from ._types import PathLike, XMLSource
+    from ._types import PathLike, Sequence1D, XMLSource
 
     A = TypeVar("A", bound="Any")
     L = TypeVar("L", bound="Latest")
@@ -668,17 +668,39 @@ class Evaluable:
     ranges: dict[str, Range] = field(default_factory=dict)
     """The numeric range for each variable that the `equation` is valid for. The *keys* are the variable names."""
 
-    def __call__(self, *, check_range: bool = True, **data: ArrayLike) -> NDArray[np.float64]:
+    def __call__(
+        self, *args: float | np.floating | Sequence1D, check_range: bool = True, **kwargs: ArrayLike
+    ) -> NDArray[np.float64]:
         """Evaluate the equation.
 
         Args:
-            data: A mapping of variable names to values to evaluate the equation with.
+            args: The values to evaluate the equation with. Can only be specified if
+                the equation contains a single variable.
             check_range: Whether to check that the data is within the allowed ranges.
+            kwargs: A mapping of variable names to values to evaluate the equation with.
 
         Returns:
             The equation evaluated.
         """
-        _locals = {k: np.asarray(v, dtype=float) for k, v in data.items()}
+        if args:
+            if len(self.variables) > 1:
+                msg = "Must specify the values as name-value pairs for a multi-variable equation"
+                raise ValueError(msg)
+
+            name = self.variables[0] if self.variables else ""
+            if name in kwargs:
+                msg = f"Cannot specify {name!r} as an argument and a keyword argument"
+                raise ValueError(msg)
+
+            if isinstance(args[0], (int, float, np.floating)):
+                kwargs[name] = np.asarray(args, dtype=float)
+            elif len(args) == 1:
+                kwargs[name] = args[0]
+            else:
+                msg = "Must specify a single sequence of floating-point values"
+                raise ValueError(msg)
+
+        _locals = {k: np.asarray(v, dtype=float) for k, v in kwargs.items()}
         if check_range:
             for name, value in _locals.items():
                 r = self.ranges.get(name)

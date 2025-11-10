@@ -1315,6 +1315,7 @@ class HiSLIP(MessageBased, regex=REGEX):
         self._sync: SyncClient
         self._async: AsyncClient
         self._connect()
+        self._set_interface_max_read_size()
         self._set_interface_timeout()
 
     def _connect(self) -> None:
@@ -1338,10 +1339,6 @@ class HiSLIP(MessageBased, regex=REGEX):
             self._async = AsyncClient(host)
             self._async.connect(port=port, timeout=self._timeout)
             _ = self._async.async_initialize(status.session_id)
-
-            r = self._async.async_maximum_message_size(self._max_read_size)
-            self._sync.maximum_server_message_size = r.maximum_message_size
-            self._async.maximum_server_message_size = r.maximum_message_size
         except (socket.timeout, TimeoutError):
             raise MSLTimeoutError(self) from None
         except Exception as e:  # noqa: BLE001

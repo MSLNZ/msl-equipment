@@ -150,7 +150,7 @@ def test_main(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[st
     caplog.set_level(logging.INFO, "msl")
 
     with pytest.raises(SystemExit) as e:
-        main([str(root_path)])
+        main([str(root_path), "--no-colour"])
 
     assert e.value.code == 3  # 3 issues
 
@@ -242,8 +242,17 @@ def test_main(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[st
     assert r[26].levelname == "INFO"
     assert r[26].message == ""
 
+    assert r[27].levelname == "WARNING"
+    assert r[27].message == "WARN  1 <equipment> element has not been 'checkedBy' someone"
+
+    assert r[28].levelname == "WARNING"
+    assert r[28].message == "WARN  1 <report> element has not been 'checkedBy' someone"
+
+    assert r[29].levelname == "WARNING"
+    assert r[29].message == "WARN  include --show-unchecked to show the list of unchecked elements"
+
     with pytest.raises(IndexError):
-        _ = r[27]
+        _ = r[30]
 
 
 def test_cli_add_winreg_keys(caplog: pytest.LogCaptureFixture) -> None:
@@ -444,3 +453,37 @@ def test_no_paths(reset_summary: None) -> None:
     # 2 <id> errors
     # 3 <file> errors
     assert cli([]) == 5
+
+
+def test_show_unchecked(reset_summary: None, caplog: pytest.LogCaptureFixture) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    caplog.set_level(logging.WARNING, "msl")
+
+    with pytest.raises(SystemExit) as e:
+        main(["--no-colour", "--show-unchecked", str(root_path)])
+
+    assert e.value.code == 3  # 3 issues
+
+    r = caplog.records
+    assert r[0].levelname == "ERROR"  # the error message was already tested
+    assert r[1].levelname == "ERROR"
+    assert r[2].levelname == "ERROR"
+
+    assert r[3].levelname == "WARNING"
+    assert r[3].message == "WARN  1 <equipment> element has not been 'checkedBy' someone"
+    assert r[4].levelname == "WARNING"
+    assert r[4].message.startswith("  Unchecked <equipment>")
+    assert r[4].message.endswith("register2.xml:3")
+
+    # register2.xml does contain a <performanceCheck>, on line 18, but it has a checkedBy value
+
+    assert r[5].levelname == "WARNING"
+    assert r[5].message == "WARN  1 <report> element has not been 'checkedBy' someone"
+    assert r[6].levelname == "WARNING"
+    assert r[6].message.startswith("  Unchecked <report>")
+    assert r[6].message.endswith("register2.xml:39")
+
+    with pytest.raises(IndexError):
+        _ = r[7]

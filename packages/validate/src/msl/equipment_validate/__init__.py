@@ -15,12 +15,13 @@ from lxml import etree
 
 from ._version import __version__
 from .osc8 import register_uri_scheme, schemes, unregister_uri_scheme
-from .validate import GREEN, RED, RESET, YELLOW, log_error, parse, recursive_validate
+from .validate import GREEN, RED, RESET, YELLOW, log, log_error, log_warn, parse, recursive_validate
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
     from typing import NoReturn
 
+    from .validate import URIScheme
 
 IS_WINDOWS = sys.platform == "win32"
 
@@ -111,6 +112,25 @@ def maybe_enable_ansi() -> None:
     # is still being used outside of Windows Terminal (prefer to not have a dependency on colorama)
     # https://bugs.python.org/issue30075
     _ = os.system("")  # noqa: S605, S607
+
+
+def log_unchecked(
+    *,
+    message: str,
+    uri_scheme: URIScheme,
+    no_colour: bool,
+    name: str,
+) -> None:
+    """Log an message as a WARNING for an element that has not been 'checkedBy' someone."""
+    if uri_scheme is None:
+        msg = message
+    else:
+        # https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
+        uri = f"{uri_scheme}://file/{message}"
+        msg = f"\033]8;;{uri}\033\\{message}\033]8;;\033\\"
+
+    (colour, reset) = ("", "") if no_colour else (YELLOW, RESET)
+    log.warning("  %sUnchecked <%s>%s %s", colour, name, reset, msg)
 
 
 def configure_parser() -> ArgumentParser:
@@ -234,6 +254,12 @@ def configure_parser() -> ArgumentParser:
         help="Skip <file> and <digitalReport> SHA256 checksum validation.",
     )
     _ = parser.add_argument(
+        "-u",
+        "--show-unchecked",
+        action="store_true",
+        help="Show the list of elements that have not been 'checkedBy'.",
+    )
+    _ = parser.add_argument(
         "-n",
         "--no-colour",
         action="store_true",
@@ -339,6 +365,28 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: C901, PLR0912, PLR09
     log.info("<serialised> %d", summary.num_serialised)
     log.info("<table> %d", summary.num_table)
     log.info("")
+
+    for name, tup in [
+        ("equipment", summary.unchecked_equipment),
+        ("report", summary.unchecked_reports),
+        ("performanceCheck", summary.unchecked_performance_checks),
+    ]:
+        if tup:
+            log_warn(
+                "%d <%s> element%s not been 'checkedBy' someone",
+                len(tup),
+                name,
+                " has" if len(tup) == 1 else "s have",
+                no_colour=args.no_colour,
+            )
+            if args.show_unchecked:
+                for item in tup:
+                    log_unchecked(message=item, uri_scheme=args.link, no_colour=args.no_colour, name=name)
+
+    if (
+        summary.unchecked_equipment or summary.unchecked_reports or summary.unchecked_performance_checks
+    ) and not args.show_unchecked:
+        log_warn("include --show-unchecked to show the list of unchecked elements", no_colour=args.no_colour)
 
     if summary.num_issues == 0:
         green, yellow, reset = ("", "", "") if args.no_colour else (GREEN, YELLOW, RESET)

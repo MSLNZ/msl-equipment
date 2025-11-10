@@ -38,6 +38,7 @@ RESET = "\033[0m"
 
 booleans = {"true", "True", "TRUE", "1", "false", "False", "FALSE", "0"}
 namespace = "https://measurement.govt.nz/equipment-register"
+ns_map = {"reg": namespace}
 
 equation_map = {
     "pi": np.pi,
@@ -81,6 +82,9 @@ class Summary:
     num_file: int = 0
     num_serialised: int = 0
     num_table: int = 0
+    unchecked_equipment: tuple[str, ...] = ()
+    unchecked_reports: tuple[str, ...] = ()
+    unchecked_performance_checks: tuple[str, ...] = ()
 
     def __init__(self, *, exit_first: bool) -> None:
         """Keeps tracks of the number of files validated, errors, and elements that were skipped."""
@@ -167,7 +171,7 @@ def log_warn(
     log.warning("%sWARN%s  %s", colour, reset, msg)
 
 
-def log_error(  # noqa: PLR0913
+def log_error(
     *,
     file: str | Path,
     line: int,
@@ -208,19 +212,19 @@ def parse(*, file: Path, uri_scheme: URIScheme, no_colour: bool) -> ElementTree 
     return None
 
 
-def schema_validate(  # noqa: PLR0913
-    *, path: str, xml: ElementTree, schema: XMLSchema, exit_first: bool, uri_scheme: URIScheme, no_colour: bool
+def schema_validate(
+    *, path: str, tree: ElementTree, schema: XMLSchema, exit_first: bool, uri_scheme: URIScheme, no_colour: bool
 ) -> bool:
     """Validate an XML file against a schema."""
     log_info("Validating %s", path, no_colour=no_colour)
 
-    root = xml.getroot()
+    root = tree.getroot()
     if root.tag == "connections":
         Summary.num_connection += len(root)
     else:
         Summary.num_equipment += len(root)
 
-    if schema.validate(xml):
+    if schema.validate(tree):
         return True
 
     for error in schema.error_log:
@@ -276,13 +280,20 @@ def recursive_validate(  # noqa: C901, PLR0912, PLR0913
         if tag.endswith("register"):
             Summary.num_register += 1
             valid = schema_validate(
-                path=path, xml=tree, schema=er_schema, exit_first=exit_first, uri_scheme=uri_scheme, no_colour=no_colour
+                path=path,
+                tree=tree,
+                schema=er_schema,
+                exit_first=exit_first,
+                uri_scheme=uri_scheme,
+                no_colour=no_colour,
             )
             if summary.check_exit():
                 return summary
 
             if not valid:
                 continue
+
+            find_unchecked(path, tree)
 
             ids = validate(
                 path=path,
@@ -308,7 +319,7 @@ def recursive_validate(  # noqa: C901, PLR0912, PLR0913
 
         elif tag == "connections":
             _ = schema_validate(
-                path=path, xml=tree, schema=c_schema, exit_first=exit_first, uri_scheme=uri_scheme, no_colour=no_colour
+                path=path, tree=tree, schema=c_schema, exit_first=exit_first, uri_scheme=uri_scheme, no_colour=no_colour
             )
             if summary.check_exit():
                 return summary
@@ -318,7 +329,7 @@ def recursive_validate(  # noqa: C901, PLR0912, PLR0913
     return summary
 
 
-def validate(  # noqa: C901, PLR0911, PLR0912, PLR0913
+def validate(  # noqa: C901, PLR0911, PLR0912
     *,
     path: str,
     tree: ElementTree,
@@ -340,9 +351,8 @@ def validate(  # noqa: C901, PLR0911, PLR0912, PLR0913
         no_colour: Whether to suppress coloured output.
 
     Returns:
-        A mapping between the equipment id and (sourceline of the equipment id, file path).
+        A mapping between the equipment id and `(file path, sourceline of the equipment id)`.
     """
-    ns_map = {"reg": namespace}
     ids: dict[str, tuple[str, int]] = {}
     for equipment in tree.xpath("//reg:equipment", namespaces=ns_map):
         id_, manufacturer, model, serial = equipment[:4]  # schema forces order
@@ -706,3 +716,29 @@ def validate_cvd(coefficients: Element, info: Info) -> bool:
     names = uncertainty.attrib["variables"].split()
     assert uncertainty.text is not None  # noqa: S101
     return _eval(text=uncertainty.text, names=names, info=info, line=uncertainty.sourceline or 0)
+
+
+def find_unchecked(path: str, tree: ElementTree) -> None:
+    """Find equipment, report and performanceCheck elements that have not been 'checkedBy'.
+
+    Args:
+        path: File path.
+        tree: The element tree.
+    """
+    Summary.unchecked_equipment = tuple(
+        f"{path}:{element.sourceline}"
+        for element in tree.xpath("//reg:equipment", namespaces=ns_map)
+        if not element.get("checkedBy")
+    )
+
+    Summary.unchecked_reports = tuple(
+        f"{path}:{element.sourceline}"
+        for element in tree.xpath("//reg:report", namespaces=ns_map)
+        if not element.get("checkedBy")
+    )
+
+    Summary.unchecked_performance_checks = tuple(
+        f"{path}:{element.sourceline}"
+        for element in tree.xpath("//reg:performanceCheck", namespaces=ns_map)
+        if not element.get("checkedBy")
+    )

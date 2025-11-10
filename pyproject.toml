@@ -141,6 +141,7 @@ data_file = ".cache/coverage/.coverage"
 omit = [
     "src/msl/equipment/_types.py",
     "**/_version.py",
+    "packages/validate/tests/*.py",
 ]
 
 [tool.coverage.report]

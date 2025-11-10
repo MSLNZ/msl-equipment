@@ -98,7 +98,7 @@ class EQ99(Serial, manufacturer=r"Energetiq", model=r"EQ-99(-MGR)?", flags=re.IG
                 of milliseconds. Valid range is from 1 to 30000 milliseconds.
         """
         if not (1 <= milliseconds <= MAX_TIME):
-            msg = f"Invalid delay of {milliseconds} milliseconds, must be in range [1, {MAX_TIME}]"
+            msg = f"Invalid delay of {milliseconds} milliseconds, must be in the range [1, {MAX_TIME}]"
             raise ValueError(msg)
         self._write_check(f"DELAY {milliseconds}")
 
@@ -176,7 +176,7 @@ class EQ99(Serial, manufacturer=r"Energetiq", model=r"EQ-99(-MGR)?", flags=re.IG
         if not (MIN_EXPOSURE_TIME <= milliseconds <= MAX_TIME):
             msg = (
                 f"Invalid exposure time of {milliseconds} milliseconds, "
-                f"must be in range [{MIN_EXPOSURE_TIME}, {MAX_TIME}]"
+                f"must be in the range [{MIN_EXPOSURE_TIME}, {MAX_TIME}]"
             )
             raise ValueError(msg)
         self._write_check(f"LDLS:EXPOSURE {milliseconds}")
@@ -240,7 +240,7 @@ class EQ99(Serial, manufacturer=r"Energetiq", model=r"EQ-99(-MGR)?", flags=re.IG
             hours: The lamp runtime, in hours, between 0 and 9999.
         """
         if not (0 <= hours <= MAX_RUNTIME):
-            msg = f"Invalid lamp runtime of {hours} hours, must be in range [0, {MAX_RUNTIME}]"
+            msg = f"Invalid lamp runtime of {hours} hours, must be in the range [0, {MAX_RUNTIME}]"
             raise ValueError(msg)
         self._write_check(f"LDLS:LAMPTIME {hours}")
 

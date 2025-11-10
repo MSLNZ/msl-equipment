@@ -107,7 +107,7 @@ def _int32(value: str) -> None:
     """An int in the table data must be in the int32 range."""
     int32 = int(value)
     if int32 < -2147483648 or int32 > 2147483647:  # noqa: PLR2004
-        msg = f"Invalid int value {value}, must be in range [-2147483648, 2147483647]"
+        msg = f"Invalid int value {value}, must be in the range [-2147483648, 2147483647]"
         raise ValueError(msg)
 
 

@@ -92,7 +92,7 @@ class OLxxA(MultiMessageBased, manufacturer=r"Optronic", model=r"(OL)?\s*(16|65|
     @staticmethod
     def _check_lamp_number(lamp: int) -> None:
         if lamp < 0 or lamp > MAX_LAMPS:
-            msg = f"Invalid lamp number {lamp}, must be in range [0, 9]"
+            msg = f"Invalid lamp number {lamp}, must be in the range [0, 9]"
             raise ValueError(msg)
 
     @staticmethod

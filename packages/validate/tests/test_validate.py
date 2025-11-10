@@ -282,7 +282,7 @@ def test_table_int_value_error(info: Info, value: int | float, caplog: pytest.Lo
     if isinstance(value, float):
         msg = f"invalid literal for int() with base 10: '{value}'"
     else:
-        msg = f"Invalid int value {value}, must be in range [-2147483648, 2147483647]"
+        msg = f"Invalid int value {value}, must be in the range [-2147483648, 2147483647]"
 
     r = caplog.records
     assert r[0].message == (f"ERROR register.xml:3:0\n  Invalid table <data> for 'Name': {msg}")

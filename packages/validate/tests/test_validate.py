@@ -1405,11 +1405,12 @@ def test_recursive_with_equation(
 ) -> None:
     assert reset_summary is None
     assert Summary.num_issues == 0
+    assert Summary.num_warnings == 0
 
     register = tmp_path / "register.xml"
     _ = register.write_text("""<?xml version='1.0' encoding='utf-8'?>
 <register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
-    <equipment enteredBy="Joseph Borbely">
+    <equipment enteredBy="Joseph Borbely" checkedBy="Joseph Borbely">
         <id>MSLE.P.001</id>
         <manufacturer>MSL</manufacturer>
         <model>ABC</model>
@@ -1423,7 +1424,7 @@ def test_recursive_with_equation(
         <calibrations>
             <measurand quantity="Humidity" calibrationInterval="5">
                 <component name="">
-                    <report id="Humidity/2023/1024" enteredBy="Joseph Borbely">
+                    <report id="Humidity/2023/1024" enteredBy="Joseph Borbely" checkedBy="Joseph Borbely">
                         <reportIssueDate>2023-08-18</reportIssueDate>
                         <measurementStartDate>2023-08-08</measurementStartDate>
                         <measurementStopDate>2023-08-14</measurementStopDate>
@@ -1432,13 +1433,13 @@ def test_recursive_with_equation(
                         <conditions/>
                         <acceptanceCriteria/>
                         <equation>
-                            <value variables="x">1</value>
+                            <value variables="a">acos(1)</value>
                             <uncertainty variables="">0.1</uncertainty>
                             <unit>m</unit>
                             <ranges/>
                         </equation>
                         <equation>
-                            <value variables="x">1</value>
+                            <value variables="x">1+x</value>
                             <uncertainty variables="">0.1</uncertainty>
                             <unit>m</unit>
                             <ranges/>
@@ -1457,7 +1458,7 @@ def test_recursive_with_equation(
 </register>
 """)
 
-    caplog.set_level("ERROR", "msl.equipment_validate")
+    caplog.set_level("WARNING", "msl.equipment_validate")
 
     er_schema = etree.XMLSchema(file=schema_dir / "equipment-register.xsd")
     c_schema = etree.XMLSchema(file=schema_dir / "connections.xsd")
@@ -1479,9 +1480,16 @@ def test_recursive_with_equation(
         assert len(r) == 1
         assert summary.num_issues == 1
     else:
-        assert r[1].message.startswith(f"ERROR {register}:31:0\n  The equation variables")
-        assert len(r) == 2
+        # using variable="a" will check if "cos" is replace before "acos"
+        assert r[1].message == (
+            f"WARN  {register}:26:0\n"
+            "  The variable 'a' is not used in the equation for 'MSL|ABC|123' [equation=acos(1)]"
+        )
+        assert r[2].message.startswith(f"ERROR {register}:31:0\n  The equation variables")
+
+        assert len(r) == 3
         assert summary.num_issues == 2
+        assert summary.num_warnings == 1
 
 
 @pytest.mark.parametrize("exit_first", [False, True])

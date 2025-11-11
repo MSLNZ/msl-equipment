@@ -41,18 +41,18 @@ namespace = "https://measurement.govt.nz/equipment-register"
 ns_map = {"reg": namespace}
 
 equation_map = {
+    "acos": np.arccos,  # order is important when checking if a variable is specified but not used
+    "asin": np.arcsin,
+    "atan": np.arctan,
+    "cos": np.cos,
+    "sin": np.sin,
+    "tan": np.tan,
     "pi": np.pi,
     "pow": np.power,
     "sqrt": np.sqrt,
-    "sin": np.sin,
-    "asin": np.arcsin,
-    "cos": np.cos,
-    "acos": np.arccos,
-    "tan": np.tan,
-    "atan": np.arctan,
     "exp": np.exp,
-    "log": np.log,
     "log10": np.log10,
+    "log": np.log,
 }
 
 
@@ -479,6 +479,16 @@ def _eval(*, text: str, names: list[str], info: Info, line: int) -> bool:
     """Calls the builtin eval() function."""
     _locals: dict[str, object] = dict.fromkeys(names, 1.0)
     _locals.update(equation_map)
+
+    # Check if there are any unused variables in an equation."""
+    replaced = str(text)
+    for key in equation_map:
+        replaced = replaced.replace(key, "")
+    for variable in names:
+        if variable not in replaced:
+            msg = f"The variable {variable!r} is not used in the equation for {info.debug_name!r} [equation={text}]"
+            log_warn(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour)
+            Summary.num_warnings += 1
 
     try:
         with warnings.catch_warnings():

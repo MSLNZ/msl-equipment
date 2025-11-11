@@ -64,37 +64,43 @@ You may also want to create a command alias, since the executable name `msl-equi
 
 The tool first validates XML files against the schema and once there are no schema-related issues continues to process the additional validation steps (correct SHA-256 checksum values, tables are well formatted, equations contain valid syntax, etc.), therefore, it is possible that the number of issues found increases after the schema-related issues are fixed.
 
-To see the help for the tool run
+To see the help for the tool run the following.
 
 ```console
 msl-equipment-validate --help
 ```
 
-To recursively validate all XML files (that are used by `msl-equipment`) in the current working directory and all sub directories, run the command without arguments
+To recursively validate all XML files (that are used by `msl-equipment`) in the current working directory and all sub directories, run the command without arguments,
 
 ```console
 msl-equipment-validate
 ```
 
-or specify specific files to validate
+or specify specific files to validate,
 
 ```console
 msl-equipment-validate my/equipment/register.xml my/equipment/connections.xml
 ```
 
-or specify a specific folder to validate
+or specify a specific folder to validate.
 
 ```console
 msl-equipment-validate my/equipment
 ```
 
-If the `msl-equipment` package is also installed, you can use its command-line interface to validate documents. *(Note the removal of the hyphen between `equipment` and `validate`.)*
+Including the `--strict` flag will provide the highest level of validation. It will treat warnings as errors.
+
+```console
+msl-equipment-validate --strict
+```
+
+If the `msl-equipment` package is also installed, you can use its command-line interface to validate documents. *(Note the removal of the hyphen between `equipment` and `validate`.)*,
 
 ```console
 msl-equipment validate
 ```
 
-or to display the help
+or to display the help.
 
 ```console
 msl-equipment help validate

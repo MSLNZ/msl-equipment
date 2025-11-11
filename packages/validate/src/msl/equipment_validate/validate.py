@@ -82,6 +82,7 @@ class Summary:
     num_file: int = 0
     num_serialised: int = 0
     num_table: int = 0
+    num_warnings: int = 0
     unchecked_equipment: tuple[str, ...] = ()
     unchecked_reports: tuple[str, ...] = ()
     unchecked_performance_checks: tuple[str, ...] = ()
@@ -725,20 +726,25 @@ def find_unchecked(path: str, tree: ElementTree) -> None:
         path: File path.
         tree: The element tree.
     """
-    Summary.unchecked_equipment = tuple(
+    unchecked_equipment = tuple(
         f"{path}:{element.sourceline}"
         for element in tree.xpath("//reg:equipment", namespaces=ns_map)
         if not element.get("checkedBy")
     )
 
-    Summary.unchecked_reports = tuple(
+    unchecked_reports = tuple(
         f"{path}:{element.sourceline}"
         for element in tree.xpath("//reg:report", namespaces=ns_map)
         if not element.get("checkedBy")
     )
 
-    Summary.unchecked_performance_checks = tuple(
+    unchecked_performance_checks = tuple(
         f"{path}:{element.sourceline}"
         for element in tree.xpath("//reg:performanceCheck", namespaces=ns_map)
         if not element.get("checkedBy")
     )
+
+    Summary.num_warnings += len(unchecked_equipment) + len(unchecked_reports) + len(unchecked_performance_checks)
+    Summary.unchecked_equipment += unchecked_equipment
+    Summary.unchecked_reports += unchecked_reports
+    Summary.unchecked_performance_checks += unchecked_performance_checks

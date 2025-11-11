@@ -260,6 +260,12 @@ def configure_parser() -> ArgumentParser:
         help="Show the list of elements that have not been 'checkedBy'.",
     )
     _ = parser.add_argument(
+        "-S",
+        "--strict",
+        action="store_true",
+        help="Treat warnings as errors.",
+    )
+    _ = parser.add_argument(
         "-n",
         "--no-colour",
         action="store_true",
@@ -383,10 +389,13 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: C901, PLR0912, PLR09
                 for item in tup:
                     log_unchecked(message=item, uri_scheme=args.link, no_colour=args.no_colour, name=name)
 
-    if (
-        summary.unchecked_equipment or summary.unchecked_reports or summary.unchecked_performance_checks
-    ) and not args.show_unchecked:
+    if summary.num_warnings and not args.show_unchecked:
         log_warn("include --show-unchecked to show the list of unchecked elements", no_colour=args.no_colour)
+
+    if args.strict:
+        summary.num_issues += summary.num_warnings
+        if args.skip_checksum:
+            summary.num_issues += summary.num_skipped
 
     if summary.num_issues == 0:
         green, yellow, reset = ("", "", "") if args.no_colour else (GREEN, YELLOW, RESET)

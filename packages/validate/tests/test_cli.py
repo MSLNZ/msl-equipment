@@ -243,10 +243,10 @@ def test_main(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[st
     assert r[26].message == ""
 
     assert r[27].levelname == "WARNING"
-    assert r[27].message == "WARN  1 <equipment> element has not been 'checkedBy' someone"
+    assert r[27].message == "WARN  6 <equipment> elements have not been 'checkedBy' someone"
 
     assert r[28].levelname == "WARNING"
-    assert r[28].message == "WARN  1 <report> element has not been 'checkedBy' someone"
+    assert r[28].message == "WARN  2 <report> elements have not been 'checkedBy' someone"
 
     assert r[29].levelname == "WARNING"
     assert r[29].message == "WARN  include --show-unchecked to show the list of unchecked elements"
@@ -458,6 +458,7 @@ def test_no_paths(reset_summary: None) -> None:
 def test_show_unchecked(reset_summary: None, caplog: pytest.LogCaptureFixture) -> None:
     assert reset_summary is None
     assert Summary.num_issues == 0
+    assert len(Summary.unchecked_equipment) == 0
 
     caplog.set_level(logging.WARNING, "msl")
 
@@ -472,18 +473,70 @@ def test_show_unchecked(reset_summary: None, caplog: pytest.LogCaptureFixture) -
     assert r[2].levelname == "ERROR"
 
     assert r[3].levelname == "WARNING"
-    assert r[3].message == "WARN  1 <equipment> element has not been 'checkedBy' someone"
-    assert r[4].levelname == "WARNING"
+    assert r[3].message == "WARN  6 <equipment> elements have not been 'checkedBy' someone"
+    assert r[4].levelname == "WARNING"  # light/register.xml
     assert r[4].message.startswith("  Unchecked <equipment>")
-    assert r[4].message.endswith("register2.xml:3")
+    assert r[4].message.endswith("register.xml:3")
+    assert r[5].levelname == "WARNING"  # light/register.xml
+    assert r[5].message.startswith("  Unchecked <equipment>")
+    assert r[5].message.endswith("register.xml:22")
+    assert r[6].levelname == "WARNING"  # light/register.xml
+    assert r[6].message.startswith("  Unchecked <equipment>")
+    assert r[6].message.endswith("register.xml:41")
+    assert r[7].levelname == "WARNING"  # light/register.xml
+    assert r[7].message.startswith("  Unchecked <equipment>")
+    assert r[7].message.endswith("register.xml:60")
+    assert r[8].levelname == "WARNING"  # mass/register.xml
+    assert r[8].message.startswith("  Unchecked <equipment>")
+    assert r[8].message.endswith("register.xml:3")
+    assert r[9].levelname == "WARNING"  # mass/register.xml
+    assert r[9].message.startswith("  Unchecked <equipment>")
+    assert r[9].message.endswith("register2.xml:3")
 
-    # register2.xml does contain a <performanceCheck>, on line 18, but it has a checkedBy value
-
-    assert r[5].levelname == "WARNING"
-    assert r[5].message == "WARN  1 <report> element has not been 'checkedBy' someone"
-    assert r[6].levelname == "WARNING"
-    assert r[6].message.startswith("  Unchecked <report>")
-    assert r[6].message.endswith("register2.xml:39")
+    assert r[10].levelname == "WARNING"
+    assert r[10].message == "WARN  2 <report> elements have not been 'checkedBy' someone"
+    assert r[11].levelname == "WARNING"  # mass/register.xml
+    assert r[11].message.startswith("  Unchecked <report>")
+    assert r[11].message.endswith("register.xml:68")
+    assert r[12].levelname == "WARNING"  # mass/register.xml
+    assert r[12].message.startswith("  Unchecked <report>")
+    assert r[12].message.endswith("register2.xml:39")
 
     with pytest.raises(IndexError):
-        _ = r[7]
+        _ = r[13]
+
+
+def test_strict(reset_summary: None) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+    assert Summary.num_warnings == 0
+    assert Summary.num_skipped == 0
+
+    with pytest.raises(SystemExit) as e:
+        main(["--strict", str(root_path)])
+
+    assert e.value.code == 3 + 6 + 2  # 3 issues, 6 <equipment> unchecked, 2 <report> unchecked
+    assert Summary.num_issues == 3
+    assert Summary.num_warnings == 8
+    assert Summary.num_skipped == 0
+    assert len(Summary.unchecked_equipment) == 6
+    assert len(Summary.unchecked_reports) == 2
+    assert len(Summary.unchecked_performance_checks) == 0
+
+
+def test_strict_skipped(reset_summary: None) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+    assert Summary.num_warnings == 0
+    assert Summary.num_skipped == 0
+
+    with pytest.raises(SystemExit) as e:
+        main(["--strict", "--skip-checksum", str(root_path)])
+
+    assert e.value.code == 3 + 6 + 2  # 3 skipped, 6 <equipment> unchecked, 2 <report> unchecked
+    assert Summary.num_issues == 0
+    assert Summary.num_warnings == 8
+    assert Summary.num_skipped == 3
+    assert len(Summary.unchecked_equipment) == 6
+    assert len(Summary.unchecked_reports) == 2
+    assert len(Summary.unchecked_performance_checks) == 0

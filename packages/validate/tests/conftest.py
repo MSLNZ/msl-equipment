@@ -9,6 +9,8 @@ def reset_summary() -> None:
     for item in dir(Summary):
         if item.startswith("num"):
             setattr(Summary, item, 0)
+        elif item.startswith("unchecked"):
+            setattr(Summary, item, ())
 
 
 @pytest.fixture

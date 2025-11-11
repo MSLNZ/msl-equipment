@@ -3919,7 +3919,7 @@
 <span class="w">  </span><span class="nt">&lt;/ranges&gt;</span>
 <span class="nt">&lt;/equation&gt;</span>
 </code></pre></div>
-<p>You can access the <em>unit</em>, <em>degrees of freedom</em> and <em>comment</em> as attributes of <code>equation</code></p>
+<p>You can access the <em>unit</em>, <em>degrees of freedom</em> and <em>comment</em> as attributes of <code>equation</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">unit</span>
 <span class="go">&#39;%rh&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">degree_freedom</span>
@@ -3927,7 +3927,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">comment</span>
 <span class="go">&#39;&#39;</span>
 </code></pre></div>
-<p>To evaluate an equation, call the appropriate attribute with the variable(s) that are required to evaluate the equation with</p>
+<p>To evaluate an equation, call the appropriate attribute with the variable(s) that are required to evaluate the equation.</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">variables</span>
 <span class="go">(&#39;r&#39;, &#39;t&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">variables</span>
@@ -3935,6 +3935,10 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mf">50.3</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mf">20.4</span><span class="p">)</span> <span class="o">==</span> <span class="mf">49.8211466</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">equation</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.355</span>
 </code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If the equation contains a single variable, you do not need to specify the variable name as a keyword argument. For example, if the above equation only depended on <code>t</code> you could evaluate it using <code>equation.value(20.4)</code> or <code>equation.value(t=20.4)</code> since these function calls are equivalent.</p>
+</div>
 <p>A variable can have multiple values. Any sequence of numbers, i.e., a <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list" target="_blank">list</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple" target="_blank">tuple</a>, <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a>, etc., may be used <em>(tip: using <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> will improve performance since a copy of the values is not required)</em>,</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="p">[</span><span class="mf">50.3</span><span class="p">,</span> <span class="mf">52.1</span><span class="p">,</span> <span class="mf">48.7</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="p">[</span><span class="mf">20.4</span><span class="p">,</span> <span class="mf">19.7</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">])</span>
 <span class="go">array([49.8211466, 51.6104604, 48.1625746])</span>
@@ -3944,7 +3948,7 @@
 <span class="go">array([[49.8211466, 51.6104604],</span>
 <span class="go">       [48.1625746, 47.3216314]])</span>
 </code></pre></div>
-<p>and the array broadcasting rules of numpy also apply, i.e., multiple <code>r</code> values and a single <code>t</code> value</p>
+<p>and the array broadcasting rules of numpy also apply, i.e., multiple <code>r</code> values and a single <code>t</code> value.</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="p">(</span><span class="mf">50.3</span><span class="p">,</span> <span class="mf">52.1</span><span class="p">,</span> <span class="mf">48.7</span><span class="p">),</span> <span class="n">t</span><span class="o">=</span><span class="mf">20.4</span><span class="p">)</span>
 <span class="go">array([49.8211466, 51.6595514, 48.1888586])</span>
 </code></pre></div>
@@ -3954,12 +3958,12 @@
 <span class="c">...</span>
 <span class="gr">NameError</span>: <span class="n">name &#39;t&#39; is not defined</span>
 </code></pre></div>
-<p>however, if you specify more variables than are required to evaluate the equation, the additional variables are ignored
+<p>however, if you specify more variables than are required to evaluate the equation, the additional variables are ignored.</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mf">50.3</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mf">20.4</span><span class="p">)</span>
 <span class="go">array(0.355)</span>
-</code></pre></div></p>
+</code></pre></div>
 <p>Notice in the last returned value that the result was printed as <code>array(0.355)</code> even though a single <code>r</code> and <code>t</code> value was specified <em>(although these variables were ignored in this particular example, since the standard uncertainty is a constant, the principle remains the same if they were not ignored)</em>. All evaluated returned types are an instance of a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> even if a single value is specified. These particular returned array instances are referred to as 0-dimensional <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#arrays-scalars" target="_blank">array scalars</a> in numpy terminology.</p>
-<p>When evaluating an equation, the value(s) of the input variables are checked to ensure that the value(s) are within the ranges that the equation is valid for. The XML data above shows that the temperature, <code>t</code>, value must be in the range <code>15</code> to <code>25</code>. If you evaluate the corrected value at <code>t=30</code> a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#ValueError" target="_blank">ValueError</a> is raised</p>
+<p>When evaluating an equation, the value(s) of the input variables are checked to ensure that the value(s) are within the ranges that the equation is valid for. The XML data above shows that the temperature, <code>t</code>, value must be in the range <code>15</code> to <code>25</code>. If you evaluate the corrected value at <code>t=30</code> a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#ValueError" target="_blank">ValueError</a> is raised.</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">ranges</span>
 <span class="go">{&#39;r&#39;: Range(minimum=30, maximum=80), &#39;t&#39;: Range(minimum=15, maximum=25)}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mf">50.3</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
@@ -4006,6 +4010,7 @@
 </code></pre></div>
 
     <div class="doc doc-contents first">
+
 
 
         <p>Represents the <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/latest/#type_equation">equation</a> element in an equipment register.</p>
@@ -4362,37 +4367,37 @@
     </table>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">729</span>
-<span class="normal">730</span>
-<span class="normal">731</span>
-<span class="normal">732</span>
-<span class="normal">733</span>
-<span class="normal">734</span>
-<span class="normal">735</span>
-<span class="normal">736</span>
-<span class="normal">737</span>
-<span class="normal">738</span>
-<span class="normal">739</span>
-<span class="normal">740</span>
-<span class="normal">741</span>
-<span class="normal">742</span>
-<span class="normal">743</span>
-<span class="normal">744</span>
-<span class="normal">745</span>
-<span class="normal">746</span>
-<span class="normal">747</span>
-<span class="normal">748</span>
-<span class="normal">749</span>
-<span class="normal">750</span>
-<span class="normal">751</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">751</span>
 <span class="normal">752</span>
 <span class="normal">753</span>
 <span class="normal">754</span>
 <span class="normal">755</span>
 <span class="normal">756</span>
-<span class="normal">757</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">757</span>
+<span class="normal">758</span>
+<span class="normal">759</span>
+<span class="normal">760</span>
+<span class="normal">761</span>
+<span class="normal">762</span>
+<span class="normal">763</span>
+<span class="normal">764</span>
+<span class="normal">765</span>
+<span class="normal">766</span>
+<span class="normal">767</span>
+<span class="normal">768</span>
+<span class="normal">769</span>
+<span class="normal">770</span>
+<span class="normal">771</span>
+<span class="normal">772</span>
+<span class="normal">773</span>
+<span class="normal">774</span>
+<span class="normal">775</span>
+<span class="normal">776</span>
+<span class="normal">777</span>
+<span class="normal">778</span>
+<span class="normal">779</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Equation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into an [Equation][msl.equipment.schema.Equation] instance.</span>
 
@@ -4476,36 +4481,36 @@
     </table>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">759</span>
-<span class="normal">760</span>
-<span class="normal">761</span>
-<span class="normal">762</span>
-<span class="normal">763</span>
-<span class="normal">764</span>
-<span class="normal">765</span>
-<span class="normal">766</span>
-<span class="normal">767</span>
-<span class="normal">768</span>
-<span class="normal">769</span>
-<span class="normal">770</span>
-<span class="normal">771</span>
-<span class="normal">772</span>
-<span class="normal">773</span>
-<span class="normal">774</span>
-<span class="normal">775</span>
-<span class="normal">776</span>
-<span class="normal">777</span>
-<span class="normal">778</span>
-<span class="normal">779</span>
-<span class="normal">780</span>
-<span class="normal">781</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">781</span>
 <span class="normal">782</span>
 <span class="normal">783</span>
 <span class="normal">784</span>
 <span class="normal">785</span>
-<span class="normal">786</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">786</span>
+<span class="normal">787</span>
+<span class="normal">788</span>
+<span class="normal">789</span>
+<span class="normal">790</span>
+<span class="normal">791</span>
+<span class="normal">792</span>
+<span class="normal">793</span>
+<span class="normal">794</span>
+<span class="normal">795</span>
+<span class="normal">796</span>
+<span class="normal">797</span>
+<span class="normal">798</span>
+<span class="normal">799</span>
+<span class="normal">800</span>
+<span class="normal">801</span>
+<span class="normal">802</span>
+<span class="normal">803</span>
+<span class="normal">804</span>
+<span class="normal">805</span>
+<span class="normal">806</span>
+<span class="normal">807</span>
+<span class="normal">808</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Equation][msl.equipment.schema.Equation] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
@@ -4568,6 +4573,7 @@
 </code></pre></div>
 
     <div class="doc doc-contents first">
+
 
 
         <p>Represents the <code>&lt;value&gt;</code> and <code>&lt;uncertainty&gt;</code> XML elements in an <a class="autorefs autorefs-external" href="https://mslnz.github.io/equipment-register-schema/latest/#type_equation">equation</a>.</p>
@@ -4754,6 +4760,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
     <div class="doc doc-contents first">
             <p class="doc doc-class-bases">
               Bases: <code><a class="autorefs autorefs-external" title="typing.NamedTuple" href="https://docs.python.org/3/library/typing.html#typing.NamedTuple">NamedTuple</a></code></p>
+
 
 
         <p>The numeric range of a variable that an <a class="autorefs autorefs-internal" title="Equation" href="#equation">equation</a> is valid for.</p>
@@ -4946,7 +4953,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
     </table>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">630</span>
 <span class="normal">631</span>

@@ -3718,22 +3718,25 @@
 </div>
 <h2 id="validate-usage">Usage<a class="headerlink" href="#validate-usage" title="Permanent link">¤</a></h2>
 <p>The tool first validates XML files against the schema and once there are no schema-related issues continues to process the additional validation steps (correct SHA-256 checksum values, tables are well formatted, equations contain valid syntax, etc.), therefore, it is possible that the number of issues found increases after the schema-related issues are fixed.</p>
-<p>To see the help for the tool run</p>
+<p>To see the help for the tool run the following.</p>
 <div class="highlight"><pre><span></span><code><span class="go">msl-equipment-validate --help</span>
 </code></pre></div>
-<p>To recursively validate all XML files (that are used by <code>msl-equipment</code>) in the current working directory and all sub directories, run the command without arguments</p>
+<p>To recursively validate all XML files (that are used by <code>msl-equipment</code>) in the current working directory and all sub directories, run the command without arguments,</p>
 <div class="highlight"><pre><span></span><code><span class="go">msl-equipment-validate</span>
 </code></pre></div>
-<p>or specify specific files to validate</p>
+<p>or specify specific files to validate,</p>
 <div class="highlight"><pre><span></span><code><span class="go">msl-equipment-validate my/equipment/register.xml my/equipment/connections.xml</span>
 </code></pre></div>
-<p>or specify a specific folder to validate</p>
+<p>or specify a specific folder to validate.</p>
 <div class="highlight"><pre><span></span><code><span class="go">msl-equipment-validate my/equipment</span>
 </code></pre></div>
-<p>If the <code>msl-equipment</code> package is also installed, you can use its command-line interface to validate documents. <em>(Note the removal of the hyphen between <code>equipment</code> and <code>validate</code>.)</em></p>
+<p>Including the <code>--strict</code> flag will provide the highest level of validation. It will treat warnings as errors.</p>
+<div class="highlight"><pre><span></span><code><span class="go">msl-equipment-validate --strict</span>
+</code></pre></div>
+<p>If the <code>msl-equipment</code> package is also installed, you can use its command-line interface to validate documents. <em>(Note the removal of the hyphen between <code>equipment</code> and <code>validate</code>.)</em>,</p>
 <div class="highlight"><pre><span></span><code><span class="go">msl-equipment validate</span>
 </code></pre></div>
-<p>or to display the help</p>
+<p>or to display the help.</p>
 <div class="highlight"><pre><span></span><code><span class="go">msl-equipment help validate</span>
 </code></pre></div>
 <h2 id="validate-release-notes">Release Notes<a class="headerlink" href="#validate-release-notes" title="Permanent link">¤</a></h2>

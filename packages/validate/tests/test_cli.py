@@ -540,3 +540,59 @@ def test_strict_skipped(reset_summary: None) -> None:
     assert len(Summary.unchecked_equipment) == 6
     assert len(Summary.unchecked_reports) == 2
     assert len(Summary.unchecked_performance_checks) == 0
+
+
+def test_skip_checksum(reset_summary: None) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    with pytest.raises(SystemExit) as e:
+        main(["--skip-checksum", str(root_path)])
+    assert e.value.code == 0
+
+
+def test_skip_checksum_strict_warning(
+    reset_summary: None, caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    caplog.set_level(logging.WARNING, "msl")
+
+    with pytest.raises(SystemExit) as e:
+        main(["--no-colour", "--skip-checksum", "--strict", str(root_path)])
+
+    assert e.value.code == 3 + 6 + 2  # 3 skipped, 6 <equipment> unchecked, 2 <report> unchecked
+    assert Summary.num_issues == 0
+    assert Summary.num_warnings == 8
+    assert Summary.num_skipped == 3
+    assert len(Summary.unchecked_equipment) == 6
+    assert len(Summary.unchecked_reports) == 2
+    assert len(Summary.unchecked_performance_checks) == 0
+
+    r = caplog.records
+
+    path = root_path / "resources" / "mass" / "register.xml"
+    assert r[0].levelname == "WARNING"
+    assert r[0].message == f"WARN  {path}:125:0\n  Skipped validation of <file> for 'XYZ|A|b'"
+
+    path = root_path / "resources" / "mass" / "register2.xml"
+    assert r[1].levelname == "WARNING"
+    assert r[1].message == f"WARN  {path}:31:0\n  Skipped validation of <digitalReport> for 'Measurement|Stds|Lab'"
+
+    assert r[2].levelname == "WARNING"
+    assert r[2].message == f"WARN  {path}:25:0\n  Skipped validation of <file> for 'Measurement|Stds|Lab'"
+
+    assert r[3].levelname == "WARNING"
+    assert r[3].message == "WARN  6 <equipment> elements have not been 'checkedBy' someone"
+    assert r[4].levelname == "WARNING"
+    assert r[4].message == "WARN  2 <report> elements have not been 'checkedBy' someone"
+    assert r[5].levelname == "WARNING"
+    assert r[5].message == "WARN  include --show-unchecked to show the list of unchecked elements"
+
+    with pytest.raises(IndexError):
+        _ = r[6]
+
+    out, err = capsys.readouterr()
+    assert not err
+    assert out == "Found 11 issues [0 schema, 11 additional]\n"

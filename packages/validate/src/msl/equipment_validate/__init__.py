@@ -15,7 +15,7 @@ from lxml import etree
 
 from ._version import __version__
 from .osc8 import register_uri_scheme, schemes, unregister_uri_scheme
-from .validate import GREEN, RED, RESET, YELLOW, log, log_error, log_warn, parse, recursive_validate
+from .validate import GREEN, RED, RESET, YELLOW, log, log_error, parse, recursive_validate
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -112,6 +112,17 @@ def maybe_enable_ansi() -> None:
     # is still being used outside of Windows Terminal (prefer to not have a dependency on colorama)
     # https://bugs.python.org/issue30075
     _ = os.system("")  # noqa: S605, S607
+
+
+def log_warn(
+    fmt: str,
+    *args: object,
+    no_colour: bool,
+) -> None:
+    """Log a WARN message."""
+    msg = fmt % args
+    (colour, reset) = ("", "") if no_colour else (YELLOW, RESET)
+    log.warning("%sWARN%s  %s", colour, reset, msg)
 
 
 def log_unchecked(
@@ -393,9 +404,7 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: C901, PLR0912, PLR09
         log_warn("include --show-unchecked to show the list of unchecked elements", no_colour=args.no_colour)
 
     if args.strict:
-        summary.num_issues += summary.num_warnings
-        if args.skip_checksum:
-            summary.num_issues += summary.num_skipped
+        summary.num_issues += summary.num_warnings + summary.num_skipped
 
     if summary.num_issues == 0:
         green, yellow, reset = ("", "", "") if args.no_colour else (GREEN, YELLOW, RESET)

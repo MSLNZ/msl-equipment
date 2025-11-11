@@ -9,13 +9,13 @@ from GTC import (  # type: ignore[import-untyped]  # pyright: ignore[reportMissi
 )
 from lxml import etree
 from lxml.builder import E
+from msl.equipment_validate import log_warn
 from msl.equipment_validate.validate import (
     Info,
     Summary,
     log_debug,
     log_error,
     log_info,
-    log_warn,
     recursive_validate,
     validate_equation,
     validate_file,

@@ -137,6 +137,7 @@ def log_debug(
 ) -> None:
     """Log a DEBUG message."""
     if not log.isEnabledFor(logging.DEBUG):
+        # log.debug checks isEnabledFor, but avoid (perhaps) unnecessary `fmt % args`
         return
 
     msg = fmt % args
@@ -151,6 +152,7 @@ def log_info(
 ) -> None:
     """Log an INFO message."""
     if not log.isEnabledFor(logging.INFO):
+        # log.debug checks isEnabledFor, but avoid (perhaps) unnecessary `fmt % args`
         return
 
     msg = fmt % args
@@ -159,15 +161,20 @@ def log_info(
 
 
 def log_warn(
-    fmt: str,
-    *args: object,
+    *,
+    file: str | Path,
+    line: int,
     no_colour: bool,
+    uri_scheme: URIScheme,
+    message: str,
+    column: int = 0,
 ) -> None:
     """Log a WARN message."""
     if not log.isEnabledFor(logging.WARNING):
+        # log.warning checks isEnabledFor, but avoid (perhaps) unnecessary call to `maybe_create_osc8_message`
         return
 
-    msg = fmt % args
+    msg = maybe_create_osc8_message(file=file, line=line, uri_scheme=uri_scheme, message=message, column=column)
     (colour, reset) = ("", "") if no_colour else (YELLOW, RESET)
     log.warning("%sWARN%s  %s", colour, reset, msg)
 
@@ -182,19 +189,33 @@ def log_error(
     column: int = 0,
 ) -> None:
     """Log an ERROR message."""
-    # errors are always shown, so no need to use % formatting
-    if uri_scheme is None:
-        msg = f"{file}:{line}:{column}\n  {message}"
-    else:
-        # https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
-        label = f"{file}:{line}:{column}"
-        resolved = Path(file).resolve()
-        uri = f"{uri_scheme}://file/{resolved}:{line}:{column}"
-        msg = f"\033]8;;{uri}\033\\{label}\033]8;;\033\\\n  {message}"
+    if not log.isEnabledFor(logging.ERROR):
+        # log.error checks isEnabledFor, but avoid (perhaps) unnecessary call to `maybe_create_osc8_message`
+        return
 
+    msg = maybe_create_osc8_message(file=file, line=line, uri_scheme=uri_scheme, message=message, column=column)
     (colour, reset) = ("", "") if no_colour else (RED, RESET)
     log.error("%sERROR%s %s", colour, reset, msg)
     Summary.num_issues += 1
+
+
+def maybe_create_osc8_message(
+    *,
+    file: str | Path,
+    line: int,
+    uri_scheme: URIScheme,
+    message: str,
+    column: int = 0,
+) -> str:
+    """Maybe create an OSC8 compatible link with the message."""
+    if uri_scheme is None:
+        return f"{file}:{line}:{column}\n  {message}"
+
+    # https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
+    label = f"{file}:{line}:{column}"
+    resolved = Path(file).resolve()
+    uri = f"{uri_scheme}://file/{resolved}:{line}:{column}"
+    return f"\033]8;;{uri}\033\\{label}\033]8;;\033\\\n  {message}"
 
 
 def parse(*, file: Path, uri_scheme: URIScheme, no_colour: bool) -> ElementTree | None:
@@ -363,8 +384,11 @@ def validate(  # noqa: C901, PLR0911, PLR0912
         for digital_report in equipment.xpath(".//reg:digitalReport", namespaces=ns_map):
             Summary.num_digital_report += 1
             if skip_checksum:
+                msg = f"Skipped validation of <digitalReport> for {name!r}"
+                log_warn(
+                    file=path, line=digital_report.sourceline, message=msg, uri_scheme=uri_scheme, no_colour=no_colour
+                )
                 Summary.num_skipped += 1
-                log_warn("Skipped validation of <digitalReport> for %r", name, no_colour=no_colour)
                 continue
             ok = validate_file(digital_report, roots=roots, info=info, name="digitalReport")
             if (not ok) and exit_first:
@@ -377,8 +401,9 @@ def validate(  # noqa: C901, PLR0911, PLR0912
         for file in equipment.xpath(".//reg:file", namespaces=ns_map):
             Summary.num_file += 1
             if skip_checksum:
+                msg = f"Skipped validation of <file> for {name!r}"
+                log_warn(file=path, line=file.sourceline, message=msg, uri_scheme=uri_scheme, no_colour=no_colour)
                 Summary.num_skipped += 1
-                log_warn("Skipped validation of <file> for %r", name, no_colour=no_colour)
                 continue
             ok = validate_file(file, roots=roots, info=info, name="file")
             if (not ok) and exit_first:

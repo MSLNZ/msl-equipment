@@ -100,21 +100,30 @@ def _bool(value: str) -> None:
     """A bool in the table data must only be allowed to have certain values."""
     if value not in booleans:
         expected = ", ".join(sorted(booleans))
-        msg = f"Invalid bool value {value}, must be one of: {expected}"
+        msg = f"{value!r} is not valid for a `bool` data type, must be one of: {expected}"
         raise ValueError(msg)
 
 
 def _int32(value: str) -> None:
     """An int in the table data must be in the int32 range."""
-    int32 = int(value)
+    try:
+        int32 = int(value)
+    except ValueError:
+        msg = f"{value!r} is not valid for an `int` data type"
+        raise ValueError(msg) from None
+
     if int32 < -2147483648 or int32 > 2147483647:  # noqa: PLR2004
-        msg = f"Invalid int value {value}, must be in the range [-2147483648, 2147483647]"
+        msg = f"{value!r} must be in the range [-2147483648, 2147483647]"
         raise ValueError(msg)
 
 
 def _double(value: str) -> None:
     """A double in the table data must be able to be converted to a float."""
-    _ = float(value)
+    try:
+        _ = float(value)
+    except ValueError:
+        msg = f"{value!r} is not valid for a `double` data type"
+        raise ValueError(msg) from None
 
 
 def _string(value: str) -> None:

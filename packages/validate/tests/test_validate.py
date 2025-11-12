@@ -264,7 +264,7 @@ def test_table_bool_value_error(info: Info, caplog: pytest.LogCaptureFixture) ->
     r = caplog.records
     assert r[0].message == (
         "ERROR register.xml:8:0\n"
-        "  Invalid table <data> for 'Name': Invalid bool value 2, must be one of: 0, 1, FALSE, False, TRUE, True, false, true"  # noqa: E501
+        "  Invalid table <data> for 'Name': '2' is not valid for a `bool` data type, must be one of: 0, 1, FALSE, False, TRUE, True, false, true"  # noqa: E501
     )
     assert len(r) == 1
 
@@ -280,12 +280,12 @@ def test_table_int_value_error(info: Info, value: int | float, caplog: pytest.Lo
     assert not validate_table(table, info=info)
 
     if isinstance(value, float):
-        msg = f"invalid literal for int() with base 10: '{value}'"
+        msg = "is not valid for an `int` data type"
     else:
-        msg = f"Invalid int value {value}, must be in the range [-2147483648, 2147483647]"
+        msg = "must be in the range [-2147483648, 2147483647]"
 
     r = caplog.records
-    assert r[0].message == (f"ERROR register.xml:3:0\n  Invalid table <data> for 'Name': {msg}")
+    assert r[0].message == (f"ERROR register.xml:3:0\n  Invalid table <data> for 'Name': '{value}' {msg}")
     assert len(r) == 1
 
 
@@ -300,7 +300,7 @@ def test_table_double_value_error(info: Info, caplog: pytest.LogCaptureFixture) 
 
     r = caplog.records
     assert r[0].message == (
-        "ERROR register.xml:2:0\n  Invalid table <data> for 'Name': could not convert string to float: 'E+300'"
+        "ERROR register.xml:2:0\n  Invalid table <data> for 'Name': 'E+300' is not valid for a `double` data type"
     )
     assert len(r) == 1
 
@@ -627,7 +627,7 @@ def test_table_invalid_data_exit_first(info: Info, caplog: pytest.LogCaptureFixt
     r = caplog.records
 
     assert r[0].message == (
-        "ERROR register.xml:6:0\n  Invalid table <data> for 'Name': invalid literal for int() with base 10: 'X'"
+        "ERROR register.xml:6:0\n  Invalid table <data> for 'Name': 'X' is not valid for an `int` data type"
     )
 
     assert len(r) == 1

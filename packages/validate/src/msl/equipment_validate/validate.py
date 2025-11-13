@@ -147,10 +147,6 @@ def log_debug(
     no_colour: bool,
 ) -> None:
     """Log a DEBUG message."""
-    if not log.isEnabledFor(logging.DEBUG):
-        # log.debug checks isEnabledFor, but avoid (perhaps) unnecessary `fmt % args`
-        return
-
     msg = fmt % args
     (colour, reset) = ("", "") if no_colour else (CYAN, RESET)
     log.debug("%sDEBUG%s %s", colour, reset, msg)
@@ -162,10 +158,6 @@ def log_info(
     no_colour: bool,
 ) -> None:
     """Log an INFO message."""
-    if not log.isEnabledFor(logging.INFO):
-        # log.debug checks isEnabledFor, but avoid (perhaps) unnecessary `fmt % args`
-        return
-
     msg = fmt % args
     (colour, reset) = ("", "") if no_colour else (BLUE, RESET)
     log.info("%sINFO%s  %s", colour, reset, msg)
@@ -181,10 +173,6 @@ def log_warn(
     column: int = 0,
 ) -> None:
     """Log a WARN message."""
-    if not log.isEnabledFor(logging.WARNING):
-        # log.warning checks isEnabledFor, but avoid (perhaps) unnecessary call to `maybe_create_osc8_message`
-        return
-
     msg = maybe_create_osc8_message(file=file, line=line, uri_scheme=uri_scheme, message=message, column=column)
     (colour, reset) = ("", "") if no_colour else (YELLOW, RESET)
     log.warning("%sWARN%s  %s", colour, reset, msg)
@@ -200,10 +188,6 @@ def log_error(
     column: int = 0,
 ) -> None:
     """Log an ERROR message."""
-    if not log.isEnabledFor(logging.ERROR):
-        # log.error checks isEnabledFor, but avoid (perhaps) unnecessary call to `maybe_create_osc8_message`
-        return
-
     msg = maybe_create_osc8_message(file=file, line=line, uri_scheme=uri_scheme, message=message, column=column)
     (colour, reset) = ("", "") if no_colour else (RED, RESET)
     log.error("%sERROR%s %s", colour, reset, msg)

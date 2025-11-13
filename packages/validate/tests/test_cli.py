@@ -146,7 +146,9 @@ def test_configure_parser() -> None:
     assert args.no_colour is True
 
 
-def test_main(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str]) -> None:  # noqa: PLR0915
+def test_main(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str], reset_summary: None) -> None:  # noqa: PLR0915
+    assert reset_summary is None
+    assert Summary.num_issues == 0
     caplog.set_level(logging.INFO, "msl")
 
     with pytest.raises(SystemExit) as e:
@@ -256,6 +258,112 @@ def test_main(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[st
 
     with pytest.raises(IndexError):
         _ = r[31]
+
+
+def test_main_quiet(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str], reset_summary: None) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    caplog.set_level(logging.DEBUG, "msl")
+
+    with pytest.raises(SystemExit) as e:
+        main([str(root_path), "--no-colour", "--quiet"])
+
+    assert e.value.code == 3  # 3 issues
+
+    out, err = capsys.readouterr()
+    assert not err
+    assert "Found 3 issues" in out
+
+    r = caplog.records
+
+    assert r[0].levelname == "ERROR"
+    lines = r[0].message.splitlines()
+    assert lines[0].endswith("register.xml:127:0")
+    assert lines[1].startswith("  The SHA-256 checksum")
+    assert lines[2] == "  expected: 7a91267cfb529388a99762b891ee4b7a12463e83b5d55809f76a0c8e76c71886"
+    assert lines[3] == "  <sha256>: 70d79d2eb24dc2515faaf4ab7fa3540e5a73ca6080181908a0ea87a309293609"
+
+    assert r[1].levelname == "ERROR"
+    lines = r[1].message.splitlines()
+    assert lines[0].endswith("register2.xml:32:0")
+    assert lines[1].startswith("  Cannot find")
+
+    assert r[2].levelname == "ERROR"
+    lines = r[2].message.splitlines()
+    assert lines[0].endswith("register2.xml:26:0")
+    assert lines[1].startswith("  Cannot find")
+
+    assert r[3].levelname == "WARNING"
+    assert r[3].message == "WARN  6 <equipment> elements have not been 'checkedBy' someone"
+
+    assert r[4].levelname == "WARNING"
+    assert r[4].message == "WARN  2 <report> elements have not been 'checkedBy' someone"
+
+    assert r[5].levelname == "WARNING"
+    assert r[5].message == "WARN  include --show-unchecked to show the list of unchecked elements"
+
+    with pytest.raises(IndexError):
+        _ = r[6]
+
+
+def test_main_quiet_quiet(
+    caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str], reset_summary: None
+) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    caplog.set_level(logging.DEBUG, "msl")
+
+    with pytest.raises(SystemExit) as e:
+        main([str(root_path), "--no-colour", "--quiet", "--quiet"])
+
+    assert e.value.code == 3  # 3 issues
+
+    out, err = capsys.readouterr()
+    assert not err
+    assert "Found 3 issues" in out
+
+    r = caplog.records
+
+    assert r[0].levelname == "ERROR"
+    lines = r[0].message.splitlines()
+    assert lines[0].endswith("register.xml:127:0")
+    assert lines[1].startswith("  The SHA-256 checksum")
+    assert lines[2] == "  expected: 7a91267cfb529388a99762b891ee4b7a12463e83b5d55809f76a0c8e76c71886"
+    assert lines[3] == "  <sha256>: 70d79d2eb24dc2515faaf4ab7fa3540e5a73ca6080181908a0ea87a309293609"
+
+    assert r[1].levelname == "ERROR"
+    lines = r[1].message.splitlines()
+    assert lines[0].endswith("register2.xml:32:0")
+    assert lines[1].startswith("  Cannot find")
+
+    assert r[2].levelname == "ERROR"
+    lines = r[2].message.splitlines()
+    assert lines[0].endswith("register2.xml:26:0")
+    assert lines[1].startswith("  Cannot find")
+
+    with pytest.raises(IndexError):
+        _ = r[3]
+
+
+def test_main_quiet_quiet_quiet(
+    caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str], reset_summary: None
+) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    caplog.set_level(logging.DEBUG, "msl")
+
+    with pytest.raises(SystemExit) as e:
+        main([str(root_path), "--no-colour", "-qqq"])
+
+    assert e.value.code == 3  # 3 issues
+
+    out, err = capsys.readouterr()
+    assert not err
+    assert "Found 3 issues" in out
+    assert len(caplog.records) == 0
 
 
 def test_cli_add_winreg_keys(caplog: pytest.LogCaptureFixture) -> None:

@@ -420,6 +420,17 @@ def validate(  # noqa: C901, PLR0911, PLR0912
             ok = validate_cvd(coefficients, info=info)
             if (not ok) and exit_first:
                 return ids
+        ok = validate_checked_by_checked_date(equipment, info)
+        if (not ok) and exit_first:
+            return ids
+        for report in equipment.xpath(".//reg:report", namespaces=ns_map):
+            ok = validate_checked_by_checked_date(report, info)
+            if (not ok) and exit_first:
+                return ids
+        for pc in equipment.xpath(".//reg:performanceCheck", namespaces=ns_map):
+            ok = validate_checked_by_checked_date(pc, info)
+            if (not ok) and exit_first:
+                return ids
     return ids
 
 
@@ -780,3 +791,42 @@ def find_unchecked(path: str, tree: ElementTree) -> None:
     Summary.unchecked_equipment += unchecked_equipment
     Summary.unchecked_reports += unchecked_reports
     Summary.unchecked_performance_checks += unchecked_performance_checks
+
+
+def validate_checked_by_checked_date(element: Element, info: Info) -> bool:
+    """Validates checkedBy and checkedDate.
+
+    If checkedBy is specified then checkedDate must be also specified, and vice versa.
+
+    Returns whether the element is valid.
+    """
+    line = element.sourceline or 0
+    checked_by = element.get("checkedBy")
+    checked_date = element.get("checkedDate")
+
+    is_valid = True
+    if checked_by and not checked_date:
+        log_error(
+            file=info.url,
+            line=line,
+            message=f"checkedBy={checked_by!r} specified without a checkedDate",
+            uri_scheme=info.uri_scheme,
+            no_colour=info.no_colour,
+        )
+        is_valid = False
+        if info.exit_first:
+            return False
+
+    if checked_date and not checked_by:
+        log_error(
+            file=info.url,
+            line=line,
+            message=f"checkedDate={checked_date!r} specified without a checkedBy",
+            uri_scheme=info.uri_scheme,
+            no_colour=info.no_colour,
+        )
+        is_valid = False
+        if info.exit_first:
+            return False
+
+    return is_valid

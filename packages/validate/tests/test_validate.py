@@ -17,6 +17,7 @@ from msl.equipment_validate.validate import (
     log_error,
     log_info,
     recursive_validate,
+    validate_checked_by_checked_date,
     validate_equation,
     validate_file,
     validate_serialised,
@@ -1486,9 +1487,11 @@ def test_recursive_with_equation(
             "  The variable 'a' is not used in the equation for 'MSL|ABC|123' [equation=acos(1)]"
         )
         assert r[2].message.startswith(f"ERROR {register}:31:0\n  The equation variables")
+        assert r[3].message == f"ERROR {register}:3:0\n  checkedBy='Joseph Borbely' specified without a checkedDate"
+        assert r[4].message == f"ERROR {register}:17:0\n  checkedBy='Joseph Borbely' specified without a checkedDate"
 
-        assert len(r) == 3
-        assert summary.num_issues == 2
+        assert len(r) == 5
+        assert summary.num_issues == 4
         assert summary.num_warnings == 1
 
 
@@ -1811,5 +1814,314 @@ def test_recursive_with_connections(
         assert summary.num_issues == 1
     else:
         assert r[1].message.startswith(f"ERROR {register}:4:0\n  Element 'apple': This element is not expected. ")
+        assert len(r) == 2
+        assert summary.num_issues == 2
+
+
+def test_checked_by_checked_date_both_missing(info: Info, caplog: pytest.LogCaptureFixture) -> None:
+    element = '<whatever enteredBy="Me"/>'
+    assert validate_checked_by_checked_date(etree.XML(element), info=info)
+    assert len(caplog.records) == 0
+
+
+def test_checked_by_checked_date_date_missing(info: Info, caplog: pytest.LogCaptureFixture) -> None:
+    element = '<whatever enteredBy="Me" checkedBy="Joe"/>'
+    assert not validate_checked_by_checked_date(etree.XML(element), info=info)
+
+    r = caplog.records
+    assert r[0].message == ("ERROR register.xml:1:0\n  checkedBy='Joe' specified without a checkedDate")
+    assert len(r) == 1
+
+
+def test_checked_by_checked_date_by_missing(info: Info, caplog: pytest.LogCaptureFixture) -> None:
+    element = '<whatever checkedDate="2025-11-13"/>'
+    assert not validate_checked_by_checked_date(etree.XML(element), info=info)
+
+    r = caplog.records
+    assert r[0].message == ("ERROR register.xml:1:0\n  checkedDate='2025-11-13' specified without a checkedBy")
+    assert len(r) == 1
+
+
+@pytest.mark.parametrize("exit_first", [False, True])
+def test_recursive_with_checked_by_checked_date_performance_check(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    reset_summary: None,
+    exit_first: bool,  # noqa: FBT001
+) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    register = tmp_path / "register.xml"
+    _ = register.write_text("""<?xml version='1.0' encoding='utf-8'?>
+<register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
+    <equipment enteredBy="Joseph Borbely">
+        <id>MSLE.P.001</id>
+        <manufacturer>MSL</manufacturer>
+        <model>ABC</model>
+        <serial>123</serial>
+        <description>Something</description>
+        <specifications/>
+        <location>CMM Lab</location>
+        <status>Active</status>
+        <loggable/>
+        <traceable>false</traceable>
+        <calibrations>
+            <measurand quantity="Humidity" calibrationInterval="5">
+                <component name="">
+                    <performanceCheck completedDate="2023-04-02" enteredBy="Joseph Borbely" checkedBy="Joseph Borbely">
+                        <competency>
+                            <worker>Joseph Borbely</worker>
+                            <checker>Joseph Borbely</checker>
+                            <technicalProcedure>MSLT.E.048.005</technicalProcedure>
+                        </competency>
+                        <conditions/>
+                        <equation>
+                            <value variables="">1</value>
+                            <uncertainty variables="">1</uncertainty>
+                            <unit>x</unit>
+                            <ranges/>
+                        </equation>
+                    </performanceCheck>
+                    <performanceCheck completedDate="2023-04-02" enteredBy="Joseph Borbely" checkedDate="2023-04-03">
+                        <competency>
+                            <worker>Joseph Borbely</worker>
+                            <checker>Joseph Borbely</checker>
+                            <technicalProcedure>MSLT.E.048.005</technicalProcedure>
+                        </competency>
+                        <conditions/>
+                        <equation>
+                            <value variables="">1</value>
+                            <uncertainty variables="">1</uncertainty>
+                            <unit>x</unit>
+                            <ranges/>
+                        </equation>
+                    </performanceCheck>
+                </component>
+            </measurand>
+        </calibrations>
+        <maintenance/>
+        <alterations/>
+        <firmware/>
+        <specifiedRequirements/>
+        <referenceMaterials/>
+        <qualityManual/>
+    </equipment>
+</register>
+""")
+
+    caplog.set_level("ERROR", "msl.equipment_validate")
+
+    er_schema = etree.XMLSchema(file=schema_dir / "equipment-register.xsd")
+    c_schema = etree.XMLSchema(file=schema_dir / "connections.xsd")
+
+    summary = recursive_validate(
+        files=[register],
+        er_schema=er_schema,
+        c_schema=c_schema,
+        roots=[],
+        exit_first=exit_first,
+        uri_scheme=None,
+        skip_checksum=False,
+        no_colour=True,
+    )
+
+    r = caplog.records
+    assert r[0].message == f"ERROR {register}:17:0\n  checkedBy='Joseph Borbely' specified without a checkedDate"
+    if exit_first:
+        assert len(r) == 1
+        assert summary.num_issues == 1
+    else:
+        assert r[1].message == f"ERROR {register}:31:0\n  checkedDate='2023-04-03' specified without a checkedBy"
+        assert len(r) == 2
+        assert summary.num_issues == 2
+
+
+@pytest.mark.parametrize("exit_first", [False, True])
+def test_recursive_with_checked_by_checked_date_report(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    reset_summary: None,
+    exit_first: bool,  # noqa: FBT001
+) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    register = tmp_path / "register.xml"
+    _ = register.write_text("""<?xml version='1.0' encoding='utf-8'?>
+<register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
+    <equipment enteredBy="Joseph Borbely">
+        <id>MSLE.P.001</id>
+        <manufacturer>MSL</manufacturer>
+        <model>ABC</model>
+        <serial>123</serial>
+        <description>Something</description>
+        <specifications/>
+        <location>CMM Lab</location>
+        <status>Active</status>
+        <loggable/>
+        <traceable>false</traceable>
+        <calibrations>
+            <measurand quantity="Humidity" calibrationInterval="5">
+                <component name="">
+                    <report id="Humidity/2023/1024" enteredBy="Joseph Borbely" checkedBy="Joseph Borbely">
+                        <reportIssueDate>2023-08-18</reportIssueDate>
+                        <measurementStartDate>2023-08-08</measurementStartDate>
+                        <measurementStopDate>2023-08-14</measurementStopDate>
+                        <issuingLaboratory>MSL</issuingLaboratory>
+                        <technicalProcedure>MSLT.H.062</technicalProcedure>
+                        <conditions/>
+                        <acceptanceCriteria/>
+                        <cvdCoefficients>
+                            <R0>100.0189</R0>
+                            <A>3.913e-3</A>
+                            <B>-6.056e-7</B>
+                            <C>1.372e-12</C>
+                            <D>0</D>
+                            <uncertainty variables="">0.0056</uncertainty>
+                            <range>
+                                <minimum>-10</minimum>
+                                <maximum>70</maximum>
+                            </range>
+                        </cvdCoefficients>
+                    </report>
+                    <report id="Humidity/2023/1024" enteredBy="Joseph Borbely" checkedDate="2023-08-18">
+                        <reportIssueDate>2023-08-18</reportIssueDate>
+                        <measurementStartDate>2023-08-08</measurementStartDate>
+                        <measurementStopDate>2023-08-14</measurementStopDate>
+                        <issuingLaboratory>MSL</issuingLaboratory>
+                        <technicalProcedure>MSLT.H.062</technicalProcedure>
+                        <conditions/>
+                        <acceptanceCriteria/>
+                        <cvdCoefficients>
+                            <R0>100.0189</R0>
+                            <A>3.913e-3</A>
+                            <B>-6.056e-7</B>
+                            <C>1.372e-12</C>
+                            <D>0</D>
+                            <uncertainty variables="">0.0056</uncertainty>
+                            <range>
+                                <minimum>-10</minimum>
+                                <maximum>70</maximum>
+                            </range>
+                        </cvdCoefficients>
+                    </report>
+                </component>
+            </measurand>
+        </calibrations>
+        <maintenance/>
+        <alterations/>
+        <firmware/>
+        <specifiedRequirements/>
+        <referenceMaterials/>
+        <qualityManual/>
+    </equipment>
+</register>
+""")
+
+    caplog.set_level("ERROR", "msl.equipment_validate")
+
+    er_schema = etree.XMLSchema(file=schema_dir / "equipment-register.xsd")
+    c_schema = etree.XMLSchema(file=schema_dir / "connections.xsd")
+
+    summary = recursive_validate(
+        files=[register],
+        er_schema=er_schema,
+        c_schema=c_schema,
+        roots=[],
+        exit_first=exit_first,
+        uri_scheme=None,
+        skip_checksum=False,
+        no_colour=True,
+    )
+
+    r = caplog.records
+    assert r[0].message == f"ERROR {register}:17:0\n  checkedBy='Joseph Borbely' specified without a checkedDate"
+    if exit_first:
+        assert len(r) == 1
+        assert summary.num_issues == 1
+    else:
+        assert r[1].message == f"ERROR {register}:38:0\n  checkedDate='2023-08-18' specified without a checkedBy"
+        assert len(r) == 2
+        assert summary.num_issues == 2
+
+
+@pytest.mark.parametrize("exit_first", [False, True])
+def test_recursive_with_checked_by_checked_date_equipment(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    reset_summary: None,
+    exit_first: bool,  # noqa: FBT001
+) -> None:
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    register = tmp_path / "register.xml"
+    _ = register.write_text("""<?xml version='1.0' encoding='utf-8'?>
+<register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
+    <equipment enteredBy="Joseph Borbely" checkedDate="2025-04-19">
+        <id>MSLE.P.002</id>
+        <manufacturer>MSL</manufacturer>
+        <model>ABC</model>
+        <serial>123</serial>
+        <description>Something</description>
+        <specifications/>
+        <location>CMM Lab</location>
+        <status>Active</status>
+        <loggable/>
+        <traceable>false</traceable>
+        <calibrations/>
+        <maintenance/>
+        <alterations/>
+        <firmware/>
+        <specifiedRequirements/>
+        <referenceMaterials/>
+        <qualityManual/>
+    </equipment>
+    <equipment enteredBy="Joseph Borbely" checkedBy="Joseph Borbely">
+        <id>MSLE.P.001</id>
+        <manufacturer>MSL</manufacturer>
+        <model>ABC</model>
+        <serial>123</serial>
+        <description>Something</description>
+        <specifications/>
+        <location>CMM Lab</location>
+        <status>Active</status>
+        <loggable/>
+        <traceable>false</traceable>
+        <calibrations/>
+        <maintenance/>
+        <alterations/>
+        <firmware/>
+        <specifiedRequirements/>
+        <referenceMaterials/>
+        <qualityManual/>
+    </equipment>
+</register>
+""")
+
+    caplog.set_level("ERROR", "msl.equipment_validate")
+
+    er_schema = etree.XMLSchema(file=schema_dir / "equipment-register.xsd")
+    c_schema = etree.XMLSchema(file=schema_dir / "connections.xsd")
+
+    summary = recursive_validate(
+        files=[register],
+        er_schema=er_schema,
+        c_schema=c_schema,
+        roots=[],
+        exit_first=exit_first,
+        uri_scheme=None,
+        skip_checksum=False,
+        no_colour=True,
+    )
+
+    r = caplog.records
+    assert r[0].message == f"ERROR {register}:3:0\n  checkedDate='2025-04-19' specified without a checkedBy"
+    if exit_first:
+        assert len(r) == 1
+        assert summary.num_issues == 1
+    else:
+        assert r[1].message == f"ERROR {register}:22:0\n  checkedBy='Joseph Borbely' specified without a checkedDate"
         assert len(r) == 2
         assert summary.num_issues == 2

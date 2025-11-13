@@ -213,46 +213,49 @@ def test_main(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[st
     assert r[16].message == "=================================== Summary ==================================="
 
     assert r[17].levelname == "INFO"
-    assert r[17].message == "<connection> 7"
+    assert r[17].message == "Checked 7 <equipment> in 3 register files"
 
     assert r[18].levelname == "INFO"
-    assert r[18].message == "<cvdCoefficients> 1"
+    assert r[18].message == "<connection> 7"
 
     assert r[19].levelname == "INFO"
-    assert r[19].message == "<digitalReport> 1"
+    assert r[19].message == "<cvdCoefficients> 1"
 
     assert r[20].levelname == "INFO"
-    assert r[20].message == "<equation> 2"
+    assert r[20].message == "<digitalReport> 1"
 
     assert r[21].levelname == "INFO"
-    assert r[21].message == "<equipment> 7"
+    assert r[21].message == "<equation> 2"
 
     assert r[22].levelname == "INFO"
     assert r[22].message == "<file> 2"
 
     assert r[23].levelname == "INFO"
-    assert r[23].message == "<register> 3"
+    assert r[23].message == "<performanceCheck> 1"
 
     assert r[24].levelname == "INFO"
-    assert r[24].message == "<serialised> 0"
+    assert r[24].message == "<report> 5"
 
     assert r[25].levelname == "INFO"
-    assert r[25].message == "<table> 1"
+    assert r[25].message == "<serialised> 0"
 
     assert r[26].levelname == "INFO"
-    assert r[26].message == ""
+    assert r[26].message == "<table> 1"
 
-    assert r[27].levelname == "WARNING"
-    assert r[27].message == "WARN  6 <equipment> elements have not been 'checkedBy' someone"
+    assert r[27].levelname == "INFO"
+    assert r[27].message == ""
 
     assert r[28].levelname == "WARNING"
-    assert r[28].message == "WARN  2 <report> elements have not been 'checkedBy' someone"
+    assert r[28].message == "WARN  6 <equipment> elements have not been 'checkedBy' someone"
 
     assert r[29].levelname == "WARNING"
-    assert r[29].message == "WARN  include --show-unchecked to show the list of unchecked elements"
+    assert r[29].message == "WARN  2 <report> elements have not been 'checkedBy' someone"
+
+    assert r[30].levelname == "WARNING"
+    assert r[30].message == "WARN  include --show-unchecked to show the list of unchecked elements"
 
     with pytest.raises(IndexError):
-        _ = r[30]
+        _ = r[31]
 
 
 def test_cli_add_winreg_keys(caplog: pytest.LogCaptureFixture) -> None:

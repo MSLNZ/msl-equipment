@@ -372,13 +372,19 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: C901, PLR0912, PLR09
 
     log.info("")
     log.info("%s Summary %s", "=" * 35, "=" * 35)
+    log.info(
+        "Checked %d <equipment> in %d register file%s",
+        summary.num_equipment,
+        summary.num_register,
+        "" if summary.num_register == 1 else "s",
+    )
     log.info("<connection> %d", summary.num_connection)
     log.info("<cvdCoefficients> %d", summary.num_cvd)
     log.info("<digitalReport> %d", summary.num_digital_report)
     log.info("<equation> %d", summary.num_equation)
-    log.info("<equipment> %d", summary.num_equipment)
     log.info("<file> %d", summary.num_file)
-    log.info("<register> %d", summary.num_register)
+    log.info("<performanceCheck> %d", summary.num_performance_check)
+    log.info("<report> %d", summary.num_report)
     log.info("<serialised> %d", summary.num_serialised)
     log.info("<table> %d", summary.num_table)
     log.info("")

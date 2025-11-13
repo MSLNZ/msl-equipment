@@ -70,22 +70,24 @@ class Info:
 class Summary:
     """Keeps tracks of the number of files validated, issues, and elements."""
 
-    num_issues: int = 0  # the total number of issues
-    num_schema_issues: int = 0  # the number of issues that the schema catches
-    num_skipped: int = 0
-    num_register: int = 0
-    num_equipment: int = 0
     num_connection: int = 0
     num_cvd: int = 0
     num_digital_report: int = 0
     num_equation: int = 0
+    num_equipment: int = 0
     num_file: int = 0
+    num_issues: int = 0  # the total number of issues
+    num_performance_check: int = 0
+    num_register: int = 0
+    num_report: int = 0
+    num_schema_issues: int = 0  # the number of issues that the schema catches
     num_serialised: int = 0
+    num_skipped: int = 0
     num_table: int = 0
     num_warnings: int = 0
     unchecked_equipment: tuple[str, ...] = ()
-    unchecked_reports: tuple[str, ...] = ()
     unchecked_performance_checks: tuple[str, ...] = ()
+    unchecked_reports: tuple[str, ...] = ()
 
     def __init__(self, *, exit_first: bool) -> None:
         """Keeps tracks of the number of files validated, errors, and elements that were skipped."""
@@ -254,6 +256,8 @@ def schema_validate(
         Summary.num_connection += len(root)
     else:
         Summary.num_equipment += len(root)
+        Summary.num_report += int(tree.xpath("count(//reg:report)", namespaces=ns_map))
+        Summary.num_performance_check += int(tree.xpath("count(//reg:performanceCheck)", namespaces=ns_map))
 
     if schema.validate(tree):
         return True

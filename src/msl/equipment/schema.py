@@ -139,6 +139,19 @@ def _tuple_summary(obj: Report | PerformanceCheck) -> str:
     return "" if not info else f" ({', '.join(info)})"
 
 
+def _scheme(url: str) -> str:
+    """Get the scheme for a URL."""
+    index = url.find(":")
+    if index == -1:
+        return ""
+
+    scheme = url[:index]
+    if index == 1 and len(url) > 2 and url[2] in ("/", "\\"):  # noqa: PLR2004
+        return ""  # assume Windows drive letter
+
+    return scheme
+
+
 class Status(Enum):
     """Represents the [status][type_statusEnumerationString] enumeration in an equipment register.
 
@@ -876,8 +889,10 @@ class File:
     """The location of the file.
 
     The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738) `<scheme>:<scheme-specific-part>`.
-    If `<scheme>` is not specified, it shall be treated as the `file` scheme
-    (see also [scheme][msl.equipment.schema.File.scheme]).
+    If `<scheme>` is not specified, it shall be treated as the `file` scheme.
+
+    !!! note "See Also"
+        [scheme][msl.equipment.schema.File.scheme]
     """
 
     sha256: str
@@ -915,15 +930,7 @@ class File:
         If a `<scheme>` is not specified, an empty string is returned (which shall be treated
         as the `file` scheme). Drive letters on Windows are not considered as a _scheme_.
         """  # noqa: D205
-        index = self.url.find(":")
-        if index == -1:
-            return ""
-
-        scheme = self.url[:index]
-        if index == 1 and len(self.url) > 2 and self.url[2] in ("/", "\\"):  # noqa: PLR2004
-            return ""  # assume Windows drive letter
-
-        return scheme
+        return _scheme(self.url)
 
     def to_xml(self) -> Element[str]:
         """Convert the [File][msl.equipment.schema.File] class into an XML element.
@@ -1073,8 +1080,14 @@ class DigitalReport:
     """
 
     url: str
-    """The location of the digital report. The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738)
-    `scheme:scheme-specific-part`. If `scheme:` is not specified, it is assumed to be `file:`."""
+    """The location of the digital report.
+
+    The syntax follows [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738) `<scheme>:<scheme-specific-part>`.
+    If `<scheme>` is not specified, it shall be treated as the `file` scheme.
+
+    !!! note "See Also"
+        [scheme][msl.equipment.schema.DigitalReport.scheme]
+    """
 
     format: DigitalFormat
     """The format of the digital calibration report."""
@@ -1110,6 +1123,16 @@ class DigitalReport:
             attributes=element[0].attrib,
             comment=element.attrib.get("comment", ""),
         )
+
+    @property
+    def scheme(self) -> str:
+        """Returns the _scheme_ component that is specified in the [url][msl.equipment.schema.DigitalReport.url]
+        (see [RFC 1738](https://www.rfc-editor.org/rfc/rfc1738) for more details).
+
+        If a `<scheme>` is not specified, an empty string is returned (which shall be treated
+        as the `file` scheme). Drive letters on Windows are not considered as a _scheme_.
+        """  # noqa: D205
+        return _scheme(self.url)
 
     def to_xml(self) -> Element[str]:
         """Convert the [DigitalReport][msl.equipment.schema.DigitalReport] class into an XML element.

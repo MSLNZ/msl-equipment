@@ -622,6 +622,27 @@ def test_digital_report() -> None:
     assert tostring(dr.to_xml()) == text
 
 
+@pytest.mark.parametrize(
+    ("url", "scheme"),
+    [
+        ("filename.xls", ""),
+        (":filename.xls", ""),
+        (r"C:\filename.xls", ""),
+        ("C:", "C"),  # `:` is not followed by `/` or `\`
+        ("C:/filename.xls", ""),
+        ("C:filename.xls", "C"),
+        (r"ab:\filename.xls", "ab"),
+        ("file://host/path", "file"),
+        ("https://www.measurement.govt.nz/", "https"),
+    ],
+)
+def test_digital_report_scheme(url: str, scheme: str) -> None:
+    text = f'<digitalReport format="MSL PDF/A-3" id="ID"><url>{url}</url><sha256>b</sha256></digitalReport>'
+    dr = DigitalReport.from_xml(XML(text))
+    assert dr.url == url
+    assert dr.scheme == scheme
+
+
 def test_adjustment() -> None:
     text = b'<adjustment date="2024-10-16">Did something</adjustment>'
     a = Adjustment.from_xml(XML(text))

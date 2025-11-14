@@ -10,7 +10,8 @@ from __future__ import annotations
 import re
 import sys
 from pathlib import Path
-from subprocess import Popen
+from subprocess import Popen, run
+from tempfile import TemporaryDirectory
 from typing import Callable
 
 schemes = ("vs", "vscode", "pycharm", "n++")
@@ -123,10 +124,12 @@ def pycharm_uri_scheme_handler(file: str, line: int, column: int) -> None:
                     return
 
 
-def vs_uri_scheme_handler(file: str, line: int, column: int) -> None:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG001
+def vs_uri_scheme_handler_devenv(file: str, line: int, column: int) -> None:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG001
     """Handles [OSC-8 Hyperlinks] in the Windows Terminal to open a file in Visual Studio.
 
-    The Visual Studio URI Scheme must first be registered using `register_uri_scheme(name="VS")`
+    The Visual Studio URI Scheme must first be registered using `register_uri_scheme(name="VS")`.
+
+    Uses the Visual Studio devenv.exe tool to open the file.
 
     [OSC-8 Hyperlinks]: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
     """
@@ -137,10 +140,6 @@ def vs_uri_scheme_handler(file: str, line: int, column: int) -> None:  # pyright
     # VS is already running, the devenv.exe tool ignores the /Command option. The file is still
     # opened but remains at line 1. This is a known bug that Microsoft hasn't fixed for many years
     # https://learn.microsoft.com/en-us/answers/questions/919213/vs2019-open-file-and-goto-line
-
-    # There is another way to open a file at the specified line by using the "VisualStudio.DTE" COM object
-    # https://stackoverflow.com/questions/350323/open-a-file-in-visual-studio-at-a-specific-line-number
-
     for pf in ["C:\\Program Files", "C:\\Program Files (x86)"]:  # pragma: no cover
         for path in Path(pf).glob("Microsoft Visual Studio\\*\\Community\\Common7\\IDE"):
             exe = path / "devenv.exe"
@@ -151,6 +150,37 @@ def vs_uri_scheme_handler(file: str, line: int, column: int) -> None:  # pyright
                 # `column` is currently not supported by the GoTo option
                 _ = Popen(cmd)  # noqa: S603
                 return
+
+
+def vs_uri_scheme_handler_dte(file: str, line: int, column: int) -> None:
+    """Handles [OSC-8 Hyperlinks] in the Windows Terminal to open a file in Visual Studio.
+
+    The Visual Studio URI Scheme must first be registered using `register_uri_scheme(name="VS")`.
+
+    Uses the Visual Studio DTE (Development Tools Environment) COM object to open the file.
+
+    [OSC-8 Hyperlinks]: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
+    """
+    if not Path(file).is_file():
+        return
+
+    # Temporarily create a Visual Basic Script to open (or create) an instance of Visual Studio
+    # with the specified file opened at the line and column numbers
+    with TemporaryDirectory() as tmp:
+        path = Path(tmp) / "open-vs.vbs"
+        _ = path.write_text(f"""
+            On Error Resume Next
+            Set dte = GetObject(, "VisualStudio.DTE")
+            If Err.Number <> 0 Then
+                Set dte = CreateObject("VisualStudio.DTE")
+            End If
+            dte.MainWindow.Activate
+            dte.MainWindow.Visible = True
+            dte.UserControl = True
+            dte.ItemOperations.OpenFile "{file}"
+            dte.ActiveDocument.Selection.MoveToLineAndOffset {line}, {column + 1}
+        """)
+        __ = run([r"C:\Windows\SysWOW64\wscript.exe", path], check=False)  # noqa: S603
 
 
 def notepad_pp_uri_scheme_handler(file: str, line: int, column: int) -> None:
@@ -201,7 +231,7 @@ def uri_scheme_handler(command: str) -> bool:
 
 handler_map: dict[str, Callable[[str, int, int], None]] = {
     "pycharm": pycharm_uri_scheme_handler,
-    "vs": vs_uri_scheme_handler,
+    "vs": vs_uri_scheme_handler_dte,
     "n++": notepad_pp_uri_scheme_handler,
     # vscode has its own handler
 }

@@ -1315,6 +1315,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#msl.equipment.schema.DigitalReport.scheme" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;scheme
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msl.equipment.schema.DigitalReport.sha256" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4277,6 +4288,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#msl.equipment.schema.DigitalReport.scheme" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;scheme
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msl.equipment.schema.DigitalReport.sha256" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4620,6 +4642,38 @@
 
 
 
+<h3 id="msl.equipment.schema.DigitalReport.scheme" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">scheme</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#msl.equipment.schema.DigitalReport.scheme" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">scheme</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Returns the <em>scheme</em> component that is specified in the <a class="autorefs autorefs-internal" title="            url
+
+
+  
+      instance-attribute
+  " href="#msl.equipment.schema.DigitalReport.url">url</a>
+(see <a href="https://www.rfc-editor.org/rfc/rfc1738">RFC 1738</a> for more details).</p>
+<p>If a <code>&lt;scheme&gt;</code> is not specified, an empty string is returned (which shall be treated
+as the <code>file</code> scheme). Drive letters on Windows are not considered as a <em>scheme</em>.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="msl.equipment.schema.DigitalReport.sha256" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">sha256</span>
 
@@ -4658,8 +4712,18 @@
 
     <div class="doc doc-contents ">
 
-        <p>The location of the digital report. The syntax follows <a href="https://www.rfc-editor.org/rfc/rfc1738">RFC 1738</a>
-<code>scheme:scheme-specific-part</code>. If <code>scheme:</code> is not specified, it is assumed to be <code>file:</code>.</p>
+        <p>The location of the digital report.</p>
+<p>The syntax follows <a href="https://www.rfc-editor.org/rfc/rfc1738">RFC 1738</a> <code>&lt;scheme&gt;:&lt;scheme-specific-part&gt;</code>.
+If <code>&lt;scheme&gt;</code> is not specified, it shall be treated as the <code>file</code> scheme.</p>
+<div class="admonition note">
+<p class="admonition-title">See Also</p>
+<p><a class="autorefs autorefs-internal" title="            scheme
+
+
+  
+      property
+  " href="#msl.equipment.schema.DigitalReport.scheme">scheme</a></p>
+</div>
 
     </div>
 
@@ -4764,25 +4828,25 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1094</span>
-<span class="normal">1095</span>
-<span class="normal">1096</span>
-<span class="normal">1097</span>
-<span class="normal">1098</span>
-<span class="normal">1099</span>
-<span class="normal">1100</span>
-<span class="normal">1101</span>
-<span class="normal">1102</span>
-<span class="normal">1103</span>
-<span class="normal">1104</span>
-<span class="normal">1105</span>
-<span class="normal">1106</span>
-<span class="normal">1107</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1107</span>
 <span class="normal">1108</span>
 <span class="normal">1109</span>
 <span class="normal">1110</span>
 <span class="normal">1111</span>
-<span class="normal">1112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1112</span>
+<span class="normal">1113</span>
+<span class="normal">1114</span>
+<span class="normal">1115</span>
+<span class="normal">1116</span>
+<span class="normal">1117</span>
+<span class="normal">1118</span>
+<span class="normal">1119</span>
+<span class="normal">1120</span>
+<span class="normal">1121</span>
+<span class="normal">1122</span>
+<span class="normal">1123</span>
+<span class="normal">1124</span>
+<span class="normal">1125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DigitalReport</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [DigitalReport][msl.equipment.schema.DigitalReport] instance.</span>
 
@@ -4858,21 +4922,21 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1114</span>
-<span class="normal">1115</span>
-<span class="normal">1116</span>
-<span class="normal">1117</span>
-<span class="normal">1118</span>
-<span class="normal">1119</span>
-<span class="normal">1120</span>
-<span class="normal">1121</span>
-<span class="normal">1122</span>
-<span class="normal">1123</span>
-<span class="normal">1124</span>
-<span class="normal">1125</span>
-<span class="normal">1126</span>
-<span class="normal">1127</span>
-<span class="normal">1128</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1137</span>
+<span class="normal">1138</span>
+<span class="normal">1139</span>
+<span class="normal">1140</span>
+<span class="normal">1141</span>
+<span class="normal">1142</span>
+<span class="normal">1143</span>
+<span class="normal">1144</span>
+<span class="normal">1145</span>
+<span class="normal">1146</span>
+<span class="normal">1147</span>
+<span class="normal">1148</span>
+<span class="normal">1149</span>
+<span class="normal">1150</span>
+<span class="normal">1151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [DigitalReport][msl.equipment.schema.DigitalReport] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>

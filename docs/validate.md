@@ -21,6 +21,23 @@ You may use any XML validating tool to validate [equipment registers][] and [con
     uv tool install msl-equipment-validate
     ```
 
+The source code is hosted on GitHub and to install the development version you can run the following.
+
+=== "pip"
+    ```console
+     pip install msl-equipment-validate@git+https://github.com/MSLNZ/msl-equipment#subdirectory=packages/validate
+    ```
+
+=== "pipx"
+    ```console
+    pipx install msl-equipment-validate@git+https://github.com/MSLNZ/msl-equipment#subdirectory=packages/validate
+    ```
+
+=== "uv"
+    ```console
+    uv tool install msl-equipment-validate@git+https://github.com/MSLNZ/msl-equipment#subdirectory=packages/validate
+    ```
+
 This will install a command-line tool that you can use to validate the content of equipment registers and connection files.
 
 If you used a package manager that does not automatically add the `msl-equipment-validate` executable to your PATH environment variable (without activating a [virtual environment](https://docs.python.org/3/library/venv.html)), you may want to add the directory to where the `msl-equipment-validate` executable is located to your PATH. This will allow you to validate XML documents from any directory without having to first activate a virtual environment.

@@ -123,6 +123,16 @@ or to display the help.
 msl-equipment help validate
 ```
 
+## Developer's Guide {: #validate-developers-guide }
+
+When updating the equipment-register schema to an unreleased version, update the version number defined in the schema file. Run the following command from the root directory of the `equipment-register-schema` repository. A warning may be shown stating *could not use pyproject.toml, using default configuration* but just ignore the warning.
+
+```console
+uvx --with setuptools-scm -- python -m setuptools_scm
+```
+
+Copy the version that is shown to the `version` attribute of the root `xsd:schema` element.
+
 ## Release Notes {: #validate-release-notes }
 
 --8<-- "packages/validate/CHANGELOG.md"

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema version="0.2.0"
+<xsd:schema version="0.2.1.dev10+g88c4573b5"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
             xmlns:gtc="https://measurement.govt.nz/gtc/xml"
@@ -191,6 +191,7 @@
             <xsd:enumeration value="Ana Rakonjac"/>
             <xsd:enumeration value="Ben Sherson"/>
             <xsd:enumeration value="Blair Hall"/>
+            <xsd:enumeration value="Charlotte Hayton"/>
             <xsd:enumeration value="Cheng Yang"/>
             <xsd:enumeration value="Chris Young"/>
             <xsd:enumeration value="Darrin Jack"/>
@@ -243,19 +244,21 @@
                     <xsd:enumeration value="Barometer"/>
                     <xsd:enumeration value="Block"/>
                     <xsd:enumeration value="Bridge"/>
+                    <xsd:enumeration value="Camera"/>
                     <xsd:enumeration value="Comparator"/>
                     <xsd:enumeration value="Component"/>
+                    <xsd:enumeration value="Controller"/>
                     <xsd:enumeration value="Current"/>
                     <xsd:enumeration value="DAQ"/>
                     <xsd:enumeration value="DC"/>
-                    <xsd:enumeration value="DMM"/>
                     <xsd:enumeration value="Detector"/>
+                    <xsd:enumeration value="DMM"/>
                     <xsd:enumeration value="Driver"/>
                     <xsd:enumeration value="Gateway"/>
                     <xsd:enumeration value="Gauge"/>
+                    <xsd:enumeration value="Hygrometer"/>
                     <xsd:enumeration value="Infrared"/>
                     <xsd:enumeration value="Interferometer"/>
-                    <xsd:enumeration value="Hygrometer"/>
                     <xsd:enumeration value="Lamp"/>
                     <xsd:enumeration value="Laser"/>
                     <xsd:enumeration value="Linescale"/>
@@ -264,8 +267,8 @@
                     <xsd:enumeration value="Mechanical"/>
                     <xsd:enumeration value="Meter"/>
                     <xsd:enumeration value="Monochromator"/>
-                    <xsd:enumeration value="Multiplexor"/>
                     <xsd:enumeration value="Motor"/>
+                    <xsd:enumeration value="Multiplexor"/>
                     <xsd:enumeration value="Network"/>
                     <xsd:enumeration value="Optical"/>
                     <xsd:enumeration value="Oscilloscope"/>
@@ -280,18 +283,21 @@
                     <xsd:enumeration value="Set"/>
                     <xsd:enumeration value="Source"/>
                     <xsd:enumeration value="SPRT"/>
+                    <xsd:enumeration value="Stabiliser"/>
                     <xsd:enumeration value="Stage"/>
                     <xsd:enumeration value="Stepper"/>
                     <xsd:enumeration value="Tape"/>
+                    <xsd:enumeration value="Temperature"/>
                     <xsd:enumeration value="Thermocouple"/>
                     <xsd:enumeration value="Thermometer"/>
                     <xsd:enumeration value="Tile"/>
-                    <xsd:enumeration value="Trap"/>
                     <xsd:enumeration value="Translation"/>
-                    <xsd:enumeration value="Voltage"/>
-                    <xsd:enumeration value="Weight"/>
+                    <xsd:enumeration value="Trap"/>
                     <xsd:enumeration value="UV"/>
                     <xsd:enumeration value="Visible"/>
+                    <xsd:enumeration value="Voltage"/>
+                    <xsd:enumeration value="Wavelength"/>
+                    <xsd:enumeration value="Weight"/>
                 </xsd:restriction>
             </xsd:simpleType>
         </xsd:list>
@@ -394,6 +400,7 @@
             <xsd:enumeration value="Runout"/>
             <xsd:enumeration value="Spectral Irradiance"/>
             <xsd:enumeration value="Spectral Irradiance Responsivity"/>
+            <xsd:enumeration value="Spectral Power Responsivity"/>
             <xsd:enumeration value="Sphericity"/>
             <xsd:enumeration value="Straightness"/>
             <xsd:enumeration value="Temperature"/>
@@ -414,7 +421,7 @@
 
                 The identity pattern shall consist of
                 * the upper-case letters **MSLE**
-                * followed by one period **.** (0x2E)
+                * followed by one period **.**
                 * followed by one of the following letters
                     * **E**: Electrical
                     * **F**: Frequency (Time)
@@ -424,7 +431,7 @@
                     * **O**: Optics (Light)
                     * **P**: Pressure
                     * **T**: Temperature
-                * followed by one period **.** (0x2E)
+                * followed by one period **.**
                 * followed by one or more upper-case letters and/or digits
 
                 **Examples**
@@ -448,7 +455,7 @@
             <xsd:documentation>
                 The pattern for an MSL technical procedure shall consist of
                 * the upper-case letters **MSLT**
-                * followed by one period **.** (0x2E)
+                * followed by one period **.**
                 * followed by one of the following letters
                     * **E**: Electrical
                     * **F**: Frequency (Time)
@@ -458,9 +465,9 @@
                     * **O**: Optics (Light)
                     * **P**: Pressure
                     * **T**: Temperature
-                * followed by one period **.** (0x2E)
+                * followed by one period **.**
                 * followed by one or more digits [0-9]
-                * optionally, followed by one period **.** (0x2E) and one or more digits [0-9]
+                * optionally, followed by one period **.** and one or more digits [0-9]
 
                 **Examples**
 
@@ -481,8 +488,8 @@
     <xsd:simpleType name="nonEmptyString">
         <xsd:annotation>
             <xsd:documentation>
-                A non-empty string that shall not contain the line feed (0x0A)
-                nor carriage return (0x0D) characters.
+                A non-empty string that shall not contain the line feed (`\n`)
+                nor carriage return (`\r`) characters.
             </xsd:documentation>
         </xsd:annotation>
         <xsd:restriction base="xsd:string">
@@ -494,8 +501,8 @@
         <xsd:annotation>
             <xsd:documentation>
                 A non-empty string that shall not
-                * contain the tab (0x09), line feed (0x0A) nor carriage return (0x0D) characters,
-                * contain sequences of two or more spaces (0x20),
+                * contain the tab (`\t`), line feed (`\n`) nor carriage return (`\r`) characters,
+                * contain sequences of two or more spaces (` `),
                 * have leading or trailing spaces.
 
                 This implementation is what [xsd:token](https://www.w3.org/TR/xmlschema-2/#token)
@@ -669,7 +676,8 @@
                         file). It does not validate that the `id` is universally (within MSL)
                         unique, for example, if an equipment-register for a team is distributed
                         across multiple XML files. To validate the universal uniqueness of the
-                        `id` content, you must use another tool._
+                        `id` content, you must use another tool, for example
+                        [msl-equipment-validate](https://mslnz.github.io/msl-equipment/dev/validate/)._
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
@@ -908,8 +916,8 @@
     <xsd:complexType name="comment">
         <xsd:annotation>
             <xsd:documentation>
-                A non-empty string that shall not contain the line feed (0x0A)
-                nor carriage return (0x0D) characters and shall have a date
+                A non-empty string that shall not contain the line feed (`\n`)
+                nor carriage return (`\r`) characters and shall have a date
                 as an attribute. The date must be in the YYYY-MM-DD format (see
                 [xsd:date](https://www.w3.org/TR/xmlschema-2/#date) for details).
 
@@ -1765,6 +1773,16 @@
                 confidence in the performance of the equipment, these
                 checks shall be carried out according to a procedure.
 
+                A `performanceCheck` supports a _choice_ for how the calibration data is specified
+                (e.g., [equation](#type_equation), [file](#type_file), [table](#type_table)).
+                The intention of having a _choice_ is to handle the situation when it is
+                appropriate to specify different calibration data in different ways. Having
+                a _choice_ is not intended as a way to duplicate information. If, for example,
+                the calibration data has been saved in a spreadsheet then you may choose to
+                either specify the calibration data as a [file](#type_file) or convert it to a
+                [table](#type_table), but not both. It is important to have a single source
+                of truth when accessing the calibration data.
+
                 **Examples**
 
                 ```xml
@@ -1933,6 +1951,16 @@
                 metadata and data) _some_ of the information that is required
                 by ISO/IEC 17025:2017 Clause 7.8.2.1 must be explicitly
                 included in the equipment register.
+
+                A `report` supports a _choice_ for how the calibration data is specified
+                (e.g., [equation](#type_equation), [file](#type_file), [table](#type_table)).
+                The intention of having a _choice_ is to handle the situation when it is
+                appropriate to specify different calibration data in different ways. Having
+                a _choice_ is not intended as a way to duplicate information. If, for example,
+                the calibration data has been saved in a spreadsheet then you may choose to
+                either specify the calibration data as a [file](#type_file) or convert it to a
+                [table](#type_table), but not both. It is important to have a single source
+                of truth when accessing the calibration data.
 
                 **Examples**
 
@@ -2159,7 +2187,7 @@
                 `uncertainty` may be expressed as an equation.
 
                 The content of the equation to parse may contain
-                * the space (0x20) and tab (0x09) characters
+                * the space (` `) and tab (`\t`) characters
                 * integer and floating-point numbers (e.g., 100, 100.0, 1e2, 1.0E+02)
                 * the following brackets: `(` `)`
                 * the following (unary) operators: `+` `-` `*` `/`
@@ -2192,7 +2220,9 @@
                 (e.g., that the `value` and `uncertainty` elements exist and the content
                 is a [nonEmptyString](#type_nonEmptyString)). It does not validate that
                 the equation syntax is correct (e.g., whether the equation is missing
-                a closing bracket). You must use another tool to validate the syntax._
+                a closing bracket). You must use another tool, for example
+                [msl-equipment-validate](https://mslnz.github.io/msl-equipment/dev/validate/),
+                to validate the syntax._
 
                 **Examples**
 
@@ -2534,8 +2564,8 @@
                 that the file exists nor if the SHA-256 checksum is correct for the file
                 (although the general format of the checksum, i.e., has the proper length
                 and contains only allowed characters, is validated). You must use another
-                tool to validate the existence of the file and the validity of the
-                checksum value._
+                tool, for example [msl-equipment-validate](https://mslnz.github.io/msl-equipment/dev/validate/),
+                to validate the existence of the file and the validity of the checksum value._
 
                 **Examples**
 
@@ -2744,7 +2774,9 @@
                         (e.g., that the `gtcArchiveJSON` element has content that may be any
                         string). It does not attempt to validate that the content is a valid
                         string that can be used to create an `Archive` object. You must use
-                        `GTC` to validate the content._
+                        GTC or another tool, for example
+                        [msl-equipment-validate](https://mslnz.github.io/msl-equipment/dev/validate/),
+                        to validate the content._
 
                         **Examples**
 
@@ -2782,7 +2814,8 @@
                 (e.g., that the `header` element exists and that the content matches
                 the allowed pattern). It does not attempt to validate that the table
                 is structurally correct (e.g., whether `type`, `unit`, `header` and
-                `data` contain the same number of columns). You must use another tool
+                `data` contain the same number of columns). You must use another tool,
+                for example [msl-equipment-validate](https://mslnz.github.io/msl-equipment/dev/validate/),
                 to validate the structure of the table._
 
                 **Examples**
@@ -2865,13 +2898,37 @@
             <xsd:element name="data">
                 <xsd:annotation>
                     <xsd:documentation>
-                        The data in the `table`.
-                        Each row shall be separated by a line-feed character (0x0A).
-                        Each column in a row shall be separated by a comma.
+                        The data of the `table`.
+                        Each row shall be separated by a line-feed character (`\n`).
+                        Each column in a row shall be separated by a comma (`,`).
 
-                        If splitting the content by a line-feed character results in
-                        an empty row or a row that contains only whitespace characters,
-                        that row shall be ignored by analysis software.
+                        Each _value_ must be parsable into the corresponding _int_ or _double_
+                        data type by using builtin functions that are provided by programming
+                        languages. If the _value_ represents a _double_ it can only contain the
+                        `0123456789.+-eE` characters. Characters, such as, `/`, `%` and `,` are
+                        not allowed.
+
+                        For example, if using Python the following must not raise an error to convert
+                        a _value_ to an _int_ or _double_,
+
+                        ```python
+                        int(value)
+                        float(value)
+                        ```
+
+                        if using C#,
+
+                        ```cs
+                        System.Int32.Parse(value);
+                        System.Double.Parse(value);
+                        ```
+
+                        and, if using Delphi,
+
+                        ```cpp
+                        System.Convert.ToInt32(value);
+                        System.Convert.ToDouble(value);
+                        ```
                     </xsd:documentation>
                 </xsd:annotation>
                 <xsd:simpleType>
@@ -2961,8 +3018,9 @@
                                 (e.g., that the `variable` attribute exist and the content
                                 is a [tokenizedString](#type_tokenizedString)). It does not attempt to
                                 validate that the range for every `variable` is defined.
-                                You must use another tool to validate that every `variable` is
-                                uniquely defined._
+                                You must use another tool, for example
+                                [msl-equipment-validate](https://mslnz.github.io/msl-equipment/dev/validate/),
+                                to validate that every `variable` is uniquely defined._
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>

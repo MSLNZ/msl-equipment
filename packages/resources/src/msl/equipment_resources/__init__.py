@@ -18,6 +18,7 @@ from .optosigma import SHOT702
 from .optronic_labs import OL756, OLxxA
 from .princeton_instruments import PrincetonInstruments
 from .raicol import RaicolTEC
+from .thorlabs import FWxx2C
 from .vaisala import PTB330, PTU300
 
 __all__: list[str] = [
@@ -32,6 +33,7 @@ __all__: list[str] = [
     "SHOT702",
     "SIA3",
     "AvaSpec",
+    "FWxx2C",
     "MXSeries",
     "MilliK",
     "OLxxA",

@@ -143,6 +143,8 @@ nav:
       - resources/princeton_instruments/arc_instrument.md
     - Raicol Crystals:
       - resources/raicol/tec.md
+    - Thorlabs:
+      - resources/thorlabs/fwxx2c.md
     - Vaisala:
       - resources/vaisala/ptb330.md
       - resources/vaisala/ptu300.md

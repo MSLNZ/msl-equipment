@@ -1,60 +1,63 @@
+"""Example showing how to communicate with a WinCamD beam-profiling camera from DataRay.
+
+Tested with the WinCamD-LCM-8.0E45 (x64) software version.
 """
-Example showing how to communicate with a WinCamD beam profiling camera from DataRay.
 
-Tested with the WinCamD-LCM-8.0D36 software version.
-"""
-import pprint
+from __future__ import annotations
 
-# if matplotlib is available then plot the data
-try:
-    import matplotlib.pyplot as plt
-except ImportError:
-    plt = None
+from typing import TYPE_CHECKING
 
-from msl.equipment import (
-    EquipmentRecord,
-    ConnectionRecord,
-    Backend,
+from msl.equipment import Connection
+
+if TYPE_CHECKING:
+    from msl.equipment.resources import WinCamD
+
+connection = Connection(
+    "SDK::DATARAYOCX",
+    manufacturer="DataRay",
+    model="WinCamD",
+    # plateau_uniformity=True,  # these are some examples of the properties that can be specified
+    # full_scale_filter=0.5,
 )
 
-record = EquipmentRecord(
-    manufacturer='DataRay',
-    model='WinCamD',
-    connection=ConnectionRecord(
-        address='SDK::DATARAYOCX',
-        backend=Backend.MSL,
-    ),
-)
+# Connect to the camera (a GUI will be displayed).
+# The GUI must remain open to have access to the DataRay OCX library.
+# The text "Error in oglInitialize invalid operation" might be printed, ignore it.
+camera: WinCamD = connection.connect()
 
-# connect to the camera (a GUI will be displayed)
-# NOTE: The GUI must remain open to have access to the DataRay OCX library
-camera = record.connect()
-
-# wait until we finish configuring the camera
-# (e.g, setting the ROI, the number of averages, ...)
+# Wait until the camera has been configured (e.g., set the image size, ROI, major/minor mode, ...)
 camera.wait_to_configure()
 
-# capture images
-for i in range(5):
-    info = camera.capture()
+# Capture an image,
+camera.capture()
 
-    # print and plot (if matplotlib is available) the information about the image
-    print('Capture {}:'.format(i+1))
-    pprint.pprint(info)
-    if plt is not None:
-        ax1 = plt.subplot2grid((2, 2), (0, 0), rowspan=2)
-        ax2 = plt.subplot2grid((2, 2), (0, 1))
-        ax3 = plt.subplot2grid((2, 2), (1, 1))
+# and then you can get information about the image
+print("image", camera.image)
+print("profile_x", camera.profile_x)
+print("profile_y", camera.profile_y)
+print("pixel_size", camera.pixel_size)
+print("centroid", camera.centroid)
+print("roi", camera.roi)
+print("xc", camera.xc)
+print("xg", camera.xg)
+print("xp", camera.xp)
+print("yc", camera.yc)
+print("yg", camera.yg)
+print("yp", camera.yp)
+print("major", camera.major)
+print("mean", camera.mean)
+print("minor", camera.minor)
+print("orientation", camera.orientation)
+print("plateau_uniformity", camera.plateau_uniformity)
+print("homogeneity", camera.homogeneity)
+print("adc_peak_percent", camera.adc_peak_percent)
+print("effective_2w", camera.effective_2w)
+print("ellipticity", camera.ellipticity)
+print("exposure_time", camera.exposure_time)
 
-        ax1.imshow(info['image'])
-        ax1.set_title('Capture {}'.format(i+1))
-        ax2.plot(info['profile_x'])
-        ax2.set_title('Profile X')
-        ax3.plot(info['profile_y'])
-        ax3.set_title('Profile Y')
+# You can also access properties of the SDK
+print("ImagerGain", camera.sdk.ImagerGain)
+print("CameraType", camera.sdk.CameraType())
 
-        plt.tight_layout()
-        plt.show()
-
-# disconnect from the camera (also closes the GUI)
+# Disconnect from the camera (also closes the GUI)
 camera.disconnect()

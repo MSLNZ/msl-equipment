@@ -48,6 +48,8 @@
         "capsys",
         "cbrt",
         "cutoff",
+        "dataray",
+        "DATARAYOCX",
         "datasheet",
         "datasheets",
         "ddof",
@@ -231,6 +233,7 @@
         "Vaisala",
         "VERS",
         "WAITLOCK",
+        "wincamd",
         "xoff",
         "xonxoff"
     ]

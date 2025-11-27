@@ -15,8 +15,8 @@ if TYPE_CHECKING:
 
     from msl.equipment._types import PathLike
     from msl.equipment.schema import Equipment
-    from msl.loadlib._types import LibType
-
+    from msl.loadlib.activex import Application
+    from msl.loadlib.types import LibType
 
 REGEX = re.compile(r"SDK::(?P<path>.+)", flags=re.IGNORECASE)
 
@@ -24,7 +24,9 @@ REGEX = re.compile(r"SDK::(?P<path>.+)", flags=re.IGNORECASE)
 class SDK(Interface, regex=REGEX):
     """Base class for equipment that use the manufacturer's Software Development Kit (SDK)."""
 
-    def __init__(self, equipment: Equipment, *, libtype: LibType | None = None, path: PathLike | None = None) -> None:
+    def __init__(
+        self, equipment: Equipment, *, libtype: LibType | None = None, path: PathLike | None = None, **kwargs: Any  # noqa: ANN401
+    ) -> None:
         """Base class for equipment that use the manufacturer's Software Development Kit (SDK).
 
         You can use the [configuration file][config-xml-example] to add the directory that the SDK
@@ -35,6 +37,7 @@ class SDK(Interface, regex=REGEX):
             libtype: The library type. See [LoadLibrary][msl.loadlib.load_library.LoadLibrary] for more details.
             path: The path to the SDK. Specifying this value will take precedence over the
                 [address][msl.equipment.schema.Connection.address] value.
+            kwargs: All additional keyword arguments are passed to [LoadLibrary][msl.loadlib.load_library.LoadLibrary].
         """
         super().__init__(equipment)
 
@@ -46,7 +49,7 @@ class SDK(Interface, regex=REGEX):
                 raise ValueError(msg)
             path = info.path
 
-        self._load_library: LoadLibrary = LoadLibrary(path, libtype)
+        self._load_library: LoadLibrary = LoadLibrary(path, libtype=libtype, **kwargs)
         self._sdk: Any = self._load_library.lib
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
@@ -60,6 +63,14 @@ class SDK(Interface, regex=REGEX):
         """Convenience method for logging an [errcheck][ctypes._CFuncPtr.errcheck] from [ctypes][]."""
         logger.debug("%s.%s%s -> %s", self.__class__.__name__, func.__name__, arguments, result)
         return result
+
+    @property
+    def application(self) -> Application | None:
+        """[Application][msl.loadlib.activex.Application] | `None` &mdash; Reference to the ActiveX application window.
+
+        If the loaded library is not an ActiveX library, returns `None`.
+        """
+        return self._load_library.application
 
     @property
     def sdk(self) -> Any:  # noqa: ANN401

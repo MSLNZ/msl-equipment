@@ -118,6 +118,8 @@ nav:
       - resources/avantes/avaspec.md
     - CMI:
       - resources/cmi/sia3.md
+    - DataRay:
+      - resources/dataray/wincamd.md
     - Electron Dynamics:
       - resources/electron_dynamics/tc_series.md
     - Energetiq:

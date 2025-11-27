@@ -42,6 +42,11 @@ classifiers = [
     "Topic :: Software Development",
 ]
 
+[dependency-groups]
+dev = [
+    "comtypes; sys_platform=='win32'",
+]
+
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"

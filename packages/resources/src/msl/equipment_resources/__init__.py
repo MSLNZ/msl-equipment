@@ -16,6 +16,7 @@ from .nkt import NKT
 from .omega import ITHX
 from .optosigma import SHOT702
 from .optronic_labs import OL756, OLxxA
+from .picotech import PT104
 from .princeton_instruments import PrincetonInstruments
 from .raicol import RaicolTEC
 from .thorlabs import FWxx2C
@@ -28,6 +29,7 @@ __all__: list[str] = [
     "NKT",
     "OL756",
     "PR4000B",
+    "PT104",
     "PTB330",
     "PTU300",
     "SHOT702",

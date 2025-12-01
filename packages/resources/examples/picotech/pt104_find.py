@@ -1,13 +1,14 @@
-"""
-Example showing how to list all Pico Technology PT-104
-Platinum Resistance Data Logger's that can be found.
-"""
+"""Example showing how to list all PT-104 Data Logger's that are available."""
+
+from __future__ import annotations
+
 import os
 
-from msl.equipment.resources.picotech.pt104 import enumerate_units
+from msl.equipment.resources import PT104
 
-# optional: ensure that the PicoTech DLLs are available on PATH
-os.environ['PATH'] += os.pathsep + r'C:\Program Files\Pico Technology\SDK\lib'
+# Optional: Ensure that the Pico Technology SDK is available on PATH (if not already)
+os.environ["PATH"] += os.pathsep + r"C:\Program Files\Pico Technology\SDK\lib"
 
-units = enumerate_units()
-print('The following PT-104\'s were found: {}'.format(units))
+print("The following PT-104's were found:")
+for unit in PT104.enumerate_units():
+    print(f"  {unit}")

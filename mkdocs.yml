@@ -139,6 +139,9 @@ nav:
     - Optronic Laboratories:
       - resources/optronic_labs/ol756.md
       - resources/optronic_labs/olxxa.md
+    - Pico Technology:
+      - resources/picotech/pt104.md
+      - resources/picotech/types.md
     - Princeton Instruments:
       - resources/princeton_instruments/arc_instrument.md
     - Raicol Crystals:

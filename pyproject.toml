@@ -245,6 +245,9 @@ max-args = 7
     "T201",  # Allow print statements
     "T203",  # Allpw pprint statements
 ]
+"packages/resources/src/msl/equipment_resources/picotech/status.py" = [
+    "E501",  # line-too-long
+]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

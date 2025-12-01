@@ -25,7 +25,12 @@ class SDK(Interface, regex=REGEX):
     """Base class for equipment that use the manufacturer's Software Development Kit (SDK)."""
 
     def __init__(
-        self, equipment: Equipment, *, libtype: LibType | None = None, path: PathLike | None = None, **kwargs: Any  # noqa: ANN401
+        self,
+        equipment: Equipment,
+        *,
+        libtype: LibType | None = None,
+        path: PathLike | None = None,
+        **kwargs: Any,  # noqa: ANN401
     ) -> None:
         """Base class for equipment that use the manufacturer's Software Development Kit (SDK).
 

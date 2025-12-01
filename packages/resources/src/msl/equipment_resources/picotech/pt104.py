@@ -243,7 +243,7 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
         """
         value = c_int32()
         self.sdk.UsbPt104GetValue(self._handle, channel, byref(value), int(filtered))
-        return value.value * self._scaling[channel]
+        return value.value * self._scaling.get(channel, 1.0)
 
     def set_channel(self, channel: int, mode: Mode | str | int, num_wires: Literal[2, 3, 4]) -> None:
         """Configure a single channel of the PT-104 Data Logger.
@@ -276,8 +276,12 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
             self._scaling[channel] = 1e-3
         elif _mode in {PT104.Mode.DIFFERENTIAL_TO_115MV, PT104.Mode.SINGLE_ENDED_TO_115MV}:
             self._scaling[channel] = 1e-9
+            if _mode == PT104.Mode.SINGLE_ENDED_TO_115MV:
+                self._scaling[channel + 4] = 1e-9
         elif _mode in {PT104.Mode.DIFFERENTIAL_TO_2500MV, PT104.Mode.SINGLE_ENDED_TO_2500MV}:
-            self._scaling[channel] = 1e-10
+            self._scaling[channel] = 10e-9
+            if _mode == PT104.Mode.SINGLE_ENDED_TO_2500MV:
+                self._scaling[channel + 4] = 10e-9
         else:
             self._scaling[channel] = 1.0
 

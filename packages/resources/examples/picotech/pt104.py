@@ -16,12 +16,12 @@ if TYPE_CHECKING:
 
 
 connection = Connection(
-    "SDK::usbpt104",
+    "SDK::usbpt104",  # Alternatively, specify the full path to the SDK, "SDK::path/to/lib/usbpt104"
     manufacturer="PicoTech",
     model="PT-104",
     serial="JO332/224",  # Change for your device
-    ip_address="192.168.1.20:1875",  # Optional: Define if connecting via ethernet (change value for your device)
-    open_via_ip=False,  # Optional: True: connect via ethernet, False: connect via USB (default)
+    ip_address="192.168.1.20:1875",  # Optional: Specify the IP address and port (change for your device)
+    # open_via_ip=True,  # Optional: True: connect via ethernet, False: connect via USB (default)
 )
 
 # Optional: Ensure that the Pico Technology SDK is available on PATH (if not already)
@@ -44,28 +44,20 @@ print(f"Ethernet enabled? {enabled}")
 print(f"Address: {ip_address}:{port}")
 
 # Configure channel 1 to be single-ended voltage from 0 to 2.5 V
-pt104.set_channel(1, pt104.Type.SINGLE_ENDED_TO_2500MV, 2)
+pt104.set_channel(1, pt104.Mode.SINGLE_ENDED_TO_2500MV, 2)
 
 # Configure channel 2 to be a PT100 in a 4-wire arrangement
-pt104.set_channel(2, pt104.Type.PT100, 4)
+pt104.set_channel(2, pt104.Mode.PT100, 4)
 
-for i in range(10):
-    # Wait for the samples to be available
-    # A measurement cycle takes about 1 second per active channel
-    # 2 channels are active, so we should wait at least 2 seconds
-    time.sleep(3)
+# Wait for the samples to be available
+# A measurement cycle takes about 1 second per active channel
+# 2 channels are active, so we should wait at least 2 seconds
+time.sleep(3)
 
-    # Read the value of channel 1
-    ch1 = pt104.get_value(1)
-
-    # Read the value of channel 2
-    ch2 = pt104.get_value(2)
-
-    # For the SINGLE_ENDED_TO_2500MV configuration, the scaling factor is 10 nV
-    print(f"Loop {i}, Voltage={ch1 * 10e-9}")
-
-    # For the PT100 configuration, the scaling factor is 1/1000 deg C
-    print(f"Loop {i}, Temperature={ch2 * 1e-3}")
+# Read the values
+ch1 = pt104.get_value(1)
+ch2 = pt104.get_value(2)
+print(f"Voltage={ch1}, Temperature={ch2}")
 
 # Disconnect from the Data Logger
 pt104.disconnect()

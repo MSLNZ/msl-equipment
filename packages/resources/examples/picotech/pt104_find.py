@@ -7,6 +7,7 @@ import os
 from msl.equipment.resources import PT104
 
 # Optional: Ensure that the Pico Technology SDK is available on PATH (if not already)
+# Alternatively, you can specify the path in PT104.enumerate_units()
 os.environ["PATH"] += os.pathsep + r"C:\Program Files\Pico Technology\SDK\lib"
 
 print("The following PT-104's were found:")

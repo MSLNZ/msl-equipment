@@ -17,6 +17,8 @@ from .status import PICO_INFO, PICO_OK, Error, PicoInfo
 if TYPE_CHECKING:
     from typing import Any, Literal
 
+    from msl.loadlib.types import PathLike
+
     from msl.equipment.schema import Equipment
 
 
@@ -26,8 +28,8 @@ IS_WINDOWS = sys.platform == "win32"
 class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
     """PT-104 Platinum Resistance Data Logger from [Pico Technology](https://www.picotech.com/)."""
 
-    class Type(IntEnum):
-        """The measurement types for a PT-104 Data Logger.
+    class Mode(IntEnum):
+        """The measurement mode for a PT-104 Data Logger channel.
 
         Attributes:
             OFF (int): `0`
@@ -61,8 +63,10 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
         for a PT104 Data Logger.
 
         Attributes: Connection Properties:
-            ip_address (str): The IP address and port number of the PT-104 (e.g., `"192.168.1.201:1234"`).
+            ip_address (str): The IP address and port number, separated by a `:`, of the PT-104
+                (e.g., `"192.168.1.201:1234"`).
             open_via_ip (bool): Whether to connect to the PT-104 by Ethernet. Default is to connect by USB.
+                If `True`, then `ip_address` must be specified.
         """
         self._handle: int | None = None
         libtype = "windll" if IS_WINDOWS else "cdll"
@@ -94,17 +98,43 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
 
         assert equipment.connection is not None  # noqa: S101
         p = equipment.connection.properties
-        self._IP_ADDRESS: str = p.get("ip_address", "")
-        if self._IP_ADDRESS and p.get("open_via_ip", False):
-            self.open_via_ip(self._IP_ADDRESS)
+
+        if p.get("open_via_ip", False):
+            self._open_via_ip(p.get("ip_address", ""))
         else:
-            self.open()
+            self._open()
+
+        self._scaling: dict[int, float] = {}
 
     def _check(self, result: Any, func: Any, arguments: tuple[Any, ...]) -> None:  # noqa: ANN401
         self._log_errcheck(result, func, arguments)
         if result != PICO_OK:
             msg = Error.get(result, f"UnknownPicoTechError: Error code 0x{result:08x}")
             raise MSLConnectionError(self, message=msg)
+
+    def _open(self) -> None:
+        """Open the connection to the PT-104 via USB."""
+        handle = c_int16()
+        s = self.equipment.serial
+        serial = (c_int8 * len(s)).from_buffer_copy(s.encode())
+        self.sdk.UsbPt104OpenUnit(byref(handle), serial)
+        self._handle = handle.value
+
+    def _open_via_ip(self, address: str) -> None:
+        """Open the connection to the PT-104 via ETHERNET.
+
+        Args:
+            address: The IP address and port number to use to connect to the PT-104.
+                For example, `"192.168.1.201:1234"`.
+        """
+        if not address:
+            msg = "You must specify the IP address in Connection.properties"
+            raise MSLConnectionError(self, message=msg)
+
+        handle = c_int16()
+        c_address = (c_int8 * len(address)).from_buffer_copy(address.encode())
+        self.sdk.UsbPt104OpenUnitViaIp(byref(handle), None, c_address)
+        self._handle = handle.value
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
         """Disconnect from the PT-104 Data Logger."""
@@ -114,7 +144,9 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
             super().disconnect()
 
     @staticmethod
-    def enumerate_units(communication: Literal["both", "ethernet", "usb"] = "both") -> list[str]:
+    def enumerate_units(
+        communication: Literal["both", "ethernet", "usb"] = "both", path: PathLike = "usbpt104"
+    ) -> list[str]:
         """Find PT-104 Platinum Resistance Data Logger's.
 
         This routine returns a list of all the attached PT-104 devices for the specified communication type.
@@ -124,6 +156,7 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
 
         Args:
             communication: The communication type used by the PT-104.
+            path: The path to the Pico Technology SDK.
 
         Returns:
             A list of serial numbers of the PT-104 Data Logger's that were found.
@@ -143,7 +176,7 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
             raise ValueError(msg)
 
         libtype = "windll" if IS_WINDOWS else "cdll"
-        sdk = LoadLibrary("usbpt104", libtype)
+        sdk = LoadLibrary(path, libtype=libtype)
         result = sdk.lib.UsbPt104Enumerate(byref(details), byref(length), t_val)
         if result != PICO_OK:
             msg = Error.get(result, f"UnknownPicoTechError: Error code 0x{result:08x}")
@@ -190,20 +223,11 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
             out.append(f"{name}{string_at(addressof(string)).decode()}")
         return "\n".join(out)
 
-    def get_value(self, channel: int, *, filtered: bool = False) -> int:
-        """Get the most recent reading for the specified channel.
+    def get_value(self, channel: int, *, filtered: bool = False) -> float:
+        r"""Get the most recent reading for the specified channel.
 
         Once you open the driver and define some channels, the driver begins to take
         continuous readings from the PT-104 Data Logger.
-
-        The scaling factor to apply to the returned value is as follows
-
-        |   Measurement Type    |    Scaling factor    |
-        | :-------------------  | :------------------- |
-        | Temperature           | value * 1/1000 deg C |
-        | Voltage (0 to 2.5 V)  | value * 10 nV        |
-        | Voltage (0 to 115 mV) | value * 1 nV         |
-        | Resistance            | value * 1 mOhm       |
 
         Args:
             channel: The channel number to read, from 1 to 4 in differential mode or
@@ -214,64 +238,48 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
                 and on how many channels are active.
 
         Returns:
-            The latest reading for the specified channel.
+            The latest reading for the specified channel. A voltage reading is in $\text{V}$,
+                a temperature reading is in $^{\circ}\text{C}$ and a resistance reading is in $\Omega$.
         """
         value = c_int32()
         self.sdk.UsbPt104GetValue(self._handle, channel, byref(value), int(filtered))
-        return value.value
+        return value.value * self._scaling[channel]
 
-    def open(self) -> None:
-        """Open the connection to the PT-104 via USB."""
-        if self._handle:
-            self.disconnect()
-
-        handle = c_int16()
-        s = self.equipment.serial
-        serial = (c_int8 * len(s)).from_buffer_copy(s.encode())
-        self.sdk.UsbPt104OpenUnit(byref(handle), serial)
-        self._handle = handle.value
-
-    def open_via_ip(self, address: str | None = None) -> None:
-        """Open the connection to the PT-104 via ETHERNET.
-
-        Args:
-            address: The IP address and port number to use to connect to the PT-104.
-                For example, `"192.168.1.201:1234"`.
-        """
-        if self._handle:
-            self.disconnect()
-
-        handle = c_int16()
-        ip = self._IP_ADDRESS if address is None else address
-        if not ip:
-            msg = "You must either specify the IP address when calling this function or in in the Connection.properties"
-            raise ValueError(msg)
-
-        c_address = (c_int8 * len(ip)).from_buffer_copy(ip.encode())
-        self.sdk.UsbPt104OpenUnitViaIp(byref(handle), None, c_address)
-        self._handle = handle.value
-
-    def set_channel(self, channel: int, type: Type | str | int, num_wires: Literal[2, 3, 4]) -> None:  # noqa: A002
+    def set_channel(self, channel: int, mode: Mode | str | int, num_wires: Literal[2, 3, 4]) -> None:
         """Configure a single channel of the PT-104 Data Logger.
 
         The fewer channels configured, the more frequently they will be updated. A measurement
         takes about 1 second per active channel.
 
         If a call to the [set_channel][msl.equipment_resources.picotech.pt104.PT104.set_channel]
-        method has a measurement type of *single-ended*, then the specified channel's *sister* channel is
+        method has a measurement mode of *single-ended*, then the specified channel's *sister* channel is
         also enabled (i.e., enabling 3 also enables 7).
 
         Args:
             channel: The channel number to configure. It should be between 1 and 4 if using
                 single-ended inputs in voltage mode.
-            type: The measurement type to configure the `channel` for. Can be an enum value or member name.
+            mode: The measurement mode to configure the `channel` for. Can be an enum value or member name.
             num_wires: The number of wires that are used for the measurement.
         """
-        typ = to_enum(type, PT104.Type, to_upper=True)
+        _mode = to_enum(mode, PT104.Mode, to_upper=True)
         if num_wires not in {2, 3, 4}:
             msg = f"The num_wires value is {num_wires}. It must be 2, 3 or 4."
             raise ValueError(msg)
-        self.sdk.UsbPt104SetChannel(self._handle, channel, typ, num_wires)
+        self.sdk.UsbPt104SetChannel(self._handle, channel, _mode, num_wires)
+
+        #    Measurement Type    |    Scaling factor
+        #  Temperature           | value * 1/1000 deg C
+        #  Resistance            | value * 1 mOhm
+        #  Voltage (0 to 2.5 V)  | value * 10 nV
+        #  Voltage (0 to 115 mV) | value * 1 nV
+        if _mode in {PT104.Mode.PT100, PT104.Mode.PT1000, PT104.Mode.RESISTANCE_TO_375R, PT104.Mode.RESISTANCE_TO_10K}:
+            self._scaling[channel] = 1e-3
+        elif _mode in {PT104.Mode.DIFFERENTIAL_TO_115MV, PT104.Mode.SINGLE_ENDED_TO_115MV}:
+            self._scaling[channel] = 1e-9
+        elif _mode in {PT104.Mode.DIFFERENTIAL_TO_2500MV, PT104.Mode.SINGLE_ENDED_TO_2500MV}:
+            self._scaling[channel] = 1e-10
+        else:
+            self._scaling[channel] = 1.0
 
     def set_ip_details(self, *, enabled: bool, ip_address: str | None = None, port: int | None = None) -> None:
         """Set the IP details to the device.
@@ -282,7 +290,7 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
             port: The new port number. If `None`, do not change the port number.
         """
         if ip_address is None or port is None:
-            enabled, _ip_address, _port = self.get_ip_details()
+            _, _ip_address, _port = self.get_ip_details()
             if ip_address is None:
                 ip_address = _ip_address
             if port is None:

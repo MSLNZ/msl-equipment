@@ -43,10 +43,10 @@ enabled, ip_address, port = pt104.get_ip_details()
 print(f"Ethernet enabled? {enabled}")
 print(f"Address: {ip_address}:{port}")
 
-# Configure channel 1 to be single-ended voltage from 0 to 2.5 V
-pt104.set_channel(1, pt104.Mode.SINGLE_ENDED_TO_2500MV, 2)
+# Set channel 1 to measure the resistance of a PT1000 in a 4-wire arrangement
+pt104.set_channel(1, pt104.Mode.RESISTANCE_TO_10K, 4)
 
-# Configure channel 2 to be a PT100 in a 4-wire arrangement
+# Set channel 2 to measure the temperature of a PT100 in a 4-wire arrangement
 pt104.set_channel(2, pt104.Mode.PT100, 4)
 
 # Wait for the samples to be available
@@ -57,7 +57,7 @@ time.sleep(3)
 # Read the values
 ch1 = pt104.get_value(1)
 ch2 = pt104.get_value(2)
-print(f"Voltage={ch1}, Temperature={ch2}")
+print(f"Resistance={ch1}, Temperature={ch2}")
 
 # Disconnect from the Data Logger
 pt104.disconnect()

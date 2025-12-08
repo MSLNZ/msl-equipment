@@ -237,11 +237,11 @@ def _load_library(errcheck: Callable[[int, _NamedFuncPointer, tuple[int, ...]], 
             function = getattr(lib, fcn)
         except AttributeError:
 
-            def not_implement(*_: int, f: str = fcn) -> Never:
-                msg = f"{f!r} is not implement on {sys.platform!r}"
-                raise RuntimeError(msg)
+            def not_implemented(*_: int, f: str = fcn) -> Never:
+                msg = f"{f!r} is not implemented on {sys.platform!r}"
+                raise NotImplementedError(msg)
 
-            setattr(lib, fcn, partial(not_implement, f=fcn))
+            setattr(lib, fcn, partial(not_implemented, f=fcn))
             continue
 
         function.argtypes = argtypes

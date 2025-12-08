@@ -28,7 +28,7 @@ class Parity(enum.Enum):
         NONE (str): "N"
         ODD (str): "O"
         EVEN (str): "E"
-        MARK (str): "M""
+        MARK (str): "M"
         SPACE (str): "S"
     """
 

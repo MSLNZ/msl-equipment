@@ -970,7 +970,7 @@ class GPIB(MessageBased, regex=REGEX):
 
 @dataclass
 class ParsedGPIBAddress:
-    """The parsed result of a VISA-style address for the ZeroMQ interface.
+    """The parsed result of a VISA-style address for the GPIB interface.
 
     Args:
         board: The GPIB board number.

@@ -29,7 +29,7 @@ from ctypes import (
 )
 from dataclasses import dataclass
 from enum import IntEnum
-from typing import TYPE_CHECKING, Any, final
+from typing import TYPE_CHECKING, final
 
 from msl.loadlib import IS_PYTHON_64BIT, LoadLibrary
 

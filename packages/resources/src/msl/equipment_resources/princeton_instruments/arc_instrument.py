@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import os
 from ctypes import POINTER, c_bool, c_char_p, c_double, c_long, c_void_p, create_string_buffer
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from msl.loadlib import LoadLibrary
 

@@ -7,13 +7,13 @@ import re
 import time
 from dataclasses import dataclass
 from enum import Enum, IntEnum
-from typing import TYPE_CHECKING, Callable, NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 from msl.equipment.interfaces import MSLConnectionError, Serial
 
 if TYPE_CHECKING:
     from re import Pattern
-    from typing import Literal
+    from typing import Callable, Literal
 
     from msl.equipment.schema import Equipment
 

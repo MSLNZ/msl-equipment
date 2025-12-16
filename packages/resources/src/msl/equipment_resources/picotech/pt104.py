@@ -3,16 +3,16 @@
 from __future__ import annotations
 
 import sys
-from ctypes import POINTER, addressof, byref, c_int8, c_int16, c_int32, c_uint16, c_uint32, string_at
+from ctypes import POINTER, byref, c_char_p, c_int8, c_int16, c_int32, c_uint16, c_uint32, create_string_buffer
 from enum import IntEnum
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING
 
 from msl.loadlib import LoadLibrary
 
 from msl.equipment.interfaces import SDK, MSLConnectionError
 from msl.equipment.utils import to_enum
 
-from .status import PICO_INFO, PICO_OK, Error, PicoInfo
+from .status import PICO_INFO, PICO_OK, PICO_STATUS, Error, PicoInfo
 
 if TYPE_CHECKING:
     from typing import Any, Literal
@@ -72,29 +72,38 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
         libtype = "windll" if IS_WINDOWS else "cdll"
         super().__init__(equipment, libtype=libtype)
 
-        self.sdk.UsbPt104OpenUnit.argtypes = [POINTER(c_int16), POINTER(c_int8)]
-        self.sdk.UsbPt104OpenUnit.errcheck = self._check
-        self.sdk.UsbPt104OpenUnitViaIp.argtypes = [POINTER(c_int16), POINTER(c_int8), POINTER(c_int8)]
-        self.sdk.UsbPt104OpenUnitViaIp.errcheck = self._check
-        self.sdk.UsbPt104CloseUnit.argtypes = [c_int16]
-        self.sdk.UsbPt104CloseUnit.errcheck = self._check
-        self.sdk.UsbPt104GetUnitInfo.argtypes = [c_int16, POINTER(c_int8), c_int16, POINTER(c_int16), PICO_INFO]
-        self.sdk.UsbPt104GetUnitInfo.errcheck = self._check
-        self.sdk.UsbPt104GetValue.argtypes = [c_int16, c_uint32, POINTER(c_int32), c_int16]
-        self.sdk.UsbPt104GetValue.errcheck = self._check
-        self.sdk.UsbPt104IpDetails.argtypes = [
+        sdk = self.sdk
+        sdk.UsbPt104OpenUnit.argtypes = [POINTER(c_int16), c_char_p]
+        sdk.UsbPt104OpenUnit.restype = PICO_STATUS
+        sdk.UsbPt104OpenUnit.errcheck = self._check
+        sdk.UsbPt104OpenUnitViaIp.argtypes = [POINTER(c_int16), c_char_p, c_char_p]
+        sdk.UsbPt104OpenUnitViaIp.restype = PICO_STATUS
+        sdk.UsbPt104OpenUnitViaIp.errcheck = self._check
+        sdk.UsbPt104CloseUnit.argtypes = [c_int16]
+        sdk.UsbPt104CloseUnit.restype = PICO_STATUS
+        sdk.UsbPt104CloseUnit.errcheck = self._check
+        sdk.UsbPt104GetUnitInfo.argtypes = [c_int16, c_char_p, c_int16, POINTER(c_int16), PICO_INFO]
+        sdk.UsbPt104GetUnitInfo.restype = PICO_STATUS
+        sdk.UsbPt104GetUnitInfo.errcheck = self._check
+        sdk.UsbPt104GetValue.argtypes = [c_int16, c_uint32, POINTER(c_int32), c_int16]
+        sdk.UsbPt104GetValue.restype = PICO_STATUS
+        sdk.UsbPt104GetValue.errcheck = self._check
+        sdk.UsbPt104IpDetails.argtypes = [
             c_int16,
             POINTER(c_int16),
-            POINTER(c_int8),
+            c_char_p,
             POINTER(c_uint16),
             POINTER(c_uint16),
             c_uint32,
         ]
-        self.sdk.UsbPt104IpDetails.errcheck = self._check
-        self.sdk.UsbPt104SetChannel.argtypes = [c_int16, c_uint32, c_uint32, c_int16]
-        self.sdk.UsbPt104SetChannel.errcheck = self._check
-        self.sdk.UsbPt104SetMains.argtypes = [c_int16, c_uint16]
-        self.sdk.UsbPt104SetMains.errcheck = self._check
+        sdk.UsbPt104IpDetails.restype = PICO_STATUS
+        sdk.UsbPt104IpDetails.errcheck = self._check
+        sdk.UsbPt104SetChannel.argtypes = [c_int16, c_uint32, c_uint32, c_int16]
+        sdk.UsbPt104SetChannel.restype = PICO_STATUS
+        sdk.UsbPt104SetChannel.errcheck = self._check
+        sdk.UsbPt104SetMains.argtypes = [c_int16, c_uint16]
+        sdk.UsbPt104SetMains.restype = PICO_STATUS
+        sdk.UsbPt104SetMains.errcheck = self._check
 
         assert equipment.connection is not None  # noqa: S101
         p = equipment.connection.properties
@@ -115,9 +124,7 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
     def _open(self) -> None:
         """Open the connection to the PT-104 via USB."""
         handle = c_int16()
-        s = self.equipment.serial
-        serial = (c_int8 * len(s)).from_buffer_copy(s.encode())
-        self.sdk.UsbPt104OpenUnit(byref(handle), serial)
+        self.sdk.UsbPt104OpenUnit(byref(handle), create_string_buffer(self.equipment.serial.encode()))
         self._handle = handle.value
 
     def _open_via_ip(self, address: str) -> None:
@@ -132,20 +139,21 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
             raise MSLConnectionError(self, message=msg)
 
         handle = c_int16()
-        c_address = (c_int8 * len(address)).from_buffer_copy(address.encode())
-        self.sdk.UsbPt104OpenUnitViaIp(byref(handle), None, c_address)
+        serial = create_string_buffer(self.equipment.serial.encode())
+        self.sdk.UsbPt104OpenUnitViaIp(byref(handle), serial, create_string_buffer(address.encode()))
         self._handle = handle.value
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
         """Disconnect from the PT-104 Data Logger."""
-        if self._handle:
+        if self._handle is not None:
             self.sdk.UsbPt104CloseUnit(self._handle)
             self._handle = None
             super().disconnect()
 
     @staticmethod
     def enumerate_units(
-        communication: Literal["both", "ethernet", "usb"] = "both", path: PathLike = "usbpt104"
+        path: PathLike = "usbpt104",
+        communication: Literal["both", "ethernet", "usb"] = "both",
     ) -> list[str]:
         """Find PT-104 Platinum Resistance Data Logger's.
 
@@ -155,14 +163,13 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
             You cannot call this function after you have opened a connection to a Data Logger.
 
         Args:
-            communication: The communication type used by the PT-104.
             path: The path to the Pico Technology SDK.
+            communication: The communication type used by the PT-104.
 
         Returns:
             A list of serial numbers of the PT-104 Data Logger's that were found.
         """
-        length = c_uint32(1023)
-        details = (c_int8 * length.value)()
+        details = create_string_buffer(1024)
 
         t = communication.lower()
         if t == "usb":
@@ -177,12 +184,12 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
 
         libtype = "windll" if IS_WINDOWS else "cdll"
         sdk = LoadLibrary(path, libtype=libtype)
-        result = sdk.lib.UsbPt104Enumerate(byref(details), byref(length), t_val)
+        result = sdk.lib.UsbPt104Enumerate(byref(details), byref(c_int16(len(details))), t_val)
         if result != PICO_OK:
             msg = Error.get(result, f"UnknownPicoTechError: Error code 0x{result:08x}")
-            raise RuntimeError(msg)
+            raise OSError(msg)
 
-        return string_at(addressof(details)).decode("utf-8").split(",")
+        return details.value.decode().split(",")
 
     def get_ip_details(self) -> tuple[bool, str, int]:
         """Reads the ethernet details of the PT-104 Data Logger.
@@ -191,11 +198,10 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
             Whether connecting via ethernet is enabled, the IP address and the port number.
         """
         enabled = c_int16()
-        address = c_int8(127)
-        length = c_uint16(address.value)
+        address = create_string_buffer(128)
         port = c_uint16()
-        self.sdk.UsbPt104IpDetails(self._handle, byref(enabled), byref(address), byref(length), byref(port), 0)
-        return bool(enabled.value), string_at(addressof(address)).decode(), port.value
+        self.sdk.UsbPt104IpDetails(self._handle, byref(enabled), address, byref(c_uint16(len(address))), byref(port), 0)
+        return bool(enabled.value), address.value.decode(), port.value
 
     def get_unit_info(self, info: PicoInfo | str | int | None = None, *, prefix: bool = True) -> str:
         """Retrieves information about the PT-104 Data Logger.
@@ -203,24 +209,25 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
         If the device fails to open, or no device is opened only the driver version is available.
 
         Args:
-            info: An enum value or member name. If `None`, request all information from the PT-104.
+            info: An enum value or member name (case insensitive). If `None`, request all information from the PT-104.
             prefix: If `True`, includes the enum member name as a prefix.
                 For example, returns `"CAL_DATE: 09Aug16"` if `prefix` is `True` else `"09Aug16"`.
 
         Returns:
             The requested information from the PT-104 Data Logger.
         """
-        # only the first 7 items are supported by the SDK
         values = [PicoInfo(i) for i in range(7)] if info is None else [to_enum(info, PicoInfo, to_upper=True)]
+        if info is None:
+            values.append(PicoInfo.MAC_ADDRESS)
 
-        string = c_int8(127)
+        string = create_string_buffer(32)
         required_size = c_int16()
 
         out: list[str] = []
         for value in values:
             name = f"{value.name}: " if prefix else ""
-            self.sdk.UsbPt104GetUnitInfo(self._handle, byref(string), string.value, byref(required_size), value)
-            out.append(f"{name}{string_at(addressof(string)).decode()}")
+            self.sdk.UsbPt104GetUnitInfo(self._handle, string, len(string), byref(required_size), value)
+            out.append(f"{name}{string.value.decode()}")
         return "\n".join(out)
 
     def get_value(self, channel: int, *, filtered: bool = False) -> float:

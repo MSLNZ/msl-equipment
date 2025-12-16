@@ -31,12 +31,14 @@ os.environ["PATH"] += os.pathsep + r"C:\Program Files\Pico Technology\SDK\lib"
 pt104: PT104 = connection.connect()
 
 # Get all available information about the PT-104
-info = pt104.get_unit_info()
-print(info)
+print(pt104.get_unit_info())
 
-# Only get the date that the PT-104 was last calibrated
-info = pt104.get_unit_info("cal_date", prefix=False)
-print(f"The PT-104 was last calibrated on {info}")
+# Use the enum value to get the calibration date and do not print the member-name prefix
+info = pt104.get_unit_info(5, prefix=False)
+print(f"The PT-104 was calibrated on {info}")
+
+# Use the enum member name to get the MAC address
+print(pt104.get_unit_info("mac_address"))
 
 # Get the details of the ethernet connection
 enabled, ip_address, port = pt104.get_ip_details()

@@ -32,7 +32,7 @@ class PicoInfo(IntEnum):
         MAC_ADDRESS (int): MAC address of device, `11`.
         SHADOW_CAL (int): Shadow calibration, `12`.
         IPP_VERSION (int): Version of picoipp library, `13`.
-        DRIVER_PATH (int): Driver path, `14`.
+        DRIVER_PATH (int): The path to the library file, `14`.
         FIRMWARE_VERSION_3 (int): Third part of the firmware version, `15`.
         FRONT_PANEL_FIRMWARE_VERSION (int): Front panel firmware version, `16`.
         BOOTLOADER_VERSION (int): Bootloader version, `0x10000001`.
@@ -59,6 +59,7 @@ class PicoInfo(IntEnum):
 
 
 PICO_OK: int = 0
+PICO_BUSY: int = 0x00000027
 
 Error: dict[int, str] = {
     PICO_OK: "PICO_OK: The PicoScope is functioning correctly",
@@ -100,7 +101,7 @@ Error: dict[int, str] = {
     0x00000024: "PICO_DEVICE_SAMPLING: An attempt is being made to get stored data while streaming. Either stop streaming by calling stop() or use get_streaming_latest_values()",
     0x00000025: "PICO_NO_SAMPLES_AVAILABLE: Data is unavailable because a run has not been completed",
     0x00000026: "PICO_SEGMENT_OUT_OF_RANGE: The memory segment index is out of range",
-    0x00000027: "PICO_BUSY: The device is busy so data cannot be returned yet",
+    PICO_BUSY: "PICO_BUSY: The device is busy so data cannot be returned yet",
     0x00000028: "PICO_START_INDEX_INVALID: The start time to get stored data is out of range",
     0x00000029: "PICO_INVALID_INFO: The information number requested is not a valid number",
     0x0000002A: "PICO_INFO_UNAVAILABLE: The handle is invalid so no information is available about the device Only PICO_DRIVER_VERSION is available",

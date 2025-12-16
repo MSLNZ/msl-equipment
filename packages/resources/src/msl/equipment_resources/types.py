@@ -16,3 +16,12 @@ NKTDeviceStatusCallback = Callable[[str, int, int, int, int], None]
 
 NKTRegisterStatusCallback = Callable[[str, int, int, int, int, int, int], None]
 """Callback handler for the [NKT][msl.equipment_resources.nkt.nktpdll.NKT] SDK when the status of a register changes."""
+
+PicoTechBlockReadyCallback = Callable[[int, int, None], None]
+"""Block-ready callback handler for the [PicoScope][msl.equipment_resources.picotech.picoscope.PicoScope] SDK."""
+
+PicoTechDataReadyCallback = Callable[[int, int, int, int, None], None]
+"""Data-ready callback handler for the [PicoScope][msl.equipment_resources.picotech.picoscope.PicoScope] SDK."""
+
+PicoTechStreamingReadyCallback = Callable[[int, int, int, int, int, int, int, None], None]
+"""Streaming-ready callback handler for the [PicoScope][msl.equipment_resources.picotech.picoscope.PicoScope] SDK."""

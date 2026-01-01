@@ -1,0 +1,476 @@
+"""Base class for (raw) USB communication."""
+
+# cSpell: ignore altsetting
+# pyright: reportUnknownVariableType=false, reportUnknownMemberType=false, reportUnknownArgumentType=false, reportAttributeAccessIssue=false
+from __future__ import annotations
+
+import contextlib
+import re
+import sys
+import time
+from dataclasses import dataclass
+from enum import IntEnum
+from typing import TYPE_CHECKING
+
+import usb  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
+
+from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
+
+if TYPE_CHECKING:
+    from array import array
+    from types import ModuleType
+    from typing import (
+        Any,
+        Literal,  # pyright: ignore[reportUnusedImport]  # noqa: F401
+    )
+
+    from msl.equipment.schema import Equipment
+
+
+REGEX = re.compile(
+    r"^USB(?P<board>\d*)::(?P<vid>[^:]+)::(?P<pid>[^:]+)::(?P<serial>(?:[^:]*|:(?!:))*)(::(?P<interface>\d+))?::((?<!INSTR)|(RAW))$",
+    flags=re.IGNORECASE,
+)
+
+IS_WINDOWS = sys.platform == "win32"
+
+
+def _usb_backend(name: str) -> Any:  # noqa: ANN401
+    """Returns a usb.backend.IBackend subclass or raises ValueError."""
+    from usb.backend import (  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]  # noqa: PLC0415
+        libusb0,
+        libusb1,
+        openusb,
+    )
+
+    backends: dict[str, ModuleType] = {
+        "libusb0": libusb0,
+        "libusb1": libusb1,
+        "openusb": openusb,
+    }
+
+    backend_module = backends.get(name)
+    if backend_module is None:
+        options = ", ".join(backends)
+        msg = f"The requested {name!r} USB backend is invalid, must be one of: {options}"
+        raise ValueError(msg)
+
+    backend = backend_module.get_backend()
+    if backend is None:
+        msg = f"Cannot load the requested {name!r} USB backend"
+        raise ValueError(msg)
+
+    return backend
+
+
+def _find_device(parsed: ParsedUSBAddress, backend: Any) -> Any:  # noqa: ANN401
+    """Returns the usb.core.Device object or None."""
+    for dev in usb.core.find(find_all=True, backend=backend, idVendor=parsed.vendor_id, idProduct=parsed.product_id):
+        serial = None
+        with contextlib.suppress(NotImplementedError, ValueError):
+            serial = dev.serial_number or ""
+
+        if serial == parsed.serial:
+            return dev
+
+    return None
+
+
+@dataclass
+class Endpoint:
+    """Information about a USB Endpoint.
+
+    Attributes:
+        address (int): The `bEndpointAddress` value of the USB Endpoint.
+        max_packet_size (int): The `wMaxPacketSize` value of the USB Endpoint.
+        interface_number (int): The `bInterfaceNumber` value of the USB Interface
+            that the USB Endpoint is associated with.
+    """
+
+    address: int
+    interface_number: int
+    max_packet_size: int
+
+
+def _endpoint(cls: USB, interface: Any, direction: int, typ: int) -> Endpoint | None:  # noqa: ANN401
+    """Get information about an Endpoint.
+
+    Args:
+        cls: A USB class instance.
+        interface: A usb.core.Interface instance.
+        direction: Either usb.util.ENDPOINT_IN or usb.util.ENDPOINT_OUT.
+        typ: One of the usb.util.ENDPOINT_TYPE_* values.
+    """
+
+    def custom_match(ep: Any) -> bool:  # noqa: ANN401
+        return bool(
+            usb.util.endpoint_direction(ep.bEndpointAddress) == direction
+            and usb.util.endpoint_type(ep.bmAttributes) == typ
+        )
+
+    ep = usb.util.find_descriptor(interface, custom_match=custom_match)
+    if ep is None:
+        if typ == usb.util.ENDPOINT_TYPE_BULK:
+            d = "IN" if direction == usb.util.ENDPOINT_IN else "OUT"
+            msg = f"Cannot find a bulk-{d} endpoint for {interface!r}"
+            raise MSLConnectionError(cls, msg)
+        return None
+
+    return Endpoint(
+        address=ep.bEndpointAddress,
+        interface_number=interface.bInterfaceNumber,
+        max_packet_size=ep.wMaxPacketSize,
+    )
+
+
+class USB(MessageBased, regex=REGEX):
+    """Base class for (raw) USB communication."""
+
+    class CtrlDirection(IntEnum):
+        """The direction of a control transfer.
+
+        Attributes:
+            IN (int): Transfer direction is from device to computer.
+            OUT (int): Transfer direction is from computer to device.
+        """
+
+        IN = usb.util.CTRL_IN
+        OUT = usb.util.CTRL_OUT
+
+    class CtrlRecipient(IntEnum):
+        """The recipient of a control transfer.
+
+        Attributes:
+            DEVICE (int): Transfer is for a Device descriptor.
+            INTERFACE (int): Transfer is for an Interface descriptor.
+            ENDPOINT (int): Transfer is for an Endpoint descriptor.
+        """
+
+        DEVICE = usb.util.CTRL_RECIPIENT_DEVICE
+        INTERFACE = usb.util.CTRL_RECIPIENT_INTERFACE
+        ENDPOINT = usb.util.CTRL_RECIPIENT_ENDPOINT
+
+    class CtrlType(IntEnum):
+        """The type of a control transfer.
+
+        Attributes:
+            STANDARD (int): Standard type.
+            CLASS (int): Class type.
+            VENDOR (int): Vendor type.
+        """
+
+        STANDARD = usb.util.CTRL_TYPE_STANDARD
+        CLASS = usb.util.CTRL_TYPE_CLASS
+        VENDOR = usb.util.CTRL_TYPE_VENDOR
+
+    def __init__(self, equipment: Equipment) -> None:  # noqa: C901, PLR0915
+        """Base class for (raw) USB communication.
+
+        Args:
+            equipment: An [Equipment][] instance.
+
+        A [Connection][msl.equipment.schema.Connection] instance supports the following _properties_
+        for the USB communication protocol, as well as the _properties_ defined in
+        [MessageBased][msl.equipment.interfaces.message_based.MessageBased].
+
+        Attributes: Connection Properties:
+            bAlternateSetting (int): The value of `bAlternateSetting` of the USB Interface Descriptor.
+                _Default: `0`_
+            bConfigurationValue (int): The value of `bConfigurationValue` of the USB Configuration Descriptor.
+                _Default: `1`_
+            usb_backend (Literal["libusb1", "libusb0", "openusb"] | None): The USB backend library to use
+                for the connection. If `None`, selects the first backend that is available. _Default: `None`_
+        """
+        self._detached: bool = False
+        self._interface_number: int = 0
+        self._timeout_ms: int = 0
+        self._byte_buffer: bytearray = bytearray()
+        super().__init__(equipment)
+
+        assert equipment.connection is not None  # noqa: S101
+        parsed = parse_usb_address(equipment.connection.address)
+        if parsed is None:
+            msg = f"Invalid USB address {equipment.connection.address!r}"
+            raise ValueError(msg)
+
+        p = equipment.connection.properties
+
+        backend = p.get("usb_backend")
+        if isinstance(backend, str):
+            backend = _usb_backend(backend)
+
+        try:
+            device = _find_device(parsed, backend)
+        except usb.core.NoBackendError:
+            msg = (
+                "No USB backend is available. For tips on how to fix this issue see "
+                "https://mslnz.github.io/msl-equipment/dev/api/interfaces/usb/"
+            )
+            raise MSLConnectionError(self, msg) from None
+
+        if device is None:
+            msg = "The USB device was not found"
+            if not IS_WINDOWS:
+                msg += " (or you don't have permission to access the USB device)"
+            raise MSLConnectionError(self, msg)
+
+        self._device: Any = device  # usb.core.Device instance
+
+        self._interface_number = parsed.interface_number
+        configuration_value = p.get("bConfigurationValue", 1)
+        alternate_setting = p.get("bAlternateSetting", 0)
+
+        # If a kernel driver is active, the device will be unable to perform I/O
+        # On Windows there is no kernel so NotImplementedError is raised
+        with contextlib.suppress(usb.core.USBError, NotImplementedError):
+            if device.is_kernel_driver_active(self._interface_number):
+                device.detach_kernel_driver(self._interface_number)
+                self._detached = True
+
+        # Only set the USB Configuration if one is not already set
+        # https://libusb.sourceforge.io/api-1.0/libusb_caveats.html#configsel
+        cfg = None
+        with contextlib.suppress(usb.core.USBError):
+            cfg = device.get_active_configuration()
+
+        if cfg is None or cfg.bConfigurationValue != configuration_value:
+            try:
+                device.set_configuration(configuration_value)
+                cfg = device.get_active_configuration()
+            except ValueError:
+                msg = f"Invalid configuration value {configuration_value}"
+                raise MSLConnectionError(self, msg) from None
+            except usb.core.USBError as e:
+                msg = f"Cannot set configuration to value {configuration_value}, {e}"
+                raise MSLConnectionError(self, msg) from None
+
+        # Get the USB Interface (and maybe set the Alternate Setting)
+        interface = cfg[(self._interface_number, alternate_setting)]
+        alternates = list(usb.util.find_descriptor(cfg, find_all=True, bInterfaceNumber=interface.bInterfaceNumber))
+        if len(alternates) > 1:
+            try:
+                interface.set_altsetting()
+            except usb.core.USBError as e:
+                msg = f"Cannot set alternate setting for {interface!r}, {e}"
+                raise MSLConnectionError(self, msg) from None
+
+        # Get the info about some of the In/Out Endpoints for the selected USB Interface
+        self._bulk_in: Endpoint = _endpoint(self, interface, usb.util.ENDPOINT_IN, usb.util.ENDPOINT_TYPE_BULK)
+        self._bulk_out: Endpoint = _endpoint(self, interface, usb.util.ENDPOINT_OUT, usb.util.ENDPOINT_TYPE_BULK)
+        self._intr_in: Endpoint | None = _endpoint(self, interface, usb.util.ENDPOINT_IN, usb.util.ENDPOINT_TYPE_INTR)
+        self._intr_out: Endpoint | None = _endpoint(self, interface, usb.util.ENDPOINT_OUT, usb.util.ENDPOINT_TYPE_INTR)
+
+    def _read(self, size: int | None) -> bytes:  # pyright: ignore[reportImplicitOverride]
+        """Overrides method in MessageBased."""
+        original_timeout = self._timeout_ms
+        timeout = original_timeout
+        address = self._bulk_in.address
+        packet_size = self._bulk_in.max_packet_size
+        termination = self._read_termination
+        read = self._device.read
+        t0 = time.time()
+        while True:
+            if size is not None:
+                if len(self._byte_buffer) >= size:
+                    msg = self._byte_buffer[:size]
+                    self._byte_buffer = self._byte_buffer[size:]
+                    break
+
+            elif termination:
+                index = self._byte_buffer.find(termination)
+                if index != -1:
+                    index += len(termination)
+                    msg = self._byte_buffer[:index]
+                    self._byte_buffer = self._byte_buffer[index:]
+                    break
+
+            data: array[int] = read(address, packet_size, timeout)
+            self._byte_buffer.extend(data.tobytes())
+
+            if len(self._byte_buffer) > self._max_read_size:
+                error = f"len(message) [{len(self._byte_buffer)}] > max_read_size [{self._max_read_size}]"
+                raise RuntimeError(error)
+
+            elapsed_time = int((time.time() - t0) * 1000)
+            if (original_timeout > 0) and (elapsed_time > original_timeout):
+                raise MSLTimeoutError(self)
+
+            # decrease the timeout when reading each chunk so that the total
+            # time to receive all data preserves what was specified
+            timeout = max(0, original_timeout - elapsed_time)
+
+        return bytes(msg)
+
+    def _set_interface_timeout(self) -> None:  # pyright: ignore[reportImplicitOverride]
+        """Overrides method in MessageBased."""
+        # libusb docs: For an unlimited timeout, use value 0
+        self._timeout_ms = 0 if self._timeout is None else round(self._timeout * 1000)
+
+    def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
+        """Overrides method in MessageBased."""
+        address = self._bulk_out.address
+        packet_size = self._bulk_out.max_packet_size
+        timeout = self._timeout_ms
+        write = self._device.write
+        offset: int = 0
+        size = len(message)
+        while offset < size:
+            write_size = packet_size
+            if offset + write_size > size:
+                write_size = size - offset
+            length = write(address, message[offset : offset + write_size], timeout)
+            if length <= 0:
+                msg = "USB bulk OUT wrote <=0 bytes"
+                raise MSLConnectionError(self, msg)
+            offset += length
+        return offset
+
+    @staticmethod
+    def build_request_type(direction: USB.CtrlDirection, type: USB.CtrlType, recipient: USB.CtrlRecipient) -> int:  # noqa: A002
+        """Build a `bmRequestType` field for a control request.
+
+        Args:
+            direction: Transfer direction.
+            type: Transfer type.
+            recipient: Recipient of the transfer.
+
+        Returns:
+            The `request_type` argument for a [ctrl_transfer][msl.equipment.interfaces.usb.USB.ctrl_transfer].
+        """
+        request: int = usb.util.build_request_type(direction, type, recipient)
+        return request
+
+    @property
+    def bulk_in_endpoint(self) -> Endpoint:
+        """Information about the Bulk-IN endpoint."""
+        return self._bulk_in
+
+    @property
+    def bulk_out_endpoint(self) -> Endpoint:
+        """Information about the Bulk-OUT endpoint."""
+        return self._bulk_out
+
+    def clear_halt(self, endpoint: Endpoint) -> None:
+        """Clear the halt/stall condition for an endpoint.
+
+        Args:
+            endpoint: The endpoint to clear.
+        """
+        self._device.clear_halt(endpoint.address)
+
+    def ctrl_transfer(
+        self,
+        request_type: int,
+        request: int,
+        value: int = 0,
+        index: int = 0,
+        data_or_length: int | bytes | bytearray | array[int] | str | None = None,
+    ) -> int | array[int]:
+        """Perform a control transfer on Endpoint 0.
+
+        Args:
+            request_type: The request type field for the setup packet. The bit-map value
+                defines the direction (OUT or IN) of the request, the type of request
+                and the designated recipient.
+            request: Defines the request being made.
+            value: The value field for the request.
+            index: The index field for the request.
+            data_or_length: Either the data payload for an OUT transfer or the number of
+                bytes to read for an IN transfer. If there is no data payload, the parameter
+                should be `None` for an OUT transfer or 0 for an IN transfer.
+
+        Returns:
+            For an OUT transfer, the returned value is the number of bytes sent to the equipment.
+                For an IN transfer, the returned value is the data that was read.
+        """
+        try:
+            out: int | array[int] = self._device.ctrl_transfer(
+                bmRequestType=request_type,
+                bRequest=request,
+                wValue=value,
+                wIndex=index,
+                data_or_wLength=data_or_length,
+                timeout=self._timeout_ms,
+            )
+        except usb.core.USBTimeoutError:
+            raise MSLTimeoutError(self) from None
+        except usb.core.USBError as e:
+            raise MSLConnectionError(self, str(e)) from None
+        else:
+            return out
+
+    def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
+        """Disconnect from the USB device."""
+        if not hasattr(self, "_device") or self._device is None:
+            return None
+
+        if self._detached:
+            with contextlib.suppress(usb.core.USBError):
+                self._device.attach_kernel_driver(self._interface_number)
+
+        with contextlib.suppress(usb.core.USBError):
+            usb.util.dispose_resources(self._device)
+
+        self._device = None
+        return super().disconnect()
+
+    @property
+    def intr_in_endpoint(self) -> Endpoint | None:
+        """Information about the Interrupt-IN endpoint."""
+        return self._intr_in
+
+    @property
+    def intr_out_endpoint(self) -> Endpoint | None:
+        """Information about the Interrupt-OUT endpoint."""
+        return self._intr_out
+
+    def reset(self) -> None:
+        """Reset the USB device."""
+        self._device.reset()
+
+
+@dataclass
+class ParsedUSBAddress:
+    """The parsed result of a VISA-style address for the USB interface.
+
+    Args:
+        vendor_id: The manufacturer of the USB device.
+        product_id: The specific product identifier from the manufacturer.
+        serial: The serial number of the USB device.
+        interface_number: The USB Interface to use for communication.
+    """
+
+    vendor_id: int
+    product_id: int
+    serial: str
+    interface_number: int
+
+
+def parse_usb_address(address: str) -> ParsedUSBAddress | None:
+    """Get the vendor/product ID and the serial/interface number.
+
+    Args:
+        address: The VISA-style address to use for the connection.
+
+    Returns:
+        The parsed address or `None` if `address` is not valid for the USB interface.
+    """
+    splitted = address.split("::")
+    if len(splitted) < 4 or not address.startswith(("USB", "usb")):  # noqa: PLR2004
+        return None
+
+    _, vid, pid, serial, *remaining = splitted
+
+    vid = vid.lower()
+    pid = pid.lower()
+
+    interface = 0
+    with contextlib.suppress(ValueError, IndexError):
+        interface = int(remaining[0])
+
+    return ParsedUSBAddress(
+        vendor_id=int(vid, 16) if vid.startswith("0x") else int(vid),
+        product_id=int(pid, 16) if pid.startswith("0x") else int(pid),
+        serial=serial,
+        interface_number=interface,
+    )

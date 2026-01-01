@@ -49,6 +49,9 @@ msl-equipment find
 
 This will display a description about the type of interface, the equipment that was found for each interface and the address(es) that may be used to connect to the equipment.
 
+!!! tip
+    If USB devices are attached to the computer and none are found, make sure you have followed [these instructions][usb] for your operating system.
+
 ```console
 ASRL Ports
   COM1 [Communications Port (COM1)]

@@ -26,6 +26,8 @@
     ],
     "words": [
         "activex",
+        "adduser",
+        "akeo",
         "allclose",
         "arithmatex",
         "ASRL",
@@ -154,6 +156,7 @@
         "levelname",
         "libgpib",
         "libtype",
+        "libusb",
         "loadlib",
         "loadtxt",
         "loggable",
@@ -176,6 +179,7 @@
         "nbytes",
         "ndarray",
         "ndpointer",
+        "newgrp",
         "NIDAQ",
         "nidaqmx",
         "NKTP",
@@ -183,6 +187,7 @@
         "nprobes",
         "numpy",
         "olxxa",
+        "openusb",
         "Opto",
         "optosigma",
         "Optronic",
@@ -190,6 +195,7 @@
         "picoscope",
         "picotech",
         "pipx",
+        "plugdev",
         "PMAP",
         "PMAPPROC",
         "preopen",
@@ -235,6 +241,7 @@
         "tobytes",
         "TOOWEAK",
         "ttyname",
+        "udevadm",
         "ulonglong",
         "UNAVAIL",
         "ureal",
@@ -244,7 +251,9 @@
         "WAITLOCK",
         "wincamd",
         "WINFUNCTYPE",
+        "winget",
         "xoff",
-        "xonxoff"
+        "xonxoff",
+        "Zadig"
     ]
 }

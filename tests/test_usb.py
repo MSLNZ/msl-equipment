@@ -35,7 +35,7 @@ def test_get_usb_backend_cannot_load() -> None:
         _ = _usb_backend("openusb")
 
 
-@pytest.mark.skipif(sys.platform == "darwin" and sys.python_version[:2] == (3, 8), reason="libusb1 not available in CI")
+@pytest.mark.skipif(sys.platform == "darwin" and sys.version_info[:2] == (3, 8), reason="libusb1 not available in CI")
 def test_get_usb_backend_success() -> None:
     assert _usb_backend("libusb1") is not None
 

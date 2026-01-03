@@ -255,8 +255,14 @@ class USB(MessageBased, regex=REGEX):
                 raise MSLConnectionError(self, msg) from None
 
         # Get the info about some of the In/Out Endpoints for the selected USB Interface
-        self._bulk_in: Endpoint = _endpoint(self, interface, usb.util.ENDPOINT_IN, usb.util.ENDPOINT_TYPE_BULK)
-        self._bulk_out: Endpoint = _endpoint(self, interface, usb.util.ENDPOINT_OUT, usb.util.ENDPOINT_TYPE_BULK)
+        ep = _endpoint(self, interface, usb.util.ENDPOINT_IN, usb.util.ENDPOINT_TYPE_BULK)
+        assert ep is not None  # noqa: S101
+        self._bulk_in: Endpoint =  ep
+
+        ep = _endpoint(self, interface, usb.util.ENDPOINT_OUT, usb.util.ENDPOINT_TYPE_BULK)
+        assert ep is not None  # noqa: S101
+        self._bulk_out: Endpoint = ep
+
         self._intr_in: Endpoint | None = _endpoint(self, interface, usb.util.ENDPOINT_IN, usb.util.ENDPOINT_TYPE_INTR)
         self._intr_out: Endpoint | None = _endpoint(self, interface, usb.util.ENDPOINT_OUT, usb.util.ENDPOINT_TYPE_INTR)
 

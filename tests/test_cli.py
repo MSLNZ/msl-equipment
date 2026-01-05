@@ -137,7 +137,7 @@ def test_cli_find_verbose(
     assert reset_gpib is None
 
     gpib_file = Path().parent / "tests" / "resources" / f"gpib.{gpib_ext}"
-    args = ["find", "-i", "127.0.0.1", "-v", "-t", "0.1", "-g", str(gpib_file)]
+    args = ["find", "-i", "127.0.0.1", "-v", "-t", "0.1", "-g", str(gpib_file), "-b", "openusb"]
     assert cli(args) == 0
 
     m = caplog.messages
@@ -148,8 +148,10 @@ def test_cli_find_verbose(
     assert m[4] == "Searching for Serial ports"
     assert m[5] == "Searching for GPIB devices (include_sad=False)"
     assert m[6] == f"Loaded {gpib_file.resolve()}"
-    assert m[7] == "Waiting approximately 0.1 second(s) for network devices to respond..."
-    assert re.match(r"Found \d+ devices", m[8])
+    assert m[7] == "Searching for USB devices"
+    assert m[8] == "Cannot load the requested 'openusb' PyUSB backend"
+    assert m[9] == "Waiting approximately 0.1 second(s) for network devices to respond..."
+    assert re.match(r"Found \d+ devices", m[10])
 
     # check stdout, but must ignore all Serial devices
     out, _ = capsys.readouterr()
@@ -167,7 +169,12 @@ def test_cli_find_verbose(
 
 def test_find_print_stdout(capsys: pytest.CaptureFixture[str]) -> None:
     devices = [
-        Device(type=DeviceType.ASRL, addresses=["COM1"], description="Communications Port (COM1)", webserver=""),
+        Device(
+            type=DeviceType.ASRL,
+            addresses=["COM1"],
+            description="Communications Port (COM1)",
+            webserver="",
+        ),
         Device(
             type=DeviceType.LXI,
             addresses=[
@@ -178,13 +185,29 @@ def test_find_print_stdout(capsys: pytest.CaptureFixture[str]) -> None:
             description="Digital Multimeter - MY9876543210",
             webserver="http://169.254.100.4",
         ),
-        Device(type=DeviceType.ASRL, addresses=["COM2"], description="Communications Port (COM2)", webserver=""),
-        Device(type=DeviceType.GPIB, addresses=["GPIB::1", "GPIB0::2::INSTR"], description="", webserver=""),
+        Device(
+            type=DeviceType.ASRL,
+            addresses=["COM2"],
+            description="Communications Port (COM2)",
+            webserver="",
+        ),
+        Device(
+            type=DeviceType.GPIB,
+            addresses=["GPIB::1", "GPIB0::2::INSTR"],
+            description="",
+            webserver="",
+        ),
         Device(
             type=DeviceType.ASRL,
             addresses=["COM3"],
             description="Intel(R) Active Management Technology - SOL (COM3)",
-            webserver="",
+            webserver="ignored",
+        ),
+        Device(
+            type=DeviceType.USB,
+            addresses=["USB::1::2::a"],
+            description="Manufacturer",
+            webserver="ignored",
         ),
         Device(
             type=DeviceType.VXI11,
@@ -206,6 +229,12 @@ def test_find_print_stdout(capsys: pytest.CaptureFixture[str]) -> None:
             addresses=[],
             description="HTML title",
             webserver="",
+        ),
+        Device(
+            type=DeviceType.USB,
+            addresses=["USB::1::2::b"],
+            description="Manufacturer 2",
+            webserver="ignored",
         ),
         Device(
             type=DeviceType.VXI11,
@@ -257,5 +286,17 @@ VXI11 Devices
   Digital Voltmeter [webserver: http://169.254.100.6]
     TCPIP::169.254.100.6::inst0::INSTR
   HTML title
+USB Devices
+  USB::1::2::a [Manufacturer]
+  USB::1::2::b [Manufacturer 2]
 """
     )
+
+
+def test_usb_backend_invalid(capsys: pytest.CaptureFixture[str]) -> None:
+    with pytest.raises(SystemExit):
+        _ = cli(["find", "--usb-backend", "xxx"])
+
+    out, err = capsys.readouterr()
+    assert not out
+    assert "invalid choice: 'xxx' (choose from libusb1, libusb0, openusb)" in err

@@ -52,12 +52,12 @@ def _usb_backend(name: str) -> Any:  # noqa: ANN401
     backend_module = backends.get(name)
     if backend_module is None:
         options = ", ".join(backends)
-        msg = f"The requested {name!r} USB backend is invalid, must be one of: {options}"
+        msg = f"The requested {name!r} PyUSB backend is invalid, must be one of: {options}"
         raise ValueError(msg)
 
     backend = backend_module.get_backend()
     if backend is None:
-        msg = f"Cannot load the requested {name!r} USB backend"
+        msg = f"Cannot load the requested {name!r} PyUSB backend"
         raise ValueError(msg)
 
     return backend
@@ -287,7 +287,7 @@ class USB(MessageBased, regex=REGEX):
                 _Default: `0`_
             bConfigurationValue (int | None): The value of `bConfigurationValue` of the USB Configuration
                 Descriptor. If `None`, use the first Configuration found. _Default: `None`_
-            usb_backend (Literal["libusb1", "libusb0", "openusb"] | None): The USB backend library to use
+            usb_backend (Literal["libusb1", "libusb0", "openusb"] | None): The PyUSB backend library to use
                 for the connection. If `None`, selects the first backend that is available. _Default: `None`_
         """
         self._detached: bool = False
@@ -312,7 +312,7 @@ class USB(MessageBased, regex=REGEX):
             device = _find_device(parsed, backend)
         except usb.core.NoBackendError:
             msg = (
-                "No USB backend is available. For tips on how to fix this issue see "
+                "A PyUSB backend is not available. For tips on how to fix this issue see "
                 "https://mslnz.github.io/msl-equipment/dev/api/interfaces/usb/"
             )
             raise MSLConnectionError(self, msg) from None

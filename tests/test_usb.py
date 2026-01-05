@@ -26,12 +26,12 @@ ENDPOINT_TYPE_INTR = int(usb.util.ENDPOINT_TYPE_INTR)  # pyright: ignore[reportU
 
 
 def test_get_usb_backend_invalid() -> None:
-    with pytest.raises(ValueError, match=r"The requested 'abc' USB backend is invalid"):
+    with pytest.raises(ValueError, match=r"The requested 'abc' PyUSB backend is invalid"):
         _ = _usb_backend("abc")
 
 
 def test_get_usb_backend_cannot_load() -> None:
-    with pytest.raises(ValueError, match=r"Cannot load the requested 'openusb' USB backend"):
+    with pytest.raises(ValueError, match=r"Cannot load the requested 'openusb' PyUSB backend"):
         _ = _usb_backend("openusb")
 
 
@@ -99,13 +99,13 @@ def test_invalid_usb_address() -> None:
 
 
 def test_invalid_backend_string() -> None:
-    with pytest.raises(ValueError, match=r"'xxx' USB backend is invalid"):
+    with pytest.raises(ValueError, match=r"'xxx' PyUSB backend is invalid"):
         _ = Connection("USB::1::2::serial::RAW", usb_backend="xxx").connect()
 
 
 def test_no_backend_available(usb_backend: USBBackend) -> None:
     # By not calling usb_backend.add_device() the mocked USB backend simulates no backend library
-    with pytest.raises(MSLConnectionError, match=r"No USB backend is available"):
+    with pytest.raises(MSLConnectionError, match=r"A PyUSB backend is not available"):
         _ = Connection("USB::1::2::serial::RAW", usb_backend=usb_backend).connect()
 
 

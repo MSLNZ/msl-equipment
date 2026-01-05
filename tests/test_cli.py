@@ -28,6 +28,8 @@ patch=["subprocess"]
 to measure coverage in Python subprocesses, but 7.10 requires Python 3.9+.
 """
 
+no_libusb = sys.platform == "darwin" and sys.version_info[:2] == (3, 8)
+
 
 @pytest.fixture
 def reset_gpib() -> Iterator[None]:
@@ -112,7 +114,7 @@ def test_cli_unknown(capsys: pytest.CaptureFixture[str]) -> None:
     assert "invalid choice: 'unknown'" in err
 
 
-@pytest.mark.skipif(sys.platform == "darwin" and sys.version_info[:2] == (3, 8), reason="libusb1 not available in CI")
+@pytest.mark.skipif(no_libusb, reason="libusb1 not available in CI")
 def test_cli_find_json(capsys: pytest.CaptureFixture[str]) -> None:
     args = ["find", "-i", "127.0.0.1", "-t", "0.1", "-g", f"tests/resources/gpib.{gpib_ext}", "-j"]
     assert cli(args) == 0
@@ -129,6 +131,7 @@ def test_cli_find_json(capsys: pytest.CaptureFixture[str]) -> None:
     assert gpib_devices[0]["webserver"] == ""
 
 
+@pytest.mark.skipif(no_libusb, reason="libusb1 not available in CI")
 def test_cli_find_verbose(
     reset_gpib: None, caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str]
 ) -> None:

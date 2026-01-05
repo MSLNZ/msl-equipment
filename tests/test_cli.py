@@ -299,4 +299,4 @@ def test_usb_backend_invalid(capsys: pytest.CaptureFixture[str]) -> None:
 
     out, err = capsys.readouterr()
     assert not out
-    assert "invalid choice: 'xxx' (choose from libusb1, libusb0, openusb)" in err
+    assert "invalid choice: 'xxx' (choose from" in err

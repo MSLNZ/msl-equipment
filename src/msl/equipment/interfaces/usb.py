@@ -144,7 +144,7 @@ def find_usb(usb_backend: Any = None) -> list[_USBDevice]:  # noqa: ANN401, C901
 
     These include: FTDI, USBTMC and RAW.
     """
-    logger.debug("Searching for USB devices")
+    logger.debug("Searching for USB devices (backend=%r)", usb_backend)
 
     devices: list[_USBDevice] = []
 

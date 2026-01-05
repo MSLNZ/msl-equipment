@@ -148,7 +148,7 @@ def test_cli_find_verbose(
     assert m[4] == "Searching for Serial ports"
     assert m[5] == "Searching for GPIB devices (include_sad=False)"
     assert m[6] == f"Loaded {gpib_file.resolve()}"
-    assert m[7] == "Searching for USB devices"
+    assert m[7] == "Searching for USB devices (backend='openusb')"
     assert m[8] == "Cannot load the requested 'openusb' PyUSB backend"
     assert m[9] == "Waiting approximately 0.1 second(s) for network devices to respond..."
     assert re.match(r"Found \d+ devices", m[10])

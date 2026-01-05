@@ -15,6 +15,7 @@ from serial.tools.list_ports import comports
 from msl.equipment.dns_service_discovery import find_lxi
 from msl.equipment.interfaces.gpib import find_listeners
 from msl.equipment.interfaces.prologix import find_prologix
+from msl.equipment.interfaces.usb import find_usb
 from msl.equipment.interfaces.vxi11 import find_vxi11
 from msl.equipment.utils import ipv4_addresses, logger
 
@@ -31,6 +32,7 @@ class DeviceType(IntEnum):
     PROLOGIX = 2
     LXI = 3
     VXI11 = 4
+    USB = 4
 
 
 @dataclass
@@ -144,6 +146,12 @@ def find_equipment(  # noqa: C901
         num_found += len(gpib)
         devices["GPIB"] = Device(type=DeviceType.GPIB, addresses=gpib)
 
+    for index, usb in enumerate(find_usb()):
+        num_found += 1
+        devices[f"USB{index:03d}"] = Device(
+            type=DeviceType.USB, addresses=[usb.visa_address], description=usb.description
+        )
+
     logger.debug("Waiting approximately %g second(s) for network devices to respond...", timeout)
     for thread in threads:
         thread.join()
@@ -170,7 +178,7 @@ def print_stdout(found: list[Device]) -> None:
                 continue
             if typ == DeviceType.GPIB:
                 print("  " + "\n  ".join(device.addresses))
-            elif typ == DeviceType.ASRL:
+            elif typ in {DeviceType.ASRL, DeviceType.USB}:
                 print(f"  {device.addresses[0]} [{device.description}]")
             else:
                 webserver = f" [webserver: {device.webserver}]" if device.webserver else ""

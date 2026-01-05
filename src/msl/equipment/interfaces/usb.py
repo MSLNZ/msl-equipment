@@ -10,19 +10,19 @@ import sys
 import time
 from dataclasses import dataclass
 from enum import IntEnum
+from itertools import combinations
 from typing import TYPE_CHECKING
 
 import usb  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
+
+from msl.equipment.utils import logger
 
 from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from array import array
     from types import ModuleType
-    from typing import (
-        Any,
-        Literal,  # pyright: ignore[reportUnusedImport]  # noqa: F401
-    )
+    from typing import Any, Literal
 
     from msl.equipment.schema import Equipment
 
@@ -65,15 +65,124 @@ def _usb_backend(name: str) -> Any:  # noqa: ANN401
 
 def _find_device(parsed: ParsedUSBAddress, backend: Any) -> Any:  # noqa: ANN401
     """Returns the usb.core.Device object or None."""
-    for dev in usb.core.find(find_all=True, backend=backend, idVendor=parsed.vendor_id, idProduct=parsed.product_id):
-        serial = None
-        with contextlib.suppress(NotImplementedError, ValueError):
-            serial = dev.serial_number or ""
+    bus_address_regex = re.compile(r"bus=(?P<bus>\d+),address=(?P<address>\d+)")
 
-        if serial == parsed.serial:
+    for dev in usb.core.find(find_all=True, backend=backend, idVendor=parsed.vendor_id, idProduct=parsed.product_id):
+        # Check if only the VID and PID are required to find the USB device and return the first one found
+        if parsed.serial_id == "IGNORE":
             return dev
 
+        # Multiple USB devices exist with the same serial number or the serial number cannot be determined
+        match = bus_address_regex.match(parsed.serial_id)
+        if match is not None and (dev.bus == int(match["bus"])) and (dev.address == int(match["address"])):
+            return dev
+
+        try:
+            if dev.serial_number == parsed.serial_id:
+                return dev
+        except (NotImplementedError, ValueError):
+            pass
+
     return None
+
+
+class _USBDevice:
+    """A device that support the USB protocol."""
+
+    def __init__(self, usb_core_device: Any) -> None:  # noqa: ANN401
+        self.vid: int = usb_core_device.idVendor
+        self.pid: int = usb_core_device.idProduct
+        self.bus: int | None = usb_core_device.bus
+        self.address: int | None = usb_core_device.address
+
+        info: list[str] = []
+        with contextlib.suppress(NotImplementedError, ValueError):
+            info.append(usb_core_device.manufacturer or "")
+        with contextlib.suppress(NotImplementedError, ValueError):
+            info.append(usb_core_device.product or "")
+        self.description: str = ", ".join(item for item in info if item) or "Unknown USB Device"
+
+        serial = ""
+        with contextlib.suppress(NotImplementedError, ValueError):
+            serial = usb_core_device.serial_number or ""
+        self.serial: str = serial
+
+        self.is_serial_unique: bool = True
+        self.type: Literal["FTDI", "USB"] = "USB"
+        self.interface_number: int = 0
+        self.suffix: Literal["RAW", "INSTR"] | None = None
+
+    def check_vid_pid_serial_equal(self, other: _USBDevice) -> None:
+        """Check if idVendor::idProduct::serial_number is unique.
+
+        If not, then `self.is_serial_unique` and `other.is_serial_unique` are set to False.
+        """
+        if self.serial and self.serial == other.serial and self.vid == other.vid and self.pid == other.pid:
+            self.is_serial_unique = False
+            other.is_serial_unique = False
+
+    @property
+    def visa_address(self) -> str:
+        """Returns the VISA-style address."""
+        serial_id: str
+        if self.serial and self.is_serial_unique:
+            serial_id = self.serial
+        elif self.bus is not None and self.address is not None:
+            if self.serial and not self.is_serial_unique:
+                self.description += f", serial number is {self.serial!r} but it is not unique"
+            serial_id = f"bus={self.bus},address={self.address}"
+        else:
+            serial_id = "IGNORE"
+
+        iface = "" if self.interface_number == 0 else f"::{self.interface_number}"
+        suffix = f"::{self.suffix}" if self.suffix else ""
+        return f"{self.type}::0x{self.vid:04x}::0x{self.pid:04x}::{serial_id}{iface}{suffix}"
+
+
+def find_usb(usb_backend: Any = None) -> list[_USBDevice]:  # noqa: ANN401, C901
+    """Find USB devices.
+
+    These include: FTDI, USBTMC and RAW.
+    """
+    logger.debug("Searching for USB devices")
+
+    devices: list[_USBDevice] = []
+
+    if isinstance(usb_backend, str):
+        try:
+            usb_backend = _usb_backend(usb_backend)
+        except ValueError as e:
+            logger.debug("%s", e)
+            return devices
+
+    for usb_core_device in usb.core.find(find_all=True, backend=usb_backend):
+        for index, config in enumerate(usb_core_device):
+            for interface in config:
+                device: _USBDevice | None = None
+
+                if usb_core_device.idVendor == 0x0403:  # noqa: PLR2004
+                    device = _USBDevice(usb_core_device)
+                    device.type = "FTDI"
+                elif interface.bInterfaceClass == 0xFE and interface.bInterfaceSubClass == 3:  # noqa: PLR2004
+                    device = _USBDevice(usb_core_device)
+                    device.suffix = "INSTR"
+                elif interface.bInterfaceClass == 0xFF and interface.bInterfaceSubClass == 0xFF:  # noqa: PLR2004
+                    device = _USBDevice(usb_core_device)
+                    device.suffix = "RAW"
+
+                if device is not None:
+                    device.interface_number = interface.bInterfaceNumber
+                    if usb_core_device.bNumConfigurations > 1 and index > 0:
+                        device.description += f", define bConfigurationValue={config.bConfigurationValue}"
+                    if interface.bAlternateSetting != 0:
+                        device.description += f", define bAlternateSetting={interface.bAlternateSetting}"
+                    devices.append(device)
+
+    # Check for non-unique VID::PID::Serial
+    for device1, device2 in combinations(devices, 2):
+        device1.check_vid_pid_serial_equal(device2)
+
+    return devices
 
 
 @dataclass
@@ -176,8 +285,8 @@ class USB(MessageBased, regex=REGEX):
         Attributes: Connection Properties:
             bAlternateSetting (int): The value of `bAlternateSetting` of the USB Interface Descriptor.
                 _Default: `0`_
-            bConfigurationValue (int): The value of `bConfigurationValue` of the USB Configuration Descriptor.
-                _Default: `1`_
+            bConfigurationValue (int | None): The value of `bConfigurationValue` of the USB Configuration
+                Descriptor. If `None`, use the first Configuration found. _Default: `None`_
             usb_backend (Literal["libusb1", "libusb0", "openusb"] | None): The USB backend library to use
                 for the connection. If `None`, selects the first backend that is available. _Default: `None`_
         """
@@ -217,8 +326,8 @@ class USB(MessageBased, regex=REGEX):
         self._device: Any = device  # usb.core.Device instance
 
         self._interface_number = parsed.interface_number
-        configuration_value = p.get("bConfigurationValue", 1)
-        alternate_setting = p.get("bAlternateSetting", 0)
+        configuration_value: int | None = p.get("bConfigurationValue")
+        alternate_setting: int = p.get("bAlternateSetting", 0)
 
         # If a kernel driver is active, the device will be unable to perform I/O
         # On Windows there is no kernel so NotImplementedError is raised
@@ -233,7 +342,7 @@ class USB(MessageBased, regex=REGEX):
         with contextlib.suppress(usb.core.USBError):
             cfg = device.get_active_configuration()
 
-        if cfg is None or cfg.bConfigurationValue != configuration_value:
+        if cfg is None or (configuration_value is not None and cfg.bConfigurationValue != configuration_value):
             try:
                 device.set_configuration(configuration_value)
                 cfg = device.get_active_configuration()
@@ -257,7 +366,7 @@ class USB(MessageBased, regex=REGEX):
         # Get the info about some of the In/Out Endpoints for the selected USB Interface
         ep = _endpoint(self, interface, usb.util.ENDPOINT_IN, usb.util.ENDPOINT_TYPE_BULK)
         assert ep is not None  # noqa: S101
-        self._bulk_in: Endpoint =  ep
+        self._bulk_in: Endpoint = ep
 
         ep = _endpoint(self, interface, usb.util.ENDPOINT_OUT, usb.util.ENDPOINT_TYPE_BULK)
         assert ep is not None  # noqa: S101
@@ -430,8 +539,12 @@ class USB(MessageBased, regex=REGEX):
         """Information about the Interrupt-OUT endpoint."""
         return self._intr_out
 
-    def reset(self) -> None:
-        """Reset the USB device."""
+    def reset_device(self) -> None:
+        """Perform a USB port reset for the device.
+
+        If your program has to call this method, the reset will cause the
+        device state to change (e.g., register values may be reset).
+        """
         self._device.reset()
 
 
@@ -442,18 +555,21 @@ class ParsedUSBAddress:
     Args:
         vendor_id: The manufacturer of the USB device.
         product_id: The specific product identifier from the manufacturer.
-        serial: The serial number of the USB device.
+        serial_id: An identifier of the serial number. Either the
+            1. serial_number
+            2. bus=#,address=#
+            3. IGNORE
         interface_number: The USB Interface to use for communication.
     """
 
     vendor_id: int
     product_id: int
-    serial: str
+    serial_id: str
     interface_number: int
 
 
 def parse_usb_address(address: str) -> ParsedUSBAddress | None:
-    """Get the vendor/product ID and the serial/interface number.
+    """Get the vendor/product/serial ID and the interface number.
 
     Args:
         address: The VISA-style address to use for the connection.
@@ -462,21 +578,28 @@ def parse_usb_address(address: str) -> ParsedUSBAddress | None:
         The parsed address or `None` if `address` is not valid for the USB interface.
     """
     splitted = address.split("::")
-    if len(splitted) < 4 or not address.startswith(("USB", "usb")):  # noqa: PLR2004
+    if len(splitted) < 4 or not address[:4].upper().startswith(("USB", "FTDI")):  # noqa: PLR2004
         return None
 
-    _, vid, pid, serial, *remaining = splitted
+    _, vid, pid, sid, *remaining = splitted
 
-    vid = vid.lower()
-    pid = pid.lower()
+    try:
+        vendor_id = int(vid, 16) if vid.lower().startswith("0x") else int(vid)
+    except ValueError:
+        return None
+
+    try:
+        product_id = int(pid, 16) if pid.lower().startswith("0x") else int(pid)
+    except ValueError:
+        return None
 
     interface = 0
     with contextlib.suppress(ValueError, IndexError):
         interface = int(remaining[0])
 
     return ParsedUSBAddress(
-        vendor_id=int(vid, 16) if vid.startswith("0x") else int(vid),
-        product_id=int(pid, 16) if pid.startswith("0x") else int(pid),
-        serial=serial,
+        vendor_id=vendor_id,
+        product_id=product_id,
+        serial_id=sid,
         interface_number=interface,
     )

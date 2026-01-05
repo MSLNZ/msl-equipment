@@ -43,8 +43,11 @@ def test_get_usb_backend_success() -> None:
 @pytest.mark.parametrize(
     ("address", "expected"),
     [
+        ("", None),
         ("USB::123::456", None),
-        ("xxx::123::456::abc", None),
+        ("GPIB::123::456::abc", None),
+        ("USB::abc::456::123", None),
+        ("USB::123::abc::456", None),
         ("USB::123::456::abc", ParsedUSBAddress(123, 456, "abc", 0)),
         ("USB::123::456::abc::INSTR", ParsedUSBAddress(123, 456, "abc", 0)),
         ("USB::123::456::abc::0::INSTR", ParsedUSBAddress(123, 456, "abc", 0)),
@@ -52,7 +55,9 @@ def test_get_usb_backend_success() -> None:
         ("USB::123::456::abc::RAW", ParsedUSBAddress(123, 456, "abc", 0)),
         ("usb0::123::456::ABC::raw", ParsedUSBAddress(123, 456, "ABC", 0)),
         ("USB3::0x012f::0x04a6::index2::11::RAW", ParsedUSBAddress(0x012F, 0x04A6, "index2", 11)),
-        ("USB10::1::0x2::3:4::5::Whatever", ParsedUSBAddress(1, 2, "3:4", 5)),
+        ("USB10::0X1::0X2::3:4::5::Whatever", ParsedUSBAddress(1, 2, "3:4", 5)),
+        ("FTDI::123::456::abc", ParsedUSBAddress(123, 456, "abc", 0)),
+        ("fTdi0::123::456::abc", ParsedUSBAddress(123, 456, "abc", 0)),
     ],
 )
 def test_parse_usb_address(address: str, expected: ParsedUSBAddress | None) -> None:
@@ -242,4 +247,4 @@ def test_clear_halt_and_reset(usb_backend: USBBackend) -> None:
     c = Connection("USB::1::2::x::RAW", usb_backend=usb_backend)
     with USB(Equipment(connection=c)) as device:
         device.clear_halt(device.bulk_in_endpoint)
-        device.reset()
+        device.reset_device()

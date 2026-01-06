@@ -77,11 +77,9 @@ def _find_device(parsed: ParsedUSBAddress, backend: Any) -> Any:  # noqa: ANN401
         if match is not None and (dev.bus == int(match["bus"])) and (dev.address == int(match["address"])):
             return dev
 
-        try:
+        with contextlib.suppress(NotImplementedError, ValueError):
             if dev.serial_number == parsed.serial_id:
                 return dev
-        except (NotImplementedError, ValueError):
-            pass
 
     return None
 
@@ -139,7 +137,7 @@ class _USBDevice:
         return f"{self.type}::0x{self.vid:04x}::0x{self.pid:04x}::{serial_id}{iface}{suffix}"
 
 
-def find_usb(usb_backend: Any = None) -> list[_USBDevice]:  # noqa: ANN401, C901
+def find_usb(usb_backend: Any = None) -> list[_USBDevice]:  # noqa: ANN401, C901, PLR0912
     """Find USB devices.
 
     These include: FTDI, USBTMC and RAW.
@@ -155,7 +153,14 @@ def find_usb(usb_backend: Any = None) -> list[_USBDevice]:  # noqa: ANN401, C901
             logger.debug("%s", e)
             return devices
 
-    for usb_core_device in usb.core.find(find_all=True, backend=usb_backend):
+    try:
+        libusb_devices = usb.core.find(find_all=True, backend=usb_backend)
+    except usb.core.NoBackendError:
+        link = "https://mslnz.github.io/msl-equipment/dev/api/interfaces/usb/"
+        logger.debug("A PyUSB backend is not available. For tips on how to fix this issue see %s", link)
+        return devices
+
+    for usb_core_device in libusb_devices:
         for index, config in enumerate(usb_core_device):
             for interface in config:
                 device: _USBDevice | None = None
@@ -513,6 +518,15 @@ class USB(MessageBased, regex=REGEX):
             raise MSLConnectionError(self, str(e)) from None
         else:
             return out
+
+    @property
+    def device_version(self) -> int:
+        """Returns the device version (release) number.
+
+        Corresponds to the `bcdDevice` field in the Device Descriptor.
+        """
+        dv: int = self._device.bcdDevice
+        return dv
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
         """Disconnect from the USB device."""

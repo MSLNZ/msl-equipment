@@ -195,7 +195,7 @@ The following interface classes are available
 * [HiSLIP][] &mdash; For equipment that use the [HiSLIP](https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf){:target="_blank"} protocol
 * [Prologix][] &mdash; Use [Prologix](https://prologix.biz/){:target="_blank"} hardware to establish a connection to GPIB-compatible equipment
 * [SDK][] &mdash; For equipment that use a Software Development Kit (SDK) for communication
-* [Serial][] &mdash; For equipment that is connected through a serial port
+* [Serial][] &mdash; For equipment that is connected through a serial port (or a USB to RS-232 adaptor)
 * [Socket][] &mdash; For equipment that is connected through a network socket
 * [USB][] &mdash; For equipment that use the USB protocol
 * [VXI11][] &mdash; For equipment that use the [VXI-11](http://www.vxibus.org/specifications.html){:target="_blank"} protocol

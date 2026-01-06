@@ -503,7 +503,19 @@ class PTYServer:
 class USBDeviceDescriptor:
     """Mocked USB Device Descriptor."""
 
-    def __init__(self, *, vid: int = -1, pid: int = -1, serial: str = "", is_usb_tmc: bool = False) -> None:
+    def __init__(  # noqa: PLR0913
+        self,
+        *,
+        vid: int = -1,
+        pid: int = -1,
+        serial: str = "",
+        is_usb_tmc: bool = False,
+        is_not_raw: bool = False,
+        bus: int | None = 1,
+        address: int | None = 1,
+        alternate_setting: int = 0,
+        num_configurations: int = 1,
+    ) -> None:
         """Mocked USB Device Descriptor."""
         self.bLength: int = 18
         self.bDescriptorType: int = 0x01
@@ -514,18 +526,21 @@ class USBDeviceDescriptor:
         self.bMaxPacketSize0: int = 64
         self.idVendor: int = vid
         self.idProduct: int = pid
-        self.bcdDevice: int = 0x0001
+        self.bcdDevice: int = 0x1001
         self.iManufacturer: int = 1
         self.iProduct: int = 2
         self.iSerialNumber: int = 3
-        self.bNumConfigurations: int = 1
-        self.bus: int = 1
-        self.address: int = 1
+        self.bNumConfigurations: int = num_configurations
+        self.bus: int | None = bus
+        self.address: int | None = address
         self.port_number: None = None
         self.port_numbers: None = None
         self.speed: None = None
         self.serial: str = serial
+
         self.is_usb_tmc: bool = is_usb_tmc
+        self.is_not_raw: bool = is_not_raw
+        self.alternate_setting: int = alternate_setting
 
 
 class USBConfigurationDescriptor:
@@ -547,12 +562,12 @@ class USBConfigurationDescriptor:
 class USBInterfaceDescriptor:
     """Mocked USB Interface Descriptor."""
 
-    def __init__(self, cls: int = 0xFF, sub_cls: int = 0xFF) -> None:
+    def __init__(self, cls: int = 0xFF, sub_cls: int = 0xFF, alternate_setting: int = 0) -> None:
         """Mocked USB Interface Descriptor."""
         self.bLength: int = 9
         self.bDescriptorType: int = 4
         self.bInterfaceNumber: int = 0
-        self.bAlternateSetting: int = 0
+        self.bAlternateSetting: int = alternate_setting
         self.bNumEndpoints: int = 2
         self.bInterfaceClass: int = cls
         self.bInterfaceSubClass: int = sub_cls
@@ -597,9 +612,33 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         """
         self._bulk_queue.put(content)
 
-    def add_device(self, vendor_id: int, product_id: int, serial: str, *, is_usb_tmc: bool = False) -> None:
+    def add_device(  # noqa: PLR0913
+        self,
+        vendor_id: int,
+        product_id: int,
+        serial: str,
+        *,
+        is_usb_tmc: bool = False,
+        is_not_raw: bool = False,
+        alternate_setting: int = 0,
+        bus: int | None = 1,
+        address: int | None = 1,
+        num_configurations: int = 1,
+    ) -> None:
         """Add a device."""
-        self._devices.append(USBDeviceDescriptor(vid=vendor_id, pid=product_id, serial=serial, is_usb_tmc=is_usb_tmc))
+        self._devices.append(
+            USBDeviceDescriptor(
+                vid=vendor_id,
+                pid=product_id,
+                serial=serial,
+                is_usb_tmc=is_usb_tmc,
+                is_not_raw=is_not_raw,
+                alternate_setting=alternate_setting,
+                bus=bus,
+                address=address,
+                num_configurations=num_configurations,
+            )
+        )
 
     def attach_kernel_driver(self, handle: int, interface: int) -> None:  # pyright: ignore[reportUnusedParameter]
         """Does nothing."""
@@ -690,6 +729,7 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
 
     def get_device_descriptor(self, device: USBDeviceDescriptor) -> USBDeviceDescriptor:
         """Returns the device descriptor."""
+        self._device = device
         return device
 
     def get_endpoint_descriptor(
@@ -715,6 +755,10 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
             raise IndexError
         if self._device.is_usb_tmc:
             return USBInterfaceDescriptor(cls=0xFE, sub_cls=3)
+        if self._device.is_not_raw:
+            return USBInterfaceDescriptor(cls=0x22, sub_cls=10)
+        if self._device.alternate_setting != 0:
+            return USBInterfaceDescriptor(alternate_setting=self._device.alternate_setting)
         return USBInterfaceDescriptor()
 
     def is_kernel_driver_active(self, handle: int, interface: int) -> bool:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002

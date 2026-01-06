@@ -33,6 +33,6 @@ The core package is `msl-equipment` and it is available through the [Python Pack
 
 ### Dependencies
 
-The `msl-equipment` package depends on the following packages: [msl-loadlib](https://mslnz.github.io/msl-loadlib/latest/), [numpy](https://www.numpy.org/){:target="_blank"}, [pyserial](https://pyserial.readthedocs.io/en/latest/){:target="_blank"}, [pyzmq](https://pyzmq.readthedocs.io/en/stable/){:target="_blank"}
+The `msl-equipment` package depends on the following packages: [msl-loadlib](https://mslnz.github.io/msl-loadlib/latest/), [numpy](https://www.numpy.org/){:target="_blank"}, [pySerial](https://pyserial.readthedocs.io/en/latest/){:target="_blank"}, [PyUSB](https://github.com/pyusb/pyusb){:target="_blank"}, [PyZMQ](https://pyzmq.readthedocs.io/en/stable/){:target="_blank"}.
 
 The following packages are optional dependencies that may be installed to interface with equipment: [msl-equipment-resources][resources], [NI-DAQmx](https://nidaqmx-python.readthedocs.io/en/stable/){:target="_blank"}, [PyVISA](https://pyvisa.readthedocs.io/en/stable/){:target="_blank"}, [PyVISA-py](https://pyvisa.readthedocs.io/projects/pyvisa-py/en/stable/){:target="_blank"}

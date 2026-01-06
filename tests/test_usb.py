@@ -12,7 +12,9 @@ from msl.equipment.interfaces.usb import (
     REGEX,
     ParsedUSBAddress,
     _endpoint,  # pyright: ignore[reportPrivateUsage]
+    _find_device,  # pyright: ignore[reportPrivateUsage]
     _usb_backend,  # pyright: ignore[reportPrivateUsage]
+    find_usb,
     parse_usb_address,
 )
 
@@ -91,6 +93,22 @@ def test_regex(address: str, *, matches: bool) -> None:
         assert REGEX.match(address) is not None
     else:
         assert REGEX.match(address) is None
+
+
+def test_find_device_ignore_serial(usb_backend: USBBackend) -> None:
+    usb_backend.add_device(1, 2, "whatever")
+    parsed = ParsedUSBAddress(1, 2, "IGNORE", 0)
+    assert _find_device(parsed, backend=usb_backend) is not None
+
+
+def test_find_device_bus_address(usb_backend: USBBackend) -> None:
+    usb_backend.add_device(1, 2, "whatever")
+
+    parsed = ParsedUSBAddress(1, 2, "bus=1,address=1", 0)
+    assert _find_device(parsed, backend=usb_backend) is not None
+
+    parsed = ParsedUSBAddress(1, 2, "bus=1,address=2", 0)
+    assert _find_device(parsed, backend=usb_backend) is None
 
 
 def test_invalid_usb_address() -> None:
@@ -199,6 +217,11 @@ def test_write_read_query(usb_backend: USBBackend) -> None:
 
         assert device.query("echo", decode=False) == b"echo\r\n"
 
+        # writes in `max_packet_size` so the first x's are not included in the return value
+        msg = (b"x" * device.bulk_out_endpoint.max_packet_size) + b"yyy\r\n"
+        assert device.write(msg) == device.bulk_out_endpoint.max_packet_size + 5
+        assert device.read(decode=False) == b"yyy\r\n"
+
         device.max_read_size = 4
         with pytest.raises(MSLConnectionError, match=r"max_read_size"):
             _ = device.query("more than 4 characters")
@@ -242,9 +265,61 @@ def test_build_request_type() -> None:
     assert USB.build_request_type(USB.CtrlDirection.IN, USB.CtrlType.VENDOR, USB.CtrlRecipient.ENDPOINT) == 194
 
 
-def test_clear_halt_and_reset(usb_backend: USBBackend) -> None:
+def test_clear_halt_reset_device_version(usb_backend: USBBackend) -> None:
     usb_backend.add_device(1, 2, "x")
     c = Connection("USB::1::2::x::RAW", usb_backend=usb_backend)
     with USB(Equipment(connection=c)) as device:
         device.clear_halt(device.bulk_in_endpoint)
         device.reset_device()
+        assert device.device_version == 0x1001
+
+
+def test_find_usb_invalid_backend(caplog: pytest.LogCaptureFixture) -> None:
+    caplog.set_level("DEBUG", "msl.equipment")
+    caplog.clear()
+
+    assert len(find_usb(usb_backend="pie")) == 0
+
+    assert caplog.messages == [
+        "Searching for USB devices (backend='pie')",
+        "The requested 'pie' PyUSB backend is invalid, must be one of: libusb0, libusb1, openusb",
+    ]
+
+
+def test_find_usb(usb_backend: USBBackend) -> None:
+    usb_backend.add_device(0x0403, 1, "a")
+    usb_backend.add_device(1, 2, "b")
+    usb_backend.add_device(3, 4, "c", is_usb_tmc=True)
+    usb_backend.add_device(5, 6, "d", is_not_raw=True)
+    usb_backend.add_device(7, 8, "bus=1,address=1")
+    usb_backend.add_device(9, 10, "e", alternate_setting=3)
+    usb_backend.add_device(11, 12, "f")
+    usb_backend.add_device(11, 12, "f")
+    usb_backend.add_device(11, 12, "f", bus=None, address=None)
+    usb_backend.add_device(11, 12, "")
+    usb_backend.add_device(13, 14, "g", num_configurations=2)
+
+    devices = find_usb(usb_backend=usb_backend)
+    assert len(devices) == 11
+    assert devices[0].visa_address == "FTDI::0x0403::0x0001::a"
+    assert devices[0].description == "a, a"
+    assert devices[1].visa_address == "USB::0x0001::0x0002::b::RAW"
+    assert devices[1].description == "b, b"
+    assert devices[2].visa_address == "USB::0x0003::0x0004::c::INSTR"
+    assert devices[2].description == "c, c"
+    assert devices[3].visa_address == "USB::0x0007::0x0008::bus=1,address=1::RAW"
+    assert devices[3].description == "bus=1,address=1, bus=1,address=1"
+    assert devices[4].visa_address == "USB::0x0009::0x000a::e::RAW"
+    assert devices[4].description == "e, e, define bAlternateSetting=3"
+    assert devices[5].visa_address == "USB::0x000b::0x000c::bus=1,address=1::RAW"
+    assert devices[5].description == "f, f, serial number is 'f' but it is not unique"
+    assert devices[6].visa_address == "USB::0x000b::0x000c::bus=1,address=1::RAW"
+    assert devices[6].description == "f, f, serial number is 'f' but it is not unique"
+    assert devices[7].visa_address == "USB::0x000b::0x000c::IGNORE::RAW"
+    assert devices[7].description == "f, f"
+    assert devices[8].visa_address == "USB::0x000b::0x000c::bus=1,address=1::RAW"
+    assert devices[8].description == "Unknown USB Device"
+    assert devices[9].visa_address == "USB::0x000d::0x000e::bus=1,address=1::RAW"
+    assert devices[9].description == "g, g, serial number is 'g' but it is not unique"
+    assert devices[10].visa_address == "USB::0x000d::0x000e::bus=1,address=1::RAW"
+    assert devices[10].description == "g, g, define bConfigurationValue=1, serial number is 'g' but it is not unique"

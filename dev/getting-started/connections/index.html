@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2106,6 +2106,8 @@
       
         
       
+        
+      
     
     
     
@@ -2313,6 +2315,34 @@
     
   
     Socket
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/interfaces/usb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    USB
   
 
     
@@ -4836,6 +4866,21 @@
     <td>Compatible with National Instruments syntax</td>
   </tr>
   <tr>
+    <td>USB</td>
+    <td>USB::0x2a67::0x0408::abc::RAW</td>
+    <td>A (raw) USB device with board=0 (default), idVendor=0x2a67, idProduct=0x0408 (hexadecimal notation), serial number=abc, USB Interface Number=0 (default)</td>
+  </tr>
+  <tr>
+    <td>USB</td>
+    <td>USB0::1027::24577::032165::1::RAW</td>
+    <td>A (raw) USB device with board=0, idVendor=1027, idProduct=24577 (decimal notation), serial number=032165, USB Interface Number=1</td>
+  </tr>
+  <tr>
+    <td>USB</td>
+    <td>USB::0x0381::0x06a2::IGNORE::RAW</td>
+    <td>A (raw) USB device with board=0 (default), idVendor=0x0381, idProduct=0x06a2 (hexadecimal notation), serial number=IGNORE (means that the serial number is not used when finding the USB device and the first USB device found that matches idVendor and idProduct is used), USB Interface Number=0 (default)</td>
+  </tr>
+  <tr>
     <td>VXI-11</td>
     <td>TCPIP::dev.company.com::INSTR</td>
     <td>A VXI-11.3 LAN instrument, host=dev.company.com (uses the default LAN Device Name <i>inst0</i>)</td>
@@ -4861,14 +4906,15 @@
 <h2 id="connections-interfaces">Interfaces<a class="headerlink" href="#connections-interfaces" title="Permanent link">¤</a></h2>
 <p>The following interface classes are available</p>
 <ul>
-<li><a class="autorefs autorefs-internal" title="            GPIB" href="../../api/interfaces/gpib/#msl.equipment.interfaces.gpib.GPIB">GPIB</a> &mdash; Base class for GPIB communication</li>
-<li><a class="autorefs autorefs-internal" title="            HiSLIP" href="../../api/interfaces/hislip/#msl.equipment.interfaces.hislip.HiSLIP">HiSLIP</a> &mdash; Base class for the <a href="https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf">HiSLIP</a> communication protocol</li>
-<li><a class="autorefs autorefs-internal" title="            Prologix" href="../../api/interfaces/prologix/#msl.equipment.interfaces.prologix.Prologix">Prologix</a> &mdash; Use <a href="https://prologix.biz/">Prologix</a> hardware to establish a connection</li>
-<li><a class="autorefs autorefs-internal" title="            SDK" href="../../api/interfaces/sdk/#msl.equipment.interfaces.sdk.SDK">SDK</a> &mdash; Use the Software Development Kit (SDK) provided by the manufacturer</li>
-<li><a class="autorefs autorefs-internal" title="            Serial" href="../../api/interfaces/serial/#msl.equipment.interfaces.serial.Serial">Serial</a> &mdash; Base class for equipment that is connected through a serial port</li>
-<li><a class="autorefs autorefs-internal" title="            Socket" href="../../api/interfaces/socket/#msl.equipment.interfaces.socket.Socket">Socket</a> &mdash; Base class for equipment that is connected through a socket</li>
-<li><a class="autorefs autorefs-internal" title="            VXI11" href="../../api/interfaces/vxi11/#msl.equipment.interfaces.vxi11.VXI11">VXI11</a> &mdash; Base class for the <a href="http://www.vxibus.org/specifications.html">VXI-11</a> communication protocol</li>
-<li><a class="autorefs autorefs-internal" title="            ZeroMQ" href="../../api/interfaces/zeromq/#msl.equipment.interfaces.zeromq.ZeroMQ">ZeroMQ</a> &mdash; Communicate via the <a href="https://zeromq.org/">ZeroMQ</a> protocol</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/gpib/#gpib">GPIB</a> &mdash; For equipment that use the GPIB (IEEE 488) protocol</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/hislip/#hislip">HiSLIP</a> &mdash; For equipment that use the <a href="https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf" target="_blank">HiSLIP</a> protocol</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/prologix/#prologix">Prologix</a> &mdash; Use <a href="https://prologix.biz/" target="_blank">Prologix</a> hardware to establish a connection to GPIB-compatible equipment</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/sdk/#sdk">SDK</a> &mdash; For equipment that use a Software Development Kit (SDK) for communication</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/serial/#serial">Serial</a> &mdash; For equipment that is connected through a serial port (or a USB-to-Serial adaptor)</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/socket/#socket">Socket</a> &mdash; For equipment that is connected through a network socket</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/usb/#usb">USB</a> &mdash; For equipment that use the USB protocol</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/vxi11/#vxi11">VXI11</a> &mdash; For equipment that use the <a href="http://www.vxibus.org/specifications.html" target="_blank">VXI-11</a> protocol</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/zeromq/#zeromq">ZeroMQ</a> &mdash; For equipment that use the <a href="https://zeromq.org/" target="_blank">ZeroMQ</a> protocol</li>
 </ul>
 <h3 id="connections-backend">Backends<a class="headerlink" href="#connections-backend" title="Permanent link">¤</a></h3>
 <p>When a <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instance is created, the <code>backend</code> keyword argument decides which backend to use when interfacing with the equipment. There are different <a class="autorefs autorefs-internal" title="            Backend" href="../../api/enumerations/#msl.equipment.enumerations.Backend">Backend</a>s to choose from: <code>MSL</code> (default), <code>PyVISA</code> or <code>NIDAQ</code>.</p>
@@ -5053,10 +5099,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="../../javascripts/arithmatex.js"></script>
       

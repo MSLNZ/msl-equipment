@@ -494,9 +494,10 @@ class USB(MessageBased, regex=REGEX):
         """Perform a control transfer on Endpoint 0.
 
         Args:
-            request_type: The request type field for the setup packet. The bit-map value
+            request_type: The `bmRequestType` field for the setup packet. The bit-map value
                 defines the direction (OUT or IN) of the request, the type of request
-                and the designated recipient.
+                and the designated recipient. See
+                [build_request_type][msl.equipment.interfaces.usb.USB.build_request_type].
             request: Defines the request being made.
             value: The value field for the request.
             index: The index field for the request.

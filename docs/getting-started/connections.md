@@ -155,13 +155,18 @@ The following are examples of VISA-style addresses that may be used to connect t
   </tr>
   <tr>
     <td>USB</td>
-    <td>USB::0x2a67::0x0408::RAW</td>
-    <td>A (raw) USB device with board=0 (default), idVendor=0x2a67, idProduct=0x0408 (hexadecimal notation) and uses the USB Interface Number 0 (default)</td>
+    <td>USB::0x2a67::0x0408::abc::RAW</td>
+    <td>A (raw) USB device with board=0 (default), idVendor=0x2a67, idProduct=0x0408 (hexadecimal notation), serial number=abc, USB Interface Number=0 (default)</td>
   </tr>
   <tr>
     <td>USB</td>
-    <td>USB0::1027::24577::1::RAW</td>
-    <td>A (raw) USB device with board=0, idVendor=1027, idProduct=24577 (decimal notation) and uses the USB Interface Number 1</td>
+    <td>USB0::1027::24577::032165::1::RAW</td>
+    <td>A (raw) USB device with board=0, idVendor=1027, idProduct=24577 (decimal notation), serial number=032165, USB Interface Number=1</td>
+  </tr>
+  <tr>
+    <td>USB</td>
+    <td>USB::0x0381::0x06a2::IGNORE::RAW</td>
+    <td>A (raw) USB device with board=0 (default), idVendor=0x0381, idProduct=0x06a2 (hexadecimal notation), serial number=IGNORE (means that the serial number is not used when finding the USB device and the first USB device found that matches idVendor and idProduct is used), USB Interface Number=0 (default)</td>
   </tr>
   <tr>
     <td>VXI-11</td>
@@ -195,7 +200,7 @@ The following interface classes are available
 * [HiSLIP][] &mdash; For equipment that use the [HiSLIP](https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf){:target="_blank"} protocol
 * [Prologix][] &mdash; Use [Prologix](https://prologix.biz/){:target="_blank"} hardware to establish a connection to GPIB-compatible equipment
 * [SDK][] &mdash; For equipment that use a Software Development Kit (SDK) for communication
-* [Serial][] &mdash; For equipment that is connected through a serial port (or a USB to RS-232 adaptor)
+* [Serial][] &mdash; For equipment that is connected through a serial port (or a USB-to-Serial adaptor)
 * [Socket][] &mdash; For equipment that is connected through a network socket
 * [USB][] &mdash; For equipment that use the USB protocol
 * [VXI11][] &mdash; For equipment that use the [VXI-11](http://www.vxibus.org/specifications.html){:target="_blank"} protocol

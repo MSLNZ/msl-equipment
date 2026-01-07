@@ -35,13 +35,13 @@ Finally, install the [Zadig](https://zadig.akeo.ie/){:target="_blank"} applicati
 winget install akeo.ie.Zadig
 ```
 
-then run Zadig (you must open a new administrative terminal)
+then run Zadig (you must open a new administrative terminal to run the following command)
 
 ```console
 zadig
 ```
 
-to install a driver (preferably `WinUSB`) for the USB device &mdash; follow the [Zadig User Guide](https://github.com/pbatard/libwdi/wiki/Zadig){:target="_blank"}.
+to install a driver (`WinUSB` is recommended) for the USB device &mdash; follow the [Zadig User Guide](https://github.com/pbatard/libwdi/wiki/Zadig){:target="_blank"}.
 
 See [How to use libusb on Windows](https://github.com/libusb/libusb/wiki/Windows#user-content-How_to_use_libusb_on_Windows){:target="_blank"} for additional information.
 

@@ -325,15 +325,3 @@ def test_find_usb(usb_backend: USBBackend) -> None:
     assert devices[9].description == "g, g, serial number is 'g' but it is not unique"
     assert devices[10].visa_address == "USB::0x000d::0x000e::bus=1,address=1::RAW"
     assert devices[10].description == "g, g, define bConfigurationValue=1, serial number is 'g' but it is not unique"
-
-
-def test_find_usb_ftdi_no_serial(usb_backend: USBBackend) -> None:
-    usb_backend.add_device(0x0403, 1, "")
-
-    devices = find_usb(usb_backend=usb_backend)
-    if IS_WINDOWS:
-        assert len(devices) == 0  # assumes the D2XX driver is used
-    else:
-        assert len(devices) == 1
-        assert devices[0].visa_address == "FTDI::0x0403::0x0001::bus=1,address=1"
-        assert devices[0].description == "Unknown USB Device"

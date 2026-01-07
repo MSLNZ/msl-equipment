@@ -87,7 +87,7 @@ def _find_device(parsed: ParsedUSBAddress, backend: Any) -> Any:  # noqa: ANN401
 class _USBDevice:
     """A device that support the USB protocol."""
 
-    def __init__(self, usb_core_device: Any, serial: str) -> None:  # noqa: ANN401
+    def __init__(self, usb_core_device: Any) -> None:  # noqa: ANN401
         self.vid: int = usb_core_device.idVendor
         self.pid: int = usb_core_device.idProduct
         self.bus: int | None = usb_core_device.bus
@@ -99,6 +99,10 @@ class _USBDevice:
         with contextlib.suppress(NotImplementedError, ValueError):
             info.append(usb_core_device.product.rstrip() or "")
         self.description: str = ", ".join(item for item in info if item) or "Unknown USB Device"
+
+        serial = ""
+        with contextlib.suppress(NotImplementedError, ValueError):
+            serial = usb_core_device.serial_number or ""
 
         self.serial: str = serial
 
@@ -158,26 +162,18 @@ def find_usb(usb_backend: Any = None) -> list[_USBDevice]:  # noqa: ANN401, C901
         return devices
 
     for usb_core_device in libusb_devices:
-        serial = ""
-        with contextlib.suppress(NotImplementedError, ValueError):
-            serial = usb_core_device.serial_number or ""
-
         for index, config in enumerate(usb_core_device):
             for interface in config:
                 device: _USBDevice | None = None
 
                 if usb_core_device.idVendor == 0x0403:  # noqa: PLR2004
-                    # An FTDI device could be associated with the D2XX driver on Windows,
-                    # in which case libusb should not be used to communicate with the device
-                    if IS_WINDOWS and not serial:
-                        continue
-                    device = _USBDevice(usb_core_device, serial)
+                    device = _USBDevice(usb_core_device)
                     device.type = "FTDI"
                 elif interface.bInterfaceClass == 0xFE and interface.bInterfaceSubClass == 3:  # noqa: PLR2004
-                    device = _USBDevice(usb_core_device, serial)
+                    device = _USBDevice(usb_core_device)
                     device.suffix = "INSTR"
                 elif interface.bInterfaceClass == 0xFF and interface.bInterfaceSubClass == 0xFF:  # noqa: PLR2004
-                    device = _USBDevice(usb_core_device, serial)
+                    device = _USBDevice(usb_core_device)
                     device.suffix = "RAW"
 
                 if device is not None:

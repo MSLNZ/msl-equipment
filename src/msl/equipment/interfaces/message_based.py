@@ -7,6 +7,9 @@ import time
 from typing import TYPE_CHECKING, overload
 
 import serial
+from usb.core import (  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
+    USBTimeoutError,  # pyright: ignore[reportUnknownVariableType]
+)
 
 from msl.equipment.schema import Interface
 from msl.equipment.utils import from_bytes, logger, to_bytes
@@ -287,7 +290,7 @@ class MessageBased(Interface, append=False):
 
         try:
             message = self._read(size)
-        except (serial.SerialTimeoutException, socket.timeout, TimeoutError):
+        except (serial.SerialTimeoutException, socket.timeout, TimeoutError, USBTimeoutError):
             raise MSLTimeoutError(self) from None
         except Exception as e:  # noqa: BLE001
             msg = f"{e.__class__.__name__}: {e}"
@@ -394,7 +397,7 @@ class MessageBased(Interface, append=False):
 
         try:
             return self._write(message)
-        except (serial.SerialTimeoutException, socket.timeout, TimeoutError):
+        except (serial.SerialTimeoutException, socket.timeout, TimeoutError, USBTimeoutError):
             raise MSLTimeoutError(self) from None
         except Exception as e:  # noqa: BLE001
             raise MSLConnectionError(self, str(e)) from None

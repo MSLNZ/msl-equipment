@@ -54,6 +54,17 @@ def configure_find(parser: ArgumentParser) -> None:
         ),
     )
     _ = parser.add_argument(
+        "-b",
+        "--usb-backend",
+        default=None,
+        nargs="?",
+        choices=["libusb1", "libusb0", "openusb"],
+        help=(
+            "The PyUSB backend to use to find USB devices. If not\n"
+            "specified, selects the first backend that is available."
+        )
+    )
+    _ = parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",

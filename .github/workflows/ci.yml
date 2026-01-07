@@ -24,6 +24,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y language-pack-en language-pack-de
+      - name: Install libusb-1.0 (Windows)
+        if: ${{ matrix.os == 'windows' }}
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri https://github.com/libusb/libusb/releases/download/v1.0.29/libusb-1.0.29.7z -OutFile libusb.7z
+          7z e libusb.7z -oC:\Windows\System32 VS2022\MS64\dll\libusb-1.0.dll
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:

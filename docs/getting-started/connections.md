@@ -154,6 +154,21 @@ The following are examples of VISA-style addresses that may be used to connect t
     <td>Compatible with National Instruments syntax</td>
   </tr>
   <tr>
+    <td>USB</td>
+    <td>USB::0x2a67::0x0408::abc::RAW</td>
+    <td>A (raw) USB device with board=0 (default), idVendor=0x2a67, idProduct=0x0408 (hexadecimal notation), serial number=abc, USB Interface Number=0 (default)</td>
+  </tr>
+  <tr>
+    <td>USB</td>
+    <td>USB0::1027::24577::032165::1::RAW</td>
+    <td>A (raw) USB device with board=0, idVendor=1027, idProduct=24577 (decimal notation), serial number=032165, USB Interface Number=1</td>
+  </tr>
+  <tr>
+    <td>USB</td>
+    <td>USB::0x0381::0x06a2::IGNORE::RAW</td>
+    <td>A (raw) USB device with board=0 (default), idVendor=0x0381, idProduct=0x06a2 (hexadecimal notation), serial number=IGNORE (means that the serial number is not used when finding the USB device and the first USB device found that matches idVendor and idProduct is used), USB Interface Number=0 (default)</td>
+  </tr>
+  <tr>
     <td>VXI-11</td>
     <td>TCPIP::dev.company.com::INSTR</td>
     <td>A VXI-11.3 LAN instrument, host=dev.company.com (uses the default LAN Device Name <i>inst0</i>)</td>
@@ -181,14 +196,15 @@ National Instruments also provides [examples](https://www.ni.com/docs/en-US/bund
 
 The following interface classes are available
 
-* [GPIB][msl.equipment.interfaces.gpib.GPIB] &mdash; Base class for GPIB communication
-* [HiSLIP][msl.equipment.interfaces.hislip.HiSLIP] &mdash; Base class for the [HiSLIP](https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf) communication protocol
-* [Prologix][msl.equipment.interfaces.prologix.Prologix] &mdash; Use [Prologix](https://prologix.biz/) hardware to establish a connection
-* [SDK][msl.equipment.interfaces.sdk.SDK] &mdash; Use the Software Development Kit (SDK) provided by the manufacturer
-* [Serial][msl.equipment.interfaces.serial.Serial] &mdash; Base class for equipment that is connected through a serial port
-* [Socket][msl.equipment.interfaces.socket.Socket] &mdash; Base class for equipment that is connected through a socket
-* [VXI11][msl.equipment.interfaces.vxi11.VXI11] &mdash; Base class for the [VXI-11](http://www.vxibus.org/specifications.html) communication protocol
-* [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] &mdash; Communicate via the [ZeroMQ](https://zeromq.org/) protocol
+* [GPIB][] &mdash; For equipment that use the GPIB (IEEE 488) protocol
+* [HiSLIP][] &mdash; For equipment that use the [HiSLIP](https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf){:target="_blank"} protocol
+* [Prologix][] &mdash; Use [Prologix](https://prologix.biz/){:target="_blank"} hardware to establish a connection to GPIB-compatible equipment
+* [SDK][] &mdash; For equipment that use a Software Development Kit (SDK) for communication
+* [Serial][] &mdash; For equipment that is connected through a serial port (or a USB-to-Serial adaptor)
+* [Socket][] &mdash; For equipment that is connected through a network socket
+* [USB][] &mdash; For equipment that use the USB protocol
+* [VXI11][] &mdash; For equipment that use the [VXI-11](http://www.vxibus.org/specifications.html){:target="_blank"} protocol
+* [ZeroMQ][] &mdash; For equipment that use the [ZeroMQ](https://zeromq.org/){:target="_blank"} protocol
 
 ### Backends {: #connections-backend }
 

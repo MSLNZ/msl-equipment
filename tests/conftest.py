@@ -5,6 +5,8 @@ from __future__ import annotations
 import contextlib
 import os
 import socket
+import sys
+from array import array
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer as BaseHTTPServer
 from queue import Queue
@@ -13,11 +15,16 @@ from time import sleep
 from typing import TYPE_CHECKING
 
 import pytest
+import usb  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
 import zmq
+from usb.backend import (  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
+    IBackend,  # pyright: ignore[reportUnknownVariableType]
+)
 
 from msl.equipment import Connection
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from typing import Any, TypeVar
 
     from zmq.sugar.context import Context
@@ -30,6 +37,9 @@ if TYPE_CHECKING:
     UDPSelf = TypeVar("UDPSelf", bound="UDPServer")
     ZMQSelf = TypeVar("ZMQSelf", bound="ZMQServer")
     PTYSelf = TypeVar("PTYSelf", bound="PTYServer")
+
+
+IS_WINDOWS = sys.platform == "win32"
 
 
 class HTTPRequestHandler(BaseHTTPRequestHandler):
@@ -490,6 +500,288 @@ class PTYServer:
         self.clear_response_queue()
 
 
+class USBDeviceDescriptor:
+    """Mocked USB Device Descriptor."""
+
+    def __init__(  # noqa: PLR0913
+        self,
+        *,
+        vid: int = -1,
+        pid: int = -1,
+        serial: str = "",
+        is_usb_tmc: bool = False,
+        is_not_raw: bool = False,
+        bus: int | None = 1,
+        address: int | None = 1,
+        alternate_setting: int = 0,
+        num_configurations: int = 1,
+    ) -> None:
+        """Mocked USB Device Descriptor."""
+        self.bLength: int = 18
+        self.bDescriptorType: int = 0x01
+        self.bcdUSB: int = 0x0200
+        self.bDeviceClass: int = 0xFF
+        self.bDeviceSubClass: int = 0xFF
+        self.bDeviceProtocol: int = 0xFF
+        self.bMaxPacketSize0: int = 64
+        self.idVendor: int = vid
+        self.idProduct: int = pid
+        self.bcdDevice: int = 0x1001
+        self.iManufacturer: int = 1
+        self.iProduct: int = 2
+        self.iSerialNumber: int = 3
+        self.bNumConfigurations: int = num_configurations
+        self.bus: int | None = bus
+        self.address: int | None = address
+        self.port_number: None = None
+        self.port_numbers: None = None
+        self.speed: None = None
+        self.serial: str = serial
+
+        self.is_usb_tmc: bool = is_usb_tmc
+        self.is_not_raw: bool = is_not_raw
+        self.alternate_setting: int = alternate_setting
+
+
+class USBConfigurationDescriptor:
+    """Mocked USB Configuration Descriptor."""
+
+    def __init__(self) -> None:
+        """Mocked USB Configuration Descriptor."""
+        self.bLength: int = 9
+        self.bDescriptorType: int = 2
+        self.wTotalLength: int = 0x0020
+        self.bNumInterfaces: int = 1
+        self.bConfigurationValue: int = 1
+        self.iConfiguration: int = 0
+        self.bmAttributes: int = 0x80
+        self.bMaxPower: int = 250
+        self.extra_descriptors: list[int] = []
+
+
+class USBInterfaceDescriptor:
+    """Mocked USB Interface Descriptor."""
+
+    def __init__(self, cls: int = 0xFF, sub_cls: int = 0xFF, alternate_setting: int = 0) -> None:
+        """Mocked USB Interface Descriptor."""
+        self.bLength: int = 9
+        self.bDescriptorType: int = 4
+        self.bInterfaceNumber: int = 0
+        self.bAlternateSetting: int = alternate_setting
+        self.bNumEndpoints: int = 2
+        self.bInterfaceClass: int = cls
+        self.bInterfaceSubClass: int = sub_cls
+        self.bInterfaceProtocol: int = 0xFF
+        self.iInterface: int = 2
+        self.extra_descriptors: list[int] = []
+
+
+class USBEndpointDescriptor:
+    """Mocked USB Endpoint Descriptor."""
+
+    def __init__(self, *, is_bulk_in: bool) -> None:
+        """Mocked USB Endpoint Descriptor."""
+        self.bLength: int = 7
+        self.bDescriptorType: int = 5
+        self.bEndpointAddress: int = 0x81 if is_bulk_in else 0x02
+        self.bmAttributes: int = 2
+        self.wMaxPacketSize: int = 0x0040
+        self.bInterval: int = 0
+        self.bRefresh: int = 0
+        self.bSynchAddress: int = 0
+        self.extra_descriptors: list[int] = []
+
+
+class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: ignore[reportUntypedBaseClass]
+    """Mocked USB backend for testing the USB interface."""
+
+    def __init__(self) -> None:
+        """Mocked USB backend for testing the USB interface."""
+        super().__init__()  # pyright: ignore[reportUnknownMemberType]
+        self._devices: list[USBDeviceDescriptor] = []
+        self._device: USBDeviceDescriptor = USBDeviceDescriptor()
+        self._bulk_message: array[int] = array("B")
+        self._bulk_queue: Queue[bytes] = Queue()
+        self._raise_bad_config_number: bool = False
+
+    def add_bulk_response(self, content: bytes) -> None:
+        """Add a bulk I/O response to the queue.
+
+        Args:
+            content: The content of the response message.
+        """
+        self._bulk_queue.put(content)
+
+    def add_device(  # noqa: PLR0913
+        self,
+        vendor_id: int,
+        product_id: int,
+        serial: str,
+        *,
+        is_usb_tmc: bool = False,
+        is_not_raw: bool = False,
+        alternate_setting: int = 0,
+        bus: int | None = 1,
+        address: int | None = 1,
+        num_configurations: int = 1,
+    ) -> None:
+        """Add a device."""
+        self._devices.append(
+            USBDeviceDescriptor(
+                vid=vendor_id,
+                pid=product_id,
+                serial=serial,
+                is_usb_tmc=is_usb_tmc,
+                is_not_raw=is_not_raw,
+                alternate_setting=alternate_setting,
+                bus=bus,
+                address=address,
+                num_configurations=num_configurations,
+            )
+        )
+
+    def attach_kernel_driver(self, handle: int, interface: int) -> None:  # pyright: ignore[reportUnusedParameter]
+        """Does nothing."""
+
+    def bulk_read(self, handle: int, ep: int, interface: int, buffer: array[int], timeout: int) -> int:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+        """Mock a bulk read."""
+        msg = self._bulk_message if self._bulk_queue.empty() else array("B", self._bulk_queue.get())
+        if msg.tobytes() == b"sleep":
+            sleep(0.05)
+        buffer[:] = msg
+        return len(msg)
+
+    def bulk_write(self, handle: int, ep: int, interface: int, data: array[int], timeout: int) -> int:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+        """Mock a bulk write."""
+        self._bulk_message = data
+        return len(data)
+
+    def claim_interface(self, handle: int, interface: int) -> None:  # pyright: ignore[reportUnusedParameter]
+        """Does nothing."""
+
+    def clear_bulk_response_queue(self) -> None:
+        """Clear the bulk I/O response queue."""
+        with self._bulk_queue.mutex:
+            self._bulk_queue.queue.clear()
+
+    def clear_halt(self, handle: int, ep: int) -> None:  # pyright: ignore[reportUnusedParameter]
+        """Does nothing."""
+
+    def close_device(self, handle: int) -> None:  # pyright: ignore[reportUnusedParameter]
+        """Does nothing."""
+
+    def ctrl_transfer(
+        self,
+        handle: int,  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+        request_type: int,
+        request: int,
+        value: int,  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+        index: int,
+        data: array[int],
+        timeout: int,  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+    ) -> int:
+        """Return the number of bytes written (for OUT transfers) or to read (for IN transfers)."""
+        if request_type == 1234:
+            msg = "Transfer error"
+            raise usb.core.USBError(msg)  # pyright: ignore[reportUnknownMemberType]
+
+        if request_type == 9999:
+            msg = "timeout"
+            raise usb.core.USBTimeoutError(msg)  # pyright: ignore[reportUnknownMemberType]
+
+        if request == 0x06:  # get_descriptor()
+            if index == 0:  # langid request
+                data[:4] = array("B", [4, 3, 9, 4])  # langid = 1033
+                return 4
+
+            if index == 1033:
+                serial = self._device.serial.encode("utf-16-le")
+                n = len(serial) + 2
+                data[:2] = array("B", [n, 3])
+                data[2 : len(serial)] = array("B", serial)
+                return n
+
+        return len(data)
+
+    def detach_kernel_driver(self, handle: int, interface: int) -> None:  # pyright: ignore[reportUnusedParameter]
+        """Does nothing."""
+
+    def enumerate_devices(self) -> Iterator[USBDeviceDescriptor]:
+        """Yield mocked devices. Also raises NoBackendError if there are no devices."""
+        if not self._devices:
+            msg = "No backend available"
+            raise usb.core.NoBackendError(msg)  # pyright: ignore[reportUnknownMemberType]
+        yield from self._devices
+
+    def get_configuration(self, handle: int) -> int:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+        """Receives the mocked handle."""
+        if self._device.serial == "config-not-set":
+            self._raise_bad_config_number = True
+            return -1
+        return USBConfigurationDescriptor().bConfigurationValue
+
+    def get_configuration_descriptor(self, device: USBDeviceDescriptor, config: int) -> USBConfigurationDescriptor:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+        """Return a mocked Configuration Descriptor."""
+        if self._raise_bad_config_number:
+            msg = "Mocked message from pyUSB"
+            raise usb.core.USBError(msg)  # pyright: ignore[reportUnknownMemberType]
+        return USBConfigurationDescriptor()
+
+    def get_device_descriptor(self, device: USBDeviceDescriptor) -> USBDeviceDescriptor:
+        """Returns the device descriptor."""
+        self._device = device
+        return device
+
+    def get_endpoint_descriptor(
+        self,
+        device: USBDeviceDescriptor,  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+        ep: int,
+        interface: int,  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+        alternate_settings: int,  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+        config: int,  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+    ) -> USBEndpointDescriptor:
+        """Return a mocked Endpoint Descriptor."""
+        return USBEndpointDescriptor(is_bulk_in=ep == 0)
+
+    def get_interface_descriptor(
+        self,
+        device: USBDeviceDescriptor,  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+        interface: int,  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+        alternate_settings: int,
+        config: int,  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+    ) -> USBInterfaceDescriptor:
+        """Return a mocked Interface Descriptor."""
+        if alternate_settings > 0:
+            raise IndexError
+        if self._device.is_usb_tmc:
+            return USBInterfaceDescriptor(cls=0xFE, sub_cls=3)
+        if self._device.is_not_raw:
+            return USBInterfaceDescriptor(cls=0x22, sub_cls=10)
+        if self._device.alternate_setting != 0:
+            return USBInterfaceDescriptor(alternate_setting=self._device.alternate_setting)
+        return USBInterfaceDescriptor()
+
+    def is_kernel_driver_active(self, handle: int, interface: int) -> bool:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+        """Raises NotImplementedError on Windows, otherwise returns True."""
+        if IS_WINDOWS:
+            raise NotImplementedError
+        return True
+
+    def open_device(self, device: USBDeviceDescriptor) -> int:
+        """Returns a handle for the USB Device, 1."""
+        self._device = device
+        return 1
+
+    def release_interface(self, handle: int, interface: int) -> None:  # pyright: ignore[reportUnusedParameter]
+        """Does nothing."""
+
+    def reset_device(self, handle: int) -> None:  # pyright: ignore[reportUnusedParameter]
+        """Does nothing."""
+
+    def set_configuration(self, handle: int, config: int) -> None:  # pyright: ignore[reportUnusedParameter]
+        """Does nothing."""
+
+
 @pytest.fixture
 def http_server() -> type[HTTPServer]:
     return HTTPServer
@@ -513,3 +805,8 @@ def zmq_server() -> type[ZMQServer]:
 @pytest.fixture
 def pty_server() -> type[PTYServer]:
     return PTYServer
+
+
+@pytest.fixture
+def usb_backend() -> USBBackend:
+    return USBBackend()

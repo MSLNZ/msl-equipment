@@ -15,12 +15,13 @@ from serial.tools.list_ports import comports
 from msl.equipment.dns_service_discovery import find_lxi
 from msl.equipment.interfaces.gpib import find_listeners
 from msl.equipment.interfaces.prologix import find_prologix
+from msl.equipment.interfaces.usb import find_usb
 from msl.equipment.interfaces.vxi11 import find_vxi11
 from msl.equipment.utils import ipv4_addresses, logger
 
 if TYPE_CHECKING:
     from argparse import Namespace
-    from typing import ClassVar
+    from typing import ClassVar, Literal
 
 
 class DeviceType(IntEnum):
@@ -31,6 +32,7 @@ class DeviceType(IntEnum):
     PROLOGIX = 2
     LXI = 3
     VXI11 = 4
+    USB = 5
 
 
 @dataclass
@@ -97,7 +99,12 @@ class VXI11Thread(Thread):
 
 
 def find_equipment(  # noqa: C901
-    *, ip: list[str] | None = None, timeout: float = 2, gpib_library: str = "", include_sad: bool = False
+    *,
+    ip: list[str] | None = None,
+    timeout: float = 2,
+    gpib_library: str = "",
+    include_sad: bool = False,
+    usb_backend: Literal["libusb1", "libusb0", "openusb"] | None = None,
 ) -> list[Device]:
     """Returns information about equipment that are available.
 
@@ -109,6 +116,8 @@ def find_equipment(  # noqa: C901
             platform dependent. If a GPIB library cannot be found, GPIB devices will not
             be searched for.
         include_sad: Whether to scan for secondary GPIB addresses.
+        usb_backend: The PyUSB backend library to use to find USB devices. If `None`,
+            selects the first backend that is available.
 
     Returns:
         The information about the devices that were found.
@@ -144,6 +153,12 @@ def find_equipment(  # noqa: C901
         num_found += len(gpib)
         devices["GPIB"] = Device(type=DeviceType.GPIB, addresses=gpib)
 
+    for index, usb in enumerate(find_usb(usb_backend=usb_backend)):
+        num_found += 1
+        devices[f"USB{index:03d}"] = Device(
+            type=DeviceType.USB, addresses=[usb.visa_address], description=usb.description
+        )
+
     logger.debug("Waiting approximately %g second(s) for network devices to respond...", timeout)
     for thread in threads:
         thread.join()
@@ -170,7 +185,7 @@ def print_stdout(found: list[Device]) -> None:
                 continue
             if typ == DeviceType.GPIB:
                 print("  " + "\n  ".join(device.addresses))
-            elif typ == DeviceType.ASRL:
+            elif typ in {DeviceType.ASRL, DeviceType.USB}:
                 print(f"  {device.addresses[0]} [{device.description}]")
             else:
                 webserver = f" [webserver: {device.webserver}]" if device.webserver else ""
@@ -194,6 +209,7 @@ def run(ns: Namespace) -> int:
         timeout=ns.timeout,
         gpib_library=ns.gpib_library,
         include_sad=ns.include_sad,
+        usb_backend=ns.usb_backend,
     )
 
     if ns.json:

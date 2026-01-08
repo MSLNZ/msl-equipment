@@ -1,10 +1,11 @@
 """Base class for (raw) USB communication."""
 
-# cSpell: ignore altsetting
+# cSpell: ignore altsetting geteuid
 # pyright: reportUnknownVariableType=false, reportUnknownMemberType=false, reportUnknownArgumentType=false, reportAttributeAccessIssue=false
 from __future__ import annotations
 
 import contextlib
+import os
 import re
 import sys
 import time
@@ -33,6 +34,12 @@ REGEX = re.compile(
 )
 
 IS_WINDOWS = sys.platform == "win32"
+IS_LINUX = sys.platform == "linux"
+UNKNOWN_USB_DEVICE = "Unknown USB Device"
+
+
+def _is_linux_and_not_sudo() -> bool:
+    return IS_LINUX and os.geteuid() != 0
 
 
 def _usb_backend(name: str) -> Any:  # noqa: ANN401
@@ -98,7 +105,7 @@ class _USBDevice:
             info.append(usb_core_device.manufacturer.rstrip() or "")
         with contextlib.suppress(NotImplementedError, ValueError):
             info.append(usb_core_device.product.rstrip() or "")
-        self.description: str = ", ".join(item for item in info if item) or "Unknown USB Device"
+        self.description: str = ", ".join(item for item in info if item) or UNKNOWN_USB_DEVICE
 
         serial = ""
         with contextlib.suppress(NotImplementedError, ValueError):
@@ -177,6 +184,8 @@ def find_usb(usb_backend: Any = None) -> list[_USBDevice]:  # noqa: ANN401, C901
                     device.suffix = "RAW"
 
                 if device is not None:
+                    if _is_linux_and_not_sudo() and device.description == UNKNOWN_USB_DEVICE:
+                        device.description += ", try running as sudo or create a udev rule"
                     device.interface_number = interface.bInterfaceNumber
                     if usb_core_device.bNumConfigurations > 1 and index > 0:
                         device.description += f", define bConfigurationValue={config.bConfigurationValue}"
@@ -325,8 +334,8 @@ class USB(MessageBased, regex=REGEX):
 
         if device is None:
             msg = "The USB device was not found"
-            if not IS_WINDOWS:
-                msg += " (or you don't have permission to access the USB device)"
+            if _is_linux_and_not_sudo():
+                msg += " (try running as sudo or create a udev rule)"
             raise MSLConnectionError(self, msg)
 
         self._device: Any = device  # usb.core.Device instance

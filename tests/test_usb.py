@@ -13,6 +13,7 @@ from msl.equipment.interfaces.usb import (
     ParsedUSBAddress,
     _endpoint,  # pyright: ignore[reportPrivateUsage]
     _find_device,  # pyright: ignore[reportPrivateUsage]
+    _is_linux_and_not_sudo,  # pyright: ignore[reportPrivateUsage]
     _usb_backend,  # pyright: ignore[reportPrivateUsage]
     find_usb,
     parse_usb_address,
@@ -301,6 +302,8 @@ def test_find_usb(usb_backend: USBBackend) -> None:
     usb_backend.add_device(11, 12, "")
     usb_backend.add_device(13, 14, "g", num_configurations=2)
 
+    sudo_tip = ", try running as sudo or create a udev rule" if _is_linux_and_not_sudo() else ""
+
     devices = find_usb(usb_backend=usb_backend)
     assert len(devices) == 11
     assert devices[0].visa_address == "FTDI::0x0403::0x0001::a"
@@ -320,7 +323,7 @@ def test_find_usb(usb_backend: USBBackend) -> None:
     assert devices[7].visa_address == "USB::0x000b::0x000c::IGNORE::RAW"
     assert devices[7].description == "f, f"
     assert devices[8].visa_address == "USB::0x000b::0x000c::bus=1,address=1::RAW"
-    assert devices[8].description == "Unknown USB Device"
+    assert devices[8].description == "Unknown USB Device" + sudo_tip
     assert devices[9].visa_address == "USB::0x000d::0x000e::bus=1,address=1::RAW"
     assert devices[9].description == "g, g, serial number is 'g' but it is not unique"
     assert devices[10].visa_address == "USB::0x000d::0x000e::bus=1,address=1::RAW"

@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING
 from serial.tools.list_ports import comports
 
 from msl.equipment.dns_service_discovery import find_lxi
+from msl.equipment.interfaces.ftdi import find_ftd2xx_devices
 from msl.equipment.interfaces.gpib import find_listeners
 from msl.equipment.interfaces.prologix import find_prologix
 from msl.equipment.interfaces.usb import find_usb
@@ -33,6 +34,7 @@ class DeviceType(IntEnum):
     LXI = 3
     VXI11 = 4
     USB = 5
+    FTDI = 6
 
 
 @dataclass
@@ -102,6 +104,7 @@ def find_equipment(  # noqa: C901
     *,
     ip: list[str] | None = None,
     timeout: float = 2,
+    d2xx_library: str = "",
     gpib_library: str = "",
     include_sad: bool = False,
     usb_backend: Literal["libusb1", "libusb0", "openusb"] | None = None,
@@ -112,6 +115,9 @@ def find_equipment(  # noqa: C901
         ip: The IP address(es) on the local computer to use to search for network devices.
             If not specified, uses all network interfaces.
         timeout: The maximum number of seconds to wait for a reply from a network device.
+        d2xx_library: The path to a D2XX library file (for FTDI devices). The default file
+            that is used is platform dependent. If a D2XX library cannot be found, FTDI
+            devices that use the D2XX driver will not be searched for.
         gpib_library: The path to a GPIB library file. The default file that is used is
             platform dependent. If a GPIB library cannot be found, GPIB devices will not
             be searched for.
@@ -156,7 +162,15 @@ def find_equipment(  # noqa: C901
     for index, usb in enumerate(find_usb(usb_backend=usb_backend)):
         num_found += 1
         devices[f"USB{index:03d}"] = Device(
-            type=DeviceType.USB, addresses=[usb.visa_address], description=usb.description
+            type=DeviceType.USB if usb.type == "USB" else DeviceType.FTDI,
+            addresses=[usb.visa_address],
+            description=usb.description,
+        )
+
+    for index, d2xx in enumerate(find_ftd2xx_devices(d2xx_library=d2xx_library)):
+        num_found += 1
+        devices[f"FTDI{index:03d}"] = Device(
+            type=DeviceType.FTDI, addresses=[d2xx.visa_address], description=d2xx.description
         )
 
     logger.debug("Waiting approximately %g second(s) for network devices to respond...", timeout)
@@ -176,7 +190,7 @@ def find_equipment(  # noqa: C901
 def print_stdout(found: list[Device]) -> None:
     """Print a summary of all equipment that are available to connect to."""
     devices = sorted(found, key=lambda v: v.description)
-    types = sorted({d.type for d in devices})
+    types = sorted({d.type for d in devices}, key=lambda t: t.name)
     for typ in types:
         kind = "Ports" if typ == DeviceType.ASRL else "Devices"
         print(f"{typ.name} {kind}")
@@ -185,7 +199,7 @@ def print_stdout(found: list[Device]) -> None:
                 continue
             if typ == DeviceType.GPIB:
                 print("  " + "\n  ".join(device.addresses))
-            elif typ in {DeviceType.ASRL, DeviceType.USB}:
+            elif typ in {DeviceType.ASRL, DeviceType.USB, DeviceType.FTDI}:
                 print(f"  {device.addresses[0]} [{device.description}]")
             else:
                 webserver = f" [webserver: {device.webserver}]" if device.webserver else ""
@@ -207,6 +221,7 @@ def run(ns: Namespace) -> int:
     equipment = find_equipment(
         ip=ns.ip,
         timeout=ns.timeout,
+        d2xx_library=ns.d2xx_library,
         gpib_library=ns.gpib_library,
         include_sad=ns.include_sad,
         usb_backend=ns.usb_backend,

@@ -285,7 +285,7 @@ def test_find_usb_invalid_backend(caplog: pytest.LogCaptureFixture) -> None:
 
     assert caplog.messages == [
         "Searching for USB devices (backend='pie')",
-        "The requested 'pie' PyUSB backend is invalid, must be one of: libusb0, libusb1, openusb",
+        "ValueError: The requested 'pie' PyUSB backend is invalid, must be one of: libusb0, libusb1, openusb",
     ]
 
 

@@ -158,14 +158,14 @@ def find_usb(usb_backend: Any = None) -> list[_USBDevice]:  # noqa: ANN401, C901
         try:
             usb_backend = _usb_backend(usb_backend)
         except ValueError as e:
-            logger.debug("%s", e)
+            logger.debug("ValueError: %s", e)
             return devices
 
     try:
         libusb_devices = usb.core.find(find_all=True, backend=usb_backend)
     except usb.core.NoBackendError:
         link = "https://mslnz.github.io/msl-equipment/dev/api/interfaces/usb/"
-        logger.debug("A PyUSB backend is not available. For tips on how to fix this issue see %s", link)
+        logger.debug("NoBackendError: A PyUSB backend is not available. For tips on how to fix this issue see %s", link)
         return devices
 
     for usb_core_device in libusb_devices:
@@ -176,6 +176,8 @@ def find_usb(usb_backend: Any = None) -> list[_USBDevice]:  # noqa: ANN401, C901
                 if usb_core_device.idVendor == 0x0403:  # noqa: PLR2004
                     device = _USBDevice(usb_core_device)
                     device.type = "FTDI"
+                    if device.description == UNKNOWN_USB_DEVICE and not device.serial:
+                        device.description += ", use the FTDI2 address (if available)"
                 elif interface.bInterfaceClass == 0xFE and interface.bInterfaceSubClass == 3:  # noqa: PLR2004
                     device = _USBDevice(usb_core_device)
                     device.suffix = "INSTR"

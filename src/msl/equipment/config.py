@@ -61,6 +61,11 @@ class Config:
         self._registers: dict[str, Register] | None = None
         self._config_equipment: ConfigEquipment = ConfigEquipment(self)
 
+        element = self.find("d2xx_library")
+        if element is not None and element.text:
+            os.environ["D2XX_LIBRARY"] = element.text
+            logger.debug("update D2XX_LIBRARY=%s", element.text)
+
         element = self.find("gpib_library")
         if element is not None and element.text:
             os.environ["GPIB_LIBRARY"] = element.text

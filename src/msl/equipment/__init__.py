@@ -6,6 +6,7 @@ from .__about__ import __version__, version_tuple
 from .config import Config
 from .enumerations import Backend, DataBits, Parity, StopBits
 from .interfaces import (
+    FTDI,
     GPIB,
     NIDAQ,
     SDK,
@@ -61,6 +62,7 @@ from .schema import (
 )
 
 __all__: list[str] = [
+    "FTDI",
     "GPIB",
     "NIDAQ",
     "SDK",

@@ -43,6 +43,18 @@ def configure_find(parser: ArgumentParser) -> None:
         ),
     )
     _ = parser.add_argument(
+        "-x",
+        "--d2xx-library",
+        default="",
+        help=(
+            "The path to a D2XX library file (for FTDI devices). The\n"
+            "default file that is used is platform dependent. If a D2XX\n"
+            "library cannot be found, FTDI devices that use the D2XX\n"
+            "driver will not be searched for. You may also define the\n"
+            "library file path as a D2XX_LIBRARY environment variable."
+        ),
+    )
+    _ = parser.add_argument(
         "-g",
         "--gpib-library",
         default="",

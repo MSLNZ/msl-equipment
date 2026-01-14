@@ -1,6 +1,6 @@
 """Base class for equipment that use a Future Technology Devices International (FTDI) chip for communication."""
 
-# cSpell: ignore VIDPID CBUS MPSSE libftd
+# cSpell: ignore VIDPID CBUS MPSSE TCIFLUSH TCOFLUSH THRE TEMT RCVE libftd
 from __future__ import annotations
 
 import os
@@ -10,18 +10,18 @@ from ctypes import POINTER, byref, c_ubyte, c_uint16, c_ulong, c_ushort, c_void_
 from dataclasses import dataclass
 from functools import partial
 from itertools import combinations
-from time import sleep
+from struct import unpack
 from typing import TYPE_CHECKING
 
 from msl.equipment.enumerations import DataBits, Parity, StopBits
-from msl.equipment.schema import Interface
 from msl.equipment.utils import logger, to_enum
 from msl.loadlib import LoadLibrary
 
-from .message_based import MSLConnectionError
+from .message_based import MessageBased, MSLConnectionError
 from .usb import USB
 
 if TYPE_CHECKING:
+    from ctypes import CDLL
     from typing import Any, Callable, Literal, Never
 
     from msl.equipment.schema import Equipment
@@ -102,8 +102,8 @@ class _FTDevice:
 
 def _maybe_load_ftd2xx(errcheck: Callable[..., Any] | None = None) -> LoadLibrary:
     """Maybe load the ftd2xx library, if it has not already been loaded."""
-    if FTD2XX.ftd2xx is not None:
-        return FTD2XX.ftd2xx
+    if _D2XX.ftd2xx is not None:
+        return _D2XX.ftd2xx
 
     path = os.getenv("D2XX_LIBRARY")
     if not path:
@@ -170,7 +170,7 @@ def _maybe_load_ftd2xx(errcheck: Callable[..., Any] | None = None) -> LoadLibrar
         if errcheck is not None:
             function.errcheck = errcheck
 
-    FTD2XX.ftd2xx = library
+    _D2XX.ftd2xx = library
     return library
 
 
@@ -204,21 +204,17 @@ def find_ftd2xx_devices(d2xx_library: str = "") -> list[_FTDevice]:
     tmp = c_void_p()
     for i in range(num_devices.value):
         result = lib.FT_GetDeviceInfoDetail(i, byref(flags), byref(typ), byref(_id), byref(loc_id), serial, desc, tmp)
-        if result != 0:
-            continue
-
-        vid = (_id.value >> 16) & 0xFFFF
-        pid = _id.value & 0xFFFF
-        devices.append(
-            _FTDevice(
-                index=i,
-                vid=vid,
-                pid=pid,
-                serial=serial.value.decode(),
-                description=desc.value.decode(),
-                driver=2,
+        if result == 0:
+            devices.append(
+                _FTDevice(
+                    index=i,
+                    vid=(_id.value >> 16) & 0xFFFF,
+                    pid=_id.value & 0xFFFF,
+                    serial=serial.value.decode(),
+                    description=desc.value.decode(),
+                    driver=2,
+                )
             )
-        )
 
     # Check for non-unique VID::PID::Serial
     for device1, device2 in combinations(devices, 2):
@@ -227,16 +223,117 @@ def find_ftd2xx_devices(d2xx_library: str = "") -> list[_FTDevice]:
     return devices
 
 
-class FTD2XX:
-    """Wrapper around the FTD2XX driver."""
+def _ftdi_sio_index(baudrate: int) -> int:
+    # https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L1273
+    speeds = [300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200]
+    try:
+        return speeds.index(baudrate)
+    except ValueError:
+        options = ", ".join(str(s) for s in speeds)
+        msg = f"Invalid baudrate {baudrate}, must be one of: {options}"
+        raise ValueError(msg) from None
+
+
+def _ftdi_232am_baud_to_divisor(baudrate: int) -> tuple[int, int]:
+    # https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L1120
+    clock = 3e6
+
+    if baudrate > clock:
+        msg = f"Invalid baudrate {baudrate}, must be < {clock / 1e6:.1f} MHz"
+        raise ValueError(msg)
+
+    min_clock = clock / 16384.0
+    if baudrate < min_clock:
+        msg = f"Invalid baudrate {baudrate}, must be > {min_clock:.1f} Hz"
+        raise ValueError(msg)
+
+    divisor3 = round((8 * clock) / baudrate)
+    if (divisor3 & 0x7) == 7:  # noqa: PLR2004
+        divisor3 += 1  # round x.7/8 up to x+1
+
+    actual = int(((8 * clock) + (divisor3 // 2)) // divisor3)
+
+    divisor = divisor3 >> 3
+    divisor3 &= 0x7
+
+    # Section 4.2: https://www.ftdichip.com/Documents/AppNotes/AN_120_Aliasing_VCP_Baud_Rates.pdf
+    if divisor == 1:  # deviates from ftdi_sio.c to properly handle 2MHz
+        divisor = 1 if divisor3 else 0  # 2MHz -> 1, 3MHz -> 0
+    elif divisor3 == 1:
+        divisor |= 0xC000  # +0.125 => 1100_0000_0000_0000
+    elif divisor3 >= 4:  # noqa: PLR2004
+        divisor |= 0x4000  # +0.5   => 0100_0000_0000_0000
+    elif divisor3 != 0:
+        divisor |= 0x8000  # +0.25  => 1000_0000_0000_0000
+
+    return actual, divisor
+
+
+def _ftdi_232bm_2232h_baud_to_divisor(baudrate: int, device_version: int) -> tuple[int, int]:
+    # https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L1145
+    # https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L1166
+    div_frac = [0, 3, 2, 4, 1, 5, 6, 7]
+    hi_speed = baudrate >= 1200 and device_version in {0x0700, 0x0800, 0x0900, 0x3600}  # noqa: PLR2004
+    clock = 12e6 if hi_speed else 3e6
+
+    if baudrate > clock:
+        msg = f"Invalid baudrate {baudrate}, must be < {clock / 1e6:.1f} MHz"
+        raise ValueError(msg)
+
+    min_clock = clock / 16384.0
+    if baudrate < min_clock:
+        msg = f"Invalid baudrate {baudrate}, must be > {min_clock:.1f} Hz"
+        raise ValueError(msg)
+
+    divisor3 = round((8 * clock) / baudrate)
+    actual = int(((8 * clock) + (divisor3 // 2)) // divisor3)
+
+    divisor = divisor3 >> 3
+    divisor |= div_frac[divisor3 & 0x7] << 14
+    if divisor == 1:
+        divisor = 0
+    elif divisor == 0x4001:  # noqa: PLR2004
+        divisor = 1
+
+    if hi_speed:
+        divisor |= 0x00020000  # 1 << 17, most significant bit (MSB) of the divisor must be a 1
+
+    return actual, divisor
+
+
+def _get_ftdi_divisor(baudrate: int, device_version: int) -> int:
+    # https://www.ftdichip.com/Documents/AppNotes/AN_120_Aliasing_VCP_Baud_Rates.pdf
+    if device_version < 0x0200:  # noqa: PLR2004
+        actual, divisor = baudrate, _ftdi_sio_index(baudrate)
+    elif device_version == 0x0200:  # noqa: PLR2004
+        actual, divisor = _ftdi_232am_baud_to_divisor(baudrate)
+    else:
+        actual, divisor = _ftdi_232bm_2232h_baud_to_divisor(baudrate, device_version)
+
+    tolerance = abs(actual - baudrate) / baudrate
+    if tolerance > 0.03:  # noqa: PLR2004
+        # The exact baudrate may not be achievable, however, as long as the actual baudrate used
+        # is within +/-3% of the required baudrate then the link should function without errors
+        # https://www.ftdichip.com/Support/Knowledgebase/index.html?an232b_05calc.htm
+        msg = f"The actual baudrate ({actual}) is not within 3% of the requested baudrate ({baudrate})"
+        raise ValueError(msg)
+
+    return divisor
+
+
+class _D2XX:
+    """Wrapper around the D2XX driver.
+
+    https://ftdichip.com/wp-content/uploads/2025/06/D2XX_Programmers_Guide.pdf
+    """
 
     ftd2xx: LoadLibrary | None = None
 
-    def __init__(self) -> None:
-        """Wrapper around the FTD2XX driver."""
+    def __init__(self, errcheck: Callable[..., Any]) -> None:
+        """Wrapper around the D2XX driver."""
         self._handle: int | None = None
         self._timeout: float | None = None
-        self._lib: Any = _maybe_load_ftd2xx().lib
+        self._lib: CDLL = _maybe_load_ftd2xx(errcheck).lib
 
     def clr_dtr(self) -> None:
         """Clears the Data Terminal Ready (DTR) control signal."""
@@ -287,17 +384,15 @@ class FTD2XX:
         self._lib.FT_GetLatencyTimer(self._handle, byref(timer))
         return timer.value
 
-    def get_line_modem_status(self) -> tuple[int, int]:
+    def get_line_modem_status(self) -> int:
         """Gets the line status and the modem status from the device.
 
         Returns:
-            The `(line, modem)` status values.
+            The status value.
         """
         status = c_ulong()
         self._lib.FT_GetModemStatus(self._handle, byref(status))
-        line = (status.value >> 8) & 0x000000FF
-        modem = status.value & 0x000000FF
-        return line, modem
+        return status.value
 
     def get_queue_status(self) -> int:
         """Gets the number of bytes in the receive (Rx) queue.
@@ -442,7 +537,7 @@ class FTD2XX:
         """
         self._lib.FT_SetChars(self._handle, event, int(event_enable), error, int(error_enable))
 
-    def set_data_characteristics(self, *, data_bits: DataBits, stop_bits: StopBits, parity: Parity) -> None:
+    def set_data_characteristics(self, *, data_bits: DataBits, parity: Parity, stop_bits: StopBits) -> None:
         """Sets the data characteristics for the device.
 
         Args:
@@ -495,7 +590,7 @@ class FTD2XX:
         """Set the latency timer value.
 
         Args:
-            value: Required value, in milliseconds, of the latency timer. Valid range is [2, 255].
+            value: Required value, in milliseconds, of the latency timer. Valid range is [1, 255].
         """
         self._lib.FT_SetLatencyTimer(self._handle, value)
 
@@ -512,7 +607,7 @@ class FTD2XX:
         and 64 kbytes.
 
         Args:
-            in_size: Transfer size for USB IN request (e.g., 16384 for 16 kB).
+            in_size: Transfer size for USB IN request (e.g., 16384 for 16 kiB).
             out_size: Transfer size for USB OUT request. This parameter may not be
                 supported by the FTDI driver.
         """
@@ -584,7 +679,7 @@ class FTD2XX:
         return wrote.value
 
 
-class FTDI(Interface, regex=REGEX):
+class FTDI(MessageBased, regex=REGEX):
     """Base class for equipment that use a Future Technology Devices International (FTDI) chip for communication."""
 
     def __init__(self, equipment: Equipment) -> None:
@@ -596,12 +691,12 @@ class FTDI(Interface, regex=REGEX):
         A [Connection][msl.equipment.schema.Connection] instance supports the following _properties_
         for the FTDI communication protocol. The [DataBits][msl.equipment.enumerations.DataBits],
         [Parity][msl.equipment.enumerations.Parity] and [StopBits][msl.equipment.enumerations.StopBits]
-        enumeration names and values may also be used. For properties that specify an _alias_, you
+        enumeration names or values may also be used. For properties that specify an _alias_, you
         may also use the alternative name as the property name.
 
         Attributes: Connection Properties:
             baud_rate (int): The baud rate (_alias:_ baudrate). _Default: `9600`_
-            data_bits (int): The number of data bits, e.g. 5, 6, 7, 8 (_alias:_ bytesize). _Default: `8`_
+            data_bits (int): The number of data bits, 7 or 8 (_alias:_ bytesize). _Default: `8`_
             dsr_dtr (bool): Whether to enable hardware (DSR/DTR) flow control (_alias:_ dsrdtr). _Default: `False`_
             parity (str): Parity checking, e.g. 'even', 'odd'. _Default: `none`_
             rts_cts (bool): Whether to enable hardware (RTS/CTS) flow control (_alias:_ rtscts). _Default: `False`_
@@ -617,142 +712,337 @@ class FTDI(Interface, regex=REGEX):
             msg = f"Invalid FTDI address {equipment.connection.address!r}"
             raise ValueError(msg)
 
-        if parsed.driver not in {0, 2}:
-            msg = f"Invalid FTDI driver number {parsed.driver}"
+        self._d2xx: _D2XX | None = None
+        self._libusb: USB | None = None
+        self._out_req_type: int = -1
+        self._in_req_type: int = -1
+        self._index: int = -1
+
+        if parsed.driver == 0:
+            # http://developer.intra2net.com/git/?p=libftdi;a=tree;f=src;hb=HEAD
+            self._libusb = USB(equipment)
+            self._index = self._libusb.bulk_in_endpoint.interface_number + 1
+            self._out_req_type = self._libusb.build_request_type(
+                direction=self._libusb.CtrlDirection.OUT,
+                type=self._libusb.CtrlType.VENDOR,
+                recipient=self._libusb.CtrlRecipient.DEVICE,
+            )
+            self._in_req_type = self._libusb.build_request_type(
+                direction=self._libusb.CtrlDirection.IN,
+                type=self._libusb.CtrlType.VENDOR,
+                recipient=self._libusb.CtrlRecipient.DEVICE,
+            )
+        elif parsed.driver == 2:  # noqa: PLR2004
+            self._d2xx = _D2XX(errcheck=self._error_check)
+            if not IS_WINDOWS:
+                self._d2xx.set_vid_pid(parsed.vid, parsed.pid)
+
+            if parsed.index is None:
+                self._d2xx.open_ex(parsed.serial)
+            else:
+                self._d2xx.open(parsed.index)
+        else:
+            msg = f"Invalid FTDI driver number {parsed.driver}, must be either 0 or 2"
             raise ValueError(msg)
 
-        self._libusb: USB | None = None
-        if parsed.driver == 0:
-            self._libusb = USB(equipment)
-
-        _ = _maybe_load_ftd2xx(self._error_check)
-        ftd2xx = FTD2XX()
-        if not IS_WINDOWS:
-            ftd2xx.set_vid_pid(parsed.vid, parsed.pid)
-
-        if parsed.index is None:
-            ftd2xx.open_ex(parsed.serial)
-        else:
-            ftd2xx.open(parsed.index)
+        self._set_interface_timeout()
 
         p = equipment.connection.properties
 
-        ftd2xx.set_baud_rate(p.get("baud_rate", p.get("baudrate", 9600)))
+        self.set_baud_rate(p.get("baud_rate", p.get("baudrate", 9600)))
 
-        db = p.get("data_bits", p.get("bytesize", DataBits.EIGHT))
-        sb = p.get("stop_bits", p.get("stopbits", StopBits.ONE))
-        ftd2xx.set_data_characteristics(
-            data_bits=to_enum(db, DataBits, to_upper=True),
-            stop_bits=to_enum(sb, StopBits, to_upper=True),
-            parity=to_enum(p.get("parity", Parity.NONE), Parity, to_upper=True),
+        self.set_data_characteristics(
+            data_bits=p.get("data_bits", p.get("bytesize", DataBits.EIGHT)),
+            parity=p.get("parity", Parity.NONE),
+            stop_bits=p.get("stop_bits", p.get("stopbits", StopBits.ONE)),
         )
 
         if p.get("xon_xoff", p.get("xonxoff", False)):
-            ftd2xx.set_flow_control("XON_XOFF", xon=17, xoff=19)  # pySerial uses 17 and 19
+            self.set_flow_control("XON_XOFF", xon=17, xoff=19)  # pySerial uses 17 and 19
 
         if p.get("dsr_dtr", p.get("dsrdtr", False)):
-            ftd2xx.set_flow_control("DTR_DSR")
+            self.set_flow_control("DTR_DSR")
 
         if p.get("rts_cts", p.get("rtscts", False)):
-            ftd2xx.set_flow_control("RTS_CTS")
-
-        ftd2xx.timeout = p.get("timeout")
-
-        self._ftd2xx: FTD2XX = ftd2xx
+            self.set_flow_control("RTS_CTS")
 
     def _error_check(self, result: int, func: Any, arguments: tuple[int, ...]) -> int:  # noqa: ANN401
-        logger.debug("FTD2xx.%s%s -> %d", func.__name__, arguments, result)
+        logger.debug("D2xx.%s%s -> %d", func.__name__, arguments, result)
         if result != 0:
-            msg = ftd2xx_error.get(result, f"FTD2xxUnknownError: Error code {result}")
+            msg = ftd2xx_error.get(result, f"D2xxUnknownError: Error code {result}")
             raise MSLConnectionError(self, msg)
         return result
 
+    def _read(self, size: int | None = None) -> bytes:  # pyright: ignore[reportImplicitOverride]
+        if self._d2xx is not None:
+            return self._d2xx.read(size)
+
+        assert self._libusb is not None  # noqa: S101
+        address = self._libusb.bulk_in_endpoint.address
+        packet_size = self._libusb.bulk_in_endpoint.max_packet_size
+        read = self._libusb._device.read  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+        timeout = self._libusb._timeout_ms  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+
+        # First 2 bytes in each packet represent the current [modem, line] status
+        n_skip = 2
+
+        size = 1 if size is None else size
+        remaining = size
+        buffer = bytearray()
+        while remaining > 0:
+            data = read(address, min(remaining + n_skip, packet_size), timeout)
+            if len(data) > n_skip:
+                if data[1] & 0x8E:  # check for Overrun, Parity, Framing or RCVR FIFO error -- see self.poll_status()
+                    msg = f"FTDI read error, line-status byte is {data[1]}"
+                    raise MSLConnectionError(self, msg)
+                remaining -= len(data) - n_skip
+                buffer.extend(data[n_skip:])
+
+        return bytes(buffer)
+
+    def _set_interface_timeout(self) -> None:  # pyright: ignore[reportImplicitOverride]
+        if hasattr(self, "_d2xx") and self._d2xx is not None:
+            self._d2xx.timeout = self.timeout
+        elif hasattr(self, "_libusb") and self._libusb is not None:
+            self._libusb.timeout = self.timeout
+
+    def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
+        if self._d2xx is not None:
+            return self._d2xx.write(message)
+
+        assert self._libusb is not None  # noqa: S101
+        return self._libusb._write(message)  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
         """Disconnect from the equipment."""
-        if hasattr(self, "_ftd2xx"):
-            self._ftd2xx.close()
+        if hasattr(self, "_d2xx") and self._d2xx is not None:
+            self._d2xx.close()
+            self._d2xx = None
+            super().disconnect()
+        elif hasattr(self, "_libusb") and self._libusb is not None:
+            self._libusb.disconnect()
+            self._libusb = None
             super().disconnect()
 
-    @property
-    def ftd2xx(self) -> FTD2XX:
-        """Returns the reference to the ftd2xx driver instance."""
-        return self._ftd2xx
+    def get_latency_timer(self) -> int:
+        """Get the latency timer value.
+
+        Returns:
+            The latency timer value, in milliseconds.
+        """
+        if self._d2xx is not None:
+            return self._d2xx.get_latency_timer()
+
+        assert self._libusb is not None  # noqa: S101
+        data = self._libusb.ctrl_transfer(
+            request_type=self._in_req_type,
+            request=0x0A,  # SIO_GET_LATENCY_TIMER_REQUEST
+            index=self._index,
+            data_or_length=1,
+        )
+        assert not isinstance(data, int)  # noqa: S101
+        return data[0]
+
+    def poll_status(self) -> tuple[int, int]:
+        """Polls the modem and line status from the device.
+
+        Returns:
+            The `(modem, line)` status values.
+                Bit mask of the `modem` byte:
+                - B0..B3: Should be 0
+                - B4: Clear To Send (CTS) = 0x10 &mdash; 0 = inactive, 1 = active
+                - B5: Data Set Ready (DSR) = 0x20 &mdash; 0 = inactive, 1 = active
+                - B6: Ring Indicator (RI) = 0x40 &mdash; 0 = inactive, 1 = active
+                - B7: Data Carrier Detect (DCD) = 0x80 &mdash; 0 = inactive, 1 = active
+
+                Bit mask of the `line` byte:
+                - B0: Data Ready (DR) = 0x01
+                - B1: Overrun Error (OE) = 0x02
+                - B2: Parity Error (PE) = 0x04
+                - B3: Framing Error (FE) = 0x08
+                - B4: Break Interrupt (BI) = 0x10
+                - B5: Transmitter Holding Register Empty (THRE) = 0x20
+                - B6: Transmitter Empty (TEMT) = 0x40
+                - B7: Receiver FIFO Error (RCVE) = 0x80
+
+        """
+        status: int
+        if self._d2xx is not None:
+            status = self._d2xx.get_line_modem_status()
+        else:
+            assert self._libusb is not None  # noqa: S101
+            data = self._libusb.ctrl_transfer(
+                request_type=self._in_req_type,
+                request=0x05,  # SIO_POLL_MODEM_STATUS_REQUEST
+                index=self._index,
+                data_or_length=2,
+            )
+            assert not isinstance(data, int)  # noqa: S101
+            (status,) = unpack("<H", data)
+
+        line = (status >> 8) & 0xFF
+        modem = status & 0xFF
+        return modem, line
 
     def purge_buffers(self) -> None:
-        """Purge the receive (Rx) and transmit (Tx) buffers for the device."""
-        self._ftd2xx.purge_buffers()
+        """Purge the receive (Rx) and transmit (Tx) buffers for the FTDI device."""
+        if self._d2xx is not None:
+            self._d2xx.purge_buffers()
+        elif self._libusb is not None:
+            # 0=SIO_RESET_REQUEST, 1=SIO_TCOFLUSH (host-to-ftdi), 2=SIO_TCIFLUSH (ftdi-to-host)
+            _ = self._libusb.ctrl_transfer(request_type=self._out_req_type, request=0, value=1, index=self._index)
+            _ = self._libusb.ctrl_transfer(request_type=self._out_req_type, request=0, value=2, index=self._index)
 
-    def query(self, data: bytes, *, delay: float = 0.1, size: int | None = None) -> bytes:
-        """Convenience method for performing a write followed by a read.
-
-        Args:
-            data: The data to write to the equipment.
-            delay: Time delay, in seconds, to wait between the _write_ and _read_ operations.
-            size: The number of bytes to read. If `None`, determine the size from the receive (Rx) queue.
-
-        Returns:
-            The response from the equipment.
-        """
-        _ = self.write(data)
-        if delay > 0:
-            sleep(delay)
-        return self.read(size)
-
-    def read(self, size: int | None = None) -> bytes:
-        """Read data from the equipment.
-
-        Args:
-            size: The number of bytes to read. If `None`, determine the size from the receive (Rx) queue.
-
-        Returns:
-            The data from the equipment.
-        """
-        if size is None:
-            size = self._ftd2xx.get_queue_status()
-
-        data = self._ftd2xx.read(size)
-        if len(data) < size:
-            msg = f"Timeout occurred after {self.timeout} second(s) [got {len(data)} bytes, requested {size}]"
-            raise TimeoutError(msg)
-        return data
+            self._libusb._byte_buffer.clear()  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
 
     def reset_device(self) -> None:
         """Sends a reset command to the device."""
-        self._ftd2xx.reset_device()
+        if self._d2xx is not None:
+            self._d2xx.reset_device()
+        elif self._libusb is not None:
+            self._libusb.reset_device()
+
+    def set_baud_rate(self, rate: int) -> None:
+        """Set the baud rate.
+
+        Args:
+            rate: The baud rate.
+        """
+        if self._d2xx is not None:
+            self._d2xx.set_baud_rate(rate)
+        elif self._libusb is not None:
+            dv = self._libusb.device_version
+            divisor = _get_ftdi_divisor(baudrate=rate, device_version=dv)
+            value = divisor & 0xFFFF
+            index = (divisor >> 16) & 0xFFFF
+            if dv >= 0x0700 or dv == 0x0500:  # noqa: PLR2004
+                index <<= 8
+                index |= self._index
+
+            _ = self._libusb.ctrl_transfer(
+                request_type=self._out_req_type,
+                request=3,  # SIO_SET_BAUD_RATE
+                value=value,
+                index=index,
+            )
+
+    def set_data_characteristics(
+        self,
+        *,
+        data_bits: DataBits | str | int = DataBits.EIGHT,
+        parity: Parity | str | int = Parity.NONE,
+        stop_bits: StopBits | str | int = StopBits.ONE,
+    ) -> None:
+        """Set the RS-232 data characteristics.
+
+        Args:
+            data_bits: The number of data bits (7 or 8). Can be an enum member name (case insensitive) or value.
+            parity: The parity. Can be an enum member name (case insensitive) or value.
+            stop_bits: The number of stop bits. Can be an enum member name (case insensitive) or value.
+        """
+        data_bits = to_enum(data_bits, DataBits, to_upper=True)
+        parity = to_enum(parity, Parity, to_upper=True)
+        stop_bits = to_enum(stop_bits, StopBits, to_upper=True)
+
+        if data_bits not in {7, 8}:
+            msg = f"Unsupported data_bits value {data_bits!r}, must be either 7 or 8"
+            raise ValueError(msg)
+
+        if self._d2xx is not None:
+            self._d2xx.set_data_characteristics(data_bits=data_bits, parity=parity, stop_bits=stop_bits)
+        elif self._libusb is not None:
+            value = data_bits.value
+            value |= {Parity.NONE: 0, Parity.ODD: 256, Parity.EVEN: 512, Parity.MARK: 768, Parity.SPACE: 1024}[parity]
+            value |= {StopBits.ONE: 0, StopBits.ONE_POINT_FIVE: 2048, StopBits.TWO: 4096}[stop_bits]
+
+            _ = self._libusb.ctrl_transfer(
+                request_type=self._out_req_type,
+                request=4,  # SIO_SET_DATA
+                value=value,
+                index=self._index,
+            )
+
+    def set_dtr(self, *, state: bool) -> None:
+        """Set the Data Terminal Ready (DTR) control signal.
+
+        Args:
+            state: New DTR logical level: HIGH (`True`) or LOW (`False`).
+        """
+        if self._d2xx is not None:
+            self._d2xx.set_dtr() if state else self._d2xx.clr_dtr()
+        elif self._libusb is not None:
+            _ = self._libusb.ctrl_transfer(
+                request_type=self._out_req_type,
+                request=1,  # SIO_MODEM_CTRL
+                value=257 if state else 256,  # 257=SIO_SET_DTR_HIGH, 256=SIO_SET_DTR_LOW
+                index=self._index,
+            )
+
+    def set_flow_control(
+        self, flow: Literal["RTS_CTS", "DTR_DSR", "XON_XOFF"] | None = None, *, xon: int = 0, xoff: int = 0
+    ) -> None:
+        """Sets the flow control for the device.
+
+        Args:
+            flow: The type of flow control to use, `None` disables flow control.
+            xon: The character (between 0 and 255) used to signal Xon. Only used if `flow` is `XON_XOFF`.
+            xoff: The character (between 0 and 255) used to signal Xoff. Only used if `flow` is `XON_XOFF`.
+        """
+        if self._d2xx is not None:
+            self._d2xx.set_flow_control(flow, xon=xon, xoff=xoff)
+        elif self._libusb is not None:
+            value, index = 0, 0
+            if flow == "RTS_CTS":
+                index = 256  # SIO_RTS_CTS_HS
+            elif flow == "DTR_DSR":
+                index = 512  # SIO_DTR_DSR_HS
+            elif flow == "XON_XOFF":
+                value = xon | (xoff << 8)
+                index = 1024  # SIO_XON_XOFF_HS
+
+            _ = self._libusb.ctrl_transfer(
+                request_type=self._out_req_type,
+                request=2,  # SIO_SET_FLOW_CTRL
+                value=value,
+                index=index | self._index,
+            )
+
+    def set_latency_timer(self, value: int) -> None:
+        """Set the latency timer value.
+
+        Args:
+            value: Required value, in milliseconds, of the latency timer. Valid range is [1, 255].
+        """
+        v = int(value)
+        if v < 1 or v > 255:  # noqa: PLR2004
+            msg = f"Invalid latency timer value {value}, must be in the range [1, 255]"
+            raise ValueError(msg)
+
+        if self._d2xx is not None:
+            self._d2xx.set_latency_timer(v)
+        elif self._libusb is not None:
+            _ = self._libusb.ctrl_transfer(
+                request_type=self._out_req_type,
+                request=0x09,  # SIO_SET_LATENCY_TIMER_REQUEST
+                value=v,
+                index=self._index,
+            )
 
     def set_rts(self, *, state: bool) -> None:
-        """Sets the Request To Send (RTS) control signal.
+        """Set the Request To Send (RTS) control signal.
 
         Args:
             state: New RTS logical level: HIGH (`True`) or LOW (`False`).
         """
-        if state:
-            self._ftd2xx.set_rts()
-        else:
-            self._ftd2xx.clr_rts()
-
-    @property
-    def timeout(self) -> float | None:
-        """The timeout, in seconds, for read and write operations.
-
-        A value &lt;0 will set the timeout to be `None` (blocking mode).
-        """
-        return self._ftd2xx.timeout
-
-    @timeout.setter
-    def timeout(self, value: float | None) -> None:
-        self._ftd2xx.timeout = value
-
-    def write(self, data: bytes) -> int:
-        """Write data to the equipment.
-
-        Args:
-            data: The data to write to the equipment.
-
-        Returns:
-            The number of bytes written.
-        """
-        return self._ftd2xx.write(data)
+        if self._d2xx is not None:
+            self._d2xx.set_rts() if state else self._d2xx.clr_rts()
+        elif self._libusb is not None:
+            _ = self._libusb.ctrl_transfer(
+                request_type=self._out_req_type,
+                request=1,  # SIO_MODEM_CTRL
+                value=514 if state else 512,  # 514=SIO_SET_RTS_HIGH, 512=SIO_SET_RTS_LOW
+                index=self._index,
+            )
 
 
 @dataclass

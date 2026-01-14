@@ -12,7 +12,7 @@ import pytest
 
 from msl.equipment.cli import cli, main, run_external
 from msl.equipment.cli.find import Device, DeviceType, print_stdout
-from msl.equipment.interfaces.ftdi import FTD2XX
+from msl.equipment.interfaces.ftdi import _D2XX  # pyright: ignore[reportPrivateUsage]
 from msl.equipment.interfaces.gpib import GPIB
 
 if TYPE_CHECKING:
@@ -34,12 +34,12 @@ no_libusb = sys.platform == "darwin" and sys.version_info[:2] == (3, 8)
 
 @pytest.fixture
 def reset_d2xx_gpib() -> Iterator[None]:
-    FTD2XX.ftd2xx = None
+    _D2XX.ftd2xx = None
     GPIB.gpib_library = None
     _ = os.environ.pop("D2XX_LIBRARY", "")
     _ = os.environ.pop("GPIB_LIBRARY", "")
     yield
-    FTD2XX.ftd2xx = None
+    _D2XX.ftd2xx = None
     GPIB.gpib_library = None
     _ = os.environ.pop("D2XX_LIBRARY", "")
     _ = os.environ.pop("GPIB_LIBRARY", "")

@@ -44,7 +44,6 @@ FT2232H = 0x0700
 FT4232H = 0x0800
 FT232H = 0x0900
 FT4232HA = 0x3600
-SIO = 0x0200  # the bcdDevice value is actually less than this value
 
 ftd2xx_error: dict[int, str] = {
     0: "FT_OK",
@@ -321,7 +320,7 @@ def _ftdi_232bm_2232h_baud_to_divisor(baudrate: int, device_version: int) -> tup
 
 def _get_ftdi_divisor(baudrate: int, device_version: int) -> int:
     # https://www.ftdichip.com/Documents/AppNotes/AN_120_Aliasing_VCP_Baud_Rates.pdf
-    if device_version < SIO:
+    if device_version < FT232A:
         actual, divisor = baudrate, _ftdi_sio_index(baudrate)
     elif device_version == FT232A:
         actual, divisor = _ftdi_232am_baud_to_divisor(baudrate)
@@ -467,7 +466,7 @@ class _D2XX:
         """Read data from the device.
 
         Args:
-            size: The number of bytes to read. If `None`, calls [get_queue_status][] to determine the size.
+            size: The number of bytes to read. If `None`, calls `get_queue_status()` to determine the size.
 
         Returns:
             The data from the device. The actual number of bytes read could be &lt; `size` if a timeout occurred.
@@ -502,7 +501,7 @@ class _D2XX:
 
         This function is used to attempt to recover the port after a failure.
         It is not equivalent to an unplug/re-plug event. For the equivalent
-        of an unplug/re-plug event, use [cycle_port][].
+        of an unplug/re-plug event, use `cycle_port()`.
 
         !!! warning
             Only valid on Windows.
@@ -579,7 +578,7 @@ class _D2XX:
     def set_divisor(self, divisor: int) -> None:
         """Set a non-standard baud rate.
 
-        This function may no longer be required as [set_baud_rate][] will automatically
+        This function may no longer be required as `set_baud_rate()` will automatically
         calculate the required divisor for a requested baud rate.
 
         Args:
@@ -875,6 +874,11 @@ class FTDI(MessageBased, regex=REGEX):
             return self._d2xx.write(message)
 
         assert self._libusb is not None  # noqa: S101
+        if self._libusb.device_version < FT232A:
+            # https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L2366
+            # https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.h#L565
+            msg = "The FTDI chip requires a header byte when writing data, which has not been implemented yet"
+            raise MSLConnectionError(self, msg)
         return self._libusb._write(message)  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
@@ -898,9 +902,18 @@ class FTDI(MessageBased, regex=REGEX):
             return self._d2xx.get_latency_timer()
 
         assert self._libusb is not None  # noqa: S101
+
+        # https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L1408
+        if self._libusb.device_version <= FT232A:
+            # The linux code returns an error, but FT_GetLatencyTimer in the D2xx programming manual states:
+            #  "In the FT8U232AM and FT8U245AM devices, the receive buffer timeout that is used
+            #   to flush remaining data from the receive buffer was fixed at 16 ms."
+            return 16
+
         data = self._libusb.ctrl_transfer(
             request_type=self._in_req_type,
-            request=0x0A,  # SIO_GET_LATENCY_TIMER_REQUEST
+            request=0x0A,  # FTDI_SIO_GET_LATENCY_TIMER
+            value=0,
             index=self._index,
             data_or_length=1,
         )
@@ -913,7 +926,7 @@ class FTDI(MessageBased, regex=REGEX):
         Returns:
             The `(modem, line)` status values.
                 Bit mask of the `modem` byte:
-                - B0..B3: Should be 0
+                - B0..3: Should be 0 (reserved)
                 - B4: Clear To Send (CTS) = 0x10 &mdash; 0 = inactive, 1 = active
                 - B5: Data Set Ready (DSR) = 0x20 &mdash; 0 = inactive, 1 = active
                 - B6: Ring Indicator (RI) = 0x40 &mdash; 0 = inactive, 1 = active
@@ -935,14 +948,18 @@ class FTDI(MessageBased, regex=REGEX):
             status = self._d2xx.get_line_modem_status()
         else:
             assert self._libusb is not None  # noqa: S101
+
+            # https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L2744
+            length, fmt = (1, "B") if self._libusb.device_version < FT232A else (2, "<H")
             data = self._libusb.ctrl_transfer(
                 request_type=self._in_req_type,
-                request=0x05,  # SIO_POLL_MODEM_STATUS_REQUEST
+                request=5,  # FTDI_SIO_GET_MODEM_STATUS
+                value=0,
                 index=self._index,
-                data_or_length=2,
+                data_or_length=length,
             )
             assert not isinstance(data, int)  # noqa: S101
-            (status,) = unpack("<H", data)
+            (status,) = unpack(fmt, data)
 
         line = (status >> 8) & 0xFF
         modem = status & 0xFF
@@ -954,6 +971,7 @@ class FTDI(MessageBased, regex=REGEX):
             return self._d2xx.purge_buffers()
 
         assert self._libusb is not None  # noqa: S101
+        # http://developer.intra2net.com/git/?p=libftdi;a=blob;f=src/ftdi.c;h=811f801feab8a04a62526c68ff2a93aae11feb2b;hb=HEAD#l1032
         # 0=SIO_RESET_REQUEST, 1=SIO_TCOFLUSH (host-to-ftdi), 2=SIO_TCIFLUSH (ftdi-to-host)
         _ = self._libusb.ctrl_transfer(request_type=self._out_req_type, request=0, value=1, index=self._index)
         _ = self._libusb.ctrl_transfer(request_type=self._out_req_type, request=0, value=2, index=self._index)
@@ -964,8 +982,11 @@ class FTDI(MessageBased, regex=REGEX):
         if self._d2xx is not None:
             return self._d2xx.reset_device()
 
+        # http://developer.intra2net.com/git/?p=libftdi;a=blob;f=src/ftdi.c;h=811f801feab8a04a62526c68ff2a93aae11feb2b;hb=HEAD#l1006
         assert self._libusb is not None  # noqa: S101
-        return self._libusb.reset_device()
+        # SIO_RESET=0, SIO_RESET_SIO=0
+        _ = self._libusb.ctrl_transfer(request_type=self._out_req_type, request=0, value=0, index=self._index)
+        return None
 
     def set_baud_rate(self, rate: int) -> None:
         """Set the baud rate.
@@ -976,6 +997,7 @@ class FTDI(MessageBased, regex=REGEX):
         if self._d2xx is not None:
             return self._d2xx.set_baud_rate(rate)
 
+        # https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L1342
         assert self._libusb is not None  # noqa: S101
         dv = self._libusb.device_version
         divisor = _get_ftdi_divisor(baudrate=rate, device_version=dv)
@@ -987,7 +1009,7 @@ class FTDI(MessageBased, regex=REGEX):
 
         _ = self._libusb.ctrl_transfer(
             request_type=self._out_req_type,
-            request=3,  # SIO_SET_BAUD_RATE
+            request=3,  # FTDI_SIO_SET_BAUDRATE_REQUEST
             value=value,
             index=index,
         )
@@ -1018,6 +1040,7 @@ class FTDI(MessageBased, regex=REGEX):
         if self._d2xx is not None:
             return self._d2xx.set_data_characteristics(data_bits=data_bits, parity=parity, stop_bits=stop_bits)
 
+        # http://developer.intra2net.com/git/?p=libftdi;a=blob;f=src/ftdi.c;h=811f801feab8a04a62526c68ff2a93aae11feb2b;hb=HEAD#l1512
         assert self._libusb is not None  # noqa: S101
         value = data_bits.value
         value |= {Parity.NONE: 0, Parity.ODD: 256, Parity.EVEN: 512, Parity.MARK: 768, Parity.SPACE: 1024}[parity]
@@ -1040,11 +1063,13 @@ class FTDI(MessageBased, regex=REGEX):
         if self._d2xx is not None:
             return self._d2xx.set_dtr() if active else self._d2xx.clr_dtr()
 
+        # https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L1199
         assert self._libusb is not None  # noqa: S101
+        # FTDI_SIO_SET_DTR_HIGH=((0x01 << 8) | 1), FTDI_SIO_SET_DTR_LOW=((0x01 << 8) | 0)
         _ = self._libusb.ctrl_transfer(
             request_type=self._out_req_type,
-            request=1,  # SIO_MODEM_CTRL
-            value=257 if active else 256,  # 257=SIO_SET_DTR_HIGH, 256=SIO_SET_DTR_LOW
+            request=1,  # FTDI_SIO_MODEM_CTRL
+            value=257 if active else 256,
             index=self._index,
         )
         return None
@@ -1062,19 +1087,20 @@ class FTDI(MessageBased, regex=REGEX):
         if self._d2xx is not None:
             return self._d2xx.set_flow_control(flow, xon=xon, xoff=xoff)
 
+        # https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L2716
         assert self._libusb is not None  # noqa: S101
         value, index = 0, 0
         if flow == "RTS_CTS":
-            index = 256  # SIO_RTS_CTS_HS
+            index = 0x1 << 8  # FTDI_SIO_RTS_CTS_HS
         elif flow == "DTR_DSR":
-            index = 512  # SIO_DTR_DSR_HS
+            index = 0x2 << 8  # FTDI_SIO_DTR_DSR_HS
         elif flow == "XON_XOFF":
-            value = xon | (xoff << 8)
-            index = 1024  # SIO_XON_XOFF_HS
+            value = (xoff << 8) | xon
+            index = 0x4 << 8  # FTDI_SIO_XON_XOFF_HS
 
         _ = self._libusb.ctrl_transfer(
             request_type=self._out_req_type,
-            request=2,  # SIO_SET_FLOW_CTRL
+            request=2,  # FTDI_SIO_SET_FLOW_CTRL
             value=value,
             index=index | self._index,
         )
@@ -1088,16 +1114,26 @@ class FTDI(MessageBased, regex=REGEX):
         """
         v = int(value)
         if v < 1 or v > 255:  # noqa: PLR2004
-            msg = f"Invalid latency timer value {value}, must be in the range [1, 255]"
+            msg = f"Invalid latency timer value {value}, must be an integer in the range [1, 255]"
             raise ValueError(msg)
 
         if self._d2xx is not None:
             return self._d2xx.set_latency_timer(v)
 
+        # https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L1365
         assert self._libusb is not None  # noqa: S101
+        if self._libusb.device_version <= FT232A:
+            # The linux code returns an error, but FT_SetLatencyTimer in the D2xx programming manual states:
+            #  "In the FT8U232AM and FT8U245AM devices, the receive buffer timeout that is used
+            #   to flush remaining data from the receive buffer was fixed at 16 ms."
+            if v == 16:  # noqa: PLR2004
+                return None
+            msg = "Cannot set latency timer for this (old) FTDI chip. The value is fixed at 16 ms."
+            raise MSLConnectionError(self, msg)
+
         _ = self._libusb.ctrl_transfer(
             request_type=self._out_req_type,
-            request=0x09,  # SIO_SET_LATENCY_TIMER_REQUEST
+            request=9,  # FTDI_SIO_SET_LATENCY_TIMER
             value=v,
             index=self._index,
         )
@@ -1112,11 +1148,13 @@ class FTDI(MessageBased, regex=REGEX):
         if self._d2xx is not None:
             return self._d2xx.set_rts() if active else self._d2xx.clr_rts()
 
+        # https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L1199
         assert self._libusb is not None  # noqa: S101
+        # FTDI_SIO_SET_RTS_HIGH=((0x2 << 8) | 2), FTDI_SIO_SET_RTS_LOW=((0x2 << 8) | 0)
         _ = self._libusb.ctrl_transfer(
             request_type=self._out_req_type,
-            request=1,  # SIO_MODEM_CTRL
-            value=514 if active else 512,  # 514=SIO_SET_RTS_HIGH, 512=SIO_SET_RTS_LOW
+            request=1,  # FTDI_SIO_MODEM_CTRL
+            value=514 if active else 512,
             index=self._index,
         )
         return None

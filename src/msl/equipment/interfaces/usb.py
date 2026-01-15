@@ -175,8 +175,8 @@ def find_usb(usb_backend: Any = None) -> list[_USBDevice]:  # noqa: ANN401, C901
                 if usb_core_device.idVendor == 0x0403:  # noqa: PLR2004
                     device = _USBDevice(usb_core_device)
                     device.type = "FTDI"
-                    if device.description == UNKNOWN_USB_DEVICE and not device.serial:
-                        device.description += ", use the FTDI2 address (if available)"
+                    if IS_WINDOWS and device.description == UNKNOWN_USB_DEVICE and not device.serial:
+                        device.description += ", use FTDI2 address (if available) or use Zadig to replace driver"
                 elif interface.bInterfaceClass == 0xFE and interface.bInterfaceSubClass == 3:  # noqa: PLR2004
                     device = _USBDevice(usb_core_device)
                     device.suffix = "INSTR"
@@ -487,6 +487,7 @@ class USB(MessageBased, regex=REGEX):
         Args:
             endpoint: The endpoint to clear.
         """
+        logger.debug("%s.clear_halt(0x%02X)", self, endpoint.address)
         self._device.clear_halt(endpoint.address)
 
     def ctrl_transfer(
@@ -515,16 +516,13 @@ class USB(MessageBased, regex=REGEX):
             For an OUT transfer, the returned value is the number of bytes sent to the equipment.
                 For an IN transfer, the returned value is the data that was read.
         """
+        # fmt: off
         logger.debug(
-            "USBCtrlTransfer<%s>(0x%02X, 0x%02X, 0x%04X, 0x%04X, %s, %d)",
-            self,
-            request_type,
-            request,
-            value,
-            index,
-            data_or_length,
-            self._timeout_ms,
+            "%s.ctrl_transfer(0x%02X, 0x%02X, 0x%04X, 0x%04X, %s, %d)",
+            self, request_type, request, value, index, data_or_length, self._timeout_ms
         )
+        # fmt: on
+
         try:
             out: int | array[int] = self._device.ctrl_transfer(
                 bmRequestType=request_type,
@@ -581,6 +579,7 @@ class USB(MessageBased, regex=REGEX):
         If your program has to call this method, the reset will cause the
         device state to change (e.g., register values may be reset).
         """
+        logger.debug("%s.reset_device()", self)
         self._device.reset()
 
 

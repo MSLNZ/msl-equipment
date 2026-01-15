@@ -658,7 +658,7 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
     def bulk_read(self, handle: int, ep: int, interface: int, buffer: array[int], timeout: int) -> int:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
         """Mock a bulk read."""
         msg = self._bulk_message if self._bulk_queue.empty() else array("B", self._bulk_queue.get())
-        if msg.tobytes() == b"sleep":
+        if msg.tobytes() in {b"sleep", b"\x11\x60sleep"}:  # \x11\x60 are the status bytes for the FTDI packet
             sleep(0.05)
         buffer[:] = msg
         return len(msg)

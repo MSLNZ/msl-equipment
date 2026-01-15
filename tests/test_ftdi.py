@@ -4,11 +4,10 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from msl.equipment import FTDI, Connection, Equipment, MSLConnectionError
+from msl.equipment import FTDI, Connection, Equipment, MSLConnectionError, MSLTimeoutError
 from msl.equipment.interfaces.ftdi import (
     FT232A,
     FT2232H,
-    SIO,
     ParsedFTDIAddress,
     _ftdi_232am_baud_to_divisor,  # pyright: ignore[reportPrivateUsage]
     _ftdi_232bm_2232h_baud_to_divisor,  # pyright: ignore[reportPrivateUsage]
@@ -43,13 +42,13 @@ def test_parse_usb_address(address: str, expected: ParsedFTDIAddress | None) -> 
 
 
 def test_get_ftdi_divisor_sio() -> None:
-    assert _get_ftdi_divisor(300, SIO - 1) == 0
-    assert _get_ftdi_divisor(9600, SIO - 1) == 5
+    assert _get_ftdi_divisor(300, FT232A - 1) == 0
+    assert _get_ftdi_divisor(9600, FT232A - 1) == 5
 
 
 def test_baudrate_out_of_range() -> None:
     with pytest.raises(ValueError, match=r"Invalid baudrate 10, must be one of"):
-        _ = _get_ftdi_divisor(10, SIO - 1)
+        _ = _get_ftdi_divisor(10, FT232A - 1)
 
     with pytest.raises(ValueError, match=r"Invalid baudrate 3100000, must be < 3.0 MBd"):
         _ = _get_ftdi_divisor(3_100_000, FT232A)
@@ -206,9 +205,6 @@ def test_invalid_ftdi_driver_number() -> None:
 
 
 def test_connection_properties(usb_backend: USBBackend, caplog: pytest.LogCaptureFixture) -> None:
-    caplog.set_level("DEBUG", "msl.equipment")
-    caplog.clear()
-
     usb_backend.add_device(1, 2, "x")
     c = Connection(
         "FTDI::1::2::x",
@@ -223,33 +219,35 @@ def test_connection_properties(usb_backend: USBBackend, caplog: pytest.LogCaptur
         xon_xoff=True,
     )
 
+    caplog.set_level("DEBUG", "msl.equipment")
+    caplog.clear()
+
     device: FTDI
     with c.connect() as device:
         assert device.read_termination is None
         assert device.write_termination is None
         assert device.timeout == 5.1
-        device.reset_device()  # just to call this method somewhere
 
     assert caplog.messages == [
         "Connecting to FTDI<|| at FTDI::1::2::x>",
         "Connecting to USB<|| at FTDI::1::2::x>",
-        "USBCtrlTransfer<FTDI<||>>(0x40, 0x03, 0x001A, 0x0001, None, 5100)",  # set baudrate to 115200
-        "USBCtrlTransfer<FTDI<||>>(0x40, 0x04, 0x1207, 0x0001, None, 5100)",  # setting parity, data bits, stop bits
-        "USBCtrlTransfer<FTDI<||>>(0x40, 0x02, 0x0000, 0x0001, None, 5100)",  # default flow control
-        "USBCtrlTransfer<FTDI<||>>(0x40, 0x02, 0x1311, 0x0401, None, 5100)",  # enable xon_xoff with xon=17, xoff=19
-        "USBCtrlTransfer<FTDI<||>>(0x40, 0x02, 0x0000, 0x0201, None, 5100)",  # enable dsr_dtr
-        "USBCtrlTransfer<FTDI<||>>(0x40, 0x02, 0x0000, 0x0101, None, 5100)",  # enable rts_cts
+        "FTDI<||>.ctrl_transfer(0x40, 0x03, 0x001A, 0x0001, None, 5100)",  # set baudrate to 115200
+        "FTDI<||>.ctrl_transfer(0x40, 0x04, 0x1207, 0x0001, None, 5100)",  # setting parity, data bits, stop bits
+        "FTDI<||>.ctrl_transfer(0x40, 0x02, 0x0000, 0x0001, None, 5100)",  # default flow control is None
+        "FTDI<||>.ctrl_transfer(0x40, 0x02, 0x1311, 0x0401, None, 5100)",  # enable xon_xoff with xon=17, xoff=19
+        "FTDI<||>.ctrl_transfer(0x40, 0x02, 0x0000, 0x0201, None, 5100)",  # enable dsr_dtr
+        "FTDI<||>.ctrl_transfer(0x40, 0x02, 0x0000, 0x0101, None, 5100)",  # enable rts_cts
         "Disconnected from USB<|| at FTDI::1::2::x>",
         "Disconnected from FTDI<|| at FTDI::1::2::x>",
     ]
 
 
 def test_connection_without_properties(usb_backend: USBBackend, caplog: pytest.LogCaptureFixture) -> None:
-    caplog.set_level("DEBUG", "msl.equipment")
-    caplog.clear()
-
     usb_backend.add_device(1, 2, "x")
     c = Connection("FTDI::1::2::x", usb_backend=usb_backend)
+
+    caplog.set_level("DEBUG", "msl.equipment")
+    caplog.clear()
 
     device: FTDI
     with c.connect() as device:
@@ -260,9 +258,9 @@ def test_connection_without_properties(usb_backend: USBBackend, caplog: pytest.L
     assert caplog.messages == [
         "Connecting to FTDI<|| at FTDI::1::2::x>",
         "Connecting to USB<|| at FTDI::1::2::x>",
-        "USBCtrlTransfer<FTDI<||>>(0x40, 0x03, 0x4138, 0x0001, None, 0)",  # set baudrate to 9600
-        "USBCtrlTransfer<FTDI<||>>(0x40, 0x04, 0x0008, 0x0001, None, 0)",  # setting parity, data bits, stop bits
-        "USBCtrlTransfer<FTDI<||>>(0x40, 0x02, 0x0000, 0x0001, None, 0)",  # default flow control
+        "FTDI<||>.ctrl_transfer(0x40, 0x03, 0x4138, 0x0001, None, 0)",  # set baudrate to 9600
+        "FTDI<||>.ctrl_transfer(0x40, 0x04, 0x0008, 0x0001, None, 0)",  # setting parity, data bits, stop bits
+        "FTDI<||>.ctrl_transfer(0x40, 0x02, 0x0000, 0x0001, None, 0)",  # default flow control
         "Disconnected from USB<|| at FTDI::1::2::x>",
         "Disconnected from FTDI<|| at FTDI::1::2::x>",
     ]
@@ -271,7 +269,6 @@ def test_connection_without_properties(usb_backend: USBBackend, caplog: pytest.L
 def test_invalid_data_bits(usb_backend: USBBackend) -> None:
     usb_backend.add_device(1, 2, "x")
     c = Connection("FTDI::1::2::x", usb_backend=usb_backend, data_bits=6)
-
     with pytest.raises(ValueError, match=r"either 7 or 8"), c.connect():
         pass
 
@@ -301,29 +298,57 @@ def test_ctrl_transfer_in(usb_backend: USBBackend) -> None:
         assert device.poll_status() == (17, 96)
 
 
+def test_ctrl_transfer_in_sio_chip(usb_backend: USBBackend) -> None:
+    usb_backend.add_device(1, 2, "x", device_version=FT232A - 1)
+    c = Connection("FTDI::1::2::x", usb_backend=usb_backend)
+
+    device: FTDI
+    with c.connect() as device:
+        usb_backend.clear_ctrl_response_queue()  # ctrl_transfer is not actually sent to device
+        assert device.get_latency_timer() == 16
+
+        usb_backend.add_ctrl_response(b"\x11")
+        assert device.poll_status() == (17, 0)
+
+
 def test_ctrl_transfer_out(usb_backend: USBBackend, caplog: pytest.LogCaptureFixture) -> None:
     usb_backend.add_device(1, 2, "x", device_version=FT232A)
     c = Connection("FTDI::1::2::x", usb_backend=usb_backend)
 
     device: FTDI
-    with c.connect() as device:
-        with caplog.at_level("DEBUG", "msl.equipment"):
-            device.set_dtr(active=True)
-            device.set_dtr(active=False)
-            device.set_rts(active=True)
-            device.set_rts(active=False)
-            device.set_baud_rate(9600)
-            device.purge_buffers()
+    with c.connect() as device, caplog.at_level("DEBUG", "msl.equipment"):
+        device.set_dtr(active=True)
+        device.set_dtr(active=False)
+        device.set_rts(active=True)
+        device.set_rts(active=False)
+        device.set_baud_rate(9600)
+        device.purge_buffers()
+        device.reset_device()
 
         assert caplog.messages == [
-            "USBCtrlTransfer<FTDI<||>>(0x40, 0x01, 0x0101, 0x0001, None, 0)",
-            "USBCtrlTransfer<FTDI<||>>(0x40, 0x01, 0x0100, 0x0001, None, 0)",
-            "USBCtrlTransfer<FTDI<||>>(0x40, 0x01, 0x0202, 0x0001, None, 0)",
-            "USBCtrlTransfer<FTDI<||>>(0x40, 0x01, 0x0200, 0x0001, None, 0)",
-            "USBCtrlTransfer<FTDI<||>>(0x40, 0x03, 0x4138, 0x0000, None, 0)",
-            "USBCtrlTransfer<FTDI<||>>(0x40, 0x00, 0x0001, 0x0001, None, 0)",
-            "USBCtrlTransfer<FTDI<||>>(0x40, 0x00, 0x0002, 0x0001, None, 0)",
+            "FTDI<||>.ctrl_transfer(0x40, 0x01, 0x0101, 0x0001, None, 0)",  # activate DTR
+            "FTDI<||>.ctrl_transfer(0x40, 0x01, 0x0100, 0x0001, None, 0)",  # deactivate DTR
+            "FTDI<||>.ctrl_transfer(0x40, 0x01, 0x0202, 0x0001, None, 0)",  # activate RTS
+            "FTDI<||>.ctrl_transfer(0x40, 0x01, 0x0200, 0x0001, None, 0)",  # deactivate RTS
+            "FTDI<||>.ctrl_transfer(0x40, 0x03, 0x4138, 0x0000, None, 0)",  # set baud rate to 9600
+            "FTDI<||>.ctrl_transfer(0x40, 0x00, 0x0001, 0x0001, None, 0)",  # purge host-to-ftdi buffer
+            "FTDI<||>.ctrl_transfer(0x40, 0x00, 0x0002, 0x0001, None, 0)",  # purge ftdi-to-host buffer
+            "FTDI<||>.ctrl_transfer(0x40, 0x00, 0x0000, 0x0001, None, 0)",  # reset
         ]
+
+
+def test_set_latency_timer_sio(usb_backend: USBBackend) -> None:
+    usb_backend.add_device(1, 2, "x", device_version=FT232A - 1)
+    c = Connection("FTDI::1::2::x", usb_backend=usb_backend)
+
+    device: FTDI
+    with c.connect() as device:
+        # setting to 16 is okay
+        device.set_latency_timer(16)
+
+        # anything else is an error
+        with pytest.raises(MSLConnectionError, match=r"fixed at 16 ms"):
+            device.set_latency_timer(165)
 
 
 def test_read_write(usb_backend: USBBackend) -> None:
@@ -332,18 +357,67 @@ def test_read_write(usb_backend: USBBackend) -> None:
 
     device: FTDI
     with c.connect() as device:
-        # writing b"hello" sets the line status to be one of the error bits
-        assert 0b01100101 & 0x8E  # expect
+        assert device.timeout is None
+
+        # writing b"hello" sets the line status (second byte) to have a bit mask that enables some of the error bits
+        assert ord("e") & 0x8E
         assert device.write(b"hello") == 5
         with pytest.raises(MSLConnectionError, match=r"bit mask of the line-status byte is 0b01100101"):
             _ = device.read(size=5)
 
-        status_bytes = b"\x11`"  # modem=17, line=96
-        thorlabs_response = (
+        status_bytes = bytes([17, 96])  # modem=17, line=96
+
+        usb_backend.add_bulk_response(status_bytes + b"x")
+        assert device.read(size=1, decode=False) == b"x"
+
+        response = (
             b"\x06\x00T\x00\x81\x01\xcc\xba0\x02SCC201\x00\x00\x10\x00\x05\x01\x03\x00APT Stepper Controller"
             b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
             b"\x00\x00\x00APT Stepper \x03\x00\x01\x00\x01\x00"
         )
-        usb_backend.add_bulk_response(status_bytes + thorlabs_response[:3])
-        usb_backend.add_bulk_response(status_bytes + thorlabs_response[3:])
-        assert device.read(size=90, decode=False) == thorlabs_response
+
+        usb_backend.add_bulk_response(status_bytes)
+        usb_backend.add_bulk_response(status_bytes)
+        usb_backend.add_bulk_response(status_bytes + response[:1])
+        usb_backend.add_bulk_response(status_bytes + response[1:10])
+        usb_backend.add_bulk_response(status_bytes + response[10:20])
+        usb_backend.add_bulk_response(status_bytes + response[20:53])
+        usb_backend.add_bulk_response(status_bytes + response[53:60])
+        usb_backend.add_bulk_response(status_bytes + response[60:])
+        usb_backend.add_bulk_response(status_bytes)
+        usb_backend.add_bulk_response(status_bytes)
+        assert device.read(size=90, decode=False) == response
+
+        usb_backend.clear_bulk_response_queue()
+
+        usb_backend.add_bulk_response(status_bytes)
+        usb_backend.add_bulk_response(status_bytes + response[:1])
+        usb_backend.add_bulk_response(status_bytes + response[1:10])
+        usb_backend.add_bulk_response(status_bytes)  # stops reading here since size=None
+        usb_backend.add_bulk_response(status_bytes + response[10:])
+        assert device.read(size=None, decode=False) == response[:10]
+
+        usb_backend.clear_bulk_response_queue()
+
+        device.max_read_size = 32
+        usb_backend.add_bulk_response(status_bytes + response[:40])
+        with pytest.raises(MSLConnectionError, match=r"len\(message\) \[40\] > max_read_size \[32\]"):
+            _ = device.read(size=32)
+
+        usb_backend.clear_bulk_response_queue()
+
+        device.max_read_size = 1024
+        device.timeout = 0.06  # usb_backend.bulk_read() sleeps for 0.05 seconds per read
+        usb_backend.add_bulk_response(status_bytes + b"sleep")
+        usb_backend.add_bulk_response(status_bytes + b"sleep")
+        with pytest.raises(MSLTimeoutError):
+            _ = device.read(size=90)
+
+
+def test_write_sio(usb_backend: USBBackend) -> None:
+    usb_backend.add_device(1, 2, "x", device_version=FT232A - 1)
+    c = Connection("FTDI::1::2::x", usb_backend=usb_backend)
+
+    device: FTDI
+    with c.connect() as device, pytest.raises(MSLConnectionError, match=r"FTDI chip requires a header byte"):
+        _ = device.write(b"hi")

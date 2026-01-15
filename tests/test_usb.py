@@ -268,13 +268,19 @@ def test_build_request_type() -> None:
     assert USB.build_request_type(USB.CtrlDirection.IN, USB.CtrlType.VENDOR, USB.CtrlRecipient.ENDPOINT) == 194
 
 
-def test_clear_halt_reset_device_version(usb_backend: USBBackend) -> None:
+def test_clear_halt_reset_device_version(usb_backend: USBBackend, caplog: pytest.LogCaptureFixture) -> None:
     usb_backend.add_device(1, 2, "x")
     c = Connection("USB::1::2::x::RAW", usb_backend=usb_backend)
     with USB(Equipment(connection=c)) as device:
-        device.clear_halt(device.bulk_in_endpoint)
-        device.reset_device()
         assert device.device_version == 0x1001
+
+        with caplog.at_level("DEBUG", "msl.equipment"):
+            device.clear_halt(device.bulk_in_endpoint)
+            device.reset_device()
+            assert caplog.messages == [
+                "USB<||>.clear_halt(0x81)",
+                "USB<||>.reset_device()",
+            ]
 
 
 def test_find_usb_invalid_backend(caplog: pytest.LogCaptureFixture) -> None:
@@ -301,11 +307,13 @@ def test_find_usb(usb_backend: USBBackend) -> None:
     usb_backend.add_device(11, 12, "f", bus=None, address=None)
     usb_backend.add_device(11, 12, "")
     usb_backend.add_device(13, 14, "g", num_configurations=2)
+    usb_backend.add_device(0x0403, 2, "")
 
     sudo_tip = ", try running as sudo or create a udev rule" if _is_linux_and_not_sudo() else ""
+    d2xx_tip = ", use FTDI2 address (if available) or use Zadig to replace driver" if IS_WINDOWS else ""
 
     devices = find_usb(usb_backend=usb_backend)
-    assert len(devices) == 11
+    assert len(devices) == 12
     assert devices[0].visa_address == "FTDI::0x0403::0x0001::a"
     assert devices[0].description == "a, a"
     assert devices[1].visa_address == "USB::0x0001::0x0002::b::RAW"
@@ -328,3 +336,5 @@ def test_find_usb(usb_backend: USBBackend) -> None:
     assert devices[9].description == "g, g, serial number is 'g' but it is not unique"
     assert devices[10].visa_address == "USB::0x000d::0x000e::bus=1,address=1::RAW"
     assert devices[10].description == "g, g, define bConfigurationValue=1, serial number is 'g' but it is not unique"
+    assert devices[11].visa_address == "FTDI::0x0403::0x0002::bus=1,address=1"
+    assert devices[11].description == "Unknown USB Device" + d2xx_tip

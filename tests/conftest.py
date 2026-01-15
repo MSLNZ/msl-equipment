@@ -515,6 +515,7 @@ class USBDeviceDescriptor:
         address: int | None = 1,
         alternate_setting: int = 0,
         num_configurations: int = 1,
+        device_version: int = 0x1001,
     ) -> None:
         """Mocked USB Device Descriptor."""
         self.bLength: int = 18
@@ -526,7 +527,7 @@ class USBDeviceDescriptor:
         self.bMaxPacketSize0: int = 64
         self.idVendor: int = vid
         self.idProduct: int = pid
-        self.bcdDevice: int = 0x1001
+        self.bcdDevice: int = device_version
         self.iManufacturer: int = 1
         self.iProduct: int = 2
         self.iSerialNumber: int = 3
@@ -602,6 +603,7 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         self._device: USBDeviceDescriptor = USBDeviceDescriptor()
         self._bulk_message: array[int] = array("B")
         self._bulk_queue: Queue[bytes] = Queue()
+        self._ctrl_queue: Queue[bytes] = Queue()
         self._raise_bad_config_number: bool = False
 
     def add_bulk_response(self, content: bytes) -> None:
@@ -611,6 +613,14 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
             content: The content of the response message.
         """
         self._bulk_queue.put(content)
+
+    def add_ctrl_response(self, content: bytes) -> None:
+        """Add a control transfer response to the queue.
+
+        Args:
+            content: The content of the control transfer message.
+        """
+        self._ctrl_queue.put(content)
 
     def add_device(  # noqa: PLR0913
         self,
@@ -624,6 +634,7 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         bus: int | None = 1,
         address: int | None = 1,
         num_configurations: int = 1,
+        device_version: int = 0x1001,
     ) -> None:
         """Add a device."""
         self._devices.append(
@@ -637,6 +648,7 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
                 bus=bus,
                 address=address,
                 num_configurations=num_configurations,
+                device_version=device_version,
             )
         )
 
@@ -664,6 +676,11 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         with self._bulk_queue.mutex:
             self._bulk_queue.queue.clear()
 
+    def clear_ctrl_response_queue(self) -> None:
+        """Clear the control transfer I/O response queue."""
+        with self._ctrl_queue.mutex:
+            self._ctrl_queue.queue.clear()
+
     def clear_halt(self, handle: int, ep: int) -> None:  # pyright: ignore[reportUnusedParameter]
         """Does nothing."""
 
@@ -688,6 +705,11 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         if request_type == 9999:
             msg = "timeout"
             raise usb.core.USBTimeoutError(msg)  # pyright: ignore[reportUnknownMemberType]
+
+        if request_type == 0xC0:  # FTDI control IN request
+            buffer = self._ctrl_queue.get()
+            data[: len(buffer)] = array("B", buffer)
+            return len(buffer)
 
         if request == 0x06:  # get_descriptor()
             if index == 0:  # langid request

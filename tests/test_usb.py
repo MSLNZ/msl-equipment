@@ -337,4 +337,7 @@ def test_find_usb(usb_backend: USBBackend) -> None:
     assert devices[10].visa_address == "USB::0x000d::0x000e::bus=1,address=1::RAW"
     assert devices[10].description == "g, g, define bConfigurationValue=1, serial number is 'g' but it is not unique"
     assert devices[11].visa_address == "FTDI::0x0403::0x0002::bus=1,address=1"
-    assert devices[11].description == "Unknown USB Device" + d2xx_tip
+    if _is_linux_and_not_sudo():
+        assert devices[11].description == "Unknown USB Device" + sudo_tip
+    else:
+        assert devices[11].description == "Unknown USB Device" + d2xx_tip

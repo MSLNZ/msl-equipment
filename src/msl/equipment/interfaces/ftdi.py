@@ -302,8 +302,13 @@ def _ftdi_232bm_2232h_baud_to_divisor(baudrate: int, device_version: int) -> tup
         msg = f"Invalid baudrate {baudrate}, must be > {min_clock:.1f} Bd"
         raise ValueError(msg)
 
+    # Currently we don't allow bit-bang mode, but if we did we would need
+    # to divide the baudrate here, e.g., baudrate //= 5 if hi_speed else 16
+
     divisor3 = round((8 * clock) / baudrate)
     actual = int(((8 * clock) + (divisor3 // 2)) // divisor3)
+
+    # and then multiply the actual baudrate here, e.g., actual *= 5 if hi_speed else 16
 
     divisor = divisor3 >> 3
     divisor |= div_frac[divisor3 & 0x7] << 14
@@ -805,7 +810,7 @@ class FTDI(MessageBased, regex=REGEX):
             self.set_flow_control("RTS_CTS")
 
     def _error_check(self, result: int, func: Any, arguments: tuple[int, ...]) -> int:  # noqa: ANN401
-        logger.debug("D2xx.%s%s -> %d", func.__name__, arguments, result)
+        logger.debug("%s.%s%s -> %d", self, func.__name__, arguments, result)
         if result != 0:
             msg = ftd2xx_error.get(result, f"D2xxUnknownError: Error code {result}")
             raise MSLConnectionError(self, msg)

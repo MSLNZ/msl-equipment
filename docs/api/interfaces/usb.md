@@ -2,8 +2,7 @@
 
 ## Prerequisites
 
-Before communicating with a USB device, a [libusb](https://libusb.info/){:target="_blank"}-compatible
-driver must be installed and the directory to the `libusb` library must be available on the `PATH` environment variable.
+Before communicating with a USB device, a [libusb](https://libusb.info/){:target="_blank"}-compatible driver must be installed and the directory to the `libusb` library must be available on the `PATH` environment variable.
 
 The following instructions are intended to be a starting point if you are having issues communicating with a USB device.
 

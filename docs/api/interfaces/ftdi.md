@@ -11,7 +11,7 @@ The choice of using a `libusb` or `d2xx` driver depends on whether the manufactu
 
 If you want to use a `libusb` driver, follow [these][usb-windows-prerequisites] instructions.
 
-If you want to use the [d2xx](https://ftdichip.com/drivers/d2xx-drivers/){:target="_blank"} driver, follow the [installation guide](https://ftdichip.com/wp-content/uploads/2023/11/AN_396_FTDI_Drivers_Installation_Guide_for_Windows_10_11.pdf){:target="_blank"}, [download](https://ftdichip.com/wp-content/uploads/2025/03/CDM-v2.12.36.20-WHQL-Certified.zip) the zip file that contains the `ftd2xx` library file then extract the zip file and copy the appropriate library file (i.e., `amd64\ftd2xx64.dll` if using 64-bit Python, `i386\ftd2xx.dll` if using 32-bit Python) to a directory that is on your `PATH` environment variable.
+If you want to use the [d2xx](https://ftdichip.com/drivers/d2xx-drivers/){:target="_blank"} driver, follow the [installation guide](https://ftdichip.com/wp-content/uploads/2023/11/AN_396_FTDI_Drivers_Installation_Guide_for_Windows_10_11.pdf){:target="_blank"} (skip this step if the Windows Device Manager shows that the equipment has already been successfully installed), [download](https://ftdichip.com/wp-content/uploads/2025/03/CDM-v2.12.36.20-WHQL-Certified.zip) the zip file that contains the `ftd2xx` library file then extract the zip file and copy the appropriate library file (i.e., `amd64\ftd2xx64.dll` if using 64-bit Python, `i386\ftd2xx.dll` if using 32-bit Python) to a directory that is on your `PATH` environment variable.
 
 ### Debian/Ubuntu {: #ftdi-linux-prerequisites }
 If you want to use the `libusb` driver (recommended), follow [these][usb-linux-prerequisites] instructions.

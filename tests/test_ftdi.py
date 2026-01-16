@@ -233,6 +233,7 @@ def test_connection_properties(usb_backend: USBBackend, caplog: pytest.LogCaptur
         dsr_dtr=True,
         stop_bits=2,
         data_bits=7,
+        latency=64,
         rts_cts=True,
         parity="even",
         xon_xoff=True,
@@ -252,6 +253,7 @@ def test_connection_properties(usb_backend: USBBackend, caplog: pytest.LogCaptur
         "Connecting to USB<|| at FTDI::1::2::x>",
         "FTDI<||>.ctrl_transfer(0x40, 0x03, 0x001A, 0x0001, None, 5100)",  # set baudrate to 115200
         "FTDI<||>.ctrl_transfer(0x40, 0x04, 0x1207, 0x0001, None, 5100)",  # setting parity, data bits, stop bits
+        "FTDI<||>.ctrl_transfer(0x40, 0x09, 0x0040, 0x0001, None, 5100)",  # set latency to 64 ms
         "FTDI<||>.ctrl_transfer(0x40, 0x02, 0x0000, 0x0001, None, 5100)",  # default flow control is None
         "FTDI<||>.ctrl_transfer(0x40, 0x02, 0x1311, 0x0401, None, 5100)",  # enable xon_xoff with xon=17, xoff=19
         "FTDI<||>.ctrl_transfer(0x40, 0x02, 0x0000, 0x0201, None, 5100)",  # enable dsr_dtr

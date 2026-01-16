@@ -98,6 +98,7 @@ nav:
     - api/types.md
     - Interfaces:
       - api/interfaces/index.md
+      - api/interfaces/ftdi.md
       - api/interfaces/gpib.md
       - api/interfaces/hislip.md
       - api/interfaces/prologix.md

@@ -1,6 +1,6 @@
 """Base class for equipment that use a Future Technology Devices International (FTDI) chip for communication."""
 
-# cSpell: ignore VIDPID CBUS MPSSE TCIFLUSH TCOFLUSH THRE TEMT RCVE libftd
+# cSpell: ignore VIDPID CBUS MPSSE TCIFLUSH TCOFLUSH THRE TEMT RCVE
 from __future__ import annotations
 
 import os
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 IS_WINDOWS = sys.platform == "win32"
 
 REGEX = re.compile(
-    r"FTDI(?P<driver>\d+)?(::(?P<vid>[^\s:]+))(::(?P<pid>[^\s:]+))(::(?P<sid>[^\s:]+))(::(?P<interface>\d+))?",
+    r"FTDI(?P<driver>\d+)?(::(?P<vid>[^\s:]+))(::(?P<pid>[^\s:]+))(::(?P<sid>[^\s:]+))",
     flags=re.IGNORECASE,
 )
 
@@ -735,10 +735,12 @@ class FTDI(MessageBased, regex=REGEX):
             baud_rate (int): The baud rate (_alias:_ baudrate). _Default: `9600`_
             data_bits (int): The number of data bits: 7 or 8 (_alias:_ bytesize). _Default: `8`_
             dsr_dtr (bool): Whether to enable hardware (DSR/DTR) flow control (_alias:_ dsrdtr). _Default: `False`_
+            latency (int | None): The latency-timer value in milliseconds, between 1 and 255.
+                If `None`, the latency timer is not set and the chip default is used, typically 16 ms.
+                _Default: `None`_
             parity (str): Parity checking: none, odd, even, mark or space. _Default: `none`_
             rts_cts (bool): Whether to enable hardware (RTS/CTS) flow control (_alias:_ rtscts). _Default: `False`_
-            stop_bits (int | float): The number of stop bits: 1, 1.5 or 2 (_alias:_ stopbits). _Default: `1`_
-            timeout (float | None): The timeout to use for _read_ and _write_ operations. _Default: `None`_
+            stop_bits (float): The number of stop bits: 1, 1.5 or 2 (_alias:_ stopbits). _Default: `1`_
             xon_xoff (bool): Whether to enable software flow control (_alias:_ xonxoff). _Default: `False`_
         """
         self._d2xx: _D2XX | None = None
@@ -797,6 +799,10 @@ class FTDI(MessageBased, regex=REGEX):
             parity=p.get("parity", Parity.NONE),
             stop_bits=p.get("stop_bits", p.get("stopbits", StopBits.ONE)),
         )
+
+        latency: int | None = p.get("latency")
+        if latency:
+            self.set_latency_timer(latency)
 
         self.set_flow_control()  # set to None as default, the following may overwrite
 
@@ -898,10 +904,10 @@ class FTDI(MessageBased, regex=REGEX):
             super().disconnect()
 
     def get_latency_timer(self) -> int:
-        """Get the latency timer value.
+        """Get the latency-timer value from the FTDI device.
 
         Returns:
-            The latency timer value, in milliseconds.
+            The latency-timer value, in milliseconds.
         """
         if self._d2xx is not None:
             return self._d2xx.get_latency_timer()
@@ -926,18 +932,21 @@ class FTDI(MessageBased, regex=REGEX):
         return data[0]
 
     def poll_status(self) -> tuple[int, int]:
-        """Polls the modem and line status from the device.
+        """Polls the modem and line status bytes from the FTDI device.
 
         Returns:
-            The `(modem, line)` status values.
+            The `(modem, line)` status bytes.
+
                 Bit mask of the `modem` byte:
+
                 - B0..3: Should be 0 (reserved)
-                - B4: Clear To Send (CTS) = 0x10 &mdash; 0 = inactive, 1 = active
-                - B5: Data Set Ready (DSR) = 0x20 &mdash; 0 = inactive, 1 = active
-                - B6: Ring Indicator (RI) = 0x40 &mdash; 0 = inactive, 1 = active
-                - B7: Data Carrier Detect (DCD) = 0x80 &mdash; 0 = inactive, 1 = active
+                - B4: Clear To Send (CTS) = 0x10
+                - B5: Data Set Ready (DSR) = 0x20
+                - B6: Ring Indicator (RI) = 0x40
+                - B7: Data Carrier Detect (DCD) = 0x80
 
                 Bit mask of the `line` byte:
+
                 - B0: Data Ready (DR) = 0x01
                 - B1: Overrun Error (OE) = 0x02
                 - B2: Parity Error (PE) = 0x04
@@ -971,7 +980,7 @@ class FTDI(MessageBased, regex=REGEX):
         return modem, line
 
     def purge_buffers(self) -> None:
-        """Purge the receive (Rx) and transmit (Tx) buffers for the FTDI device."""
+        """Purge the receive (Rx) and transmit (Tx) buffers of the FTDI device."""
         if self._d2xx is not None:
             return self._d2xx.purge_buffers()
 
@@ -983,7 +992,7 @@ class FTDI(MessageBased, regex=REGEX):
         return None
 
     def reset_device(self) -> None:
-        """Sends a reset command to the device."""
+        """Sends a reset command to the FTDI device."""
         if self._d2xx is not None:
             return self._d2xx.reset_device()
 
@@ -994,7 +1003,7 @@ class FTDI(MessageBased, regex=REGEX):
         return None
 
     def set_baud_rate(self, rate: int) -> None:
-        """Set the baud rate.
+        """Set the baud rate for the FTDI device.
 
         Args:
             rate: The baud rate.
@@ -1027,7 +1036,7 @@ class FTDI(MessageBased, regex=REGEX):
         parity: Parity | str | int = Parity.NONE,
         stop_bits: StopBits | str | int = StopBits.ONE,
     ) -> None:
-        """Set the RS-232 data characteristics.
+        """Set the RS-232 data characteristics for the FTDI device.
 
         Args:
             data_bits: The number of data bits (7 or 8). Can be an enum member name (case insensitive) or value.
@@ -1082,7 +1091,7 @@ class FTDI(MessageBased, regex=REGEX):
     def set_flow_control(
         self, flow: Literal["RTS_CTS", "DTR_DSR", "XON_XOFF"] | None = None, *, xon: int = 0, xoff: int = 0
     ) -> None:
-        """Sets the flow control for the device.
+        """Sets the flow control for the FTDI device.
 
         Args:
             flow: The type of flow control to use, `None` disables flow control.
@@ -1112,7 +1121,17 @@ class FTDI(MessageBased, regex=REGEX):
         return None
 
     def set_latency_timer(self, value: int) -> None:
-        """Set the latency timer value.
+        """Set the latency-timer value for the FTDI device.
+
+        The latency timer is a form of timeout mechanism for the read buffer of FTDI devices.
+
+        The latency timer counts from the last time data was sent back to the computer. If
+        the latency timer expires, the device will send what data it has available to the
+        computer regardless of how many bytes it is waiting on. The latency timer will then
+        reset and begin counting again.
+
+        The timer allows the device to be better optimized for protocols requiring faster
+        response times from shorter data packets.
 
         Args:
             value: Required value, in milliseconds, of the latency timer. Valid range is [1, 255].
@@ -1133,7 +1152,7 @@ class FTDI(MessageBased, regex=REGEX):
             #   to flush remaining data from the receive buffer was fixed at 16 ms."
             if v == 16:  # noqa: PLR2004
                 return None
-            msg = "Cannot set latency timer for this (old) FTDI chip. The value is fixed at 16 ms."
+            msg = "Cannot set the latency timer for the FTDI chip. The value is fixed at 16 ms."
             raise MSLConnectionError(self, msg)
 
         _ = self._libusb.ctrl_transfer(

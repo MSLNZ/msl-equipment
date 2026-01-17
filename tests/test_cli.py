@@ -161,8 +161,11 @@ def test_cli_find_verbose(
     assert m[6] == f"Loaded {gpib_file.resolve()}"
     assert m[7] == "Searching for USB devices (backend='openusb')"
     assert m[8] == "ValueError: Cannot load the requested 'openusb' PyUSB backend"
-    assert m[9] == "Searching for FTDI devices that use the D2XX driver (d2xx_library='d2xx.ignore')"
-    assert m[10] == f"OSError: Cannot find 'd2xx.ignore' for libtype={libtype!r}"
+    assert m[9] == "Searching for equipment that use the D2XX driver (d2xx_library='d2xx.ignore')"
+    assert (
+        m[10]
+        == f"OSError: Cannot find 'd2xx.ignore' for libtype={libtype!r}, download library from https://ftdichip.com/drivers/d2xx-drivers/"
+    )
     assert m[11] == "Waiting approximately 0.1 second(s) for network devices to respond..."
     assert re.match(r"Found \d+ devices", m[12])
 

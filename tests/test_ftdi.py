@@ -338,13 +338,21 @@ def test_ctrl_transfer_out(usb_backend: USBBackend, caplog: pytest.LogCaptureFix
 
     device: FTDI
     with c.connect() as device, caplog.at_level("DEBUG", "msl.equipment"):
-        device.set_dtr(active=True)
-        device.set_dtr(active=False)
-        device.set_rts(active=True)
-        device.set_rts(active=False)
+        device.set_dtr(True)
+        device.set_dtr(False)
+        device.set_rts(True)
+        device.set_rts(False)
         device.set_baud_rate(9600)
         device.purge_buffers()
         device.reset_device()
+        device.set_break(True)
+        device.set_break(False)
+        device.set_break(True)
+
+        device.set_data_characteristics(data_bits=7, parity="mark", stop_bits=1.5)
+        device.set_break(True)
+        device.set_break(False)
+        device.set_break(True)
 
         assert caplog.messages == [
             "FTDI<||>.ctrl_transfer(0x40, 0x01, 0x0101, 0x0001, None, 0)",  # activate DTR
@@ -355,6 +363,13 @@ def test_ctrl_transfer_out(usb_backend: USBBackend, caplog: pytest.LogCaptureFix
             "FTDI<||>.ctrl_transfer(0x40, 0x00, 0x0001, 0x0001, None, 0)",  # purge host-to-ftdi buffer
             "FTDI<||>.ctrl_transfer(0x40, 0x00, 0x0002, 0x0001, None, 0)",  # purge ftdi-to-host buffer
             "FTDI<||>.ctrl_transfer(0x40, 0x00, 0x0000, 0x0001, None, 0)",  # reset
+            "FTDI<||>.ctrl_transfer(0x40, 0x04, 0x4008, 0x0001, None, 0)",  # break True
+            "FTDI<||>.ctrl_transfer(0x40, 0x04, 0x0008, 0x0001, None, 0)",  # break False
+            "FTDI<||>.ctrl_transfer(0x40, 0x04, 0x4008, 0x0001, None, 0)",  # break True
+            "FTDI<||>.ctrl_transfer(0x40, 0x04, 0x0B07, 0x0001, None, 0)",  # set characteristics
+            "FTDI<||>.ctrl_transfer(0x40, 0x04, 0x4B07, 0x0001, None, 0)",  # break True
+            "FTDI<||>.ctrl_transfer(0x40, 0x04, 0x0B07, 0x0001, None, 0)",  # break False
+            "FTDI<||>.ctrl_transfer(0x40, 0x04, 0x4B07, 0x0001, None, 0)",  # break True
         ]
 
 
@@ -382,9 +397,14 @@ def test_read_write(usb_backend: USBBackend) -> None:
 
         # writing b"hello" sets the line status (second byte) to have a bit mask that enables some of the error bits
         assert ord("e") & 0x8E
+        assert device.check_packet_for_errors
         assert device.write(b"hello") == 5
-        with pytest.raises(MSLConnectionError, match=r"bit mask of the line-status byte is 0b01100101"):
-            _ = device.read(size=5)
+        with pytest.raises(MSLConnectionError, match=r"bit mask of the line-status byte is 0b01100101\. Set"):
+            _ = device.read(size=3)
+
+        device.check_packet_for_errors = False
+        assert device.read(size=3) == "llo"
+        device.check_packet_for_errors = True
 
         status_bytes = bytes([17, 96])  # modem=17, line=96
 
@@ -466,14 +486,13 @@ def test_find_ftd2xx_devices(mock_d2xx: None) -> None:
         _ = _maybe_load_ftd2xx()
 
 
-def test_find_ftd2xx_devices_library_missing(mock_d2xx: None, caplog: pytest.LogCaptureFixture) -> None:
-    assert mock_d2xx is None
+def test_find_ftd2xx_devices_library_missing(caplog: pytest.LogCaptureFixture) -> None:
     libtype = "windll" if IS_WINDOWS else "cdll"
     with caplog.at_level("DEBUG", "msl.equipment"):
         assert len(find_ftd2xx_devices("missing")) == 0
         assert caplog.messages == [
-            "Searching for FTDI devices that use the D2XX driver (d2xx_library='missing')",
-            f"OSError: Cannot find 'missing' for libtype={libtype!r}",
+            "Searching for equipment that use the D2XX driver (d2xx_library='missing')",
+            f"OSError: Cannot find 'missing' for libtype={libtype!r}, download library from https://ftdichip.com/drivers/d2xx-drivers/",
         ]
 
 
@@ -494,7 +513,7 @@ def test_open_d2xx(mock_d2xx: None, serial: str, handle: int) -> None:
             device._d2xx.set_vid_pid(1, 2)  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
 
 
-def test_d2xx_logging(mock_d2xx: None, caplog: pytest.LogCaptureFixture) -> None:
+def test_d2xx_logging(mock_d2xx: None, caplog: pytest.LogCaptureFixture) -> None:  # noqa: PLR0915
     assert mock_d2xx is None
     c = Connection("FTDI2::1::2::x")
 
@@ -509,20 +528,22 @@ def test_d2xx_logging(mock_d2xx: None, caplog: pytest.LogCaptureFixture) -> None
     messages.extend(
         [
             "FTDI<||>.FT_OpenEx",
-            "FTDI<||>.FT_SetTimeouts",
-            "FTDI<||>.FT_SetBaudRate",
-            "FTDI<||>.FT_SetDataCharacteristics",
-            "FTDI<||>.FT_SetFlowControl",
+            "FTDI<||>.FT_SetTimeouts(2, 4294967295, 4294967295) -> 0",
+            "FTDI<||>.FT_SetBaudRate(2, 9600) -> 0",
+            "FTDI<||>.FT_SetDataCharacteristics(2, <DataBits.EIGHT: 8>, 0, 0) -> 0",
+            "FTDI<||>.FT_SetFlowControl(2, 0, 0, 0) -> 0",
             "FTDI<||>.FT_GetModemStatus",
             "FTDI<||>.FT_GetLatencyTimer",
-            "FTDI<||>.FT_SetLatencyTimer",
-            "FTDI<||>.FT_SetDtr",
-            "FTDI<||>.FT_ClrDtr",
-            "FTDI<||>.FT_SetRts",
-            "FTDI<||>.FT_ClrRts",
+            "FTDI<||>.FT_SetLatencyTimer(2, 10) -> 0",
+            "FTDI<||>.FT_SetDtr(2,) -> 0",
+            "FTDI<||>.FT_ClrDtr(2,) -> 0",
+            "FTDI<||>.FT_SetRts(2,) -> 0",
+            "FTDI<||>.FT_ClrRts(2,) -> 0",
             "FTDI<||>.FT_SetTimeouts(2, 5300, 5300) -> 0",
             "FTDI<||>.FT_Purge(2, 3) -> 0",
             "FTDI<||>.FT_ResetDevice",
+            "FTDI<||>.FT_SetBreakOn(2,) -> 0",
+            "FTDI<||>.FT_SetBreakOff(2,) -> 0",
             "FTDI<||>.write(b'ignored')",
             "FTDI<||>.FT_Write",
             "FTDI<||>.FT_Read",
@@ -530,27 +551,26 @@ def test_d2xx_logging(mock_d2xx: None, caplog: pytest.LogCaptureFixture) -> None
             "FTDI<||>.FT_GetQueueStatus",
             "FTDI<||>.FT_Read",
             "FTDI<||>.read()",
-            "FTDI<||>.FT_SetDivisor",
+            "FTDI<||>.FT_SetFlowControl(2, 1024, 20, 61) -> 0",
+            "FTDI<||>.FT_SetDivisor(2, 1) -> 17",
             "FTDI<|| at FTDI2::1::2::x> FT_NOT_SUPPORTED",
-            "FTDI<||>.FT_CyclePort",
-            "FTDI<||>.FT_ResetPort",
-            "FTDI<||>.FT_StopInTask",
-            "FTDI<||>.FT_RestartInTask",
-            "FTDI<||>.FT_SetBitMode",
+            "FTDI<||>.FT_CyclePort(2,) -> 0",
+            "FTDI<||>.FT_ResetPort(2,) -> 0",
+            "FTDI<||>.FT_StopInTask(2,) -> 0",
+            "FTDI<||>.FT_RestartInTask(2,) -> 0",
+            "FTDI<||>.FT_SetBitMode(2, 1, 9) -> 0",
             "FTDI<||>.FT_GetBitMode",
             "FTDI<||>.FT_GetQueueStatus",
             "FTDI<||>.FT_GetStatus",
             "FTDI<||>.FT_Purge(2, 1) -> 0",
             "FTDI<||>.FT_Purge(2, 2) -> 0",
             "FTDI<||>.FT_Purge(2, 3) -> 0",
-            "FTDI<||>.FT_SetBreakOn",
-            "FTDI<||>.FT_SetBreakOff",
             "FTDI<||>.FT_SetChars(2, 1, 1, 5, 0) -> 0",
             "FTDI<||>.FT_SetEventNotification(2, 3, 2) -> 0",
             "FTDI<||>.FT_SetUSBParameters(2, 8, 0) -> 0",
             "FTDI<||>.FT_SetWaitMask(2, 12) -> 0",
             "FTDI<||>.FT_WaitOnMask",
-            "FTDI<||>.FT_Close",
+            "FTDI<||>.FT_Close(2,) -> 0",
             "Disconnected from FTDI<|| at FTDI2::1::2::x>",
         ]
     )
@@ -560,16 +580,19 @@ def test_d2xx_logging(mock_d2xx: None, caplog: pytest.LogCaptureFixture) -> None
         assert device.poll_status() == (17, 96)
         assert device.get_latency_timer() == 7
         device.set_latency_timer(10)
-        device.set_dtr(active=True)
-        device.set_dtr(active=False)
-        device.set_rts(active=True)
-        device.set_rts(active=False)
+        device.set_dtr(True)
+        device.set_dtr(False)
+        device.set_rts(True)
+        device.set_rts(False)
         device.timeout = 5.3
         device.purge_buffers()
         device.reset_device()
+        device.set_break(True)
+        device.set_break(False)
         assert device.write(b"ignored") == 10
         assert device.read(size=90, decode=False) == b"A" * 90
         assert device.read(size=None, decode=False) == b"A" * 90
+        device.set_flow_control("XON_XOFF", xon=20, xoff=61)
 
         assert device._d2xx is not None  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
         d2xx = device._d2xx  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
@@ -579,15 +602,13 @@ def test_d2xx_logging(mock_d2xx: None, caplog: pytest.LogCaptureFixture) -> None
         d2xx.reset_port()
         d2xx.stop_in_task()
         d2xx.restart_in_task()
-        d2xx.set_bit_mode(1, 1)
+        d2xx.set_bit_mode(1, 9)
         assert d2xx.get_bit_mode() == 20
         assert d2xx.get_queue_status() == 90
         assert d2xx.get_status() == (1, 2, 3)
         d2xx.purge_rx_buffer()
         d2xx.purge_tx_buffer()
         d2xx.purge_buffers()
-        d2xx.set_break_on()
-        d2xx.set_break_off()
         d2xx.set_chars(event=1, event_enable=True, error=5, error_enable=False)
         d2xx.set_event_notification(3, 2)
         d2xx.set_usb_parameters(8)
@@ -598,6 +619,8 @@ def test_d2xx_logging(mock_d2xx: None, caplog: pytest.LogCaptureFixture) -> None
         device.disconnect()
         device.disconnect()  # multiple times is ok and only logs "Disconnected from ..." once
         device.disconnect()
+        d2xx.close()
+        d2xx.close()
 
         assert len(caplog.messages) == len(messages)
         for msg, expected in zip(caplog.messages, messages):

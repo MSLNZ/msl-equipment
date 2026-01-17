@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 IS_WINDOWS = sys.platform == "win32"
 
 REGEX = re.compile(
-    r"FTDI(?P<driver>\d+)?(::(?P<vid>[^\s:]+))(::(?P<pid>[^\s:]+))(::(?P<sid>[^\s:]+))",
+    r"^FTDI(?P<driver>\d+)?(::(?P<vid>[^\s:]+))(::(?P<pid>[^\s:]+))(::(?P<sid>[^\s:]+))",
     flags=re.IGNORECASE,
 )
 
@@ -123,7 +123,11 @@ def _maybe_load_ftd2xx(errcheck: Callable[..., Any] | None = None) -> LoadLibrar
             path += "64"
 
     libtype: Literal["windll", "cdll"] = "windll" if IS_WINDOWS else "cdll"
-    library = LoadLibrary(path, libtype=libtype)
+    try:
+        library = LoadLibrary(path, libtype=libtype)
+    except OSError as e:
+        msg = f"{e}, download library from https://ftdichip.com/drivers/d2xx-drivers/"
+        raise OSError(msg) from None
 
     definitions: list[tuple[str, tuple[Any, ...]]] = [
         ("FT_SetVIDPID", (c_ulong, c_ulong)),
@@ -187,7 +191,7 @@ def _maybe_load_ftd2xx(errcheck: Callable[..., Any] | None = None) -> LoadLibrar
 
 def find_ftd2xx_devices(d2xx_library: str = "") -> list[_FTDevice]:
     """Calls `FT_CreateDeviceInfoList` then `FT_GetDeviceInfoDetail`."""
-    logger.debug("Searching for FTDI devices that use the D2XX driver (d2xx_library=%r)", d2xx_library)
+    logger.debug("Searching for equipment that use the D2XX driver (d2xx_library=%r)", d2xx_library)
 
     if d2xx_library:
         os.environ["D2XX_LIBRARY"] = d2xx_library
@@ -351,7 +355,7 @@ class _D2XX:
 
     ftd2xx: LoadLibrary | None = None
 
-    def __init__(self, errcheck: Callable[..., Any]) -> None:
+    def __init__(self, errcheck: Callable[..., Any] | None = None) -> None:
         """Wrapper around the D2XX driver."""
         self._handle: int | None = None
         self._timeout: float | None = None
@@ -368,7 +372,7 @@ class _D2XX:
     def cycle_port(self) -> None:
         """Send a cycle command to the USB port.
 
-        The effect of this function is the same as disconnecting then reconnecting the device from USB.
+        The effect of this function is the same as disconnecting then reconnecting the device from the USB port.
 
         !!! warning
             Only valid on Windows.
@@ -747,6 +751,14 @@ class FTDI(MessageBased, regex=REGEX):
         self._libusb: USB | None = None
         super().__init__(equipment)
 
+        self.check_packet_for_errors: bool = True
+        """Whether to check the bit mask of the `line` byte in a read packet for errors.
+
+        This attribute is only used if *libusb* is used as the communication library.
+        See [poll_status][msl.equipment.interfaces.ftdi.FTDI.poll_status] for more details
+        about the `line` bit mask.
+        """
+
         self._read_termination: bytes | None = None
         self._write_termination: bytes | None = None
 
@@ -759,6 +771,7 @@ class FTDI(MessageBased, regex=REGEX):
         self._out_req_type: int = -1
         self._in_req_type: int = -1
         self._index: int = -1
+        self._characteristics: int = 0
 
         if parsed.driver == 0:
             # http://developer.intra2net.com/git/?p=libftdi;a=tree;f=src;hb=HEAD
@@ -842,8 +855,12 @@ class FTDI(MessageBased, regex=REGEX):
         while True:
             data: array[int] = read(address, min(remaining + n_skip, packet_size), timeout)
             if len(data) > n_skip:
-                if data[1] & 0x8E:  # check for Overrun, Parity, Framing or FIFO error -- see self.poll_status()
-                    msg = f"FTDI read error, bit mask of the line-status byte is 0b{data[1]:08b}"
+                # check for Overrun, Parity, Framing or FIFO error -- see self.poll_status()
+                if self.check_packet_for_errors and data[1] & 0x8E:
+                    msg = (
+                        f"FTDI read-packet error, bit mask of the line-status byte is 0b{data[1]:08b}. "
+                        "Set the attribute check_packet_for_errors=False if you want to ignore this error."
+                    )
                     raise MSLConnectionError(self, msg)
                 remaining -= len(data) - n_skip
                 buffer.extend(data[n_skip:])
@@ -904,7 +921,7 @@ class FTDI(MessageBased, regex=REGEX):
             super().disconnect()
 
     def get_latency_timer(self) -> int:
-        """Get the latency-timer value from the FTDI device.
+        """Get the latency-timer value from the FTDI chip.
 
         Returns:
             The latency-timer value, in milliseconds.
@@ -932,7 +949,7 @@ class FTDI(MessageBased, regex=REGEX):
         return data[0]
 
     def poll_status(self) -> tuple[int, int]:
-        """Polls the modem and line status bytes from the FTDI device.
+        """Polls the modem and line status bytes from the FTDI chip.
 
         Returns:
             The `(modem, line)` status bytes.
@@ -980,7 +997,7 @@ class FTDI(MessageBased, regex=REGEX):
         return modem, line
 
     def purge_buffers(self) -> None:
-        """Purge the receive (Rx) and transmit (Tx) buffers of the FTDI device."""
+        """Purge the receive (Rx) and transmit (Tx) buffers of the FTDI chip."""
         if self._d2xx is not None:
             return self._d2xx.purge_buffers()
 
@@ -992,7 +1009,7 @@ class FTDI(MessageBased, regex=REGEX):
         return None
 
     def reset_device(self) -> None:
-        """Sends a reset command to the FTDI device."""
+        """Sends a reset command to the FTDI chip."""
         if self._d2xx is not None:
             return self._d2xx.reset_device()
 
@@ -1003,7 +1020,7 @@ class FTDI(MessageBased, regex=REGEX):
         return None
 
     def set_baud_rate(self, rate: int) -> None:
-        """Set the baud rate for the FTDI device.
+        """Set the baud rate for the FTDI chip.
 
         Args:
             rate: The baud rate.
@@ -1029,14 +1046,35 @@ class FTDI(MessageBased, regex=REGEX):
         )
         return None
 
+    def set_break(self, state: bool) -> None:  # noqa: FBT001
+        """Set the BREAK condition for the FTDI chip.
+
+        Args:
+            state: The state of the BREAK condition. If `True`, the transmit (Tx) line is driven
+                low until this method is called with `False`, which resets or de-asserts the
+                BREAK condition returning the transmit line to its normal operating state.
+        """
+        if self._d2xx is not None:
+            return self._d2xx.set_break_on() if state else self._d2xx.set_break_off()
+
+        # http://developer.intra2net.com/git/?p=libftdi;a=blob;f=src/ftdi.c;h=811f801feab8a04a62526c68ff2a93aae11feb2b;hb=HEAD#l1512
+        assert self._libusb is not None  # noqa: S101
+        _ = self._libusb.ctrl_transfer(
+            request_type=self._out_req_type,
+            request=4,  # SIO_SET_DATA
+            value=self._characteristics | (0x1 << 14) if state else self._characteristics,
+            index=self._index,
+        )
+        return None
+
     def set_data_characteristics(
         self,
         *,
         data_bits: DataBits | str | int = DataBits.EIGHT,
         parity: Parity | str | int = Parity.NONE,
-        stop_bits: StopBits | str | int = StopBits.ONE,
+        stop_bits: StopBits | str | float = StopBits.ONE,
     ) -> None:
-        """Set the RS-232 data characteristics for the FTDI device.
+        """Set the RS-232 data characteristics for the FTDI chip.
 
         Args:
             data_bits: The number of data bits (7 or 8). Can be an enum member name (case insensitive) or value.
@@ -1060,6 +1098,7 @@ class FTDI(MessageBased, regex=REGEX):
         value |= {Parity.NONE: 0, Parity.ODD: 256, Parity.EVEN: 512, Parity.MARK: 768, Parity.SPACE: 1024}[parity]
         value |= {StopBits.ONE: 0, StopBits.ONE_POINT_FIVE: 2048, StopBits.TWO: 4096}[stop_bits]
 
+        self._characteristics = value
         _ = self._libusb.ctrl_transfer(
             request_type=self._out_req_type,
             request=4,  # SIO_SET_DATA
@@ -1068,14 +1107,14 @@ class FTDI(MessageBased, regex=REGEX):
         )
         return None
 
-    def set_dtr(self, *, active: bool) -> None:
+    def set_dtr(self, state: bool) -> None:  # noqa: FBT001
         """Set the Data Terminal Ready (DTR) control signal.
 
         Args:
-            active: New DTR logical level: HIGH (`True`) or LOW (`False`).
+            state: New state of the DTR logical level: HIGH (`True`) or LOW (`False`).
         """
         if self._d2xx is not None:
-            return self._d2xx.set_dtr() if active else self._d2xx.clr_dtr()
+            return self._d2xx.set_dtr() if state else self._d2xx.clr_dtr()
 
         # https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L1199
         assert self._libusb is not None  # noqa: S101
@@ -1083,7 +1122,7 @@ class FTDI(MessageBased, regex=REGEX):
         _ = self._libusb.ctrl_transfer(
             request_type=self._out_req_type,
             request=1,  # FTDI_SIO_MODEM_CTRL
-            value=257 if active else 256,
+            value=257 if state else 256,
             index=self._index,
         )
         return None
@@ -1091,7 +1130,7 @@ class FTDI(MessageBased, regex=REGEX):
     def set_flow_control(
         self, flow: Literal["RTS_CTS", "DTR_DSR", "XON_XOFF"] | None = None, *, xon: int = 0, xoff: int = 0
     ) -> None:
-        """Sets the flow control for the FTDI device.
+        """Sets the flow control for the FTDI chip.
 
         Args:
             flow: The type of flow control to use, `None` disables flow control.
@@ -1121,16 +1160,16 @@ class FTDI(MessageBased, regex=REGEX):
         return None
 
     def set_latency_timer(self, value: int) -> None:
-        """Set the latency-timer value for the FTDI device.
+        """Set the latency-timer value for the FTDI chip.
 
-        The latency timer is a form of timeout mechanism for the read buffer of FTDI devices.
+        The latency timer is a form of timeout mechanism for the read buffer of FTDI chip.
 
         The latency timer counts from the last time data was sent back to the computer. If
-        the latency timer expires, the device will send what data it has available to the
+        the latency timer expires, the chip will send what data it has available to the
         computer regardless of how many bytes it is waiting on. The latency timer will then
         reset and begin counting again.
 
-        The timer allows the device to be better optimized for protocols requiring faster
+        The timer allows the chip to be better optimized for protocols requiring faster
         response times from shorter data packets.
 
         Args:
@@ -1163,14 +1202,14 @@ class FTDI(MessageBased, regex=REGEX):
         )
         return None
 
-    def set_rts(self, *, active: bool) -> None:
+    def set_rts(self, state: bool) -> None:  # noqa: FBT001
         """Set the Request To Send (RTS) control signal.
 
         Args:
-            active: New RTS logical level: HIGH (`True`) or LOW (`False`).
+            state: New state of the RTS logical level: HIGH (`True`) or LOW (`False`).
         """
         if self._d2xx is not None:
-            return self._d2xx.set_rts() if active else self._d2xx.clr_rts()
+            return self._d2xx.set_rts() if state else self._d2xx.clr_rts()
 
         # https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L1199
         assert self._libusb is not None  # noqa: S101
@@ -1178,7 +1217,7 @@ class FTDI(MessageBased, regex=REGEX):
         _ = self._libusb.ctrl_transfer(
             request_type=self._out_req_type,
             request=1,  # FTDI_SIO_MODEM_CTRL
-            value=514 if active else 512,
+            value=514 if state else 512,
             index=self._index,
         )
         return None

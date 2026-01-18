@@ -60,8 +60,8 @@ The following are examples of VISA-style addresses that may be used to connect t
   </tr>
   <tr>
     <td>FTDI</td>
-    <td>FTDI2::0x0403::0xfaf0::825192</td>
-    <td>FTDI device using driver=2 (d2xx), idVendor=0x0403, idProduct=0xfaf0 (hexadecimal notation), serial number=825192,
+    <td>FTDI2::0x0403::0xfaf0::A825192</td>
+    <td>FTDI device using driver=2 (d2xx), idVendor=0x0403, idProduct=0xfaf0 (hexadecimal notation), serial number=A825192,
     the USB Interface Number is ignored when using the d2xx driver</td>
   </tr>
   <tr>

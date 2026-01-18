@@ -736,16 +736,23 @@ class FTDI(MessageBased, regex=REGEX):
         are automatically set to `None` (termination characters are not used in the FTDI protocol).
 
         Attributes: Connection Properties:
-            baud_rate (int): The baud rate (_alias:_ baudrate). _Default: `9600`_
-            data_bits (int): The number of data bits: 7 or 8 (_alias:_ bytesize). _Default: `8`_
-            dsr_dtr (bool): Whether to enable hardware (DSR/DTR) flow control (_alias:_ dsrdtr). _Default: `False`_
+            baud_rate (int): The baud rate (_alias:_ baudrate).
+                _Default: `9600`_
+            data_bits (DataBits | str | int): The number of data bits: 7 or 8 (_alias:_ bytesize).
+                _Default: `8`_
+            dsr_dtr (bool): Whether to enable hardware (DSR/DTR) flow control (_alias:_ dsrdtr).
+                _Default: `False`_
             latency (int | None): The latency-timer value in milliseconds, between 1 and 255.
                 If `None`, the latency timer is not set and the chip default is used, typically 16 ms.
                 _Default: `None`_
-            parity (str): Parity checking: none, odd, even, mark or space. _Default: `none`_
-            rts_cts (bool): Whether to enable hardware (RTS/CTS) flow control (_alias:_ rtscts). _Default: `False`_
-            stop_bits (float): The number of stop bits: 1, 1.5 or 2 (_alias:_ stopbits). _Default: `1`_
-            xon_xoff (bool): Whether to enable software flow control (_alias:_ xonxoff). _Default: `False`_
+            parity (Parity | str): Parity checking: NONE, ODD, EVEN, MARK or SPACE.
+                _Default: `NONE`_
+            rts_cts (bool): Whether to enable hardware (RTS/CTS) flow control (_alias:_ rtscts).
+                _Default: `False`_
+            stop_bits (StopBits | str | float): The number of stop bits: 1, 1.5 or 2 (_alias:_ stopbits).
+                _Default: `1`_
+            xon_xoff (bool): Whether to enable software flow control (_alias:_ xonxoff).
+                _Default: `False`_
         """
         self._d2xx: _D2XX | None = None
         self._libusb: USB | None = None
@@ -1072,7 +1079,7 @@ class FTDI(MessageBased, regex=REGEX):
         self,
         *,
         data_bits: DataBits | str | int = DataBits.EIGHT,
-        parity: Parity | str | int = Parity.NONE,
+        parity: Parity | str = Parity.NONE,
         stop_bits: StopBits | str | float = StopBits.ONE,
     ) -> None:
         """Set the RS-232 data characteristics for the FTDI chip.
@@ -1135,8 +1142,8 @@ class FTDI(MessageBased, regex=REGEX):
 
         Args:
             flow: The type of flow control to use, `None` disables flow control.
-            xon: The character (between 0 and 255) used to signal Xon. Only used if `flow` is `XON_XOFF`.
-            xoff: The character (between 0 and 255) used to signal Xoff. Only used if `flow` is `XON_XOFF`.
+            xon: The character (between 0 and 255) to signal Xon. Only used if `flow` is `XON_XOFF`.
+            xoff: The character (between 0 and 255) to signal Xoff. Only used if `flow` is `XON_XOFF`.
         """
         if self._d2xx is not None:
             return self._d2xx.set_flow_control(flow, xon=xon, xoff=xoff)

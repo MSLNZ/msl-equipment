@@ -428,6 +428,7 @@ class USB(MessageBased, regex=REGEX):
                 elapsed_time = int((time.time() - t0) * 1000)
                 if elapsed_time >= original_timeout:
                     raise MSLTimeoutError(self)
+                # use at least 1 ms, since libusb considers 0 as no timeout
                 timeout = max(1, original_timeout - elapsed_time)
 
         return bytes(msg)

@@ -865,8 +865,12 @@ class FTDI(MessageBased, regex=REGEX):
                 remaining -= len(data) - n_skip
                 buffer.extend(data[n_skip:])
 
+            if len(buffer) > self._max_read_size:
+                error = f"len(message) [{len(buffer)}] > max_read_size [{self._max_read_size}]"
+                raise RuntimeError(error)
+
             if size is not None:
-                if len(buffer) == size:
+                if len(buffer) >= size:
                     break
             elif buffer and len(data) == 2:  # noqa: PLR2004
                 # If `size` is not specified then assume that once data is in the buffer and only
@@ -877,16 +881,13 @@ class FTDI(MessageBased, regex=REGEX):
                 # size=None here as well in some capacity.
                 break
 
-            if len(buffer) > self._max_read_size:
-                error = f"len(message) [{len(buffer)}] > max_read_size [{self._max_read_size}]"
-                raise RuntimeError(error)
-
             if original_timeout > 0:
                 # decrease the timeout when reading each packet so that the total
                 # time to receive all packets preserves what was specified
                 elapsed_time = int((time.time() - t0) * 1000)
                 if elapsed_time >= original_timeout:
                     raise MSLTimeoutError(self)
+                # use at least 1 ms, since libusb considers 0 as no timeout
                 timeout = max(1, original_timeout - elapsed_time)
 
         return bytes(buffer)

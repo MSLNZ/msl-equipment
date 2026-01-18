@@ -387,7 +387,7 @@ def test_set_latency_timer_sio(usb_backend: USBBackend) -> None:
             device.set_latency_timer(165)
 
 
-def test_read_write(usb_backend: USBBackend) -> None:
+def test_read_write(usb_backend: USBBackend) -> None:  # noqa: PLR0915
     usb_backend.add_device(1, 2, "x")
     c = Connection("FTDI::1::2::x", usb_backend=usb_backend)
 
@@ -441,13 +441,25 @@ def test_read_write(usb_backend: USBBackend) -> None:
         usb_backend.clear_bulk_response_queue()
 
         device.max_read_size = 32
-        usb_backend.add_bulk_response(status_bytes + response[:40])
+        usb_backend.add_bulk_response(status_bytes + response[:10])
+        usb_backend.add_bulk_response(status_bytes + response[10:20])
+        usb_backend.add_bulk_response(status_bytes + response[20:30])
+        usb_backend.add_bulk_response(status_bytes + response[30:40])
         with pytest.raises(MSLConnectionError, match=r"len\(message\) \[40\] > max_read_size \[32\]"):
             _ = device.read(size=32)
 
         usb_backend.clear_bulk_response_queue()
-
         device.max_read_size = 1024
+
+        usb_backend.add_bulk_response(status_bytes + response[:10])
+        usb_backend.add_bulk_response(status_bytes + response[10:20])
+        usb_backend.add_bulk_response(status_bytes + response[20:30])
+        usb_backend.add_bulk_response(status_bytes + response[30:])
+        with pytest.raises(MSLConnectionError, match=r"received 90 bytes, requested 32 bytes"):
+            _ = device.read(size=32)
+
+        usb_backend.clear_bulk_response_queue()
+
         device.timeout = 0.06  # usb_backend.bulk_read() sleeps for 0.05 seconds per read
         usb_backend.add_bulk_response(status_bytes + b"sleep")
         usb_backend.add_bulk_response(status_bytes + b"sleep")

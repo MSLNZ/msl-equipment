@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from msl.loadlib.activex import Application
     from msl.loadlib.types import LibType
 
-REGEX = re.compile(r"SDK::(?P<path>.+)", flags=re.IGNORECASE)
+REGEX = re.compile(r"^SDK::(?P<path>.+)", flags=re.IGNORECASE)
 
 
 class SDK(Interface, regex=REGEX):
@@ -66,7 +66,7 @@ class SDK(Interface, regex=REGEX):
 
     def _log_errcheck(self, result: Any, func: Any, arguments: tuple[Any, ...]) -> Any:  # noqa: ANN401
         """Convenience method for logging an [errcheck][ctypes._CFuncPtr.errcheck] from [ctypes][]."""
-        logger.debug("%s.%s%s -> %s", self.__class__.__name__, func.__name__, arguments, result)
+        logger.debug("%s.%s%s -> %s", self, func.__name__, arguments, result)
         return result
 
     @property

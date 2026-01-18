@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 REGEX = re.compile(
-    r"(?P<prefix>TCP|UDP|TCPIP\d*)::(?P<host>[^\s:]+)::(?P<port>\d+)(?P<suffix>::SOCKET)?", flags=re.IGNORECASE
+    r"^(?P<prefix>TCP|UDP|TCPIP\d*)::(?P<host>[^\s:]+)::(?P<port>\d+)(?P<suffix>::SOCKET)?", flags=re.IGNORECASE
 )
 
 
@@ -67,10 +67,10 @@ class Socket(MessageBased, regex=REGEX):
                 msg = f"Cannot connect to {host}:{port}\n{e.__class__.__name__}: {e}"
                 raise MSLConnectionError(self, msg) from None
 
-    def _read(self, size: int | None) -> bytes:  # pyright: ignore[reportImplicitOverride]  # noqa: C901
+    def _read(self, size: int | None) -> bytes:  # pyright: ignore[reportImplicitOverride]  # noqa: C901, PLR0912
         """Overrides method in MessageBased."""
-        t0 = time.time()
         original_timeout = self._socket.gettimeout()
+        t0 = time.time()
         while True:
             if size is not None:
                 if len(self._byte_buffer) >= size:
@@ -102,17 +102,17 @@ class Socket(MessageBased, regex=REGEX):
                 error = f"len(message) [{len(self._byte_buffer)}] > max_read_size [{self._max_read_size}]"
                 raise RuntimeError(error)
 
-            elapsed_time = time.time() - t0
-            if self._timeout and (elapsed_time > self._timeout):
-                self._socket.settimeout(original_timeout)
-                raise MSLTimeoutError(self)
-
-            # decrease the timeout when reading each chunk so that the total
-            # time to receive all data preserves what was specified
             if original_timeout is not None:
+                # decrease the timeout when reading each packet so that the total
+                # time to receive all packets preserves what was specified
+                elapsed_time = time.time() - t0
+                if elapsed_time > original_timeout:
+                    self._socket.settimeout(original_timeout)
+                    raise MSLTimeoutError(self)
                 self._socket.settimeout(max(0, original_timeout - elapsed_time))
 
-        self._socket.settimeout(original_timeout)
+        if original_timeout is not None:
+            self._socket.settimeout(original_timeout)
         return bytes(msg)
 
     def _set_interface_timeout(self) -> None:  # pyright: ignore[reportImplicitOverride]

@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-REGEX = re.compile(r"ZMQ::(?P<host>[^\s:]+)::(?P<port>\d+)", flags=re.IGNORECASE)
+REGEX = re.compile(r"^ZMQ::(?P<host>[^\s:]+)::(?P<port>\d+)", flags=re.IGNORECASE)
 
 
 class ZeroMQ(MessageBased, regex=REGEX):

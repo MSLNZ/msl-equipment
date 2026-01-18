@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 # The value of `enet_port` should always be 1234 for the actual hardware, but make it configurable for the tests
 REGEX = re.compile(
-    r"Prologix::(?P<hw_address>[^\s:]+)(?P<enet_port>::\d{4,})?(::GPIB\d*)?::(?P<pad>\d+)(::(?P<sad>\d+))?",
+    r"^Prologix::(?P<hw_address>[^\s:]+)(?P<enet_port>::\d{4,})?(::GPIB\d*)?::(?P<pad>\d+)(::(?P<sad>\d+))?",
     flags=re.IGNORECASE,
 )
 

@@ -30,7 +30,9 @@ IS_WINDOWS: bool = sys.platform == "win32"
 IS_LINUX: bool = sys.platform == "linux"
 IS_DARWIN: bool = sys.platform == "darwin"
 
-REGEX = re.compile(r"GPIB(?P<board>\d{0,2})(::((?P<pad>\d+)|(?P<name>[^\s:]+)))?(::(?P<sad>\d+))?", flags=re.IGNORECASE)
+REGEX = re.compile(
+    r"^GPIB(?P<board>\d{0,2})(::((?P<pad>\d+)|(?P<name>[^\s:]+)))?(::(?P<sad>\d+))?", flags=re.IGNORECASE
+)
 
 # NI VI_GPIB
 REN_DEASSERT = 0
@@ -275,7 +277,8 @@ def find_listeners(*, include_sad: bool = False) -> list[str]:  # noqa: C901
     try:
         _load_library(error_check)
     except (OSError, AttributeError) as e:
-        logger.debug(str(e).splitlines()[0])
+        msg = str(e).splitlines()[0]  # ignore "create a GPIB_LIBRARY environment variable" tip
+        logger.debug("%s: %s", e.__class__.__name__, msg)
         return devices
 
     assert GPIB.gpib_library is not None  # noqa: S101
@@ -400,7 +403,7 @@ class GPIB(MessageBased, regex=REGEX):
     def _get_ibdev_handle(self, *args: int) -> int:
         # board_index, pad, sad, timeout, send_eoi, eos_mode
         handle: int = self._lib.ibdev(*args)
-        logger.debug("gpib.ibdev%s -> %d", args, handle)
+        logger.debug("%s.ibdev%s -> %d", self, args, handle)
         if handle < 0:
             msg = f"Cannot acquire a handle for the GPIB device using {args}"
             raise MSLConnectionError(self, message=msg)
@@ -408,14 +411,14 @@ class GPIB(MessageBased, regex=REGEX):
 
     def _get_ibfind_handle(self, name: str) -> int:
         handle: int = self._lib.ibfindW(name) if IS_WINDOWS else self._lib.ibfind(name.encode("ascii"))
-        logger.debug("gpib.ibfind(%r) -> %d", name, handle)
+        logger.debug("%s.ibfind(%r) -> %d", self, name, handle)
         if handle < 0:
             msg = f"Cannot acquire a handle for the GPIB board/device with name {name!r}"
             raise MSLConnectionError(self, message=msg)
         return handle
 
     def _error_check(self, result: int, func: _NamedFuncPointer, arguments: tuple[int, ...]) -> int:
-        logger.debug("gpib.%s%s -> 0x%x", func.__name__, arguments, result)
+        logger.debug("%s.%s%s -> 0x%X", self, func.__name__, arguments, result)
         if result & TIMO:
             msg = (
                 "If you are confident that the GPIB device received a\n"

@@ -1,4 +1,4 @@
-"""Base class for equipment that is connected through a serial port."""
+"""Base class for equipment that is connected through a serial port (or a USB-to-Serial adaptor)."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-REGEX = re.compile(r"(COM|ASRL|ASRLCOM)((?P<dev>/dev/[^\s:]+)|(?P<number>\d+))", flags=re.IGNORECASE)
+REGEX = re.compile(r"^(COM|ASRL|ASRLCOM)((?P<dev>/dev/[^\s:]+)|(?P<number>\d+))", flags=re.IGNORECASE)
 
 
 def _init_serial(port: str, p: dict[str, Any]) -> serial.Serial:
@@ -55,10 +55,10 @@ def _init_serial(port: str, p: dict[str, Any]) -> serial.Serial:
 
 
 class Serial(MessageBased, regex=REGEX):
-    """Base class for equipment that is connected through a serial port."""
+    """Base class for equipment that is connected through a serial port (or a USB-to-Serial adaptor)."""
 
     def __init__(self, equipment: Equipment) -> None:
-        """Base class for equipment that is connected through a serial port.
+        """Base class for equipment that is connected through a serial port (or a USB-to-Serial adaptor).
 
         Args:
             equipment: An [Equipment][] instance.
@@ -73,12 +73,15 @@ class Serial(MessageBased, regex=REGEX):
 
         Attributes: Connection Properties:
             baud_rate (int): The baud rate (_alias:_ baudrate). _Default: `9600`_
-            data_bits (int): The number of data bits, e.g. 5, 6, 7, 8 (_alias:_ bytesize). _Default: `8`_
+            data_bits (DataBits | str | int): The number of data bits: 5, 6, 7 or 8 (_alias:_ bytesize). _Default: `8`_
             dsr_dtr (bool): Whether to enable hardware (DSR/DTR) flow control (_alias:_ dsrdtr). _Default: `False`_
-            inter_byte_timeout (float | None): The inter-character timeout. _Default: `None`_
-            parity (str): Parity checking, e.g. 'even', 'odd'. _Default: `none`_
+            inter_byte_timeout (float | None): The maximum duration, in seconds, that is allowed between two
+                consecutive bytes in a read operation. A value of zero (or `None`) indicates that the inter-byte timeout
+                condition is not used. On Windows, the minimum supported value is 0.001 seconds, on POSIX it is 0.1
+                seconds. A value less than the minimum will disable the inter-byte timeout. _Default: `None`_
+            parity (Parity | str): Parity checking: NONE, ODD, EVEN, MARK or SPACE. _Default: `NONE`_
             rts_cts (bool): Whether to enable hardware (RTS/CTS) flow control (_alias:_ rtscts). _Default: `False`_
-            stop_bits (int | float): The number of stop bits, e.g. 1, 1.5, 2 (_alias:_ stopbits). _Default: `1`_
+            stop_bits (StopBits | str | float): The number of stop bits: 1, 1.5 or 2 (_alias:_ stopbits). _Default: `1`_
             xon_xoff (bool): Whether to enable software flow control (_alias:_ xonxoff). _Default: `False`_
         """
         super().__init__(equipment)

@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 
 
 REGEX = re.compile(
-    r"TCPIP(?P<board>\d*)::(?P<host>[^\s:]+)::(?P<name>(hislip\d+))(,(?P<port>\d+))?(::INSTR)?$", flags=re.IGNORECASE
+    r"^TCPIP(?P<board>\d*)::(?P<host>[^\s:]+)::(?P<name>(hislip\d+))(,(?P<port>\d+))?(::INSTR)?$", flags=re.IGNORECASE
 )
 
 PORT = 4880

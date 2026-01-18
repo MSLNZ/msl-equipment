@@ -232,8 +232,9 @@ def test_write_read_query(usb_backend: USBBackend) -> None:
         device.max_read_size = 1000
         assert device.read(decode=False) == b"more than 4 characters\r\n"
 
-        device.timeout = 0.001
+        device.timeout = 0.06  # usb_backend.bulk_read() sleeps for 0.05 seconds per read
         device.read_termination = None
+        usb_backend.add_bulk_response(b"sleep")
         usb_backend.add_bulk_response(b"sleep")
         with pytest.raises(MSLTimeoutError):
             _ = device.read(size=10)

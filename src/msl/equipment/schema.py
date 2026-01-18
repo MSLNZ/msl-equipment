@@ -1152,7 +1152,7 @@ class DigitalReport:
 
 
 def _cvd_resistance(
-    temperature: float | np.ndarray, r0: float, a: float, b: float, c: float, d: float
+    temperature: np.float64 | np.ndarray, r0: float, a: float, b: float, c: float, d: float
 ) -> NDArray[np.float64]:
     """Calculate resistance from temperature."""
     return np.piecewise(
@@ -1322,8 +1322,8 @@ class CVDEquation:
         ranges = {
             "t": _range,
             "r": Range(
-                minimum=round(float(_cvd_resistance(_range.minimum, r0, a, b, c, d)), 3),
-                maximum=round(float(_cvd_resistance(_range.maximum, r0, a, b, c, d)), 3),
+                minimum=round(float(_cvd_resistance(np.float64(_range.minimum), r0, a, b, c, d)), 3),
+                maximum=round(float(_cvd_resistance(np.float64(_range.maximum), r0, a, b, c, d)), 3),
             ),
         }
 
@@ -1438,7 +1438,7 @@ class Table(np.ndarray):
     def unstructured(
         self,
         *,
-        dtype: DTypeLike = None,
+        dtype: DTypeLike | None = None,
         copy: bool = False,
         casting: Literal["no", "equiv", "safe", "same_kind", "unsafe"] = "unsafe",
     ) -> NDArray[_Any]:

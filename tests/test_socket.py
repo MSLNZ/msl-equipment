@@ -117,8 +117,10 @@ def test_tcp_socket_read(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
     reply = dev.read(fmt=None, dtype=">f")
     assert np.array_equal(reply, np.array([-1.53, 2.34, 9.72, 3.46], dtype=">f"))
 
+    dev.timeout = None
     assert dev.query("message", decode=True) == "message"
     assert dev.query("message", decode=False) == b"message"
+    assert dev.timeout is None
 
     dev.disconnect()
     server.stop()

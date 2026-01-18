@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 
 
 REGEX = re.compile(
-    r"TCPIP(?P<board>\d*)::(?P<host>[^\s:]+)(::(?!hislip)(?P<name>([^\s:]+\d+(\[.+])?)))?(::INSTR)?$",
+    r"^TCPIP(?P<board>\d*)::(?P<host>[^\s:]+)(::(?!hislip)(?P<name>([^\s:]+\d+(\[.+])?)))?(::INSTR)?$",
     flags=re.IGNORECASE,
 )
 

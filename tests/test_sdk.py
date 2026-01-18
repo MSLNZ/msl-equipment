@@ -87,7 +87,7 @@ def test_logging_messages(caplog: pytest.LogCaptureFixture) -> None:
     assert caplog.messages == [
         "Connecting to SDK<MSL|| at >",
         f"Loaded {sdk.path}",
-        "SDK.add(c_float(1.0), c_float(1.0)) -> None",
+        "SDK<MSL||>.add(c_float(1.0), c_float(1.0)) -> None",
         "Disconnected from SDK<MSL|| at >",
     ]
 

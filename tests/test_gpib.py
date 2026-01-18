@@ -232,7 +232,7 @@ def test_mock_logging(mock_gpib: None, caplog: pytest.LogCaptureFixture) -> None
     dev.disconnect()  # multiple times is ok and only logs "Disconnected from ..." once
     dev.disconnect()
     assert dev.gpib_library is not None
-    assert caplog.messages[-2] == "gpib.ibonl(3, 0) -> 0x1a"
+    assert caplog.messages[-2] == "GPIB<||>.ibonl(3, 0) -> 0x1A"
     assert caplog.messages[-1] == "Disconnected from GPIB<|| at GPIB::5>"
 
 

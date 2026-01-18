@@ -12,6 +12,7 @@ import pytest
 
 from msl.equipment.cli import cli, main, run_external
 from msl.equipment.cli.find import Device, DeviceType, print_stdout
+from msl.equipment.interfaces.ftdi import _D2XX  # pyright: ignore[reportPrivateUsage]
 from msl.equipment.interfaces.gpib import GPIB
 
 if TYPE_CHECKING:
@@ -32,12 +33,16 @@ no_libusb = sys.platform == "darwin" and sys.version_info[:2] == (3, 8)
 
 
 @pytest.fixture
-def reset_gpib() -> Iterator[None]:
+def reset_d2xx_gpib() -> Iterator[None]:
+    _D2XX.ftd2xx = None
     GPIB.gpib_library = None
-    _ = os.environ.pop("GPIB_LIBRARY")
+    _ = os.environ.pop("D2XX_LIBRARY", "")
+    _ = os.environ.pop("GPIB_LIBRARY", "")
     yield
+    _D2XX.ftd2xx = None
     GPIB.gpib_library = None
-    _ = os.environ.pop("GPIB_LIBRARY")
+    _ = os.environ.pop("D2XX_LIBRARY", "")
+    _ = os.environ.pop("GPIB_LIBRARY", "")
 
 
 @pytest.mark.parametrize("args", [None, [], ["--help"], ["help"]])
@@ -133,15 +138,17 @@ def test_cli_find_json(capsys: pytest.CaptureFixture[str]) -> None:
 
 @pytest.mark.skipif(no_libusb, reason="libusb1 not available in CI")
 def test_cli_find_verbose(
-    reset_gpib: None, caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str]
+    reset_d2xx_gpib: None, caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str]
 ) -> None:
     caplog.set_level("DEBUG", "msl")  # include msl.loadlib and msl.equipment
     caplog.clear()
 
-    assert reset_gpib is None
+    assert reset_d2xx_gpib is None
+
+    libtype = "windll" if sys.platform == "win32" else "cdll"
 
     gpib_file = Path().parent / "tests" / "resources" / f"gpib.{gpib_ext}"
-    args = ["find", "-i", "127.0.0.1", "-v", "-t", "0.1", "-g", str(gpib_file), "-b", "openusb"]
+    args = ["find", "-i", "127.0.0.1", "-v", "-t", "0.1", "-g", str(gpib_file), "-b", "openusb", "-x", "d2xx.ignore"]
     assert cli(args) == 0
 
     m = caplog.messages
@@ -153,9 +160,14 @@ def test_cli_find_verbose(
     assert m[5] == "Searching for GPIB devices (include_sad=False)"
     assert m[6] == f"Loaded {gpib_file.resolve()}"
     assert m[7] == "Searching for USB devices (backend='openusb')"
-    assert m[8] == "Cannot load the requested 'openusb' PyUSB backend"
-    assert m[9] == "Waiting approximately 0.1 second(s) for network devices to respond..."
-    assert re.match(r"Found \d+ devices", m[10])
+    assert m[8] == "ValueError: Cannot load the requested 'openusb' PyUSB backend"
+    assert m[9] == "Searching for equipment that use the D2XX driver (d2xx_library='d2xx.ignore')"
+    assert (
+        m[10]
+        == f"OSError: Cannot find 'd2xx.ignore' for libtype={libtype!r}, download library from https://ftdichip.com/drivers/d2xx-drivers/"
+    )
+    assert m[11] == "Waiting approximately 0.1 second(s) for network devices to respond..."
+    assert re.match(r"Found \d+ devices", m[12])
 
     # check stdout, but must ignore all Serial devices
     out, _ = capsys.readouterr()
@@ -202,6 +214,12 @@ def test_find_print_stdout(capsys: pytest.CaptureFixture[str]) -> None:
             webserver="",
         ),
         Device(
+            type=DeviceType.FTDI,
+            addresses=["FTDI2::0x1::0x2::a"],
+            description="Manufacturer 1-2-a",
+            webserver="ignored",
+        ),
+        Device(
             type=DeviceType.ASRL,
             addresses=["COM3"],
             description="Intel(R) Active Management Technology - SOL (COM3)",
@@ -218,6 +236,12 @@ def test_find_print_stdout(capsys: pytest.CaptureFixture[str]) -> None:
             addresses=["TCPIP::169.254.100.5::5025::SOCKET", "TCPIP::169.254.100.5::inst0::INSTR"],
             description="Data Acquisition / Switch Unit",
             webserver="http://169.254.100.5",
+        ),
+        Device(
+            type=DeviceType.FTDI,
+            addresses=["FTDI::1::2::b"],
+            description="Manufacturer 1-2-b",
+            webserver="ignored",
         ),
         Device(
             type=DeviceType.PROLOGIX,
@@ -267,13 +291,12 @@ def test_find_print_stdout(capsys: pytest.CaptureFixture[str]) -> None:
   COM1 [Communications Port (COM1)]
   COM2 [Communications Port (COM2)]
   COM3 [Intel(R) Active Management Technology - SOL (COM3)]
+FTDI Devices
+  FTDI2::0x1::0x2::a [Manufacturer 1-2-a]
+  FTDI::1::2::b [Manufacturer 1-2-b]
 GPIB Devices
   GPIB::1
   GPIB0::2::INSTR
-PROLOGIX Devices
-  Prologix GPIB-ETHERNET Controller version 01.06.06.00 (MAC Address: 00-01-02-03-04-05)
-    Prologix::169.254.100.2::1234::GPIB::<PAD>[::<SAD>]
-    Prologix::prologix-00-01-02-03-04-05::1234::GPIB::<PAD>[::<SAD>]
 LXI Devices
   Digital Multimeter - MY0123456789 [webserver: http://169.254.100.3]
     TCPIP::169.254.100.3::5025::SOCKET
@@ -283,6 +306,13 @@ LXI Devices
     TCPIP::169.254.100.4::5025::SOCKET
     TCPIP::169.254.100.4::hislip0::INSTR
     TCPIP::169.254.100.4::inst0::INSTR
+PROLOGIX Devices
+  Prologix GPIB-ETHERNET Controller version 01.06.06.00 (MAC Address: 00-01-02-03-04-05)
+    Prologix::169.254.100.2::1234::GPIB::<PAD>[::<SAD>]
+    Prologix::prologix-00-01-02-03-04-05::1234::GPIB::<PAD>[::<SAD>]
+USB Devices
+  USB::1::2::a [Manufacturer]
+  USB::1::2::b [Manufacturer 2]
 VXI11 Devices
   Data Acquisition / Switch Unit [webserver: http://169.254.100.5]
     TCPIP::169.254.100.5::5025::SOCKET
@@ -290,9 +320,6 @@ VXI11 Devices
   Digital Voltmeter [webserver: http://169.254.100.6]
     TCPIP::169.254.100.6::inst0::INSTR
   HTML title
-USB Devices
-  USB::1::2::a [Manufacturer]
-  USB::1::2::b [Manufacturer 2]
 """
     )
 

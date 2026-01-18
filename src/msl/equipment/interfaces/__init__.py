@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from .ftdi import FTDI
 from .gpib import GPIB
 from .hislip import HiSLIP
 from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
@@ -16,6 +17,7 @@ from .vxi11 import VXI11
 from .zeromq import ZeroMQ
 
 __all__: list[str] = [
+    "FTDI",
     "GPIB",
     "NIDAQ",
     "SDK",

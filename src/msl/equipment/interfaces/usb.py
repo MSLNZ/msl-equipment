@@ -34,12 +34,11 @@ REGEX = re.compile(
 )
 
 IS_WINDOWS = sys.platform == "win32"
-IS_LINUX = sys.platform == "linux"
 UNKNOWN_USB_DEVICE = "Unknown USB Device"
 
 
 def _is_linux_and_not_sudo() -> bool:
-    return IS_LINUX and os.geteuid() != 0
+    return sys.platform == "linux" and os.geteuid() != 0
 
 
 def _usb_backend(name: str) -> Any:  # noqa: ANN401
@@ -158,14 +157,14 @@ def find_usb(usb_backend: Any = None) -> list[_USBDevice]:  # noqa: ANN401, C901
         try:
             usb_backend = _usb_backend(usb_backend)
         except ValueError as e:
-            logger.debug("%s", e)
+            logger.debug("ValueError: %s", e)
             return devices
 
     try:
         libusb_devices = usb.core.find(find_all=True, backend=usb_backend)
     except usb.core.NoBackendError:
         link = "https://mslnz.github.io/msl-equipment/dev/api/interfaces/usb/"
-        logger.debug("A PyUSB backend is not available. For tips on how to fix this issue see %s", link)
+        logger.debug("NoBackendError: A PyUSB backend is not available. For tips on how to fix this issue see %s", link)
         return devices
 
     for usb_core_device in libusb_devices:
@@ -176,6 +175,8 @@ def find_usb(usb_backend: Any = None) -> list[_USBDevice]:  # noqa: ANN401, C901
                 if usb_core_device.idVendor == 0x0403:  # noqa: PLR2004
                     device = _USBDevice(usb_core_device)
                     device.type = "FTDI"
+                    if IS_WINDOWS and device.description == UNKNOWN_USB_DEVICE and not device.serial:
+                        device.description += ", use FTDI2 address (if available) or use Zadig to replace driver"
                 elif interface.bInterfaceClass == 0xFE and interface.bInterfaceSubClass == 3:  # noqa: PLR2004
                     device = _USBDevice(usb_core_device)
                     device.suffix = "INSTR"
@@ -415,19 +416,20 @@ class USB(MessageBased, regex=REGEX):
                     break
 
             data: array[int] = read(address, packet_size, timeout)
-            self._byte_buffer.extend(data.tobytes())
+            self._byte_buffer.extend(data)
 
             if len(self._byte_buffer) > self._max_read_size:
                 error = f"len(message) [{len(self._byte_buffer)}] > max_read_size [{self._max_read_size}]"
                 raise RuntimeError(error)
 
-            elapsed_time = int((time.time() - t0) * 1000)
-            if (original_timeout > 0) and (elapsed_time > original_timeout):
-                raise MSLTimeoutError(self)
-
-            # decrease the timeout when reading each chunk so that the total
-            # time to receive all data preserves what was specified
-            timeout = max(0, original_timeout - elapsed_time)
+            if original_timeout > 0:
+                # decrease the timeout when reading each packet so that the total
+                # time to receive all packets preserves what was specified
+                elapsed_time = int((time.time() - t0) * 1000)
+                if elapsed_time >= original_timeout:
+                    raise MSLTimeoutError(self)
+                # use at least 1 ms, since libusb considers 0 as no timeout
+                timeout = max(1, original_timeout - elapsed_time)
 
         return bytes(msg)
 
@@ -486,6 +488,7 @@ class USB(MessageBased, regex=REGEX):
         Args:
             endpoint: The endpoint to clear.
         """
+        logger.debug("%s.clear_halt(0x%02X)", self, endpoint.address)
         self._device.clear_halt(endpoint.address)
 
     def ctrl_transfer(
@@ -514,6 +517,13 @@ class USB(MessageBased, regex=REGEX):
             For an OUT transfer, the returned value is the number of bytes sent to the equipment.
                 For an IN transfer, the returned value is the data that was read.
         """
+        # fmt: off
+        logger.debug(
+            "%s.ctrl_transfer(0x%02X, 0x%02X, 0x%04X, 0x%04X, %s, %d)",
+            self, request_type, request, value, index, data_or_length, self._timeout_ms
+        )
+        # fmt: on
+
         try:
             out: int | array[int] = self._device.ctrl_transfer(
                 bmRequestType=request_type,
@@ -570,6 +580,7 @@ class USB(MessageBased, regex=REGEX):
         If your program has to call this method, the reset will cause the
         device state to change (e.g., register values may be reset).
         """
+        logger.debug("%s.reset_device()", self)
         self._device.reset()
 
 

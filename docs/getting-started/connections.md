@@ -49,6 +49,22 @@ The following are examples of VISA-style addresses that may be used to connect t
     <th>Description</th>
   </tr>
   <tr>
+    <td>FTDI</td>
+    <td>FTDI::0x0403::0x6001::abc</td>
+    <td>FTDI device using driver=0 (default, libusb), idVendor=0x0403, idProduct=0x6001 (hexadecimal notation), serial number=abc, USB Interface Number=0 (default)</td>
+  </tr>
+  <tr>
+    <td>FTDI</td>
+    <td>FTDI0::1027::24577::032165::1</td>
+    <td>FTDI device using driver=0 (libusb), idVendor=1027, idProduct=24577 (decimal notation), serial number=032165, USB Interface Number=1</td>
+  </tr>
+  <tr>
+    <td>FTDI</td>
+    <td>FTDI2::0x0403::0xfaf0::A825192</td>
+    <td>FTDI device using driver=2 (d2xx), idVendor=0x0403, idProduct=0xfaf0 (hexadecimal notation), serial number=A825192,
+    the USB Interface Number is ignored when using the d2xx driver</td>
+  </tr>
+  <tr>
     <td>GPIB</td>
     <td>GPIB::10</td>
     <td>GPIB device at board=0 (default), primary address=10, no secondary address</td>
@@ -196,6 +212,7 @@ National Instruments also provides [examples](https://www.ni.com/docs/en-US/bund
 
 The following interface classes are available
 
+* [FTDI][] &mdash; For equipment that use a Future Technology Devices International (FTDI) chip
 * [GPIB][] &mdash; For equipment that use the GPIB (IEEE 488) protocol
 * [HiSLIP][] &mdash; For equipment that use the [HiSLIP](https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf){:target="_blank"} protocol
 * [Prologix][] &mdash; Use [Prologix](https://prologix.biz/){:target="_blank"} hardware to establish a connection to GPIB-compatible equipment

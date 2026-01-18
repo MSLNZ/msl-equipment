@@ -1,13 +1,12 @@
 # USB
 
-## Prerequisites
+## Prerequisites {: #usb-prerequisites }
 
-Before communicating with a USB device, a [libusb](https://libusb.info/){:target="_blank"}-compatible
-driver must be installed and the directory to the `libusb` library must be available on the `PATH` environment variable.
+Before communicating with a USB device, a [libusb](https://libusb.info/){:target="_blank"}-compatible driver must be installed and the directory to the `libusb` library must be available on the `PATH` environment variable.
 
 The following instructions are intended to be a starting point if you are having issues communicating with a USB device.
 
-### Windows {: #usb-windows-prerequisites }
+### Windows {: #usb-prerequisites-windows }
 Download the latest `libusb` library from the [repository](https://github.com/libusb/libusb/releases){:target="_blank"}.
 
 !!! tip
@@ -45,7 +44,7 @@ to install a driver (`WinUSB` is recommended) for the USB device &mdash; follow 
 
 See [How to use libusb on Windows](https://github.com/libusb/libusb/wiki/Windows#user-content-How_to_use_libusb_on_Windows){:target="_blank"} for additional information.
 
-### Debian/Ubuntu {: #usb-linux-prerequisites }
+### Debian/Ubuntu {: #usb-prerequisites-linux }
 Install the `libusb-1.0-0` package.
 
 ```console
@@ -81,7 +80,7 @@ Remember that you need to *log out* / *log in* to get the above command effectiv
 newgrp plugdev
 ```
 
-### macOS {: #usb-macos-prerequisites }
+### macOS {: #usb-prerequisites-macos }
 Install the `libusb` package.
 
 ```console

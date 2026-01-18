@@ -14,6 +14,7 @@ ORIGINAL_PATH = os.environ["PATH"]
 
 def teardown_module() -> None:
     os.environ["PATH"] = ORIGINAL_PATH
+    _ = os.environ.pop("D2XX_LIBRARY", "")
     _ = os.environ.pop("GPIB_LIBRARY", "")
     _ = os.environ.pop("PYVISA_LIBRARY", "")
 
@@ -24,6 +25,20 @@ def test_parse_errors() -> None:
 
     with pytest.raises(ParseError):  # empty XML
         _ = Config(StringIO('<?xml version="1.0" encoding="utf-8" ?>'))
+
+
+def test_d2xx_library() -> None:
+    text = """<?xml version="1.0" encoding="utf-8" ?>
+    <msl>
+        <a>true</a>
+        <d2xx_library>C:/Users/username/ftd2xx64.dll</d2xx_library>
+        <some_value>1.2345</some_value>
+    </msl>
+    """
+    assert "D2XX_LIBRARY" not in os.environ
+    _ = Config(StringIO(text))
+    assert os.environ["D2XX_LIBRARY"] == "C:/Users/username/ftd2xx64.dll"
+    del os.environ["D2XX_LIBRARY"]
 
 
 def test_gpib_library() -> None:

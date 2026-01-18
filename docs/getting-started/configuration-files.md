@@ -16,6 +16,15 @@ The following illustrates an example configuration file.
 <?xml version="1.0" encoding="utf-8"?>
 <config> <!-- The name of the root tag can be anything you want. -->
 
+  <!-- OPTIONAL: Set the path to the D2XX library file (for FTDI communication).
+
+    This creates/overwrites the value of the D2XX_LIBRARY environment variable.
+    Specifying this element is only necessary if the D2XX library is not
+    automatically found. You could also include the directory to the D2XX
+    library file as a <path> element in the configuration file (see below).
+  -->
+  <d2xx_library>C:\Users\username\ftd2xx64.dll</d2xx_library>
+
   <!-- OPTIONAL: Set the path to a GPIB library file (for GPIB communication).
 
     This creates/overwrites the value of the GPIB_LIBRARY environment variable.

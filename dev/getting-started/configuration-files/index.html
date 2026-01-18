@@ -2052,6 +2052,8 @@
       
         
       
+        
+      
     
     
     
@@ -2102,6 +2104,34 @@
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/interfaces/ftdi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FTDI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -4546,6 +4576,15 @@
 <p>The following illustrates an example configuration file.</p>
 <div class="highlight"><pre><span></span><code><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
 <span class="nt">&lt;config&gt;</span><span class="w"> </span><span class="cm">&lt;!-- The name of the root tag can be anything you want. --&gt;</span>
+
+<span class="w">  </span><span class="cm">&lt;!-- OPTIONAL: Set the path to the D2XX library file (for FTDI communication).</span>
+
+<span class="cm">    This creates/overwrites the value of the D2XX_LIBRARY environment variable.</span>
+<span class="cm">    Specifying this element is only necessary if the D2XX library is not</span>
+<span class="cm">    automatically found. You could also include the directory to the D2XX</span>
+<span class="cm">    library file as a &lt;path&gt; element in the configuration file (see below).</span>
+<span class="cm">  --&gt;</span>
+<span class="w">  </span><span class="nt">&lt;d2xx_library&gt;</span>C:\Users\username\ftd2xx64.dll<span class="nt">&lt;/d2xx_library&gt;</span>
 
 <span class="w">  </span><span class="cm">&lt;!-- OPTIONAL: Set the path to a GPIB library file (for GPIB communication).</span>
 

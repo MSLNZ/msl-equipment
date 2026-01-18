@@ -1985,6 +1985,8 @@
       
         
       
+        
+      
     
     
     
@@ -2035,6 +2037,34 @@
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ftdi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FTDI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -2272,7 +2302,7 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
+  <a href="#usb-prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
       
         Prerequisites
@@ -2284,7 +2314,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#usb-windows-prerequisites" class="md-nav__link">
+  <a href="#usb-prerequisites-windows" class="md-nav__link">
     <span class="md-ellipsis">
       
         Windows
@@ -2295,7 +2325,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#usb-linux-prerequisites" class="md-nav__link">
+  <a href="#usb-prerequisites-linux" class="md-nav__link">
     <span class="md-ellipsis">
       
         Debian/Ubuntu
@@ -2306,7 +2336,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#usb-macos-prerequisites" class="md-nav__link">
+  <a href="#usb-prerequisites-macos" class="md-nav__link">
     <span class="md-ellipsis">
       
         macOS
@@ -4804,7 +4834,7 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
+  <a href="#usb-prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
       
         Prerequisites
@@ -4816,7 +4846,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#usb-windows-prerequisites" class="md-nav__link">
+  <a href="#usb-prerequisites-windows" class="md-nav__link">
     <span class="md-ellipsis">
       
         Windows
@@ -4827,7 +4857,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#usb-linux-prerequisites" class="md-nav__link">
+  <a href="#usb-prerequisites-linux" class="md-nav__link">
     <span class="md-ellipsis">
       
         Debian/Ubuntu
@@ -4838,7 +4868,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#usb-macos-prerequisites" class="md-nav__link">
+  <a href="#usb-prerequisites-macos" class="md-nav__link">
     <span class="md-ellipsis">
       
         macOS
@@ -5155,11 +5185,10 @@
 
 
 <h1 id="usb">USB<a class="headerlink" href="#usb" title="Permanent link">¤</a></h1>
-<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">¤</a></h2>
-<p>Before communicating with a USB device, a <a href="https://libusb.info/" target="_blank">libusb</a>-compatible
-driver must be installed and the directory to the <code>libusb</code> library must be available on the <code>PATH</code> environment variable.</p>
+<h2 id="usb-prerequisites">Prerequisites<a class="headerlink" href="#usb-prerequisites" title="Permanent link">¤</a></h2>
+<p>Before communicating with a USB device, a <a href="https://libusb.info/" target="_blank">libusb</a>-compatible driver must be installed and the directory to the <code>libusb</code> library must be available on the <code>PATH</code> environment variable.</p>
 <p>The following instructions are intended to be a starting point if you are having issues communicating with a USB device.</p>
-<h3 id="usb-windows-prerequisites">Windows<a class="headerlink" href="#usb-windows-prerequisites" title="Permanent link">¤</a></h3>
+<h3 id="usb-prerequisites-windows">Windows<a class="headerlink" href="#usb-prerequisites-windows" title="Permanent link">¤</a></h3>
 <p>Download the latest <code>libusb</code> library from the <a href="https://github.com/libusb/libusb/releases" target="_blank">repository</a>.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -5181,7 +5210,7 @@ driver must be installed and the directory to the <code>libusb</code> library mu
 </code></pre></div>
 <p>to install a driver (<code>WinUSB</code> is recommended) for the USB device &mdash; follow the <a href="https://github.com/pbatard/libwdi/wiki/Zadig" target="_blank">Zadig User Guide</a>.</p>
 <p>See <a href="https://github.com/libusb/libusb/wiki/Windows#user-content-How_to_use_libusb_on_Windows" target="_blank">How to use libusb on Windows</a> for additional information.</p>
-<h3 id="usb-linux-prerequisites">Debian/Ubuntu<a class="headerlink" href="#usb-linux-prerequisites" title="Permanent link">¤</a></h3>
+<h3 id="usb-prerequisites-linux">Debian/Ubuntu<a class="headerlink" href="#usb-prerequisites-linux" title="Permanent link">¤</a></h3>
 <p>Install the <code>libusb-1.0-0</code> package.</p>
 <div class="highlight"><pre><span></span><code><span class="go">sudo apt install libusb-1.0-0</span>
 </code></pre></div>
@@ -5202,7 +5231,7 @@ driver must be installed and the directory to the <code>libusb</code> library mu
 <p>Remember that you need to <em>log out</em> / <em>log in</em> to get the above command effective, or start a subshell.</p>
 <div class="highlight"><pre><span></span><code><span class="go">newgrp plugdev</span>
 </code></pre></div>
-<h3 id="usb-macos-prerequisites">macOS<a class="headerlink" href="#usb-macos-prerequisites" title="Permanent link">¤</a></h3>
+<h3 id="usb-prerequisites-macos">macOS<a class="headerlink" href="#usb-prerequisites-macos" title="Permanent link">¤</a></h3>
 <p>Install the <code>libusb</code> package.</p>
 <div class="highlight"><pre><span></span><code><span class="go">brew install libusb</span>
 </code></pre></div>
@@ -5435,8 +5464,7 @@ for the connection. If <code>None</code>, selects the first backend that is avai
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/msl/equipment/interfaces/usb.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">290</span>
-<span class="normal">291</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">291</span>
 <span class="normal">292</span>
 <span class="normal">293</span>
 <span class="normal">294</span>
@@ -5536,7 +5564,8 @@ for the connection. If <code>None</code>, selects the first backend that is avai
 <span class="normal">388</span>
 <span class="normal">389</span>
 <span class="normal">390</span>
-<span class="normal">391</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: C901, PLR0915</span>
+<span class="normal">391</span>
+<span class="normal">392</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: C901, PLR0915</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for (raw) USB communication.</span>
 
 <span class="sd">    Args:</span>
@@ -6370,9 +6399,7 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/usb.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">458</span>
-<span class="normal">459</span>
-<span class="normal">460</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">460</span>
 <span class="normal">461</span>
 <span class="normal">462</span>
 <span class="normal">463</span>
@@ -6383,7 +6410,9 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 <span class="normal">468</span>
 <span class="normal">469</span>
 <span class="normal">470</span>
-<span class="normal">471</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">471</span>
+<span class="normal">472</span>
+<span class="normal">473</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_request_type</span><span class="p">(</span><span class="n">direction</span><span class="p">:</span> <span class="n">USB</span><span class="o">.</span><span class="n">CtrlDirection</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="n">USB</span><span class="o">.</span><span class="n">CtrlType</span><span class="p">,</span> <span class="n">recipient</span><span class="p">:</span> <span class="n">USB</span><span class="o">.</span><span class="n">CtrlRecipient</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>  <span class="c1"># noqa: A002</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a `bmRequestType` field for a control request.</span>
 
@@ -6462,18 +6491,20 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/usb.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">483</span>
-<span class="normal">484</span>
-<span class="normal">485</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">485</span>
 <span class="normal">486</span>
 <span class="normal">487</span>
 <span class="normal">488</span>
-<span class="normal">489</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">clear_halt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">:</span> <span class="n">Endpoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">489</span>
+<span class="normal">490</span>
+<span class="normal">491</span>
+<span class="normal">492</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">clear_halt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">:</span> <span class="n">Endpoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear the halt/stall condition for an endpoint.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        endpoint: The endpoint to clear.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.clear_halt(0x</span><span class="si">%02X</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">clear_halt</span><span class="p">(</span><span class="n">endpoint</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6636,10 +6667,7 @@ For an IN transfer, the returned value is the data that was read.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/usb.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">491</span>
-<span class="normal">492</span>
-<span class="normal">493</span>
-<span class="normal">494</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">494</span>
 <span class="normal">495</span>
 <span class="normal">496</span>
 <span class="normal">497</span>
@@ -6676,7 +6704,17 @@ For an IN transfer, the returned value is the data that was read.</p>
 <span class="normal">528</span>
 <span class="normal">529</span>
 <span class="normal">530</span>
-<span class="normal">531</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ctrl_transfer</span><span class="p">(</span>
+<span class="normal">531</span>
+<span class="normal">532</span>
+<span class="normal">533</span>
+<span class="normal">534</span>
+<span class="normal">535</span>
+<span class="normal">536</span>
+<span class="normal">537</span>
+<span class="normal">538</span>
+<span class="normal">539</span>
+<span class="normal">540</span>
+<span class="normal">541</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ctrl_transfer</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">request_type</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">request</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -6702,6 +6740,13 @@ For an IN transfer, the returned value is the data that was read.</p>
 <span class="sd">        For an OUT transfer, the returned value is the number of bytes sent to the equipment.</span>
 <span class="sd">            For an IN transfer, the returned value is the data that was read.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># fmt: off</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.ctrl_transfer(0x</span><span class="si">%02X</span><span class="s2">, 0x</span><span class="si">%02X</span><span class="s2">, 0x</span><span class="si">%04X</span><span class="s2">, 0x</span><span class="si">%04X</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%d</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">request_type</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">data_or_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeout_ms</span>
+    <span class="p">)</span>
+    <span class="c1"># fmt: on</span>
+
     <span class="k">try</span><span class="p">:</span>
         <span class="n">out</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">array</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">ctrl_transfer</span><span class="p">(</span>
             <span class="n">bmRequestType</span><span class="o">=</span><span class="n">request_type</span><span class="p">,</span>
@@ -6741,20 +6786,20 @@ For an IN transfer, the returned value is the data that was read.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/usb.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">542</span>
-<span class="normal">543</span>
-<span class="normal">544</span>
-<span class="normal">545</span>
-<span class="normal">546</span>
-<span class="normal">547</span>
-<span class="normal">548</span>
-<span class="normal">549</span>
-<span class="normal">550</span>
-<span class="normal">551</span>
-<span class="normal">552</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">552</span>
 <span class="normal">553</span>
 <span class="normal">554</span>
-<span class="normal">555</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
+<span class="normal">555</span>
+<span class="normal">556</span>
+<span class="normal">557</span>
+<span class="normal">558</span>
+<span class="normal">559</span>
+<span class="normal">560</span>
+<span class="normal">561</span>
+<span class="normal">562</span>
+<span class="normal">563</span>
+<span class="normal">564</span>
+<span class="normal">565</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the USB device.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_device&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -7570,18 +7615,20 @@ device state to change (e.g., register values may be reset).</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/usb.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">567</span>
-<span class="normal">568</span>
-<span class="normal">569</span>
-<span class="normal">570</span>
-<span class="normal">571</span>
-<span class="normal">572</span>
-<span class="normal">573</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset_device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">577</span>
+<span class="normal">578</span>
+<span class="normal">579</span>
+<span class="normal">580</span>
+<span class="normal">581</span>
+<span class="normal">582</span>
+<span class="normal">583</span>
+<span class="normal">584</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset_device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform a USB port reset for the device.</span>
 
 <span class="sd">    If your program has to call this method, the reset will cause the</span>
 <span class="sd">    device state to change (e.g., register values may be reset).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.reset_device()&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>

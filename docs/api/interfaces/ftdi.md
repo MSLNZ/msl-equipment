@@ -4,6 +4,9 @@
 
 Before communicating with equipment that use a Future Technology Devices International (FTDI) chip for the interface, either a [libusb](https://libusb.info/){:target="_blank"}-compatible driver or the [d2xx](https://ftdichip.com/drivers/d2xx-drivers/){:target="_blank"} driver must be installed and the directory to the appropriate library file (`libusb` or `ftd2xx`) must be available on the `PATH` environment variable.
 
+!!! tip
+    If using the *d2xx* driver, you can create a `D2XX_LIBRARY` environment variable with the value being the full path to a *d2xx* library file to load. This variable can also be defined as a `<d2xx_library>` element in a [Configuration file][configuration-files].
+
 The following instructions are intended to be a starting point if you are having issues communicating with an FTDI chip.
 
 ### Windows {: #ftdi-prerequisites-windows }

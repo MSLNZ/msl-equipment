@@ -20,8 +20,8 @@ The following illustrates an example configuration file.
 
     This creates/overwrites the value of the D2XX_LIBRARY environment variable.
     Specifying this element is only necessary if the D2XX library is not
-    automatically found. You could also include the directory to the D2XX
-    library file as a <path> element in the configuration file (see below).
+    automatically found or if you want to use a different D2XX library instead
+    of the library available on the PATH environment variable.
   -->
   <d2xx_library>C:\Users\username\ftd2xx64.dll</d2xx_library>
 

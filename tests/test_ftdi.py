@@ -402,6 +402,8 @@ def test_read_write(usb_backend: USBBackend) -> None:  # noqa: PLR0915
         with pytest.raises(MSLConnectionError, match=r"bit mask of the line-status byte is 0b01100101\. Set"):
             _ = device.read(size=3)
 
+        usb_backend.read_offset = 0
+
         device.check_packet_for_errors = False
         assert device.read(size=3) == "llo"
         device.check_packet_for_errors = True

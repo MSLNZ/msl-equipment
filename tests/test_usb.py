@@ -220,10 +220,9 @@ def test_write_read_query(usb_backend: USBBackend) -> None:
 
         assert device.query("echo", decode=False) == b"echo\r\n"
 
-        # writes in `max_packet_size` so the first x's are not included in the return value
-        msg = (b"x" * device.bulk_out_endpoint.max_packet_size) + b"yyy\r\n"
-        assert device.write(msg) == device.bulk_out_endpoint.max_packet_size + 5
-        assert device.read(decode=False) == b"yyy\r\n"
+        msg = (b"x" * 5000) + b"yyy\r\n"
+        assert device.write(msg) == 5000 + 5
+        assert device.read(decode=False) == msg
 
         device.max_read_size = 4
         with pytest.raises(MSLConnectionError, match=r"max_read_size"):
@@ -232,14 +231,22 @@ def test_write_read_query(usb_backend: USBBackend) -> None:
         device.max_read_size = 1000
         assert device.read(decode=False) == b"more than 4 characters\r\n"
 
-        device.timeout = 0.06  # usb_backend.bulk_read() sleeps for 0.05 seconds per read
+        device.write_termination = None
         device.read_termination = None
+
+        # usb_backend.bulk_write/read() sleeps for 0.05 seconds per write/read
+        assert device.timeout is None
+        assert device.write("write_sleep!") == 12
+
+        device.timeout = 0.06
+        with pytest.raises(MSLTimeoutError):
+            _ = device.write("write_sleep!")
+
         usb_backend.add_bulk_response(b"sleep")
         usb_backend.add_bulk_response(b"sleep")
         with pytest.raises(MSLTimeoutError):
             _ = device.read(size=10)
 
-        device.write_termination = None
         assert device.write(b"") == 0
 
 

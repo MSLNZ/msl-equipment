@@ -303,6 +303,7 @@ class USB(MessageBased, regex=REGEX):
                 _Default: `0`_
             bConfigurationValue (int | None): The value of `bConfigurationValue` of the USB Configuration
                 Descriptor. If `None`, use the first Configuration found. _Default: `None`_
+            buffer_size (int): The maximum number of bytes to read at a time. _Default: `4096`_
             usb_backend (Literal["libusb1", "libusb0", "openusb"] | None): The PyUSB backend library to use
                 for the connection. If `None`, selects the first backend that is available. _Default: `None`_
         """
@@ -319,6 +320,7 @@ class USB(MessageBased, regex=REGEX):
             raise ValueError(msg)
 
         p = equipment.connection.properties
+        self._buffer_size: int = p.get("buffer_size", 4096)
 
         backend = p.get("usb_backend")
         if isinstance(backend, str):
@@ -396,7 +398,7 @@ class USB(MessageBased, regex=REGEX):
         original_timeout = self._timeout_ms
         timeout = original_timeout
         address = self._bulk_in.address
-        packet_size = self._bulk_in.max_packet_size
+        buffer: array[int] = usb.util.create_buffer(self._buffer_size)
         termination = self._read_termination
         read = self._device.read
         t0 = time.time()
@@ -415,8 +417,8 @@ class USB(MessageBased, regex=REGEX):
                     self._byte_buffer = self._byte_buffer[index:]
                     break
 
-            data: array[int] = read(address, packet_size, timeout)
-            self._byte_buffer.extend(data)
+            transferred: int = read(address, buffer, timeout)
+            self._byte_buffer.extend(buffer[:transferred])
 
             if len(self._byte_buffer) > self._max_read_size:
                 error = f"len(message) [{len(self._byte_buffer)}] > max_read_size [{self._max_read_size}]"
@@ -441,21 +443,30 @@ class USB(MessageBased, regex=REGEX):
     def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
         """Overrides method in MessageBased."""
         address = self._bulk_out.address
-        packet_size = self._bulk_out.max_packet_size
-        timeout = self._timeout_ms
+        original_timeout = self._timeout_ms
+        timeout = original_timeout
         write = self._device.write
-        offset: int = 0
+        wrote: int = 0
         size = len(message)
-        while offset < size:
-            write_size = packet_size
-            if offset + write_size > size:
-                write_size = size - offset
-            length = write(address, message[offset : offset + write_size], timeout)
-            if length <= 0:
-                msg = "USB bulk OUT wrote <=0 bytes"
-                raise MSLConnectionError(self, msg)
-            offset += length
-        return offset
+        view = memoryview(message)
+        t0 = time.time()
+        while True:
+            # PyUSB should handle packet fragmentation automatically
+            # https://github.com/pyusb/pyusb/discussions/427
+            wrote += write(address, view[wrote:], timeout)
+            if wrote >= size:
+                break
+
+            if original_timeout > 0:
+                # decrease the timeout when writing each packet so that the total
+                # time to write all packets preserves what was specified
+                elapsed_time = int((time.time() - t0) * 1000)
+                if elapsed_time >= original_timeout:
+                    raise MSLTimeoutError(self)
+                # use at least 1 ms, since libusb considers 0 as no timeout
+                timeout = max(1, original_timeout - elapsed_time)
+
+        return wrote
 
     @staticmethod
     def build_request_type(direction: USB.CtrlDirection, type: USB.CtrlType, recipient: USB.CtrlRecipient) -> int:  # noqa: A002

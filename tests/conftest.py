@@ -599,6 +599,7 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
     def __init__(self) -> None:
         """Mocked USB backend for testing the USB interface."""
         super().__init__()  # pyright: ignore[reportUnknownMemberType]
+        self.read_offset: int = 0
         self._devices: list[USBDeviceDescriptor] = []
         self._device: USBDeviceDescriptor = USBDeviceDescriptor()
         self._bulk_message: array[int] = array("B")
@@ -657,7 +658,12 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
 
     def bulk_read(self, handle: int, ep: int, interface: int, buffer: array[int], timeout: int) -> int:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
         """Mock a bulk read."""
-        msg = self._bulk_message if self._bulk_queue.empty() else array("B", self._bulk_queue.get())
+        if self._bulk_queue.empty():
+            # return data in wMaxPacketSize=64 chunks
+            msg = self._bulk_message[self.read_offset : self.read_offset + 64]
+            self.read_offset += 64
+        else:
+            msg = array("B", self._bulk_queue.get())
         if msg.tobytes() in {b"sleep", b"\x11\x60sleep"}:  # \x11\x60 are the status bytes for the FTDI packet
             sleep(0.05)
         buffer[:] = msg
@@ -666,6 +672,10 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
     def bulk_write(self, handle: int, ep: int, interface: int, data: array[int], timeout: int) -> int:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
         """Mock a bulk write."""
         self._bulk_message = data
+        self.read_offset = 0
+        if data.tobytes() in {b"write_sleep!", b"sleep!"}:
+            sleep(0.05)
+            return len(data) // 2
         return len(data)
 
     def claim_interface(self, handle: int, interface: int) -> None:  # pyright: ignore[reportUnusedParameter]

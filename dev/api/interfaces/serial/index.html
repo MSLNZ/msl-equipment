@@ -4846,7 +4846,7 @@
 
 
 
-        <p>Base class for equipment that is connected through a serial port.</p>
+        <p>Base class for equipment that is connected through a serial port (or a USB-to-Serial adaptor).</p>
 
 
 
@@ -4917,11 +4917,11 @@ the property name. See <a class="autorefs autorefs-external" href="https://pyser
           <tr class="doc-section-item">
             <td><code><span title="msl.equipment.interfaces.serial.Serial.__init__.data_bits">data_bits</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            DataBits (msl.equipment.enumerations.DataBits)" href="../../enumerations/#msl.equipment.enumerations.DataBits">DataBits</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The number of data bits, e.g. 5, 6, 7, 8 (<em>alias:</em> bytesize). <em>Default: <code>8</code></em></p>
+                <p>The number of data bits: 5, 6, 7 or 8 (<em>alias:</em> bytesize). <em>Default: <code>8</code></em></p>
               </div>
             </td>
           </tr>
@@ -4943,18 +4943,21 @@ the property name. See <a class="autorefs autorefs-external" href="https://pyser
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The inter-character timeout. <em>Default: <code>None</code></em></p>
+                <p>The maximum duration, in seconds, that is allowed between two
+consecutive bytes in a read operation. A value of zero (or <code>None</code>) indicates that the inter-byte timeout
+condition is not used. On Windows, the minimum supported value is 0.001 seconds, on POSIX it is 0.1
+seconds. A value less than the minimum will disable the inter-byte timeout. <em>Default: <code>None</code></em></p>
               </div>
             </td>
           </tr>
           <tr class="doc-section-item">
             <td><code><span title="msl.equipment.interfaces.serial.Serial.__init__.parity">parity</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            Parity (msl.equipment.enumerations.Parity)" href="../../enumerations/#msl.equipment.enumerations.Parity">Parity</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Parity checking, e.g. 'even', 'odd'. <em>Default: <code>none</code></em></p>
+                <p>Parity checking: NONE, ODD, EVEN, MARK or SPACE. <em>Default: <code>NONE</code></em></p>
               </div>
             </td>
           </tr>
@@ -4972,11 +4975,11 @@ the property name. See <a class="autorefs autorefs-external" href="https://pyser
           <tr class="doc-section-item">
             <td><code><span title="msl.equipment.interfaces.serial.Serial.__init__.stop_bits">stop_bits</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            StopBits (msl.equipment.enumerations.StopBits)" href="../../enumerations/#msl.equipment.enumerations.StopBits">StopBits</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The number of stop bits, e.g. 1, 1.5, 2 (<em>alias:</em> stopbits). <em>Default: <code>1</code></em></p>
+                <p>The number of stop bits: 1, 1.5 or 2 (<em>alias:</em> stopbits). <em>Default: <code>1</code></em></p>
               </div>
             </td>
           </tr>
@@ -5003,46 +5006,49 @@ the property name. See <a class="autorefs autorefs-external" href="https://pyser
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/msl/equipment/interfaces/serial.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span>
-<span class="normal">94</span>
-<span class="normal">95</span>
-<span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for equipment that is connected through a serial port.</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for equipment that is connected through a serial port (or a USB-to-Serial adaptor).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
@@ -5057,12 +5063,15 @@ the property name. See <a class="autorefs autorefs-external" href="https://pyser
 
 <span class="sd">    Attributes: Connection Properties:</span>
 <span class="sd">        baud_rate (int): The baud rate (_alias:_ baudrate). _Default: `9600`_</span>
-<span class="sd">        data_bits (int): The number of data bits, e.g. 5, 6, 7, 8 (_alias:_ bytesize). _Default: `8`_</span>
+<span class="sd">        data_bits (DataBits | str | int): The number of data bits: 5, 6, 7 or 8 (_alias:_ bytesize). _Default: `8`_</span>
 <span class="sd">        dsr_dtr (bool): Whether to enable hardware (DSR/DTR) flow control (_alias:_ dsrdtr). _Default: `False`_</span>
-<span class="sd">        inter_byte_timeout (float | None): The inter-character timeout. _Default: `None`_</span>
-<span class="sd">        parity (str): Parity checking, e.g. &#39;even&#39;, &#39;odd&#39;. _Default: `none`_</span>
+<span class="sd">        inter_byte_timeout (float | None): The maximum duration, in seconds, that is allowed between two</span>
+<span class="sd">            consecutive bytes in a read operation. A value of zero (or `None`) indicates that the inter-byte timeout</span>
+<span class="sd">            condition is not used. On Windows, the minimum supported value is 0.001 seconds, on POSIX it is 0.1</span>
+<span class="sd">            seconds. A value less than the minimum will disable the inter-byte timeout. _Default: `None`_</span>
+<span class="sd">        parity (Parity | str): Parity checking: NONE, ODD, EVEN, MARK or SPACE. _Default: `NONE`_</span>
 <span class="sd">        rts_cts (bool): Whether to enable hardware (RTS/CTS) flow control (_alias:_ rtscts). _Default: `False`_</span>
-<span class="sd">        stop_bits (int | float): The number of stop bits, e.g. 1, 1.5, 2 (_alias:_ stopbits). _Default: `1`_</span>
+<span class="sd">        stop_bits (StopBits | str | float): The number of stop bits: 1, 1.5 or 2 (_alias:_ stopbits). _Default: `1`_</span>
 <span class="sd">        xon_xoff (bool): Whether to enable software flow control (_alias:_ xonxoff). _Default: `False`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
@@ -5327,11 +5336,11 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/serial.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">136</span>
-<span class="normal">137</span>
-<span class="normal">138</span>
-<span class="normal">139</span>
-<span class="normal">140</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Close the serial port.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_serial&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serial</span><span class="o">.</span><span class="n">is_open</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_serial</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -6452,7 +6461,7 @@ See <a class="autorefs autorefs-internal" title="            MessageFormat
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2017 - 2025 Measurement Standards Laboratory of New Zealand
+      Copyright &copy; 2017 - 2026 Measurement Standards Laboratory of New Zealand
     </div>
   
   

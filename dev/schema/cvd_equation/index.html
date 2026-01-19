@@ -5554,8 +5554,8 @@ from an equipment register.</p>
     <span class="n">ranges</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="n">_range</span><span class="p">,</span>
         <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="n">Range</span><span class="p">(</span>
-            <span class="n">minimum</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">_cvd_resistance</span><span class="p">(</span><span class="n">_range</span><span class="o">.</span><span class="n">minimum</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)),</span> <span class="mi">3</span><span class="p">),</span>
-            <span class="n">maximum</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">_cvd_resistance</span><span class="p">(</span><span class="n">_range</span><span class="o">.</span><span class="n">maximum</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)),</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="n">minimum</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">_cvd_resistance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">_range</span><span class="o">.</span><span class="n">minimum</span><span class="p">),</span> <span class="n">r0</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)),</span> <span class="mi">3</span><span class="p">),</span>
+            <span class="n">maximum</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">_cvd_resistance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">_range</span><span class="o">.</span><span class="n">maximum</span><span class="p">),</span> <span class="n">r0</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)),</span> <span class="mi">3</span><span class="p">),</span>
         <span class="p">),</span>
     <span class="p">}</span>
 
@@ -6155,7 +6155,7 @@ from an equipment register.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2017 - 2025 Measurement Standards Laboratory of New Zealand
+      Copyright &copy; 2017 - 2026 Measurement Standards Laboratory of New Zealand
     </div>
   
   

@@ -5243,7 +5243,7 @@ the index of a column. If you prefer to work with unstructured data, call
 <a href="#msl.equipment.schema.Table.unstructured" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">unstructured</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.DTypeLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.DTypeLike">DTypeLike</a></span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.DTypeLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.DTypeLike">DTypeLike</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">copy</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">casting</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span>
         <span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="s2">&quot;equiv&quot;</span><span class="p">,</span> <span class="s2">&quot;safe&quot;</span><span class="p">,</span> <span class="s2">&quot;same_kind&quot;</span><span class="p">,</span> <span class="s2">&quot;unsafe&quot;</span>
@@ -5274,7 +5274,7 @@ for more details.</p>
                 <code>dtype</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" title="numpy.typing.DTypeLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.DTypeLike">DTypeLike</a></code>
+                  <code><a class="autorefs autorefs-external" title="numpy.typing.DTypeLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.DTypeLike">DTypeLike</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5380,7 +5380,7 @@ numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
 <span class="normal">1466</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unstructured</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">casting</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="s2">&quot;equiv&quot;</span><span class="p">,</span> <span class="s2">&quot;safe&quot;</span><span class="p">,</span> <span class="s2">&quot;same_kind&quot;</span><span class="p">,</span> <span class="s2">&quot;unsafe&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;unsafe&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">_Any</span><span class="p">]:</span>
@@ -5494,7 +5494,7 @@ numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2017 - 2025 Measurement Standards Laboratory of New Zealand
+      Copyright &copy; 2017 - 2026 Measurement Standards Laboratory of New Zealand
     </div>
   
   

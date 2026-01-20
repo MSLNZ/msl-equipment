@@ -5165,6 +5165,10 @@
 <h1 id="ftdi">FTDI<a class="headerlink" href="#ftdi" title="Permanent link">¤</a></h1>
 <h2 id="ftdi-prerequisites">Prerequisites<a class="headerlink" href="#ftdi-prerequisites" title="Permanent link">¤</a></h2>
 <p>Before communicating with equipment that use a Future Technology Devices International (FTDI) chip for the interface, either a <a href="https://libusb.info/" target="_blank">libusb</a>-compatible driver or the <a href="https://ftdichip.com/drivers/d2xx-drivers/" target="_blank">d2xx</a> driver must be installed and the directory to the appropriate library file (<code>libusb</code> or <code>ftd2xx</code>) must be available on the <code>PATH</code> environment variable.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If using the <em>d2xx</em> driver, you can create a <code>D2XX_LIBRARY</code> environment variable with the value being the full path to a <em>d2xx</em> library file to load. This variable can also be defined as a <code>&lt;d2xx_library&gt;</code> element in a <a class="autorefs autorefs-internal" title="Configuration Files" href="../../../getting-started/configuration-files/#configuration-files">Configuration file</a>.</p>
+</div>
 <p>The following instructions are intended to be a starting point if you are having issues communicating with an FTDI chip.</p>
 <h3 id="ftdi-prerequisites-windows">Windows<a class="headerlink" href="#ftdi-prerequisites-windows" title="Permanent link">¤</a></h3>
 <p>The choice of using a <code>libusb</code> or <code>d2xx</code> driver depends on whether the manufacturer of the equipment provides software that you also want to use to control the equipment and what driver their software uses. On Windows, this is typically the <code>d2xx</code> driver. If you don't want to use the manufacturer's software (or they don't provide software) then the choice of which driver to use does not matter.</p>

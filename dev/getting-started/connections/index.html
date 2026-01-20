@@ -763,17 +763,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#address-syntax" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Address Syntax
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#connections-interfaces" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -784,6 +773,34 @@
   
     <nav class="md-nav" aria-label="Interfaces">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#address-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Address Syntax
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Address Syntax">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connections-address-syntax-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#connections-backend" class="md-nav__link">
@@ -4607,17 +4624,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#address-syntax" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Address Syntax
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#connections-interfaces" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4628,6 +4634,34 @@
   
     <nav class="md-nav" aria-label="Interfaces">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#address-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Address Syntax
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Address Syntax">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connections-address-syntax-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#connections-backend" class="md-nav__link">
@@ -4782,8 +4816,137 @@
 <span class="w">    </span><span class="nt">&lt;/connection&gt;</span>
 <span class="nt">&lt;/connections&gt;</span>
 </code></pre></div>
-<h2 id="address-syntax">Address Syntax<a class="headerlink" href="#address-syntax" title="Permanent link">¤</a></h2>
-<p>The following are examples of VISA-style addresses that may be used to connect to equipment.</p>
+<h2 id="connections-interfaces">Interfaces<a class="headerlink" href="#connections-interfaces" title="Permanent link">¤</a></h2>
+<p>The following interface classes are available</p>
+<ul>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/ftdi/#ftdi">FTDI</a> &mdash; For equipment that use a Future Technology Devices International (FTDI) chip</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/gpib/#gpib">GPIB</a> &mdash; For equipment that use the GPIB (IEEE 488) protocol</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/hislip/#hislip">HiSLIP</a> &mdash; For equipment that use the <a href="https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf" target="_blank">HiSLIP</a> protocol</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/prologix/#prologix">Prologix</a> &mdash; Use <a href="https://prologix.biz/" target="_blank">Prologix</a> hardware to establish a connection to GPIB-compatible equipment</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/sdk/#sdk">SDK</a> &mdash; For equipment that use a Software Development Kit (SDK) for communication</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/serial/#serial">Serial</a> &mdash; For equipment that is connected through a serial port (or a USB-to-Serial adaptor)</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/socket/#socket">Socket</a> &mdash; For equipment that is connected through a network socket</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/usb/#usb">USB</a> &mdash; For equipment that use the USB protocol</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/vxi11/#vxi11">VXI11</a> &mdash; For equipment that use the <a href="http://www.vxibus.org/specifications.html" target="_blank">VXI-11</a> protocol</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/zeromq/#zeromq">ZeroMQ</a> &mdash; For equipment that use the <a href="https://zeromq.org/" target="_blank">ZeroMQ</a> protocol</li>
+</ul>
+<h3 id="address-syntax">Address Syntax<a class="headerlink" href="#address-syntax" title="Permanent link">¤</a></h3>
+<p>Each <a class="autorefs autorefs-internal" title="Interfaces" href="#connections-interfaces">Interface</a> has a syntax for the <a class="autorefs autorefs-internal" title="            Connection" href="../../api/connection/#msl.equipment.schema.Connection">Connection</a> <a class="autorefs autorefs-internal" title="            address
+
+
+  
+      instance-attribute
+  " href="../../api/connection/#msl.equipment.schema.Connection.address">address</a> that it supports. The following table shows the syntax for each Interface. Optional segments are shown in square brackets <code>[ ]</code> and capital letters represent literal text.</p>
+<table>
+  <tr>
+    <th>Interface</th>
+    <th>Syntax</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>FTDI</td>
+    <td>FTDI[driver]::vendor::product::serial[::number]</td>
+    <td>
+      <b><i>driver</i></b> &ndash; 0=libusb, 2=d2xx [default=0]<br/>
+      <b><i>vendor</i></b> &ndash; Vendor (manufacturer) ID, in hexadecimal or decimal notation<br/>
+      <b><i>product</i></b> &ndash; Product ID, in hexadecimal or decimal notation<br/>
+      <b><i>serial</i></b> &ndash; Serial number (or unique identifier)<br/>
+      <b><i>number</i></b> &ndash; USB Interface Number, only used with the libusb driver [default=0]
+    </td>
+  </tr>
+  <tr>
+    <td>GPIB</td>
+    <td>
+      GPIB[board]::pad[::sad][::INSTR]<br/>
+      GPIB[board]::INTFC
+    </td>
+    <td>
+      <b><i>board</i></b> &ndash; board number [default=0]<br/>
+      <b><i>pad</i></b> &ndash; Primary address or an interface name (see <a href="https://linux-gpib.sourceforge.io/doc_html/configuration-gpib-conf.html" target="_blank">gpib.conf</a> for more details about using a <i>name</i> on Linux)<br/>
+      <b><i>sad</i></b> &ndash; Secondary address [default=None]
+    </td>
+  </tr>
+  <tr>
+    <td>HiSLIP</td>
+    <td>TCPIP[board]::host::hislip#[,port][::INSTR]</td>
+    <td>
+      <b><i>board</i></b> &ndash; board number (not used) [default=0]<br/>
+      <b><i>host</i></b> &ndash; Hostname or IP address of the device<br/>
+      <b><i>hislip#</i></b> &ndash; The text <code>hislip</code> followed by a numeric sub address (e.g., hislip0)<br/>
+      <b><i>port</i></b> &ndash; The network port number [default=4880]
+    </td>
+  </tr>
+  <tr>
+    <td>PROLOGIX</td>
+    <td>
+      PROLOGIX::port[::GPIB]::pad[::sad]<br/>
+      PROLOGIX::host::1234[::GPIB]::pad[::sad]
+    </td>
+    <td>
+      <b><i>port</i></b> &ndash; Serial port address (GPIB-USB Controller)<br/>
+      <b><i>host</i></b> &ndash; Hostname or IP address (GPIB-ETHERNET Controller)<br/>
+      <b><i>pad</i></b> &ndash; Primary GPIB address<br/>
+      <b><i>sad</i></b> &ndash; Secondary GPIB address [default=None]<br/>
+      <i>The prefix PROLOGIX is case insensitive</i>
+    </td>
+  </tr>
+  <tr>
+    <td>SDK</td>
+    <td>SDK::path</td>
+    <td>
+      <b><i>path</i></b> &ndash; Path to the library file
+    </td>
+  </tr>
+  <tr>
+    <td>SERIAL</td>
+    <td>(ASRL|COM|ASRLCOM)port[::INSTR]</td>
+    <td>The text <code>ASRL</code>, <code>COM</code> or <code>ASRLCOM</code> followed by the serial port address</td>
+  </tr>
+  <tr>
+    <td>SOCKET</td>
+    <td>
+      TCP::host::port<br/>
+      UDP::host::port<br/>
+      TCPIP[board]::host::port::SOCKET
+    </td>
+    <td>
+      <b><i>host</i></b> &ndash; Hostname or IP address<br/>
+      <b><i>port</i></b> &ndash; Network port number<br/>
+      <b><i>board</i></b> &ndash; board number (not used) [default=0]
+    </td>
+  </tr>
+  <tr>
+    <td>USB</td>
+    <td>USB[board]::vendor::product::serial[::number]::RAW</td>
+    <td>
+      <b><i>board</i></b> &ndash; board number (not used) [default=0]<br/>
+      <b><i>vendor</i></b> &ndash; Vendor (manufacturer) ID, in hexadecimal or decimal notation<br/>
+      <b><i>product</i></b> &ndash; Product ID, in hexadecimal or decimal notation<br/>
+      <b><i>serial</i></b> &ndash; Serial number (or unique identifier). Literal text <code>IGNORE</code> means that the serial number is not used (the vendor and product values uniquely identify the device)<br/>
+      <b><i>number</i></b> &ndash; USB Interface Number [default=0]
+    </td>
+  </tr>
+  <tr>
+    <td>VXI-11</td>
+    <td>TCPIP[board]::host[::name][::INSTR]</td>
+    <td>
+      <b><i>board</i></b> &ndash; board number (not used) [default=0]<br/>
+      <b><i>host</i></b> &ndash; Hostname or IP address<br/>
+      <b><i>name</i></b> &ndash; Device name [default=inst0]
+    </td>
+  </tr>
+  <tr>
+    <td>ZMQ</td>
+    <td>ZMQ::host::port</td>
+    <td>
+      <b><i>host</i></b> &ndash; Hostname or IP address<br/>
+      <b><i>port</i></b> &ndash; Network port number
+    </td>
+  </tr>
+</table>
+
+<h4 id="connections-address-syntax-examples">Examples<a class="headerlink" href="#connections-address-syntax-examples" title="Permanent link">¤</a></h4>
+<p>The following are examples of the addresses that may be used to connect to equipment.</p>
 <table>
   <tr>
     <th>Interface</th>
@@ -4814,7 +4977,7 @@
   <tr>
     <td>GPIB</td>
     <td>GPIB0::voltmeter</td>
-    <td>GPIB device at board=0, interface name="voltmeter" (see <a href="https://linux-gpib.sourceforge.io/doc_html/configuration-gpib-conf.html" target="_blank">gpib.conf</a> for more details about the "name" option)</td>
+    <td>GPIB device at board=0, interface name=voltmeter (see <a href="https://linux-gpib.sourceforge.io/doc_html/configuration-gpib-conf.html" target="_blank">gpib.conf</a> for more details about the <i>name</i> option on Linux)</td>
   </tr>
   <tr>
     <td>GPIB</td>
@@ -4868,13 +5031,13 @@
   </tr>
   <tr>
     <td>SDK</td>
-    <td>SDK::C:/Manufacturer/library.dll</td>
+    <td>SDK::C:\Manufacturer\library.dll</td>
     <td>Specify the full path to the SDK</td>
   </tr>
   <tr>
     <td>SDK</td>
-    <td>SDK::library.dll</td>
-    <td>Specify only the filename if the path to where the SDK file is located has been added to the <code>PATH</code> environment variable</td>
+    <td>SDK::library</td>
+    <td>Specify only the filename if the path to where the SDK file is located has been added to the <code>PATH</code> environment variable. You may also omit the file extension: <code>.dll</code> is used on Windows, <code>.so</code> is used on Linux, <code>.dylib</code> is used on macOS</td>
   </tr>
   <tr>
     <td>SERIAL</td>
@@ -4949,23 +5112,9 @@
 </table>
 
 <p>National Instruments also provides <a href="https://www.ni.com/docs/en-US/bundle/ni-visa/page/visa-resource-syntax-and-examples.html" target="_blank">examples</a> if you are using <a href="https://pyvisa.readthedocs.io/en/stable/" target="_blank">PyVISA</a> as the <a class="autorefs autorefs-internal" title="Backends" href="#connections-backend">backend</a>.</p>
-<h2 id="connections-interfaces">Interfaces<a class="headerlink" href="#connections-interfaces" title="Permanent link">¤</a></h2>
-<p>The following interface classes are available</p>
-<ul>
-<li><a class="autorefs autorefs-internal" href="../../api/interfaces/ftdi/#ftdi">FTDI</a> &mdash; For equipment that use a Future Technology Devices International (FTDI) chip</li>
-<li><a class="autorefs autorefs-internal" href="../../api/interfaces/gpib/#gpib">GPIB</a> &mdash; For equipment that use the GPIB (IEEE 488) protocol</li>
-<li><a class="autorefs autorefs-internal" href="../../api/interfaces/hislip/#hislip">HiSLIP</a> &mdash; For equipment that use the <a href="https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf" target="_blank">HiSLIP</a> protocol</li>
-<li><a class="autorefs autorefs-internal" href="../../api/interfaces/prologix/#prologix">Prologix</a> &mdash; Use <a href="https://prologix.biz/" target="_blank">Prologix</a> hardware to establish a connection to GPIB-compatible equipment</li>
-<li><a class="autorefs autorefs-internal" href="../../api/interfaces/sdk/#sdk">SDK</a> &mdash; For equipment that use a Software Development Kit (SDK) for communication</li>
-<li><a class="autorefs autorefs-internal" href="../../api/interfaces/serial/#serial">Serial</a> &mdash; For equipment that is connected through a serial port (or a USB-to-Serial adaptor)</li>
-<li><a class="autorefs autorefs-internal" href="../../api/interfaces/socket/#socket">Socket</a> &mdash; For equipment that is connected through a network socket</li>
-<li><a class="autorefs autorefs-internal" href="../../api/interfaces/usb/#usb">USB</a> &mdash; For equipment that use the USB protocol</li>
-<li><a class="autorefs autorefs-internal" href="../../api/interfaces/vxi11/#vxi11">VXI11</a> &mdash; For equipment that use the <a href="http://www.vxibus.org/specifications.html" target="_blank">VXI-11</a> protocol</li>
-<li><a class="autorefs autorefs-internal" href="../../api/interfaces/zeromq/#zeromq">ZeroMQ</a> &mdash; For equipment that use the <a href="https://zeromq.org/" target="_blank">ZeroMQ</a> protocol</li>
-</ul>
 <h3 id="connections-backend">Backends<a class="headerlink" href="#connections-backend" title="Permanent link">¤</a></h3>
 <p>When a <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instance is created, the <code>backend</code> keyword argument decides which backend to use when interfacing with the equipment. There are different <a class="autorefs autorefs-internal" title="            Backend" href="../../api/enumerations/#msl.equipment.enumerations.Backend">Backend</a>s to choose from: <code>MSL</code> (default), <code>PyVISA</code> or <code>NIDAQ</code>.</p>
-<p>The <a class="autorefs autorefs-internal" title="Interfaces" href="#connections-interfaces">interface class</a> can be used if the <code>backend</code> is <code>MSL</code>. The corresponding interface classes for the external backends are <a class="autorefs autorefs-internal" title="            PyVISA" href="../../api/backends/pyvisa/#msl.equipment.interfaces.pyvisa.PyVISA">PyVISA</a> and <a class="autorefs autorefs-internal" title="            NIDAQ" href="../../api/backends/nidaq/#msl.equipment.interfaces.nidaq.NIDAQ">NIDAQ</a>.</p>
+<p>The <a class="autorefs autorefs-internal" title="Interfaces" href="#connections-interfaces">interface classes</a> can be used if the <code>backend</code> is <code>MSL</code>. The corresponding interface classes for the external backends are <a class="autorefs autorefs-internal" title="            PyVISA" href="../../api/backends/pyvisa/#msl.equipment.interfaces.pyvisa.PyVISA">PyVISA</a> and <a class="autorefs autorefs-internal" title="            NIDAQ" href="../../api/backends/nidaq/#msl.equipment.interfaces.nidaq.NIDAQ">NIDAQ</a>.</p>
 <h2 id="connections-python-examples">Python Examples<a class="headerlink" href="#connections-python-examples" title="Permanent link">¤</a></h2>
 <p>If you are primarily interested in using <code>msl-equipment</code> to interface with equipment (and not the <a class="autorefs autorefs-internal" href="../equipment-registers/#equipment-registers">Equipment Registers</a> aspect), the simplest approach is to create <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instances in a module and call the <a class="autorefs autorefs-internal" title="            connect" href="../../api/connection/#msl.equipment.schema.Connection.connect">connect</a> method (which is equivalent to calling <a class="autorefs autorefs-internal" title="            connect" href="../../schema/equipment/#msl.equipment.schema.Equipment.connect">Equipment.connect()</a> if you are using <a class="autorefs autorefs-internal" href="../equipment-registers/#equipment-registers">Equipment Registers</a>).</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span>

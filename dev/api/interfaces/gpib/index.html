@@ -5385,12 +5385,16 @@
 <h1 id="gpib">GPIB<a class="headerlink" href="#gpib" title="Permanent link">¤</a></h1>
 <h2 id="gpib-prerequisites">Prerequisites<a class="headerlink" href="#gpib-prerequisites" title="Permanent link">¤</a></h2>
 <p>Before communicating with equipment that use the General Purpose Interface Bus (GPIB), you must have a GPIB-compatible driver installed and the directory to the appropriate library file (e.g., <code>ni4882</code>, <code>gpib-32</code>, <code>libgpib</code>) must be available on the <code>PATH</code> environment variable.</p>
-<p>Consult the manufacturer's website for the appropriate software to install for the GPIB hardware you are using. Some options may include installation of one of the following software packages for your operating system,</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can create a <code>GPIB_LIBRARY</code> environment variable with the value being the full path to a GPIB library file to load. This variable can also be defined as a <code>&lt;gpib_library&gt;</code> element in a <a class="autorefs autorefs-internal" title="Configuration Files" href="../../../getting-started/configuration-files/#configuration-files">Configuration file</a>.</p>
+</div>
+<p>Consult the manufacturer's website for the appropriate software to install for the GPIB hardware you are using. Some options may include installing one of the following software packages for your operating system,</p>
 <ul>
 <li><a href="https://www.ni.com/en/support/downloads/drivers/download.ni-488-2.html#575749" target="_blank">NI-488.2</a></li>
 <li><a href="https://www.keysight.com/vn/en/lib/software-detail/computer-software/io-libraries-suite-downloads-2175637.html" target="_blank">Keysight IO Libraries Suite</a></li>
 </ul>
-<p>or you may even want to <a href="https://github.com/xyphro/UsbGpib" target="_blank">build your own</a> USB-to-GPIB adaptor.</p>
+<p>or you may even want to <a href="https://github.com/xyphro/UsbGpib" target="_blank">build your own</a> GPIB adaptor.</p>
 <h3 id="gpib-prerequisites-linux">Debian/Ubuntu<a class="headerlink" href="#gpib-prerequisites-linux" title="Permanent link">¤</a></h3>
 <p>If you are using Linux as your operating system, you may want to consider using the <a href="https://linux-gpib.sourceforge.io/" target="_blank">linux-gpib</a> project to communicate with <a href="https://linux-gpib.sourceforge.io/doc_html/supported-hardware.html" target="_blank">supported GPIB hardware</a>.</p>
 <p>Save the following bash script as, for example, <code>install-linux-gpib.sh</code> and (optionally) update the value of the <code>VERSION</code> parameter to be the <a href="https://sourceforge.net/projects/linux-gpib/files/linux-gpib%20for%203.x.x%20and%202.6.x%20kernels/" target="_blank">latest linux-gpib</a> release number.</p>
@@ -5405,7 +5409,7 @@
 sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>--yes<span class="w"> </span>linux-headers-<span class="k">$(</span>uname<span class="w"> </span>-r<span class="k">)</span><span class="w"> </span>wget<span class="w"> </span>automake<span class="w"> </span>libtool<span class="w"> </span>flex<span class="w"> </span>bison
 
 <span class="c1"># Download and extract the specified linux-gpib version</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Downloading source from https://sourceforge.net ...&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Downloading linux-gpib-</span><span class="nv">$VERSION</span><span class="s2">.tar.gz source from https://sourceforge.net ...&quot;</span>
 wget<span class="w"> </span>-q<span class="w"> </span>-O<span class="w"> </span>linux-gpib-<span class="nv">$VERSION</span>.tar.gz<span class="w"> </span>https://sourceforge.net/projects/linux-gpib/files/linux-gpib%20for%203.x.x%20and%202.6.x%20kernels/<span class="nv">$VERSION</span>/linux-gpib-<span class="nv">$VERSION</span>.tar.gz/download
 tar<span class="w"> </span>-xf<span class="w"> </span>linux-gpib-<span class="nv">$VERSION</span>.tar.gz
 <span class="nb">cd</span><span class="w"> </span>linux-gpib-<span class="nv">$VERSION</span>
@@ -5431,11 +5435,11 @@ sudo<span class="w"> </span>addgroup<span class="w"> </span>gpib
 sudo<span class="w"> </span>usermod<span class="w"> </span>-a<span class="w"> </span>-G<span class="w"> </span>gpib<span class="w"> </span><span class="k">$(</span>whoami<span class="k">)</span>
 
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Plug the GPIB-USB controller(s) into the appropriate USB port and run &#39;gpib_config&#39;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Plug the GPIB-USB controller(s) into the appropriate USB port and run &#39;sudo gpib_config&#39;&quot;</span>
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;to update the &#39;board_type&#39; for the controller(s) that you are using.&quot;</span>
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;If you get an error, for example,&quot;</span>
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  failed to open device file &#39;/dev/gpib0&#39;&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;unplug/re-plug the GPIB-USB controller (or restart the computer) and run &#39;gpib_config&#39; again.&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;unplug/re-plug the GPIB-USB controller (or restart the computer) and run &#39;sudo gpib_config&#39; again.&quot;</span>
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;You may also delete the linux-gpib-</span><span class="nv">$VERSION</span><span class="s2"> directory and the linux-gpib-</span><span class="nv">$VERSION</span><span class="s2">.tar.gz file.&quot;</span>
 </code></pre></div>
 </details>

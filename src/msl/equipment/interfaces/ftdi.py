@@ -7,6 +7,7 @@ import os
 import re
 import sys
 import time
+from array import array
 from ctypes import POINTER, byref, c_ubyte, c_uint16, c_ulong, c_ushort, c_void_p, create_string_buffer
 from dataclasses import dataclass
 from functools import partial
@@ -22,7 +23,6 @@ from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
 from .usb import USB
 
 if TYPE_CHECKING:
-    from array import array
     from ctypes import CDLL
     from typing import Any, Callable, Literal, Never
 
@@ -779,21 +779,21 @@ class FTDI(MessageBased, regex=REGEX):
         self._in_req_type: int = -1
         self._index: int = -1
         self._characteristics: int = 0
+        self._buffer: bytearray = bytearray()
 
         if parsed.driver == 0:
-            # http://developer.intra2net.com/git/?p=libftdi;a=tree;f=src;hb=HEAD
-            self._libusb = USB(equipment)
-            self._libusb._str = self._str  # noqa: SLF001
-            self._index = self._libusb.bulk_in_endpoint.interface_number + 1
-            self._out_req_type = self._libusb.build_request_type(
-                direction=self._libusb.CtrlDirection.OUT,
-                type=self._libusb.CtrlType.VENDOR,
-                recipient=self._libusb.CtrlRecipient.DEVICE,
+            self._libusb = libusb = USB(equipment)
+            libusb._str = self._str  # noqa: SLF001
+            self._index = libusb.bulk_in_endpoint.interface_number + 1
+            self._out_req_type = libusb.build_request_type(
+                direction=libusb.CtrlDirection.OUT,
+                type=libusb.CtrlType.VENDOR,
+                recipient=libusb.CtrlRecipient.DEVICE,
             )
-            self._in_req_type = self._libusb.build_request_type(
-                direction=self._libusb.CtrlDirection.IN,
-                type=self._libusb.CtrlType.VENDOR,
-                recipient=self._libusb.CtrlRecipient.DEVICE,
+            self._in_req_type = libusb.build_request_type(
+                direction=libusb.CtrlDirection.IN,
+                type=libusb.CtrlType.VENDOR,
+                recipient=libusb.CtrlRecipient.DEVICE,
             )
         elif parsed.driver == 2:  # noqa: PLR2004
             self._d2xx = _D2XX(errcheck=self._error_check)
@@ -842,13 +842,13 @@ class FTDI(MessageBased, regex=REGEX):
             raise MSLConnectionError(self, msg)
         return result
 
-    def _read(self, size: int | None = None) -> bytes:  # pyright: ignore[reportImplicitOverride]  # noqa: C901
+    def _read(self, size: int | None = None) -> bytes:  # pyright: ignore[reportImplicitOverride]
+        """Overrides method in MessageBased."""
         if self._d2xx is not None:
             return self._d2xx.read(size)
 
         assert self._libusb is not None  # noqa: S101
         address = self._libusb.bulk_in_endpoint.address
-        packet_size = self._libusb.bulk_in_endpoint.max_packet_size
         read = self._libusb._device.read  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
         original_timeout = self._libusb._timeout_ms  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
         timeout = original_timeout
@@ -856,37 +856,39 @@ class FTDI(MessageBased, regex=REGEX):
         # First 2 bytes in each packet represent the current [modem, line] status
         n_skip = 2
 
-        remaining = sys.maxsize if size is None else size
-        buffer = bytearray()
+        packet = array("B", bytes(self._libusb.bulk_in_endpoint.max_packet_size))
         t0 = time.time()
         while True:
-            data: array[int] = read(address, min(remaining + n_skip, packet_size), timeout)
-            if len(data) > n_skip:
+            if size is not None and len(self._buffer) >= size:
+                msg = self._buffer[:size]
+                self._buffer = self._buffer[size:]
+                return bytes(msg)
+
+            transferred: int = read(address, packet, timeout)
+            if transferred > n_skip:
                 # check for Overrun, Parity, Framing or FIFO error -- see self.poll_status()
-                if self.check_packet_for_errors and data[1] & 0x8E:
-                    msg = (
-                        f"FTDI read-packet error, bit mask of the line-status byte is 0b{data[1]:08b}. "
+                if self.check_packet_for_errors and packet[1] & 0x8E:
+                    message = (
+                        f"FTDI read-packet error, bit mask of the line-status byte is 0b{packet[1]:08b}. "
                         "Set the attribute check_packet_for_errors=False if you want to ignore this error."
                     )
-                    raise MSLConnectionError(self, msg)
-                remaining -= len(data) - n_skip
-                buffer.extend(data[n_skip:])
+                    raise MSLConnectionError(self, message)
+                self._buffer.extend(packet[n_skip:transferred])
 
-            if len(buffer) > self._max_read_size:
-                error = f"len(message) [{len(buffer)}] > max_read_size [{self._max_read_size}]"
+            if len(self._buffer) > self._max_read_size:
+                error = f"len(message) [{len(self._buffer)}] > max_read_size [{self._max_read_size}]"
                 raise RuntimeError(error)
 
-            if size is not None:
-                if len(buffer) >= size:
-                    break
-            elif buffer and len(data) == 2:  # noqa: PLR2004
+            if self._buffer and transferred == 2:  # noqa: PLR2004
                 # If `size` is not specified then assume that once data is in the buffer and only
-                # the 2 status bytes are returned that reading packets from the device is done.
+                # the 2 status bytes are transferred that reading packets from the device is done.
                 # Increasing the value of the latency timer could strengthen this ad hoc decision.
                 # Do this because the D2XX library has the get_queue_status() function that can
                 # determine the number of bytes in the Rx queue if size=None, so want to support
                 # size=None here as well in some capacity.
-                break
+                out = bytes(self._buffer)
+                self._buffer.clear()
+                return out
 
             if original_timeout > 0:
                 # decrease the timeout when reading each packet so that the total
@@ -897,15 +899,15 @@ class FTDI(MessageBased, regex=REGEX):
                 # use at least 1 ms, since libusb considers 0 as no timeout
                 timeout = max(1, original_timeout - elapsed_time)
 
-        return bytes(buffer)
-
     def _set_interface_timeout(self) -> None:  # pyright: ignore[reportImplicitOverride]
+        """Overrides method in MessageBased."""
         if self._d2xx is not None:
             self._d2xx.timeout = self.timeout
         elif self._libusb is not None:
             self._libusb.timeout = self.timeout
 
     def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
+        """Overrides method in MessageBased."""
         if self._d2xx is not None:
             return self._d2xx.write(message)
 
@@ -1014,6 +1016,7 @@ class FTDI(MessageBased, regex=REGEX):
         # 0=SIO_RESET_REQUEST, 1=SIO_TCOFLUSH (host-to-ftdi), 2=SIO_TCIFLUSH (ftdi-to-host)
         _ = self._libusb.ctrl_transfer(request_type=self._out_req_type, request=0, value=1, index=self._index)
         _ = self._libusb.ctrl_transfer(request_type=self._out_req_type, request=0, value=2, index=self._index)
+        self._buffer.clear()
         return None
 
     def reset_device(self) -> None:

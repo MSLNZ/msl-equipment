@@ -414,9 +414,9 @@ def test_read_write(usb_backend: USBBackend) -> None:  # noqa: PLR0915
         assert device.read(size=1, decode=False) == b"x"
 
         response = (
-            b"\x06\x00T\x00\x81\x01\xcc\xba0\x02SCC201\x00\x00\x10\x00\x05\x01\x03\x00APT Stepper Controller"
-            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-            b"\x00\x00\x00APT Stepper \x03\x00\x01\x00\x01\x00"
+            b"\x06\x08T\x00\x81\x01\xcc\xba0\x02SCC201\x00\x10\x10\x03\x05\x01\x03\x30APT Stepper Controller"
+            b"\x01\xa0\x02\x00\x03\x00\x04\x0b\x05\xc2\x06\x07\x08\x09\x0a\x12\x0b\x20\x0c\xf0\x0d\x00\x0e"
+            b"\x0f\x10\x11APT Stepper \x03\xb0\x01\xdd\x01\xf2"
         )
 
         usb_backend.add_bulk_response(status_bytes)
@@ -450,15 +450,18 @@ def test_read_write(usb_backend: USBBackend) -> None:  # noqa: PLR0915
         with pytest.raises(MSLConnectionError, match=r"len\(message\) \[40\] > max_read_size \[32\]"):
             _ = device.read(size=32)
 
-        usb_backend.clear_bulk_response_queue()
         device.max_read_size = 1024
+        usb_backend.clear_bulk_response_queue()
+        device.purge_buffers()  # important, otherwise next test fails
 
-        usb_backend.add_bulk_response(status_bytes + response[:10])
-        usb_backend.add_bulk_response(status_bytes + response[10:20])
-        usb_backend.add_bulk_response(status_bytes + response[20:30])
-        usb_backend.add_bulk_response(status_bytes + response[30:])
-        with pytest.raises(MSLConnectionError, match=r"received 90 bytes, requested 32 bytes"):
-            _ = device.read(size=32)
+        usb_backend.add_bulk_response(status_bytes + response[:14])
+        usb_backend.add_bulk_response(status_bytes + response[14:48])
+        usb_backend.add_bulk_response(status_bytes + response[48:72])
+        usb_backend.add_bulk_response(status_bytes + response[72:81])
+        usb_backend.add_bulk_response(status_bytes + response[81:])
+        assert device.read(size=30, decode=False) == response[:30]
+        assert device.read(size=40, decode=False) == response[30:70]
+        assert device.read(size=20, decode=False) == response[70:]
 
         usb_backend.clear_bulk_response_queue()
 

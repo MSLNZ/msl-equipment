@@ -38,9 +38,136 @@ Example XML file to specify connection information. Only the `<eid>` and `<addre
 </connections>
 ```
 
-## Address Syntax
+## Interfaces {: #connections-interfaces }
 
-The following are examples of VISA-style addresses that may be used to connect to equipment.
+The following interface classes are available
+
+* [FTDI][] &mdash; For equipment that use a Future Technology Devices International (FTDI) chip
+* [GPIB][] &mdash; For equipment that use the GPIB (IEEE 488) protocol
+* [HiSLIP][] &mdash; For equipment that use the [HiSLIP](https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf){:target="_blank"} protocol
+* [Prologix][] &mdash; Use [Prologix](https://prologix.biz/){:target="_blank"} hardware to establish a connection to GPIB-compatible equipment
+* [SDK][] &mdash; For equipment that use a Software Development Kit (SDK) for communication
+* [Serial][] &mdash; For equipment that is connected through a serial port (or a USB-to-Serial adaptor)
+* [Socket][] &mdash; For equipment that is connected through a network socket
+* [USB][] &mdash; For equipment that use the USB protocol
+* [VXI11][] &mdash; For equipment that use the [VXI-11](http://www.vxibus.org/specifications.html){:target="_blank"} protocol
+* [ZeroMQ][] &mdash; For equipment that use the [ZeroMQ](https://zeromq.org/){:target="_blank"} protocol
+
+### Address Syntax
+
+Each [Interface][connections-interfaces] has a syntax for the [Connection][msl.equipment.schema.Connection] [address][msl.equipment.schema.Connection.address] that it supports. The following table shows the syntax for each Interface. Optional segments are shown in square brackets `[ ]` and capital letters represent literal text.
+
+<table>
+  <tr>
+    <th>Interface</th>
+    <th>Syntax</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>FTDI</td>
+    <td>FTDI[driver]::vendor::product::serial[::number]</td>
+    <td>
+      <b><i>driver</i></b> &ndash; 0=libusb, 2=d2xx [default=0]<br/>
+      <b><i>vendor</i></b> &ndash; Vendor (manufacturer) ID, in hexadecimal or decimal notation<br/>
+      <b><i>product</i></b> &ndash; Product ID, in hexadecimal or decimal notation<br/>
+      <b><i>serial</i></b> &ndash; Serial number (or unique identifier)<br/>
+      <b><i>number</i></b> &ndash; USB Interface Number, only used with the libusb driver [default=0]
+    </td>
+  </tr>
+  <tr>
+    <td>GPIB</td>
+    <td>
+      GPIB[board]::pad[::sad][::INSTR]<br/>
+      GPIB[board]::INTFC
+    </td>
+    <td>
+      <b><i>board</i></b> &ndash; board number [default=0]<br/>
+      <b><i>pad</i></b> &ndash; Primary address or an interface name (see <a href="https://linux-gpib.sourceforge.io/doc_html/configuration-gpib-conf.html" target="_blank">gpib.conf</a> for more details about using a <i>name</i> on Linux)<br/>
+      <b><i>sad</i></b> &ndash; Secondary address [default=None]
+    </td>
+  </tr>
+  <tr>
+    <td>HiSLIP</td>
+    <td>TCPIP[board]::host::hislip#[,port][::INSTR]</td>
+    <td>
+      <b><i>board</i></b> &ndash; board number (not used) [default=0]<br/>
+      <b><i>host</i></b> &ndash; Hostname or IP address of the device<br/>
+      <b><i>hislip#</i></b> &ndash; The text <code>hislip</code> followed by a numeric sub address (e.g., hislip0)<br/>
+      <b><i>port</i></b> &ndash; The network port number [default=4880]
+    </td>
+  </tr>
+  <tr>
+    <td>PROLOGIX</td>
+    <td>
+      PROLOGIX::port[::GPIB]::pad[::sad]<br/>
+      PROLOGIX::host::1234[::GPIB]::pad[::sad]
+    </td>
+    <td>
+      <b><i>port</i></b> &ndash; Serial port address (GPIB-USB Controller)<br/>
+      <b><i>host</i></b> &ndash; Hostname or IP address (GPIB-ETHERNET Controller)<br/>
+      <b><i>pad</i></b> &ndash; Primary GPIB address<br/>
+      <b><i>sad</i></b> &ndash; Secondary GPIB address [default=None]<br/>
+      <i>The prefix PROLOGIX is case insensitive</i>
+    </td>
+  </tr>
+  <tr>
+    <td>SDK</td>
+    <td>SDK::path</td>
+    <td>
+      <b><i>path</i></b> &ndash; Path to the library file
+    </td>
+  </tr>
+  <tr>
+    <td>SERIAL</td>
+    <td>(ASRL|COM|ASRLCOM)port[::INSTR]</td>
+    <td>The text <code>ASRL</code>, <code>COM</code> or <code>ASRLCOM</code> followed by the serial port address</td>
+  </tr>
+  <tr>
+    <td>SOCKET</td>
+    <td>
+      TCP::host::port<br/>
+      UDP::host::port<br/>
+      TCPIP[board]::host::port::SOCKET
+    </td>
+    <td>
+      <b><i>host</i></b> &ndash; Hostname or IP address<br/>
+      <b><i>port</i></b> &ndash; Network port number<br/>
+      <b><i>board</i></b> &ndash; board number (not used) [default=0]
+    </td>
+  </tr>
+  <tr>
+    <td>USB</td>
+    <td>USB[board]::vendor::product::serial[::number]::RAW</td>
+    <td>
+      <b><i>board</i></b> &ndash; board number (not used) [default=0]<br/>
+      <b><i>vendor</i></b> &ndash; Vendor (manufacturer) ID, in hexadecimal or decimal notation<br/>
+      <b><i>product</i></b> &ndash; Product ID, in hexadecimal or decimal notation<br/>
+      <b><i>serial</i></b> &ndash; Serial number (or unique identifier). Literal text <code>IGNORE</code> means that the serial number is not used (the vendor and product values uniquely identify the device)<br/>
+      <b><i>number</i></b> &ndash; USB Interface Number [default=0]
+    </td>
+  </tr>
+  <tr>
+    <td>VXI-11</td>
+    <td>TCPIP[board]::host[::name][::INSTR]</td>
+    <td>
+      <b><i>board</i></b> &ndash; board number (not used) [default=0]<br/>
+      <b><i>host</i></b> &ndash; Hostname or IP address<br/>
+      <b><i>name</i></b> &ndash; Device name [default=inst0]
+    </td>
+  </tr>
+  <tr>
+    <td>ZMQ</td>
+    <td>ZMQ::host::port</td>
+    <td>
+      <b><i>host</i></b> &ndash; Hostname or IP address<br/>
+      <b><i>port</i></b> &ndash; Network port number
+    </td>
+  </tr>
+</table>
+
+#### Examples {: #connections-address-syntax-examples }
+
+The following are examples of the addresses that may be used to connect to equipment.
 
 <table>
   <tr>
@@ -72,7 +199,7 @@ The following are examples of VISA-style addresses that may be used to connect t
   <tr>
     <td>GPIB</td>
     <td>GPIB0::voltmeter</td>
-    <td>GPIB device at board=0, interface name="voltmeter" (see <a href="https://linux-gpib.sourceforge.io/doc_html/configuration-gpib-conf.html" target="_blank">gpib.conf</a> for more details about the "name" option)</td>
+    <td>GPIB device at board=0, interface name=voltmeter (see <a href="https://linux-gpib.sourceforge.io/doc_html/configuration-gpib-conf.html" target="_blank">gpib.conf</a> for more details about the <i>name</i> option on Linux)</td>
   </tr>
   <tr>
     <td>GPIB</td>
@@ -126,13 +253,13 @@ The following are examples of VISA-style addresses that may be used to connect t
   </tr>
   <tr>
     <td>SDK</td>
-    <td>SDK::C:/Manufacturer/library.dll</td>
+    <td>SDK::C:\Manufacturer\library.dll</td>
     <td>Specify the full path to the SDK</td>
   </tr>
   <tr>
     <td>SDK</td>
-    <td>SDK::library.dll</td>
-    <td>Specify only the filename if the path to where the SDK file is located has been added to the <code>PATH</code> environment variable</td>
+    <td>SDK::library</td>
+    <td>Specify only the filename if the path to where the SDK file is located has been added to the <code>PATH</code> environment variable. You may also omit the file extension: <code>.dll</code> is used on Windows, <code>.so</code> is used on Linux, <code>.dylib</code> is used on macOS</td>
   </tr>
   <tr>
     <td>SERIAL</td>
@@ -208,26 +335,11 @@ The following are examples of VISA-style addresses that may be used to connect t
 
 National Instruments also provides [examples](https://www.ni.com/docs/en-US/bundle/ni-visa/page/visa-resource-syntax-and-examples.html){:target="_blank"} if you are using [PyVISA](https://pyvisa.readthedocs.io/en/stable/){:target="_blank"} as the [backend][connections-backend].
 
-## Interfaces {: #connections-interfaces }
-
-The following interface classes are available
-
-* [FTDI][] &mdash; For equipment that use a Future Technology Devices International (FTDI) chip
-* [GPIB][] &mdash; For equipment that use the GPIB (IEEE 488) protocol
-* [HiSLIP][] &mdash; For equipment that use the [HiSLIP](https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf){:target="_blank"} protocol
-* [Prologix][] &mdash; Use [Prologix](https://prologix.biz/){:target="_blank"} hardware to establish a connection to GPIB-compatible equipment
-* [SDK][] &mdash; For equipment that use a Software Development Kit (SDK) for communication
-* [Serial][] &mdash; For equipment that is connected through a serial port (or a USB-to-Serial adaptor)
-* [Socket][] &mdash; For equipment that is connected through a network socket
-* [USB][] &mdash; For equipment that use the USB protocol
-* [VXI11][] &mdash; For equipment that use the [VXI-11](http://www.vxibus.org/specifications.html){:target="_blank"} protocol
-* [ZeroMQ][] &mdash; For equipment that use the [ZeroMQ](https://zeromq.org/){:target="_blank"} protocol
-
 ### Backends {: #connections-backend }
 
 When a [Connection][] instance is created, the `backend` keyword argument decides which backend to use when interfacing with the equipment. There are different [Backend][msl.equipment.enumerations.Backend]s to choose from: `MSL` (default), `PyVISA` or `NIDAQ`.
 
-The [interface class][connections-interfaces] can be used if the `backend` is `MSL`. The corresponding interface classes for the external backends are [PyVISA][msl.equipment.interfaces.pyvisa.PyVISA] and [NIDAQ][msl.equipment.interfaces.nidaq.NIDAQ].
+The [interface classes][connections-interfaces] can be used if the `backend` is `MSL`. The corresponding interface classes for the external backends are [PyVISA][msl.equipment.interfaces.pyvisa.PyVISA] and [NIDAQ][msl.equipment.interfaces.nidaq.NIDAQ].
 
 ## Python Examples {: #connections-python-examples }
 

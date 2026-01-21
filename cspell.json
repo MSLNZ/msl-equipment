@@ -145,6 +145,7 @@
         "ibwait",
         "ibwrt",
         "ibwrta",
+        "iface",
         "infty",
         "inproc",
         "INSTR",

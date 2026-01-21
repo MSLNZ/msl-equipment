@@ -106,6 +106,7 @@ nav:
       - api/interfaces/serial.md
       - api/interfaces/socket.md
       - api/interfaces/usb.md
+      - api/interfaces/usbtmc.md
       - api/interfaces/vxi11.md
       - api/interfaces/zeromq.md
     - Backends:

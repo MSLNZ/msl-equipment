@@ -12,7 +12,7 @@ import time
 from dataclasses import dataclass
 from enum import IntEnum
 from itertools import combinations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 
 import usb  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
 
@@ -502,31 +502,65 @@ class USB(MessageBased, regex=REGEX):
         logger.debug("%s.clear_halt(0x%02X)", self, endpoint.address)
         self._device.clear_halt(endpoint.address)
 
+    # Cannot know what type is returned until runtime
+    @overload
+    def ctrl_transfer(  # pyright: ignore[reportOverlappingOverload]  # pragma: no cover
+        self,
+        request_type: int,
+        request: int,
+        value: int = ...,
+        index: int = ...,
+        data_or_length: None = None,
+    ) -> int | array[int]: ...
+
+    # PyUSB always returns int if an array[int] is passed in (for both OUT and IN transfers)
+    # or for an OUT transfer (assume OUT if bytes | bytearray | str are passed in)
+    @overload
+    def ctrl_transfer(  # pragma: no cover
+        self,
+        request_type: int,
+        request: int,
+        value: int = ...,
+        index: int = ...,
+        data_or_length: array[int] | bytes | bytearray | str = ...,
+    ) -> int: ...
+
+    # Assume an IN transfer
+    @overload
+    def ctrl_transfer(  # pragma: no cover
+        self,
+        request_type: int,
+        request: int,
+        value: int = ...,
+        index: int = ...,
+        data_or_length: int = ...,
+    ) -> array[int]: ...
+
     def ctrl_transfer(
         self,
         request_type: int,
         request: int,
         value: int = 0,
         index: int = 0,
-        data_or_length: int | bytes | bytearray | array[int] | str | None = None,
+        data_or_length: int | array[int] | bytes | bytearray | str | None = None,
     ) -> int | array[int]:
         """Perform a control transfer on Endpoint 0.
 
         Args:
-            request_type: The `bmRequestType` field for the setup packet. The bit-map value
-                defines the direction (OUT or IN) of the request, the type of request
-                and the designated recipient. See
-                [build_request_type][msl.equipment.interfaces.usb.USB.build_request_type].
-            request: Defines the request being made.
-            value: The value field for the request.
-            index: The index field for the request.
-            data_or_length: Either the data payload for an OUT transfer or the number of
-                bytes to read for an IN transfer. If there is no data payload, the parameter
-                should be `None` for an OUT transfer or 0 for an IN transfer.
+            request_type: The *bmRequestType* field of the request. The bitmap value defines the
+                direction (OUT or IN) of the request, the type of request and the designated recipient.
+                See [build_request_type][msl.equipment.interfaces.usb.USB.build_request_type].
+            request: The *bRequest* field of the request.
+            value: The *wValue* field of the request.
+            index: The *wIndex* field of the request.
+            data_or_length: Either the data payload for an OUT request, an [array][array.array]
+                buffer to receive data for an IN request, or the number of bytes to read for an
+                IN request.
 
         Returns:
-            For an OUT transfer, the returned value is the number of bytes sent to the equipment.
-                For an IN transfer, the returned value is the data that was read.
+            For an OUT request or if `data_or_length` is an [array][array.array], the returned
+                value is the number of bytes transferred. For an IN request, the returned
+                value is the data that was read (as an [array][array.array]).
         """
         # fmt: off
         logger.debug(

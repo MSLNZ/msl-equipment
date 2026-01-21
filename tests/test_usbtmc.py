@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from array import array
 from typing import TYPE_CHECKING
 
@@ -10,6 +11,9 @@ from msl.equipment.interfaces.usbtmc import _Capabilities  # pyright: ignore[rep
 
 if TYPE_CHECKING:
     from tests.conftest import USBBackend
+
+
+NO_LIBUSB1 = sys.platform == "darwin" and sys.version_info[:2] == (3, 8)
 
 
 @pytest.mark.parametrize(
@@ -39,6 +43,7 @@ def test_usbtmc_address_raw(usb_backend: USBBackend) -> None:
         assert isinstance(device, USB)
 
 
+@pytest.mark.skipif(NO_LIBUSB1, reason="libusb1 not available in CI")
 def test_usbtmc_not_found() -> None:
     c = Connection("USB::0x2a2b::0x1122::ABC123")
     with pytest.raises(MSLConnectionError, match=r"The USB device was not found"):

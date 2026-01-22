@@ -204,13 +204,11 @@ class USBTMC(USB, regex=REGEX):
         # USBTMC_usb488_subclass_1_00.pdf: Section 3.4.2, Table 7
         byte: int
         notify1, byte = self._device.read(self.intr_in_endpoint.address, 2, self._timeout_ms)
-        d7_not_1 = not (notify1 & 0x80)
-        bad_tag = (notify1 & 0x7F) != self._status_tag
-        if d7_not_1 or bad_tag:
+        if (not (notify1 & 0x80)) or ((notify1 & 0x7F) != self._status_tag):
             msg = "Invalid Interrupt-IN response packet"
-            if d7_not_1:
-                msg += ", bit 8 is not 1"
-            if bad_tag:
+            if not (notify1 & 0x80):
+                msg += ", bit 7 is not 1"
+            if (notify1 & 0x7F) != self._status_tag:
                 msg += f", sent bTag [{self._status_tag}] != received bTag [{notify1 & 0x7F}]"
             raise MSLConnectionError(self, msg)
 

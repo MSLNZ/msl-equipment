@@ -153,8 +153,8 @@ def test_indicator_pulse(usb_backend: USBBackend) -> None:
             device.indicator_pulse()
 
 
-def test_serial_poll(usb_backend: USBBackend) -> None:
-    usb_backend.add_device(1, 2, "x")
+def test_serial_poll_without_interrupt(usb_backend: USBBackend) -> None:
+    usb_backend.add_device(1, 2, "x", is_usb_tmc=True, has_intr_read=False)
     c = Connection("USB::1::2::x", usb_backend=usb_backend)
 
     device: USBTMC
@@ -178,3 +178,31 @@ def test_serial_poll(usb_backend: USBBackend) -> None:
         device.capabilities.is_488 = False
         with pytest.raises(MSLConnectionError, match=r"does not accept the serial-poll request"):
             _ = device.serial_poll()
+
+
+def test_serial_poll_with_interrupt(usb_backend: USBBackend) -> None:
+    usb_backend.add_device(1, 2, "x", is_usb_tmc=True, has_intr_read=True)
+    c = Connection("USB::1::2::x", usb_backend=usb_backend)
+
+    device: USBTMC
+    with c.connect() as device:
+        assert device.capabilities.is_488
+
+        usb_backend.add_ctrl_response(b"\x01\x02\x00")  # STATUS_SUCCESS, bTag, reserved
+        usb_backend.add_intr_response(bytes([0b00000010, 0]))
+        with pytest.raises(MSLConnectionError, match=r"packet, bit 7 is not 1$"):
+            _ = device.serial_poll()
+
+        usb_backend.add_ctrl_response(b"\x01\x03\x00")
+        usb_backend.add_intr_response(bytes([0b10000001, 0]))
+        with pytest.raises(MSLConnectionError, match=r"packet, sent bTag \[3\] != received bTag \[1\]$"):
+            _ = device.serial_poll()
+
+        usb_backend.add_ctrl_response(b"\x01\x04\x00")
+        usb_backend.add_intr_response(bytes([0b00000000, 0]))
+        with pytest.raises(MSLConnectionError, match=r"bit 7 is not 1, sent bTag \[4\] != received bTag \[0\]$"):
+            _ = device.serial_poll()
+
+        usb_backend.add_ctrl_response(b"\x01\x05\x00")
+        usb_backend.add_intr_response(bytes([0b10000101, 62]))
+        assert device.serial_poll() == 62

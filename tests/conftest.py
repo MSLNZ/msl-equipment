@@ -721,6 +721,14 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
             data[: len(buffer)] = array("B", buffer)
             return len(buffer)
 
+        if request_type == 0xA1 and request == 7:  # USBTMC GET_CAPABILITIES
+            data[:] = array("B", [1, 0, 0, 0, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0])
+
+        if request_type == 0xA1 and request in {64, 128}:  # USBTMC control IN request
+            buffer = self._ctrl_queue.get()
+            data[: len(buffer)] = array("B", buffer)
+            return len(buffer)
+
         if request == 0x06:  # get_descriptor()
             if index == 0:  # langid request
                 data[:4] = array("B", [4, 3, 9, 4])  # langid = 1033

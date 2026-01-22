@@ -860,7 +860,7 @@ class GPIB(MessageBased, regex=REGEX):
             handle: Device descriptor. Default is the device handle of the instantiated class.
 
         Returns:
-            The [status value](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html).
+            The status byte.
         """
         if handle is None:
             handle = self._handle

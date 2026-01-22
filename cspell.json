@@ -186,6 +186,7 @@
         "MSLT",
         "nbytes",
         "ndarray",
+        "ndash",
         "ndpointer",
         "newgrp",
         "NIDAQ",

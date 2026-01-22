@@ -955,7 +955,6 @@ class FTDI(MessageBased, regex=REGEX):
             index=self._index,
             data_or_length=1,
         )
-        assert not isinstance(data, int)  # noqa: S101
         return data[0]
 
     def poll_status(self) -> tuple[int, int]:
@@ -999,7 +998,6 @@ class FTDI(MessageBased, regex=REGEX):
                 index=self._index,
                 data_or_length=length,
             )
-            assert not isinstance(data, int)  # noqa: S101
             (status,) = unpack(fmt, data)
 
         line = (status >> 8) & 0xFF

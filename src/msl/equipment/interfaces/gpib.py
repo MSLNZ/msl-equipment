@@ -7,7 +7,7 @@ import os
 import re
 import sys
 from bisect import bisect_right
-from ctypes import POINTER, byref, c_char_p, c_int, c_long, c_short, c_wchar_p, create_string_buffer
+from ctypes import POINTER, byref, c_char_p, c_int, c_long, c_short, c_ubyte, c_wchar_p, create_string_buffer
 from dataclasses import dataclass
 from functools import partial
 from typing import TYPE_CHECKING
@@ -19,11 +19,11 @@ from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from ctypes import _NamedFuncPointer, _Pointer  # pyright: ignore[reportPrivateUsage]
-    from typing import Any, Callable, Never
+    from typing import Any, Callable, Literal, Never
 
     from msl.equipment.schema import Equipment
 
-    ArgType = type[c_int | c_char_p | c_long | c_wchar_p | _Pointer[c_int | c_short | c_char_p]]
+    ArgType = type[c_int | c_char_p | c_long | c_wchar_p | _Pointer[c_ubyte | c_int | c_short | c_char_p]]
 
 
 IS_WINDOWS: bool = sys.platform == "win32"
@@ -74,7 +74,6 @@ EWIP = 26
 ERST = 27
 EPWR = 28
 
-NO_SEC_ADDR = 0xFFFF
 TIMO = 0x4000
 ERR = 0x8000
 
@@ -209,7 +208,7 @@ def _load_library(errcheck: Callable[[int, _NamedFuncPointer, tuple[int, ...]], 
         ("ibonl", True, c_int, (c_int, c_int)),
         ("ibpct", True, c_int, (c_int,)),
         ("ibrd", True, c_int, (c_int, c_char_p, c_long)),
-        ("ibrsp", True, c_int, (c_int, c_char_p)),
+        ("ibrsp", True, c_int, (c_int, POINTER(c_ubyte))),
         ("ibsic", True, c_int, (c_int,)),
         ("ibspb", True, c_int, (c_int, POINTER(c_short))),
         ("ibtrg", True, c_int, (c_int,)),
@@ -406,7 +405,7 @@ class GPIB(MessageBased, regex=REGEX):
         logger.debug("%s.ibdev%s -> %d", self, args, handle)
         if handle < 0:
             msg = f"Cannot acquire a handle for the GPIB device using {args}"
-            raise MSLConnectionError(self, message=msg)
+            raise MSLConnectionError(self, msg)
         return handle
 
     def _get_ibfind_handle(self, name: str) -> int:
@@ -414,7 +413,7 @@ class GPIB(MessageBased, regex=REGEX):
         logger.debug("%s.ibfind(%r) -> %d", self, name, handle)
         if handle < 0:
             msg = f"Cannot acquire a handle for the GPIB board/device with name {name!r}"
-            raise MSLConnectionError(self, message=msg)
+            raise MSLConnectionError(self, msg)
         return handle
 
     def _error_check(self, result: int, func: _NamedFuncPointer, arguments: tuple[int, ...]) -> int:
@@ -457,7 +456,7 @@ class GPIB(MessageBased, regex=REGEX):
 
         if self._is_board:
             msg = "Cannot set a timeout value for a GPIB board"
-            raise MSLConnectionError(self, message=msg)
+            raise MSLConnectionError(self, msg)
 
         # set the timeout to one of the discrete values (IbcTMO = 0x3)
         _ = self.config(0x3, _convert_timeout(self._timeout))
@@ -476,7 +475,7 @@ class GPIB(MessageBased, regex=REGEX):
             buffer.extend(data[: self.count()])  # type: ignore[arg-type]
             if len(buffer) > self._max_read_size:
                 msg = f"Maximum read size exceeded: {len(buffer)} > {self._max_read_size}\nbuffer: {buffer}"
-                raise MSLConnectionError(self, message=msg)
+                raise MSLConnectionError(self, msg)
             if sta & 0x2000:  # END
                 break
 
@@ -492,7 +491,7 @@ class GPIB(MessageBased, regex=REGEX):
         return self.count()
 
     def ask(self, option: int, *, handle: int | None = None) -> int:
-        """Get a configuration setting (board or device).
+        """Get a GPIB configuration setting (board or device).
 
         This method is the [ibask](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibask.html)
         function, it should not be confused with the [query][msl.equipment.interfaces.message_based.MessageBased.query]
@@ -513,7 +512,7 @@ class GPIB(MessageBased, regex=REGEX):
 
     @property
     def board(self) -> int:
-        """Returns the board descriptor."""
+        """Returns the board descriptor (handle)."""
         return self._address_info.board
 
     def clear(self, *, handle: int | None = None) -> int:
@@ -522,7 +521,7 @@ class GPIB(MessageBased, regex=REGEX):
         This method is the [ibclr](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibclr.html) function.
 
         Args:
-            handle: Board or device descriptor. Default is the handle of the instantiated class.
+            handle: Device descriptor. Default is the device handle of the instantiated class.
 
         Returns:
             The status value (`ibsta`).
@@ -540,13 +539,14 @@ class GPIB(MessageBased, regex=REGEX):
         Args:
             data: The [commands](https://linux-gpib.sourceforge.io/doc_html/gpib-protocol.html#REFERENCE-COMMAND-BYTES)
                 to write to the bus.
-            handle: Board or device descriptor. Default is the handle of the instantiated class.
+            handle: Board descriptor. Default is the board handle of the instantiated class.
+                The board must be the controller-in-charge.
 
         Returns:
             The status value (`ibsta`).
         """
         if handle is None:
-            handle = self._handle
+            handle = self._address_info.board
         ibsta: int = self._lib.ibcmd(handle, data, len(data))
         return ibsta
 
@@ -569,46 +569,36 @@ class GPIB(MessageBased, regex=REGEX):
         ibsta: int = self._lib.ibconfig(handle, option, value)
         return ibsta
 
-    def control_atn(self, state: int, *, handle: int | None = None) -> int:
-        """Set the state of the ATN line (board).
+    def control_atn(self, state: Literal[0, 1, 2, 3]) -> int:
+        """Set the state of the GPIB Attention (ATN) line.
 
         This method mimics the PyVISA-py implementation.
 
         Args:
-            state: The state of the ATN line or the active controller. Allowed values are:
+            state: The state of the ATN line of the active controller. Allowed values are:
 
                 * 0: ATN_DEASSERT
                 * 1: ATN_ASSERT
                 * 2: ATN_DEASSERT_HANDSHAKE
                 * 3: ATN_ASSERT_IMMEDIATE
 
-        Args:
-            handle: Board or device descriptor. Default is the handle of the instantiated class.
-
         Returns:
             The status value (`ibsta`).
         """
-        ibsta: int
-        if handle is None:
-            handle = self._handle
-        if state == ATN_DEASSERT:
-            ibsta = self._lib.ibgts(handle, 0)
-            return ibsta
+        ibsta = 0
+        handle = self._address_info.board
         if state == ATN_ASSERT:
             ibsta = self._lib.ibcac(handle, 0)
-            return ibsta
-        if state == ATN_DEASSERT_HANDSHAKE:
-            ibsta = self._lib.ibgts(handle, 1)
-            return ibsta
-        if state == ATN_ASSERT_IMMEDIATE:
+        elif state == ATN_DEASSERT:
+            ibsta = self._lib.ibgts(handle, 0)
+        elif state == ATN_ASSERT_IMMEDIATE:
             ibsta = self._lib.ibcac(handle, 1)
-            return ibsta
+        elif state == ATN_DEASSERT_HANDSHAKE:
+            ibsta = self._lib.ibgts(handle, 1)
+        return ibsta
 
-        msg = f"Invalid ATN {state=}"
-        raise MSLConnectionError(self, message=msg)
-
-    def control_ren(self, state: int, *, handle: int | None = None) -> int:
-        """Controls the state of the GPIB Remote Enable (REN) interface line.
+    def control_ren(self, state: Literal[0, 1, 2, 3, 4, 5, 6]) -> int:
+        """Controls the state of the GPIB Remote Enable (REN) line.
 
         Optionally the remote/local state of the device is also controlled.
 
@@ -626,18 +616,15 @@ class GPIB(MessageBased, regex=REGEX):
                 * 5: REN_ASSERT_ADDRESS_LLO
                 * 6: REN_ADDRESS_GTL
 
-            handle: Board or device descriptor. Default is the handle of the instantiated class.
-
         Returns:
             The status value (`ibsta`).
         """
-        if handle is None:
-            handle = self._handle
-
-        ibsta = 0
         if self._is_board and state not in (REN_ASSERT, REN_DEASSERT, REN_ASSERT_LLO):
             msg = f"Invalid REN {state=} for INTFC"
-            raise MSLConnectionError(self, message=msg)
+            raise MSLConnectionError(self, msg)
+
+        ibsta = 0
+        handle = None  # let the method use the appropriate board or device handle
 
         if state == REN_DEASSERT_GTL:
             ibsta = self.command(b"\x01", handle=handle)  # GTL = 0x1
@@ -663,6 +650,9 @@ class GPIB(MessageBased, regex=REGEX):
         """Get the number of bytes sent or received.
 
         This method is the [ibcntl](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibcnt.html) function.
+
+        Returns:
+            The number of bytes sent or received.
         """
         return int(self._lib.ibcntl())
 
@@ -676,7 +666,7 @@ class GPIB(MessageBased, regex=REGEX):
 
     @property
     def handle(self) -> int:
-        """Returns the handle of the instantiated board or device."""
+        """Returns the handle of the instantiated board (INTFC) or device (INSTR)."""
         return self._handle
 
     def interface_clear(self, *, handle: int | None = None) -> int:
@@ -689,13 +679,13 @@ class GPIB(MessageBased, regex=REGEX):
         function.
 
         Args:
-            handle: Board or device descriptor. Default is the handle of the instantiated class.
+            handle: Board descriptor. Default is the board handle of the instantiated class.
 
         Returns:
             The status value (`ibsta`).
         """
         if handle is None:
-            handle = self._handle
+            handle = self._address_info.board
         ibsta: int = self._lib.ibsic(handle)
         return ibsta
 
@@ -706,10 +696,13 @@ class GPIB(MessageBased, regex=REGEX):
         function.
 
         Args:
-            handle: Board or device descriptor. Default is the handle of the instantiated class.
+            handle: Board descriptor. Default is the board handle of the instantiated class.
+
+        Returns:
+            The status of the control and handshaking bus lines.
         """
         if handle is None:
-            handle = self._handle
+            handle = self._address_info.board
         status = c_short()
         self._lib.iblines(handle, byref(status))
         return status.value
@@ -743,7 +736,7 @@ class GPIB(MessageBased, regex=REGEX):
         Args:
             handle: Board or device descriptor. Default is the handle of the instantiated class.
 
-        Return:
+        Returns:
             The status value (`ibsta`).
         """
         if handle is None:
@@ -781,7 +774,7 @@ class GPIB(MessageBased, regex=REGEX):
         name: str | None = None,
         board: int | None = None,
         pad: int = 0,
-        sad: int = NO_SEC_ADDR,
+        sad: int | None = None,
     ) -> int:
         """Set a GPIB board or device to become the controller-in-charge (CIC).
 
@@ -805,6 +798,8 @@ class GPIB(MessageBased, regex=REGEX):
         elif name is not None:
             handle = self._get_ibfind_handle(name)
         elif board is not None:
+            if sad is None:
+                sad = 0xFFFF  # NO_SEC_ADDR
             handle = self._get_ibdev_handle(board, pad, sad, 13, 1, 0)  # T10s = 13
         else:
             handle = self._handle
@@ -845,14 +840,15 @@ class GPIB(MessageBased, regex=REGEX):
         Args:
             state: If `True`, the board asserts the REN line. Otherwise, the REN line is not asserted.
                 The board must be the system controller.
-            handle: Board or device descriptor. Default is the handle of the instantiated class.
+            handle: Board descriptor. Default is the board handle of the instantiated class.
 
         Returns:
             The status value (`ibsta`).
         """
         # ibsre was removed from ni4882.dll, use ibconfig instead (IbcSRE = 0xb)
-        ibsta: int = self.config(0xB, int(state), handle=handle)
-        return ibsta
+        if handle is None:
+            handle = self._address_info.board
+        return self.config(0xB, int(state), handle=handle)
 
     def serial_poll(self, *, handle: int | None = None) -> int:
         """Read status byte / serial poll (device).
@@ -861,16 +857,16 @@ class GPIB(MessageBased, regex=REGEX):
         function.
 
         Args:
-            handle: Board or device descriptor. Default is the handle of the instantiated class.
+            handle: Device descriptor. Default is the device handle of the instantiated class.
 
         Returns:
             The [status value](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html).
         """
         if handle is None:
             handle = self._handle
-        status = create_string_buffer(1)
-        self._lib.ibrsp(handle, status)
-        return ord(status.value)
+        status = c_ubyte()
+        self._lib.ibrsp(handle, byref(status))
+        return status.value
 
     def spoll_bytes(self, *, handle: int | None = None) -> int:
         """Get the length of the serial poll bytes queue (device).
@@ -879,7 +875,10 @@ class GPIB(MessageBased, regex=REGEX):
         function.
 
         Args:
-            handle: Board or device descriptor. Default is the handle of the instantiated class.
+            handle: Device descriptor. Default is the device handle of the instantiated class.
+
+        Returns:
+            The number of serial poll bytes queued for the device.
         """
         if handle is None:
             handle = self._handle
@@ -888,17 +887,22 @@ class GPIB(MessageBased, regex=REGEX):
         return length.value
 
     def status(self) -> int:
-        """Returns the status value [ibsta](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html)."""
-        return int(self._lib.ThreadIbsta())
+        """Get the status value [ibsta](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html).
+
+        Returns:
+            The status value.
+        """
+        status: int = self._lib.ThreadIbsta()
+        return status
 
     def trigger(self, *, handle: int | None = None) -> int:
-        """Trigger device.
+        """Trigger a device (device).
 
         This method is the [ibtrg](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibtrg.html)
         function.
 
         Args:
-            handle: Board or device descriptor. Default is the handle of the instantiated class.
+            handle: Device descriptor. Default is the device handle of the instantiated class.
 
         Returns:
             The status value (`ibsta`).
@@ -909,7 +913,11 @@ class GPIB(MessageBased, regex=REGEX):
         return ibsta
 
     def version(self) -> str:
-        """Returns the version of the GPIB library (linux only)."""
+        """Get the version of the GPIB library.
+
+        Returns:
+            The version number (if using the `linux-gpib` library), otherwise an empty string.
+        """
         try:
             version = c_char_p()
             self._lib.ibvers(byref(version))
@@ -936,7 +944,7 @@ class GPIB(MessageBased, regex=REGEX):
         ibsta: int = self._lib.ibwait(handle, mask)
         return ibsta
 
-    def wait_for_srq(self, *, board: int | None = None) -> int:
+    def wait_for_srq(self, *, handle: int | None = None) -> int:
         """Wait for the SRQ interrupt (SRQI, 0x1000) line to be asserted (board).
 
         This method will return when the board receives a service request from *any* device.
@@ -944,14 +952,14 @@ class GPIB(MessageBased, regex=REGEX):
         device asserted the service request.
 
         Args:
-            board: Board descriptor. Default is the board descriptor of the instantiated class.
+            handle: Board descriptor. Default is the board handle of the instantiated class.
 
         Returns:
             The status value (`ibsta`).
         """
-        if board is None:
-            board = self._address_info.board
-        return self.wait(0x1000, handle=board)  # SRQI = 0x1000
+        if handle is None:
+            handle = self._address_info.board
+        return self.wait(0x1000, handle=handle)  # SRQI = 0x1000
 
     def write_async(self, message: bytes, *, handle: int | None = None) -> int:
         """Write a message asynchronously (board or device).

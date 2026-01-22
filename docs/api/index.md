@@ -39,7 +39,7 @@ or to display the help for a specific command
 msl-equipment help find
 ```
 
-### find
+### find {: #cli-find }
 
 Run the `find` command to find equipment (and serial ports) that are available.
 
@@ -76,3 +76,17 @@ VXI11 Devices
   E5810 (43:8E:5A:06:23:EE) [webserver: http://10.12.102.2]
     TCPIP::10.12.102.2::inst0::INSTR
 ```
+
+### validate {: #cli-validate }
+
+Validate [equipment registers][] and [connection][connections] files against the schema.
+
+Requires the [msl-equipment-validate][validate] package to be installed.
+
+The following command shows how to validate an equipment register
+
+```console
+msl-equipment validate path/to/register.xml
+```
+
+See [here][validate-usage] for more examples.

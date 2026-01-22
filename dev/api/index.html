@@ -4466,10 +4466,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#find" class="md-nav__link">
+  <a href="#cli-find" class="md-nav__link">
     <span class="md-ellipsis">
       
         find
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate
       
     </span>
   </a>
@@ -4528,7 +4539,7 @@
 <p>or to display the help for a specific command</p>
 <div class="highlight"><pre><span></span><code><span class="go">msl-equipment help find</span>
 </code></pre></div>
-<h3 id="find">find<a class="headerlink" href="#find" title="Permanent link">¤</a></h3>
+<h3 id="cli-find">find<a class="headerlink" href="#cli-find" title="Permanent link">¤</a></h3>
 <p>Run the <code>find</code> command to find equipment (and serial ports) that are available.</p>
 <div class="highlight"><pre><span></span><code><span class="go">msl-equipment find</span>
 </code></pre></div>
@@ -4560,6 +4571,13 @@
 <span class="go">  E5810 (43:8E:5A:06:23:EE) [webserver: http://10.12.102.2]</span>
 <span class="go">    TCPIP::10.12.102.2::inst0::INSTR</span>
 </code></pre></div>
+<h3 id="cli-validate">validate<a class="headerlink" href="#cli-validate" title="Permanent link">¤</a></h3>
+<p>Validate <a class="autorefs autorefs-internal" title="Equipment Registers" href="../getting-started/equipment-registers/#equipment-registers">equipment registers</a> and <a class="autorefs autorefs-internal" title="Connections" href="../getting-started/connections/#connections">connection</a> files against the schema.</p>
+<p>Requires the <a class="autorefs autorefs-internal" title="Validate" href="../validate/#validate">msl-equipment-validate</a> package to be installed.</p>
+<p>The following command shows how to validate an equipment register</p>
+<div class="highlight"><pre><span></span><code><span class="go">msl-equipment validate path/to/register.xml</span>
+</code></pre></div>
+<p>See <a class="autorefs autorefs-internal" title="Usage" href="../validate/#validate-usage">here</a> for more examples.</p>
 
 
 

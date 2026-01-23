@@ -19,6 +19,9 @@ import re
 import struct
 from typing import TYPE_CHECKING
 
+from msl.equipment.enumerations import RENMode
+from msl.equipment.utils import to_enum
+
 from .message_based import MSLConnectionError
 from .usb import USB
 
@@ -32,6 +35,59 @@ REGEX = re.compile(
     r"^USB(?P<board>\d*)::(?P<vid>[^:]+)::(?P<pid>[^:]+)::(?P<serial>(?:[^:]*|:(?!:))*)(::(?P<interface>\d+))?(::INSTR)?$",
     flags=re.IGNORECASE,
 )
+
+
+class _Message:
+    """Prepare Bulk IN/OUT messages."""
+
+    def __init__(self) -> None:
+        self.tag: int = 0
+
+    def dev_dep_msg_out(self, message: bytes, *, eom: bool = True) -> bytes:
+        # USBTMC_1_00.pdf: Section 3.2.1.1, Table 3
+        tag = self.next_tag()
+        return (
+            struct.pack(
+                "<BBBxLBxxx",
+                1,  # DEV_DEP_MSG_OUT, Table 2
+                tag,
+                tag ^ 0xFF,  # inverse
+                len(message),
+                eom,
+            )
+            + message
+            + bytes((4 - len(message)) % 4)  # alignment bytes
+        )
+
+    def next_tag(self) -> int:
+        # USBTMC_1_00.pdf: Section 3.2, Table 1
+        self.tag += 1
+        if self.tag > 255:  # noqa: PLR2004
+            self.tag = 1
+        return self.tag
+
+    def request_dev_dep_msg_in(self, size: int) -> bytes:
+        # USBTMC_1_00.pdf: Section 3.2.1.2, Table 4
+        tag = self.next_tag()
+        return struct.pack(
+            "<BBBxLBBxx",
+            2,  # REQUEST_DEV_DEP_MSG_IN, Table 2
+            tag,
+            tag ^ 0xFF,  # inverse
+            size,
+            0,  # do not use a termination character
+            0,  # termination character
+        )
+
+    def trigger(self) -> bytes:
+        # USBTMC_usb488_subclass_1_00.pdf, Section 3.2.1.1, Table 2
+        tag = self.next_tag()
+        return struct.pack(
+            "BBB9x",
+            128,  # TRIGGER, Table 1
+            tag,
+            tag ^ 0xFF,  # inverse
+        )
 
 
 class Capabilities:
@@ -81,7 +137,7 @@ class Capabilities:
         is_dt_capable = bool(device_488 & (1 << 0))
 
         # Underneath Table 8 (USBTMC_usb488_subclass_1_00.pdf: Section 4.2.2)
-        # there are additional rules, however, not all manufacturer's follow these rules.
+        # there are additional rules, however, not all manufacturer's obey these rules.
         # If either of the bitmap values is True then the instance attribute is considered True.
         self.accepts_trigger: bool = is_dt_capable or accepts_interface_trigger  # rule 1
         self.accepts_remote_local: bool = is_rl_capable or accepts_remote_local  # rule 2
@@ -118,7 +174,8 @@ class USBTMC(USB, regex=REGEX):
         as those specified in [USB][msl.equipment.interfaces.usb.USB].
         """
         super().__init__(equipment)
-        self._status_tag: int = 1  # bTag for READ_STATUS_BYTE control transfer
+        self._tag_status: int = 1  # bTag for READ_STATUS_BYTE control transfer
+        self._msg: _Message = _Message()
 
         # USBTMC_1_00.pdf: Section 4.2.1.8, Table 36
         self._capabilities: Capabilities = Capabilities(
@@ -137,6 +194,122 @@ class USBTMC(USB, regex=REGEX):
             msg = f"The request was not successful [status_code=0x{data[0]:02X}]"
             raise MSLConnectionError(self, msg)
         return data
+
+    def _read(self, size: int | None = None) -> bytes:  # pyright: ignore[reportImplicitOverride]
+        """Overrides method in USB."""
+        if self._capabilities.is_listen_only:
+            msg = "The USBTMC device does not accept a read request"
+            raise MSLConnectionError(self, msg)
+
+        read = super()._read
+        write = super()._write
+
+        # Request for the device to send data
+        # USBTMC_1_00.pdf, Section 3.2.1.2
+        _ = write(self._msg.request_dev_dep_msg_in(size or self._max_read_size))
+
+        # Parse Bulk-IN header
+        # USBTMC_1_00.pdf, Section 3.3.1.1, Table 9
+        # Ignore bTagInverse (only check bTag)
+        msg_id, tag, transfer_size, eom = struct.unpack("<BBxxLBxxx", read(12))
+
+        if msg_id != 2:  # DEV_DEP_MSG_IN, Table 2  # noqa: PLR2004
+            # ABORT
+            msg = f"Wrong DEV_DEP_MSG_IN value {msg_id} (expect 2), the device does not obey USBTMC standards."
+            raise MSLConnectionError(self, msg)
+
+        if tag != self._msg.tag:
+            # ABORT
+            msg = f"Received bTag [{tag}] != sent bTag [{self._msg.tag}], the device does not obey USBTMC standards."
+            raise MSLConnectionError(self, msg)
+
+        # Read all data plus the alignment bytes
+        num_align_bytes = (4 - transfer_size) % 4
+        data = read(transfer_size + num_align_bytes)
+        if num_align_bytes == 0:
+            return data
+        return data[:transfer_size]
+
+    def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
+        """Overrides method in USB."""
+        if self._capabilities.is_talk_only:
+            msg = "The USBTMC device does not accept a write request"
+            raise MSLConnectionError(self, msg)
+
+        # USBTMC_1_00.pdf, Section 3.2
+        # Rule 5 (below Table 2) states:
+        #   "The Host must send a complete USBTMC command message with a single transfer"
+        # Rule 1 (below Table 3) states:
+        #  "The Host may send this USBTMC command message with multiple transfers, as the data becomes available"
+        # Rule 5 uses the word "must", rule 1 uses "may". Follow Rule 5. Write complete message in a single transfer.
+        # Also, libusb manages packet transactions (fragmentation), so we should not do it in Python.
+        # Assume no Bulk-OUT transfer errors for now, if this becomes an issue see Section 3.2.2.3, Table 7.
+        return super()._write(self._msg.dev_dep_msg_out(message))
+
+    def control_ren(self, mode: RENMode | str | int) -> None:
+        """Controls the state of the GPIB Remote Enable (REN) line.
+
+        Optionally the remote/local state of the device is also controlled.
+
+        Args:
+            mode: The mode of the REN line and optionally the device remote/local state.
+                Can be an enum member name (case insensitive) or value.
+                Allowed values are:
+        """
+        if not self._capabilities.accepts_remote_local:
+            msg = "The USBTMC device does not accept a remote-local request"
+            raise MSLConnectionError(self, msg)
+
+        mode = to_enum(mode, RENMode, to_upper=True)
+
+        # mimic pyvisa-py
+        if mode in {RENMode.ASSERT, RENMode.ASSERT_ADDRESS, RENMode.ASSERT_ADDRESS_LLO}:
+            # USBTMC_usb488_subclass_1_00.pdf: Section 4.3.2, Table 15
+            _ = self._check_ctrl_in_status(
+                self.ctrl_transfer(
+                    request_type=0xA1,  # Dir=IN, Type=Class, Recipient=Interface
+                    request=160,  # REN_CONTROL, see Table 9
+                    value=1,  # assert
+                    index=self.bulk_in_endpoint.interface_number,
+                    data_or_length=0x0001,
+                )
+            )
+
+        if mode in {RENMode.ASSERT_LLO, RENMode.ASSERT_ADDRESS_LLO}:
+            # USBTMC_usb488_subclass_1_00.pdf: Section 4.3.4, Table 19
+            _ = self._check_ctrl_in_status(
+                self.ctrl_transfer(
+                    request_type=0xA1,  # Dir=IN, Type=Class, Recipient=Interface
+                    request=162,  # LOCAL_LOCKOUT, see Table 9
+                    value=0,  # always 0
+                    index=self.bulk_in_endpoint.interface_number,
+                    data_or_length=0x0001,
+                )
+            )
+
+        if mode in {RENMode.DEASSERT_GTL, RENMode.ADDRESS_GTL}:
+            # USBTMC_usb488_subclass_1_00.pdf: Section 4.3.3, Table 17
+            _ = self._check_ctrl_in_status(
+                self.ctrl_transfer(
+                    request_type=0xA1,  # Dir=IN, Type=Class, Recipient=Interface
+                    request=161,  # GO_TO_LOCAL, see Table 9
+                    value=0,  # always 0
+                    index=self.bulk_in_endpoint.interface_number,
+                    data_or_length=0x0001,
+                )
+            )
+
+        if mode in {RENMode.DEASSERT, RENMode.DEASSERT_GTL}:
+            # USBTMC_usb488_subclass_1_00.pdf: Section 4.3.2, Table 15
+            _ = self._check_ctrl_in_status(
+                self.ctrl_transfer(
+                    request_type=0xA1,  # Dir=IN, Type=Class, Recipient=Interface
+                    request=160,  # REN_CONTROL, see Table 9
+                    value=0,  # deassert
+                    index=self.bulk_in_endpoint.interface_number,
+                    data_or_length=0x0001,
+                )
+            )
 
     @property
     def capabilities(self) -> Capabilities:
@@ -178,38 +351,48 @@ class USBTMC(USB, regex=REGEX):
             msg = "The USBTMC device does not accept the serial-poll request"
             raise MSLConnectionError(self, msg)
 
-        self._status_tag += 1
-        if self._status_tag > 127:  # noqa: PLR2004
-            self._status_tag = 2
+        self._tag_status += 1
+        if self._tag_status > 127:  # noqa: PLR2004
+            self._tag_status = 2
 
         # USBTMC_usb488_subclass_1_00.pdf: Section 4.3.1, Table 11
-        data = self._check_ctrl_in_status(
+        _, tag, data = self._check_ctrl_in_status(
             self.ctrl_transfer(
                 request_type=0xA1,  # Dir=IN, Type=Class, Recipient=Interface
                 request=128,  # READ_STATUS_BYTE, see Table 9
-                value=self._status_tag,
+                value=self._tag_status,
                 index=self.bulk_in_endpoint.interface_number,
                 data_or_length=0x0003,
             )
         )
 
-        if self._status_tag != data[1]:
-            msg = f"sent bTag [{self._status_tag}] != received bTag [{data[1]}]"
+        if self._tag_status != tag:
+            msg = f"sent bTag [{self._tag_status}] != received bTag [{tag}]"
             raise MSLConnectionError(self, msg)
 
         # USBTMC_usb488_subclass_1_00.pdf: Section 4.3.1.1, Table 12
         if self.intr_in_endpoint is None:
-            return data[2]
+            return data
 
         # USBTMC_usb488_subclass_1_00.pdf: Section 3.4.2, Table 7
-        byte: int
-        notify1, byte = self._device.read(self.intr_in_endpoint.address, 2, self._timeout_ms)
-        if (not (notify1 & 0x80)) or ((notify1 & 0x7F) != self._status_tag):
+        status: int
+        notify1, status = self._device.read(self.intr_in_endpoint.address, 2, self._timeout_ms)
+        d7_not_1 = not (notify1 & 0x80)
+        tag_mismatch = (notify1 & 0x7F) != self._tag_status
+        if d7_not_1 or tag_mismatch:
             msg = "Invalid Interrupt-IN response packet"
-            if not (notify1 & 0x80):
+            if d7_not_1:
                 msg += ", bit 7 is not 1"
-            if (notify1 & 0x7F) != self._status_tag:
-                msg += f", sent bTag [{self._status_tag}] != received bTag [{notify1 & 0x7F}]"
+            if tag_mismatch:
+                msg += f", sent bTag [{self._tag_status}] != received bTag [{notify1 & 0x7F}]"
             raise MSLConnectionError(self, msg)
 
-        return byte
+        return status
+
+    def trigger(self) -> None:
+        """Trigger device."""
+        if not self._capabilities.accepts_trigger:
+            msg = "The USBTMC device does not accept the trigger request"
+            raise MSLConnectionError(self, msg)
+
+        _ = super()._write(self._msg.trigger())

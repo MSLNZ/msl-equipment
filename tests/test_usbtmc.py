@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from msl.equipment import USB, USBTMC, Connection, MSLConnectionError
-from msl.equipment.interfaces.usbtmc import Capabilities
+from msl.equipment import USB, USBTMC, Connection, MSLConnectionError, RENMode
+from msl.equipment.interfaces.usbtmc import Capabilities, _Message  # pyright: ignore[reportPrivateUsage]
 
 if TYPE_CHECKING:
     from tests.conftest import USBBackend
@@ -168,7 +168,7 @@ def test_serial_poll_without_interrupt(usb_backend: USBBackend) -> None:
             _ = device.serial_poll()
 
         usb_backend.add_ctrl_response(b"\x01\x02\x04")  # STATUS_SUCCESS, bTag=2
-        device._status_tag = 127  # bTag cycles back to 2  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+        device._tag_status = 127  # bTag cycles back to 2  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
         assert device.serial_poll() == 0x04
 
         usb_backend.add_ctrl_response(b"\x80\x00\x00")  # STATUS_FAILED
@@ -206,3 +206,98 @@ def test_serial_poll_with_interrupt(usb_backend: USBBackend) -> None:
         usb_backend.add_ctrl_response(b"\x01\x05\x00")
         usb_backend.add_intr_response(bytes([0b10000101, 62]))
         assert device.serial_poll() == 62
+
+
+def test_control_ren(usb_backend: USBBackend) -> None:
+    usb_backend.add_device(1, 2, "x", is_usb_tmc=True, has_intr_read=True)
+    c = Connection("USB::1::2::x", usb_backend=usb_backend)
+    device: USBTMC
+    with c.connect() as device:
+        for _ in range(100):  # add more than enough STATUS_SUCCESS replies
+            usb_backend.add_ctrl_response(b"\x01")
+
+        assert device.capabilities.accepts_remote_local
+        for name, value in RENMode.__members__.items():
+            device.control_ren(name)
+            device.control_ren(value)
+
+        usb_backend.clear_ctrl_response_queue()
+
+        for _ in range(100):  # add more than enough STATUS_FAILED replies
+            usb_backend.add_ctrl_response(b"\x80")
+
+        for mode in RENMode:
+            with pytest.raises(MSLConnectionError, match=r"The request was not successful \[status_code=0x80\]"):
+                device.control_ren(mode)
+
+        usb_backend.clear_ctrl_response_queue()
+
+        device.capabilities.accepts_remote_local = False
+        with pytest.raises(MSLConnectionError, match=r"remote-local request"):
+            device.control_ren(RENMode.ASSERT)
+
+
+def test_increment_tag() -> None:
+    m = _Message()
+    for i in range(1, 256):
+        assert i == m.next_tag()
+    assert m.next_tag() == 1
+
+
+def test_dev_dep_msg_out() -> None:
+    m = _Message()
+
+    # Example in USBTMC_usb488_subclass_1_00.pdf, Table 3
+    assert m.dev_dep_msg_out(b"*IDN?\n") == bytes(
+        [0x01, 0x01, 0xFE, 0, 0x06, 0, 0, 0, 0x01, 0, 0, 0, 0x2A, 0x49, 0x44, 0x4E, 0x3F, 0x0A, 0, 0]
+    )
+
+    # tag increments, eom=False, 2 alignment bytes
+    assert m.dev_dep_msg_out(b"*IDN?\n", eom=False) == bytes(
+        [0x01, 0x02, 0xFD, 0, 0x06, 0, 0, 0, 0x00, 0, 0, 0, 0x2A, 0x49, 0x44, 0x4E, 0x3F, 0x0A, 0, 0]
+    )
+
+    # tag increments, 3 alignment bytes
+    assert m.dev_dep_msg_out(b"*IDN?", eom=False) == bytes(
+        [0x01, 0x03, 0xFC, 0, 0x05, 0, 0, 0, 0x00, 0, 0, 0, 0x2A, 0x49, 0x44, 0x4E, 0x3F, 0, 0, 0]
+    )
+
+    # tag increments, 1 alignment byte
+    assert m.dev_dep_msg_out(b"*IDN?\r\n", eom=False) == bytes(
+        [0x01, 0x04, 0xFB, 0, 0x07, 0, 0, 0, 0x00, 0, 0, 0, 0x2A, 0x49, 0x44, 0x4E, 0x3F, 0x0D, 0x0A, 0]
+    )
+
+    # tag increments, no alignment byte
+    assert m.dev_dep_msg_out(b"**IDN?\r\n", eom=False) == bytes(
+        [0x01, 0x05, 0xFA, 0, 0x08, 0, 0, 0, 0x00, 0, 0, 0, 0x2A, 0x2A, 0x49, 0x44, 0x4E, 0x3F, 0x0D, 0x0A]
+    )
+
+
+def test_trigger(usb_backend: USBBackend) -> None:
+    usb_backend.add_device(1, 2, "x")
+    c = Connection("USB::1::2::x", usb_backend=usb_backend)
+
+    device: USBTMC
+    with c.connect() as device:
+        device.trigger()
+
+        device.capabilities.accepts_trigger = False
+        with pytest.raises(MSLConnectionError, match=r"trigger request"):
+            device.trigger()
+
+    m = _Message()
+    assert m.trigger() == bytes([128, 1, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    assert m.trigger() == bytes([128, 2, 253, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+
+
+def test_write(usb_backend: USBBackend) -> None:
+    usb_backend.add_device(1, 2, "x")
+    c = Connection("USB::1::2::x", usb_backend=usb_backend)
+
+    device: USBTMC
+    with c.connect() as device:
+        device.capabilities.is_talk_only = False
+        assert device.write_termination == b"\r\n"
+
+        expect = bytes([0x01, 0x01, 0xFE, 0, 0x07, 0, 0, 0, 0x01, 0, 0, 0, 0x2A, 0x49, 0x44, 0x4E, 0x3F, 0x0D, 0x0A, 0])
+        assert device.write("*IDN?") == len(expect)

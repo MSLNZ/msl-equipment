@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from .__about__ import __version__, version_tuple
 from .config import Config
-from .enumerations import Backend, DataBits, Parity, StopBits
+from .enumerations import ATNState, Backend, DataBits, Parity, RENMode, StopBits
 from .interfaces import (
     FTDI,
     GPIB,
@@ -70,6 +70,7 @@ __all__: list[str] = [
     "USB",
     "USBTMC",
     "VXI11",
+    "ATNState",
     "AcceptanceCriteria",
     "Accessories",
     "Adjustment",
@@ -109,6 +110,7 @@ __all__: list[str] = [
     "Prologix",
     "PyVISA",
     "QualityManual",
+    "RENMode",
     "Range",
     "Readings",
     "ReferenceMaterials",

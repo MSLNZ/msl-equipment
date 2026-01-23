@@ -12,14 +12,15 @@ from dataclasses import dataclass
 from functools import partial
 from typing import TYPE_CHECKING
 
-from msl.equipment.utils import logger
+from msl.equipment.enumerations import ATNState, RENMode
+from msl.equipment.utils import logger, to_enum
 from msl.loadlib import LoadLibrary
 
 from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from ctypes import _NamedFuncPointer, _Pointer  # pyright: ignore[reportPrivateUsage]
-    from typing import Any, Callable, Literal, Never
+    from typing import Any, Callable, Never
 
     from msl.equipment.schema import Equipment
 
@@ -33,19 +34,6 @@ IS_DARWIN: bool = sys.platform == "darwin"
 REGEX = re.compile(
     r"^GPIB(?P<board>\d{0,2})(::((?P<pad>\d+)|(?P<name>[^\s:]+)))?(::(?P<sad>\d+))?", flags=re.IGNORECASE
 )
-
-# NI VI_GPIB
-REN_DEASSERT = 0
-REN_ASSERT = 1
-REN_DEASSERT_GTL = 2
-REN_ASSERT_ADDRESS = 3
-REN_ASSERT_LLO = 4
-REN_ASSERT_ADDRESS_LLO = 5
-REN_ADDRESS_GTL = 6
-ATN_DEASSERT = 0
-ATN_ASSERT = 1
-ATN_DEASSERT_HANDSHAKE = 2
-ATN_ASSERT_IMMEDIATE = 3
 
 # IBERR error codes
 # linux-gpib-user/include/gpib/gpib_user.h
@@ -569,35 +557,29 @@ class GPIB(MessageBased, regex=REGEX):
         ibsta: int = self._lib.ibconfig(handle, option, value)
         return ibsta
 
-    def control_atn(self, state: Literal[0, 1, 2, 3]) -> int:
+    def control_atn(self, state: ATNState | str | int) -> int:
         """Set the state of the GPIB Attention (ATN) line.
 
         This method mimics the PyVISA-py implementation.
 
         Args:
-            state: The state of the ATN line of the active controller. Allowed values are:
-
-                * 0: ATN_DEASSERT
-                * 1: ATN_ASSERT
-                * 2: ATN_DEASSERT_HANDSHAKE
-                * 3: ATN_ASSERT_IMMEDIATE
+            state: The state of the ATN line of the active controller. Can be
+                an enum member name (case insensitive) or value.
 
         Returns:
             The status value (`ibsta`).
         """
-        ibsta = 0
         handle = self._address_info.board
-        if state == ATN_ASSERT:
-            ibsta = self._lib.ibcac(handle, 0)
-        elif state == ATN_DEASSERT:
-            ibsta = self._lib.ibgts(handle, 0)
-        elif state == ATN_ASSERT_IMMEDIATE:
-            ibsta = self._lib.ibcac(handle, 1)
-        elif state == ATN_DEASSERT_HANDSHAKE:
-            ibsta = self._lib.ibgts(handle, 1)
-        return ibsta
+        atn = to_enum(state, ATNState, to_upper=True)
+        if atn == ATNState.ASSERT:
+            return int(self._lib.ibcac(handle, 0))
+        if atn == ATNState.DEASSERT:
+            return int(self._lib.ibgts(handle, 0))
+        if atn == ATNState.ASSERT_IMMEDIATE:
+            return int(self._lib.ibcac(handle, 1))
+        return int(self._lib.ibgts(handle, 1))  # ATNState.DEASSERT_HANDSHAKE
 
-    def control_ren(self, state: Literal[0, 1, 2, 3, 4, 5, 6]) -> int:
+    def control_ren(self, mode: RENMode | str | int) -> int:
         """Controls the state of the GPIB Remote Enable (REN) line.
 
         Optionally the remote/local state of the device is also controlled.
@@ -605,44 +587,37 @@ class GPIB(MessageBased, regex=REGEX):
         This method mimics the PyVISA-py implementation.
 
         Args:
-            state: Specifies the state of the REN line and optionally the device remote/local state.
+            mode: The mode of the REN line and optionally the device remote/local state.
+                Can be an enum member name (case insensitive) or value.
                 Allowed values are:
-
-                * 0: REN_DEASSERT
-                * 1: REN_ASSERT
-                * 2: REN_DEASSERT_GTL
-                * 3: REN_ASSERT_ADDRESS
-                * 4: REN_ASSERT_LLO
-                * 5: REN_ASSERT_ADDRESS_LLO
-                * 6: REN_ADDRESS_GTL
 
         Returns:
             The status value (`ibsta`).
         """
-        if self._is_board and state not in (REN_ASSERT, REN_DEASSERT, REN_ASSERT_LLO):
-            msg = f"Invalid REN {state=} for INTFC"
+        ibsta = 0
+        ren = to_enum(mode, RENMode, to_upper=True)
+
+        if self._is_board and ren not in (RENMode.ASSERT, RENMode.DEASSERT, RENMode.ASSERT_LLO):
+            msg = f"Invalid mode {ren!r} for INTFC"
             raise MSLConnectionError(self, msg)
 
-        ibsta = 0
-        handle = None  # let the method use the appropriate board or device handle
+        if ren == RENMode.DEASSERT_GTL:
+            ibsta |= self.command(b"\x01")  # GTL = 0x1
 
-        if state == REN_DEASSERT_GTL:
-            ibsta = self.command(b"\x01", handle=handle)  # GTL = 0x1
+        if ren in {RENMode.DEASSERT, RENMode.DEASSERT_GTL}:
+            ibsta |= self.remote_enable(state=False)
 
-        if state in (REN_DEASSERT, REN_DEASSERT_GTL):
-            ibsta = self.remote_enable(state=False, handle=handle)
-
-        if state == REN_ASSERT_LLO:
-            ibsta = self.command(b"\x11", handle=handle)  # LLO = 0x11
-        elif state == REN_ADDRESS_GTL:
-            ibsta = self.command(b"\x01", handle=handle)  # GTL = 0x1
-        elif state == REN_ASSERT_ADDRESS_LLO:
+        if ren == RENMode.ASSERT_LLO:
+            ibsta |= self.command(b"\x11")  # LLO = 0x11
+        elif ren == RENMode.ADDRESS_GTL:
+            ibsta |= self.command(b"\x01")  # GTL = 0x1
+        elif ren == RENMode.ASSERT_ADDRESS_LLO:
             pass
-        elif state in (REN_ASSERT, REN_ASSERT_ADDRESS):
-            ibsta = self.remote_enable(state=True, handle=handle)
-            if not self._is_board and state == REN_ASSERT_ADDRESS:
+        elif ren in {RENMode.ASSERT, RENMode.ASSERT_ADDRESS}:
+            ibsta |= self.remote_enable(state=True)
+            if not self._is_board and ren == RENMode.ASSERT_ADDRESS:
                 assert self._address_info.pad is not None  # noqa: S101
-                ibsta = int(self.listener(self._address_info.pad, sad=self._address_info.sad or 0, handle=handle))
+                _ = self.listener(self._address_info.pad, sad=self._address_info.sad or 0)
 
         return ibsta
 

@@ -227,6 +227,7 @@
         "REUSEADDR",
         "rtol",
         "rtscts",
+        "RWLS",
         "savetxt",
         "Schar",
         "SCPI",

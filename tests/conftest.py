@@ -744,7 +744,7 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         if request_type == 0xA1 and request == 7:  # USBTMC GET_CAPABILITIES
             data[:] = array("B", [1, 0, 0, 0, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0])
 
-        if request_type == 0xA1 and request in {64, 128}:  # USBTMC control IN request
+        if request_type == 0xA1 and request in {64, 128, 160, 161, 162}:  # USBTMC control IN request
             buffer = self._ctrl_queue.get()
             data[: len(buffer)] = array("B", buffer)
             return len(buffer)

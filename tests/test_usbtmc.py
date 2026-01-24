@@ -58,7 +58,7 @@ def test_capabilities() -> None:  # noqa: PLR0915
     assert not c.accepts_service_request
     assert not c.accepts_term_char
     assert not c.accepts_trigger
-    assert not c.is_488
+    assert not c.is_488_interface
     assert not c.is_listen_only
     assert not c.is_talk_only
 
@@ -69,7 +69,7 @@ def test_capabilities() -> None:  # noqa: PLR0915
     assert c.accepts_service_request
     assert c.accepts_term_char
     assert c.accepts_trigger
-    assert c.is_488
+    assert c.is_488_interface
     assert c.is_listen_only
     assert c.is_talk_only
 
@@ -80,7 +80,7 @@ def test_capabilities() -> None:  # noqa: PLR0915
     assert not c.accepts_service_request
     assert not c.accepts_term_char
     assert not c.accepts_trigger
-    assert not c.is_488
+    assert not c.is_488_interface
     assert not c.is_listen_only
     assert not c.is_talk_only
 
@@ -91,7 +91,7 @@ def test_capabilities() -> None:  # noqa: PLR0915
     assert c.accepts_service_request
     assert not c.accepts_term_char
     assert c.accepts_trigger  # is_dt_capable=True OR accepts_interface_trigger=False  => True
-    assert c.is_488
+    assert c.is_488_interface
     assert not c.is_listen_only
     assert not c.is_talk_only
 
@@ -102,7 +102,7 @@ def test_capabilities() -> None:  # noqa: PLR0915
     assert c.accepts_service_request
     assert c.accepts_term_char
     assert c.accepts_trigger
-    assert c.is_488
+    assert c.is_488_interface
     assert not c.is_listen_only
     assert not c.is_talk_only
 
@@ -115,7 +115,7 @@ def test_capabilities() -> None:  # noqa: PLR0915
     assert c.accepts_service_request  # because SR1
     assert c.accepts_term_char
     assert not c.accepts_trigger
-    assert not c.is_488
+    assert not c.is_488_interface
     assert c.is_listen_only
     assert not c.is_talk_only
 
@@ -127,7 +127,7 @@ def test_capabilities() -> None:  # noqa: PLR0915
         "  accepts_service_request=True,\n"
         "  accepts_term_char=True,\n"
         "  accepts_trigger=False,\n"
-        "  is_488=False,\n"
+        "  is_488_interface=False,\n"
         "  is_listen_only=True,\n"
         "  is_talk_only=False\n"
         ")"
@@ -159,7 +159,7 @@ def test_serial_poll_without_interrupt(usb_backend: USBBackend) -> None:
 
     device: USBTMC
     with c.connect() as device:
-        assert device.capabilities.is_488
+        assert device.capabilities.is_488_interface
         usb_backend.add_ctrl_response(b"\x01\x02\x08")  # STATUS_SUCCESS, bTag, status byte
         assert device.serial_poll() == 0x08
 
@@ -175,7 +175,7 @@ def test_serial_poll_without_interrupt(usb_backend: USBBackend) -> None:
         with pytest.raises(MSLConnectionError, match=r"The request was not successful \[status_code=0x80\]"):
             _ = device.serial_poll()
 
-        device.capabilities.is_488 = False
+        device.capabilities.is_488_interface = False
         with pytest.raises(MSLConnectionError, match=r"does not accept the serial-poll request"):
             _ = device.serial_poll()
 
@@ -186,7 +186,7 @@ def test_serial_poll_with_interrupt(usb_backend: USBBackend) -> None:
 
     device: USBTMC
     with c.connect() as device:
-        assert device.capabilities.is_488
+        assert device.capabilities.is_488_interface
 
         usb_backend.add_ctrl_response(b"\x01\x02\x00")  # STATUS_SUCCESS, bTag, reserved
         usb_backend.add_intr_response(bytes([0b00000010, 0]))

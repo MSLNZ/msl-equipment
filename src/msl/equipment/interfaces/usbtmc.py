@@ -15,12 +15,14 @@ https://www.usb.org/document-library/test-measurement-class-specification
 
 from __future__ import annotations
 
+import contextlib
 import re
 import struct
+from time import sleep
 from typing import TYPE_CHECKING
 
 from msl.equipment.enumerations import RENMode
-from msl.equipment.utils import to_enum
+from msl.equipment.utils import logger, to_enum
 
 from .message_based import MSLConnectionError
 from .usb import USB
@@ -61,9 +63,7 @@ class _Message:
 
     def next_tag(self) -> int:
         # USBTMC_1_00.pdf: Section 3.2, Table 1
-        self.tag += 1
-        if self.tag > 255:  # noqa: PLR2004
-            self.tag = 1
+        self.tag = (self.tag % 255) + 1
         return self.tag
 
     def request_dev_dep_msg_in(self, size: int) -> bytes:
@@ -96,6 +96,15 @@ class Capabilities:
     def __init__(self, data: array[int]) -> None:
         """USBTMC device capabilities.
 
+        !!! warning
+            Do not instantiate this class. The device capabilities are automatically determined
+            when the connection is established. You can access these attributes via the
+            [capabilities][msl.equipment.interfaces.usbtmc.USBTMC.capabilities] property.
+            A manufacturer may not strictly follow the rules defined in the USBTMC standard.
+            You may change the value of an attribute if you get an error when requesting
+            a capability (such as [trigger][msl.equipment.interfaces.usbtmc.USBTMC.trigger])
+            stating that the capability is not supported even though you know that it is.
+
         Attributes:
             data (array[int]): The `GET_CAPABILITIES` response from the device.
             accepts_indicator_pulse (bool): Whether the interface accepts the `INDICATOR_PULSE` request.
@@ -103,10 +112,12 @@ class Capabilities:
                 and `LOCAL_LOCKOUT` requests.
             accepts_service_request (bool): Whether the device accepts a service request.
             accepts_term_char (bool): Whether the device supports ending a Bulk-IN transfer when a byte matches the
-                [read_termination][msl.equipment.interface.message_based.MessageBased.read_termination] character.
+                [read_termination][msl.equipment.interfaces.message_based.MessageBased.read_termination] character.
             accepts_trigger (bool): Whether the device accepts the `TRIGGER` request.
-            is_488 (bool): Whether the device understands all mandatory SCPI commands, accepts a service
-                request and is a 488.2 interface.
+            is_488_interface (bool): Whether the device understands all mandatory SCPI commands, accepts a service
+                request and is a 488.2 interface. See *Appendix 2: IEEE 488.2 compatibility* in
+                [USBTMC_usb488_subclass_1_00.pdf](https://www.usb.org/document-library/test-measurement-class-specification){:target="_blank"}
+                for more details.
             is_listen_only (bool): Whether the interface is listen-only.
             is_talk_only (bool): Whether the interface is talk-only.
         """
@@ -142,7 +153,7 @@ class Capabilities:
         self.accepts_trigger: bool = is_dt_capable or accepts_interface_trigger  # rule 1
         self.accepts_remote_local: bool = is_rl_capable or accepts_remote_local  # rule 2
         self.accepts_service_request: bool = is_488_interface or is_sr_capable  # rule 3
-        self.is_488: bool = understands_scpi or (is_sr_capable and is_488_interface)  # rule 4
+        self.is_488_interface: bool = understands_scpi or (is_sr_capable and is_488_interface)  # rule 4
 
     def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the string representation."""
@@ -154,7 +165,7 @@ class Capabilities:
             f"  accepts_service_request={self.accepts_service_request},\n"
             f"  accepts_term_char={self.accepts_term_char},\n"
             f"  accepts_trigger={self.accepts_trigger},\n"
-            f"  is_488={self.is_488},\n"
+            f"  is_488_interface={self.is_488_interface},\n"
             f"  is_listen_only={self.is_listen_only},\n"
             f"  is_talk_only={self.is_talk_only}\n"
             ")"
@@ -181,16 +192,83 @@ class USBTMC(USB, regex=REGEX):
         self._capabilities: Capabilities = Capabilities(
             self.ctrl_transfer(
                 request_type=0xA1,  # Dir=IN, Type=Class, Recipient=Interface
-                request=7,  # GET_CAPABILITIES, see Table 15
+                request=7,  # GET_CAPABILITIES, Table 15
                 value=0,
                 index=self.bulk_in_endpoint.interface_number,
                 data_or_length=0x0018,
             )
         )
 
+    def _abort_transaction(self, direction: USB.CtrlDirection, tag: int | None = None) -> None:  # noqa: C901
+        """Abort a pending Bulk-OUT/IN transaction."""
+        logger.debug("%s aborting %r transaction ...", self, direction)
+
+        # USBTMC_1_00.pdf, Section 4.2.1.2 (Abort Bulk-OUT), Section 4.2.1.4 (Abort Bulk-IN)
+        if direction == USB.CtrlDirection.OUT:
+            # Table 15: INITIATE_ABORT_BULK_OUT=1, CHECK_ABORT_BULK_OUT_STATUS=2
+            initiate, check, index = 1, 2, self.bulk_out_endpoint.address
+        else:
+            # Table 15: INITIATE_ABORT_BULK_IN=3, CHECK_ABORT_BULK_IN_STATUS=4
+            initiate, check, index = 3, 4, self.bulk_in_endpoint.address
+
+        # Tables 18 (Bulk-OUT) and 24 (Bulk-IN)
+        status, current_tag = self.ctrl_transfer(
+            request_type=0xA2,  # Dir=IN, Type=Class, Recipient=Endpoint
+            request=initiate,
+            value=self._msg.tag if tag is None else tag,
+            index=index,
+            data_or_length=0x0002,
+        )
+
+        if status == 0x81:  # USBTMC_1_00.pdf, Table 16, STATUS_TRANSFER_NOT_IN_PROGRESS  # noqa: PLR2004
+            if tag is None:  # Avoid RecursionError
+                # For a STATUS_TRANSFER_NOT_IN_PROGRESS issue, Tables 20 (Bulk-OUT) and 26 (Bulk-IN) state:
+                #   * There is a transfer in progress, but the specified bTag does not match
+                #   * There is no transfer in progress, but the Bulk-OUT FIFO is not empty
+                # Specified wrong tag? Try again with the tag that was returned from the device
+                self._abort_transaction(direction, current_tag)
+            return
+
+        if status != 0x01:  # USBTMC_1_00.pdf: Table 16, STATUS_SUCCESS
+            return
+
+        def read_short_packet() -> None:
+            self._byte_buffer.clear()
+            with contextlib.suppress(OSError):
+                self._device.read(self.bulk_in_endpoint.address, self.bulk_in_endpoint.max_packet_size, 1000)
+
+        # Table 26 (Bulk-IN)
+        # The Host should continue reading from the Bulk-IN endpoint until a short packet is received
+        if direction == USB.CtrlDirection.IN:
+            read_short_packet()
+
+        # USBTMC_1_00.pdf: Tables 21 (Bulk-OUT) and 27 (Bulk-IN)
+        for i in range(1, 100):
+            status, fifo, *_ = self.ctrl_transfer(
+                request_type=0xA2,  # Dir=IN, Type=Class, Recipient=Endpoint
+                request=check,
+                value=0x0000,
+                index=index,
+                data_or_length=0x0008,
+            )
+
+            # Tables 23 (Bulk-OUT) and 29 (Bulk-IN) describes Host behaviour
+            if status == 0x02:  # USBTMC_1_00.pdf, Table 16, STATUS_PENDING  # noqa: PLR2004
+                logger.debug("%s aborting %r transaction PENDING [iteration=%d]", self, direction, i)
+                sleep(0.05)
+                if fifo and direction == USB.CtrlDirection.IN:
+                    read_short_packet()  # Table 29, bmAbortBulkIn.D0 = 1
+                continue  # check again if STATUS_PENDING
+
+            if direction == self.CtrlDirection.OUT:
+                # USBTMC_1_00.pdf, Section 4.1.1 and Table 23 -- send CLEAR_FEATURE then done
+                self.clear_halt(self.bulk_out_endpoint)
+
+            logger.debug("%s aborting %r transaction done", self, direction)
+            return
+
     def _check_ctrl_in_status(self, data: array[int]) -> array[int]:
-        # USBTMC_1_00.pdf: Table 16
-        if data[0] != 1:  # STATUS_SUCCESS
+        if data[0] != 1:  # USBTMC_1_00.pdf: Table 16, STATUS_SUCCESS
             msg = f"The request was not successful [status_code=0x{data[0]:02X}]"
             raise MSLConnectionError(self, msg)
         return data
@@ -204,31 +282,51 @@ class USBTMC(USB, regex=REGEX):
         read = super()._read
         write = super()._write
 
-        # Request for the device to send data
-        # USBTMC_1_00.pdf, Section 3.2.1.2
-        _ = write(self._msg.request_dev_dep_msg_in(size or self._max_read_size))
+        message = bytearray()
+        msg_in_size = size or self._buffer_size
 
-        # Parse Bulk-IN header
-        # USBTMC_1_00.pdf, Section 3.3.1.1, Table 9
-        # Ignore bTagInverse (only check bTag)
-        msg_id, tag, transfer_size, eom = struct.unpack("<BBxxLBxxx", read(12))
+        try:
+            # USBTMC_1_00.pdf, Section 3.3
+            # Rule 9:
+            #   When the Bulk-IN transfer is completed, if more message data bytes are expected,
+            #   the Host may send a new USBTMC command message to read the remainder of the message.
+            # Rule 13:
+            #   The device may send a Bulk-IN message using multiple transfers, as the data becomes available.
+            # These two rules are the reason for the 'while' loop to handle multiple transfers
+            while True:
+                # USBTMC_1_00.pdf, Section 3.2.1.2
+                # Send the REQUEST_DEV_DEP_MSG_IN USBTMC command message
+                _ = write(self._msg.request_dev_dep_msg_in(msg_in_size))
 
-        if msg_id != 2:  # DEV_DEP_MSG_IN, Table 2  # noqa: PLR2004
-            # ABORT
-            msg = f"Wrong DEV_DEP_MSG_IN value {msg_id} (expect 2), the device does not obey USBTMC standards."
-            raise MSLConnectionError(self, msg)
+                # USBTMC_1_00.pdf, Section 3.3.1.1, Table 9
+                # Parse Bulk-IN header, ignore bTagInverse (only check bTag)
+                msg_id, tag, transfer_size, attributes = struct.unpack("<BBxxLBxxx", read(12))
 
-        if tag != self._msg.tag:
-            # ABORT
-            msg = f"Received bTag [{tag}] != sent bTag [{self._msg.tag}], the device does not obey USBTMC standards."
-            raise MSLConnectionError(self, msg)
+                if msg_id != 2 or tag != self._msg.tag:  # Table 2, DEV_DEP_MSG_IN=2  # noqa: PLR2004
+                    msg = "Unexpected USBTMC response header"
+                    if msg_id != 2:  # noqa: PLR2004
+                        msg = f", wrong DEV_DEP_MSG_IN value {msg_id} (expect 2)"
+                    if tag != self._msg.tag:
+                        msg = f", received bTag [{tag}] != sent bTag [{self._msg.tag}]"
+                    raise MSLConnectionError(self, msg)
 
-        # Read all data plus the alignment bytes
-        num_align_bytes = (4 - transfer_size) % 4
-        data = read(transfer_size + num_align_bytes)
-        if num_align_bytes == 0:
-            return data
-        return data[:transfer_size]
+                message.extend(read(transfer_size))
+                if attributes & 1:  # EOM condition satisfied?
+                    # USBTMC_1_00.pdf
+                    # Section 3.3, Rule 10 states:
+                    #   The device may send extra alignment bytes
+                    # Section 3.3.1.1, Table 9, TransferSize field states:
+                    #   This does not include the number of bytes in this header or alignment bytes.
+                    # Therefore, the buffer "may" have alignment bytes to discard
+                    self._byte_buffer.clear()
+                    if size is not None:
+                        # Must read the full Bulk-IN USBTMC response message (so the USB device is happy)
+                        # but only return the requested size
+                        return bytes(message[:size])
+                    return bytes(message)
+        except OSError:
+            self._abort_transaction(USB.CtrlDirection.IN)
+            raise
 
     def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
         """Overrides method in USB."""
@@ -238,13 +336,57 @@ class USBTMC(USB, regex=REGEX):
 
         # USBTMC_1_00.pdf, Section 3.2
         # Rule 5 (below Table 2) states:
-        #   "The Host must send a complete USBTMC command message with a single transfer"
+        #   The Host must send a complete USBTMC command message with a single transfer
         # Rule 1 (below Table 3) states:
-        #  "The Host may send this USBTMC command message with multiple transfers, as the data becomes available"
-        # Rule 5 uses the word "must", rule 1 uses "may". Follow Rule 5. Write complete message in a single transfer.
+        #   The Host may send this USBTMC command message with multiple transfers, as the data becomes available
+        # Rule 5 uses the word "must", rule 1 uses "may". Follow Rule 5, write complete message in a single transfer.
         # Also, libusb manages packet transactions (fragmentation), so we should not do it in Python.
-        # Assume no Bulk-OUT transfer errors for now, if this becomes an issue see Section 3.2.2.3, Table 7.
-        return super()._write(self._msg.dev_dep_msg_out(message))
+        try:
+            return super()._write(self._msg.dev_dep_msg_out(message))
+        except OSError:
+            self._abort_transaction(USB.CtrlDirection.OUT)
+            raise
+
+    def clear_device_buffers(self) -> None:
+        """Clear all input and output buffers associated with the USBTMC device."""
+        logger.debug("%s clearing USBTMC buffers ...", self)
+        self._byte_buffer.clear()
+
+        # USBTMC_1_00.pdf, Section 4.2.1.6
+        _ = self._check_ctrl_in_status(
+            self.ctrl_transfer(
+                request_type=0xA1,  # Dir=IN, Type=Class, Recipient=Interface
+                request=5,  # INITIATE_CLEAR, Table 15
+                value=0,
+                index=self.bulk_in_endpoint.interface_number,  # Bulk-IN/OUT have the same interface number
+                data_or_length=0x0001,
+            )
+        )
+
+        # USBTMC_1_00.pdf, Section 4.2.1.7
+        for i in range(1, 100):
+            # Table 33 and 34
+            status, clear = self.ctrl_transfer(
+                request_type=0xA1,  # Dir=IN, Type=Class, Recipient=Interface
+                request=6,  # CHECK_CLEAR_STATUS, Table 15
+                value=0,
+                index=self.bulk_in_endpoint.interface_number,  # Bulk-IN/OUT have the same interface number
+                data_or_length=0x0002,
+            )
+
+            # Table 35 describes Host behaviour
+            if status == 0x02:  # USBTMC_1_00.pdf, Table 16, STATUS_PENDING  # noqa: PLR2004
+                logger.debug("%s clearing USBTMC buffers PENDING [iteration=%d]", self, i)
+                sleep(0.05)
+                if clear:  # Table 34, bmClear.D0 = 1
+                    with contextlib.suppress(OSError):
+                        self._device.read(self.bulk_in_endpoint.address, self.bulk_in_endpoint.max_packet_size, 1000)
+                continue  # check again if STATUS_PENDING
+
+            # Section 4.1.1 and Table 35, send CLEAR_FEATURE then done
+            self.clear_halt(self.bulk_out_endpoint)
+            logger.debug("%s clearing USBTMC buffers done", self)
+            return
 
     def control_ren(self, mode: RENMode | str | int) -> None:
         """Controls the state of the GPIB Remote Enable (REN) line.
@@ -254,7 +396,6 @@ class USBTMC(USB, regex=REGEX):
         Args:
             mode: The mode of the REN line and optionally the device remote/local state.
                 Can be an enum member name (case insensitive) or value.
-                Allowed values are:
         """
         if not self._capabilities.accepts_remote_local:
             msg = "The USBTMC device does not accept a remote-local request"
@@ -268,7 +409,7 @@ class USBTMC(USB, regex=REGEX):
             _ = self._check_ctrl_in_status(
                 self.ctrl_transfer(
                     request_type=0xA1,  # Dir=IN, Type=Class, Recipient=Interface
-                    request=160,  # REN_CONTROL, see Table 9
+                    request=160,  # REN_CONTROL, Table 9
                     value=1,  # assert
                     index=self.bulk_in_endpoint.interface_number,
                     data_or_length=0x0001,
@@ -280,7 +421,7 @@ class USBTMC(USB, regex=REGEX):
             _ = self._check_ctrl_in_status(
                 self.ctrl_transfer(
                     request_type=0xA1,  # Dir=IN, Type=Class, Recipient=Interface
-                    request=162,  # LOCAL_LOCKOUT, see Table 9
+                    request=162,  # LOCAL_LOCKOUT, Table 9
                     value=0,  # always 0
                     index=self.bulk_in_endpoint.interface_number,
                     data_or_length=0x0001,
@@ -292,7 +433,7 @@ class USBTMC(USB, regex=REGEX):
             _ = self._check_ctrl_in_status(
                 self.ctrl_transfer(
                     request_type=0xA1,  # Dir=IN, Type=Class, Recipient=Interface
-                    request=161,  # GO_TO_LOCAL, see Table 9
+                    request=161,  # GO_TO_LOCAL, Table 9
                     value=0,  # always 0
                     index=self.bulk_in_endpoint.interface_number,
                     data_or_length=0x0001,
@@ -304,7 +445,7 @@ class USBTMC(USB, regex=REGEX):
             _ = self._check_ctrl_in_status(
                 self.ctrl_transfer(
                     request_type=0xA1,  # Dir=IN, Type=Class, Recipient=Interface
-                    request=160,  # REN_CONTROL, see Table 9
+                    request=160,  # REN_CONTROL, Table 9
                     value=0,  # deassert
                     index=self.bulk_in_endpoint.interface_number,
                     data_or_length=0x0001,
@@ -331,7 +472,7 @@ class USBTMC(USB, regex=REGEX):
         _ = self._check_ctrl_in_status(
             self.ctrl_transfer(
                 request_type=0xA1,  # Dir=IN, Type=Class, Recipient=Interface
-                request=64,  # INDICATOR_PULSE, see Table 15
+                request=64,  # INDICATOR_PULSE, Table 15
                 value=0,
                 index=self.bulk_in_endpoint.interface_number,
                 data_or_length=0x0001,
@@ -341,13 +482,13 @@ class USBTMC(USB, regex=REGEX):
     def serial_poll(self) -> int:
         """Read status byte / serial poll (device).
 
-        This method is equivalent to the [ibrsp](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibrsp.html)
+        This method is equivalent to the [ibrsp](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibrsp.html){:target="_blank"}
         function.
 
         Returns:
             The status byte.
         """
-        if not self._capabilities.is_488:
+        if not self._capabilities.is_488_interface:
             msg = "The USBTMC device does not accept the serial-poll request"
             raise MSLConnectionError(self, msg)
 
@@ -359,7 +500,7 @@ class USBTMC(USB, regex=REGEX):
         _, tag, data = self._check_ctrl_in_status(
             self.ctrl_transfer(
                 request_type=0xA1,  # Dir=IN, Type=Class, Recipient=Interface
-                request=128,  # READ_STATUS_BYTE, see Table 9
+                request=128,  # READ_STATUS_BYTE, Table 9
                 value=self._tag_status,
                 index=self.bulk_in_endpoint.interface_number,
                 data_or_length=0x0003,

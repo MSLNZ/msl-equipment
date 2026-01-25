@@ -679,8 +679,10 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
             self.read_offset += 64
         else:
             msg = array("B", self._bulk_queue.get())
+
         if msg.tobytes() in {b"sleep", b"\x11\x60sleep"}:  # \x11\x60 are the status bytes for the FTDI packet
             sleep(0.05)
+
         buffer[:] = msg
         return len(msg)
 
@@ -688,9 +690,15 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         """Mock a bulk write."""
         self._bulk_message = data
         self.read_offset = 0
-        if data.tobytes() in {b"write_sleep!", b"sleep!"}:
+        as_bytes = data.tobytes()
+        if as_bytes in {b"write_sleep!", b"sleep!"}:
             sleep(0.05)
             return len(data) // 2
+
+        if as_bytes.endswith(b"\x00\x07\x00\x00\x00\x01\x00\x00\x00error\r\n\x00"):  # USBTMC message, after ~bTag
+            error = "Mocked Bulk-OUT write error"
+            raise usb.core.USBError(error)  # pyright: ignore[reportUnknownMemberType]
+
         return len(data)
 
     def claim_interface(self, handle: int, interface: int) -> None:  # pyright: ignore[reportUnusedParameter]
@@ -711,8 +719,11 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         with self._intr_queue.mutex:
             self._intr_queue.queue.clear()
 
-    def clear_halt(self, handle: int, ep: int) -> None:  # pyright: ignore[reportUnusedParameter]
-        """Does nothing."""
+    def clear_halt(self, handle: int, ep: int) -> None:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+        """Mock a clear-halt request."""
+        if ep == 0x81:
+            msg = "Mocked Bulk-IN clear-halt issue"
+            raise usb.core.USBError(msg)  # pyright: ignore[reportUnknownMemberType]
 
     def close_device(self, handle: int) -> None:  # pyright: ignore[reportUnusedParameter]
         """Does nothing."""
@@ -743,8 +754,9 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
 
         if request_type == 0xA1 and request == 7:  # USBTMC GET_CAPABILITIES
             data[:] = array("B", [1, 0, 0, 0, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0])
+            return len(data)
 
-        if request_type == 0xA1 and request in {64, 128, 160, 161, 162}:  # USBTMC control IN request
+        if request_type in {0xA1, 0xA2} and request in {1, 2, 3, 4, 5, 6, 64, 128, 160, 161, 162}:  # USBTMC
             buffer = self._ctrl_queue.get()
             data[: len(buffer)] = array("B", buffer)
             return len(buffer)

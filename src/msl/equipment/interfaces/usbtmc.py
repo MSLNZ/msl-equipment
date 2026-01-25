@@ -96,17 +96,24 @@ class Capabilities:
     def __init__(self, data: array[int]) -> None:
         """USBTMC device capabilities.
 
-        !!! warning
+        !!! note
             Do not instantiate this class. The device capabilities are automatically determined
             when the connection is established. You can access these attributes via the
             [capabilities][msl.equipment.interfaces.usbtmc.USBTMC.capabilities] property.
-            A manufacturer may not strictly follow the rules defined in the USBTMC standard.
-            You may change the value of an attribute if you get an error when requesting
-            a capability (such as [trigger][msl.equipment.interfaces.usbtmc.USBTMC.trigger])
-            stating that the capability is not supported even though you know that it is.
+
+            A manufacturer may not strictly follow the rules defined in the USBTMC standard when
+            specifying the relationships between the capability bitmap values. You may change
+            the value of an attribute if you get an error when calling one of the *capability*
+            methods, such as [trigger()][msl.equipment.interfaces.usbtmc.USBTMC.trigger], with
+            an error message that states the capability is not supported. For example, if
+            calling [trigger()][msl.equipment.interfaces.usbtmc.USBTMC.trigger] raises an error
+            that states a trigger request is not supported (and you are certain that the device
+            does support a trigger request) you may set `tmc.capabilities.accepts_trigger = True`,
+            where `tmc` is the [USBTMC][msl.equipment.interfaces.usbtmc.USBTMC] instance, to bypass
+            the error.
 
         Attributes:
-            data (array[int]): The `GET_CAPABILITIES` response from the device.
+            data (array[int]): The `GET_CAPABILITIES` response from the USBTMC device.
             accepts_indicator_pulse (bool): Whether the interface accepts the `INDICATOR_PULSE` request.
             accepts_remote_local (bool): Whether the interface accepts `REN_CONTROL`, `GO_TO_LOCAL`
                 and `LOCAL_LOCKOUT` requests.
@@ -199,9 +206,9 @@ class USBTMC(USB, regex=REGEX):
             )
         )
 
-    def _abort_transaction(self, direction: USB.CtrlDirection, tag: int | None = None) -> None:  # noqa: C901
-        """Abort a pending Bulk-OUT/IN transaction."""
-        logger.debug("%s aborting %r transaction ...", self, direction)
+    def _abort_transfer(self, direction: USB.CtrlDirection, tag: int | None = None) -> None:
+        """Abort a pending Bulk-OUT/IN transfer."""
+        logger.debug("%s aborting %r transfer ...", self, direction)
 
         # USBTMC_1_00.pdf, Section 4.2.1.2 (Abort Bulk-OUT), Section 4.2.1.4 (Abort Bulk-IN)
         if direction == USB.CtrlDirection.OUT:
@@ -220,16 +227,18 @@ class USBTMC(USB, regex=REGEX):
             data_or_length=0x0002,
         )
 
-        if status == 0x81:  # USBTMC_1_00.pdf, Table 16, STATUS_TRANSFER_NOT_IN_PROGRESS  # noqa: PLR2004
-            if tag is None:  # Avoid RecursionError
-                # For a STATUS_TRANSFER_NOT_IN_PROGRESS issue, Tables 20 (Bulk-OUT) and 26 (Bulk-IN) state:
-                #   * There is a transfer in progress, but the specified bTag does not match
-                #   * There is no transfer in progress, but the Bulk-OUT FIFO is not empty
-                # Specified wrong tag? Try again with the tag that was returned from the device
-                self._abort_transaction(direction, current_tag)
+        # USBTMC_1_00.pdf, Table 16, STATUS_TRANSFER_NOT_IN_PROGRESS
+        if status == 0x81 and tag is None:  # noqa: PLR2004
+            # For a STATUS_TRANSFER_NOT_IN_PROGRESS issue, Tables 20 (Bulk-OUT) and 26 (Bulk-IN) state:
+            #   * There is a transfer in progress, but the specified bTag does not match
+            #   * There is no transfer in progress, but the Bulk-OUT FIFO is not empty
+            # Specified wrong tag? Try again with the tag that was returned from the device
+            logger.debug("%s aborting %r transfer, try again with bTag=0x%02X", self, direction, current_tag)
+            self._abort_transfer(direction, current_tag)
             return
 
         if status != 0x01:  # USBTMC_1_00.pdf: Table 16, STATUS_SUCCESS
+            logger.debug("%s aborting %r transfer, INITIATE_ABORT failed [status=0x%02X]", self, direction, status)
             return
 
         def read_short_packet() -> None:
@@ -254,7 +263,7 @@ class USBTMC(USB, regex=REGEX):
 
             # Tables 23 (Bulk-OUT) and 29 (Bulk-IN) describes Host behaviour
             if status == 0x02:  # USBTMC_1_00.pdf, Table 16, STATUS_PENDING  # noqa: PLR2004
-                logger.debug("%s aborting %r transaction PENDING [iteration=%d]", self, direction, i)
+                logger.debug("%s aborting %r transfer PENDING [iteration=%d]", self, direction, i)
                 sleep(0.05)
                 if fifo and direction == USB.CtrlDirection.IN:
                     read_short_packet()  # Table 29, bmAbortBulkIn.D0 = 1
@@ -264,7 +273,7 @@ class USBTMC(USB, regex=REGEX):
                 # USBTMC_1_00.pdf, Section 4.1.1 and Table 23 -- send CLEAR_FEATURE then done
                 self.clear_halt(self.bulk_out_endpoint)
 
-            logger.debug("%s aborting %r transaction done", self, direction)
+            logger.debug("%s aborting %r transfer done", self, direction)
             return
 
     def _check_ctrl_in_status(self, data: array[int]) -> array[int]:
@@ -305,9 +314,9 @@ class USBTMC(USB, regex=REGEX):
                 if msg_id != 2 or tag != self._msg.tag:  # Table 2, DEV_DEP_MSG_IN=2  # noqa: PLR2004
                     msg = "Unexpected USBTMC response header"
                     if msg_id != 2:  # noqa: PLR2004
-                        msg = f", wrong DEV_DEP_MSG_IN value {msg_id} (expect 2)"
+                        msg += f", wrong DEV_DEP_MSG_IN value {msg_id} (expect 2)"
                     if tag != self._msg.tag:
-                        msg = f", received bTag [{tag}] != sent bTag [{self._msg.tag}]"
+                        msg += f", received bTag [{tag}] != sent bTag [{self._msg.tag}]"
                     raise MSLConnectionError(self, msg)
 
                 message.extend(read(transfer_size))
@@ -325,7 +334,7 @@ class USBTMC(USB, regex=REGEX):
                         return bytes(message[:size])
                     return bytes(message)
         except OSError:
-            self._abort_transaction(USB.CtrlDirection.IN)
+            self._abort_transfer(USB.CtrlDirection.IN)
             raise
 
     def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
@@ -344,12 +353,12 @@ class USBTMC(USB, regex=REGEX):
         try:
             return super()._write(self._msg.dev_dep_msg_out(message))
         except OSError:
-            self._abort_transaction(USB.CtrlDirection.OUT)
+            self._abort_transfer(USB.CtrlDirection.OUT)
             raise
 
     def clear_device_buffers(self) -> None:
         """Clear all input and output buffers associated with the USBTMC device."""
-        logger.debug("%s clearing USBTMC buffers ...", self)
+        logger.debug("%s clearing USBTMC device buffers ...", self)
         self._byte_buffer.clear()
 
         # USBTMC_1_00.pdf, Section 4.2.1.6
@@ -376,7 +385,7 @@ class USBTMC(USB, regex=REGEX):
 
             # Table 35 describes Host behaviour
             if status == 0x02:  # USBTMC_1_00.pdf, Table 16, STATUS_PENDING  # noqa: PLR2004
-                logger.debug("%s clearing USBTMC buffers PENDING [iteration=%d]", self, i)
+                logger.debug("%s clearing USBTMC device buffers PENDING [iteration=%d]", self, i)
                 sleep(0.05)
                 if clear:  # Table 34, bmClear.D0 = 1
                     with contextlib.suppress(OSError):
@@ -385,7 +394,7 @@ class USBTMC(USB, regex=REGEX):
 
             # Section 4.1.1 and Table 35, send CLEAR_FEATURE then done
             self.clear_halt(self.bulk_out_endpoint)
-            logger.debug("%s clearing USBTMC buffers done", self)
+            logger.debug("%s clearing USBTMC device buffers done", self)
             return
 
     def control_ren(self, mode: RENMode | str | int) -> None:
@@ -454,7 +463,7 @@ class USBTMC(USB, regex=REGEX):
 
     @property
     def capabilities(self) -> Capabilities:
-        """Returns the capabilities of the USBTMC device."""
+        """Returns the [Capabilities][msl.equipment.interfaces.usbtmc.Capabilities] of the USBTMC device."""
         return self._capabilities
 
     def indicator_pulse(self) -> None:
@@ -465,7 +474,7 @@ class USBTMC(USB, regex=REGEX):
         then automatically turns off.
         """
         if not self._capabilities.accepts_indicator_pulse:
-            msg = "The USBTMC device does not accept the indicator-pulse request"
+            msg = "The USBTMC device does not accept an indicator-pulse request"
             raise MSLConnectionError(self, msg)
 
         # USBTMC_1_00.pdf: Section 4.2.1.9, Table 38
@@ -480,16 +489,15 @@ class USBTMC(USB, regex=REGEX):
         )
 
     def serial_poll(self) -> int:
-        """Read status byte / serial poll (device).
-
-        This method is equivalent to the [ibrsp](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibrsp.html){:target="_blank"}
-        function.
+        """Read status byte / serial poll.
 
         Returns:
-            The status byte.
+            The status byte. See the table from
+                [here](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibrsp.html){:target="_blank"}
+                for the meaning of each bit in the status byte.
         """
         if not self._capabilities.is_488_interface:
-            msg = "The USBTMC device does not accept the serial-poll request"
+            msg = "The USBTMC device does not accept a serial-poll request"
             raise MSLConnectionError(self, msg)
 
         self._tag_status += 1
@@ -533,7 +541,7 @@ class USBTMC(USB, regex=REGEX):
     def trigger(self) -> None:
         """Trigger device."""
         if not self._capabilities.accepts_trigger:
-            msg = "The USBTMC device does not accept the trigger request"
+            msg = "The USBTMC device does not accept a trigger request"
             raise MSLConnectionError(self, msg)
 
         _ = super()._write(self._msg.trigger())

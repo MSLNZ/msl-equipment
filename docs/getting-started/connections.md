@@ -416,6 +416,143 @@ alice.disconnect()
 bob.disconnect()
 ```
 
+### Better IDE Support
+
+The returned type when the [connect()][msl.equipment.schema.Connection.connect] method is called is [Any][typing.Any], because the [Interface][connections-interfaces] or [Resource][resources] to use to communicate with the equipment is not known until runtime. The Integrated Development Environment (IDE) that you may be using to develop your code cannot provide type checking, code completion or other diagnostic features for the [Any][typing.Any] type. The following illustrates different ways to get the features that your IDE supports, depending on how you may be using `msl-equipment`.
+
+If you create a [Connection][] instance in a module, annotate the returned object
+
+```python
+from msl.equipment import GPIB, Connection
+
+device: GPIB = Connection("GPIB::22").connect()
+```
+
+or if you use a [context manager][with]{:target="_blank"}, annotate the object before entering the code block.
+
+```python
+from msl.equipment import GPIB, Connection
+
+device: GPIB
+with Connection("GPIB::22").connect() as device:
+    pass
+```
+
+If you create an [Equipment][] instance in a module.
+
+```python
+from msl.equipment import GPIB, Connection, Equipment
+
+equipment = Equipment(
+    connection=Connection("GPIB::22"),
+    # specify more keyword arguments...
+)
+
+# Use the connect() method and annotate the returned object
+device: GPIB = equipment.connect()
+
+# Pass the Equipment instance to the GPIB class
+device = GPIB(equipment)
+
+# Use as a context manager
+with GPIB(equipment) as device:
+    pass
+```
+
+If you create a [Config][] instance in a module.
+
+```python
+from msl.equipment import GPIB, Config
+
+cfg = Config("path/to/configuration.xml")
+
+# Get the Equipment instance by its "name" in an Equipment Register,
+# call the connect() method and annotate the returned object
+device: GPIB = cfg.equipment["dmm"].connect()
+
+# Pass the Equipment instance to the appropriate Interface class
+device = GPIB(cfg.equipment["dmm"])
+
+# Use as a context manager
+with GPIB(cfg.equipment["dmm"]) as device:
+    pass
+```
+
+[Resources][] also take an [Equipment][] instance as an argument. If you know the Resource that is used for communicating with the equipment, you have multiple choices. The following uses the [MXSeries][msl.equipment_resources.aim_tti.mx_series.MXSeries] Resource for the examples.
+
+If you create a [Connection][] instance in a module.
+
+```python
+from msl.equipment import Connection
+from msl.equipment.resources import MXSeries
+
+connection = Connection(
+    "TCPIP::169.254.100.2::inst0::INSTR",
+    manufacturer="Aim-TTi",  # required
+    model="MX100TP",  # required (but may be a different model number)
+)
+
+# Use the connect() method and annotate the returned object
+device: MXSeries = connection.connect()
+
+# Use as a context manager
+device: MXSeries
+with connection.connect() as device:
+    pass
+```
+
+If you create an [Equipment][] instance in a module.
+
+```python
+from msl.equipment import Connection, Equipment
+from msl.equipment.resources import MXSeries
+
+dcv_supply = Equipment(
+    connection=Connection("TCPIP::169.254.100.2::inst0::INSTR"),
+    manufacturer="Aim-TTi",  # required if calling dcv_supply.connect()
+    model="MX100TP",  # required if calling dcv_supply.connect()
+    # specify more keyword arguments...
+)
+
+# Use the connect() method and annotate the returned object.
+# The manufacturer and model values must be specified for the
+# MXSeries Resource to be chosen.
+device: MXSeries = dcv_supply.connect()
+
+# Pass the `dcv_supply` instance to the MXSeries Resource class.
+# The manufacturer and model values are not required
+device = MXSeries(dcv_supply)
+
+# Use as a context manager
+with MXSeries(dcv_supply) as device:
+    pass
+```
+
+If you create a [Config][] instance in a module.
+
+```python
+from msl.equipment import Config
+from msl.equipment.resources import MXSeries
+
+cfg = Config("path/to/configuration.xml")
+
+# Get the Equipment instance by its "name" in an Equipment Register,
+# call the connect() method and annotate the returned object. The
+# <equipment> element in the Equipment Register must also specify the
+# appropriate <manufacturer> and <model> sub-elements to automatically
+# use the MXSeries Resource.
+device: MXSeries = cfg.equipment["dcv-supply"].connect()
+
+# Pass the Equipment instance to the appropriate Resource class
+device = MXSeries(cfg.equipment["dcv-supply"])
+
+# Use as a context manager
+with MXSeries(cfg.equipment["dcv-supply"]) as device:
+    pass
+```
+
+### Debugging Communication
+
 The [logging][]{:target="_blank"} module may be used to help debug communication issues, especially when interfacing with multiple equipment. By enabling the `DEBUG` [level][levels]{:target="_blank"} you will be able to capture the bytes that are written to and read from the equipment.
 
 ```python

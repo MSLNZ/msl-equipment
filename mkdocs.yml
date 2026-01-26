@@ -197,6 +197,8 @@ plugins:
           options:
             # General
             show_source: true
+            show_inheritance_diagram: false
+            inheritance_diagram_direction: LR
 
             # Headings
             show_root_toc_entry: false

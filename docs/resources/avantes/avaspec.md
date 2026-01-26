@@ -16,11 +16,13 @@ cfg.m_NrAverages = 1  # number of averages
 
 ::: msl.equipment_resources.avantes.avaspec.AvaSpec
     options:
+        inherited_members: false
         show_root_full_path: false
         show_root_heading: true
+        show_inheritance_diagram: true
 
 ## Enums and Structs {: #avaspec-enums-structs }
 
 ::: msl.equipment_resources.avantes.avaspec
     options:
-        filters: ["!AvaSpec"]
+        filters: ["!AvaSpec", "!^_"]

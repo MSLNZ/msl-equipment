@@ -3208,7 +3208,7 @@
   <span class="md-ellipsis">
     
   
-    GMH 3000 Series thermometer
+    GMH 3000 Series
   
 
     
@@ -4777,8 +4777,9 @@
 
 
 <h2 id="msl.equipment_resources.vaisala.ptb330.PTB330" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">PTB330</span>
-
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">PTB330</span>
+(<code><a class="autorefs autorefs-internal" title="            PTU300
+(Serial) (msl.equipment_resources.vaisala.ptu300.PTU300)" href="../ptu300/#msl.equipment_resources.vaisala.ptu300.PTU300">PTU300</a></code>)
 
 <a href="#msl.equipment_resources.vaisala.ptb330.PTB330" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">PTB330</span><span class="p">(</span><span class="n">equipment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Equipment
@@ -4790,9 +4791,53 @@
 </code></pre></div>
 
     <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="            PTU300 (msl.equipment_resources.vaisala.ptu300.PTU300)" href="../ptu300/#msl.equipment_resources.vaisala.ptu300.PTU300">PTU300</a></code></p>
 
+            <div style="display: none">
+              <a class="autorefs autorefs-internal" title="            PTB330
+(PTU300) (msl.equipment_resources.vaisala.ptb330.PTB330)" href="#msl.equipment_resources.vaisala.ptb330.PTB330" id="mermaid-link-msl.equipment_resources.vaisala.ptb330.PTB330"></a>
+                  <a class="autorefs autorefs-internal" title="            PTU300
+(Serial) (msl.equipment_resources.vaisala.ptu300.PTU300)" href="../ptu300/#msl.equipment_resources.vaisala.ptu300.PTU300" id="mermaid-link-msl.equipment_resources.vaisala.ptu300.PTU300"></a>
+                  <a class="autorefs autorefs-internal" title="            Serial
+(MessageBased) (msl.equipment.interfaces.serial.Serial)" href="../../../api/interfaces/serial/#msl.equipment.interfaces.serial.Serial" id="mermaid-link-msl.equipment.interfaces.serial.Serial"></a>
+                  <a class="autorefs autorefs-internal" title="            MessageBased
+(Interface) (msl.equipment.interfaces.message_based.MessageBased)" href="../../../api/interfaces/#msl.equipment.interfaces.message_based.MessageBased" id="mermaid-link-msl.equipment.interfaces.message_based.MessageBased"></a>
+                  <a class="autorefs autorefs-internal" title="            Interface (msl.equipment.schema.Interface)" href="../../../api/interfaces/#msl.equipment.schema.Interface" id="mermaid-link-msl.equipment.schema.Interface"></a>
+            </div>
+            <pre class="mermaid"><code id="mermaid-diagram-msl.equipment_resources.vaisala.ptb330.PTB330">
+              flowchart LR
+              msl.equipment_resources.vaisala.ptb330.PTB330[PTB330]
+              msl.equipment_resources.vaisala.ptu300.PTU300[PTU300]
+              msl.equipment.interfaces.serial.Serial[Serial]
+              msl.equipment.interfaces.message_based.MessageBased[MessageBased]
+              msl.equipment.schema.Interface[Interface]
+
+                              msl.equipment_resources.vaisala.ptu300.PTU300 --> msl.equipment_resources.vaisala.ptb330.PTB330
+                                msl.equipment.interfaces.serial.Serial --> msl.equipment_resources.vaisala.ptu300.PTU300
+                                msl.equipment.interfaces.message_based.MessageBased --> msl.equipment.interfaces.serial.Serial
+                                msl.equipment.schema.Interface --> msl.equipment.interfaces.message_based.MessageBased
+                
+
+
+
+
+
+              click msl.equipment_resources.vaisala.ptb330.PTB330 href "" "msl.equipment_resources.vaisala.ptb330.PTB330"
+              click msl.equipment_resources.vaisala.ptu300.PTU300 href "" "msl.equipment_resources.vaisala.ptu300.PTU300"
+              click msl.equipment.interfaces.serial.Serial href "" "msl.equipment.interfaces.serial.Serial"
+              click msl.equipment.interfaces.message_based.MessageBased href "" "msl.equipment.interfaces.message_based.MessageBased"
+              click msl.equipment.schema.Interface href "" "msl.equipment.schema.Interface"
+            </code></pre>
+            <script>
+              var diagram = document.getElementById('mermaid-diagram-msl.equipment_resources.vaisala.ptb330.PTB330');
+              diagram.innerHTML = diagram.innerHTML.replace(/click ([\w.]+) href "" "\1"/g, function(match, nodeID, offset) {
+                try {
+                  const link = document.getElementById("mermaid-link-" + nodeID).href;
+                  return `click ${nodeID} href "${link}" "${nodeID}"`
+                } catch (e) {
+                  return '';
+                }
+              });
+            </script>
 
 
         <p><a href="https://www.vaisala.com/en" target="_blank">Vaisala</a> PTB330 Barometer.</p>
@@ -4804,6 +4849,12 @@
 <li>Data bits: 7</li>
 <li>Parity: EVEN</li>
 </ul>
+<p>Regular-expression patterns that are used to select this Resource when
+<a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Vaisala&quot;</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;^PTB330$&quot;</span>
+<span class="n">flags</span><span class="o">=</span><span class="n">IGNORECASE</span>
+</code></pre></div></p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Ensure the device is in <code>STOP</code> or <code>SEND</code> mode before initiating communication.</p>
@@ -4871,7 +4922,15 @@
 <span class="normal">36</span>
 <span class="normal">37</span>
 <span class="normal">38</span>
-<span class="normal">39</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Vaisala PTB330 Barometer.</span>
 
 <span class="sd">    The device manual is available [here](https://docs.vaisala.com/r/M210855EN-E/en-US){:target=&quot;_blank&quot;}.</span>
@@ -4881,6 +4940,14 @@
 <span class="sd">    * Baud rate: 4800</span>
 <span class="sd">    * Data bits: 7</span>
 <span class="sd">    * Parity: EVEN</span>
+
+<span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
+<span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
+<span class="sd">    ```python</span>
+<span class="sd">    manufacturer=r&quot;Vaisala&quot;</span>
+<span class="sd">    model=r&quot;^PTB330$&quot;</span>
+<span class="sd">    flags=IGNORECASE</span>
+<span class="sd">    ```</span>
 
 <span class="sd">    !!! warning</span>
 <span class="sd">        Ensure the device is in `STOP` or `SEND` mode before initiating communication.</span>
@@ -4972,14 +5039,14 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/vaisala/ptu300.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_for_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span>
+<span class="normal">98</span>
+<span class="normal">99</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_for_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise an error, if present.&quot;&quot;&quot;</span>
     <span class="n">err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;ERRS&quot;</span><span class="p">)</span>  <span class="c1"># List present transmitter errors</span>
     <span class="c1"># a PASS or FAIL line is returned from PTB330 modules first</span>
@@ -5034,14 +5101,14 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/vaisala/ptu300.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the currently active formatter string.</span>
 
 <span class="sd">    Returns:</span>
@@ -5097,14 +5164,14 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/vaisala/ptu300.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">107</span>
-<span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reading_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reading_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Output the reading once.</span>
 
 <span class="sd">    Returns:</span>
@@ -5173,15 +5240,7 @@ date as [yyyy-mm-dd]. For more options, refer to the manual.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/vaisala/ptu300.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
-<span class="normal">123</span>
-<span class="normal">124</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">124</span>
 <span class="normal">125</span>
 <span class="normal">126</span>
 <span class="normal">127</span>
@@ -5201,7 +5260,15 @@ date as [yyyy-mm-dd]. For more options, refer to the manual.</p>
 <span class="normal">141</span>
 <span class="normal">142</span>
 <span class="normal">143</span>
-<span class="normal">144</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the format of data output to follow the pattern in the format string.</span>
 
 <span class="sd">    For example, in the format string `4.3 P &quot; &quot; 3.3 T &quot; &quot; 3.3 RH &quot; &quot; SN &quot; &quot; #r #n`, `x.y` is the number</span>
@@ -5293,58 +5360,58 @@ as specified in the instrument manual on pages 12 and 68.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/vaisala/ptb330.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desired_units</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desired_units</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set units of specified quantities.</span>
 
 <span class="sd">    Args:</span>

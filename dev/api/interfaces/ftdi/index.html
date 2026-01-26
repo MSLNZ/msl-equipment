@@ -3577,7 +3577,7 @@
   <span class="md-ellipsis">
     
   
-    GMH 3000 Series thermometer
+    GMH 3000 Series
   
 
     
@@ -5217,8 +5217,9 @@
 
 
 <h2 id="msl.equipment.interfaces.ftdi.FTDI" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">FTDI</span>
-
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">FTDI</span>
+(<code><a class="autorefs autorefs-internal" title="            MessageBased
+(Interface) (msl.equipment.interfaces.message_based.MessageBased)" href="../#msl.equipment.interfaces.message_based.MessageBased">MessageBased</a></code>)
 
 <a href="#msl.equipment.interfaces.ftdi.FTDI" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">FTDI</span><span class="p">(</span><span class="n">equipment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Equipment
@@ -5230,8 +5231,6 @@
 </code></pre></div>
 
     <div class="doc doc-contents first">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="            MessageBased (msl.equipment.interfaces.message_based.MessageBased)" href="../#msl.equipment.interfaces.message_based.MessageBased">MessageBased</a></code></p>
 
 
 
@@ -5275,9 +5274,13 @@
     </table>
         <p>A <a class="autorefs autorefs-internal" title="            Connection" href="../../connection/#msl.equipment.schema.Connection">Connection</a> instance supports the following <em>properties</em>
 for the FTDI communication protocol, as well as the <em>properties</em> defined in
-<a class="autorefs autorefs-internal" title="            MessageBased" href="../#msl.equipment.interfaces.message_based.MessageBased">MessageBased</a>. The
-<a class="autorefs autorefs-internal" title="            DataBits" href="../../enumerations/#msl.equipment.enumerations.DataBits">DataBits</a>,
-<a class="autorefs autorefs-internal" title="            Parity" href="../../enumerations/#msl.equipment.enumerations.Parity">Parity</a> and <a class="autorefs autorefs-internal" title="            StopBits" href="../../enumerations/#msl.equipment.enumerations.StopBits">StopBits</a>
+<a class="autorefs autorefs-internal" title="            MessageBased
+(Interface)" href="../#msl.equipment.interfaces.message_based.MessageBased">MessageBased</a>. The
+<a class="autorefs autorefs-internal" title="            DataBits
+(IntEnum)" href="../../enumerations/#msl.equipment.enumerations.DataBits">DataBits</a>,
+<a class="autorefs autorefs-internal" title="            Parity
+(Enum)" href="../../enumerations/#msl.equipment.enumerations.Parity">Parity</a> and <a class="autorefs autorefs-internal" title="            StopBits
+(Enum)" href="../../enumerations/#msl.equipment.enumerations.StopBits">StopBits</a>
 enumeration names or values may also be used. For properties that specify an <em>alias</em>, you
 may also use the alternative name as the property name. The
 <a class="autorefs autorefs-internal" title="            read_termination
@@ -5322,7 +5325,8 @@ are automatically set to <code>None</code> (termination characters are not used 
           <tr class="doc-section-item">
             <td><code><span title="msl.equipment.interfaces.ftdi.FTDI.__init__.data_bits">data_bits</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            DataBits (msl.equipment.enumerations.DataBits)" href="../../enumerations/#msl.equipment.enumerations.DataBits">DataBits</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            DataBits
+(IntEnum) (msl.equipment.enumerations.DataBits)" href="../../enumerations/#msl.equipment.enumerations.DataBits">DataBits</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5359,7 +5363,8 @@ If <code>None</code>, the latency timer is not set and the chip default is used,
           <tr class="doc-section-item">
             <td><code><span title="msl.equipment.interfaces.ftdi.FTDI.__init__.parity">parity</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            Parity (msl.equipment.enumerations.Parity)" href="../../enumerations/#msl.equipment.enumerations.Parity">Parity</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            Parity
+(Enum) (msl.equipment.enumerations.Parity)" href="../../enumerations/#msl.equipment.enumerations.Parity">Parity</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5383,7 +5388,8 @@ If <code>None</code>, the latency timer is not set and the chip default is used,
           <tr class="doc-section-item">
             <td><code><span title="msl.equipment.interfaces.ftdi.FTDI.__init__.stop_bits">stop_bits</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            StopBits (msl.equipment.enumerations.StopBits)" href="../../enumerations/#msl.equipment.enumerations.StopBits">StopBits</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            StopBits
+(Enum) (msl.equipment.enumerations.StopBits)" href="../../enumerations/#msl.equipment.enumerations.StopBits">StopBits</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6678,7 +6684,8 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
       writable
   " href="../#msl.equipment.interfaces.message_based.MessageBased.timeout">timeout</a>
    is not <code>None</code>. If a timeout occurs, an
-   <a class="autorefs autorefs-internal" title="            MSLTimeoutError" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLTimeoutError">MSLTimeoutError</a> is raised.</li>
+   <a class="autorefs autorefs-internal" title="            MSLTimeoutError
+(TimeoutError)" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLTimeoutError">MSLTimeoutError</a> is raised.</li>
 <li><a class="autorefs autorefs-internal" title="            max_read_size
 
 
@@ -6687,7 +6694,8 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
       writable
   " href="../#msl.equipment.interfaces.message_based.MessageBased.max_read_size">max_read_size</a>
    bytes have been received. If the maximum number of bytes have been read, an
-   <a class="autorefs autorefs-internal" title="            MSLConnectionError" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLConnectionError">MSLConnectionError</a> is raised.</li>
+   <a class="autorefs autorefs-internal" title="            MSLConnectionError
+(OSError)" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLConnectionError">MSLConnectionError</a> is raised.</li>
 </ol>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -7255,9 +7263,12 @@ BREAK condition returning the transmit line to its normal operating state.</p>
 <a href="#msl.equipment.interfaces.ftdi.FTDI.set_data_characteristics" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_data_characteristics</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">data_bits</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            DataBits (msl.equipment.enumerations.DataBits)" href="../../enumerations/#msl.equipment.enumerations.DataBits">DataBits</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="n"><span title="msl.equipment.enumerations.DataBits.EIGHT">EIGHT</span></span><span class="p">,</span>
-    <span class="n">parity</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Parity (msl.equipment.enumerations.Parity)" href="../../enumerations/#msl.equipment.enumerations.Parity">Parity</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="n"><span title="msl.equipment.enumerations.Parity.NONE">NONE</span></span><span class="p">,</span>
-    <span class="n">stop_bits</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            StopBits (msl.equipment.enumerations.StopBits)" href="../../enumerations/#msl.equipment.enumerations.StopBits">StopBits</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">=</span> <span class="n"><span title="msl.equipment.enumerations.StopBits.ONE">ONE</span></span>
+    <span class="n">data_bits</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            DataBits
+(IntEnum) (msl.equipment.enumerations.DataBits)" href="../../enumerations/#msl.equipment.enumerations.DataBits">DataBits</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="n"><span title="msl.equipment.enumerations.DataBits.EIGHT">EIGHT</span></span><span class="p">,</span>
+    <span class="n">parity</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Parity
+(Enum) (msl.equipment.enumerations.Parity)" href="../../enumerations/#msl.equipment.enumerations.Parity">Parity</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="n"><span title="msl.equipment.enumerations.Parity.NONE">NONE</span></span><span class="p">,</span>
+    <span class="n">stop_bits</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            StopBits
+(Enum) (msl.equipment.enumerations.StopBits)" href="../../enumerations/#msl.equipment.enumerations.StopBits">StopBits</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">=</span> <span class="n"><span title="msl.equipment.enumerations.StopBits.ONE">ONE</span></span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
@@ -7282,7 +7293,8 @@ BREAK condition returning the transmit line to its normal operating state.</p>
                 <code>data_bits</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            DataBits (msl.equipment.enumerations.DataBits)" href="../../enumerations/#msl.equipment.enumerations.DataBits">DataBits</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            DataBits
+(IntEnum) (msl.equipment.enumerations.DataBits)" href="../../enumerations/#msl.equipment.enumerations.DataBits">DataBits</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7298,7 +7310,8 @@ BREAK condition returning the transmit line to its normal operating state.</p>
                 <code>parity</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            Parity (msl.equipment.enumerations.Parity)" href="../../enumerations/#msl.equipment.enumerations.Parity">Parity</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            Parity
+(Enum) (msl.equipment.enumerations.Parity)" href="../../enumerations/#msl.equipment.enumerations.Parity">Parity</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7314,7 +7327,8 @@ BREAK condition returning the transmit line to its normal operating state.</p>
                 <code>stop_bits</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            StopBits (msl.equipment.enumerations.StopBits)" href="../../enumerations/#msl.equipment.enumerations.StopBits">StopBits</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            StopBits
+(Enum) (msl.equipment.enumerations.StopBits)" href="../../enumerations/#msl.equipment.enumerations.StopBits">StopBits</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7515,9 +7529,7 @@ BREAK condition returning the transmit line to its normal operating state.</p>
 
 <a href="#msl.equipment.interfaces.ftdi.FTDI.set_flow_control" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_flow_control</span><span class="p">(</span>
-    <span class="n">flow</span><span class="p">:</span> <span class="p">(</span>
-        <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;RTS_CTS&quot;</span><span class="p">,</span> <span class="s2">&quot;DTR_DSR&quot;</span><span class="p">,</span> <span class="s2">&quot;XON_XOFF&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">flow</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;RTS_CTS&quot;</span><span class="p">,</span> <span class="s2">&quot;DTR_DSR&quot;</span><span class="p">,</span> <span class="s2">&quot;XON_XOFF&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">xon</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">xoff</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">0</span>

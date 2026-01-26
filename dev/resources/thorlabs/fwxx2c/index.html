@@ -3208,7 +3208,7 @@
   <span class="md-ellipsis">
     
   
-    GMH 3000 Series thermometer
+    GMH 3000 Series
   
 
     
@@ -4776,8 +4776,9 @@
 
 
 <h2 id="msl.equipment_resources.thorlabs.fwxx2c.FWxx2C" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">FWxx2C</span>
-
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">FWxx2C</span>
+(<code><a class="autorefs autorefs-internal" title="            Serial
+(MessageBased) (msl.equipment.interfaces.Serial)" href="../../../api/interfaces/serial/#msl.equipment.interfaces.serial.Serial">Serial</a></code>)
 
 <a href="#msl.equipment_resources.thorlabs.fwxx2c.FWxx2C" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">FWxx2C</span><span class="p">(</span><span class="n">equipment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Equipment
@@ -4789,13 +4790,56 @@
 </code></pre></div>
 
     <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="            Serial (msl.equipment.interfaces.Serial)" href="../../../api/interfaces/serial/#msl.equipment.interfaces.serial.Serial">Serial</a></code></p>
 
+            <div style="display: none">
+              <a class="autorefs autorefs-internal" title="            FWxx2C
+(Serial) (msl.equipment_resources.thorlabs.fwxx2c.FWxx2C)" href="#msl.equipment_resources.thorlabs.fwxx2c.FWxx2C" id="mermaid-link-msl.equipment_resources.thorlabs.fwxx2c.FWxx2C"></a>
+                  <a class="autorefs autorefs-internal" title="            Serial
+(MessageBased) (msl.equipment.interfaces.serial.Serial)" href="../../../api/interfaces/serial/#msl.equipment.interfaces.serial.Serial" id="mermaid-link-msl.equipment.interfaces.serial.Serial"></a>
+                  <a class="autorefs autorefs-internal" title="            MessageBased
+(Interface) (msl.equipment.interfaces.message_based.MessageBased)" href="../../../api/interfaces/#msl.equipment.interfaces.message_based.MessageBased" id="mermaid-link-msl.equipment.interfaces.message_based.MessageBased"></a>
+                  <a class="autorefs autorefs-internal" title="            Interface (msl.equipment.schema.Interface)" href="../../../api/interfaces/#msl.equipment.schema.Interface" id="mermaid-link-msl.equipment.schema.Interface"></a>
+            </div>
+            <pre class="mermaid"><code id="mermaid-diagram-msl.equipment_resources.thorlabs.fwxx2c.FWxx2C">
+              flowchart LR
+              msl.equipment_resources.thorlabs.fwxx2c.FWxx2C[FWxx2C]
+              msl.equipment.interfaces.serial.Serial[Serial]
+              msl.equipment.interfaces.message_based.MessageBased[MessageBased]
+              msl.equipment.schema.Interface[Interface]
+
+                              msl.equipment.interfaces.serial.Serial --> msl.equipment_resources.thorlabs.fwxx2c.FWxx2C
+                                msl.equipment.interfaces.message_based.MessageBased --> msl.equipment.interfaces.serial.Serial
+                                msl.equipment.schema.Interface --> msl.equipment.interfaces.message_based.MessageBased
+                
+
+
+
+
+              click msl.equipment_resources.thorlabs.fwxx2c.FWxx2C href "" "msl.equipment_resources.thorlabs.fwxx2c.FWxx2C"
+              click msl.equipment.interfaces.serial.Serial href "" "msl.equipment.interfaces.serial.Serial"
+              click msl.equipment.interfaces.message_based.MessageBased href "" "msl.equipment.interfaces.message_based.MessageBased"
+              click msl.equipment.schema.Interface href "" "msl.equipment.schema.Interface"
+            </code></pre>
+            <script>
+              var diagram = document.getElementById('mermaid-diagram-msl.equipment_resources.thorlabs.fwxx2c.FWxx2C');
+              diagram.innerHTML = diagram.innerHTML.replace(/click ([\w.]+) href "" "\1"/g, function(match, nodeID, offset) {
+                try {
+                  const link = document.getElementById("mermaid-link-" + nodeID).href;
+                  return `click ${nodeID} href "${link}" "${nodeID}"`
+                } catch (e) {
+                  return '';
+                }
+              });
+            </script>
 
 
         <p>Communicate with a FW102C/FW212C Motorized Filter Wheel from <a href="https://www.thorlabs.com/" target="_blank">Thorlabs</a>.</p>
 
+        <p>Regular-expression patterns that are used to select this Resource when
+<a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Thorlabs&quot;</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;FW(10|21)2C&quot;</span>
+</code></pre></div></p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -4858,8 +4902,22 @@
 <span class="normal">30</span>
 <span class="normal">31</span>
 <span class="normal">32</span>
-<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Communicate with a FW102C/FW212C Motorized Filter Wheel from Thorlabs.</span>
+
+<span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
+<span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
+<span class="sd">    ```python</span>
+<span class="sd">    manufacturer=r&quot;Thorlabs&quot;</span>
+<span class="sd">    model=r&quot;FW(10|21)2C&quot;</span>
+<span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
@@ -5062,9 +5120,9 @@ filter wheel is idle to eliminate stray light.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/thorlabs/fwxx2c.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Save the current settings as default on power up.&quot;&quot;&quot;</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;save&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>

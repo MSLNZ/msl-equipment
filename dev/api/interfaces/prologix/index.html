@@ -3593,7 +3593,7 @@
   <span class="md-ellipsis">
     
   
-    GMH 3000 Series thermometer
+    GMH 3000 Series
   
 
     
@@ -5232,8 +5232,8 @@
 
 
 <h2 id="msl.equipment.interfaces.prologix.Prologix" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Prologix</span>
-
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Prologix</span>
+(<code><a class="autorefs autorefs-internal" title="            Interface (msl.equipment.schema.Interface)" href="../#msl.equipment.schema.Interface">Interface</a></code>)
 
 <a href="#msl.equipment.interfaces.prologix.Prologix" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">Prologix</span><span class="p">(</span><span class="n">equipment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Equipment
@@ -5245,8 +5245,6 @@
 </code></pre></div>
 
     <div class="doc doc-contents first">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="            Interface (msl.equipment.schema.Interface)" href="../#msl.equipment.schema.Interface">Interface</a></code></p>
 
 
 
@@ -5325,8 +5323,10 @@ GPIB Address) is an integer value between 96 and 126 (SAD is optional). For exam
     </table>
         <p>A <a class="autorefs autorefs-internal" title="            Connection" href="../../connection/#msl.equipment.schema.Connection">Connection</a> instance supports the following <em>properties</em>
 for using Prologix hardware, as well as the <em>properties</em> defined in
-<a class="autorefs autorefs-internal" title="            Serial" href="../serial/#msl.equipment.interfaces.serial.Serial">Serial</a> (for a GPIB-USB Controller) and in
-<a class="autorefs autorefs-internal" title="            Socket" href="../socket/#msl.equipment.interfaces.socket.Socket">Socket</a> (for a GPIB-ETHERNET Controller).</p>
+<a class="autorefs autorefs-internal" title="            Serial
+(MessageBased)" href="../serial/#msl.equipment.interfaces.serial.Serial">Serial</a> (for a GPIB-USB Controller) and in
+<a class="autorefs autorefs-internal" title="            Socket
+(MessageBased)" href="../socket/#msl.equipment.interfaces.socket.Socket">Socket</a> (for a GPIB-ETHERNET Controller).</p>
 
 
 <p><span class="doc-section-title">Connection Properties:</span></p>
@@ -5731,7 +5731,9 @@ to re-enable it afterwards. Only the <code>escape_characters</code> property is 
   </span>
 
 <a href="#msl.equipment.interfaces.prologix.Prologix.controller" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">controller</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Serial (msl.equipment.interfaces.serial.Serial)" href="../serial/#msl.equipment.interfaces.serial.Serial">Serial</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            Socket (msl.equipment.interfaces.socket.Socket)" href="../socket/#msl.equipment.interfaces.socket.Socket">Socket</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">controller</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Serial
+(MessageBased) (msl.equipment.interfaces.serial.Serial)" href="../serial/#msl.equipment.interfaces.serial.Serial">Serial</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            Socket
+(MessageBased) (msl.equipment.interfaces.socket.Socket)" href="../socket/#msl.equipment.interfaces.socket.Socket">Socket</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6061,8 +6063,10 @@ for the <em>serial_poll</em> command, <a class="autorefs autorefs-internal" titl
     <div class="doc doc-contents ">
 
         <p>Disconnect from the equipment.</p>
-<p>Calling this method does not close the underlying <a class="autorefs autorefs-internal" title="            Serial" href="../serial/#msl.equipment.interfaces.serial.Serial">Serial</a>
-or <a class="autorefs autorefs-internal" title="            Socket" href="../socket/#msl.equipment.interfaces.socket.Socket">Socket</a> connection to the Prologix Controller since
+<p>Calling this method does not close the underlying <a class="autorefs autorefs-internal" title="            Serial
+(MessageBased)" href="../serial/#msl.equipment.interfaces.serial.Serial">Serial</a>
+or <a class="autorefs autorefs-internal" title="            Socket
+(MessageBased)" href="../socket/#msl.equipment.interfaces.socket.Socket">Socket</a> connection to the Prologix Controller since
 the connection to the Prologix Controller may still be required to send messages to other GPIB
 devices that are attached to the Controller.</p>
 
@@ -7130,9 +7134,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 
 
 <a href="#msl.equipment.interfaces.prologix.Prologix.serial_poll" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">serial_poll</span><span class="p">(</span>
-    <span class="n">pad</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sad</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">serial_poll</span><span class="p">(</span><span class="n">pad</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sad</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7428,9 +7430,7 @@ secondary address of the instantiated class.</p>
 
 
 <a href="#msl.equipment.interfaces.prologix.Prologix.set_plus_plus_read_char" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_plus_plus_read_char</span><span class="p">(</span>
-    <span class="n">char</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_plus_plus_read_char</span><span class="p">(</span><span class="n">char</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7766,9 +7766,7 @@ if an event has not occurred. A value of <code>None</code> means wait forever.</
 
 
 <a href="#msl.equipment.interfaces.prologix.Prologix.wait_for_srq" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">wait_for_srq</span><span class="p">(</span>
-    <span class="o">*</span><span class="p">,</span> <span class="n">delay</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">wait_for_srq</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">delay</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">

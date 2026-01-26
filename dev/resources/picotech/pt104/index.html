@@ -3208,7 +3208,7 @@
   <span class="md-ellipsis">
     
   
-    GMH 3000 Series thermometer
+    GMH 3000 Series
   
 
     
@@ -4787,41 +4787,14 @@
 <h1 id="pt-104">PT-104<a class="headerlink" href="#pt-104" title="Permanent link">¤</a></h1>
 
 
-<div class="doc doc-object doc-module">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>PT-104 Platinum Resistance Data Logger from <a href="https://www.picotech.com/">Pico Technology</a>.</p>
-
-
-
-
-
-
-
-
-
-
-<div class="doc doc-children">
-
-
-
-
-
-
-
-
-
 <div class="doc doc-object doc-class">
 
 
 
 <h2 id="msl.equipment_resources.picotech.pt104.PT104" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">PT104</span>
-
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">PT104</span>
+(<code><a class="autorefs autorefs-internal" title="            SDK
+(Interface) (msl.equipment.interfaces.SDK)" href="../../../api/interfaces/sdk/#msl.equipment.interfaces.sdk.SDK">SDK</a></code>)
 
 <a href="#msl.equipment_resources.picotech.pt104.PT104" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">PT104</span><span class="p">(</span><span class="n">equipment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Equipment
@@ -4832,14 +4805,51 @@
    (msl.equipment.schema.Equipment)" href="../../../schema/equipment/#msl.equipment.schema.Equipment">Equipment</a></span><span class="p">)</span>
 </code></pre></div>
 
-    <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="            SDK (msl.equipment.interfaces.SDK)" href="../../../api/interfaces/sdk/#msl.equipment.interfaces.sdk.SDK">SDK</a></code></p>
+    <div class="doc doc-contents first">
 
+            <div style="display: none">
+              <a class="autorefs autorefs-internal" title="            PT104
+(SDK) (msl.equipment_resources.picotech.pt104.PT104)" href="#msl.equipment_resources.picotech.pt104.PT104" id="mermaid-link-msl.equipment_resources.picotech.pt104.PT104"></a>
+                  <a class="autorefs autorefs-internal" title="            SDK
+(Interface) (msl.equipment.interfaces.sdk.SDK)" href="../../../api/interfaces/sdk/#msl.equipment.interfaces.sdk.SDK" id="mermaid-link-msl.equipment.interfaces.sdk.SDK"></a>
+                  <a class="autorefs autorefs-internal" title="            Interface (msl.equipment.schema.Interface)" href="../../../api/interfaces/#msl.equipment.schema.Interface" id="mermaid-link-msl.equipment.schema.Interface"></a>
+            </div>
+            <pre class="mermaid"><code id="mermaid-diagram-msl.equipment_resources.picotech.pt104.PT104">
+              flowchart LR
+              msl.equipment_resources.picotech.pt104.PT104[PT104]
+              msl.equipment.interfaces.sdk.SDK[SDK]
+              msl.equipment.schema.Interface[Interface]
+
+                              msl.equipment.interfaces.sdk.SDK --> msl.equipment_resources.picotech.pt104.PT104
+                                msl.equipment.schema.Interface --> msl.equipment.interfaces.sdk.SDK
+                
+
+
+
+              click msl.equipment_resources.picotech.pt104.PT104 href "" "msl.equipment_resources.picotech.pt104.PT104"
+              click msl.equipment.interfaces.sdk.SDK href "" "msl.equipment.interfaces.sdk.SDK"
+              click msl.equipment.schema.Interface href "" "msl.equipment.schema.Interface"
+            </code></pre>
+            <script>
+              var diagram = document.getElementById('mermaid-diagram-msl.equipment_resources.picotech.pt104.PT104');
+              diagram.innerHTML = diagram.innerHTML.replace(/click ([\w.]+) href "" "\1"/g, function(match, nodeID, offset) {
+                try {
+                  const link = document.getElementById("mermaid-link-" + nodeID).href;
+                  return `click ${nodeID} href "${link}" "${nodeID}"`
+                } catch (e) {
+                  return '';
+                }
+              });
+            </script>
 
 
         <p>PT-104 Platinum Resistance Data Logger from <a href="https://www.picotech.com/">Pico Technology</a>.</p>
 
+        <p>Regular-expression patterns that are used to select this Resource when
+<a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Pico\s*Tech&quot;</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;PT[-]?104&quot;</span>
+</code></pre></div></p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -4986,8 +4996,22 @@ If <code>True</code>, then <code>ip_address</code> must be specified.</p>
 <span class="normal">113</span>
 <span class="normal">114</span>
 <span class="normal">115</span>
-<span class="normal">116</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;PT-104 Platinum Resistance Data Logger from Pico Technology.</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;PT-104 Platinum Resistance Data Logger from Pico Technology.</span>
+
+<span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
+<span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
+<span class="sd">    ```python</span>
+<span class="sd">    manufacturer=r&quot;Pico\s*Tech&quot;</span>
+<span class="sd">    model=r&quot;PT[-]?104&quot;</span>
+<span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
@@ -5067,16 +5091,37 @@ If <code>True</code>, then <code>ip_address</code> must be specified.</p>
 
 
 <h3 id="msl.equipment_resources.picotech.pt104.PT104.Mode" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Mode</span>
-
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Mode</span>
+(<code><a class="autorefs autorefs-external" title="enum.IntEnum" href="https://docs.python.org/3/library/enum.html#enum.IntEnum">IntEnum</a></code>)
 
 <a href="#msl.equipment_resources.picotech.pt104.PT104.Mode" class="headerlink" title="Permanent link">¤</a></h3>
 
 
     <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-external" title="enum.IntEnum" href="https://docs.python.org/3/library/enum.html#enum.IntEnum">IntEnum</a></code></p>
 
+            <div style="display: none">
+              <a class="autorefs autorefs-internal" title="            Mode
+(IntEnum) (msl.equipment_resources.picotech.pt104.PT104.Mode)" href="#msl.equipment_resources.picotech.pt104.PT104.Mode" id="mermaid-link-msl.equipment_resources.picotech.pt104.PT104.Mode"></a>
+            </div>
+            <pre class="mermaid"><code id="mermaid-diagram-msl.equipment_resources.picotech.pt104.PT104.Mode">
+              flowchart LR
+              msl.equipment_resources.picotech.pt104.PT104.Mode[Mode]
+
+              
+
+              click msl.equipment_resources.picotech.pt104.PT104.Mode href "" "msl.equipment_resources.picotech.pt104.PT104.Mode"
+            </code></pre>
+            <script>
+              var diagram = document.getElementById('mermaid-diagram-msl.equipment_resources.picotech.pt104.PT104.Mode');
+              diagram.innerHTML = diagram.innerHTML.replace(/click ([\w.]+) href "" "\1"/g, function(match, nodeID, offset) {
+                try {
+                  const link = document.getElementById("mermaid-link-" + nodeID).href;
+                  return `click ${nodeID} href "${link}" "${nodeID}"`
+                } catch (e) {
+                  return '';
+                }
+              });
+            </script>
 
 
         <p>The measurement mode for a PT-104 Data Logger channel.</p>
@@ -5242,12 +5287,12 @@ If <code>True</code>, then <code>ip_address</code> must be specified.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/pt104.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the PT-104 Data Logger.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">UsbPt104CloseUnit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">)</span>
@@ -5273,9 +5318,7 @@ If <code>True</code>, then <code>ip_address</code> must be specified.</p>
 <a href="#msl.equipment_resources.picotech.pt104.PT104.enumerate_units" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">enumerate_units</span><span class="p">(</span>
     <span class="n">path</span><span class="p">:</span> <span class="n"><span title="msl.loadlib.types.PathLike">PathLike</span></span> <span class="o">=</span> <span class="s2">&quot;usbpt104&quot;</span><span class="p">,</span>
-    <span class="n">communication</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span>
-        <span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="s2">&quot;ethernet&quot;</span><span class="p">,</span> <span class="s2">&quot;usb&quot;</span>
-    <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
+    <span class="n">communication</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="s2">&quot;ethernet&quot;</span><span class="p">,</span> <span class="s2">&quot;usb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list">list</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span>
 </code></pre></div>
 
@@ -5361,14 +5404,7 @@ If <code>True</code>, then <code>ip_address</code> must be specified.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/pt104.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">153</span>
-<span class="normal">154</span>
-<span class="normal">155</span>
-<span class="normal">156</span>
-<span class="normal">157</span>
-<span class="normal">158</span>
-<span class="normal">159</span>
-<span class="normal">160</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">160</span>
 <span class="normal">161</span>
 <span class="normal">162</span>
 <span class="normal">163</span>
@@ -5400,7 +5436,14 @@ If <code>True</code>, then <code>ip_address</code> must be specified.</p>
 <span class="normal">189</span>
 <span class="normal">190</span>
 <span class="normal">191</span>
-<span class="normal">192</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">enumerate_units</span><span class="p">(</span>
     <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">=</span> <span class="s2">&quot;usbpt104&quot;</span><span class="p">,</span>
     <span class="n">communication</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="s2">&quot;ethernet&quot;</span><span class="p">,</span> <span class="s2">&quot;usb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span>
@@ -5487,17 +5530,17 @@ If <code>True</code>, then <code>ip_address</code> must be specified.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/pt104.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">194</span>
-<span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
-<span class="normal">201</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">201</span>
 <span class="normal">202</span>
 <span class="normal">203</span>
-<span class="normal">204</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ip_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ip_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads the ethernet details of the PT-104 Data Logger.</span>
 
 <span class="sd">    Returns:</span>
@@ -5523,9 +5566,8 @@ If <code>True</code>, then <code>ip_address</code> must be specified.</p>
 
 <a href="#msl.equipment_resources.picotech.pt104.PT104.get_unit_info" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">get_unit_info</span><span class="p">(</span>
-    <span class="n">info</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            PicoInfo (msl.equipment_resources.picotech.status.PicoInfo)" href="../types/#msl.equipment_resources.picotech.status.PicoInfo">PicoInfo</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">prefix</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">info</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            PicoInfo
+(IntEnum) (msl.equipment_resources.picotech.status.PicoInfo)" href="../types/#msl.equipment_resources.picotech.status.PicoInfo">PicoInfo</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
 </code></pre></div>
 
@@ -5551,7 +5593,8 @@ If <code>True</code>, then <code>ip_address</code> must be specified.</p>
                 <code>info</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            PicoInfo (msl.equipment_resources.picotech.status.PicoInfo)" href="../types/#msl.equipment_resources.picotech.status.PicoInfo">PicoInfo</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
+                  <code><a class="autorefs autorefs-internal" title="            PicoInfo
+(IntEnum) (msl.equipment_resources.picotech.status.PicoInfo)" href="../types/#msl.equipment_resources.picotech.status.PicoInfo">PicoInfo</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5608,14 +5651,7 @@ For example, returns <code>"CAL_DATE: 09Aug16"</code> if <code>prefix</code> is 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/pt104.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">206</span>
-<span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
-<span class="normal">212</span>
-<span class="normal">213</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">213</span>
 <span class="normal">214</span>
 <span class="normal">215</span>
 <span class="normal">216</span>
@@ -5633,7 +5669,14 @@ For example, returns <code>"CAL_DATE: 09Aug16"</code> if <code>prefix</code> is 
 <span class="normal">228</span>
 <span class="normal">229</span>
 <span class="normal">230</span>
-<span class="normal">231</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_unit_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">PicoInfo</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_unit_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">PicoInfo</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieves information about the PT-104 Data Logger.</span>
 
 <span class="sd">    If the device fails to open, or no device is opened only the driver version is available.</span>
@@ -5760,14 +5803,7 @@ a temperature reading is in <span class="arithmatex">\(^{\circ}\text{C}\)</span>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/pt104.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">233</span>
-<span class="normal">234</span>
-<span class="normal">235</span>
-<span class="normal">236</span>
-<span class="normal">237</span>
-<span class="normal">238</span>
-<span class="normal">239</span>
-<span class="normal">240</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">240</span>
 <span class="normal">241</span>
 <span class="normal">242</span>
 <span class="normal">243</span>
@@ -5780,7 +5816,14 @@ a temperature reading is in <span class="arithmatex">\(^{\circ}\text{C}\)</span>
 <span class="normal">250</span>
 <span class="normal">251</span>
 <span class="normal">252</span>
-<span class="normal">253</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">filtered</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">filtered</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Get the most recent reading for the specified channel.</span>
 
 <span class="sd">    Once you open the driver and define some channels, the driver begins to take</span>
@@ -5816,9 +5859,8 @@ a temperature reading is in <span class="arithmatex">\(^{\circ}\text{C}\)</span>
 
 <a href="#msl.equipment_resources.picotech.pt104.PT104.set_channel" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_channel</span><span class="p">(</span>
-    <span class="n">channel</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span>
-    <span class="n">mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Mode (msl.equipment_resources.picotech.pt104.PT104.Mode)" href="#msl.equipment_resources.picotech.pt104.PT104.Mode">Mode</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span>
-    <span class="n">num_wires</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Mode
+(IntEnum) (msl.equipment_resources.picotech.pt104.PT104.Mode)" href="#msl.equipment_resources.picotech.pt104.PT104.Mode">Mode</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">num_wires</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
@@ -5865,7 +5907,8 @@ single-ended inputs in voltage mode.</p>
                 <code>mode</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            Mode (msl.equipment_resources.picotech.pt104.PT104.Mode)" href="#msl.equipment_resources.picotech.pt104.PT104.Mode">Mode</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            Mode
+(IntEnum) (msl.equipment_resources.picotech.pt104.PT104.Mode)" href="#msl.equipment_resources.picotech.pt104.PT104.Mode">Mode</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5898,14 +5941,7 @@ single-ended inputs in voltage mode.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/pt104.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">255</span>
-<span class="normal">256</span>
-<span class="normal">257</span>
-<span class="normal">258</span>
-<span class="normal">259</span>
-<span class="normal">260</span>
-<span class="normal">261</span>
-<span class="normal">262</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">262</span>
 <span class="normal">263</span>
 <span class="normal">264</span>
 <span class="normal">265</span>
@@ -5936,7 +5972,14 @@ single-ended inputs in voltage mode.</p>
 <span class="normal">290</span>
 <span class="normal">291</span>
 <span class="normal">292</span>
-<span class="normal">293</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Mode</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_wires</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Mode</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_wires</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Configure a single channel of the PT-104 Data Logger.</span>
 
 <span class="sd">    The fewer channels configured, the more frequently they will be updated. A measurement</span>
@@ -5990,10 +6033,7 @@ single-ended inputs in voltage mode.</p>
 
 <a href="#msl.equipment_resources.picotech.pt104.PT104.set_ip_details" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_ip_details</span><span class="p">(</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">enabled</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span><span class="p">,</span>
-    <span class="n">ip_address</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">port</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">enabled</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span><span class="p">,</span> <span class="n">ip_address</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
@@ -6067,14 +6107,7 @@ single-ended inputs in voltage mode.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/pt104.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">295</span>
-<span class="normal">296</span>
-<span class="normal">297</span>
-<span class="normal">298</span>
-<span class="normal">299</span>
-<span class="normal">300</span>
-<span class="normal">301</span>
-<span class="normal">302</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">302</span>
 <span class="normal">303</span>
 <span class="normal">304</span>
 <span class="normal">305</span>
@@ -6085,7 +6118,14 @@ single-ended inputs in voltage mode.</p>
 <span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
-<span class="normal">313</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_ip_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">ip_address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_ip_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">ip_address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the IP details to the device.</span>
 
 <span class="sd">    Args:</span>
@@ -6160,18 +6200,18 @@ single-ended inputs in voltage mode.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/pt104.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">315</span>
-<span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span>
-<span class="normal">319</span>
-<span class="normal">320</span>
-<span class="normal">321</span>
-<span class="normal">322</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
-<span class="normal">326</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_mains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hertz</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">60</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_mains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hertz</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">60</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Inform the driver of the local mains (line) frequency.</span>
 
 <span class="sd">    This helps the driver to filter out electrical noise.</span>
@@ -6196,6 +6236,34 @@ single-ended inputs in voltage mode.</p>
     </div>
 
 </div>
+
+<div class="doc doc-object doc-module">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>PT-104 Platinum Resistance Data Logger from <a href="https://www.picotech.com/">Pico Technology</a>.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
 
 
 

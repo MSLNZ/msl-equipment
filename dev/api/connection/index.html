@@ -3360,7 +3360,7 @@
   <span class="md-ellipsis">
     
   
-    GMH 3000 Series thermometer
+    GMH 3000 Series
   
 
     
@@ -4768,16 +4768,15 @@
 
 
 <h2 id="msl.equipment.schema.Connection" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Connection</span>
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Connection</span>
 
 
 <a href="#msl.equipment.schema.Connection" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">Connection</span><span class="p">(</span>
     <span class="n">address</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">backend</span><span class="p">:</span> <span class="p">(</span>
-        <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;MSL&quot;</span><span class="p">,</span> <span class="s2">&quot;PyVISA&quot;</span><span class="p">,</span> <span class="s2">&quot;NIDAQ&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            Backend (msl.equipment.enumerations.Backend)" href="../enumerations/#msl.equipment.enumerations.Backend">Backend</a></span>
-    <span class="p">)</span> <span class="o">=</span> <span class="n"><span title="msl.equipment.enumerations.Backend.MSL">MSL</span></span><span class="p">,</span>
+    <span class="n">backend</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;MSL&quot;</span><span class="p">,</span> <span class="s2">&quot;PyVISA&quot;</span><span class="p">,</span> <span class="s2">&quot;NIDAQ&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            Backend
+(Enum) (msl.equipment.enumerations.Backend)" href="../enumerations/#msl.equipment.enumerations.Backend">Backend</a></span> <span class="o">=</span> <span class="n"><span title="msl.equipment.enumerations.Backend.MSL">MSL</span></span><span class="p">,</span>
     <span class="n">eid</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">manufacturer</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">model</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -4826,11 +4825,13 @@
                 <code>backend</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>[&#39;MSL&#39;, &#39;PyVISA&#39;, &#39;NIDAQ&#39;] | <a class="autorefs autorefs-internal" title="            Backend (msl.equipment.enumerations.Backend)" href="../enumerations/#msl.equipment.enumerations.Backend">Backend</a></code>
+                  <code><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>[&#39;MSL&#39;, &#39;PyVISA&#39;, &#39;NIDAQ&#39;] | <a class="autorefs autorefs-internal" title="            Backend
+(Enum) (msl.equipment.enumerations.Backend)" href="../enumerations/#msl.equipment.enumerations.Backend">Backend</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The <a class="autorefs autorefs-internal" title="            Backend" href="../enumerations/#msl.equipment.enumerations.Backend">backend</a> to use to communicate with the equipment.</p>
+                <p>The <a class="autorefs autorefs-internal" title="            Backend
+(Enum)" href="../enumerations/#msl.equipment.enumerations.Backend">backend</a> to use to communicate with the equipment.</p>
               </div>
             </td>
             <td>
@@ -5091,12 +5092,15 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
   </span>
 
 <a href="#msl.equipment.schema.Connection.backend" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">backend</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Backend (msl.equipment.enumerations.Backend)" href="../enumerations/#msl.equipment.enumerations.Backend">Backend</a></span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="            Backend (msl.equipment.enumerations.Backend)" href="../enumerations/#msl.equipment.enumerations.Backend">Backend</a></span><span class="p">(</span><span class="n"><span title="msl.equipment.schema.Connection(backend)">backend</span></span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">backend</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Backend
+(Enum) (msl.equipment.enumerations.Backend)" href="../enumerations/#msl.equipment.enumerations.Backend">Backend</a></span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="            Backend
+(Enum) (msl.equipment.enumerations.Backend)" href="../enumerations/#msl.equipment.enumerations.Backend">Backend</a></span><span class="p">(</span><span class="n"><span title="msl.equipment.schema.Connection(backend)">backend</span></span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>The <a class="autorefs autorefs-internal" title="            Backend" href="../enumerations/#msl.equipment.enumerations.Backend">backend</a> that is used to communicate with the equipment.</p>
+        <p>The <a class="autorefs autorefs-internal" title="            Backend
+(Enum)" href="../enumerations/#msl.equipment.enumerations.Backend">backend</a> that is used to communicate with the equipment.</p>
 
     </div>
 

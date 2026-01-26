@@ -3615,7 +3615,7 @@
   <span class="md-ellipsis">
     
   
-    GMH 3000 Series thermometer
+    GMH 3000 Series
   
 
     
@@ -5278,7 +5278,7 @@
 
 
 <h2 id="msl.equipment.interfaces.usbtmc.Capabilities" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Capabilities</span>
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Capabilities</span>
 
 
 <a href="#msl.equipment.interfaces.usbtmc.Capabilities" class="headerlink" title="Permanent link">¤</a></h2>
@@ -5309,7 +5309,8 @@ an error message that states the capability is not supported. For example, if
 calling <a class="autorefs autorefs-internal" title="            trigger" href="#msl.equipment.interfaces.usbtmc.USBTMC.trigger">trigger()</a> raises an error
 that states a trigger request is not supported (and you are certain that the device
 does support a trigger request) you may set <code>tmc.capabilities.accepts_trigger = True</code>,
-where <code>tmc</code> is the <a class="autorefs autorefs-internal" title="            USBTMC" href="#msl.equipment.interfaces.usbtmc.USBTMC">USBTMC</a> instance, to bypass
+where <code>tmc</code> is the <a class="autorefs autorefs-internal" title="            USBTMC
+(USB)" href="#msl.equipment.interfaces.usbtmc.USBTMC">USBTMC</a> instance, to bypass
 the error.</p>
 </div>
 
@@ -5610,8 +5611,9 @@ for more details.</p>
 
 
 <h2 id="msl.equipment.interfaces.usbtmc.USBTMC" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">USBTMC</span>
-
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">USBTMC</span>
+(<code><a class="autorefs autorefs-internal" title="            USB
+(MessageBased) (msl.equipment.interfaces.usb.USB)" href="../usb/#msl.equipment.interfaces.usb.USB">USB</a></code>)
 
 <a href="#msl.equipment.interfaces.usbtmc.USBTMC" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">USBTMC</span><span class="p">(</span><span class="n">equipment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Equipment
@@ -5623,8 +5625,6 @@ for more details.</p>
 </code></pre></div>
 
     <div class="doc doc-contents first">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="            USB (msl.equipment.interfaces.usb.USB)" href="../usb/#msl.equipment.interfaces.usb.USB">USB</a></code></p>
 
 
 
@@ -5667,7 +5667,8 @@ for more details.</p>
       </tbody>
     </table>
         <p>A <a class="autorefs autorefs-internal" title="            Connection" href="../../connection/#msl.equipment.schema.Connection">Connection</a> instance supports the same <em>properties</em>
-as those specified in <a class="autorefs autorefs-internal" title="            USB" href="../usb/#msl.equipment.interfaces.usb.USB">USB</a>.</p>
+as those specified in <a class="autorefs autorefs-internal" title="            USB
+(MessageBased)" href="../usb/#msl.equipment.interfaces.usb.USB">USB</a>.</p>
 
 
 
@@ -6097,15 +6098,13 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 
 
 <h3 id="msl.equipment.interfaces.usbtmc.USBTMC.CtrlDirection" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">CtrlDirection</span>
-
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">CtrlDirection</span>
+(<code><a class="autorefs autorefs-external" title="enum.IntEnum" href="https://docs.python.org/3/library/enum.html#enum.IntEnum">IntEnum</a></code>)
 
 <a href="#msl.equipment.interfaces.usbtmc.USBTMC.CtrlDirection" class="headerlink" title="Permanent link">¤</a></h3>
 
 
     <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-external" title="enum.IntEnum" href="https://docs.python.org/3/library/enum.html#enum.IntEnum">IntEnum</a></code></p>
 
 
 
@@ -6181,15 +6180,13 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 
 
 <h3 id="msl.equipment.interfaces.usbtmc.USBTMC.CtrlRecipient" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">CtrlRecipient</span>
-
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">CtrlRecipient</span>
+(<code><a class="autorefs autorefs-external" title="enum.IntEnum" href="https://docs.python.org/3/library/enum.html#enum.IntEnum">IntEnum</a></code>)
 
 <a href="#msl.equipment.interfaces.usbtmc.USBTMC.CtrlRecipient" class="headerlink" title="Permanent link">¤</a></h3>
 
 
     <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-external" title="enum.IntEnum" href="https://docs.python.org/3/library/enum.html#enum.IntEnum">IntEnum</a></code></p>
 
 
 
@@ -6276,15 +6273,13 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 
 
 <h3 id="msl.equipment.interfaces.usbtmc.USBTMC.CtrlType" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">CtrlType</span>
-
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">CtrlType</span>
+(<code><a class="autorefs autorefs-external" title="enum.IntEnum" href="https://docs.python.org/3/library/enum.html#enum.IntEnum">IntEnum</a></code>)
 
 <a href="#msl.equipment.interfaces.usbtmc.USBTMC.CtrlType" class="headerlink" title="Permanent link">¤</a></h3>
 
 
     <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-external" title="enum.IntEnum" href="https://docs.python.org/3/library/enum.html#enum.IntEnum">IntEnum</a></code></p>
 
 
 
@@ -6380,9 +6375,10 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 
 <a href="#msl.equipment.interfaces.usbtmc.USBTMC.build_request_type" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">build_request_type</span><span class="p">(</span>
-    <span class="n">direction</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            CtrlDirection (msl.equipment.interfaces.usb.USB.CtrlDirection)" href="../usb/#msl.equipment.interfaces.usb.USB.CtrlDirection">CtrlDirection</a></span><span class="p">,</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            CtrlType (msl.equipment.interfaces.usb.USB.CtrlType)" href="../usb/#msl.equipment.interfaces.usb.USB.CtrlType">CtrlType</a></span><span class="p">,</span>
-    <span class="n">recipient</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            CtrlRecipient (msl.equipment.interfaces.usb.USB.CtrlRecipient)" href="../usb/#msl.equipment.interfaces.usb.USB.CtrlRecipient">CtrlRecipient</a></span><span class="p">,</span>
+    <span class="n">direction</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            CtrlDirection
+(IntEnum) (msl.equipment.interfaces.usb.USB.CtrlDirection)" href="../usb/#msl.equipment.interfaces.usb.USB.CtrlDirection">CtrlDirection</a></span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            CtrlType
+(IntEnum) (msl.equipment.interfaces.usb.USB.CtrlType)" href="../usb/#msl.equipment.interfaces.usb.USB.CtrlType">CtrlType</a></span><span class="p">,</span> <span class="n">recipient</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            CtrlRecipient
+(IntEnum) (msl.equipment.interfaces.usb.USB.CtrlRecipient)" href="../usb/#msl.equipment.interfaces.usb.USB.CtrlRecipient">CtrlRecipient</a></span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
@@ -6407,7 +6403,8 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
                 <code>direction</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            CtrlDirection (msl.equipment.interfaces.usb.USB.CtrlDirection)" href="../usb/#msl.equipment.interfaces.usb.USB.CtrlDirection">CtrlDirection</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            CtrlDirection
+(IntEnum) (msl.equipment.interfaces.usb.USB.CtrlDirection)" href="../usb/#msl.equipment.interfaces.usb.USB.CtrlDirection">CtrlDirection</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6423,7 +6420,8 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
                 <code>type</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            CtrlType (msl.equipment.interfaces.usb.USB.CtrlType)" href="../usb/#msl.equipment.interfaces.usb.USB.CtrlType">CtrlType</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            CtrlType
+(IntEnum) (msl.equipment.interfaces.usb.USB.CtrlType)" href="../usb/#msl.equipment.interfaces.usb.USB.CtrlType">CtrlType</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6439,7 +6437,8 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
                 <code>recipient</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            CtrlRecipient (msl.equipment.interfaces.usb.USB.CtrlRecipient)" href="../usb/#msl.equipment.interfaces.usb.USB.CtrlRecipient">CtrlRecipient</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            CtrlRecipient
+(IntEnum) (msl.equipment.interfaces.usb.USB.CtrlRecipient)" href="../usb/#msl.equipment.interfaces.usb.USB.CtrlRecipient">CtrlRecipient</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6709,7 +6708,8 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 
 
 <a href="#msl.equipment.interfaces.usbtmc.USBTMC.control_ren" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">control_ren</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            RENMode (msl.equipment.enumerations.RENMode)" href="../../enumerations/#msl.equipment.enumerations.RENMode">RENMode</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">control_ren</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            RENMode
+(IntEnum) (msl.equipment.enumerations.RENMode)" href="../../enumerations/#msl.equipment.enumerations.RENMode">RENMode</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6734,7 +6734,8 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
                 <code>mode</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            RENMode (msl.equipment.enumerations.RENMode)" href="../../enumerations/#msl.equipment.enumerations.RENMode">RENMode</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            RENMode
+(IntEnum) (msl.equipment.enumerations.RENMode)" href="../../enumerations/#msl.equipment.enumerations.RENMode">RENMode</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6904,9 +6905,7 @@ Can be an enum member name (case insensitive) or value.</p>
     <span class="n">request</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
     <span class="n">index</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
-    <span class="n">data_or_length</span><span class="p">:</span> <span class="p">(</span>
-        <span class="n"><a class="autorefs autorefs-external" title="array.array" href="https://docs.python.org/3/library/array.html#array.array">array</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytearray">bytearray</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
-    <span class="p">)</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+    <span class="n">data_or_length</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="array.array" href="https://docs.python.org/3/library/array.html#array.array">array</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytearray">bytearray</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div><div class="doc-signature highlight"><pre><span></span><code><span class="nf">ctrl_transfer</span><span class="p">(</span>
     <span class="n">request_type</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span>
@@ -6921,9 +6920,7 @@ Can be an enum member name (case insensitive) or value.</p>
     <span class="n">request</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">index</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="n">data_or_length</span><span class="p">:</span> <span class="p">(</span>
-        <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="array.array" href="https://docs.python.org/3/library/array.html#array.array">array</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytearray">bytearray</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">data_or_length</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="array.array" href="https://docs.python.org/3/library/array.html#array.array">array</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytearray">bytearray</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="array.array" href="https://docs.python.org/3/library/array.html#array.array">array</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">]</span>
 </code></pre></div>
 
@@ -7737,7 +7734,8 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
       writable
   " href="../#msl.equipment.interfaces.message_based.MessageBased.timeout">timeout</a>
    is not <code>None</code>. If a timeout occurs, an
-   <a class="autorefs autorefs-internal" title="            MSLTimeoutError" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLTimeoutError">MSLTimeoutError</a> is raised.</li>
+   <a class="autorefs autorefs-internal" title="            MSLTimeoutError
+(TimeoutError)" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLTimeoutError">MSLTimeoutError</a> is raised.</li>
 <li><a class="autorefs autorefs-internal" title="            max_read_size
 
 
@@ -7746,7 +7744,8 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
       writable
   " href="../#msl.equipment.interfaces.message_based.MessageBased.max_read_size">max_read_size</a>
    bytes have been received. If the maximum number of bytes have been read, an
-   <a class="autorefs autorefs-internal" title="            MSLConnectionError" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLConnectionError">MSLConnectionError</a> is raised.</li>
+   <a class="autorefs autorefs-internal" title="            MSLConnectionError
+(OSError)" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLConnectionError">MSLConnectionError</a> is raised.</li>
 </ol>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>

@@ -3378,7 +3378,7 @@
   <span class="md-ellipsis">
     
   
-    GMH 3000 Series thermometer
+    GMH 3000 Series
   
 
     
@@ -5226,8 +5226,11 @@
 
 <p>National Instruments also provides <a href="https://www.ni.com/docs/en-US/bundle/ni-visa/page/visa-resource-syntax-and-examples.html" target="_blank">examples</a> if you are using <a href="https://pyvisa.readthedocs.io/en/stable/" target="_blank">PyVISA</a> as the <a class="autorefs autorefs-internal" title="Backends" href="#connections-backend">backend</a>.</p>
 <h3 id="connections-backend">Backends<a class="headerlink" href="#connections-backend" title="Permanent link">¤</a></h3>
-<p>When a <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instance is created, the <code>backend</code> keyword argument decides which backend to use when interfacing with the equipment. There are different <a class="autorefs autorefs-internal" title="            Backend" href="../../api/enumerations/#msl.equipment.enumerations.Backend">Backend</a>s to choose from: <code>MSL</code> (default), <code>PyVISA</code> or <code>NIDAQ</code>.</p>
-<p>The <a class="autorefs autorefs-internal" title="Interfaces" href="#connections-interfaces">interface classes</a> can be used if the <code>backend</code> is <code>MSL</code>. The corresponding interface classes for the external backends are <a class="autorefs autorefs-internal" title="            PyVISA" href="../../api/backends/pyvisa/#msl.equipment.interfaces.pyvisa.PyVISA">PyVISA</a> and <a class="autorefs autorefs-internal" title="            NIDAQ" href="../../api/backends/nidaq/#msl.equipment.interfaces.nidaq.NIDAQ">NIDAQ</a>.</p>
+<p>When a <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instance is created, the <code>backend</code> keyword argument decides which backend to use when interfacing with the equipment. There are different <a class="autorefs autorefs-internal" title="            Backend
+(Enum)" href="../../api/enumerations/#msl.equipment.enumerations.Backend">Backend</a>s to choose from: <code>MSL</code> (default), <code>PyVISA</code> or <code>NIDAQ</code>.</p>
+<p>The <a class="autorefs autorefs-internal" title="Interfaces" href="#connections-interfaces">interface classes</a> can be used if the <code>backend</code> is <code>MSL</code>. The corresponding interface classes for the external backends are <a class="autorefs autorefs-internal" title="            PyVISA
+(Interface)" href="../../api/backends/pyvisa/#msl.equipment.interfaces.pyvisa.PyVISA">PyVISA</a> and <a class="autorefs autorefs-internal" title="            NIDAQ
+(Interface)" href="../../api/backends/nidaq/#msl.equipment.interfaces.nidaq.NIDAQ">NIDAQ</a>.</p>
 <h2 id="connections-python-examples">Python Examples<a class="headerlink" href="#connections-python-examples" title="Permanent link">¤</a></h2>
 <p>If you are primarily interested in using <code>msl-equipment</code> to interface with equipment (and not the <a class="autorefs autorefs-internal" href="../equipment-registers/#equipment-registers">Equipment Registers</a> aspect), the simplest approach is to create <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instances in a module and call the <a class="autorefs autorefs-internal" title="            connect" href="../../api/connection/#msl.equipment.schema.Connection.connect">connect</a> method (which is equivalent to calling <a class="autorefs autorefs-internal" title="            connect" href="../../schema/equipment/#msl.equipment.schema.Equipment.connect">Equipment.connect()</a> if you are using <a class="autorefs autorefs-internal" href="../equipment-registers/#equipment-registers">Equipment Registers</a>).</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span>
@@ -5314,7 +5317,8 @@
 <span class="k">with</span> <span class="n">GPIB</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;dmm&quot;</span><span class="p">])</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
     <span class="k">pass</span>
 </code></pre></div>
-<p><a class="autorefs autorefs-internal" href="../../resources/#resources">Resources</a> also take an <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> instance as an argument. If you know the Resource that is used for communicating with the equipment, you have multiple choices. The following uses the <a class="autorefs autorefs-internal" title="            MXSeries" href="../../resources/aim-tti/mx_series/#msl.equipment_resources.aim_tti.mx_series.MXSeries">MXSeries</a> Resource for the examples.</p>
+<p><a class="autorefs autorefs-internal" href="../../resources/#resources">Resources</a> also take an <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> instance as an argument. If you know the Resource that is used for communicating with the equipment, you have multiple choices. The following uses the <a class="autorefs autorefs-internal" title="            MXSeries
+(MultiMessageBased)" href="../../resources/aim-tti/mx_series/#msl.equipment_resources.aim_tti.mx_series.MXSeries">MXSeries</a> Resource for the examples.</p>
 <p>If you create a <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instance in a module.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment.resources</span><span class="w"> </span><span class="kn">import</span> <span class="n">MXSeries</span>

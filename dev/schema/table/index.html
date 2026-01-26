@@ -3349,7 +3349,7 @@
   <span class="md-ellipsis">
     
   
-    GMH 3000 Series thermometer
+    GMH 3000 Series
   
 
     
@@ -4765,7 +4765,8 @@
 
 -->
 
-<p>Suppose you have a variable named <code>table</code> (which is an instance of <a class="autorefs autorefs-internal" title="            Table" href="#msl.equipment.schema.Table">Table</a>) that represents the following information in an equipment register for equipment that measures spectral irradiance</p>
+<p>Suppose you have a variable named <code>table</code> (which is an instance of <a class="autorefs autorefs-internal" title="            Table
+(ndarray)" href="#msl.equipment.schema.Table">Table</a>) that represents the following information in an equipment register for equipment that measures spectral irradiance</p>
 <div class="highlight"><pre><span></span><code><span class="nt">&lt;table</span><span class="w"> </span><span class="na">comment=</span><span class="s">&quot;Spectral&quot;</span><span class="nt">&gt;</span>
 <span class="w">  </span><span class="nt">&lt;type&gt;</span><span class="w">   </span>int<span class="w">       </span>,<span class="w">    </span>double<span class="w"> </span>,<span class="w">    </span>double<span class="w">     </span><span class="nt">&lt;/type&gt;</span>
 <span class="w">  </span><span class="nt">&lt;unit&gt;</span><span class="w">   </span>nm<span class="w">        </span>,<span class="w">    </span>W/m^2<span class="w">  </span>,<span class="w">    </span>W/m^2<span class="w">      </span><span class="nt">&lt;/unit&gt;</span>
@@ -4799,7 +4800,8 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sliced</span><span class="p">)</span>
 <span class="go">[(250, 0.01818, 0.02033) (300, 0.18478, 0.01755) (350, 0.80845, 0.01606)]</span>
 </code></pre></div>
-<p>and since <code>sliced</code> is another <a class="autorefs autorefs-internal" title="            Table" href="#msl.equipment.schema.Table">Table</a> instance, the attributes of the original <code>table</code> are available</p>
+<p>and since <code>sliced</code> is another <a class="autorefs autorefs-internal" title="            Table
+(ndarray)" href="#msl.equipment.schema.Table">Table</a> instance, the attributes of the original <code>table</code> are available</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">sliced</span><span class="o">.</span><span class="n">comment</span>
 <span class="go">&#39;Spectral&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sliced</span><span class="o">.</span><span class="n">header</span>
@@ -4837,15 +4839,13 @@
 
 
 <h2 id="msl.equipment.schema.Table" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Table</span>
-
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Table</span>
+(<code><a class="autorefs autorefs-external" title="numpy.ndarray" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a></code>)
 
 <a href="#msl.equipment.schema.Table" class="headerlink" title="Permanent link">¤</a></h2>
 
 
     <div class="doc doc-contents first">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-external" title="numpy.ndarray" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a></code></p>
 
 
 
@@ -4984,12 +4984,14 @@
   </span>
 
 <a href="#msl.equipment.schema.Table.from_xml" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="            Table (msl.equipment.schema.Table)" href="#msl.equipment.schema.Table">Table</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="            Table
+(ndarray) (msl.equipment.schema.Table)" href="#msl.equipment.schema.Table">Table</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Convert an XML element into a <a class="autorefs autorefs-internal" title="            Table" href="#msl.equipment.schema.Table">Table</a> instance.</p>
+        <p>Convert an XML element into a <a class="autorefs autorefs-internal" title="            Table
+(ndarray)" href="#msl.equipment.schema.Table">Table</a> instance.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -5034,11 +5036,13 @@
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            Table (msl.equipment.schema.Table)" href="#msl.equipment.schema.Table">Table</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            Table
+(ndarray) (msl.equipment.schema.Table)" href="#msl.equipment.schema.Table">Table</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A <a class="autorefs autorefs-internal" title="            Table" href="#msl.equipment.schema.Table">Table</a> is an subclass of a numpy
+                <p>A <a class="autorefs autorefs-internal" title="            Table
+(ndarray)" href="#msl.equipment.schema.Table">Table</a> is an subclass of a numpy
 <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/user/basics.rec.html#structured-arrays">structured array</a>, where the <code>header</code> is used as
 the <em>field names</em>. This allows for accessing a column by the header value rather than by
 the index of a column. If you prefer to work with unstructured data, call
@@ -5178,7 +5182,8 @@ the index of a column. If you prefer to work with unstructured data, call
 
     <div class="doc doc-contents ">
 
-        <p>Convert the <a class="autorefs autorefs-internal" title="            Table" href="#msl.equipment.schema.Table">Table</a> class into an XML element.</p>
+        <p>Convert the <a class="autorefs autorefs-internal" title="            Table
+(ndarray)" href="#msl.equipment.schema.Table">Table</a> class into an XML element.</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -5196,7 +5201,8 @@ the index of a column. If you prefer to work with unstructured data, call
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The <a class="autorefs autorefs-internal" title="            Table" href="#msl.equipment.schema.Table">Table</a> as an XML element.</p>
+                <p>The <a class="autorefs autorefs-internal" title="            Table
+(ndarray)" href="#msl.equipment.schema.Table">Table</a> as an XML element.</p>
               </div>
             </td>
           </tr>
@@ -5275,9 +5281,7 @@ the index of a column. If you prefer to work with unstructured data, call
     <span class="o">*</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.DTypeLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.DTypeLike">DTypeLike</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">copy</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">casting</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span>
-        <span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="s2">&quot;equiv&quot;</span><span class="p">,</span> <span class="s2">&quot;safe&quot;</span><span class="p">,</span> <span class="s2">&quot;same_kind&quot;</span><span class="p">,</span> <span class="s2">&quot;unsafe&quot;</span>
-    <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;unsafe&quot;</span>
+    <span class="n">casting</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="s2">&quot;equiv&quot;</span><span class="p">,</span> <span class="s2">&quot;safe&quot;</span><span class="p">,</span> <span class="s2">&quot;same_kind&quot;</span><span class="p">,</span> <span class="s2">&quot;unsafe&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;unsafe&quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.NDArray" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.NDArray">NDArray</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">]</span>
 </code></pre></div>
 
@@ -5368,7 +5372,8 @@ for more details.</p>
             <td>
               <div class="doc-md-description">
                 <p>The unstructured array. This method may return a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a> instance
-instead of a <a class="autorefs autorefs-internal" title="            Table" href="#msl.equipment.schema.Table">Table</a> instance if the table consists of
+instead of a <a class="autorefs autorefs-internal" title="            Table
+(ndarray)" href="#msl.equipment.schema.Table">Table</a> instance if the table consists of
 numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
               </div>
             </td>

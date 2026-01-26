@@ -3687,7 +3687,7 @@
   <span class="md-ellipsis">
     
   
-    GMH 3000 Series thermometer
+    GMH 3000 Series
   
 
     
@@ -5486,8 +5486,9 @@ sudo<span class="w"> </span>usermod<span class="w"> </span>-a<span class="w"> </
 
 
 <h2 id="msl.equipment.interfaces.gpib.GPIB" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">GPIB</span>
-
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">GPIB</span>
+(<code><a class="autorefs autorefs-internal" title="            MessageBased
+(Interface) (msl.equipment.interfaces.message_based.MessageBased)" href="../#msl.equipment.interfaces.message_based.MessageBased">MessageBased</a></code>)
 
 <a href="#msl.equipment.interfaces.gpib.GPIB" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">GPIB</span><span class="p">(</span><span class="n">equipment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Equipment
@@ -5499,8 +5500,6 @@ sudo<span class="w"> </span>usermod<span class="w"> </span>-a<span class="w"> </
 </code></pre></div>
 
     <div class="doc doc-contents first">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="            MessageBased (msl.equipment.interfaces.message_based.MessageBased)" href="../#msl.equipment.interfaces.message_based.MessageBased">MessageBased</a></code></p>
 
 
 
@@ -5544,7 +5543,8 @@ sudo<span class="w"> </span>usermod<span class="w"> </span>-a<span class="w"> </
     </table>
         <p>A <a class="autorefs autorefs-internal" title="            Connection" href="../../connection/#msl.equipment.schema.Connection">Connection</a> instance supports the following <em>properties</em>
 for the GPIB communication protocol, as well as the <em>properties</em> defined in
-<a class="autorefs autorefs-internal" title="            MessageBased" href="../#msl.equipment.interfaces.message_based.MessageBased">MessageBased</a>.</p>
+<a class="autorefs autorefs-internal" title="            MessageBased
+(Interface)" href="../#msl.equipment.interfaces.message_based.MessageBased">MessageBased</a>.</p>
 
 
 <p><span class="doc-section-title">Connection Properties:</span></p>
@@ -6357,9 +6357,7 @@ The board must be the controller-in-charge.</p>
 
 
 <a href="#msl.equipment.interfaces.gpib.GPIB.config" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">config</span><span class="p">(</span>
-    <span class="n">option</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">config</span><span class="p">(</span><span class="n">option</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6506,7 +6504,8 @@ function.</p>
 
 
 <a href="#msl.equipment.interfaces.gpib.GPIB.control_atn" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">control_atn</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            ATNState (msl.equipment.enumerations.ATNState)" href="../../enumerations/#msl.equipment.enumerations.ATNState">ATNState</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">control_atn</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            ATNState
+(IntEnum) (msl.equipment.enumerations.ATNState)" href="../../enumerations/#msl.equipment.enumerations.ATNState">ATNState</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6531,7 +6530,8 @@ function.</p>
                 <code>state</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            ATNState (msl.equipment.enumerations.ATNState)" href="../../enumerations/#msl.equipment.enumerations.ATNState">ATNState</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            ATNState
+(IntEnum) (msl.equipment.enumerations.ATNState)" href="../../enumerations/#msl.equipment.enumerations.ATNState">ATNState</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6627,7 +6627,8 @@ an enum member name (case insensitive) or value.</p>
 
 
 <a href="#msl.equipment.interfaces.gpib.GPIB.control_ren" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">control_ren</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            RENMode (msl.equipment.enumerations.RENMode)" href="../../enumerations/#msl.equipment.enumerations.RENMode">RENMode</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">control_ren</span><span class="p">(</span><span class="n">mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            RENMode
+(IntEnum) (msl.equipment.enumerations.RENMode)" href="../../enumerations/#msl.equipment.enumerations.RENMode">RENMode</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6653,7 +6654,8 @@ an enum member name (case insensitive) or value.</p>
                 <code>mode</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            RENMode (msl.equipment.enumerations.RENMode)" href="../../enumerations/#msl.equipment.enumerations.RENMode">RENMode</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            RENMode
+(IntEnum) (msl.equipment.enumerations.RENMode)" href="../../enumerations/#msl.equipment.enumerations.RENMode">RENMode</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7124,9 +7126,7 @@ function.</p>
 
 
 <a href="#msl.equipment.interfaces.gpib.GPIB.listener" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">listener</span><span class="p">(</span>
-    <span class="n">pad</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">sad</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">listener</span><span class="p">(</span><span class="n">pad</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">sad</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -8204,7 +8204,8 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
       writable
   " href="../#msl.equipment.interfaces.message_based.MessageBased.timeout">timeout</a>
    is not <code>None</code>. If a timeout occurs, an
-   <a class="autorefs autorefs-internal" title="            MSLTimeoutError" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLTimeoutError">MSLTimeoutError</a> is raised.</li>
+   <a class="autorefs autorefs-internal" title="            MSLTimeoutError
+(TimeoutError)" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLTimeoutError">MSLTimeoutError</a> is raised.</li>
 <li><a class="autorefs autorefs-internal" title="            max_read_size
 
 
@@ -8213,7 +8214,8 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
       writable
   " href="../#msl.equipment.interfaces.message_based.MessageBased.max_read_size">max_read_size</a>
    bytes have been received. If the maximum number of bytes have been read, an
-   <a class="autorefs autorefs-internal" title="            MSLConnectionError" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLConnectionError">MSLConnectionError</a> is raised.</li>
+   <a class="autorefs autorefs-internal" title="            MSLConnectionError
+(OSError)" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLConnectionError">MSLConnectionError</a> is raised.</li>
 </ol>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -8534,9 +8536,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 
 
 <a href="#msl.equipment.interfaces.gpib.GPIB.remote_enable" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">remote_enable</span><span class="p">(</span>
-    <span class="n">state</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">remote_enable</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -9632,9 +9632,7 @@ See <a class="autorefs autorefs-internal" title="            MessageFormat
 
 
 <a href="#msl.equipment.interfaces.gpib.GPIB.write_async" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">write_async</span><span class="p">(</span>
-    <span class="n">message</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">write_async</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">

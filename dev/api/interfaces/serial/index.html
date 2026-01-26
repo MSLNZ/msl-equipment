@@ -3406,7 +3406,7 @@
   <span class="md-ellipsis">
     
   
-    GMH 3000 Series thermometer
+    GMH 3000 Series
   
 
     
@@ -4858,8 +4858,9 @@
 
 
 <h2 id="msl.equipment.interfaces.serial.Serial" class="doc doc-heading">
-<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Serial</span>
-
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">Serial</span>
+(<code><a class="autorefs autorefs-internal" title="            MessageBased
+(Interface) (msl.equipment.interfaces.message_based.MessageBased)" href="../#msl.equipment.interfaces.message_based.MessageBased">MessageBased</a></code>)
 
 <a href="#msl.equipment.interfaces.serial.Serial" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">Serial</span><span class="p">(</span><span class="n">equipment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Equipment
@@ -4871,8 +4872,6 @@
 </code></pre></div>
 
     <div class="doc doc-contents first">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="            MessageBased (msl.equipment.interfaces.message_based.MessageBased)" href="../#msl.equipment.interfaces.message_based.MessageBased">MessageBased</a></code></p>
 
 
 
@@ -4916,9 +4915,13 @@
     </table>
         <p>A <a class="autorefs autorefs-internal" title="            Connection" href="../../connection/#msl.equipment.schema.Connection">Connection</a> instance supports the following <em>properties</em>
 for the serial communication protocol, as well as the <em>properties</em> defined in
-<a class="autorefs autorefs-internal" title="            MessageBased" href="../#msl.equipment.interfaces.message_based.MessageBased">MessageBased</a>. The
-<a class="autorefs autorefs-internal" title="            DataBits" href="../../enumerations/#msl.equipment.enumerations.DataBits">DataBits</a>, <a class="autorefs autorefs-internal" title="            Parity" href="../../enumerations/#msl.equipment.enumerations.Parity">Parity</a>
-and <a class="autorefs autorefs-internal" title="            StopBits" href="../../enumerations/#msl.equipment.enumerations.StopBits">StopBits</a> enumeration names and values may also
+<a class="autorefs autorefs-internal" title="            MessageBased
+(Interface)" href="../#msl.equipment.interfaces.message_based.MessageBased">MessageBased</a>. The
+<a class="autorefs autorefs-internal" title="            DataBits
+(IntEnum)" href="../../enumerations/#msl.equipment.enumerations.DataBits">DataBits</a>, <a class="autorefs autorefs-internal" title="            Parity
+(Enum)" href="../../enumerations/#msl.equipment.enumerations.Parity">Parity</a>
+and <a class="autorefs autorefs-internal" title="            StopBits
+(Enum)" href="../../enumerations/#msl.equipment.enumerations.StopBits">StopBits</a> enumeration names and values may also
 be used. For properties that specify an <em>alias</em>, you may also use the alternative name as
 the property name. See <a class="autorefs autorefs-external" href="https://pyserial.readthedocs.io/en/stable/pyserial_api.html#serial.Serial">serial.Serial</a> for more details.</p>
 
@@ -4947,7 +4950,8 @@ the property name. See <a class="autorefs autorefs-external" href="https://pyser
           <tr class="doc-section-item">
             <td><code><span title="msl.equipment.interfaces.serial.Serial.__init__.data_bits">data_bits</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            DataBits (msl.equipment.enumerations.DataBits)" href="../../enumerations/#msl.equipment.enumerations.DataBits">DataBits</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            DataBits
+(IntEnum) (msl.equipment.enumerations.DataBits)" href="../../enumerations/#msl.equipment.enumerations.DataBits">DataBits</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -4983,7 +4987,8 @@ seconds. A value less than the minimum will disable the inter-byte timeout. <em>
           <tr class="doc-section-item">
             <td><code><span title="msl.equipment.interfaces.serial.Serial.__init__.parity">parity</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            Parity (msl.equipment.enumerations.Parity)" href="../../enumerations/#msl.equipment.enumerations.Parity">Parity</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            Parity
+(Enum) (msl.equipment.enumerations.Parity)" href="../../enumerations/#msl.equipment.enumerations.Parity">Parity</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5005,7 +5010,8 @@ seconds. A value less than the minimum will disable the inter-byte timeout. <em>
           <tr class="doc-section-item">
             <td><code><span title="msl.equipment.interfaces.serial.Serial.__init__.stop_bits">stop_bits</span></code></td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            StopBits (msl.equipment.enumerations.StopBits)" href="../../enumerations/#msl.equipment.enumerations.StopBits">StopBits</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+                  <code><a class="autorefs autorefs-internal" title="            StopBits
+(Enum) (msl.equipment.enumerations.StopBits)" href="../../enumerations/#msl.equipment.enumerations.StopBits">StopBits</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5835,7 +5841,8 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
       writable
   " href="../#msl.equipment.interfaces.message_based.MessageBased.timeout">timeout</a>
    is not <code>None</code>. If a timeout occurs, an
-   <a class="autorefs autorefs-internal" title="            MSLTimeoutError" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLTimeoutError">MSLTimeoutError</a> is raised.</li>
+   <a class="autorefs autorefs-internal" title="            MSLTimeoutError
+(TimeoutError)" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLTimeoutError">MSLTimeoutError</a> is raised.</li>
 <li><a class="autorefs autorefs-internal" title="            max_read_size
 
 
@@ -5844,7 +5851,8 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
       writable
   " href="../#msl.equipment.interfaces.message_based.MessageBased.max_read_size">max_read_size</a>
    bytes have been received. If the maximum number of bytes have been read, an
-   <a class="autorefs autorefs-internal" title="            MSLConnectionError" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLConnectionError">MSLConnectionError</a> is raised.</li>
+   <a class="autorefs autorefs-internal" title="            MSLConnectionError
+(OSError)" href="../../exceptions/#msl.equipment.interfaces.message_based.MSLConnectionError">MSLConnectionError</a> is raised.</li>
 </ol>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>

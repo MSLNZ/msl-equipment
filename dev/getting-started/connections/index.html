@@ -827,6 +827,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Python Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#better-ide-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Better IDE Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debugging-communication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debugging Communication
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -4718,6 +4746,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Python Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#better-ide-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Better IDE Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debugging-communication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debugging Communication
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -5210,6 +5266,118 @@
 <span class="n">alice</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 <span class="n">bob</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="better-ide-support">Better IDE Support<a class="headerlink" href="#better-ide-support" title="Permanent link">¤</a></h3>
+<p>The returned type when the <a class="autorefs autorefs-internal" title="            connect" href="../../api/connection/#msl.equipment.schema.Connection.connect">connect()</a> method is called is <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>, because the <a class="autorefs autorefs-internal" title="Interfaces" href="#connections-interfaces">Interface</a> or <a class="autorefs autorefs-internal" title="Resources" href="../../resources/#resources">Resource</a> to use to communicate with the equipment is not known until runtime. The Integrated Development Environment (IDE) that you may be using to develop your code cannot provide type checking, code completion or other diagnostic features for the <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a> type. The following illustrates different ways to get the features that your IDE supports, depending on how you may be using <code>msl-equipment</code>.</p>
+<p>If you create a <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instance in a module, annotate the returned object</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">GPIB</span><span class="p">,</span> <span class="n">Connection</span>
+
+<span class="n">device</span><span class="p">:</span> <span class="n">GPIB</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;GPIB::22&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+</code></pre></div>
+<p>or if you use a <a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/compound_stmts.html#with" target="_blank">context manager</a>, annotate the object before entering the code block.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">GPIB</span><span class="p">,</span> <span class="n">Connection</span>
+
+<span class="n">device</span><span class="p">:</span> <span class="n">GPIB</span>
+<span class="k">with</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;GPIB::22&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<p>If you create an <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> instance in a module.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">GPIB</span><span class="p">,</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">Equipment</span>
+
+<span class="n">equipment</span> <span class="o">=</span> <span class="n">Equipment</span><span class="p">(</span>
+    <span class="n">connection</span><span class="o">=</span><span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;GPIB::22&quot;</span><span class="p">),</span>
+    <span class="c1"># specify more keyword arguments...</span>
+<span class="p">)</span>
+
+<span class="c1"># Use the connect() method and annotate the returned object</span>
+<span class="n">device</span><span class="p">:</span> <span class="n">GPIB</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+
+<span class="c1"># Pass the Equipment instance to the GPIB class</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">GPIB</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
+
+<span class="c1"># Use as a context manager</span>
+<span class="k">with</span> <span class="n">GPIB</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<p>If you create a <a class="autorefs autorefs-internal" href="../../api/config/#config">Config</a> instance in a module.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">GPIB</span><span class="p">,</span> <span class="n">Config</span>
+
+<span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">&quot;path/to/configuration.xml&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get the Equipment instance by its &quot;name&quot; in an Equipment Register,</span>
+<span class="c1"># call the connect() method and annotate the returned object</span>
+<span class="n">device</span><span class="p">:</span> <span class="n">GPIB</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;dmm&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+
+<span class="c1"># Pass the Equipment instance to the appropriate Interface class</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">GPIB</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;dmm&quot;</span><span class="p">])</span>
+
+<span class="c1"># Use as a context manager</span>
+<span class="k">with</span> <span class="n">GPIB</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;dmm&quot;</span><span class="p">])</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<p><a class="autorefs autorefs-internal" href="../../resources/#resources">Resources</a> also take an <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> instance as an argument. If you know the Resource that is used for communicating with the equipment, you have multiple choices. The following uses the <a class="autorefs autorefs-internal" title="            MXSeries" href="../../resources/aim-tti/mx_series/#msl.equipment_resources.aim_tti.mx_series.MXSeries">MXSeries</a> Resource for the examples.</p>
+<p>If you create a <a class="autorefs autorefs-internal" href="../../api/connection/#connection">Connection</a> instance in a module.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment.resources</span><span class="w"> </span><span class="kn">import</span> <span class="n">MXSeries</span>
+
+<span class="n">connection</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span>
+    <span class="s2">&quot;TCPIP::169.254.100.2::inst0::INSTR&quot;</span><span class="p">,</span>
+    <span class="n">manufacturer</span><span class="o">=</span><span class="s2">&quot;Aim-TTi&quot;</span><span class="p">,</span>  <span class="c1"># required</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;MX100TP&quot;</span><span class="p">,</span>  <span class="c1"># required (but may be a different model number)</span>
+<span class="p">)</span>
+
+<span class="c1"># Use the connect() method and annotate the returned object</span>
+<span class="n">device</span><span class="p">:</span> <span class="n">MXSeries</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+
+<span class="c1"># Use as a context manager</span>
+<span class="n">device</span><span class="p">:</span> <span class="n">MXSeries</span>
+<span class="k">with</span> <span class="n">connection</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<p>If you create an <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> instance in a module.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">Equipment</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment.resources</span><span class="w"> </span><span class="kn">import</span> <span class="n">MXSeries</span>
+
+<span class="n">dcv_supply</span> <span class="o">=</span> <span class="n">Equipment</span><span class="p">(</span>
+    <span class="n">connection</span><span class="o">=</span><span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;TCPIP::169.254.100.2::inst0::INSTR&quot;</span><span class="p">),</span>
+    <span class="n">manufacturer</span><span class="o">=</span><span class="s2">&quot;Aim-TTi&quot;</span><span class="p">,</span>  <span class="c1"># required if calling dcv_supply.connect()</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;MX100TP&quot;</span><span class="p">,</span>  <span class="c1"># required if calling dcv_supply.connect()</span>
+    <span class="c1"># specify more keyword arguments...</span>
+<span class="p">)</span>
+
+<span class="c1"># Use the connect() method and annotate the returned object.</span>
+<span class="c1"># The manufacturer and model values must be specified for the</span>
+<span class="c1"># MXSeries Resource to be chosen.</span>
+<span class="n">device</span><span class="p">:</span> <span class="n">MXSeries</span> <span class="o">=</span> <span class="n">dcv_supply</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+
+<span class="c1"># Pass the `dcv_supply` instance to the MXSeries Resource class.</span>
+<span class="c1"># The manufacturer and model values are not required</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">MXSeries</span><span class="p">(</span><span class="n">dcv_supply</span><span class="p">)</span>
+
+<span class="c1"># Use as a context manager</span>
+<span class="k">with</span> <span class="n">MXSeries</span><span class="p">(</span><span class="n">dcv_supply</span><span class="p">)</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<p>If you create a <a class="autorefs autorefs-internal" href="../../api/config/#config">Config</a> instance in a module.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment.resources</span><span class="w"> </span><span class="kn">import</span> <span class="n">MXSeries</span>
+
+<span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">&quot;path/to/configuration.xml&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get the Equipment instance by its &quot;name&quot; in an Equipment Register,</span>
+<span class="c1"># call the connect() method and annotate the returned object. The</span>
+<span class="c1"># &lt;equipment&gt; element in the Equipment Register must also specify the</span>
+<span class="c1"># appropriate &lt;manufacturer&gt; and &lt;model&gt; sub-elements to automatically</span>
+<span class="c1"># use the MXSeries Resource.</span>
+<span class="n">device</span><span class="p">:</span> <span class="n">MXSeries</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;dcv-supply&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+
+<span class="c1"># Pass the Equipment instance to the appropriate Resource class</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">MXSeries</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;dcv-supply&quot;</span><span class="p">])</span>
+
+<span class="c1"># Use as a context manager</span>
+<span class="k">with</span> <span class="n">MXSeries</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;dcv-supply&quot;</span><span class="p">])</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<h3 id="debugging-communication">Debugging Communication<a class="headerlink" href="#debugging-communication" title="Permanent link">¤</a></h3>
 <p>The <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#module-logging" target="_blank">logging</a> module may be used to help debug communication issues, especially when interfacing with multiple equipment. By enabling the <code>DEBUG</code> <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/logging.html#levels" target="_blank">level</a> you will be able to capture the bytes that are written to and read from the equipment.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span>

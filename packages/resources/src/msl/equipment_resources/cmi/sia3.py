@@ -76,6 +76,13 @@ class SIA3(Serial, manufacturer=r"C.*M.*I", model=r"SIA3"):
     def __init__(self, equipment: Equipment) -> None:
         """A Switched Integrator Amplifier (SIA) designed by the Czech Metrology Institute.
 
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"C.*M.*I"
+        model=r"SIA3"
+        ```
+
         Args:
             equipment: An [Equipment][] instance.
         """

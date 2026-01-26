@@ -30,7 +30,14 @@ class GMH3000(Serial, manufacturer=r"Greisinger", model=r"GMH\s*3\d{3}"):
     """Communicate with a [Greisinger](https://www.greisinger.de/) GMH 3000 Series thermometer."""
 
     def __init__(self, equipment: Equipment) -> None:
-        """Communicate with a Greisinger GMH 3000 Series thermometer.
+        r"""Communicate with a Greisinger GMH 3000 Series thermometer.
+
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Greisinger"
+        model=r"GMH\s*3\d{3}"
+        ```
 
         Args:
             equipment: An [Equipment][] instance.

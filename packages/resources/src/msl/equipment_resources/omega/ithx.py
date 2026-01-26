@@ -33,6 +33,14 @@ class ITHX(Socket, manufacturer=r"OMEGA", model=r"iTHX-[2DMSW][3D]?", flags=re.I
 
         The default termination character for read and write operations is `\r`.
 
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"OMEGA"
+        model=r"iTHX-[2DMSW][3D]?"
+        flags=IGNORECASE
+        ```
+
         Args:
             equipment: An [Equipment][] instance.
         """

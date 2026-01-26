@@ -29,11 +29,18 @@ class WinCamD(SDK, manufacturer=r"Data\s*Ray", model=r"WinCamD"):
     """Connect to a WinCamD beam-profiling camera from [DataRay](https://www.dataray.com/){:target="_blank"}."""
 
     def __init__(self, equipment: Equipment) -> None:
-        """Connect to a WinCamD beam-profiling camera from DataRay.
+        r"""Connect to a WinCamD beam-profiling camera from DataRay.
 
         The bitness (32 or 64 bit) of the DataRay Beam Profiling Software that
         is installed must match the bitness of the Python interpreter that is used
         to load the `DATARAYOCX` library.
+
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Data\s*Ray"
+        model=r"WinCamD"
+        ```
 
         Args:
             equipment: An [Equipment][] instance.

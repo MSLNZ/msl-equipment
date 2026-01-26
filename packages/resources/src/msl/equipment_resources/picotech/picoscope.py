@@ -82,7 +82,14 @@ class PicoScope(SDK, manufacturer=r"Pico\s*Tech", model=r"[23456]\d{3}[A-Z]"):
     """Whether streaming mode has finished acquiring the samples."""
 
     def __init__(self, equipment: Equipment) -> None:
-        """A wrapper around the PicoScope API Series SDK.
+        r"""A wrapper around the PicoScope API Series SDK.
+
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Pico\s*Tech"
+        model=r"[23456]\d{3}[A-Z]"
+        ```
 
         !!! warning
             This class was written for the ps5000a SDK. Different SDKs (e.g., ps4000a) have

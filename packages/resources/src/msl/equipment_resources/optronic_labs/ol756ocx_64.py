@@ -28,10 +28,18 @@ class OL756(Interface, manufacturer=r"Optronic", model=r"(OL)?\s*756", flags=re.
     """Communicate with an OL 756 spectroradiometer from [Optronic Laboratories](https://optroniclabs.com/)."""
 
     def __init__(self, equipment: Equipment) -> None:
-        """Communicate with an OL 756 spectroradiometer from Optronic Laboratories.
+        r"""Communicate with an OL 756 spectroradiometer from Optronic Laboratories.
 
         This class can be used with either a 32- or 64-bit Python interpreter
         to call the 32-bit functions in the `OL756SDKActiveXCtrl` library.
+
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Optronic"
+        model=r"(OL)?\s*756"
+        flags=IGNORECASE
+        ```
 
         Args:
             equipment: An [Equipment][] instance.

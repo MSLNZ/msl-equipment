@@ -137,6 +137,14 @@ class PR4000B(Serial, manufacturer=r"^MKS", model=r"PR4000B", flags=re.IGNORECAS
         cable is required when using a USB to RS232 converter. RS485 support is
         not implemented.
 
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"^MKS"
+        model=r"PR4000B"
+        flags=IGNORECASE
+        ```
+
         Args:
             equipment: An [Equipment][] instance..
         """

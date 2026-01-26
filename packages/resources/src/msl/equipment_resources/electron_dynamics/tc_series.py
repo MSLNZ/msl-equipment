@@ -321,7 +321,15 @@ class TCSeries(Serial, manufacturer=r"Electron Dynamics", model=r"TC\s*[M|L]", f
     """Establishes a connection to a TC Series Temperature Controller from Electron Dynamics Ltd."""
 
     def __init__(self, equipment: Equipment) -> None:
-        """Establishes a connection to a TC Series Temperature Controller from Electron Dynamics Ltd.
+        r"""Establishes a connection to a TC Series Temperature Controller from Electron Dynamics Ltd.
+
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Electron Dynamics"
+        model=r"TC\s*[M|L]"
+        flags=IGNORECASE
+        ```
 
         Args:
             equipment: An [Equipment][] instance.

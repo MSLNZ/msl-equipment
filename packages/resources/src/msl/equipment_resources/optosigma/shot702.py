@@ -85,6 +85,13 @@ class SHOT702(Serial, manufacturer=r"Opto\s*Sigma|Sigma\s*Koki", model=r"SHOT-70
 
         The default baud rate is set to 38400 and the read/write termination characters are `\r\n`.
 
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Opto\s*Sigma|Sigma\s*Koki"
+        model=r"SHOT-702"
+        ```
+
         Args:
             equipment: An [Equipment][] instance.
         """

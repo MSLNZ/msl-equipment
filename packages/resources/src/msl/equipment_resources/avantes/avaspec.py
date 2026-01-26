@@ -733,6 +733,13 @@ class AvaSpec(SDK, manufacturer=r"Avantes", model=r"."):
     def __init__(self, equipment: Equipment) -> None:
         """Wrapper around the `avaspec` SDK from Avantes.
 
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Avantes"
+        model=r"."
+        ```
+
         Args:
             equipment: An [Equipment][] instance.
 

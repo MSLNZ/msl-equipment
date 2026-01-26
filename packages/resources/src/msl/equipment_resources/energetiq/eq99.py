@@ -22,6 +22,14 @@ class EQ99(Serial, manufacturer=r"Energetiq", model=r"EQ-99(-MGR)?", flags=re.IG
     def __init__(self, equipment: Equipment) -> None:
         """Communicate with the EQ-99 Manager from Energetiq.
 
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Energetiq"
+        model=r"EQ-99(-MGR)?"
+        flags=IGNORECASE
+        ```
+
         Args:
             equipment: An [Equipment][] instance.
         """

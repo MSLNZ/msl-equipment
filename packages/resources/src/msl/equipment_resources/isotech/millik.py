@@ -109,6 +109,14 @@ class MilliK(MultiMessageBased, manufacturer=r"Iso.*Tech.*", model=r"milli.*K.*"
     def __init__(self, equipment: Equipment) -> None:
         """[IsoTech](https://isotech.co.uk/) milliK Precision Thermometer.
 
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Iso.*Tech.*"
+        model=r"milli.*K.*"
+        flags=IGNORECASE
+        ```
+
         Args:
             equipment: An [Equipment][] instance.
         """

@@ -432,13 +432,20 @@ class PortStatus(IntEnum):
     Ready = 10
 
 
-class NKT(Interface, manufacturer=r"^NKT"):
+class NKT(Interface, manufacturer=r"^NKT", model=r"."):
     """Wrapper around the `NKTPDLL.dll` SDK from [NKT Photonics](https://www.nktphotonics.com/)."""
 
     _SDK: CDLL | None = None
 
     def __init__(self, equipment: Equipment) -> None:
         """Wrapper around the `NKTPDLL.dll` SDK from [NKT Photonics](https://www.nktphotonics.com/).
+
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"^NKT"
+        model=r"."
+        ```
 
         Args:
             equipment: An [Equipment][] instance.

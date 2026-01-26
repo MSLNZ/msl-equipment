@@ -50,7 +50,15 @@ class OLxxA(MultiMessageBased, manufacturer=r"Optronic", model=r"(OL)?\s*(16|65|
     """Communicate with a DC current source from [Optronic Laboratories](https://optroniclabs.com/){:target="_blank"}."""
 
     def __init__(self, equipment: Equipment) -> None:
-        """Communicate with a DC current source from Optronic Laboratories.
+        r"""Communicate with a DC current source from Optronic Laboratories.
+
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Optronic"
+        model=r"(OL)?\s*(16|65|83)A"
+        flags=IGNORECASE
+        ```
 
         !!! warning
             The connection interface must be selected (using the buttons on the

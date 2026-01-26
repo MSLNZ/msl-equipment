@@ -30,6 +30,14 @@ class PTB330(PTU300, manufacturer=r"Vaisala", model=r"^PTB330$", flags=re.IGNORE
         * Data bits: 7
         * Parity: EVEN
 
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Vaisala"
+        model=r"^PTB330$"
+        flags=IGNORECASE
+        ```
+
         !!! warning
             Ensure the device is in `STOP` or `SEND` mode before initiating communication.
 

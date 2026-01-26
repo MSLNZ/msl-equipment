@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", model=r".*"):
+class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", model=r"."):
     """Wrapper around the `ARC_Instrument.dll` SDK from [Princeton Instruments]{:target="_blank"}.
 
     [Princeton Instruments]: https://www.princetoninstruments.com/
@@ -39,6 +39,13 @@ class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", mod
 
     def __init__(self, equipment: Equipment) -> None:
         """Wrapper around the `ARC_Instrument.dll` SDK from Princeton Instruments.
+
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Princeton Instruments"
+        model=r"."
+        ```
 
         Args:
             equipment: An [Equipment][] instance.

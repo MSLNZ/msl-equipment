@@ -54,7 +54,14 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
         SINGLE_ENDED_TO_2500MV = 8
 
     def __init__(self, equipment: Equipment) -> None:
-        """PT-104 Platinum Resistance Data Logger from Pico Technology.
+        r"""PT-104 Platinum Resistance Data Logger from Pico Technology.
+
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Pico\s*Tech"
+        model=r"PT[-]?104"
+        ```
 
         Args:
             equipment: An [Equipment][] instance.

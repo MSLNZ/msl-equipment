@@ -30,6 +30,14 @@ class PTU300(Serial, manufacturer=r"Vaisala", model=r"^PTU30[0137T]$", flags=re.
         * Data bits: 7
         * Parity: EVEN
 
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Vaisala"
+        model=r"^PTU30[0137T]$"
+        flags=IGNORECASE
+        ```
+
         !!! warning
             Ensure the device is in `STOP` or `SEND` mode before initiating communication.
 

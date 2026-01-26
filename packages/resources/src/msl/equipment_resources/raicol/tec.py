@@ -16,6 +16,13 @@ class RaicolTEC(Serial, manufacturer=r"Raicol", model=r"TEC"):
     def __init__(self, equipment: Equipment) -> None:
         """Control a TEC (Peltier-based) oven from Raicol Crystals.
 
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Raicol"
+        model=r"TEC"
+        ```
+
         Args:
             equipment: An [Equipment][] instance.
         """

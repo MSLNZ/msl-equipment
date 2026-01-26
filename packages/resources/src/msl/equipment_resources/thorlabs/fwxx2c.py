@@ -17,6 +17,13 @@ class FWxx2C(Serial, manufacturer=r"Thorlabs", model=r"FW(10|21)2C"):
     def __init__(self, equipment: Equipment) -> None:
         """Communicate with a FW102C/FW212C Motorized Filter Wheel from Thorlabs.
 
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Thorlabs"
+        model=r"FW(10|21)2C"
+        ```
+
         Args:
             equipment: An [Equipment][] instance.
         """

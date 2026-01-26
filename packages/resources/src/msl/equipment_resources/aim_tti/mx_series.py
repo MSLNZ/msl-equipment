@@ -66,9 +66,17 @@ class MXSeries(
     """Connect to an MX100QP, MX100TP, MX103QP or MX180TP DC power supply."""
 
     def __init__(self, equipment: Equipment) -> None:
-        """Connect to an MX100QP, MX100TP, MX103QP or MX180TP DC power supply from [Aim and Thurlby Thandar Instruments].
+        r"""Connect to an MX100QP, MX100TP, MX103QP or MX180TP DC power supply from [Aim and Thurlby Thandar Instruments].
 
         [Aim and Thurlby Thandar Instruments]: https://www.aimtti.com/
+
+        Regular-expression patterns that are used to select this Resource when
+        [connect()][msl.equipment.schema.Equipment.connect] is called.
+        ```python
+        manufacturer=r"Aim\s*[-&_]?\s*(and)?\s*T(hurlby)?\s*T(handar)?\s*I(nstruments)?"
+        model=r"MX1[80][03][TQ]P"
+        flags=IGNORECASE
+        ```
 
         Args:
             equipment: An [Equipment][] instance.

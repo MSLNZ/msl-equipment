@@ -513,7 +513,7 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
             return
 
         _names = b",".join(port.encode() for port in ports)
-        NKT._SDK.closePorts(ports)
+        NKT._SDK.closePorts(_names)
 
     @staticmethod
     def load_sdk(path: PathLike | None = None) -> None:
@@ -944,7 +944,7 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
             raise RuntimeError(msg)
 
         _names = b",".join(name.encode() for name in names)
-        NKT._SDK.openPorts(names, int(bool(auto)), int(bool(live)))
+        NKT._SDK.openPorts(_names, int(bool(auto)), int(bool(live)))
 
     def point_to_point_port_add(self, port: PointToPoint) -> None:
         """Creates or modifies a point-to-point port.

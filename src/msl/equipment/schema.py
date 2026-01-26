@@ -2477,7 +2477,18 @@ class Equipment:
         )
 
     def connect(self) -> _Any:  # noqa: ANN401
-        """Connect to the equipment for computer control."""
+        """Connect to the equipment for computer control.
+
+        The following sequence is used to decide how the connection is established.
+
+        1. If a [Connection][] has a specified [backend][msl.equipment.schema.Connection.backend],
+           that is not `MSL`, that [Backend][connections-backend] is used.
+        2. If the [Equipment][] has the appropriate [manufacturer][msl.equipment.schema.Equipment.manufacturer]
+           and [model][msl.equipment.schema.Equipment.model] values for one of the [Resources][],
+           that Resource is used.
+        3. If the [Connection][] has an [address][msl.equipment.schema.Connection.address]
+           that is supported by one of the [Interfaces][connections-interfaces], that Interface is used.
+        """
         if self.connection is None:
             # Cannot simply call super(). Must specify (type, object) since the dataclass uses slots=True
             super(Equipment, self).__setattr__("connection", connections[self.id])  # noqa: UP008
@@ -3114,7 +3125,18 @@ class Connection:
         return f"{self.__class__.__name__}(eid={self.eid!r}, address={self.address!r})"
 
     def connect(self) -> _Any:  # noqa: ANN401
-        """Connect to the equipment for computer control."""
+        """Connect to the equipment for computer control.
+
+        The following sequence is used to decide how the connection is established.
+
+        1. If a [Connection][] has a specified [backend][msl.equipment.schema.Connection.backend],
+           that is not `MSL`, that [Backend][connections-backend] is used.
+        2. If the [Connection][] has the appropriate [manufacturer][msl.equipment.schema.Connection.manufacturer]
+           and [model][msl.equipment.schema.Connection.model] values for one of the [Resources][],
+           that Resource is used.
+        3. If the [Connection][] has an [address][msl.equipment.schema.Connection.address]
+           that is supported by one of the [Interfaces][connections-interfaces], that Interface is used.
+        """
         equipment = Equipment(
             id=self.eid,
             manufacturer=self.manufacturer,

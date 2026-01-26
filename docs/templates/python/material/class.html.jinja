@@ -1,0 +1,26 @@
+{#- Changes how a class heading is shown.
+
+Append bases at the end of the heading, instead of using
+
+Bases: ...
+
+below the heading.
+
+See https://github.com/mkdocstrings/griffe/discussions/228
+
+-#}
+
+{% extends "_base/class.html.jinja" %}
+
+{# Append bases at the end of the heading. #}
+{% block heading %}
+  {{ super() }}
+  {%- if config.show_bases and class.bases -%}
+    ({%- for expression in class.bases -%}
+       <code>{% include "expression.html.jinja" with context %}</code>{% if not loop.last %}, {% endif %}
+     {% endfor -%})
+   {%- endif -%}
+{% endblock %}
+
+{# Empty the original "bases" block. #}
+{% block bases %}{% endblock %}

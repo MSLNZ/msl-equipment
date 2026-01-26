@@ -49,7 +49,8 @@ The following interface classes are available
 * [SDK][] &mdash; For equipment that use a Software Development Kit (SDK) for communication
 * [Serial][] &mdash; For equipment that is connected through a serial port (or a USB-to-Serial adaptor)
 * [Socket][] &mdash; For equipment that is connected through a network socket
-* [USB][] &mdash; For equipment that use the USB protocol
+* [USB][] &mdash; For equipment that use the (raw) USB protocol
+* [USBTMC][] &mdash; For equipment that use the [USB Test & Measurement Class](https://www.usb.org/document-library/test-measurement-class-specification){:target="_blank"} protocol
 * [VXI11][] &mdash; For equipment that use the [VXI-11](http://www.vxibus.org/specifications.html){:target="_blank"} protocol
 * [ZeroMQ][] &mdash; For equipment that use the [ZeroMQ](https://zeromq.org/){:target="_blank"} protocol
 
@@ -65,13 +66,13 @@ Each [Interface][connections-interfaces] has a syntax for the [Connection][msl.e
   </tr>
   <tr>
     <td>FTDI</td>
-    <td>FTDI[driver]::vendor::product::serial[::number]</td>
+    <td>FTDI[driver]::vendor::product::serial[::iface]</td>
     <td>
       <b><i>driver</i></b> &ndash; 0=libusb, 2=d2xx [default=0]<br/>
       <b><i>vendor</i></b> &ndash; Vendor (manufacturer) ID, in hexadecimal or decimal notation<br/>
       <b><i>product</i></b> &ndash; Product ID, in hexadecimal or decimal notation<br/>
       <b><i>serial</i></b> &ndash; Serial number (or unique identifier)<br/>
-      <b><i>number</i></b> &ndash; USB Interface Number, only used with the libusb driver [default=0]
+      <b><i>iface</i></b> &ndash; USB Interface Number, only used with the libusb driver [default=0]
     </td>
   </tr>
   <tr>
@@ -137,13 +138,24 @@ Each [Interface][connections-interfaces] has a syntax for the [Connection][msl.e
   </tr>
   <tr>
     <td>USB</td>
-    <td>USB[board]::vendor::product::serial[::number]::RAW</td>
+    <td>USB[board]::vendor::product::serial[::iface]::RAW</td>
     <td>
       <b><i>board</i></b> &ndash; board number (not used) [default=0]<br/>
       <b><i>vendor</i></b> &ndash; Vendor (manufacturer) ID, in hexadecimal or decimal notation<br/>
       <b><i>product</i></b> &ndash; Product ID, in hexadecimal or decimal notation<br/>
       <b><i>serial</i></b> &ndash; Serial number (or unique identifier). Literal text <code>IGNORE</code> means that the serial number is not used (the vendor and product values uniquely identify the device)<br/>
-      <b><i>number</i></b> &ndash; USB Interface Number [default=0]
+      <b><i>iface</i></b> &ndash; USB Interface Number [default=0]
+    </td>
+  </tr>
+  <tr>
+    <td>USBTMC</td>
+    <td style="white-space: nowrap">USB[board]::vendor::product::serial[::iface][::INSTR]</td>
+    <td>
+      <b><i>board</i></b> &ndash; board number (not used) [default=0]<br/>
+      <b><i>vendor</i></b> &ndash; Vendor (manufacturer) ID, in hexadecimal or decimal notation<br/>
+      <b><i>product</i></b> &ndash; Product ID, in hexadecimal or decimal notation<br/>
+      <b><i>serial</i></b> &ndash; Serial number (or unique identifier). Literal text <code>IGNORE</code> means that the serial number is not used (the vendor and product values uniquely identify the device)<br/>
+      <b><i>iface</i></b> &ndash; USB Interface Number [default=0]
     </td>
   </tr>
   <tr>
@@ -310,6 +322,21 @@ The following are examples of the addresses that may be used to connect to equip
     <td>USB</td>
     <td>USB::0x0381::0x06a2::IGNORE::RAW</td>
     <td>A (raw) USB device with board=0 (default), idVendor=0x0381, idProduct=0x06a2 (hexadecimal notation), serial number=IGNORE (means that the serial number is not used when finding the USB device and the first USB device found that matches idVendor and idProduct is used), USB Interface Number=0 (default)</td>
+  </tr>
+  <tr>
+    <td>USBTMC</td>
+    <td>USB::0x2a2b::0x1122::abc</td>
+    <td>A USBTMC device with board=0 (default), idVendor=0x2a2b, idProduct=0x1122 (hexadecimal notation), serial number=abc, USB Interface Number=0 (default)</td>
+  </tr>
+  <tr>
+    <td>USBTMC</td>
+    <td>USB::10795::4386::abc::INSTR</td>
+    <td>A USBTMC device with board=0 (default), idVendor=10795, idProduct=4386 (decimal notation), serial number=abc, USB Interface Number=0 (default)</td>
+  </tr>
+  <tr>
+    <td>USBTMC</td>
+    <td style="white-space: nowrap">USB0::0x2a2b::0x1122::032165::1::INSTR</td>
+    <td>A USBTMC device with board=0, idVendor=0x2a2b, idProduct=0x1122 (hexadecimal notation), serial number=032165, USB Interface Number=1</td>
   </tr>
   <tr>
     <td>VXI-11</td>

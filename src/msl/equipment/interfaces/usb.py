@@ -500,7 +500,10 @@ class USB(MessageBased, regex=REGEX):
             endpoint: The endpoint to clear.
         """
         logger.debug("%s.clear_halt(0x%02X)", self, endpoint.address)
-        self._device.clear_halt(endpoint.address)
+        try:
+            self._device.clear_halt(endpoint.address)
+        except usb.core.USBError as e:
+            raise MSLConnectionError(self, str(e)) from None
 
     # Cannot know what type is returned until runtime
     @overload

@@ -283,10 +283,15 @@ def test_clear_halt_reset_device_version(usb_backend: USBBackend, caplog: pytest
         assert device.device_version == 0x1001
 
         with caplog.at_level("DEBUG", "msl.equipment"):
-            device.clear_halt(device.bulk_in_endpoint)
+            with pytest.raises(MSLConnectionError, match=r"Mocked Bulk-IN clear-halt issue"):
+                device.clear_halt(device.bulk_in_endpoint)
+
+            device.clear_halt(device.bulk_out_endpoint)
             device.reset_device()
             assert caplog.messages == [
                 "USB<||>.clear_halt(0x81)",
+                "USB<|| at USB::1::2::x::RAW> [Errno None] Mocked Bulk-IN clear-halt issue",
+                "USB<||>.clear_halt(0x02)",
                 "USB<||>.reset_device()",
             ]
 

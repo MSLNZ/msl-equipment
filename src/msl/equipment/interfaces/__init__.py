@@ -13,6 +13,7 @@ from .sdk import SDK
 from .serial import Serial
 from .socket import Socket
 from .usb import USB
+from .usbtmc import USBTMC
 from .vxi11 import VXI11
 from .zeromq import ZeroMQ
 
@@ -22,6 +23,7 @@ __all__: list[str] = [
     "NIDAQ",
     "SDK",
     "USB",
+    "USBTMC",
     "VXI11",
     "HiSLIP",
     "MSLConnectionError",

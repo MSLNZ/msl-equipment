@@ -516,6 +516,7 @@ class USBDeviceDescriptor:
         alternate_setting: int = 0,
         num_configurations: int = 1,
         device_version: int = 0x1001,
+        has_intr_read: bool = False,
     ) -> None:
         """Mocked USB Device Descriptor."""
         self.bLength: int = 18
@@ -542,6 +543,7 @@ class USBDeviceDescriptor:
         self.is_usb_tmc: bool = is_usb_tmc
         self.is_not_raw: bool = is_not_raw
         self.alternate_setting: int = alternate_setting
+        self.has_intr_read: bool = has_intr_read
 
 
 class USBConfigurationDescriptor:
@@ -563,13 +565,15 @@ class USBConfigurationDescriptor:
 class USBInterfaceDescriptor:
     """Mocked USB Interface Descriptor."""
 
-    def __init__(self, cls: int = 0xFF, sub_cls: int = 0xFF, alternate_setting: int = 0) -> None:
+    def __init__(
+        self, cls: int = 0xFF, sub_cls: int = 0xFF, alternate_setting: int = 0, num_endpoints: int = 2
+    ) -> None:
         """Mocked USB Interface Descriptor."""
         self.bLength: int = 9
         self.bDescriptorType: int = 4
         self.bInterfaceNumber: int = 0
         self.bAlternateSetting: int = alternate_setting
-        self.bNumEndpoints: int = 2
+        self.bNumEndpoints: int = num_endpoints
         self.bInterfaceClass: int = cls
         self.bInterfaceSubClass: int = sub_cls
         self.bInterfaceProtocol: int = 0xFF
@@ -580,12 +584,12 @@ class USBInterfaceDescriptor:
 class USBEndpointDescriptor:
     """Mocked USB Endpoint Descriptor."""
 
-    def __init__(self, *, is_bulk_in: bool) -> None:
+    def __init__(self, ep_address: int, attributes: int) -> None:
         """Mocked USB Endpoint Descriptor."""
         self.bLength: int = 7
         self.bDescriptorType: int = 5
-        self.bEndpointAddress: int = 0x81 if is_bulk_in else 0x02
-        self.bmAttributes: int = 2
+        self.bEndpointAddress: int = ep_address
+        self.bmAttributes: int = attributes
         self.wMaxPacketSize: int = 0x0040
         self.bInterval: int = 0
         self.bRefresh: int = 0
@@ -605,6 +609,7 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         self._bulk_message: array[int] = array("B")
         self._bulk_queue: Queue[bytes] = Queue()
         self._ctrl_queue: Queue[bytes] = Queue()
+        self._intr_queue: Queue[bytes] = Queue()
         self._raise_bad_config_number: bool = False
 
     def add_bulk_response(self, content: bytes) -> None:
@@ -623,6 +628,14 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         """
         self._ctrl_queue.put(content)
 
+    def add_intr_response(self, content: bytes) -> None:
+        """Add a interrupt response to the queue.
+
+        Args:
+            content: The content of the interrupt message.
+        """
+        self._intr_queue.put(content)
+
     def add_device(  # noqa: PLR0913
         self,
         vendor_id: int,
@@ -631,6 +644,7 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         *,
         is_usb_tmc: bool = False,
         is_not_raw: bool = False,
+        has_intr_read: bool = False,  # is_usb_tmc must also be true to use this properly
         alternate_setting: int = 0,
         bus: int | None = 1,
         address: int | None = 1,
@@ -650,6 +664,7 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
                 address=address,
                 num_configurations=num_configurations,
                 device_version=device_version,
+                has_intr_read=has_intr_read,
             )
         )
 
@@ -664,8 +679,10 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
             self.read_offset += 64
         else:
             msg = array("B", self._bulk_queue.get())
+
         if msg.tobytes() in {b"sleep", b"\x11\x60sleep"}:  # \x11\x60 are the status bytes for the FTDI packet
             sleep(0.05)
+
         buffer[:] = msg
         return len(msg)
 
@@ -673,9 +690,15 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         """Mock a bulk write."""
         self._bulk_message = data
         self.read_offset = 0
-        if data.tobytes() in {b"write_sleep!", b"sleep!"}:
+        as_bytes = data.tobytes()
+        if as_bytes in {b"write_sleep!", b"sleep!"}:
             sleep(0.05)
             return len(data) // 2
+
+        if as_bytes.endswith(b"\x00\x07\x00\x00\x00\x01\x00\x00\x00error\r\n\x00"):  # USBTMC message, after ~bTag
+            error = "Mocked Bulk-OUT write error"
+            raise usb.core.USBError(error)  # pyright: ignore[reportUnknownMemberType]
+
         return len(data)
 
     def claim_interface(self, handle: int, interface: int) -> None:  # pyright: ignore[reportUnusedParameter]
@@ -691,8 +714,16 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         with self._ctrl_queue.mutex:
             self._ctrl_queue.queue.clear()
 
-    def clear_halt(self, handle: int, ep: int) -> None:  # pyright: ignore[reportUnusedParameter]
-        """Does nothing."""
+    def clear_intr_response_queue(self) -> None:
+        """Clear the interrupt response queue."""
+        with self._intr_queue.mutex:
+            self._intr_queue.queue.clear()
+
+    def clear_halt(self, handle: int, ep: int) -> None:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+        """Mock a clear-halt request."""
+        if ep == 0x81:
+            msg = "Mocked Bulk-IN clear-halt issue"
+            raise usb.core.USBError(msg)  # pyright: ignore[reportUnknownMemberType]
 
     def close_device(self, handle: int) -> None:  # pyright: ignore[reportUnusedParameter]
         """Does nothing."""
@@ -717,6 +748,15 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
             raise usb.core.USBTimeoutError(msg)  # pyright: ignore[reportUnknownMemberType]
 
         if request_type == 0xC0:  # FTDI control IN request
+            buffer = self._ctrl_queue.get()
+            data[: len(buffer)] = array("B", buffer)
+            return len(buffer)
+
+        if request_type == 0xA1 and request == 7:  # USBTMC GET_CAPABILITIES
+            data[:] = array("B", [1, 0, 0, 0, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0])
+            return len(data)
+
+        if request_type in {0xA1, 0xA2} and request in {1, 2, 3, 4, 5, 6, 64, 128, 160, 161, 162}:  # USBTMC
             buffer = self._ctrl_queue.get()
             data[: len(buffer)] = array("B", buffer)
             return len(buffer)
@@ -773,7 +813,16 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         config: int,  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
     ) -> USBEndpointDescriptor:
         """Return a mocked Endpoint Descriptor."""
-        return USBEndpointDescriptor(is_bulk_in=ep == 0)
+        if ep == 0:
+            ep_address, attributes = (0x81, 0x02)  # Bulk-IN
+        elif ep == 1:
+            ep_address, attributes = (0x02, 0x02)  # Bulk-OUT
+        elif ep == 2:
+            ep_address, attributes = (0x83, 0x03)  # Interrupt-IN
+        else:
+            msg = f"Mocked USBBackend: get_endpoint_descriptor() endpoint {ep} not handled"
+            raise ValueError(msg)
+        return USBEndpointDescriptor(ep_address, attributes)
 
     def get_interface_descriptor(
         self,
@@ -786,12 +835,20 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         if alternate_settings > 0:
             raise IndexError
         if self._device.is_usb_tmc:
+            if self._device.has_intr_read:
+                return USBInterfaceDescriptor(cls=0xFE, sub_cls=3, num_endpoints=3)
             return USBInterfaceDescriptor(cls=0xFE, sub_cls=3)
         if self._device.is_not_raw:
             return USBInterfaceDescriptor(cls=0x22, sub_cls=10)
         if self._device.alternate_setting != 0:
             return USBInterfaceDescriptor(alternate_setting=self._device.alternate_setting)
         return USBInterfaceDescriptor()
+
+    def intr_read(self, handle: int, ep: int, interface: int, buffer: array[int], timeout: int) -> int:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
+        """Mock an interrupt read."""
+        msg = array("B", self._intr_queue.get())
+        buffer[: len(msg)] = msg
+        return len(msg)
 
     def is_kernel_driver_active(self, handle: int, interface: int) -> bool:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
         """Raises NotImplementedError on Windows, otherwise returns True."""

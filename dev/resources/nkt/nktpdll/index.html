@@ -6960,7 +6960,7 @@ Port names are case sensitive.</p>
         <span class="k">return</span>
 
     <span class="n">_names</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">port</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">ports</span><span class="p">)</span>
-    <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">closePorts</span><span class="p">(</span><span class="n">ports</span><span class="p">)</span>
+    <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">closePorts</span><span class="p">(</span><span class="n">_names</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9794,7 +9794,7 @@ methods.</p>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">_names</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">)</span>
-    <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">openPorts</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">auto</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">live</span><span class="p">)))</span>
+    <span class="n">NKT</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">openPorts</span><span class="p">(</span><span class="n">_names</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">auto</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">live</span><span class="p">)))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

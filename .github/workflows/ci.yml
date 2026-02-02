@@ -18,7 +18,7 @@ jobs:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Install locales (Ubuntu)
         if: ${{ matrix.os == 'ubuntu' }}
         run: |
@@ -31,7 +31,7 @@ jobs:
           Invoke-WebRequest -Uri https://github.com/libusb/libusb/releases/download/v1.0.29/libusb-1.0.29.7z -OutFile libusb.7z
           7z e libusb.7z -oC:\Windows\System32 VS2022\MS64\dll\libusb-1.0.dll
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
       - name: Run tests

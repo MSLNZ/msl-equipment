@@ -1,11 +1,14 @@
-"""Example showing how to use callbacks with a SuperK Fianium laser."""
+"""Example showing how to use callbacks with a SuperK Fianium laser.
+
+This example requires the NKTPDLL.dll library.
+"""
 
 from __future__ import annotations
 
 from ctypes import c_ubyte
 
 from msl.equipment import Connection
-from msl.equipment.resources import NKT, nkt
+from msl.equipment.resources import NKTDLL, nkt
 
 
 @nkt.register_status_callback
@@ -20,10 +23,10 @@ def register_callback(
 ) -> None:
     """A register-status callback handler."""
     # 'address' is an integer and represents the address of c_void_p from the callback
-    data = bytearray((c_ubyte * length).from_address(address)[:])
+    data = bytes((c_ubyte * length).from_address(address)[:])
     status = nkt.RegisterStatus(reg_status)
     dtype = nkt.RegisterData(reg_type)
-    print(f"RegisterStatusCallback: {port}, {dev_id}, {reg_id}, {status!r}, {dtype!r}, {data}")
+    print(f"RegisterStatusCallback: {port}, {dev_id}, {reg_id}, {status!r}, {dtype!r}, {data!r}")
 
 
 @nkt.port_status_callback
@@ -36,8 +39,8 @@ def port_callback(port: str, status: int, cur_scan: int, max_scan: int, device: 
 def device_callback(port: str, dev_id: int, status: int, length: int, address: int) -> None:
     """A device-status callback handler."""
     # 'address' is an integer and represents the address of c_void_p from the callback
-    data = bytearray((c_ubyte * length).from_address(address)[:])
-    print(f"DeviceStatusCallback: {port}, {dev_id}, {nkt.DeviceStatus(status)!r}, {data}")
+    data = bytes((c_ubyte * length).from_address(address)[:])
+    print(f"DeviceStatusCallback: {port}, {dev_id}, {nkt.DeviceStatus(status)!r}, {data!r}")
 
 
 # Load the SDK before before connecting to the laser just to see the PortStatusCallback
@@ -46,14 +49,14 @@ def device_callback(port: str, dev_id: int, status: int, length: int, address: i
 # When installing the SDK a NKTP_SDK_PATH environment variable is created
 # and this variable specifies the path to the DLL file; however, you
 # can also explicitly specify the path to the DLL file.
-NKT.load_sdk("C:/NKT/NKTPDLL.dll")
-NKT.set_callback_port_status(port_callback)
+NKTDLL.load_sdk(r"C:\NKT Photonics\SDK\NKTPDLL\x64\NKTPDLL.dll")
+NKTDLL.set_callback_port_status(port_callback)
 
 
 connection = Connection(
-    "COM6",  # update for your device
+    "COM4",  # update for your device
     manufacturer="NKT",
-    model="SuperK Fianium",  # update for your device
+    model="NKTDLL",  # must be "NKTDLL"
 )
 
 # Device ID of the SuperK Fianium mainboard
@@ -62,7 +65,7 @@ DEVICE_ID = 15
 INTERLOCK_OK = 2
 
 # Connect to the laser
-laser: NKT = connection.connect()
+laser: NKTDLL = connection.connect()
 
 # set the register and device callback function handlers
 laser.set_callback_register_status(register_callback)

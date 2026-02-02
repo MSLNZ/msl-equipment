@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from .nkt import NKT
 from .nktpdll import (
-    NKT,
+    NKTDLL,
     DateTime,
     DeviceMode,
     DeviceStatus,
@@ -21,9 +22,11 @@ from .nktpdll import (
     port_status_callback,
     register_status_callback,
 )
+from .superk import SuperK
 
 __all__: list[str] = [
     "NKT",
+    "NKTDLL",
     "DateTime",
     "DeviceMode",
     "DeviceStatus",
@@ -36,6 +39,7 @@ __all__: list[str] = [
     "RegisterPriority",
     "RegisterStatus",
     "RegisterStatusCallback",
+    "SuperK",
     "Unit",
     "device_status_callback",
     "port_status_callback",

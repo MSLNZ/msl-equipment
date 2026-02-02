@@ -12,7 +12,7 @@ from .energetiq import EQ99
 from .greisinger import GMH3000
 from .isotech import MilliK
 from .mks import PR4000B
-from .nkt import NKT
+from .nkt import NKT, NKTDLL, SuperK
 from .omega import ITHX
 from .optosigma import SHOT702
 from .optronic_labs import OL756, OLxxA
@@ -27,6 +27,7 @@ __all__: list[str] = [
     "GMH3000",
     "ITHX",
     "NKT",
+    "NKTDLL",
     "OL756",
     "PR4000B",
     "PT104",
@@ -42,6 +43,7 @@ __all__: list[str] = [
     "PicoScope",
     "PrincetonInstruments",
     "RaicolTEC",
+    "SuperK",
     "TCSeries",
     "WinCamD",
     "avantes",

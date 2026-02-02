@@ -134,7 +134,9 @@ nav:
     - MKS Instruments:
       - resources/mks/pr4000b.md
     - NKT Photonics:
+      - resources/nkt/nkt.md
       - resources/nkt/nktpdll.md
+      - resources/nkt/superk.md
     - OMEGA:
       - resources/omega/ithx.md
     - OptoSigma:

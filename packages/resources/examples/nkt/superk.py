@@ -1,81 +1,72 @@
-"""Example showing how to communicate with a SuperK Fianium laser using the NKT SDK."""
+"""Example showing how to communicate with a SuperK laser system."""
 
 from __future__ import annotations
 
 import time
 from typing import TYPE_CHECKING
 
-from msl.equipment import Connection, MSLConnectionError
+from msl.equipment import Connection
 
 if TYPE_CHECKING:
-    from msl.equipment.resources import NKT
-
+    from msl.equipment.resources import SuperK
 
 connection = Connection(
-    "COM6",  # update for your device
+    "COM4",  # update for your device
+    # "TCP::192.168.1.2::10001",  # example address if using ethernet
     manufacturer="NKT",
-    model="SuperK Fianium",  # update for your device
-    sdk_path="C:/NKT/NKTPDLL.dll",  # path to the NKT SDK
+    model="SuperK FIANIUM",  # update for your device
+    timeout=5,
 )
 
-# Device ID of the SuperK Fianium mainboard
-DEVICE_ID = 15
-
-INTERLOCK_OK = 2
-
 # Connect to the SuperK laser
-nkt: NKT = connection.connect()
+superk: SuperK = connection.connect()
 
-# Get some info about the SuperK
-print(f"The status of the SuperK: {nkt.get_port_status()!r}")
-print("The following modules are available in the device:")
-for module, device_id in nkt.get_modules().items():
-    print(f"  ModuleType={module} DeviceID={device_id}")
-    print(f"    Status bits: {nkt.device_get_status_bits(device_id)}")
-    print(f"    Type: 0x{nkt.device_get_type(device_id):04x}")
-    print(f"    Firmware Version#: {nkt.device_get_firmware_version_str(device_id)}")
-    print(f"    Serial#: {nkt.device_get_module_serial_number_str(device_id)}")
-    try:
-        print(f"    PCB Serial#: {nkt.device_get_pcb_serial_number_str(device_id)}")
-    except MSLConnectionError:
-        print("    PCB Serial#: Not Available")
-    try:
-        print(f"    PCB Version#: {nkt.device_get_pcb_version(device_id)}")
-    except MSLConnectionError:
-        print("    PCB Version#: Not Available")
-    print(f"    Is Live?: {nkt.device_get_live(device_id)}")
+# Get info about the modules that are in the laser system
+print("The following modules are available:")
+for module in superk.scan_modules():
+    print("  ", module)
 
-# Check the Interlock status
-interlock = nkt.register_read_u16(DEVICE_ID, 0x32)
-print(f"Interlock OK? {interlock == INTERLOCK_OK}")
-if interlock == 1:  # then requires an interlock reset
-    nkt.register_write_u16(DEVICE_ID, 0x32, 1)  # reset interlock
-    print(f"Interlock OK? {nkt.register_read_u16(DEVICE_ID, 0x32) == INTERLOCK_OK}")
+# Lock the front panel (if supported)
+superk.lock_front_panel = True
 
-# The documentation indicates that there is a scaling factor of 0.1
-print(f"Temperature: {nkt.register_read_u16(DEVICE_ID, 0x11) * 0.1:.2f} deg C")
-print(f"Level {nkt.register_read_u16(DEVICE_ID, 0x37) * 0.1}%")
+# Get the user text that is saved in the firmware
+print(f"User text: {superk.user_text!r}")
 
-# Set the operating mode and get the operating mode in a single function call
-print(f"Operating mode: {nkt.register_write_read_u16(DEVICE_ID, 0x31, 1)}")
+# Get the user-setup parameters (only if the laser system is FIANIUM)
+if superk.is_fianium:
+    print(f"User setup: {superk.user_setup}")
 
-# Set the output level to 5.5% (the docs of the DLL indicate that there is a 0.1 scaling factor)
-print("Set level to 5.5%")
-nkt.register_write_u16(DEVICE_ID, 0x37, 55)
+# Get the pulse-picker ratio
+print(f"Pulse-picker ratio: {superk.pulse_picker_ratio}")
+
+# Get the operating mode
+print(f"Operating mode: {superk.operating_mode!r}")
+
+# Get the temperature
+print(f"Temperature: {superk.temperature} \u00b0C")
+
+# Set the output level to 5.5 %
+superk.output = 5.5
 
 # Get the output level
-print(f"Level {nkt.register_read_u16(DEVICE_ID, 0x37) * 0.1}%")
+print(f"Output level {superk.output} %")
 
-# Turn on the laser
+# Turn the laser on
 print("Turn laser on")
-nkt.register_write_u8(DEVICE_ID, 0x30, 3)
+superk.emission = True
 
-print("Sleep for 5 seconds")
+print("Sleeping for 5 seconds...")
 time.sleep(5)
 
-# Turn off the laser
+# Print the status bits (bit 0 should be 1 to represent that the laser is on)
+print(f"The status bits: 0b{superk.status:016b}")
+
+# Turn the laser off
 print("Turn laser off")
-nkt.register_write_u8(DEVICE_ID, 0x30, 0)
+superk.emission = False
+
+# Unlock the front panel (if supported)
+superk.lock_front_panel = False
 
 # Disconnect from the laser
-nkt.disconnect()
+superk.disconnect()

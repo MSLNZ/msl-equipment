@@ -1,6 +1,6 @@
 # NKTPDLL
 
-::: msl.equipment_resources.nkt.nktpdll.NKT
+::: msl.equipment_resources.nkt.nktpdll.NKTDLL
     options:
         inherited_members: false
         show_root_full_path: false
@@ -9,4 +9,4 @@
 
 ::: msl.equipment_resources.nkt.nktpdll
     options:
-        filters: ["!NKT", "!^_"]
+        filters: ["!NKTDLL", "!^_"]

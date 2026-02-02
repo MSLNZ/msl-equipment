@@ -130,6 +130,7 @@ class DateTime(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("Sec", c_uint8),
         ("Min", c_uint8),
@@ -167,6 +168,7 @@ class ParameterSet(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("Unit", c_uint8),
         ("ErrorHandler", c_uint8),
@@ -432,7 +434,7 @@ class PortStatus(IntEnum):
     Ready = 10
 
 
-class NKT(Interface, manufacturer=r"^NKT", model=r"."):
+class NKTDLL(Interface, manufacturer=r"^NKT", model=r"^NKTDLL$"):
     """Wrapper around the `NKTPDLL.dll` SDK from [NKT Photonics](https://www.nktphotonics.com/)."""
 
     _SDK: CDLL | None = None
@@ -444,7 +446,7 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
         [connect()][msl.equipment.schema.Equipment.connect] is called.
         ```python
         manufacturer=r"^NKT"
-        model=r"."
+        model=r"^NKTDLL$"
         ```
 
         Args:
@@ -467,11 +469,11 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
 
         p = equipment.connection.properties
         _load_sdk(p.get("sdk_path", _path), self)
-        assert NKT._SDK is not None  # noqa: S101
+        assert NKTDLL._SDK is not None  # noqa: S101
 
-        self._sdk: CDLL = NKT._SDK
+        self._sdk: CDLL = NKTDLL._SDK
         if p.get("open_port", True):
-            NKT.open_ports(address, auto=p.get("auto", True), live=p.get("live", True))
+            NKTDLL.open_ports(address, auto=p.get("auto", True), live=p.get("live", True))
 
     def _check_port_result(self, result: Any, func: Any, arguments: tuple[Any, ...]) -> Any:  # noqa: ANN401
         _log_debug(result, func, arguments)
@@ -509,11 +511,11 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
             ports: The name(s) of the port(s) to close. If not specified, close all opened ports.
                 Port names are case sensitive.
         """
-        if NKT._SDK is None:
+        if NKTDLL._SDK is None:
             return
 
         _names = b",".join(port.encode() for port in ports)
-        NKT._SDK.closePorts(_names)
+        NKTDLL._SDK.closePorts(_names)
 
     @staticmethod
     def load_sdk(path: PathLike | None = None) -> None:
@@ -531,7 +533,7 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
 
         Args:
             ports: A port or multiple ports. If not specified then the
-                [get_open_ports][msl.equipment_resources.nkt.nktpdll.NKT.get_open_ports]
+                [get_open_ports][msl.equipment_resources.nkt.nktpdll.NKTDLL.get_open_ports]
                 method is called.
             size: The maximum number of bytes that the device list can be.
 
@@ -539,12 +541,12 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
             The port names are the keys and each value is [dict][] with the
                 module type as the keys and its corresponding device ID as the value.
         """
-        if NKT._SDK is None:
+        if NKTDLL._SDK is None:
             msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
         if not ports:
-            opened_ports = [port.encode() for port in NKT.get_open_ports()]
+            opened_ports = [port.encode() for port in NKTDLL.get_open_ports()]
         else:
             opened_ports = [port.encode() for port in ports]
 
@@ -552,7 +554,7 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
         length = c_ubyte(size)
         types = create_string_buffer(size)
         for port in opened_ports:
-            NKT._SDK.deviceGetAllTypes(port, types, length)
+            NKTDLL._SDK.deviceGetAllTypes(port, types, length)
             key = port.decode()
             out[key] = {}
             for dev_id, typ in enumerate(types.raw):
@@ -563,7 +565,7 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
     def device_create(self, device_id: int, *, wait_ready: bool) -> None:
         """Creates a device in the internal device list.
 
-        If the [open_ports][msl.equipment_resources.nkt.nktpdll.NKT.open_ports] function has
+        If the [open_ports][msl.equipment_resources.nkt.nktpdll.NKTDLL.open_ports] function has
         been called with `live=True` then the kernel immediately starts to monitor the device.
 
         Args:
@@ -672,9 +674,10 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
     def device_get_live(self, device_id: int) -> bool:
         """Returns the internal device live status for a specific device id.
 
-        Requires the port being already opened with the [open_ports][msl.equipment_resources.nkt.nktpdll.NKT.open_ports]
+        Requires the port being already opened with the
+        [open_ports][msl.equipment_resources.nkt.nktpdll.NKTDLL.open_ports]
         function and the device being already created, either automatically or with the
-        [device_create][msl.equipment_resources.nkt.nktpdll.NKT.device_create] function.
+        [device_create][msl.equipment_resources.nkt.nktpdll.NKTDLL.device_create] function.
 
         Args:
             device_id: The device id (module address).
@@ -689,9 +692,10 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
     def device_get_mode(self, device_id: int) -> DeviceMode:
         """Returns the internal device mode for a specific device id.
 
-        Requires the port being already opened with the [open_ports][msl.equipment_resources.nkt.nktpdll.NKT.open_ports]
+        Requires the port being already opened with the
+        [open_ports][msl.equipment_resources.nkt.nktpdll.NKTDLL.open_ports]
         function and the device being already created, either automatically or with the
-        [device_create][msl.equipment_resources.nkt.nktpdll.NKT.device_create] function.
+        [device_create][msl.equipment_resources.nkt.nktpdll.NKTDLL.device_create] function.
 
         Args:
             device_id: The device id (module address).
@@ -842,13 +846,13 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
         Returns:
             A list of port names.
         """
-        if NKT._SDK is None:
+        if NKTDLL._SDK is None:
             msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
         length = c_ushort(size)
         names = create_string_buffer(size)
-        NKT._SDK.getAllPorts(names, length)
+        NKTDLL._SDK.getAllPorts(names, length)
         return [name for name in bytes(names.value).decode().split(",") if name]
 
     def get_modules(self, size: int = 255) -> dict[str, int]:
@@ -861,7 +865,7 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
             The module type as the keys and its corresponding device ID as the value.
         """
         a = self._portname.decode()
-        return NKT.device_get_all_types(a, size=size)[a]
+        return NKTDLL.device_get_all_types(a, size=size)[a]
 
     @staticmethod
     def get_legacy_bus_scanning() -> bool:
@@ -870,11 +874,11 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
         Returns:
             `True` if in legacy mode, `False` if in normal mode.
         """
-        if NKT._SDK is None:
+        if NKTDLL._SDK is None:
             msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
-        return bool(NKT._SDK.getLegacyBusScanning())
+        return bool(NKTDLL._SDK.getLegacyBusScanning())
 
     @staticmethod
     def get_open_ports(size: int = 255) -> list[str]:
@@ -886,13 +890,13 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
         Returns:
             A list of port names that are already open.
         """
-        if NKT._SDK is None:
+        if NKTDLL._SDK is None:
             msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
         length = c_ushort(size)
         names = create_string_buffer(size)
-        NKT._SDK.getOpenPorts(names, length)
+        NKTDLL._SDK.getOpenPorts(names, length)
         return [name for name in bytes(names.value).decode().split(",") if name]
 
     def get_port_error_msg(self) -> str:
@@ -934,17 +938,17 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
                 devices and their registers. Please note that this will keep the modules
                 watchdog alive as long as the port is open. If `False` then disable
                 continuous monitoring of the registers. No callback is possible on register
-                changes, so you must call the [register_read][msl.equipment_resources.nkt.nktpdll.NKT.register_read],
-                [register_write][msl.equipment_resources.nkt.nktpdll.NKT.register_write] and
-                [register_write_read][msl.equipment_resources.nkt.nktpdll.NKT.register_write_read]
+                changes, so you must call the [register_read][msl.equipment_resources.nkt.nktpdll.NKTDLL.register_read],
+                [register_write][msl.equipment_resources.nkt.nktpdll.NKTDLL.register_write] and
+                [register_write_read][msl.equipment_resources.nkt.nktpdll.NKTDLL.register_write_read]
                 methods.
         """
-        if NKT._SDK is None:
+        if NKTDLL._SDK is None:
             msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
         _names = b",".join(name.encode() for name in names)
-        NKT._SDK.openPorts(_names, int(bool(auto)), int(bool(live)))
+        NKTDLL._SDK.openPorts(_names, int(bool(auto)), int(bool(live)))
 
     def point_to_point_port_add(self, port: PointToPoint) -> None:
         """Creates or modifies a point-to-point port.
@@ -1025,7 +1029,7 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
     ) -> None:
         """Creates a register in the internal register list.
 
-        If the [open_ports][msl.equipment_resources.nkt.nktpdll.NKT.open_ports] function has
+        If the [open_ports][msl.equipment_resources.nkt.nktpdll.NKTDLL.open_ports] function has
         been called with `live=True` then the kernel immediately starts to monitor the register.
 
         Args:
@@ -1714,11 +1718,11 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
                 is set to legacy mode and fixes the _masterId_ at address 66 (0x42).
                 Some older modules do not accept _masterIds_ other than 66 (0x42).
         """
-        if NKT._SDK is None:
+        if NKTDLL._SDK is None:
             msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
-        NKT._SDK.setLegacyBusScanning(int(bool(mode)))
+        NKTDLL._SDK.setLegacyBusScanning(int(bool(mode)))
 
     @staticmethod
     def set_callback_device_status(callback: NKTDeviceStatusCallback | None) -> None:
@@ -1735,7 +1739,7 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
         Args:
             callback: A callback function. Pass in `None` to disable the device-status callback.
         """
-        if NKT._SDK is None:
+        if NKTDLL._SDK is None:
             msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
@@ -1743,14 +1747,14 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
             msg = "NKTError: Must pass in a DeviceStatusCallback object"
             raise TypeError(msg)
 
-        NKT._SDK.setCallbackPtrDeviceInfo(callback)
+        NKTDLL._SDK.setCallbackPtrDeviceInfo(callback)
 
     @staticmethod
     def set_callback_port_status(callback: NKTPortStatusCallback | None) -> None:
         """Enables/Disables a callback for port status changes.
 
-        Used by the [open_ports][msl.equipment_resources.nkt.nktpdll.NKT.open_ports] and
-        [close_ports][msl.equipment_resources.nkt.nktpdll.NKT.close_ports] functions.
+        Used by the [open_ports][msl.equipment_resources.nkt.nktpdll.NKTDLL.open_ports] and
+        [close_ports][msl.equipment_resources.nkt.nktpdll.NKTDLL.close_ports] functions.
 
         See [superk_callback.py](https://github.com/MSLNZ/msl-equipment/blob/main/packages/resources/examples/nkt/superk_callback.py)
         for an example usage.
@@ -1763,7 +1767,7 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
         Args:
             callback: A callback function. Pass in `None` to disable the port-status callback.
         """
-        if NKT._SDK is None:
+        if NKTDLL._SDK is None:
             msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
@@ -1771,7 +1775,7 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
             msg = "NKTError: Must pass in a PortStatusCallback object"
             raise TypeError(msg)
 
-        NKT._SDK.setCallbackPtrPortInfo(callback)
+        NKTDLL._SDK.setCallbackPtrPortInfo(callback)
 
     @staticmethod
     def set_callback_register_status(callback: NKTRegisterStatusCallback | None) -> None:
@@ -1788,7 +1792,7 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
         Args:
             callback: A callback function. Pass in `None` to disable the register-status callback.
         """
-        if NKT._SDK is None:
+        if NKTDLL._SDK is None:
             msg = "NKTError: You must first call NKT.load_sdk()"
             raise RuntimeError(msg)
 
@@ -1796,7 +1800,7 @@ class NKT(Interface, manufacturer=r"^NKT", model=r"."):
             msg = "NKTError: Must pass in a RegisterStatusCallback object"
             raise TypeError(msg)
 
-        NKT._SDK.setCallbackPtrRegisterInfo(callback)
+        NKTDLL._SDK.setCallbackPtrRegisterInfo(callback)
 
 
 _port_errors = {
@@ -1903,14 +1907,14 @@ def __check_register_result(result: Any, func: Any, arguments: tuple[Any, ...]) 
     return result
 
 
-def _load_sdk(path: str, nkt: NKT | None = None) -> None:
+def _load_sdk(path: str, nkt: NKTDLL | None = None) -> None:
     """Load the SDK.
 
     Args:
         path: The path to `NKTPDLL.dll`.
         nkt: The NKT class instance that the SDK is associated with.
     """
-    if NKT._SDK is not None:  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    if NKTDLL._SDK is not None:  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
         return
 
     if nkt is None:
@@ -2526,8 +2530,8 @@ def _load_sdk(path: str, nkt: NKT | None = None) -> None:
         "setCallbackPtrRegisterInfo": (None, _log_debug, [("callback", c_void_p)]),
     }
 
-    NKT._SDK = LoadLibrary(path).lib  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    NKTDLL._SDK = LoadLibrary(path).lib  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     for key, value in functions.items():  # pyright: ignore[reportUnknownVariableType]
-        attr = getattr(NKT._SDK, key)  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+        attr = getattr(NKTDLL._SDK, key)  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
         attr.restype, attr.errcheck = value[:2]
         attr.argtypes = [t for _, t in value[2]]

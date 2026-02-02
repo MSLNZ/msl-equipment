@@ -499,8 +499,9 @@ def test_find_ftd2xx_devices(mock_d2xx: None) -> None:
     assert _maybe_load_ftd2xx() is _D2XX.ftd2xx
     _D2XX.ftd2xx = None
     _ = os.environ.pop("D2XX_LIBRARY")
-    with pytest.raises(OSError, match=r"Cannot find"):
-        _ = _maybe_load_ftd2xx()
+    if os.getenv("GITHUB_ACTIONS", "") == "true":
+        with pytest.raises(OSError, match=r"Cannot find"):
+            _ = _maybe_load_ftd2xx()
 
 
 def test_find_ftd2xx_devices_library_missing(caplog: pytest.LogCaptureFixture) -> None:

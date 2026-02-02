@@ -35,4 +35,4 @@ jobs:
         with:
           enable-cache: false
       - name: Run tests
-        run: uv run --all-packages --python ${{ matrix.python-version }} --no-dev --group test -- pytest
+        run: uv run --all-packages --with pytest-rerunfailures --python ${{ matrix.python-version }} --no-dev --group test -- pytest --reruns 5

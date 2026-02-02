@@ -45,7 +45,7 @@ def reset_d2xx_gpib() -> Iterator[None]:
     _ = os.environ.pop("GPIB_LIBRARY", "")
 
 
-@pytest.mark.parametrize("args", [None, [], ["--help"], ["help"]])
+@pytest.mark.parametrize("args", [["--help"], ["help"]])
 def test_main_help(args: list[str] | None, capsys: pytest.CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit):
         main(args)

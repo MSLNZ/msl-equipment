@@ -315,6 +315,7 @@ class AvsIdentityType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("SerialNumber", c_char * AVS_SERIAL_LEN),
         ("UserFriendlyName", c_char * USER_ID_LEN),
@@ -337,6 +338,7 @@ class BroadcastAnswerType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("InterfaceType", c_ubyte),
         ("serial", c_ubyte * AVS_SERIAL_LEN),
@@ -361,6 +363,7 @@ class ControlSettingsType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("m_StrobeControl", c_uint16),
         ("m_LaserDelay", c_uint32),
@@ -380,6 +383,7 @@ class DarkCorrectionType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("m_Enable", c_ubyte),
         ("m_ForgetPercentage", c_ubyte),
@@ -406,6 +410,7 @@ class DetectorType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("m_SensorType", c_ubyte),
         ("m_NrPixels", c_uint16),
@@ -432,6 +437,7 @@ class SmoothingType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("m_SmoothPix", c_uint16),
         ("m_SmoothModel", c_ubyte),
@@ -449,6 +455,7 @@ class SpectrumCalibrationType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("m_Smoothing", SmoothingType),
         ("m_CalInttime", c_float),
@@ -467,6 +474,7 @@ class IrradianceType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("m_IntensityCalib", SpectrumCalibrationType),
         ("m_CalibrationType", c_ubyte),
@@ -483,6 +491,7 @@ class SpectrumCorrectionType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (("m_aSpectrumCorrect", c_float * MAX_NR_PIXELS),)
 
 
@@ -497,6 +506,7 @@ class TriggerType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("m_Mode", c_ubyte),
         ("m_Source", c_ubyte),
@@ -522,6 +532,7 @@ class MeasConfigType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("m_StartPixel", c_uint16),
         ("m_StopPixel", c_uint16),
@@ -546,6 +557,7 @@ class TimeStampType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("m_Date", c_uint16),
         ("m_Time", c_uint16),
@@ -563,6 +575,7 @@ class StandAloneType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (("m_Enable", c_bool), ("m_Meas", MeasConfigType), ("m_Nmsr", c_int16))
 
 
@@ -576,6 +589,7 @@ class DynamicStorageType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("m_Nmsr", c_int32),
         ("m_Reserved", c_ubyte * 8),
@@ -591,6 +605,7 @@ class TempSensorType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (("m_aFit", c_float * NR_TEMP_POL_COEF),)
 
 
@@ -605,6 +620,7 @@ class TecControlType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("m_Enable", c_bool),
         ("m_Setpoint", c_float),
@@ -624,6 +640,7 @@ class ProcessControlType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("m_AnalogLow", c_float * 2),
         ("m_AnalogHigh", c_float * 2),
@@ -646,6 +663,7 @@ class EthernetSettingsType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("m_IpAddr", c_uint32),
         ("m_NetMask", c_uint32),
@@ -665,6 +683,7 @@ class OemDataType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (("m_data", c_ubyte * OEM_DATA_LEN),)
 
 
@@ -678,6 +697,7 @@ class HeartbeatRespType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (("m_BitMatrix", c_uint32), ("m_Reserved", c_uint32))
 
 
@@ -704,6 +724,7 @@ class DeviceConfigType(Structure):
     """
 
     _pack_ = 1
+    _layout_ = "ms"
     _fields_ = (
         ("m_Len", c_uint16),
         ("m_ConfigVersion", c_uint16),

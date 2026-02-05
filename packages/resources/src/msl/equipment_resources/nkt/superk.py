@@ -79,7 +79,7 @@ _0x88 = {
     _Key.pulse_picker_ratio: _S(0x34, "u16"),
     _Key.watchdog_interval: _S(0x36, "u8"),
     _Key.output_level: _S(0x37, "u16"),
-    _Key.nim_delay: _S(0x39, "u16"),
+    _Key.nim_delay: _S(0x3A, "u16"),  # there is an error in 88.txt (register is not 0x39)
     _Key.user_setup: _S(0x3B, "u16"),
     _Key.user_text: _S(0x8D, None),
 }
@@ -105,23 +105,32 @@ class UserSetup:
 class SuperK(NKT, manufacturer=r"^NKT", model=r"SuperK"):
     """Communicate with a SuperK laser from NKT Photonics."""
 
-    class OperatingMode(IntEnum):
-        """The operating mode of a SuperK laser.
+    class ExtremeOperatingMode(IntEnum):
+        """The operating mode of a SuperK EXTREME system.
 
         Attributes:
-            INTERNAL_POWER (int): SuperK FIANIUM, `0`
-            CONSTANT_CURRENT (int): SuperK EXTREME, `0`
-            CONSTANT_POWER (int): SuperK EXTREME, `1`
-            MODULATED_CURRENT (int): SuperK EXTREME, `2`
-            MODULATED_POWER (int): SuperK EXTREME, `3`
-            EXTERNAL_FEEDBACK (int): SuperK EXTREME and FIANIUM, `4`
+            CONSTANT_CURRENT (int): `0`
+            CONSTANT_POWER (int): `1`
+            MODULATED_CURRENT (int): `2`
+            MODULATED_POWER (int): `3`
+            EXTERNAL_FEEDBACK (int): `4`
         """
 
-        INTERNAL_POWER = 0
         CONSTANT_CURRENT = 0
         CONSTANT_POWER = 1
         MODULATED_CURRENT = 2
         MODULATED_POWER = 3
+        EXTERNAL_FEEDBACK = 4
+
+    class FianiumOperatingMode(IntEnum):
+        """The operating mode of a SuperK FIANIUM system.
+
+        Attributes:
+            INTERNAL_POWER (int): `0`
+            EXTERNAL_FEEDBACK (int): `4`
+        """
+
+        INTERNAL_POWER = 0
         EXTERNAL_FEEDBACK = 4
 
     def __init__(self, equipment: Equipment) -> None:
@@ -166,19 +175,14 @@ class SuperK(NKT, manufacturer=r"^NKT", model=r"SuperK"):
         if equipment.connection.properties.get("ensure_interlock_ok", True):
             self.ensure_interlock_ok()
 
-    def _mode_to_output_key(self, action: str) -> _Key:
+    def _mode_to_output_key(self) -> _Key:
         if self._is_fianium:
             return _Key.output_level
 
         mode = self.operating_mode
-        if mode == self.OperatingMode.CONSTANT_POWER:
+        if mode in {SuperK.ExtremeOperatingMode.CONSTANT_POWER, SuperK.ExtremeOperatingMode.MODULATED_POWER}:
             return _Key.power_level
-
-        if mode in {self.OperatingMode.CONSTANT_CURRENT, self.OperatingMode.EXTERNAL_FEEDBACK}:
-            return _Key.current_level
-
-        msg = f"Cannot {action} the output level when the operating mode is {mode!r}"
-        raise ValueError(msg)
+        return _Key.current_level
 
     def ensure_interlock_ok(self) -> None:
         """Make sure that the interlock is okay.
@@ -251,40 +255,51 @@ class SuperK(NKT, manufacturer=r"^NKT", model=r"SuperK"):
     def nim_delay(self) -> int:
         """Get/set the NIM trigger delay (in picoseconds).
 
-        The range is 0 - 9200 ps with an average step size of approximately 15 ps.
+        The range is 0 - 9200 ps with an average step size of approximately 9 ps.
         """
         register, dtype = self._settings[_Key.nim_delay]
         assert dtype is not None  # noqa: S101
-        return self.read_register(self._module.address, register, dtype)
+        value = self.read_register(self._module.address, register, dtype)
+        norm = round(value * (9200 / 1023.0))  # must be in range [0 ps, 9200 ps] -> [0, 1023]
+        return 5 * round(norm / 5)  # round to nearest multiple of 5
 
     @nim_delay.setter
     def nim_delay(self, delay: int) -> None:
+        if delay < 0 or delay > 9200:  # noqa: PLR2004
+            msg = f"Invalid delay value {delay}, must be in the range [0, 9200]"
+            raise ValueError(msg)
+
         register, dtype = self._settings[_Key.nim_delay]
-        self.write_register(self._module.address, register, value=delay, dtype=dtype)
+        value = round(delay * (1023 / 9200.0))  # must be in range [0, 1023] -> [0 ps, 9200 ps]
+        self.write_register(self._module.address, register, value=value, dtype=dtype)
 
     @property
-    def operating_mode(self) -> OperatingMode:
+    def operating_mode(self) -> ExtremeOperatingMode | FianiumOperatingMode:
         """Get/set the operating mode."""
         register, dtype = self._settings[_Key.operating_mode]
         assert dtype is not None  # noqa: S101
         mode = self.read_register(self._module.address, register, dtype)
-        if mode == 0:
-            return self.OperatingMode.INTERNAL_POWER if self._is_fianium else self.OperatingMode.CONSTANT_CURRENT
-        return self.OperatingMode(mode)
+        if self._is_fianium:
+            return SuperK.FianiumOperatingMode(mode)
+        return SuperK.ExtremeOperatingMode(mode)
 
     @operating_mode.setter
-    def operating_mode(self, mode: OperatingMode) -> None:
+    def operating_mode(self, mode: ExtremeOperatingMode | FianiumOperatingMode) -> None:
+        if self._is_fianium and mode not in SuperK.FianiumOperatingMode:
+            msg = f"Cannot use {mode!r} for a FIANIUM system"
+            raise ValueError(msg)
+
         register, dtype = self._settings[_Key.operating_mode]
         self.write_register(self._module.address, register, value=mode, dtype=dtype)
 
     @property
     def output(self) -> float:
-        """Get/set the output level (as a percentage).
+        """Get/set the output level, or modulation setpoint, as a percentage.
 
         The operating mode that the laser is currently in automatically handles whether
         the output level is for internal power/current or external feedback.
         """
-        key = self._mode_to_output_key("get")
+        key = self._mode_to_output_key()
         register, dtype = self._settings[key]
         assert dtype is not None  # noqa: S101
         return round(self.read_register(self._module.address, register, dtype) * 0.1, 1)
@@ -295,7 +310,7 @@ class SuperK(NKT, manufacturer=r"^NKT", model=r"SuperK"):
             msg = f"Invalid output level of {level}. Must be in the range [0, 100]."
             raise ValueError(msg)
 
-        key = self._mode_to_output_key("set")
+        key = self._mode_to_output_key()
         register, dtype = self._settings[key]
         value = round(level * 10)
         self.write_register(self._module.address, register, value=value, dtype=dtype)

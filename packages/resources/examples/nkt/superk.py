@@ -39,6 +39,9 @@ if superk.is_fianium:
 # Get the pulse-picker ratio
 print(f"Pulse-picker ratio: {superk.pulse_picker_ratio}")
 
+# Get the NIM delay
+print(f"NIM delay: {superk.nim_delay}")
+
 # Get the operating mode
 print(f"Operating mode: {superk.operating_mode!r}")
 

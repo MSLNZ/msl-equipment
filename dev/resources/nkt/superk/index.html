@@ -3748,10 +3748,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#msl.equipment_resources.nkt.superk.SuperK.OperatingMode" class="md-nav__link">
+  <a href="#msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode" class="md-nav__link">
     <span class="md-ellipsis">
       
-        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;OperatingMode
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;ExtremeOperatingMode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;FianiumOperatingMode
       
     </span>
   </a>
@@ -4985,10 +4996,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#msl.equipment_resources.nkt.superk.SuperK.OperatingMode" class="md-nav__link">
+  <a href="#msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode" class="md-nav__link">
     <span class="md-ellipsis">
       
-        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;OperatingMode
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;ExtremeOperatingMode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;FianiumOperatingMode
       
     </span>
   </a>
@@ -5268,16 +5290,7 @@ SuperK mainboard module. <em>Default: <code>5.0</code></em></p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>packages/resources/src/msl/equipment_resources/nkt/superk.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">127</span>
-<span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span>
-<span class="normal">136</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">136</span>
 <span class="normal">137</span>
 <span class="normal">138</span>
 <span class="normal">139</span>
@@ -5308,7 +5321,16 @@ SuperK mainboard module. <em>Default: <code>5.0</code></em></p>
 <span class="normal">164</span>
 <span class="normal">165</span>
 <span class="normal">166</span>
-<span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Communicate with a SuperK laser from NKT Photonics.</span>
 
 <span class="sd">    *SuperK EXTREME* and *SuperK FIANIUM* are supported.</span>
@@ -5487,7 +5509,7 @@ this feature, setting this property does nothing.</p>
     <div class="doc doc-contents ">
 
         <p>Get/set the NIM trigger delay (in picoseconds).</p>
-<p>The range is 0 - 9200 ps with an average step size of approximately 15 ps.</p>
+<p>The range is 0 - 9200 ps with an average step size of approximately 9 ps.</p>
 
     </div>
 
@@ -5507,8 +5529,9 @@ this feature, setting this property does nothing.</p>
   </span>
 
 <a href="#msl.equipment_resources.nkt.superk.SuperK.operating_mode" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">operating_mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            OperatingMode
-(IntEnum) (msl.equipment_resources.nkt.superk.SuperK.OperatingMode)" href="#msl.equipment_resources.nkt.superk.SuperK.OperatingMode">OperatingMode</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">operating_mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            ExtremeOperatingMode
+(IntEnum) (msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode)" href="#msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode">ExtremeOperatingMode</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            FianiumOperatingMode
+(IntEnum) (msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode)" href="#msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode">FianiumOperatingMode</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5538,7 +5561,7 @@ this feature, setting this property does nothing.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Get/set the output level (as a percentage).</p>
+        <p>Get/set the output level, or modulation setpoint, as a percentage.</p>
 <p>The operating mode that the laser is currently in automatically handles whether
 the output level is for internal power/current or external feedback.</p>
 
@@ -5712,29 +5735,29 @@ the text on the front panel.</p>
 
 
 
-<h3 id="msl.equipment_resources.nkt.superk.SuperK.OperatingMode" class="doc doc-heading">
-  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">OperatingMode</span>
+<h3 id="msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode" class="doc doc-heading">
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">ExtremeOperatingMode</span>
 (<code><a class="autorefs autorefs-external" title="enum.IntEnum" href="https://docs.python.org/3/library/enum.html#enum.IntEnum">IntEnum</a></code>)
 
-<a href="#msl.equipment_resources.nkt.superk.SuperK.OperatingMode" class="headerlink" title="Permanent link">¤</a></h3>
+<a href="#msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode" class="headerlink" title="Permanent link">¤</a></h3>
 
 
     <div class="doc doc-contents ">
 
             <div style="display: none">
-              <a class="autorefs autorefs-internal" title="            OperatingMode
-(IntEnum) (msl.equipment_resources.nkt.superk.SuperK.OperatingMode)" href="#msl.equipment_resources.nkt.superk.SuperK.OperatingMode" id="mermaid-link-msl.equipment_resources.nkt.superk.SuperK.OperatingMode"></a>
+              <a class="autorefs autorefs-internal" title="            ExtremeOperatingMode
+(IntEnum) (msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode)" href="#msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode" id="mermaid-link-msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode"></a>
             </div>
-            <pre class="mermaid"><code id="mermaid-diagram-msl.equipment_resources.nkt.superk.SuperK.OperatingMode">
+            <pre class="mermaid"><code id="mermaid-diagram-msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode">
               flowchart LR
-              msl.equipment_resources.nkt.superk.SuperK.OperatingMode[OperatingMode]
+              msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode[ExtremeOperatingMode]
 
               
 
-              click msl.equipment_resources.nkt.superk.SuperK.OperatingMode href "" "msl.equipment_resources.nkt.superk.SuperK.OperatingMode"
+              click msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode href "" "msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode"
             </code></pre>
             <script>
-              var diagram = document.getElementById('mermaid-diagram-msl.equipment_resources.nkt.superk.SuperK.OperatingMode');
+              var diagram = document.getElementById('mermaid-diagram-msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode');
               diagram.innerHTML = diagram.innerHTML.replace(/click ([\w.]+) href "" "\1"/g, function(match, nodeID, offset) {
                 try {
                   const link = document.getElementById("mermaid-link-" + nodeID).href;
@@ -5746,7 +5769,7 @@ the text on the front panel.</p>
             </script>
 
 
-        <p>The operating mode of a SuperK laser.</p>
+        <p>The operating mode of a SuperK EXTREME system.</p>
 
 
 <p><span class="doc-section-title">Attributes:</span></p>
@@ -5760,68 +5783,162 @@ the text on the front panel.</p>
       </thead>
       <tbody>
           <tr class="doc-section-item">
-            <td><code><span title="msl.equipment_resources.nkt.superk.SuperK.OperatingMode.INTERNAL_POWER">INTERNAL_POWER</span></code></td>
+            <td><code><span title="msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode.CONSTANT_CURRENT">CONSTANT_CURRENT</span></code></td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>SuperK FIANIUM, <code>0</code></p>
+                <p><code>0</code></p>
               </div>
             </td>
           </tr>
           <tr class="doc-section-item">
-            <td><code><span title="msl.equipment_resources.nkt.superk.SuperK.OperatingMode.CONSTANT_CURRENT">CONSTANT_CURRENT</span></code></td>
+            <td><code><span title="msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode.CONSTANT_POWER">CONSTANT_POWER</span></code></td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>SuperK EXTREME, <code>0</code></p>
+                <p><code>1</code></p>
               </div>
             </td>
           </tr>
           <tr class="doc-section-item">
-            <td><code><span title="msl.equipment_resources.nkt.superk.SuperK.OperatingMode.CONSTANT_POWER">CONSTANT_POWER</span></code></td>
+            <td><code><span title="msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode.MODULATED_CURRENT">MODULATED_CURRENT</span></code></td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>SuperK EXTREME, <code>1</code></p>
+                <p><code>2</code></p>
               </div>
             </td>
           </tr>
           <tr class="doc-section-item">
-            <td><code><span title="msl.equipment_resources.nkt.superk.SuperK.OperatingMode.MODULATED_CURRENT">MODULATED_CURRENT</span></code></td>
+            <td><code><span title="msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode.MODULATED_POWER">MODULATED_POWER</span></code></td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>SuperK EXTREME, <code>2</code></p>
+                <p><code>3</code></p>
               </div>
             </td>
           </tr>
           <tr class="doc-section-item">
-            <td><code><span title="msl.equipment_resources.nkt.superk.SuperK.OperatingMode.MODULATED_POWER">MODULATED_POWER</span></code></td>
+            <td><code><span title="msl.equipment_resources.nkt.superk.SuperK.ExtremeOperatingMode.EXTERNAL_FEEDBACK">EXTERNAL_FEEDBACK</span></code></td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>SuperK EXTREME, <code>3</code></p>
+                <p><code>4</code></p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode" class="doc doc-heading">
+  <code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <span class="doc doc-object-name doc-class-name">FianiumOperatingMode</span>
+(<code><a class="autorefs autorefs-external" title="enum.IntEnum" href="https://docs.python.org/3/library/enum.html#enum.IntEnum">IntEnum</a></code>)
+
+<a href="#msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode" class="headerlink" title="Permanent link">¤</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+            <div style="display: none">
+              <a class="autorefs autorefs-internal" title="            FianiumOperatingMode
+(IntEnum) (msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode)" href="#msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode" id="mermaid-link-msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode"></a>
+            </div>
+            <pre class="mermaid"><code id="mermaid-diagram-msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode">
+              flowchart LR
+              msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode[FianiumOperatingMode]
+
+              
+
+              click msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode href "" "msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode"
+            </code></pre>
+            <script>
+              var diagram = document.getElementById('mermaid-diagram-msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode');
+              diagram.innerHTML = diagram.innerHTML.replace(/click ([\w.]+) href "" "\1"/g, function(match, nodeID, offset) {
+                try {
+                  const link = document.getElementById("mermaid-link-" + nodeID).href;
+                  return `click ${nodeID} href "${link}" "${nodeID}"`
+                } catch (e) {
+                  return '';
+                }
+              });
+            </script>
+
+
+        <p>The operating mode of a SuperK FIANIUM system.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode.INTERNAL_POWER">INTERNAL_POWER</span></code></td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>0</code></p>
               </div>
             </td>
           </tr>
           <tr class="doc-section-item">
-            <td><code><span title="msl.equipment_resources.nkt.superk.SuperK.OperatingMode.EXTERNAL_FEEDBACK">EXTERNAL_FEEDBACK</span></code></td>
+            <td><code><span title="msl.equipment_resources.nkt.superk.SuperK.FianiumOperatingMode.EXTERNAL_FEEDBACK">EXTERNAL_FEEDBACK</span></code></td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>SuperK EXTREME and FIANIUM, <code>4</code></p>
+                <p><code>4</code></p>
               </div>
             </td>
           </tr>
@@ -5914,11 +6031,7 @@ if it is not okay and it cannot be reset.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/nkt/superk.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">183</span>
-<span class="normal">184</span>
-<span class="normal">185</span>
-<span class="normal">186</span>
-<span class="normal">187</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">187</span>
 <span class="normal">188</span>
 <span class="normal">189</span>
 <span class="normal">190</span>
@@ -5937,7 +6050,11 @@ if it is not okay and it cannot be reset.</p>
 <span class="normal">203</span>
 <span class="normal">204</span>
 <span class="normal">205</span>
-<span class="normal">206</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ensure_interlock_ok</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ensure_interlock_ok</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Make sure that the interlock is okay.</span>
 
 <span class="sd">    Raises [MSLConnectionError][msl.equipment.interfaces.message_based.MSLConnectionError]</span>

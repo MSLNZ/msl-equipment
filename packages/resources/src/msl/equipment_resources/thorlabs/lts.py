@@ -1,4 +1,4 @@
-"""Communicate with a K10CR1 or K10CR2 rotation stage from Thorlabs."""
+"""Communicate with a Long Travel Stage (Integrated Controller) from Thorlabs."""
 
 from __future__ import annotations
 
@@ -10,20 +10,17 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-class K10CR(Thorlabs, manufacturer=r"Thorlabs", model=r"K10CR[12]"):
-    """Communicate with a K10CR1 or K10CR2 rotation stage from Thorlabs."""
-
-    unit: str = "\u00b0"
-    """The real-world unit."""
+class LTSIntegrated(Thorlabs, manufacturer=r"Thorlabs", model=r"LTS"):
+    """Communicate with a Long Travel Stage (Integrated Controller) from Thorlabs."""
 
     def __init__(self, equipment: Equipment) -> None:
-        """Communicate with a K10CR1 or K10CR2 rotation stage from Thorlabs.
+        """Communicate with a Long Travel Stage (Integrated Controller) from Thorlabs.
 
         Regular-expression patterns that are used to select this Resource when
         [connect()][msl.equipment.schema.Equipment.connect] is called.
         ```python
         manufacturer=r"Thorlabs"
-        model=r"K10CR[12]"
+        model=r"LTS"
         ```
 
         Args:
@@ -35,21 +32,19 @@ class K10CR(Thorlabs, manufacturer=r"Thorlabs", model=r"K10CR[12]"):
         self._has_encoder: bool = False  # EncoderFitted false
         self._position_message_id: int = 0x0411
 
-        # 200 steps per revolution
-        # 2048 micro-steps per full step
-        # 120:1 reduction gearbox
-        steps = float(200 * 2048 * 120)
-        self._position: Convert = Convert(360.0 / steps, decimals=5)
-        self._velocity: Convert = Convert(360.0 / (steps * 53.68), decimals=3)
-        self._acceleration: Convert = Convert((360.0 * 90.9) / steps, decimals=3)
+        micro_steps = 2048 if self.hardware_info().hardware_version >= 3 else 128  # noqa: PLR2004
+        steps = float(200 * micro_steps)  # 200 steps per revolution
+        self._position: Convert = Convert(1.0 / steps, decimals=5)
+        self._velocity: Convert = Convert(1.0 / (steps * 53.68), decimals=3)
+        self._acceleration: Convert = Convert((1.0 * 90.9) / steps, decimals=3)
 
-        self.set_backlash(1.0)
+        self.set_backlash(0.05)
         self.set_move_parameters(
             ThorlabsMoveParameters(
                 channel=1,
                 min_velocity=0.0,
-                max_velocity=10.0,
-                acceleration=10.0,
+                max_velocity=20.0,
+                acceleration=20.0,
             )
         )
         self.set_home_parameters(
@@ -57,16 +52,16 @@ class K10CR(Thorlabs, manufacturer=r"Thorlabs", model=r"K10CR[12]"):
                 channel=1,
                 direction="reverse",  # HomeDir 2
                 limit_switch="reverse",  # HomeLimitSwitch 1
-                velocity=10.0,
-                offset=4.0,
+                velocity=2.0,
+                offset=0.5,
             )
         )
         self.set_limit_parameters(
             ThorlabsLimitParameters(
                 channel=1,
-                cw_hardware=4,
-                ccw_hardware=1,
-                cw_software=1.0,
+                cw_hardware=2,
+                ccw_hardware=2,
+                cw_software=3.0,
                 ccw_software=1.0,
                 mode=1,
             )

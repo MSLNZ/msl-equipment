@@ -19,7 +19,7 @@ from .optronic_labs import OL756, OLxxA
 from .picotech import PT104, PicoScope, picoscope
 from .princeton_instruments import PrincetonInstruments
 from .raicol import RaicolTEC
-from .thorlabs import K10CR, FWxx2C
+from .thorlabs import K10CR, FWxx2C, LTSIntegrated
 from .vaisala import PTB330, PTU300
 
 __all__: list[str] = [
@@ -38,6 +38,7 @@ __all__: list[str] = [
     "SIA3",
     "AvaSpec",
     "FWxx2C",
+    "LTSIntegrated",
     "MXSeries",
     "MilliK",
     "OLxxA",

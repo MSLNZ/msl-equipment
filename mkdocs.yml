@@ -155,6 +155,7 @@ nav:
     - Thorlabs:
       - resources/thorlabs/fwxx2c.md
       - resources/thorlabs/k10cr.md
+      - resources/thorlabs/lts.md
       - resources/thorlabs/thorlabs.md
     - Vaisala:
       - resources/vaisala/ptb330.md

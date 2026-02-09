@@ -11,8 +11,9 @@ if TYPE_CHECKING:
     from msl.equipment.resources import K10CR
 
 # You may want to replace "FTDI2" with "FTDI" if you are not using the Kinesis or XA software.
-# Using "FTDI2" requires the D2XX library to be available on PATH.
-# Update 55264734 with the serial number of your device.
+# Using "FTDI2" requires the D2XX driver to be installed for the rotation stage.
+# Using "FTDI" requires a libusb-compatible driver to be installed for the rotation stage.
+# Update 55264734 with the serial number of your rotation stage.
 connection = Connection(
     "FTDI2::0x0403::0xfaf0::55264734",
     manufacturer="Thorlabs",
@@ -60,9 +61,9 @@ stage.move_by(5)
 print(f"Move by -5{stage.unit}")
 stage.move_by(-5)
 
-# Move to -10 degrees (absolute move), but don't wait until the stage has finished moving
-print(f"Move to -10{stage.unit}")
-stage.move_to(-10, wait=False)
+# Move to 0 degrees (absolute move), but don't wait until the stage has finished moving
+print(f"Move to 0{stage.unit}")
+stage.move_to(0, wait=False)
 
 # Do other stuff while the stage is moving...
 print("Pretend to do other stuff, sleeping...")

@@ -12,7 +12,7 @@ from struct import pack, unpack
 from time import sleep
 from typing import TYPE_CHECKING, NamedTuple
 
-from msl.equipment.interfaces.ftdi import FTDI, IS_WINDOWS
+from msl.equipment.interfaces.ftdi import FTDI
 from msl.equipment.interfaces.message_based import MSLConnectionError
 from msl.equipment.schema import Interface
 
@@ -57,22 +57,29 @@ class Thorlabs(Interface):
         self._acceleration: Convert = Convert(1)
         self._is_slot_system: bool = False
         self._has_encoder: bool = False
+        self._position_message_id: int = 0x0411  # 0x040A (ENCCOUNTER), 0x0411 (POSCOUNTER) or 0x0490 (STATUSUPDATE)
 
         assert equipment.connection is not None  # noqa: S101
         equipment.connection.properties.setdefault("baud_rate", 115200)
 
-        self._ftdi: FTDI
         try:
-            self._ftdi = FTDI(equipment)
-        except OSError:
-            if not IS_WINDOWS:
+            ftdi = FTDI(equipment)
+        except MSLConnectionError as e:
+            if str(e).endswith(("FT_DEVICE_NOT_FOUND", "not found")):
                 raise
-            if sys.maxsize > (1 << 32):
-                os.environ["D2XX_LIBRARY"] = r"C:\Program Files\Thorlabs\Kinesis\ftd2xx.dll"
-            else:
-                os.environ["D2XX_LIBRARY"] = r"C:\Program Files (x86)\Thorlabs\Kinesis\ftd2xx.dll"
-            self._ftdi = FTDI(equipment)
 
+            if sys.maxsize > (1 << 32):
+                path = r"C:\Program Files\Thorlabs\Kinesis\ftd2xx.dll"
+            else:
+                path = r"C:\Program Files (x86)\Thorlabs\Kinesis\ftd2xx.dll"
+
+            if not os.path.isfile(path):  # noqa: PTH113
+                raise
+
+            os.environ["D2XX_LIBRARY"] = path
+            ftdi = FTDI(equipment)
+
+        self._ftdi: FTDI = ftdi
         self._is_connected = True
         self._callback: Callable[[float, int], None] | None = None
         self._auto_updates: bool = False
@@ -330,7 +337,7 @@ class Thorlabs(Interface):
         """Move by a relative distance.
 
         Args:
-            distance: The distance (in millimetres or degrees) to move by.
+            distance: The distance (in millimetres or degrees) to move by. Can be a negative or a positive value.
             channel: The channel to move.
             wait: Whether to wait for the move to complete before returning to the calling program.
         """
@@ -361,9 +368,9 @@ class Thorlabs(Interface):
         Returns:
             The position (in millimetres or degrees).
         """
-        # MGMSG_MOT_REQ_ENCCOUNTER = 0x040A, MGMSG_MOT_REQ_POSCOUNTER = 0x0411
-        msg_id = 0x040A if self._has_encoder else 0x0411
-        _, encoder = unpack("<Hi", self.query(msg_id, param1=channel))
+        # Whether requesting with 0x040A (ENCCOUNTER), 0x0411 (POSCOUNTER) or 0x0490 (STATUSUPDATE)
+        # the first 6 characters of the response data are (channel, position)
+        _, encoder = unpack("<Hi", self.query(self._position_message_id, param1=channel)[:6])
         return self._position.to_real_world(encoder)
 
     def query(

@@ -19,13 +19,14 @@ from .optronic_labs import OL756, OLxxA
 from .picotech import PT104, PicoScope, picoscope
 from .princeton_instruments import PrincetonInstruments
 from .raicol import RaicolTEC
-from .thorlabs import FWxx2C
+from .thorlabs import K10CR, FWxx2C
 from .vaisala import PTB330, PTU300
 
 __all__: list[str] = [
     "EQ99",
     "GMH3000",
     "ITHX",
+    "K10CR",
     "NKT",
     "NKTDLL",
     "OL756",

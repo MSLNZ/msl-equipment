@@ -154,6 +154,8 @@ nav:
       - resources/raicol/tec.md
     - Thorlabs:
       - resources/thorlabs/fwxx2c.md
+      - resources/thorlabs/k10cr.md
+      - resources/thorlabs/thorlabs.md
     - Vaisala:
       - resources/vaisala/ptb330.md
       - resources/vaisala/ptu300.md

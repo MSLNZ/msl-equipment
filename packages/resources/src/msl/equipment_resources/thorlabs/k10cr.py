@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-class K10CR(Thorlabs, manufacturer=r"Thorlabs", model=r"K10CR[12]"):
+class K10CR(Thorlabs, manufacturer=r"Thorlabs", model=r"K10CR"):
     """Communicate with a K10CR1 or K10CR2 rotation stage from Thorlabs."""
 
     unit: str = "\u00b0"
@@ -23,11 +23,14 @@ class K10CR(Thorlabs, manufacturer=r"Thorlabs", model=r"K10CR[12]"):
         [connect()][msl.equipment.schema.Equipment.connect] is called.
         ```python
         manufacturer=r"Thorlabs"
-        model=r"K10CR[12]"
+        model=r"K10CR"
         ```
 
         Args:
             equipment: An [Equipment][] instance.
+
+        A [Connection][msl.equipment.schema.Connection] instance supports the same _properties_
+        that are defined in [Thorlabs][msl.equipment_resources.thorlabs.thorlabs.Thorlabs].
         """
         super().__init__(equipment)
 

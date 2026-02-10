@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-class LTSIntegrated(Thorlabs, manufacturer=r"Thorlabs", model=r"LTS"):
+class LTS(Thorlabs, manufacturer=r"Thorlabs", model=r"LTS"):
     """Communicate with a Long Travel Stage (Integrated Controller) from Thorlabs."""
 
     def __init__(self, equipment: Equipment) -> None:
@@ -25,6 +25,9 @@ class LTSIntegrated(Thorlabs, manufacturer=r"Thorlabs", model=r"LTS"):
 
         Args:
             equipment: An [Equipment][] instance.
+
+        A [Connection][msl.equipment.schema.Connection] instance supports the same _properties_
+        that are defined in [Thorlabs][msl.equipment_resources.thorlabs.thorlabs.Thorlabs].
         """
         super().__init__(equipment)
 

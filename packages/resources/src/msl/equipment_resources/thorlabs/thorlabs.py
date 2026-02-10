@@ -720,3 +720,29 @@ class ThorlabsLimitParameters:
     cw_software: float
     ccw_software: float
     mode: int
+
+
+def find_device(equipment: Equipment) -> str | None:
+    """Parse C:/ProgramData/Thorlabs/MotionControl/ThorlabsDeviceConfiguration.xml for a device."""
+    assert equipment.connection is not None  # noqa: S101
+    p = equipment.connection.properties
+    device = p.get("actuator", p.get("stage", ""))
+    if device:
+        return device
+
+    from xml.etree import ElementTree as ET  # noqa: PLC0415
+
+    try:
+        tree = ET.parse(r"C:\ProgramData\Thorlabs\MotionControl\ThorlabsDeviceConfiguration.xml")  # noqa: S314
+    except FileNotFoundError:
+        return None
+
+    serial = equipment.serial
+    if not serial:
+        *_, serial = equipment.connection.address.split("::")
+
+    element = tree.find(f".//Device[@Name={serial!r}]")
+    if element is None:
+        return None
+
+    return element[0].text

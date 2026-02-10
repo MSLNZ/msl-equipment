@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 from msl.equipment import Connection
 
 if TYPE_CHECKING:
-    from msl.equipment.resources import LTSIntegrated
+    from msl.equipment.resources import LTS
 
 # You may want to replace "FTDI2" with "FTDI" if you are not using the Kinesis or XA software.
 # Using "FTDI2" requires the D2XX driver to be installed for the translation stage.
@@ -28,7 +28,7 @@ def callback(position: float, status: int) -> None:
     print("  Callback", position, bin(status))
 
 
-stage: LTSIntegrated = connection.connect()
+stage: LTS = connection.connect()
 
 # Print information about the stage
 print(stage.get_home_parameters())

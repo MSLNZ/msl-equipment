@@ -4,13 +4,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from .thorlabs import Convert, Thorlabs, ThorlabsHomeParameters, ThorlabsLimitParameters, ThorlabsMoveParameters
+from .motion import Convert, ThorlabsHomeParameters, ThorlabsLimitParameters, ThorlabsMotion, ThorlabsMoveParameters
 
 if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-class LTS(Thorlabs, manufacturer=r"Thorlabs", model=r"LTS"):
+class LTS(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"LTS"):
     """Communicate with a Long Travel Stage (Integrated Controller) from Thorlabs."""
 
     def __init__(self, equipment: Equipment) -> None:
@@ -26,8 +26,8 @@ class LTS(Thorlabs, manufacturer=r"Thorlabs", model=r"LTS"):
         Args:
             equipment: An [Equipment][] instance.
 
-        A [Connection][msl.equipment.schema.Connection] instance supports the same _properties_
-        that are defined in [Thorlabs][msl.equipment_resources.thorlabs.thorlabs.Thorlabs].
+        A [Connection][msl.equipment.schema.Connection] instance supports the _properties_
+        that are defined in [ThorlabsMotion][msl.equipment_resources.thorlabs.motion.ThorlabsMotion].
         """
         super().__init__(equipment)
 
@@ -41,31 +41,32 @@ class LTS(Thorlabs, manufacturer=r"Thorlabs", model=r"LTS"):
         self._velocity: Convert = Convert(1.0 / (steps * 53.68), decimals=3)
         self._acceleration: Convert = Convert((1.0 * 90.9) / steps, decimals=3)
 
-        self.set_backlash(0.05)
-        self.set_move_parameters(
-            ThorlabsMoveParameters(
-                channel=1,
-                min_velocity=0.0,
-                max_velocity=20.0,
-                acceleration=20.0,
+        if self._init_defaults:
+            self.set_backlash(0.05)
+            self.set_move_parameters(
+                ThorlabsMoveParameters(
+                    channel=1,
+                    min_velocity=0.0,
+                    max_velocity=20.0,
+                    acceleration=20.0,
+                )
             )
-        )
-        self.set_home_parameters(
-            ThorlabsHomeParameters(
-                channel=1,
-                direction="reverse",  # HomeDir 2
-                limit_switch="reverse",  # HomeLimitSwitch 1
-                velocity=2.0,
-                offset=0.5,
+            self.set_home_parameters(
+                ThorlabsHomeParameters(
+                    channel=1,
+                    direction="reverse",  # HomeDir 2
+                    limit_switch="reverse",  # HomeLimitSwitch 1
+                    velocity=2.0,
+                    offset=0.5,
+                )
             )
-        )
-        self.set_limit_parameters(
-            ThorlabsLimitParameters(
-                channel=1,
-                cw_hardware=2,
-                ccw_hardware=2,
-                cw_software=3.0,
-                ccw_software=1.0,
-                mode=1,
+            self.set_limit_parameters(
+                ThorlabsLimitParameters(
+                    channel=1,
+                    cw_hardware=2,
+                    ccw_hardware=2,
+                    cw_software=3.0,
+                    ccw_software=1.0,
+                    mode=1,
+                )
             )
-        )

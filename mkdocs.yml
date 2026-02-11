@@ -157,7 +157,8 @@ nav:
       - resources/thorlabs/k10cr.md
       - resources/thorlabs/kst.md
       - resources/thorlabs/lts.md
-      - resources/thorlabs/thorlabs.md
+      - resources/thorlabs/mff.md
+      - resources/thorlabs/motion.md
     - Vaisala:
       - resources/vaisala/ptb330.md
       - resources/vaisala/ptu300.md

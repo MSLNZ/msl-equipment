@@ -1,4 +1,4 @@
-"""Communicate with a KST101 motor controller that has a ZFS13B actuator attached."""
+"""Communicate with a KST101 motor controller that has an actuator attached."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ connection = Connection(
     manufacturer="Thorlabs",
     model="KST101",
     serial="26000908",
-    actuator="ZFS13B",
+    # actuator="ZFS13B",  # If the controller was configured with Thorlabs software, the actuator can be looked up
     timeout=5,
 )
 
@@ -29,6 +29,7 @@ def callback(position: float, status: int) -> None:
     print("  Callback", position, bin(status))
 
 
+# Connect to the motor controller
 motor: KST = connection.connect()
 
 # Print information about the motor

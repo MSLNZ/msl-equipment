@@ -1,55 +1,51 @@
-"""
-This example communicates with a Thorlabs
-Filter Flipper (MFF101 or MFF102).
-"""
-import os
-import time
+"""Communicate with an MFF101/M flip mount."""
 
-from msl.equipment import (
-    EquipmentRecord,
-    ConnectionRecord,
-    Backend,
-)
-from msl.equipment.resources.thorlabs import MotionControl
+from __future__ import annotations
 
-# ensure that the Kinesis folder is available on PATH
-os.environ['PATH'] += os.pathsep + 'C:/Program Files/Thorlabs/Kinesis'
+from typing import TYPE_CHECKING
 
-record = EquipmentRecord(
-    manufacturer='Thorlabs',
-    model='MFF101/M',  # specify MFF102 if you have the 2" version
-    serial='37871232',  # update for your device
-    connection=ConnectionRecord(
-        backend=Backend.MSL,
-        address='SDK::Thorlabs.MotionControl.FilterFlipper.dll',
-    ),
+from msl.equipment import Connection
+
+if TYPE_CHECKING:
+    from msl.equipment.resources import MFF
+
+# You may want to replace "FTDI2" with "FTDI" if you are not using the Kinesis or XA software.
+# Using "FTDI2" requires the D2XX driver to be installed for the flip mount.
+# Using "FTDI" requires a libusb-compatible driver to be installed for the flip mount.
+# Update 37870963 with the serial number of your flip mount.
+connection = Connection(
+    "FTDI2::0x0403::0xfaf0::37870963",
+    manufacturer="Thorlabs",
+    model="MFF101/M",
+    serial="37870963",
+    timeout=5,
 )
 
-# Build the device list before connecting to the Filter Flipper
-MotionControl.build_device_list()
+# Connect to the flip mount
+flipper: MFF = connection.connect()
 
-# connect to the Filter Flipper
-flipper = record.connect()
-print('Connected to {}'.format(flipper))
+# Print information about the flip mount
+print(flipper.get_parameters())
+print(flipper.hardware_info())
 
-# wait a little bit for the Thorlabs SDK to open the serial port
-time.sleep(1)
+# Enable the motor if it is not already enabled
+if not flipper.is_enabled():
+    flipper.enable()
 
-# start polling at 200 ms
-flipper.start_polling(200)
+# Get the original position
+original = flipper.position()
+print(f"At: {original}")
 
-position = flipper.get_position()
-print('Flipper is at position {}'.format(position))
+# Toggle the position
+print("Toggle...")
+flipper.toggle()
 
-# move the flipper to the other position and wait for the move to finish
-position = 1 if position == 2 else 2
-print('Moving the flipper to position {}'.format(position))
-flipper.move_to_position(position)
-while flipper.get_position() != position:
-    print('  waiting...')
-    time.sleep(0.1)
-print('Move done. Flipper is now at position {}'.format(flipper.get_position()))
+# Get the new position
+print(f"At: {flipper.position()}")
 
-# stop polling and close the connection
-flipper.stop_polling()
+# Move back to the original position
+flipper.move_to(original)
+print(f"At: {flipper.position()}")
+
+# Disconnect from the flip mount
 flipper.disconnect()

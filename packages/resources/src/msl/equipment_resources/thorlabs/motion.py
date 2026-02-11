@@ -30,7 +30,7 @@ HOMED = 0x00000400
 MOVING = MOVING_CLOCKWISE | MOVING_COUNTER_CLOCKWISE | JOGGING_CLOCKWISE | JOGGING_COUNTER_CLOCKWISE | HOMING
 
 
-class Thorlabs(Interface):
+class ThorlabsMotion(Interface):
     """Thorlabs Motion Controller."""
 
     unit: str = "mm"
@@ -44,9 +44,17 @@ class Thorlabs(Interface):
         Args:
             equipment: An [Equipment][] instance.
 
-        A [Connection][msl.equipment.schema.Connection] instance supports the same _properties_
-        defined in [FTDI][msl.equipment.interfaces.ftdi.FTDI]. The default baud rate is 115200
+        A [Connection][msl.equipment.schema.Connection] instance supports the following
+        _properties_ for the `ThorlabsMotion` class, as well as the _properties_ defined
+        in [FTDI][msl.equipment.interfaces.ftdi.FTDI]. The default baud rate is 115200
         and RTS/CTS flow control is enabled.
+
+        Attributes: Connection Properties:
+            init (bool): Whether to initialise the motion controller to default parameters.
+                These parameters are specific to each motion controller. If `False`, the
+                parameters that are persisted in the firmware of the controller are kept.
+                You may change these parameters at runtime, `init` just changes the
+                initialisation procedure. _Default: `False`_
         """
         self._is_connected: bool = False
         super().__init__(equipment)
@@ -83,6 +91,7 @@ class Thorlabs(Interface):
         self._is_connected = True
         self._callback: Callable[[float, int], None] | None = None
         self._auto_updates: bool = False
+        self._init_defaults: bool = equipment.connection.properties.get("init", False)
 
         # Host-Controller Communications Protocol Issue 44.1
         # Section 2.1: USB Interface
@@ -124,7 +133,7 @@ class Thorlabs(Interface):
         return False
 
     def _wait(self, channel: int) -> None:
-        """Wait for a motor to stop moving."""
+        """Wait for a stage or actuator to stop moving."""
         auto = self._auto_updates
         if not auto:
             self.start_auto_updates()
@@ -215,7 +224,7 @@ class Thorlabs(Interface):
         )
 
     def get_limit_parameters(self, channel: int = 1) -> ThorlabsLimitParameters:
-        """Get the limit-switch parameters that are used for the motor.
+        """Get the limit-switch parameters that are used for the motion controller.
 
         Args:
             channel: The channel to get the limit-switch parameters of.
@@ -306,30 +315,30 @@ class Thorlabs(Interface):
             channel: The channel to check.
 
         Returns:
-            Whether the channel is enabled or disabled.
+            Whether the motor is enabled or disabled.
         """
         reply = self.query(0x0211, param1=channel)
         return reply[1] == 0x01
 
     def is_homed(self, channel: int = 1) -> bool:
-        """Check if a motor has been homed.
+        """Check if the stage or actuator has been homed.
 
         Args:
             channel: The channel to check.
 
         Returns:
-            Whether the motor has been homed.
+            Whether the stage or actuator has been homed.
         """
         return bool(self.status(channel) & HOMED)
 
     def is_moving(self, channel: int = 1) -> bool:
-        """Check if a motor is moving.
+        """Check if the stage or actuator is moving.
 
         Args:
             channel: The channel to check.
 
         Returns:
-            Whether the motor is moving.
+            Whether the stage or actuator is moving.
         """
         return bool(self.status(channel) & MOVING)
 
@@ -395,8 +404,8 @@ class Thorlabs(Interface):
                 `0x21` for Bay 0 in a card-slot system, `0x22` for Bay 1 in a card-slot system, etc.
                 If not specified, the destination module is automatically determined.
             delay: The number of seconds to wait between
-                [write][msl.equipment_resources.thorlabs.thorlabs.Thorlabs.write]
-                and [read][msl.equipment_resources.thorlabs.thorlabs.Thorlabs.read] operations.
+                [write][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.write]
+                and [read][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.read] operations.
 
         Returns:
             The data of the response.
@@ -432,7 +441,7 @@ class Thorlabs(Interface):
 
         Args:
             backlash: The backlash value (in millimetres or degrees).
-            channel: The channel to get the backlash of.
+            channel: The channel to set the backlash of.
         """
         data = pack("<Hi", channel, self._position.to_encoder(backlash))
         _ = self.write(0x043A, data=data)  # MGMSG_MOT_SET_GENMOVEPARAMS
@@ -443,7 +452,7 @@ class Thorlabs(Interface):
         The callback function will be called every time an update message is received from the controller.
 
         !!! notes "See also"
-            [start_auto_updates][msl.equipment_resources.thorlabs.thorlabs.Thorlabs.start_auto_updates]
+            [start_auto_updates][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.start_auto_updates]
 
         Args:
             callback: A callback function. Receives two arguments, the position and the status of the
@@ -465,7 +474,7 @@ class Thorlabs(Interface):
         _ = self.write(0x0440, data=data)  # MGMSG_MOT_SET_HOMEPARAMS
 
     def set_limit_parameters(self, parameters: ThorlabsLimitParameters) -> None:
-        """Set the limit-switch parameters for the motor.
+        """Set the limit-switch parameters for the motion controller.
 
         Args:
             parameters: Limit-switch parameters.
@@ -500,15 +509,15 @@ class Thorlabs(Interface):
 
         Update messages contain information about the position and status of the controller.
         The messages will be sent by the controller every 100 milliseconds until
-        [stop_auto_updates][msl.equipment_resources.thorlabs.thorlabs.Thorlabs.stop_auto_updates] is called.
+        [stop_auto_updates][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.stop_auto_updates] is called.
 
         If you want to receive position and status updates from the controller, call
-        [set_callback][msl.equipment_resources.thorlabs.thorlabs.Thorlabs.set_callback] with a function
+        [set_callback][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.set_callback] with a function
         to handle the updates.
 
         Automatic updates are temporarily enabled while waiting for a motion controller to finish moving.
 
-        You must periodically call [read][msl.equipment_resources.thorlabs.thorlabs.Thorlabs.read] to handle
+        You must periodically call [read][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.read] to handle
         the automatic updates if you explicitly call this method, otherwise the read buffer may overflow.
         """
         self._auto_updates = True
@@ -528,10 +537,10 @@ class Thorlabs(Interface):
         return status
 
     def stop(self, *, channel: int = 1, immediate: bool = False) -> None:
-        """Stop the motor from moving.
+        """Stop the stage or actuator from moving.
 
         Args:
-            channel: The channel of the motor to stop.
+            channel: The channel of the motion controller to stop.
             immediate: Whether to stop immediately (`True`) or use a gradual stop (`False`).
                 Stopping immediately may risk losing track of the position.
         """
@@ -546,8 +555,8 @@ class Thorlabs(Interface):
 
     @property
     def timeout(self) -> float | None:
-        """The timeout, in seconds, for [read][msl.equipment_resources.thorlabs.thorlabs.Thorlabs.read]
-        and [write][msl.equipment_resources.thorlabs.thorlabs.Thorlabs.write] operations.
+        """The timeout, in seconds, for [read][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.read]
+        and [write][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.write] operations.
 
         A value &lt;0 will set the timeout to be `None` (blocking mode).
         """  # noqa: D205

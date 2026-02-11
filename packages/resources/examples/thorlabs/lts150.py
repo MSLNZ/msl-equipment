@@ -28,6 +28,7 @@ def callback(position: float, status: int) -> None:
     print("  Callback", position, bin(status))
 
 
+# Connect to the stage
 stage: LTS = connection.connect()
 
 # Print information about the stage
@@ -35,7 +36,7 @@ print(stage.get_home_parameters())
 print(stage.get_limit_parameters())
 print(stage.get_move_parameters())
 print(stage.hardware_info())
-print(f"Backlash={stage.get_backlash()}{stage.unit}")
+print(f"Backlash={stage.get_backlash()} {stage.unit}")
 
 # Optional: Set a callback function that is called while the stage is moving
 stage.set_callback(callback)

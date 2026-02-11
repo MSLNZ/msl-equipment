@@ -28,6 +28,7 @@ def callback(position: float, status: int) -> None:
     print("  Callback", position, bin(status))
 
 
+# Connect to the stage
 stage: K10CR = connection.connect()
 
 # Print information about the stage

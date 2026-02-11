@@ -73,7 +73,7 @@ class MFF(Interface, manufacturer=r"Thorlabs", model=r"MFF"):
         """
         params = unpack("<HiiHHiHHiiI", self._motion.query(0x0511, param1=1, dest=0x50))  # MGMSG_MOT_REQ_MFF_OPERPARAMS
         o1, s1, pw1, o2, s2, pw2 = params[3:9]
-        return FlipperParameters(float(params[1]), FlipperIO(o1, s1, pw1 * 1e-3), FlipperIO(o2, s2, pw2 * 1e-3))
+        return FlipperParameters(params[1] * 1e-3, FlipperIO(o1, s1, pw1 * 1e-3), FlipperIO(o2, s2, pw2 * 1e-3))
 
     def hardware_info(self) -> ThorlabsHardwareInfo:
         """Get the hardware information.

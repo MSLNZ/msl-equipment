@@ -19,7 +19,7 @@ connection = Connection(
     manufacturer="Thorlabs",
     model="KST101",
     serial="26000908",
-    # actuator="ZFS13B",  # If the controller was configured with Thorlabs software, the actuator can be looked up
+    # actuator="ZFS13B",  # If not using Thorlabs software on the computer, the actuator/stage must be specified
     timeout=5,
 )
 

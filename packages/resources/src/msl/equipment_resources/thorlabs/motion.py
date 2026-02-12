@@ -1,6 +1,6 @@
 """Thorlabs Motion Controller."""
 
-# cSpell: ignore HBBBB HHBB HHHII Hiii MGMSG STATUSUPDATE POSCOUNTER ENCCOUNTER
+# cSpell: ignore HBBBB HHBB HHHII Hiii MGMSG STATUSUPDATE USTATUSUPDATE POSCOUNTER ENCCOUNTER
 # cSpell: ignore GENMOVEPARAMS VELPARAMS HOMEPARAMS UPDATEMSGS STATUSBITS CHANENABLESTATE LIMSWITCHPARAMS
 from __future__ import annotations
 
@@ -114,13 +114,6 @@ class ThorlabsMotion(Interface):
         _ = self.write(0x0018)  # MGMSG_HW_NO_FLASH_PROGRAMMING
         self.stop_auto_updates()
 
-    def _maybe_invoke_callback(self, data: bytes) -> None:
-        """Maybe invoke the callback function, if one has be defined."""
-        if self._callback is not None:
-            _, position, encoder, status = unpack("<HiiI", data)
-            value = encoder if self._has_encoder else position
-            self._callback(self._position.to_real_world(value), status)
-
     def _maybe_handle_auto_update(self, response: ThorlabsResponse) -> bool:
         """Maybe handle an automatic update response, if the message ID is correct for an automatic update.
 
@@ -128,7 +121,15 @@ class ThorlabsMotion(Interface):
             Whether the response was from an automatic update.
         """
         if response.message_id == 0x0481:  # MGMSG_MOT_GET_STATUSUPDATE  # noqa: PLR2004
-            self._maybe_invoke_callback(response.data)
+            if self._callback is not None:
+                _, position, encoder, status = unpack("<HiiI", response.data)
+                value = encoder if self._has_encoder else position
+                self._callback(self._position.to_real_world(value), status)
+            return True
+        if response.message_id == 0x0491:  # MGMSG_MOT_GET_USTATUSUPDATE  # noqa: PLR2004
+            if self._callback is not None:
+                _, position, _, _, status = unpack("<HiHhI", response.data)
+                self._callback(self._position.to_real_world(position), status)
             return True
         return False
 
@@ -280,7 +281,7 @@ class ThorlabsMotion(Interface):
             type=typ,
             firmware_version=f"{fw[2]}.{fw[1]}.{fw[0]}",
             notes=notes.decode(),
-            data=data.rstrip(b"\x00").decode().rstrip(),
+            data=data.strip(b"\x00").decode().rstrip(),
             hardware_version=hw,
             modification_state=state,
             num_channels=n,
@@ -464,7 +465,9 @@ class ThorlabsMotion(Interface):
         """Set the parameters that are used to home the motion controller.
 
         Args:
-            parameters: Homing parameters.
+            parameters: Homing parameters. It is recommended to call
+                [get_home_parameters][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.get_home_parameters]
+                first and then update the appropriate attributes.
         """
         direction = 1 if parameters.direction == "forward" else 2
         limit_switch = 4 if parameters.limit_switch == "forward" else 1
@@ -477,7 +480,9 @@ class ThorlabsMotion(Interface):
         """Set the limit-switch parameters for the motion controller.
 
         Args:
-            parameters: Limit-switch parameters.
+            parameters: Limit-switch parameters. It is recommended to call
+                [get_limit_parameters][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.get_limit_parameters]
+                first and then update the appropriate attributes.
         """
         cw_soft = self._position.to_encoder(parameters.cw_software)
         ccw_soft = self._position.to_encoder(parameters.ccw_software)
@@ -496,7 +501,9 @@ class ThorlabsMotion(Interface):
         """Set the parameters that are used to move the motion controller.
 
         Args:
-            parameters: Move parameters.
+            parameters: Move parameters. It is recommended to call
+                [get_move_parameters][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.get_move_parameters]
+                first and then update the appropriate attributes.
         """
         minimum = self._velocity.to_encoder(parameters.min_velocity)
         maximum = self._velocity.to_encoder(parameters.max_velocity)

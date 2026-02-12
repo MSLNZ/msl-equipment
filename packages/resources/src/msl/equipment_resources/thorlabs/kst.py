@@ -40,7 +40,7 @@ class KST(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"KST"):
             equipment: An [Equipment][] instance.
 
         A [Connection][msl.equipment.schema.Connection] instance supports the following
-        _properties_ for a KST motion controller, as well as the _properties_ defined in
+        _properties_ for a `KST` motion controller, as well as the _properties_ defined in
         [ThorlabsMotion][msl.equipment_resources.thorlabs.motion.ThorlabsMotion].
 
         Attributes: Connection Properties:

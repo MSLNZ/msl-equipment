@@ -19,14 +19,15 @@ connection = Connection(
     manufacturer="Thorlabs",
     model="KST101",
     serial="26000908",
-    # actuator="ZFS13B",  # If not using Thorlabs software on the computer, the actuator/stage must be specified
     timeout=5,
+    # actuator="ZFS13B",  # If not using Thorlabs software on the computer, the actuator/stage must be specified
+    # init=True,  # If you want to initialise the motor to default parameters
 )
 
 
-def callback(position: float, status: int) -> None:
-    """Handles updates of the position (in mm) and status (a 32-bit bitmap of states that the motor is in)."""
-    print("  Callback", position, bin(status))
+def callback(position: float, encoder: int, status: int) -> None:
+    """Receives the position (in mm), encoder counts and motor status."""
+    print(f"  Callback {position:9.6f} {encoder:7d} 0b{status:032b}")
 
 
 # Connect to the motor controller
@@ -76,7 +77,7 @@ print("Waiting...")
 motor.wait_until_moved()
 
 # Get the current position
-print(f"At: {motor.position()} {motor.unit}")
+print(f"At: {motor.position()} {motor.unit} [encoder={motor.encoder()}]")
 
 # Disconnect from the motor controller
 motor.disconnect()

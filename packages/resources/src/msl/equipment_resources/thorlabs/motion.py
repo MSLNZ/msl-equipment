@@ -34,7 +34,7 @@ class ThorlabsMotion(Interface):
     """Thorlabs Motion Controller."""
 
     unit: str = "mm"
-    """The real-world unit."""
+    """The physical unit."""
 
     def __init__(self, equipment: Equipment) -> None:
         """Thorlabs Motion Controller.
@@ -65,7 +65,6 @@ class ThorlabsMotion(Interface):
         self._acceleration: Convert = Convert(1)
         self._is_slot_system: bool = False
         self._has_encoder: bool = False
-        self._position_message_id: int = 0x0411  # 0x040A (ENCCOUNTER), 0x0411 (POSCOUNTER) or 0x0490 (STATUSUPDATE)
 
         assert equipment.connection is not None  # noqa: S101
         equipment.connection.properties.setdefault("baud_rate", 115200)
@@ -89,7 +88,7 @@ class ThorlabsMotion(Interface):
 
         self._ftdi: FTDI = ftdi
         self._is_connected = True
-        self._callback: Callable[[float, int], None] | None = None
+        self._callback: Callable[[float, int, int], None] | None = None
         self._auto_updates: bool = False
         self._init_defaults: bool = equipment.connection.properties.get("init", False)
 
@@ -123,18 +122,18 @@ class ThorlabsMotion(Interface):
         if response.message_id == 0x0481:  # MGMSG_MOT_GET_STATUSUPDATE  # noqa: PLR2004
             if self._callback is not None:
                 _, position, encoder, status = unpack("<HiiI", response.data)
-                value = encoder if self._has_encoder else position
-                self._callback(self._position.to_real_world(value), status)
+                value: int = encoder if self._has_encoder else position
+                self._callback(self._position.to_mm_or_degree(value), value, status)
             return True
         if response.message_id == 0x0491:  # MGMSG_MOT_GET_USTATUSUPDATE  # noqa: PLR2004
             if self._callback is not None:
                 _, position, _, _, status = unpack("<HiHhI", response.data)
-                self._callback(self._position.to_real_world(position), status)
+                self._callback(self._position.to_mm_or_degree(position), position, status)
             return True
         return False
 
     def _wait(self, channel: int) -> None:
-        """Wait for a stage or actuator to stop moving."""
+        """Wait for an actuator or stage to stop moving."""
         auto = self._auto_updates
         if not auto:
             self.start_auto_updates()
@@ -152,7 +151,8 @@ class ThorlabsMotion(Interface):
             self.stop_auto_updates()
 
         if self._callback is not None:
-            self._callback(self.position(channel), self.status(channel))
+            counts = self.encoder(channel=channel)
+            self._callback(self._position.to_mm_or_degree(counts), counts, self.status(channel=channel))
 
     def disable(self, channel: int = 1) -> None:
         """Disable a channel.
@@ -187,6 +187,20 @@ class ThorlabsMotion(Interface):
         """
         _ = self.write(0x0210, param1=channel, param2=0x01)  # MGMSG_MOD_SET_CHANENABLESTATE
 
+    def encoder(self, channel: int = 1) -> int:
+        """Get the position of the actuator or stage in encoder counts.
+
+        Args:
+            channel: The channel to get the encoder counts of.
+
+        Returns:
+            Encoder counts (number of pulses).
+        """
+        # MGMSG_MOT_REQ_ENCCOUNTER or MGMSG_MOT_REQ_POSCOUNTER
+        msg_id = 0x040A if self._has_encoder else 0x0411
+        _, counts = unpack("<Hi", self.query(msg_id, param1=channel))
+        return counts
+
     @property
     def ftdi(self) -> FTDI:
         """Returns the underlying interface instance."""
@@ -203,7 +217,7 @@ class ThorlabsMotion(Interface):
         """
         data = self.query(0x043B, param1=channel)  # MGMSG_MOT_REQ_GENMOVEPARAMS
         _, encoder = unpack("<Hi", data)
-        return self._position.to_real_world(encoder)
+        return self._position.to_mm_or_degree(encoder)
 
     def get_home_parameters(self, channel: int = 1) -> ThorlabsHomeParameters:
         """Get the parameters that are used to home the motion controller.
@@ -220,8 +234,8 @@ class ThorlabsMotion(Interface):
             channel=ch,
             direction="forward" if direction == 1 else "reverse",
             limit_switch="forward" if limit_switch == 4 else "reverse",  # noqa: PLR2004
-            velocity=self._velocity.to_real_world(velocity),
-            offset=self._position.to_real_world(offset),
+            velocity=self._velocity.to_mm_or_degree(velocity),
+            offset=self._position.to_mm_or_degree(offset),
         )
 
     def get_limit_parameters(self, channel: int = 1) -> ThorlabsLimitParameters:
@@ -239,8 +253,8 @@ class ThorlabsMotion(Interface):
             channel=ch,
             cw_hardware=cw_hard,
             ccw_hardware=ccw_hard,
-            cw_software=self._position.to_real_world(cw_soft),
-            ccw_software=self._position.to_real_world(ccw_soft),
+            cw_software=self._position.to_mm_or_degree(cw_soft),
+            ccw_software=self._position.to_mm_or_degree(ccw_soft),
             mode=mode,
         )
 
@@ -257,9 +271,9 @@ class ThorlabsMotion(Interface):
         ch, minimum, acceleration, maximum = unpack("<Hiii", reply)
         return ThorlabsMoveParameters(
             channel=ch,
-            min_velocity=self._velocity.to_real_world(minimum),
-            max_velocity=self._velocity.to_real_world(maximum),
-            acceleration=self._acceleration.to_real_world(acceleration),
+            min_velocity=self._velocity.to_mm_or_degree(minimum),
+            max_velocity=self._velocity.to_mm_or_degree(maximum),
+            acceleration=self._acceleration.to_mm_or_degree(acceleration),
         )
 
     def hardware_info(self) -> ThorlabsHardwareInfo:
@@ -322,24 +336,24 @@ class ThorlabsMotion(Interface):
         return reply[1] == 0x01
 
     def is_homed(self, channel: int = 1) -> bool:
-        """Check if the stage or actuator has been homed.
+        """Check if the actuator or stage has been homed.
 
         Args:
             channel: The channel to check.
 
         Returns:
-            Whether the stage or actuator has been homed.
+            Whether the actuator or stage has been homed.
         """
         return bool(self.status(channel) & HOMED)
 
     def is_moving(self, channel: int = 1) -> bool:
-        """Check if the stage or actuator is moving.
+        """Check if the actuator or stage is moving.
 
         Args:
             channel: The channel to check.
 
         Returns:
-            Whether the stage or actuator is moving.
+            Whether the actuator or stage is moving.
         """
         return bool(self.status(channel) & MOVING)
 
@@ -370,7 +384,7 @@ class ThorlabsMotion(Interface):
             self._wait(channel)
 
     def position(self, channel: int = 1) -> float:
-        """Get the position.
+        """Get the position of the actuator or stage.
 
         Args:
             channel: The channel to get the position of.
@@ -378,10 +392,7 @@ class ThorlabsMotion(Interface):
         Returns:
             The position (in millimetres or degrees).
         """
-        # Whether requesting with 0x040A (ENCCOUNTER), 0x0411 (POSCOUNTER) or 0x0490 (STATUSUPDATE)
-        # the first 6 characters of the response data are (channel, position)
-        _, encoder = unpack("<Hi", self.query(self._position_message_id, param1=channel)[:6])
-        return self._position.to_real_world(encoder)
+        return self._position.to_mm_or_degree(self.encoder(channel=channel))
 
     def query(
         self,
@@ -447,17 +458,23 @@ class ThorlabsMotion(Interface):
         data = pack("<Hi", channel, self._position.to_encoder(backlash))
         _ = self.write(0x043A, data=data)  # MGMSG_MOT_SET_GENMOVEPARAMS
 
-    def set_callback(self, callback: Callable[[float, int], None] | None) -> None:
-        """Set a callback function to receive position and status information.
+    def set_callback(self, callback: Callable[[float, int, int], None] | None) -> None:
+        """Set a callback function to receive position, encoder and status information.
 
-        The callback function will be called every time an update message is received from the controller.
-
-        !!! notes "See also"
-            [start_auto_updates][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.start_auto_updates]
+        The callback function is called while waiting for an actuator or stage to stop moving.
 
         Args:
-            callback: A callback function. Receives two arguments, the position and the status of the
-                motion controller. Set to `None` to disable the callback.
+            callback: A callback function. Set to `None` to disable the callback.
+
+                The callback receives three arguments:
+
+                    * Position (in millimetres or degrees)
+                    * Encoder count
+                    * Status of the motion controller. A 32-bit value that represents the
+                      current status of the motion controller. Each of the 32 bits acts as
+                      a flag (0 or 1), simultaneously indicating 32 distinct conditions the
+                      motion controller is in.
+
         """
         self._callback = callback
 
@@ -522,7 +539,7 @@ class ThorlabsMotion(Interface):
         [set_callback][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.set_callback] with a function
         to handle the updates.
 
-        Automatic updates are temporarily enabled while waiting for a motion controller to finish moving.
+        Automatic updates are temporarily enabled while waiting for an actuator or stage to finish moving.
 
         You must periodically call [read][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.read] to handle
         the automatic updates if you explicitly call this method, otherwise the read buffer may overflow.
@@ -544,7 +561,7 @@ class ThorlabsMotion(Interface):
         return status
 
     def stop(self, *, channel: int = 1, immediate: bool = False) -> None:
-        """Stop the stage or actuator from moving.
+        """Stop the actuator or stage from moving.
 
         Args:
             channel: The channel of the motion controller to stop.
@@ -615,24 +632,24 @@ class ThorlabsMotion(Interface):
 
 
 class Convert:
-    """Convert between encoder steps and a real-world value."""
+    """Convert between encoder counts and a physical value (millimetres or degree)."""
 
-    def __init__(self, factor: float, decimals: int = 4) -> None:
-        """Convert between encoder steps and real-world units.
+    def __init__(self, factor: float, decimals: int = 6) -> None:
+        """Convert between encoder counts and a physical value.
 
         Args:
-            factor: The scaling factor. Must be `real-world / encoder-steps`.
-            decimals: The number of decimals to round the real-world value to.
+            factor: The scaling factor. Must be `physical / encoder`.
+            decimals: The number of decimals to round the physical value to.
         """
         self._factor: float = factor
         self._decimals: int = decimals
 
-    def to_encoder(self, real_world: float) -> int:
-        """Convert a real-world value to encoder steps."""
-        return round(real_world / self._factor)
+    def to_encoder(self, mm_or_degree: float) -> int:
+        """Convert a value in millimetres or degrees to encoder counts."""
+        return round(mm_or_degree / self._factor)
 
-    def to_real_world(self, encoder: int) -> float:
-        """Convert encoder steps to a real-world value."""
+    def to_mm_or_degree(self, encoder: int) -> float:
+        """Convert encoder counts to a value in millimetres or degrees."""
         return round(encoder * self._factor, self._decimals)
 
 

@@ -20,12 +20,13 @@ connection = Connection(
     model="K10CR1/M",
     serial="55264734",
     timeout=5,
+    # init=True,  # If you want to initialise the motor to default parameters
 )
 
 
-def callback(position: float, status: int) -> None:
-    """Handles updates of the position (in degrees) and status (a 32-bit bitmap of states that the stage is in)."""
-    print("  Callback", position, bin(status))
+def callback(position: float, encoder: int, status: int) -> None:
+    """Receives the position (in degrees), encoder counts and motor status."""
+    print(f"  Callback {position:9.6f} {encoder:7d} 0b{status:032b}")
 
 
 # Connect to the stage
@@ -75,7 +76,7 @@ print("Waiting...")
 stage.wait_until_moved()
 
 # Get the current position
-print(f"At: {stage.position()}{stage.unit}")
+print(f"At: {stage.position()}{stage.unit} [encoder={stage.encoder()}]")
 
 # Disconnect from the stage
 stage.disconnect()

@@ -14,7 +14,7 @@ class K10CR(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"K10CR"):
     """Communicate with a K10CR1 or K10CR2 rotation stage from Thorlabs."""
 
     unit: str = "\u00b0"
-    """The real-world unit."""
+    """The physical unit."""
 
     def __init__(self, equipment: Equipment) -> None:
         """Communicate with a K10CR1 or K10CR2 rotation stage from Thorlabs.

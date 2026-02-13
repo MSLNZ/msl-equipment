@@ -33,11 +33,10 @@ class LTS(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"LTS"):
 
         self._is_slot_system: bool = False
         self._has_encoder: bool = False  # EncoderFitted false
-        self._position_message_id: int = 0x0411
 
-        micro_steps = 2048 if self.hardware_info().hardware_version >= 3 else 128  # noqa: PLR2004
-        steps = float(200 * micro_steps)  # 200 steps per revolution
-        self._position: Convert = Convert(1.0 / steps, decimals=5)
+        micro_steps = 2048.0 if self.hardware_info().hardware_version >= 3 else 128.0  # noqa: PLR2004
+        steps = 200.0 * micro_steps  # 200 steps per revolution
+        self._position: Convert = Convert(1.0 / steps)
         self._velocity: Convert = Convert(1.0 / (steps * 53.68), decimals=3)
         self._acceleration: Convert = Convert((1.0 * 90.9) / steps, decimals=3)
 

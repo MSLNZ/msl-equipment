@@ -36,13 +36,12 @@ class K10CR(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"K10CR"):
 
         self._is_slot_system: bool = False
         self._has_encoder: bool = False  # EncoderFitted false
-        self._position_message_id: int = 0x0411
 
         # 200 steps per revolution
         # 2048 micro-steps per full step
         # 120:1 reduction gearbox
-        steps = float(200 * 2048 * 120)
-        self._position: Convert = Convert(360.0 / steps, decimals=5)
+        steps = 200.0 * 2048.0 * 120.0
+        self._position: Convert = Convert(360.0 / steps)
         self._velocity: Convert = Convert(360.0 / (steps * 53.68), decimals=3)
         self._acceleration: Convert = Convert((360.0 * 90.9) / steps, decimals=3)
 

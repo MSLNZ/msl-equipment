@@ -19,6 +19,7 @@ connection = Connection(
     model="MFF101/M",
     serial="37870963",
     timeout=5,
+    # init=True,  # If you want to initialise the motor to default parameters
 )
 
 # Connect to the flip mount

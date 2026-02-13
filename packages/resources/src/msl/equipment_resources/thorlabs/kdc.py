@@ -82,13 +82,12 @@ class KDC(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"KDC"):
         # Conversion factors must be defined before initialising the default parameters below
         t = 2048.0 / 6e6
         enc_cnt = (steps_per_rev * gearbox_ratio) / pitch
-        self._position: Convert = Convert(1.0 / enc_cnt, decimals=5)
+        self._position: Convert = Convert(1.0 / enc_cnt)
         self._velocity: Convert = Convert(1.0 / (enc_cnt * t * 65536.0), decimals=3)
         self._acceleration: Convert = Convert(1.0 / (enc_cnt * t * t * 65536.0), decimals=3)
 
         self._is_slot_system: bool = False
         self._has_encoder: bool = False  # EncoderFitted false
-        self._position_message_id: int = 0x0411
 
         if self._init_defaults:
             if "PRM" in device:  # check must come first, since model number could be PRM1Z8 or PRM1/MZ8

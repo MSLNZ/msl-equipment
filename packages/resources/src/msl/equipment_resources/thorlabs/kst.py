@@ -62,7 +62,6 @@ class KST(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"KST"):
 
         self._is_slot_system: bool = False
         self._has_encoder: bool = False  # EncoderFitted false
-        self._position_message_id: int = 0x0411
 
         if "ZFS" in device:
             #  6mm: ZFS06
@@ -71,7 +70,7 @@ class KST(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"KST"):
             actuators = {6: 0x40, 13: 0x41, 25: 0x42}
 
             steps = 24.0 * 2048.0 * 400.0 / 9.0
-            self._position: Convert = Convert(1.0 / steps, decimals=6)
+            self._position: Convert = Convert(1.0 / steps)
             self._velocity: Convert = Convert(1.0 / (steps * 53.68), decimals=3)
             self._acceleration: Convert = Convert((1.0 * 90.9) / steps, decimals=3)
 

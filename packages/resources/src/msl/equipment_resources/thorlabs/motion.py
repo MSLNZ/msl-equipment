@@ -133,7 +133,7 @@ class ThorlabsMotion(Interface):
         return False
 
     def _wait(self, channel: int) -> None:
-        """Wait for an actuator or stage to stop moving."""
+        """Wait for an actuator or a stage to stop moving."""
         auto = self._auto_updates
         if not auto:
             self.start_auto_updates()
@@ -355,30 +355,38 @@ class ThorlabsMotion(Interface):
         Returns:
             Whether the actuator or stage is moving.
         """
-        return bool(self.status(channel) & MOVING)
+        return bool(self.status(channel=channel) & MOVING)
 
-    def move_by(self, distance: float, *, channel: int = 1, wait: bool = True) -> None:
+    def move_by(self, distance: float, *, channel: int = 1, convert: bool = True, wait: bool = True) -> None:
         """Move by a relative distance.
 
         Args:
-            distance: The distance (in millimetres or degrees) to move by. Can be a negative or a positive value.
+            distance: The distance to move by. Can be a negative or a positive value. The unit of the
+                value depends on the whether `convert` is `True` or `False`. If `True`, the unit must
+                be in millimetres (for a translation) or degrees (for a rotation), otherwise the
+                distance must be specified as encoder counts.
             channel: The channel to move.
+            convert: Whether to convert `distance` to encoder counts.
             wait: Whether to wait for the move to complete before returning to the calling program.
         """
-        data = pack("<Hi", channel, self._position.to_encoder(distance))
-        _ = self.write(0x0448, data=data)  # MGMSG_MOT_MOVE_RELATIVE
+        counts = self._position.to_encoder(distance) if convert else int(distance)
+        _ = self.write(0x0448, data=pack("<Hi", channel, counts))  # MGMSG_MOT_MOVE_RELATIVE
         if wait:
             self._wait(channel)
 
-    def move_to(self, position: float, *, channel: int = 1, wait: bool = True) -> None:
+    def move_to(self, position: float, *, channel: int = 1, convert: bool = True, wait: bool = True) -> None:
         """Move to an absolute position.
 
         Args:
-            position: The position (in millimetres or degrees) to move to.
+            position: The position to move to. The unit of the value depends on the whether `convert` is
+                `True` or `False`. If `True`, the unit must be in millimetres (for a translation) or degrees
+                (for a rotation), otherwise the position must be specified as encoder counts.
             channel: The channel to move.
+            convert: Whether to convert `position` to encoder counts.
             wait: Whether to wait for the move to complete before returning to the calling program.
         """
-        data = pack("<Hi", channel, self._position.to_encoder(position))
+        counts = self._position.to_encoder(position) if convert else int(position)
+        data = pack("<Hi", channel, counts)
         _ = self.write(0x0453, data=data)  # MGMSG_MOT_MOVE_ABSOLUTE
         if wait:
             self._wait(channel)
@@ -448,33 +456,35 @@ class ThorlabsMotion(Interface):
         data = self._ftdi.read(size=p1 | (p2 << 8), decode=False) if d & 0x80 else bytes([p1, p2])
         return ThorlabsResponse(message_id=msg_id, module=s, data=data)
 
-    def set_backlash(self, backlash: float, *, channel: int = 1) -> None:
+    def set_backlash(self, backlash: float, *, channel: int = 1, convert: bool = True) -> None:
         """Set the backlash value (to control hysteresis).
 
         Args:
-            backlash: The backlash value (in millimetres or degrees).
+            backlash: The backlash value. The unit of the value depends on the whether `convert` is
+                `True` or `False`. If `True`, the unit must be in millimetres (for a translation) or degrees
+                (for a rotation), otherwise the backlash must be specified as encoder counts.
             channel: The channel to set the backlash of.
+            convert: Whether to convert `backlash` to encoder counts.
         """
-        data = pack("<Hi", channel, self._position.to_encoder(backlash))
-        _ = self.write(0x043A, data=data)  # MGMSG_MOT_SET_GENMOVEPARAMS
+        counts = self._position.to_encoder(backlash) if convert else int(backlash)
+        _ = self.write(0x043A, data=pack("<Hi", channel, counts))  # MGMSG_MOT_SET_GENMOVEPARAMS
 
     def set_callback(self, callback: Callable[[float, int, int], None] | None) -> None:
-        """Set a callback function to receive position, encoder and status information.
+        """Set a callback function to receive position, encoder counts and status information.
 
-        The callback function is called while waiting for an actuator or stage to stop moving.
+        The callback function is called while waiting for an actuator or a stage to stop moving.
 
         Args:
-            callback: A callback function. Set to `None` to disable the callback.
+            callback: A callback function. Set to `None` to disable callbacks.
 
-                The callback receives three arguments:
+                The callback function receives three arguments:
 
-                    * Position (in millimetres or degrees)
-                    * Encoder count
-                    * Status of the motion controller. A 32-bit value that represents the
-                      current status of the motion controller. Each of the 32 bits acts as
-                      a flag (0 or 1), simultaneously indicating 32 distinct conditions the
-                      motion controller is in.
-
+                * Position (in millimetres or degrees)
+                * Encoder counts (as an integer)
+                * Status of the motion controller. A 32-bit integer that represents the
+                    current status of the motion controller. Each of the 32 bits acts as
+                    a flag (0 or 1), simultaneously indicating 32 distinct operating
+                    conditions of the motion controller.
         """
         self._callback = callback
 
@@ -539,7 +549,7 @@ class ThorlabsMotion(Interface):
         [set_callback][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.set_callback] with a function
         to handle the updates.
 
-        Automatic updates are temporarily enabled while waiting for an actuator or stage to finish moving.
+        Automatic updates are temporarily enabled while waiting for an actuator or a stage to stop moving.
 
         You must periodically call [read][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.read] to handle
         the automatic updates if you explicitly call this method, otherwise the read buffer may overflow.
@@ -554,7 +564,9 @@ class ThorlabsMotion(Interface):
             channel: The channel to get the status of.
 
         Returns:
-            The status.
+            The status. A 32-bit value that represents the current status of the motion controller.
+                Each of the 32 bits acts as a flag (0 or 1), simultaneously indicating 32 distinct
+                operating conditions of the motion controller.
         """
         status: int
         _, status = unpack("<HI", self.query(0x0429, param1=channel))  # MGMSG_MOT_REQ_STATUSBITS
@@ -591,9 +603,14 @@ class ThorlabsMotion(Interface):
         self._ftdi.timeout = value
 
     def wait_until_moved(self, channel: int = 1) -> None:
-        """Wait until a move is complete.
+        """Wait until the motion controller indicates that a move is complete.
 
         !!! warning
+            Some motion controllers indicate that a move is complete but upon reading the position
+            of the actuator (or stage) the returned value indicates that it is still a few
+            _encoder counts_ away from the target position. It has been observed that it could take
+            up to 600 ms for the indicated position to equal the target position.
+
             This method will block forever if the motion controller is not moving.
 
         Args:

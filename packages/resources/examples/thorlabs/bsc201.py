@@ -1,92 +1,87 @@
-"""
-This example communicates with a Thorlabs
-Benchtop Stepper Motor Controller (BSC201).
-"""
-import os
+"""Communicate with a BSC201 controller that has a rotation stage attached."""
+
+from __future__ import annotations
+
 import time
-from pprint import pprint
+from typing import TYPE_CHECKING
 
-from msl.equipment import (
-    EquipmentRecord,
-    ConnectionRecord,
-    Backend,
-)
-from msl.equipment.resources.thorlabs import MotionControl
+from msl.equipment import Connection
 
-# ensure that the Kinesis folder is available on PATH
-os.environ['PATH'] += os.pathsep + 'C:/Program Files/Thorlabs/Kinesis'
+if TYPE_CHECKING:
+    from msl.equipment.resources import BSC
 
-record = EquipmentRecord(
-    manufacturer='Thorlabs',
-    model='BSC201',  # update for your device
-    serial='40876748',  # update for your device
-    connection=ConnectionRecord(
-        address='SDK::Thorlabs.MotionControl.Benchtop.StepperMotor.dll',
-        backend=Backend.MSL,
-    )
+# You may want to replace "FTDI2" with "FTDI" if you are not using the Kinesis or XA software.
+# Using "FTDI2" requires the D2XX driver to be installed for the motion controller.
+# Using "FTDI" requires a libusb-compatible driver to be installed for the motion controller.
+# Update 40876748 with the serial number of your motion controller.
+connection = Connection(
+    "FTDI2::0x0403::0xfaf0::40876748",
+    manufacturer="Thorlabs",
+    model="BSC201",
+    serial="40876748",
+    timeout=5,
+    # stage="NR360S/M",  # If not using Thorlabs software on the computer, the actuator/stage must be specified
 )
 
 
-def wait(value):
-    motor.clear_message_queue(channel)
-    message_type, message_id, _ = motor.wait_for_message(channel)
-    while message_type != 2 or message_id != value:
-        position = motor.get_position(channel)
-        real = motor.get_real_value_from_device_unit(channel, position, 'DISTANCE')
-        print('  at position {} [device units] {:.3f} [real-world units]'.format(position, real))
-        message_type, message_id, _ = motor.wait_for_message(channel)
+def callback(position: float, encoder: int, status: int) -> None:
+    """Receives the position (in mm or degrees), encoder counts and motor status."""
+    print(f"  Callback {position:9.6f} {encoder:7d} 0b{status:032b}")
 
 
-# avoid the FT_DeviceNotFound error
-MotionControl.build_device_list()
+# Connect to the motion controller
+stage: BSC = connection.connect()
 
-# connect to the Benchtop Stepper Motor
-motor = record.connect()
-print('Connected to {}'.format(motor))
-
-# set the channel number of the Benchtop Stepper Motor to communicate with
+# BSC201 supports only one channel but BSC202 and BSC203 support multiple channels.
+# The default channel is 1 in the BSC class methods, so explicitly specifying the
+# channel in this example is not necessary.
 channel = 1
 
-# load the configuration settings, so that we can call
-# the get_real_value_from_device_unit() method
-motor.load_settings(channel)
+# Print information about the stage
+print(stage.get_home_parameters(channel))
+print(stage.get_limit_parameters(channel))
+print(stage.get_move_parameters(channel))
+print(stage.hardware_info())
+print(f"Backlash={stage.get_backlash(channel)} {stage.unit}")
 
+# Optional: Set a callback function that is called while the stage is moving
+stage.set_callback(callback)
 
-# the SBC_Open(serialNo) function in Kinesis is non-blocking and therefore we
-# should add a delay for Kinesis to establish communication with the serial port
+# Enable the motor if it is not already enabled
+if not stage.is_enabled(channel):
+    stage.enable()
+
+# Home the stage if it is not already homed
+if not stage.is_homed(channel):
+    print("Homing stage...")
+    stage.home()
+
+# Move to 10 (absolute move)
+print(f"Move to 10 {stage.unit}")
+stage.move_to(10, channel=channel)
+
+# Move by 5 (relative move)
+print(f"Move by 5 {stage.unit}")
+stage.move_by(5, channel=channel)
+
+# Move by -5 (relative move)
+print(f"Move by -5 {stage.unit}")
+stage.move_by(-5, channel=channel)
+
+# Move to 0 (absolute move), but don't wait until the stage has finished moving
+print(f"Move to 0 {stage.unit}")
+stage.move_to(0, channel=channel, wait=False)
+
+# Do other stuff while the stage is moving...
+print("Pretend to do other stuff, sleeping...")
 time.sleep(1)
 
-# start polling at 200 ms
-motor.start_polling(channel, 200)
+# Wait until the stage has finished moving
+print("Waiting...")
+stage.wait_until_moved(channel)
 
-# home the device
-print('Homing...')
-motor.home(channel)
-wait(0)
-print('Homing done. At position {} [device units]'.format(motor.get_position(channel)))
+# Get the current position
+print(f"At: {stage.position(channel)} {stage.unit} [encoder={stage.encoder(channel)}]")
 
-# move to position 100000
-print('Moving to 100000...')
-motor.move_to_position(channel, 100000)
-wait(1)
-print('Moving done. At position {} [device units]'.format(motor.get_position(channel)))
-
-# move by a relative amount of -5000
-print('Moving by -5000...')
-motor.move_relative(channel, -5000)
-wait(1)
-print('Moving done. At position {} [device units]'.format(motor.get_position(channel)))
-
-# jog forwards
-print('Jogging forwards by {} [device units]'.format(motor.get_jog_step_size(channel)))
-motor.move_jog(channel, 'Forwards')
-wait(1)
-print('Jogging done. At position {} [device units]'.format(motor.get_position(channel)))
-
-# stop polling and close the connection
-motor.stop_polling(channel)
-motor.disconnect()
-
-# you can access the default settings for the motor to pass to the set_*() methods
-print('\nThe default motor settings are:')
-pprint(motor.settings)
+# Disconnect from the motion controller
+stage.disconnect()

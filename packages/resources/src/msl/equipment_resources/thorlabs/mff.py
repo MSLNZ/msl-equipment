@@ -159,7 +159,9 @@ class MFF(Interface, manufacturer=r"Thorlabs", model=r"MFF"):
         """Get the status of the Filter Flipper.
 
         Returns:
-            The status.
+            The status. A 32-bit value that represents the current status of the motion controller.
+                Each of the 32 bits acts as a flag (0 or 1), simultaneously indicating 32 distinct
+                operating conditions of the motion controller.
         """
         return self._motion.status()
 

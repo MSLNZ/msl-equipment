@@ -1,6 +1,6 @@
 """Communicate with a KDC101 motion controller from Thorlabs."""
 
-# cSpell: ignore MGMSG BAYUSED PRMT PRMTZ
+# cSpell: ignore MGMSG PRMT PRMTZ
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -56,7 +56,7 @@ class KDC(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"KDC"):
             msg = (
                 "Cannot determine the actuator/stage that is attached to the motion controller. "
                 "Specify an 'actuator' or 'stage' key in the Connection properties with the value as "
-                "the model number of the actuator/stage that is attached to the motion controller."
+                "the model number of the actuator or stage that is attached to the motion controller."
             )
             raise MSLConnectionError(self, msg)
 

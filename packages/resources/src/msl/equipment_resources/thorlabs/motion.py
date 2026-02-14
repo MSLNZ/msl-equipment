@@ -121,7 +121,9 @@ class ThorlabsMotion(Interface):
         """
         if response.message_id == 0x0481:  # MGMSG_MOT_GET_STATUSUPDATE  # noqa: PLR2004
             if self._callback is not None:
-                _, position, encoder, status = unpack("<HiiI", response.data)
+                # Some 0x0481 messages have 14 bytes but other messages (from BSC20x controllers) have 28 bytes
+                # If 28 bytes, the last 14 bytes are reserved for future use so only consider the first 14 bytes
+                _, position, encoder, status = unpack("<HiiI", response.data[:14])
                 value: int = encoder if self._has_encoder else position
                 self._callback(self._position.to_mm_or_degree(value), value, status)
             return True

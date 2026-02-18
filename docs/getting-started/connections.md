@@ -17,24 +17,24 @@ Example XML file to specify connection information. Only the `<eid>` and `<addre
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <connections>
-    <connection>
-        <eid>MSLE.M.041</eid>
-        <address>TCPIP::192.168.1.10::hislip0</address>
-    </connection>
-    <connection>
-        <eid>MSLE.M.023</eid>
-        <address>ASRL/dev/ttyS1</address>
-        <backend>PyVISA</backend>
-        <manufacturer>Manufacturer</manufacturer>
-        <model>Model</model>
-        <serial>Serial</serial>
-        <properties>
-            <baud_rate>19200</baud_rate>
-            <read_termination>\r</read_termination>
-            <write_termination>\r</write_termination>
-            <timeout>10</timeout>
-        </properties>
-    </connection>
+  <connection>
+    <eid>MSLE.M.041</eid>
+    <address>TCPIP::192.168.1.10::hislip0</address>
+  </connection>
+  <connection>
+    <eid>MSLE.M.023</eid>
+    <address>ASRL/dev/ttyS1</address>
+    <backend>MSL</backend>
+    <manufacturer>Company Name</manufacturer>
+    <model>ABC</model>
+    <serial>123</serial>
+    <properties>
+      <baud_rate>19200</baud_rate>
+      <read_termination>\r</read_termination>
+      <write_termination>\r</write_termination>
+      <timeout>10</timeout>
+    </properties>
+  </connection>
 </connections>
 ```
 

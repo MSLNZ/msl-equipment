@@ -1,77 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema version="1.0.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <xsd:element name="connections">
-        <xsd:complexType>
-            <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-                <xsd:element name="connection">
-                    <xsd:complexType>
-                        <xsd:all>
-                            <xsd:element name="eid" type="xsd:string">
-                                <xsd:annotation>
-                                    <xsd:documentation>
-                                        The equipment ID from an equipment register.
-                                    </xsd:documentation>
-                                </xsd:annotation>
-                            </xsd:element>
-                            <xsd:element name="address" type="xsd:string">
-                                <xsd:annotation>
-                                    <xsd:documentation>
-                                        The VISA-style address to use for the connection.
-                                    </xsd:documentation>
-                                </xsd:annotation>
-                            </xsd:element>
-                            <xsd:element name="backend" minOccurs="0">
-                                <xsd:annotation>
-                                    <xsd:documentation>
-                                        The backend package to use to communicate with the equipment.
-                                        Default is MSL if not defined.
-                                    </xsd:documentation>
-                                </xsd:annotation>
-                                <xsd:simpleType>
-                                    <xsd:restriction base="xsd:string">
-                                        <xsd:enumeration value="MSL"/>
-                                        <xsd:enumeration value="PyVISA"/>
-                                        <xsd:enumeration value="NIDAQ"/>
-                                    </xsd:restriction>
-                                </xsd:simpleType>
-                            </xsd:element>
-                            <xsd:element name="manufacturer" type="xsd:string" minOccurs="0">
-                                <xsd:annotation>
-                                    <xsd:documentation>
-                                        The name of the manufacturer of the equipment.
-                                    </xsd:documentation>
-                                </xsd:annotation>
-                            </xsd:element>
-                            <xsd:element name="model" type="xsd:string" minOccurs="0">
-                                <xsd:annotation>
-                                    <xsd:documentation>
-                                        The model number of the equipment.
-                                    </xsd:documentation>
-                                </xsd:annotation>
-                            </xsd:element>
-                            <xsd:element name="serial" type="xsd:string" minOccurs="0">
-                                <xsd:annotation>
-                                    <xsd:documentation>
-                                        The serial number (or unique identifier) of the equipment.
-                                    </xsd:documentation>
-                                </xsd:annotation>
-                            </xsd:element>
-                            <xsd:element name="properties" minOccurs="0">
-                                <xsd:annotation>
-                                    <xsd:documentation>
-                                        Additional name-value pairs that are required to communicate with the equipment.
-                                    </xsd:documentation>
-                                </xsd:annotation>
-                                <xsd:complexType>
-                                    <xsd:sequence>
-                                        <xsd:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
-                                    </xsd:sequence>
-                                </xsd:complexType>
-                            </xsd:element>
-                        </xsd:all>
-                    </xsd:complexType>
-                </xsd:element>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
+  <xsd:element name="connections">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="connection">
+          <xsd:complexType>
+            <xsd:all>
+              <xsd:element name="eid" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    The equipment ID from an equipment register.
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element name="address" type="xsd:string">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    The VISA-style address to use for the connection.
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element name="backend" minOccurs="0">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    The backend package to use to communicate with the equipment.
+                    Default is MSL if not defined.
+                  </xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                  <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="MSL"/>
+                    <xsd:enumeration value="PyVISA"/>
+                    <xsd:enumeration value="NIDAQ"/>
+                  </xsd:restriction>
+                </xsd:simpleType>
+              </xsd:element>
+              <xsd:element name="manufacturer" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    The name of the manufacturer of the equipment.
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element name="model" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    The model number of the equipment.
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element name="serial" type="xsd:string" minOccurs="0">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    The serial number (or unique identifier) of the equipment.
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              <xsd:element name="properties" minOccurs="0">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Additional name-value pairs that are required to communicate
+                    with the equipment.
+                  </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:all>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
 </xsd:schema>

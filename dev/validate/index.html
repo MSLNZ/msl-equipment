@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
     
     
       
@@ -4764,25 +4764,24 @@
 <h1 id="validate">Validate<a class="headerlink" href="#validate" title="Permanent link">¤</a></h1>
 <p>You may use any XML validating tool to validate <a class="autorefs autorefs-internal" title="Equipment Registers" href="../getting-started/equipment-registers/#equipment-registers">equipment registers</a> and <a class="autorefs autorefs-internal" title="Connections" href="../getting-started/connections/#connections">connection</a> files against the schema; however, some of the values of the XML elements are not <em>completely</em> validated by the schema alone. For example, the value of an element in an equipment register could be the SHA-256 checksum of a file. The schema will validate that the SHA-256 checksum value has the correct string length and that the checksum only contains the allowed alphanumeric characters, but, the schema does not validate that the checksum value is correct for the associated file. For these additional validation steps, another tool must be used. The <code>msl-equipment-validate</code> command-line tool validates the XML files against the schema and also provides the additional validation steps.</p>
 <h2 id="validate-install">Install<a class="headerlink" href="#validate-install" title="Permanent link">¤</a></h2>
-<p><code>msl-equipment-validate</code> is available on <a href="https://pypi.org/project/msl-equipment-validate/">PyPI</a> and can be installed with a variety of Python package managers.</p>
+<!--
+`msl-equipment-validate` is available on [PyPI](https://pypi.org/project/msl-equipment-validate/) and can be installed with a variety of Python package managers.
+
+=== "pip"
+    <div class="highlight"><pre><span></span><code><span class="go">pip install msl-equipment-validate</span>
+</code></pre></div>
+
+=== "pipx"
+    <div class="highlight"><pre><span></span><code><span class="go">pipx install msl-equipment-validate</span>
+</code></pre></div>
+
+=== "uv"
+    <div class="highlight"><pre><span></span><code><span class="go">uv tool install msl-equipment-validate</span>
+</code></pre></div>
+-->
+
+<p><code>msl-equipment-validate</code> is currently only available for installation from source. It can be installed using a variety of package managers.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">pip</label><label for="__tabbed_1_2">pipx</label><label for="__tabbed_1_3">uv</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="go">pip install msl-equipment-validate</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="go">pipx install msl-equipment-validate</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="go">uv tool install msl-equipment-validate</span>
-</code></pre></div>
-</div>
-</div>
-</div>
-<p>The source code is hosted on GitHub and to install the development version you can run the following.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">pip</label><label for="__tabbed_2_2">pipx</label><label for="__tabbed_2_3">uv</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><span class="go"> pip install msl-equipment-validate@git+https://github.com/MSLNZ/msl-equipment#subdirectory=packages/validate</span>
@@ -4802,7 +4801,7 @@
 <p>If you used a package manager that does not automatically add the <code>msl-equipment-validate</code> executable to your PATH environment variable (without activating a <a href="https://docs.python.org/3/library/venv.html">virtual environment</a>), you may want to add the directory to where the <code>msl-equipment-validate</code> executable is located to your PATH. This will allow you to validate XML documents from any directory without having to first activate a virtual environment.</p>
 <h3 id="command-alias">Command alias<a class="headerlink" href="#command-alias" title="Permanent link">¤</a></h3>
 <p>You may also want to create a command alias, since the executable name <code>msl-equipment-validate</code> is rather long. The following assigns an alias <code>check</code> for the <code>msl-equipment-validate</code> executable, but you should pick an alias that you prefer.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Unix</label><label for="__tabbed_3_2">Windows</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Unix</label><label for="__tabbed_2_2">Windows</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>Add the following to your <code>.bashrc</code> (or <code>.zshrc</code>) file</p>
@@ -4810,19 +4809,27 @@
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<p>You can create an alias in your PowerShell profile script. To determine where this file is located, run the following command from your terminal, e.g., PowerShell or Windows Terminal (not Command Prompt)</p>
-<div class="highlight"><pre><span></span><code><span class="go">echo $PROFILE</span>
+<p>You can create a function in your PowerShell profile script. To determine where this file is located, run the following command from your terminal, e.g., PowerShell or Windows Terminal (not Command Prompt). The output of this command will display the path to your <em>profile</em> file.</p>
+<div class="highlight"><pre><span></span><code><span class="go">echo $profile</span>
 </code></pre></div>
-<p>Open (or create) the <code>Microsoft.PowerShell_profile.ps1</code> file that was displayed in the previous command in a text editor and add the following line</p>
-<div class="highlight"><pre><span></span><code><span class="nb">Set-Alias</span> <span class="n">check</span> <span class="n">C</span><span class="p">:\</span><span class="n">Update</span><span class="p">\</span><span class="n">to</span><span class="p">\</span><span class="n">be</span><span class="p">\</span><span class="n">the</span><span class="p">\</span><span class="n">path</span><span class="p">\</span><span class="n">to</span><span class="p">\</span><span class="n">msl-equipment-validate</span><span class="p">.</span><span class="n">exe</span>
+<p>If this file does not exist, you can create it by running.</p>
+<div class="highlight"><pre><span></span><code><span class="go">New-Item -Path $profile -ItemType File -Force</span>
 </code></pre></div>
-<p>save it then open a new terminal (or run <code>. $PROFILE</code> in the current terminal to reload the PowerShell profile).</p>
+<p>Open the file,</p>
+<div class="highlight"><pre><span></span><code><span class="go">notepad $profile</span>
+</code></pre></div>
+<p>add the following lines (you may also want to specify default arguments after the executable name),</p>
+<div class="highlight"><pre><span></span><code><span class="k">function</span> <span class="n">check</span> <span class="p">{</span>
+    <span class="n">C</span><span class="p">:\</span><span class="n">Update</span><span class="p">\</span><span class="n">to</span><span class="p">\</span><span class="n">be</span><span class="p">\</span><span class="n">the</span><span class="p">\</span><span class="n">path</span><span class="p">\</span><span class="n">to</span><span class="p">\</span><span class="n">msl-equipment-validate</span><span class="p">.</span><span class="n">exe</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>save it and then open a new terminal (or run <code>. $profile</code> in the current terminal to reload the PowerShell profile).</p>
 <div class="admonition warning">
 <p class="admonition-title">Caution</p>
 <p>If you get an error that the profile script <em>cannot be loaded because running scripts is disabled on this system</em>, run the following command in an elevated (admin) terminal</p>
 <div class="highlight"><pre><span></span><code><span class="go">Set-ExecutionPolicy -ExecutionPolicy RemoteSigned</span>
 </code></pre></div>
-<p>then restart the terminal.</p>
+<p>then open a new terminal.</p>
 </div>
 </div>
 </div>

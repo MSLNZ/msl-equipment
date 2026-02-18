@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
     
     
       
@@ -4862,104 +4862,105 @@
 <p>Schema definition for connection information. See <a class="autorefs autorefs-internal" title="Validate" href="../../validate/#validate">this section</a> for details on how to validate the contents of a connections XML file against the schema.</p>
 <div class="highlight"><pre><span></span><code><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
 <span class="nt">&lt;xsd:schema</span><span class="w"> </span><span class="na">version=</span><span class="s">&quot;1.0.0&quot;</span><span class="w"> </span><span class="na">xmlns:xsd=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema&quot;</span><span class="nt">&gt;</span>
-<span class="w">    </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;connections&quot;</span><span class="nt">&gt;</span>
-<span class="w">        </span><span class="nt">&lt;xsd:complexType&gt;</span>
-<span class="w">            </span><span class="nt">&lt;xsd:sequence</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">maxOccurs=</span><span class="s">&quot;unbounded&quot;</span><span class="nt">&gt;</span>
-<span class="w">                </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;connection&quot;</span><span class="nt">&gt;</span>
-<span class="w">                    </span><span class="nt">&lt;xsd:complexType&gt;</span>
-<span class="w">                        </span><span class="nt">&lt;xsd:all&gt;</span>
-<span class="w">                            </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;eid&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xsd:string&quot;</span><span class="nt">&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;xsd:annotation&gt;</span>
-<span class="w">                                    </span><span class="nt">&lt;xsd:documentation&gt;</span>
-<span class="w">                                        </span>The<span class="w"> </span>equipment<span class="w"> </span>ID<span class="w"> </span>from<span class="w"> </span>an<span class="w"> </span>equipment<span class="w"> </span>register.
-<span class="w">                                    </span><span class="nt">&lt;/xsd:documentation&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
-<span class="w">                            </span><span class="nt">&lt;/xsd:element&gt;</span>
-<span class="w">                            </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;address&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xsd:string&quot;</span><span class="nt">&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;xsd:annotation&gt;</span>
-<span class="w">                                    </span><span class="nt">&lt;xsd:documentation&gt;</span>
-<span class="w">                                        </span>The<span class="w"> </span>VISA-style<span class="w"> </span>address<span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span>for<span class="w"> </span>the<span class="w"> </span>connection.
-<span class="w">                                    </span><span class="nt">&lt;/xsd:documentation&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
-<span class="w">                            </span><span class="nt">&lt;/xsd:element&gt;</span>
-<span class="w">                            </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;backend&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;xsd:annotation&gt;</span>
-<span class="w">                                    </span><span class="nt">&lt;xsd:documentation&gt;</span>
-<span class="w">                                        </span>The<span class="w"> </span>backend<span class="w"> </span>package<span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span>to<span class="w"> </span>communicate<span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span>equipment.
-<span class="w">                                        </span>Default<span class="w"> </span>is<span class="w"> </span>MSL<span class="w"> </span>if<span class="w"> </span>not<span class="w"> </span>defined.
-<span class="w">                                    </span><span class="nt">&lt;/xsd:documentation&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;xsd:simpleType&gt;</span>
-<span class="w">                                    </span><span class="nt">&lt;xsd:restriction</span><span class="w"> </span><span class="na">base=</span><span class="s">&quot;xsd:string&quot;</span><span class="nt">&gt;</span>
-<span class="w">                                        </span><span class="nt">&lt;xsd:enumeration</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;MSL&quot;</span><span class="nt">/&gt;</span>
-<span class="w">                                        </span><span class="nt">&lt;xsd:enumeration</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;PyVISA&quot;</span><span class="nt">/&gt;</span>
-<span class="w">                                        </span><span class="nt">&lt;xsd:enumeration</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;NIDAQ&quot;</span><span class="nt">/&gt;</span>
-<span class="w">                                    </span><span class="nt">&lt;/xsd:restriction&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;/xsd:simpleType&gt;</span>
-<span class="w">                            </span><span class="nt">&lt;/xsd:element&gt;</span>
-<span class="w">                            </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;manufacturer&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xsd:string&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;xsd:annotation&gt;</span>
-<span class="w">                                    </span><span class="nt">&lt;xsd:documentation&gt;</span>
-<span class="w">                                        </span>The<span class="w"> </span>name<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>manufacturer<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>equipment.
-<span class="w">                                    </span><span class="nt">&lt;/xsd:documentation&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
-<span class="w">                            </span><span class="nt">&lt;/xsd:element&gt;</span>
-<span class="w">                            </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;model&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xsd:string&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;xsd:annotation&gt;</span>
-<span class="w">                                    </span><span class="nt">&lt;xsd:documentation&gt;</span>
-<span class="w">                                        </span>The<span class="w"> </span>model<span class="w"> </span>number<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>equipment.
-<span class="w">                                    </span><span class="nt">&lt;/xsd:documentation&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
-<span class="w">                            </span><span class="nt">&lt;/xsd:element&gt;</span>
-<span class="w">                            </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;serial&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xsd:string&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;xsd:annotation&gt;</span>
-<span class="w">                                    </span><span class="nt">&lt;xsd:documentation&gt;</span>
-<span class="w">                                        </span>The<span class="w"> </span>serial<span class="w"> </span>number<span class="w"> </span>(or<span class="w"> </span>unique<span class="w"> </span>identifier)<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>equipment.
-<span class="w">                                    </span><span class="nt">&lt;/xsd:documentation&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
-<span class="w">                            </span><span class="nt">&lt;/xsd:element&gt;</span>
-<span class="w">                            </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;properties&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;xsd:annotation&gt;</span>
-<span class="w">                                    </span><span class="nt">&lt;xsd:documentation&gt;</span>
-<span class="w">                                        </span>Additional<span class="w"> </span>name-value<span class="w"> </span>pairs<span class="w"> </span>that<span class="w"> </span>are<span class="w"> </span>required<span class="w"> </span>to<span class="w"> </span>communicate<span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span>equipment.
-<span class="w">                                    </span><span class="nt">&lt;/xsd:documentation&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;xsd:complexType&gt;</span>
-<span class="w">                                    </span><span class="nt">&lt;xsd:sequence&gt;</span>
-<span class="w">                                        </span><span class="nt">&lt;xsd:any</span><span class="w"> </span><span class="na">processContents=</span><span class="s">&quot;skip&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">maxOccurs=</span><span class="s">&quot;unbounded&quot;</span><span class="nt">/&gt;</span>
-<span class="w">                                    </span><span class="nt">&lt;/xsd:sequence&gt;</span>
-<span class="w">                                </span><span class="nt">&lt;/xsd:complexType&gt;</span>
-<span class="w">                            </span><span class="nt">&lt;/xsd:element&gt;</span>
-<span class="w">                        </span><span class="nt">&lt;/xsd:all&gt;</span>
-<span class="w">                    </span><span class="nt">&lt;/xsd:complexType&gt;</span>
-<span class="w">                </span><span class="nt">&lt;/xsd:element&gt;</span>
-<span class="w">            </span><span class="nt">&lt;/xsd:sequence&gt;</span>
-<span class="w">        </span><span class="nt">&lt;/xsd:complexType&gt;</span>
-<span class="w">    </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">  </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;connections&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;xsd:complexType&gt;</span>
+<span class="w">      </span><span class="nt">&lt;xsd:sequence</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">maxOccurs=</span><span class="s">&quot;unbounded&quot;</span><span class="nt">&gt;</span>
+<span class="w">        </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;connection&quot;</span><span class="nt">&gt;</span>
+<span class="w">          </span><span class="nt">&lt;xsd:complexType&gt;</span>
+<span class="w">            </span><span class="nt">&lt;xsd:all&gt;</span>
+<span class="w">              </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;eid&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xsd:string&quot;</span><span class="nt">&gt;</span>
+<span class="w">                </span><span class="nt">&lt;xsd:annotation&gt;</span>
+<span class="w">                  </span><span class="nt">&lt;xsd:documentation&gt;</span>
+<span class="w">                    </span>The<span class="w"> </span>equipment<span class="w"> </span>ID<span class="w"> </span>from<span class="w"> </span>an<span class="w"> </span>equipment<span class="w"> </span>register.
+<span class="w">                  </span><span class="nt">&lt;/xsd:documentation&gt;</span>
+<span class="w">                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
+<span class="w">              </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">              </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;address&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xsd:string&quot;</span><span class="nt">&gt;</span>
+<span class="w">                </span><span class="nt">&lt;xsd:annotation&gt;</span>
+<span class="w">                  </span><span class="nt">&lt;xsd:documentation&gt;</span>
+<span class="w">                    </span>The<span class="w"> </span>VISA-style<span class="w"> </span>address<span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span>for<span class="w"> </span>the<span class="w"> </span>connection.
+<span class="w">                  </span><span class="nt">&lt;/xsd:documentation&gt;</span>
+<span class="w">                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
+<span class="w">              </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">              </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;backend&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+<span class="w">                </span><span class="nt">&lt;xsd:annotation&gt;</span>
+<span class="w">                  </span><span class="nt">&lt;xsd:documentation&gt;</span>
+<span class="w">                    </span>The<span class="w"> </span>backend<span class="w"> </span>package<span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span>to<span class="w"> </span>communicate<span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span>equipment.
+<span class="w">                    </span>Default<span class="w"> </span>is<span class="w"> </span>MSL<span class="w"> </span>if<span class="w"> </span>not<span class="w"> </span>defined.
+<span class="w">                  </span><span class="nt">&lt;/xsd:documentation&gt;</span>
+<span class="w">                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
+<span class="w">                </span><span class="nt">&lt;xsd:simpleType&gt;</span>
+<span class="w">                  </span><span class="nt">&lt;xsd:restriction</span><span class="w"> </span><span class="na">base=</span><span class="s">&quot;xsd:string&quot;</span><span class="nt">&gt;</span>
+<span class="w">                    </span><span class="nt">&lt;xsd:enumeration</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;MSL&quot;</span><span class="nt">/&gt;</span>
+<span class="w">                    </span><span class="nt">&lt;xsd:enumeration</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;PyVISA&quot;</span><span class="nt">/&gt;</span>
+<span class="w">                    </span><span class="nt">&lt;xsd:enumeration</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;NIDAQ&quot;</span><span class="nt">/&gt;</span>
+<span class="w">                  </span><span class="nt">&lt;/xsd:restriction&gt;</span>
+<span class="w">                </span><span class="nt">&lt;/xsd:simpleType&gt;</span>
+<span class="w">              </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">              </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;manufacturer&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xsd:string&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+<span class="w">                </span><span class="nt">&lt;xsd:annotation&gt;</span>
+<span class="w">                  </span><span class="nt">&lt;xsd:documentation&gt;</span>
+<span class="w">                    </span>The<span class="w"> </span>name<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>manufacturer<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>equipment.
+<span class="w">                  </span><span class="nt">&lt;/xsd:documentation&gt;</span>
+<span class="w">                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
+<span class="w">              </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">              </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;model&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xsd:string&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+<span class="w">                </span><span class="nt">&lt;xsd:annotation&gt;</span>
+<span class="w">                  </span><span class="nt">&lt;xsd:documentation&gt;</span>
+<span class="w">                    </span>The<span class="w"> </span>model<span class="w"> </span>number<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>equipment.
+<span class="w">                  </span><span class="nt">&lt;/xsd:documentation&gt;</span>
+<span class="w">                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
+<span class="w">              </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">              </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;serial&quot;</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;xsd:string&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+<span class="w">                </span><span class="nt">&lt;xsd:annotation&gt;</span>
+<span class="w">                  </span><span class="nt">&lt;xsd:documentation&gt;</span>
+<span class="w">                    </span>The<span class="w"> </span>serial<span class="w"> </span>number<span class="w"> </span>(or<span class="w"> </span>unique<span class="w"> </span>identifier)<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>equipment.
+<span class="w">                  </span><span class="nt">&lt;/xsd:documentation&gt;</span>
+<span class="w">                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
+<span class="w">              </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">              </span><span class="nt">&lt;xsd:element</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;properties&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;</span>
+<span class="w">                </span><span class="nt">&lt;xsd:annotation&gt;</span>
+<span class="w">                  </span><span class="nt">&lt;xsd:documentation&gt;</span>
+<span class="w">                    </span>Additional<span class="w"> </span>name-value<span class="w"> </span>pairs<span class="w"> </span>that<span class="w"> </span>are<span class="w"> </span>required<span class="w"> </span>to<span class="w"> </span>communicate
+<span class="w">                    </span>with<span class="w"> </span>the<span class="w"> </span>equipment.
+<span class="w">                  </span><span class="nt">&lt;/xsd:documentation&gt;</span>
+<span class="w">                </span><span class="nt">&lt;/xsd:annotation&gt;</span>
+<span class="w">                </span><span class="nt">&lt;xsd:complexType&gt;</span>
+<span class="w">                  </span><span class="nt">&lt;xsd:sequence&gt;</span>
+<span class="w">                    </span><span class="nt">&lt;xsd:any</span><span class="w"> </span><span class="na">processContents=</span><span class="s">&quot;skip&quot;</span><span class="w"> </span><span class="na">minOccurs=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">maxOccurs=</span><span class="s">&quot;unbounded&quot;</span><span class="nt">/&gt;</span>
+<span class="w">                  </span><span class="nt">&lt;/xsd:sequence&gt;</span>
+<span class="w">                </span><span class="nt">&lt;/xsd:complexType&gt;</span>
+<span class="w">              </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">            </span><span class="nt">&lt;/xsd:all&gt;</span>
+<span class="w">          </span><span class="nt">&lt;/xsd:complexType&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/xsd:element&gt;</span>
+<span class="w">      </span><span class="nt">&lt;/xsd:sequence&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/xsd:complexType&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/xsd:element&gt;</span>
 <span class="nt">&lt;/xsd:schema&gt;</span>
 </code></pre></div>
 <h3 id="connections-xml-example">Example<a class="headerlink" href="#connections-xml-example" title="Permanent link">¤</a></h3>
 <p>Example XML file to specify connection information. Only the <code>&lt;eid&gt;</code> and <code>&lt;address&gt;</code> elements are required, all other elements are optional.</p>
 <div class="highlight"><pre><span></span><code><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
 <span class="nt">&lt;connections&gt;</span>
-<span class="w">    </span><span class="nt">&lt;connection&gt;</span>
-<span class="w">        </span><span class="nt">&lt;eid&gt;</span>MSLE.M.041<span class="nt">&lt;/eid&gt;</span>
-<span class="w">        </span><span class="nt">&lt;address&gt;</span>TCPIP::192.168.1.10::hislip0<span class="nt">&lt;/address&gt;</span>
-<span class="w">    </span><span class="nt">&lt;/connection&gt;</span>
-<span class="w">    </span><span class="nt">&lt;connection&gt;</span>
-<span class="w">        </span><span class="nt">&lt;eid&gt;</span>MSLE.M.023<span class="nt">&lt;/eid&gt;</span>
-<span class="w">        </span><span class="nt">&lt;address&gt;</span>ASRL/dev/ttyS1<span class="nt">&lt;/address&gt;</span>
-<span class="w">        </span><span class="nt">&lt;backend&gt;</span>PyVISA<span class="nt">&lt;/backend&gt;</span>
-<span class="w">        </span><span class="nt">&lt;manufacturer&gt;</span>Manufacturer<span class="nt">&lt;/manufacturer&gt;</span>
-<span class="w">        </span><span class="nt">&lt;model&gt;</span>Model<span class="nt">&lt;/model&gt;</span>
-<span class="w">        </span><span class="nt">&lt;serial&gt;</span>Serial<span class="nt">&lt;/serial&gt;</span>
-<span class="w">        </span><span class="nt">&lt;properties&gt;</span>
-<span class="w">            </span><span class="nt">&lt;baud_rate&gt;</span>19200<span class="nt">&lt;/baud_rate&gt;</span>
-<span class="w">            </span><span class="nt">&lt;read_termination&gt;</span>\r<span class="nt">&lt;/read_termination&gt;</span>
-<span class="w">            </span><span class="nt">&lt;write_termination&gt;</span>\r<span class="nt">&lt;/write_termination&gt;</span>
-<span class="w">            </span><span class="nt">&lt;timeout&gt;</span>10<span class="nt">&lt;/timeout&gt;</span>
-<span class="w">        </span><span class="nt">&lt;/properties&gt;</span>
-<span class="w">    </span><span class="nt">&lt;/connection&gt;</span>
+<span class="w">  </span><span class="nt">&lt;connection&gt;</span>
+<span class="w">    </span><span class="nt">&lt;eid&gt;</span>MSLE.M.041<span class="nt">&lt;/eid&gt;</span>
+<span class="w">    </span><span class="nt">&lt;address&gt;</span>TCPIP::192.168.1.10::hislip0<span class="nt">&lt;/address&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/connection&gt;</span>
+<span class="w">  </span><span class="nt">&lt;connection&gt;</span>
+<span class="w">    </span><span class="nt">&lt;eid&gt;</span>MSLE.M.023<span class="nt">&lt;/eid&gt;</span>
+<span class="w">    </span><span class="nt">&lt;address&gt;</span>ASRL/dev/ttyS1<span class="nt">&lt;/address&gt;</span>
+<span class="w">    </span><span class="nt">&lt;backend&gt;</span>MSL<span class="nt">&lt;/backend&gt;</span>
+<span class="w">    </span><span class="nt">&lt;manufacturer&gt;</span>Company<span class="w"> </span>Name<span class="nt">&lt;/manufacturer&gt;</span>
+<span class="w">    </span><span class="nt">&lt;model&gt;</span>ABC<span class="nt">&lt;/model&gt;</span>
+<span class="w">    </span><span class="nt">&lt;serial&gt;</span>123<span class="nt">&lt;/serial&gt;</span>
+<span class="w">    </span><span class="nt">&lt;properties&gt;</span>
+<span class="w">      </span><span class="nt">&lt;baud_rate&gt;</span>19200<span class="nt">&lt;/baud_rate&gt;</span>
+<span class="w">      </span><span class="nt">&lt;read_termination&gt;</span>\r<span class="nt">&lt;/read_termination&gt;</span>
+<span class="w">      </span><span class="nt">&lt;write_termination&gt;</span>\r<span class="nt">&lt;/write_termination&gt;</span>
+<span class="w">      </span><span class="nt">&lt;timeout&gt;</span>10<span class="nt">&lt;/timeout&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/properties&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/connection&gt;</span>
 <span class="nt">&lt;/connections&gt;</span>
 </code></pre></div>
 <h2 id="connections-interfaces">Interfaces<a class="headerlink" href="#connections-interfaces" title="Permanent link">¤</a></h2>

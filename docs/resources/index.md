@@ -12,11 +12,27 @@ Some of the resources might not work in your application because the resource mi
 
 ## Install
 
-Installing `msl-equipment-resources` will also install `msl-equipment`
+`msl-equipment-resources` is currently only available for installation from source. It can be installed using a variety of package managers.
 
-```console
-pip install msl-equipment-resources
-```
+=== "pip"
+    ```console
+    pip install msl-equipment-resources@git+https://github.com/MSLNZ/msl-equipment#subdirectory=packages/resources
+    ```
+
+=== "uv"
+    ```console
+    uv add msl-equipment-resources@git+https://github.com/MSLNZ/msl-equipment#subdirectory=packages/resources
+    ```
+
+=== "poetry"
+    ```console
+    poetry add msl-equipment-resources@git+https://github.com/MSLNZ/msl-equipment#subdirectory=packages/resources
+    ```
+
+=== "pdm"
+    ```console
+    pdm add msl-equipment-resources@git+https://github.com/MSLNZ/msl-equipment#subdirectory=packages/resources
+    ```
 
 ## Create a new resource
 

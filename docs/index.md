@@ -6,6 +6,7 @@ The purpose of `msl-equipment` is to manage information about equipment and to i
 
 The `msl-equipment` [repository](https://github.com/MSLNZ/msl-equipment/){:target="_blank"} is organised as a [workspace project](https://docs.astral.sh/uv/concepts/projects/workspaces/){:target="_blank"} that is split across multiple packages: `msl-equipment`, [msl-equipment-resources][resources], [msl-equipment-validate][validate], and [msl-equipment-webapp][web-application].
 
+<!--
 The core package is `msl-equipment` and it is available through the [Python Package Index](https://pypi.org/project/msl-equipment/){:target="_blank"}. It can be installed using a variety of package managers
 
 === "pip"
@@ -26,6 +27,29 @@ The core package is `msl-equipment` and it is available through the [Python Pack
 === "pdm"
     ```console
     pdm add msl-equipment
+    ```
+-->
+
+The core package is `msl-equipment` and it is currently only available for installation from source. It can be installed using a variety of package managers.
+
+=== "pip"
+    ```console
+    pip install msl-equipment@git+https://github.com/MSLNZ/msl-equipment.git
+    ```
+
+=== "uv"
+    ```console
+    uv add msl-equipment@git+https://github.com/MSLNZ/msl-equipment.git
+    ```
+
+=== "poetry"
+    ```console
+    poetry add msl-equipment@git+https://github.com/MSLNZ/msl-equipment.git
+    ```
+
+=== "pdm"
+    ```console
+    pdm add msl-equipment@git+https://github.com/MSLNZ/msl-equipment.git
     ```
 
 ### Dependencies

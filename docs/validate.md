@@ -4,6 +4,7 @@ You may use any XML validating tool to validate [equipment registers][] and [con
 
 ## Install {: #validate-install }
 
+<!--
 `msl-equipment-validate` is available on [PyPI](https://pypi.org/project/msl-equipment-validate/) and can be installed with a variety of Python package managers.
 
 === "pip"
@@ -20,8 +21,9 @@ You may use any XML validating tool to validate [equipment registers][] and [con
     ```console
     uv tool install msl-equipment-validate
     ```
+-->
 
-The source code is hosted on GitHub and to install the development version you can run the following.
+`msl-equipment-validate` is currently only available for installation from source. It can be installed using a variety of package managers.
 
 === "pip"
     ```console

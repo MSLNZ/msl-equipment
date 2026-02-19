@@ -138,7 +138,7 @@ def log_unchecked(
         msg = message
     else:
         # https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
-        uri = f"{uri_scheme}://file/{message}"
+        uri = f"{uri_scheme}://file/{Path(message).resolve()}"
         msg = f"\033]8;;{uri}\033\\{message}\033]8;;\033\\"
 
     (colour, reset) = ("", "") if no_colour else (YELLOW, RESET)

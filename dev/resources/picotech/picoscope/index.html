@@ -11138,7 +11138,7 @@ You must then poll the driver to see if it has finished collecting the requested
 
     <div class="doc doc-contents ">
 
-        <p>This function discovers whether a trigger, or pulse width triggering, is enabled.</p>
+        <p>This function checks whether the trigger or pulse-width qualifier is enabled.</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -11152,21 +11152,11 @@ You must then poll the driver to see if it has finished collecting the requested
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Whether the trigger is enabled and the pulse-width qualifier is enabled,</p>
-              </div>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>i.e., <code>(trigger, pwq)</code>.</p>
+                <p>Whether the trigger is enabled and the pulse-width qualifier is enabled, i.e., <code>(trigger, pwq)</code>.</p>
               </div>
             </td>
           </tr>
@@ -11190,13 +11180,11 @@ You must then poll the driver to see if it has finished collecting the requested
 <span class="normal">828</span>
 <span class="normal">829</span>
 <span class="normal">830</span>
-<span class="normal">831</span>
-<span class="normal">832</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_trigger_or_pulse_width_qualifier_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function discovers whether a trigger, or pulse width triggering, is enabled.</span>
+<span class="normal">831</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_trigger_or_pulse_width_qualifier_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function checks whether the trigger or pulse-width qualifier is enabled.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        Whether the trigger is enabled and the pulse-width qualifier is enabled,</span>
-<span class="sd">        i.e., `(trigger, pwq)`.</span>
+<span class="sd">        Whether the trigger is enabled and the pulse-width qualifier is enabled, i.e., `(trigger, pwq)`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">trigger_enabled</span> <span class="o">=</span> <span class="n">c_int16</span><span class="p">()</span>
     <span class="n">pulse_width_qualifier_enabled</span> <span class="o">=</span> <span class="n">c_int16</span><span class="p">()</span>
@@ -11254,15 +11242,15 @@ You must then poll the driver to see if it has finished collecting the requested
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">834</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">833</span>
+<span class="normal">834</span>
 <span class="normal">835</span>
 <span class="normal">836</span>
 <span class="normal">837</span>
 <span class="normal">838</span>
 <span class="normal">839</span>
 <span class="normal">840</span>
-<span class="normal">841</span>
-<span class="normal">842</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">maximum_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="normal">841</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">maximum_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the maximum ADC value.</span>
 
 <span class="sd">    Returns:</span>
@@ -11355,7 +11343,8 @@ of samples available to each channel is divided by 2.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">844</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">843</span>
+<span class="normal">844</span>
 <span class="normal">845</span>
 <span class="normal">846</span>
 <span class="normal">847</span>
@@ -11372,8 +11361,7 @@ of samples available to each channel is divided by 2.</p>
 <span class="normal">858</span>
 <span class="normal">859</span>
 <span class="normal">860</span>
-<span class="normal">861</span>
-<span class="normal">862</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">memory_segments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_segments</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="normal">861</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">memory_segments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_segments</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the number of memory segments that the scope will use.</span>
 
 <span class="sd">    When the scope is opened, the number of segments defaults to 1, meaning that each</span>
@@ -11439,15 +11427,15 @@ of samples available to each channel is divided by 2.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">864</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">863</span>
+<span class="normal">864</span>
 <span class="normal">865</span>
 <span class="normal">866</span>
 <span class="normal">867</span>
 <span class="normal">868</span>
 <span class="normal">869</span>
 <span class="normal">870</span>
-<span class="normal">871</span>
-<span class="normal">872</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">minimum_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="normal">871</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">minimum_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the minimum ADC value.</span>
 
 <span class="sd">    Returns:</span>
@@ -11598,7 +11586,8 @@ corresponding to the proposed configuration.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">874</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">873</span>
+<span class="normal">874</span>
 <span class="normal">875</span>
 <span class="normal">876</span>
 <span class="normal">877</span>
@@ -11621,8 +11610,7 @@ corresponding to the proposed configuration.</p>
 <span class="normal">894</span>
 <span class="normal">895</span>
 <span class="normal">896</span>
-<span class="normal">897</span>
-<span class="normal">898</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">nearest_sample_interval_stateless</span><span class="p">(</span>
+<span class="normal">897</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">nearest_sample_interval_stateless</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">flags</span><span class="p">:</span> <span class="n">ChannelFlags</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">resolution</span><span class="p">:</span> <span class="n">DeviceResolution</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">use_ets</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the nearest timebase index and sample interval for the proposed configuration.</span>
@@ -11695,7 +11683,8 @@ corresponding to the proposed configuration.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">900</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">899</span>
+<span class="normal">900</span>
 <span class="normal">901</span>
 <span class="normal">902</span>
 <span class="normal">903</span>
@@ -11704,8 +11693,7 @@ corresponding to the proposed configuration.</p>
 <span class="normal">906</span>
 <span class="normal">907</span>
 <span class="normal">908</span>
-<span class="normal">909</span>
-<span class="normal">910</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">no_of_streaming_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="normal">909</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">no_of_streaming_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets the number of samples available after data collection in streaming mode.</span>
 
 <span class="sd">    Call it after calling [stop][msl.equipment_resources.picotech.picoscope.PicoScope.stop].</span>
@@ -11745,7 +11733,8 @@ if pinging was not successful.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">912</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">911</span>
+<span class="normal">912</span>
 <span class="normal">913</span>
 <span class="normal">914</span>
 <span class="normal">915</span>
@@ -11753,8 +11742,7 @@ if pinging was not successful.</p>
 <span class="normal">917</span>
 <span class="normal">918</span>
 <span class="normal">919</span>
-<span class="normal">920</span>
-<span class="normal">921</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ping_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">920</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ping_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Ping the PicoScope.</span>
 
 <span class="sd">    This function can be used to check that the already opened device is still</span>
@@ -11812,7 +11800,8 @@ if pinging was not successful.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">923</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">922</span>
+<span class="normal">923</span>
 <span class="normal">924</span>
 <span class="normal">925</span>
 <span class="normal">926</span>
@@ -11821,8 +11810,7 @@ if pinging was not successful.</p>
 <span class="normal">929</span>
 <span class="normal">930</span>
 <span class="normal">931</span>
-<span class="normal">932</span>
-<span class="normal">933</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">query_output_edge_detect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">932</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">query_output_edge_detect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether output edge detection mode is currently enabled.</span>
 
 <span class="sd">    The default state is enabled.</span>
@@ -11961,7 +11949,8 @@ This does not include any auto trigger timeout</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">935</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">934</span>
+<span class="normal">935</span>
 <span class="normal">936</span>
 <span class="normal">937</span>
 <span class="normal">938</span>
@@ -12001,8 +11990,7 @@ This does not include any auto trigger timeout</p>
 <span class="normal">972</span>
 <span class="normal">973</span>
 <span class="normal">974</span>
-<span class="normal">975</span>
-<span class="normal">976</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_block</span><span class="p">(</span>
+<span class="normal">975</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_block</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">pre_trigger</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="n">callback</span><span class="p">:</span> <span class="n">PicoTechBlockReadyCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -12200,7 +12188,8 @@ to retrieve the data.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 978</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 977</span>
+<span class="normal"> 978</span>
 <span class="normal"> 979</span>
 <span class="normal"> 980</span>
 <span class="normal"> 981</span>
@@ -12269,8 +12258,7 @@ to retrieve the data.</p>
 <span class="normal">1044</span>
 <span class="normal">1045</span>
 <span class="normal">1046</span>
-<span class="normal">1047</span>
-<span class="normal">1048</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_streaming</span><span class="p">(</span>
+<span class="normal">1047</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_streaming</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">pre_trigger</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="n">factor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -12400,7 +12388,8 @@ Rounds to the nearest microsecond.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1050</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1049</span>
+<span class="normal">1050</span>
 <span class="normal">1051</span>
 <span class="normal">1052</span>
 <span class="normal">1053</span>
@@ -12410,8 +12399,7 @@ Rounds to the nearest microsecond.</p>
 <span class="normal">1057</span>
 <span class="normal">1058</span>
 <span class="normal">1059</span>
-<span class="normal">1060</span>
-<span class="normal">1061</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_auto_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1060</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_auto_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets up the auto-trigger function.</span>
 
 <span class="sd">    The auto-trigger function starts a capture if no trigger event occurs within a</span>
@@ -12577,7 +12565,8 @@ offsets depends on the input range selected for the channel, as obtained from
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1063</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1062</span>
+<span class="normal">1063</span>
 <span class="normal">1064</span>
 <span class="normal">1065</span>
 <span class="normal">1066</span>
@@ -12627,8 +12616,7 @@ offsets depends on the input range selected for the channel, as obtained from
 <span class="normal">1110</span>
 <span class="normal">1111</span>
 <span class="normal">1112</span>
-<span class="normal">1113</span>
-<span class="normal">1114</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_channel</span><span class="p">(</span>
+<span class="normal">1113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_channel</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">channel</span><span class="p">:</span> <span class="n">Channel</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -12792,7 +12780,8 @@ offsets depends on the input range selected for the channel, as obtained from
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1116</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1115</span>
+<span class="normal">1116</span>
 <span class="normal">1117</span>
 <span class="normal">1118</span>
 <span class="normal">1119</span>
@@ -12824,8 +12813,7 @@ offsets depends on the input range selected for the channel, as obtained from
 <span class="normal">1145</span>
 <span class="normal">1146</span>
 <span class="normal">1147</span>
-<span class="normal">1148</span>
-<span class="normal">1149</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_data_buffer</span><span class="p">(</span>
+<span class="normal">1148</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_data_buffer</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">channel</span><span class="p">:</span> <span class="n">Channel</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">buffer</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -12992,7 +12980,8 @@ values to this buffer by setting <code>buffer_max</code> to <code>None</code>.</
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1151</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1150</span>
+<span class="normal">1151</span>
 <span class="normal">1152</span>
 <span class="normal">1153</span>
 <span class="normal">1154</span>
@@ -13025,8 +13014,7 @@ values to this buffer by setting <code>buffer_max</code> to <code>None</code>.</
 <span class="normal">1181</span>
 <span class="normal">1182</span>
 <span class="normal">1183</span>
-<span class="normal">1184</span>
-<span class="normal">1185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_data_buffers</span><span class="p">(</span>
+<span class="normal">1184</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_data_buffers</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">channel</span><span class="p">:</span> <span class="n">Channel</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">buffer_max</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -13119,15 +13107,15 @@ with or without the <code>"DR_"</code> prefix) or value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1187</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1186</span>
+<span class="normal">1187</span>
 <span class="normal">1188</span>
 <span class="normal">1189</span>
 <span class="normal">1190</span>
 <span class="normal">1191</span>
 <span class="normal">1192</span>
 <span class="normal">1193</span>
-<span class="normal">1194</span>
-<span class="normal">1195</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_device_resolution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bit_depth</span><span class="p">:</span> <span class="n">DeviceResolution</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1194</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_device_resolution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bit_depth</span><span class="p">:</span> <span class="n">DeviceResolution</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the device resolution.</span>
 
 <span class="sd">    Args:</span>
@@ -13227,15 +13215,15 @@ with or without the <code>"DR_"</code> prefix) or value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1197</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1196</span>
+<span class="normal">1197</span>
 <span class="normal">1198</span>
 <span class="normal">1199</span>
 <span class="normal">1200</span>
 <span class="normal">1201</span>
 <span class="normal">1202</span>
 <span class="normal">1203</span>
-<span class="normal">1204</span>
-<span class="normal">1205</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_digital_port</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="n">Channel</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">logic_level</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1204</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_digital_port</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="n">Channel</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">logic_level</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Enable the digital port and set the logic level.</span>
 
 <span class="sd">    Args:</span>
@@ -13356,7 +13344,8 @@ with or without the <code>"DR_"</code> prefix) or value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1207</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1206</span>
+<span class="normal">1207</span>
 <span class="normal">1208</span>
 <span class="normal">1209</span>
 <span class="normal">1210</span>
@@ -13371,8 +13360,7 @@ with or without the <code>"DR_"</code> prefix) or value.</p>
 <span class="normal">1219</span>
 <span class="normal">1220</span>
 <span class="normal">1221</span>
-<span class="normal">1222</span>
-<span class="normal">1223</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_ets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">ETSMode</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cycles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">interleave</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="normal">1222</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_ets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">ETSMode</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cycles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">interleave</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Enable or disable ETS (equivalent-time sampling) and set the ETS parameters.</span>
 
 <span class="sd">    Args:</span>
@@ -13448,7 +13436,8 @@ time, in femtoseconds, at which the samples were captured.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1225</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1224</span>
+<span class="normal">1225</span>
 <span class="normal">1226</span>
 <span class="normal">1227</span>
 <span class="normal">1228</span>
@@ -13458,8 +13447,7 @@ time, in femtoseconds, at which the samples were captured.</p>
 <span class="normal">1232</span>
 <span class="normal">1233</span>
 <span class="normal">1234</span>
-<span class="normal">1235</span>
-<span class="normal">1236</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_ets_time_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1235</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_ets_time_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the ETS time buffers.</span>
 
 <span class="sd">    This function tells the driver where to find your applications ETS time buffers. These</span>
@@ -13528,7 +13516,8 @@ waveform. Once a value has been set, the value remains constant unless changed.<
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1238</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1237</span>
+<span class="normal">1238</span>
 <span class="normal">1239</span>
 <span class="normal">1240</span>
 <span class="normal">1241</span>
@@ -13537,8 +13526,7 @@ waveform. Once a value has been set, the value remains constant unless changed.<
 <span class="normal">1244</span>
 <span class="normal">1245</span>
 <span class="normal">1246</span>
-<span class="normal">1247</span>
-<span class="normal">1248</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_no_of_captures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1247</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_no_of_captures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the number of captures to be collected in one run of rapid block mode.</span>
 
 <span class="sd">    If you do not call this function before a run, the driver will capture only one</span>
@@ -13605,15 +13593,15 @@ waveform. Once a value has been set, the value remains constant unless changed.<
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1250</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1249</span>
+<span class="normal">1250</span>
 <span class="normal">1251</span>
 <span class="normal">1252</span>
 <span class="normal">1253</span>
 <span class="normal">1254</span>
 <span class="normal">1255</span>
 <span class="normal">1256</span>
-<span class="normal">1257</span>
-<span class="normal">1258</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_output_edge_detect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1257</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_output_edge_detect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Enables or disables output edge detection mode for the logic trigger.</span>
 
 <span class="sd">    Output edge detection is enabled by default and should be left enabled for normal operation.</span>
@@ -13684,7 +13672,8 @@ is not included in the array will be set to <code>DONT_CARE</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1260</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1259</span>
+<span class="normal">1260</span>
 <span class="normal">1261</span>
 <span class="normal">1262</span>
 <span class="normal">1263</span>
@@ -13693,8 +13682,7 @@ is not included in the array will be set to <code>DONT_CARE</code>.</p>
 <span class="normal">1266</span>
 <span class="normal">1267</span>
 <span class="normal">1268</span>
-<span class="normal">1269</span>
-<span class="normal">1270</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_pulse_width_digital_port_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">DigitalChannelDirections</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1269</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_pulse_width_digital_port_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">DigitalChannelDirections</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the individual digital channels&#39; pulse-width trigger directions.</span>
 
 <span class="sd">    Args:</span>
@@ -13785,7 +13773,8 @@ and start a new one. Can be an enum member name (case insensitive) or value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1272</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1271</span>
+<span class="normal">1272</span>
 <span class="normal">1273</span>
 <span class="normal">1274</span>
 <span class="normal">1275</span>
@@ -13799,8 +13788,7 @@ and start a new one. Can be an enum member name (case insensitive) or value.</p>
 <span class="normal">1283</span>
 <span class="normal">1284</span>
 <span class="normal">1285</span>
-<span class="normal">1286</span>
-<span class="normal">1287</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_pulse_width_qualifier_conditions</span><span class="p">(</span>
+<span class="normal">1286</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_pulse_width_qualifier_conditions</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">conditions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Condition</span><span class="p">],</span> <span class="n">info</span><span class="p">:</span> <span class="n">ConditionsInfo</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the condition to the pulse-width qualifier.</span>
@@ -13873,14 +13861,14 @@ and start a new one. Can be an enum member name (case insensitive) or value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1289</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1288</span>
+<span class="normal">1289</span>
 <span class="normal">1290</span>
 <span class="normal">1291</span>
 <span class="normal">1292</span>
 <span class="normal">1293</span>
 <span class="normal">1294</span>
-<span class="normal">1295</span>
-<span class="normal">1296</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_pulse_width_qualifier_directions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Direction</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1295</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_pulse_width_qualifier_directions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Direction</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the directions for all the trigger sources used with the pulse-width qualifier.</span>
 
 <span class="sd">    Args:</span>
@@ -13981,7 +13969,8 @@ used only when the type is <code>IN_RANGE</code> or <code>OUT_OF_RANGE</code>.</
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1298</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1297</span>
+<span class="normal">1298</span>
 <span class="normal">1299</span>
 <span class="normal">1300</span>
 <span class="normal">1301</span>
@@ -13996,8 +13985,7 @@ used only when the type is <code>IN_RANGE</code> or <code>OUT_OF_RANGE</code>.</
 <span class="normal">1310</span>
 <span class="normal">1311</span>
 <span class="normal">1312</span>
-<span class="normal">1313</span>
-<span class="normal">1314</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_pulse_width_qualifier_properties</span><span class="p">(</span>
+<span class="normal">1313</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_pulse_width_qualifier_properties</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">lower</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">upper</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -14375,7 +14363,8 @@ Can be an enum member name (case insensitive) or value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1316</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1315</span>
+<span class="normal">1316</span>
 <span class="normal">1317</span>
 <span class="normal">1318</span>
 <span class="normal">1319</span>
@@ -14493,8 +14482,7 @@ Can be an enum member name (case insensitive) or value.</p>
 <span class="normal">1431</span>
 <span class="normal">1432</span>
 <span class="normal">1433</span>
-<span class="normal">1434</span>
-<span class="normal">1435</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_sig_gen_arbitrary</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
+<span class="normal">1434</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_sig_gen_arbitrary</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">waveform</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
     <span class="n">repetition_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -14908,7 +14896,8 @@ Can be an enum member name (case insensitive) or value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1437</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1436</span>
+<span class="normal">1437</span>
 <span class="normal">1438</span>
 <span class="normal">1439</span>
 <span class="normal">1440</span>
@@ -14974,8 +14963,7 @@ Can be an enum member name (case insensitive) or value.</p>
 <span class="normal">1500</span>
 <span class="normal">1501</span>
 <span class="normal">1502</span>
-<span class="normal">1503</span>
-<span class="normal">1504</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_sig_gen_builtin_v2</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
+<span class="normal">1503</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_sig_gen_builtin_v2</span><span class="p">(</span>  <span class="c1"># noqa: PLR0913</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">offset_voltage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="n">peak_to_peak</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
@@ -15157,7 +15145,8 @@ that will be acquired.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1506</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1505</span>
+<span class="normal">1506</span>
 <span class="normal">1507</span>
 <span class="normal">1508</span>
 <span class="normal">1509</span>
@@ -15186,8 +15175,7 @@ that will be acquired.</p>
 <span class="normal">1532</span>
 <span class="normal">1533</span>
 <span class="normal">1534</span>
-<span class="normal">1535</span>
-<span class="normal">1536</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_timebase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">segment</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="normal">1535</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_timebase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">segment</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the timebase information.</span>
 
 <span class="sd">    This method does not consider ETS (equivalent-time sampling). If using ETS, consider using</span>
@@ -15368,7 +15356,8 @@ Only accurate to the nearest millisecond.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1538</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1537</span>
+<span class="normal">1538</span>
 <span class="normal">1539</span>
 <span class="normal">1540</span>
 <span class="normal">1541</span>
@@ -15423,8 +15412,7 @@ Only accurate to the nearest millisecond.</p>
 <span class="normal">1590</span>
 <span class="normal">1591</span>
 <span class="normal">1592</span>
-<span class="normal">1593</span>
-<span class="normal">1594</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_trigger</span><span class="p">(</span>
+<span class="normal">1593</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_trigger</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">channel</span><span class="p">:</span> <span class="n">Channel</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -15561,7 +15549,8 @@ them using logical OR. Can be an enum member name (case insensitive) or value.</
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1596</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1595</span>
+<span class="normal">1596</span>
 <span class="normal">1597</span>
 <span class="normal">1598</span>
 <span class="normal">1599</span>
@@ -15574,8 +15563,7 @@ them using logical OR. Can be an enum member name (case insensitive) or value.</
 <span class="normal">1606</span>
 <span class="normal">1607</span>
 <span class="normal">1608</span>
-<span class="normal">1609</span>
-<span class="normal">1610</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_channel_conditions_v2</span><span class="p">(</span>
+<span class="normal">1609</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_channel_conditions_v2</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">conditions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Condition</span><span class="p">],</span> <span class="n">info</span><span class="p">:</span> <span class="n">ConditionsInfo</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets up trigger conditions on the scope&#39;s inputs.</span>
@@ -15648,15 +15636,15 @@ the threshold to activate the trigger.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1612</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1611</span>
+<span class="normal">1612</span>
 <span class="normal">1613</span>
 <span class="normal">1614</span>
 <span class="normal">1615</span>
 <span class="normal">1616</span>
 <span class="normal">1617</span>
 <span class="normal">1618</span>
-<span class="normal">1619</span>
-<span class="normal">1620</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_channel_directions_v2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Direction</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1619</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_channel_directions_v2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Direction</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the direction of the trigger for each channel.</span>
 
 <span class="sd">    Args:</span>
@@ -15726,7 +15714,8 @@ triggering is switched off.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1622</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1621</span>
+<span class="normal">1622</span>
 <span class="normal">1623</span>
 <span class="normal">1624</span>
 <span class="normal">1625</span>
@@ -15734,8 +15723,7 @@ triggering is switched off.</p>
 <span class="normal">1627</span>
 <span class="normal">1628</span>
 <span class="normal">1629</span>
-<span class="normal">1630</span>
-<span class="normal">1631</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_channel_properties_v2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">properties</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TriggerChannelPropertiesV2</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1630</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_channel_properties_v2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">properties</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TriggerChannelPropertiesV2</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Enable or disable triggering and set its parameters.</span>
 
 <span class="sd">    Args:</span>
@@ -15800,7 +15788,8 @@ triggering is switched off.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1633</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1632</span>
+<span class="normal">1633</span>
 <span class="normal">1634</span>
 <span class="normal">1635</span>
 <span class="normal">1636</span>
@@ -15818,8 +15807,7 @@ triggering is switched off.</p>
 <span class="normal">1648</span>
 <span class="normal">1649</span>
 <span class="normal">1650</span>
-<span class="normal">1651</span>
-<span class="normal">1652</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_delay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delay</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1651</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_delay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delay</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the post-trigger delay, which causes capture to start a defined time after the trigger event.</span>
 
 <span class="sd">    Args:</span>
@@ -15902,7 +15890,8 @@ in the sequence are bitwise-OR'ed together to produce the final trigger signal.<
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1654</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1653</span>
+<span class="normal">1654</span>
 <span class="normal">1655</span>
 <span class="normal">1656</span>
 <span class="normal">1657</span>
@@ -15912,8 +15901,7 @@ in the sequence are bitwise-OR'ed together to produce the final trigger signal.<
 <span class="normal">1661</span>
 <span class="normal">1662</span>
 <span class="normal">1663</span>
-<span class="normal">1664</span>
-<span class="normal">1665</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_digital_port_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">DigitalChannelDirections</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1664</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_digital_port_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directions</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">DigitalChannelDirections</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the individual digital channel&#39;s trigger directions.</span>
 
 <span class="sd">    Args:</span>
@@ -15974,7 +15962,8 @@ for setting up the arbitrary waveform generator (i.e., <code>(min_value, max_val
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1667</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1666</span>
+<span class="normal">1667</span>
 <span class="normal">1668</span>
 <span class="normal">1669</span>
 <span class="normal">1670</span>
@@ -15993,8 +15982,7 @@ for setting up the arbitrary waveform generator (i.e., <code>(min_value, max_val
 <span class="normal">1683</span>
 <span class="normal">1684</span>
 <span class="normal">1685</span>
-<span class="normal">1686</span>
-<span class="normal">1687</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sig_gen_arbitrary_min_max_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="normal">1686</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sig_gen_arbitrary_min_max_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the range of possible sample values and waveform buffer sizes.</span>
 
 <span class="sd">    Returns:</span>
@@ -16131,7 +16119,8 @@ Can be an enum member name (case insensitive) or value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1689</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1688</span>
+<span class="normal">1689</span>
 <span class="normal">1690</span>
 <span class="normal">1691</span>
 <span class="normal">1692</span>
@@ -16150,8 +16139,7 @@ Can be an enum member name (case insensitive) or value.</p>
 <span class="normal">1705</span>
 <span class="normal">1706</span>
 <span class="normal">1707</span>
-<span class="normal">1708</span>
-<span class="normal">1709</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sig_gen_frequency_to_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repetition_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">index_mode</span><span class="p">:</span> <span class="n">IndexMode</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="normal">1708</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sig_gen_frequency_to_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repetition_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">index_mode</span><span class="p">:</span> <span class="n">IndexMode</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a frequency to a phase count for use with the arbitrary waveform generator (AWG).</span>
 
 <span class="sd">    Args:</span>
@@ -16227,13 +16215,13 @@ Can be an enum member name (case insensitive) or value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1711</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1710</span>
+<span class="normal">1711</span>
 <span class="normal">1712</span>
 <span class="normal">1713</span>
 <span class="normal">1714</span>
 <span class="normal">1715</span>
-<span class="normal">1716</span>
-<span class="normal">1717</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sig_gen_software_control</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1716</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sig_gen_software_control</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Send a software trigger event, or starts and stops gating.</span>
 
 <span class="sd">    Args:</span>
@@ -16266,13 +16254,13 @@ oscilloscope may not contain valid data.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1719</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1718</span>
+<span class="normal">1719</span>
 <span class="normal">1720</span>
 <span class="normal">1721</span>
 <span class="normal">1722</span>
 <span class="normal">1723</span>
-<span class="normal">1724</span>
-<span class="normal">1725</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1724</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Stop the oscilloscope from sampling data.</span>
 
 <span class="sd">    If this function is called before a trigger event occurs, then the</span>
@@ -16341,7 +16329,8 @@ samples have been collected.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1727</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1726</span>
+<span class="normal">1727</span>
 <span class="normal">1728</span>
 <span class="normal">1729</span>
 <span class="normal">1730</span>
@@ -16351,8 +16340,7 @@ samples have been collected.</p>
 <span class="normal">1734</span>
 <span class="normal">1735</span>
 <span class="normal">1736</span>
-<span class="normal">1737</span>
-<span class="normal">1738</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">trigger_within_pre_trigger_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">TriggerWithinPreTrigger</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1737</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">trigger_within_pre_trigger_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">TriggerWithinPreTrigger</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Allow a trigger anywhere within the pre-trigger samples.</span>
 
 <span class="sd">    This function selects a mode in which the scope can be triggered anywhere within the pre-trigger</span>
@@ -16388,10 +16376,10 @@ samples have been collected.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1740</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1739</span>
+<span class="normal">1740</span>
 <span class="normal">1741</span>
-<span class="normal">1742</span>
-<span class="normal">1743</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">wait_until_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1742</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">wait_until_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Blocking function to wait for the scope to finish acquiring samples.&quot;&quot;&quot;</span>
     <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_ready</span><span class="p">():</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
@@ -17125,7 +17113,8 @@ is called.</p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1803</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1802</span>
+<span class="normal">1803</span>
 <span class="normal">1804</span>
 <span class="normal">1805</span>
 <span class="normal">1806</span>
@@ -17172,8 +17161,7 @@ is called.</p>
 <span class="normal">1847</span>
 <span class="normal">1848</span>
 <span class="normal">1849</span>
-<span class="normal">1850</span>
-<span class="normal">1851</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">1850</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">bandwidth</span><span class="p">:</span> <span class="n">BandwidthLimiter</span><span class="p">,</span>
@@ -17570,7 +17558,8 @@ is called.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1875</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1874</span>
+<span class="normal">1875</span>
 <span class="normal">1876</span>
 <span class="normal">1877</span>
 <span class="normal">1878</span>
@@ -17580,8 +17569,7 @@ is called.</p>
 <span class="normal">1882</span>
 <span class="normal">1883</span>
 <span class="normal">1884</span>
-<span class="normal">1885</span>
-<span class="normal">1886</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">allocate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_captures</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1885</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">allocate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_captures</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Maybe allocate memory to save the samples (if the array needs to be resized).</span>
 
 <span class="sd">    Args:</span>
@@ -17689,7 +17677,8 @@ is called.</p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2387</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2386</span>
+<span class="normal">2387</span>
 <span class="normal">2388</span>
 <span class="normal">2389</span>
 <span class="normal">2390</span>
@@ -17697,8 +17686,7 @@ is called.</p>
 <span class="normal">2392</span>
 <span class="normal">2393</span>
 <span class="normal">2394</span>
-<span class="normal">2395</span>
-<span class="normal">2396</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Channel</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="n">TriggerState</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;DONT_CARE&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">2395</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Channel</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="n">TriggerState</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;DONT_CARE&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger condition.</span>
 
 <span class="sd">    Args:</span>
@@ -18089,7 +18077,8 @@ Can be an enum member name (case insensitive) or value.</p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2493</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2492</span>
+<span class="normal">2493</span>
 <span class="normal">2494</span>
 <span class="normal">2495</span>
 <span class="normal">2496</span>
@@ -18102,8 +18091,7 @@ Can be an enum member name (case insensitive) or value.</p>
 <span class="normal">2503</span>
 <span class="normal">2504</span>
 <span class="normal">2505</span>
-<span class="normal">2506</span>
-<span class="normal">2507</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">2506</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">direction</span><span class="p">:</span> <span class="n">DigitalDirection</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
@@ -18371,7 +18359,8 @@ Can be an enum member name (case insensitive) or value.</p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2411</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2410</span>
+<span class="normal">2411</span>
 <span class="normal">2412</span>
 <span class="normal">2413</span>
 <span class="normal">2414</span>
@@ -18388,8 +18377,7 @@ Can be an enum member name (case insensitive) or value.</p>
 <span class="normal">2425</span>
 <span class="normal">2426</span>
 <span class="normal">2427</span>
-<span class="normal">2428</span>
-<span class="normal">2429</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">2428</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Channel</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">direction</span><span class="p">:</span> <span class="n">ThresholdDirection</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;rising&quot;</span><span class="p">,</span>
@@ -19944,7 +19932,8 @@ the lower threshold before it will fire. It is scaled in 16-bit counts.</p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2446</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2445</span>
+<span class="normal">2446</span>
 <span class="normal">2447</span>
 <span class="normal">2448</span>
 <span class="normal">2449</span>
@@ -19976,8 +19965,7 @@ the lower threshold before it will fire. It is scaled in 16-bit counts.</p>
 <span class="normal">2475</span>
 <span class="normal">2476</span>
 <span class="normal">2477</span>
-<span class="normal">2478</span>
-<span class="normal">2479</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">2478</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">threshold_upper</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">threshold_upper_hysteresis</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -20524,13 +20512,13 @@ for an example usage.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1756</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1755</span>
+<span class="normal">1756</span>
 <span class="normal">1757</span>
 <span class="normal">1758</span>
 <span class="normal">1759</span>
 <span class="normal">1760</span>
-<span class="normal">1761</span>
-<span class="normal">1762</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">block_ready</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">PicoTechBlockReadyCallback</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CFunctionType</span><span class="p">:</span>
+<span class="normal">1761</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">block_ready</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">PicoTechBlockReadyCallback</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CFunctionType</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Use as a decorator for a callback function when the data block is ready.</span>
 
 <span class="sd">    See [ps5000a_block_ready_callback.py](https://github.com/MSLNZ/msl-equipment/blob/main/packages/resources/examples/picotech/ps5000a_block_ready_callback.py)</span>
@@ -20568,13 +20556,13 @@ for an example usage.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1765</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1764</span>
+<span class="normal">1765</span>
 <span class="normal">1766</span>
 <span class="normal">1767</span>
 <span class="normal">1768</span>
 <span class="normal">1769</span>
-<span class="normal">1770</span>
-<span class="normal">1771</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">data_ready</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">PicoTechDataReadyCallback</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CFunctionType</span><span class="p">:</span>
+<span class="normal">1770</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">data_ready</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">PicoTechDataReadyCallback</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CFunctionType</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Use as a decorator for a callback function when the data is ready.</span>
 
 <span class="sd">    See [ps5000a_data_ready_callback.py](https://github.com/MSLNZ/msl-equipment/blob/main/packages/resources/examples/picotech/ps5000a_data_ready_callback.py)</span>
@@ -20612,13 +20600,13 @@ for an example usage.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1774</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1773</span>
+<span class="normal">1774</span>
 <span class="normal">1775</span>
 <span class="normal">1776</span>
 <span class="normal">1777</span>
 <span class="normal">1778</span>
-<span class="normal">1779</span>
-<span class="normal">1780</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">streaming_ready</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">PicoTechStreamingReadyCallback</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CFunctionType</span><span class="p">:</span>
+<span class="normal">1779</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">streaming_ready</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">PicoTechStreamingReadyCallback</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CFunctionType</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Use as a decorator for a callback function when the data stream is ready.</span>
 
 <span class="sd">    See [ps5000a_streaming_ready_callback.py](https://github.com/MSLNZ/msl-equipment/blob/main/packages/resources/examples/picotech/ps5000a_streaming_ready_callback.py)</span>

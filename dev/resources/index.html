@@ -4555,10 +4555,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#create-a-new-resource" class="md-nav__link">
+  <a href="#create-a-resource" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Create a new resource
+        Create a resource
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contribute-a-resource" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contribute a resource
       
     </span>
   </a>
@@ -4629,8 +4640,85 @@
 </div>
 </div>
 </div>
-<h2 id="create-a-new-resource">Create a new resource<a class="headerlink" href="#create-a-new-resource" title="Permanent link">¤</a></h2>
-<p>TODO...</p>
+<h2 id="create-a-resource">Create a resource<a class="headerlink" href="#create-a-resource" title="Permanent link">¤</a></h2>
+<p>To create a new resource you must create a class that inherits from <a class="autorefs autorefs-internal" title="            Interface" href="../api/interfaces/#msl.equipment.schema.Interface">Interface</a> and specify the manufacturer and model number (product series) that the resource can be used for. This inheritance may also be acquired by sub-classing from one of the <a class="autorefs autorefs-internal" title="Interfaces" href="../getting-started/connections/#connections-interfaces">interface</a> protocols (see also <a class="autorefs autorefs-internal" href="#multiple-interfaces">Multiple interfaces</a>).</p>
+<p>The following example shows how to create a new resource for equipment that use the RS-232 protocol for communication. The values specified for the <code>manufacturer</code> and <code>model</code> support a <a href="https://regexr.com/" target="_blank">regular-expression pattern</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># my_resource.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Equipment</span><span class="p">,</span> <span class="n">Serial</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyResource</span><span class="p">(</span><span class="n">Serial</span><span class="p">,</span> <span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Company Name&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;ABC&quot;</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;My custom resource.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            equipment: An `Equipment` instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">do_something</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;The command to write to the equipment&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>When <code>my_resource</code> is imported, the <code>MyResource</code> class is automatically registered as a resource that will be used when <a class="autorefs autorefs-internal" title="            connect" href="../schema/equipment/#msl.equipment.schema.Equipment.connect">connect</a>ing to the equipment if the values of <a class="autorefs autorefs-internal" title="            manufacturer
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="../schema/equipment/#msl.equipment.schema.Equipment.manufacturer">manufacturer</a> and <a class="autorefs autorefs-internal" title="            model
+
+
+  
+      class-attribute
+      instance-attribute
+  " href="../schema/equipment/#msl.equipment.schema.Equipment.model">model</a> match the specified <a href="https://regexr.com/" target="_blank">regular-expression pattern</a>.</p>
+<h2 id="contribute-a-resource">Contribute a resource<a class="headerlink" href="#contribute-a-resource" title="Permanent link">¤</a></h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>As an ISO/IEC 17025 accredited laboratory, the resources in the <a href="https://github.com/MSLNZ/msl-equipment/tree/main/packages/resources" target="_blank">repository</a> are part of the Quality Management System of MSL. As such, contributions from people outside of MSL may be considered but the equipment must be available to MSL staff for the code to be checked and validated.</p>
+</div>
+<p>When adding a new resource to the <a href="https://github.com/MSLNZ/msl-equipment/tree/main/packages/resources" target="_blank">repository</a> the following steps should be performed.</p>
+<p><a href="https://docs.astral.sh/uv/" target="_blank">uv</a> is used as the package and project manager for <code>msl-equipment</code> development, it is recommended to install it. <a href="https://mypy.readthedocs.io/en/stable/index.html" target="_blank">mypy</a> and <a href="https://docs.basedpyright.com/latest/" target="_blank">basedpyright</a> are used as type checkers, <a href="https://docs.astral.sh/ruff/" target="_blank">ruff</a> is used as the formatter/linter and the documentation is built with <a href="https://www.mkdocs.org/" target="_blank">MkDocs</a> using the <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank">Material</a> theme and the <a href="https://mkdocstrings.github.io/python/" target="_blank">mkdocstrings-python</a> plugin. Installation of these packages is automatically managed for you by <a href="https://docs.astral.sh/uv/" target="_blank">uv</a>. <a href="https://cspell.org/" target="_blank">CSpell</a> provides spell checking and can be installed by running <code>npm install -g cspell@latest</code> (which requires <a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm" target="_blank">Node.js and npm</a> to be installed).</p>
+<ol>
+<li>
+<p>Create a <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo" target="_blank">fork</a> of the <a href="https://github.com/MSLNZ/msl-equipment" target="_blank">msl-equipment repository</a>.</p>
+</li>
+<li>
+<p>Resources are located in the <code>packages/resources/src/msl/equipment_resources</code> directory. A sub-directory is the name of the <em>manufacturer</em> of the equipment. If the <em>manufacturer</em> directory does not exists for the new resource, create it (also create an <code>__init__.py</code> file in the <em>manufacturer</em> directory).</p>
+</li>
+<li>
+<p>Create a new Python file within the <em>manufacturer</em> directory with a filename that represents the <em>model</em> number or product series of the equipment that the resource is used for. Follow the example in <a class="autorefs autorefs-internal" href="#create-a-resource">Create a resource</a> to implement the resource class in this file.</p>
+</li>
+<li>
+<p>Import your resource class in the <code>packages/resources/src/msl/equipment_resources/MANUFACTURER/__init__.py</code> and the <code>packages/resources/src/msl/equipment_resources/__init__.py</code> modules and alphabetically add the class to the <code>__all__</code> variable.</p>
+</li>
+<li>
+<p>Add at least one example on how to use the resource to the <code>packages/resources/examples</code> directory. Create a new <em>manufacturer</em> sub-directory if it does not already exist.</p>
+</li>
+<li>
+<p>From the <code>packages/resources</code> directory, lint <code>uv run ruff check</code>, format <code>uv run ruff format</code> and type check <code>uv run basedpyright</code>, <code>uv run mypy .</code> the code. These checks are also performed once you do Step 12. Type checking with <a href="https://mypy.readthedocs.io/en/stable/index.html" target="_blank">mypy</a> requires the <code>MYPYPATH=src</code> environment variable to be defined to fix the <em>Source file found twice under different module names</em> issue.</p>
+</li>
+<li>
+<p>If you are able to create a test for the new resource, that does not depend on the equipment being attached to a computer, add a test to the <code>packages/resources/tests</code> directory. Run <code>uv run pytest</code> to verify the tests pass.</p>
+</li>
+<li>
+<p>To add the resource to the documentation, create a new Markdown file in the <code>docs/resources</code> directory. The format follows the <code>docs/resources/MANUFACTURER/MODEL.md</code> structure. Also, add the new resource, alphabetically, to the <em>nav:</em> &rarr; <em>Resources:</em> &rarr; <em>MANUFACTURER:</em> section in the <code>mkdocs.yml</code> file. Follow what is done for the other resources.</p>
+</li>
+<li>
+<p>Update <code>CHANGELOG.md</code> stating that you added this new resource.</p>
+</li>
+<li>
+<p>From the root directory of the repository, build the documentation <code>uv run mkdocs serve</code> and check that your resource renders correctly.</p>
+</li>
+<li>
+<p>Run the spell checker <code>cspell .</code>. Since this step requires <a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm" target="_blank">Node.js and npm</a> to be installed, you may skip it. This check is also performed once you do Step 12.</p>
+</li>
+<li>
+<p>If running the tests pass and linting, formatting, type/spell checking and building the documentation do not show errors/warnings then create a <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork" target="_blank">pull request</a>.</p>
+</li>
+</ol>
 <h2 id="multiple-interfaces">Multiple interfaces<a class="headerlink" href="#multiple-interfaces" title="Permanent link">¤</a></h2>
 <p>If the equipment supports multiple interfaces for message-based protocols (e.g., <a class="autorefs autorefs-internal" title="            Socket
 (MessageBased)" href="../api/interfaces/socket/#msl.equipment.interfaces.socket.Socket">Socket</a>, <a class="autorefs autorefs-internal" title="            Serial

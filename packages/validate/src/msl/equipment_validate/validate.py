@@ -461,6 +461,14 @@ def validate_equation(equation: Element, *, ns_map: dict[str, str], info: Info) 
         if info.exit_first:
             return False
 
+    # Since .split() is used above for the value and uncertainty variables, if variables="" then .split()
+    # will return an empty list, []. When using xpath to get the range variables, if variables="" then
+    # the returned list contains an empty string, ['']. We need to check for repeated range elements
+    # with variables="" (i.e. ['', '']), which we just did above, but we now need to remove an empty
+    # string from the range list to match what .split() does
+    range_names = [name for name in range_names if name]
+    range_name_set = set(range_names)
+
     if len(names) != len(range_names) or names_set.difference(range_name_set):
         msg = (
             f"The equation variables and the range variables are not the same for {info.debug_name!r}\n"

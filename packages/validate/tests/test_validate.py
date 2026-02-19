@@ -1231,6 +1231,52 @@ def test_equation_no_variables(info: Info) -> None:
     assert validate_equation(etree.XML(equation), info=info, ns_map={"reg": "eqn"})
 
 
+def test_equation_no_variables_with_range(info: Info) -> None:
+    equation = """
+        <equation xmlns="eqn">
+          <value variables="">1</value>
+          <uncertainty variables="">0.1</uncertainty>
+          <unit>m</unit>
+          <ranges>
+            <range variable="">
+              <minimum>15</minimum>
+              <maximum>25</maximum>
+            </range>
+          </ranges>
+        </equation>
+    """
+    assert validate_equation(etree.XML(equation), info=info, ns_map={"reg": "eqn"})
+
+
+def test_equation_no_variables_with_range_repeated(info: Info, caplog: pytest.LogCaptureFixture) -> None:
+    equation = """
+        <equation xmlns="eqn">
+          <value variables="">1</value>
+          <uncertainty variables="">0.1</uncertainty>
+          <unit>m</unit>
+          <ranges>
+            <range variable="">
+              <minimum>15</minimum>
+              <maximum>25</maximum>
+            </range>
+            <range variable="">
+              <minimum>0</minimum>
+              <maximum>5</maximum>
+            </range>
+          </ranges>
+        </equation>
+    """
+    r = caplog.records
+
+    assert not validate_equation(etree.XML(equation), info=info, ns_map={"reg": "eqn"})
+
+    assert r[0].message == (
+        "ERROR register.xml:6:0\n  The names of the range variables are not unique for 'Name': ['', '']"
+    )
+
+    assert len(r) == 1
+
+
 @pytest.mark.parametrize("exit_first", [False, True])
 def test_recursive_with_serialised(
     tmp_path: Path,

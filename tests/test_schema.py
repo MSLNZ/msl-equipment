@@ -852,6 +852,39 @@ def test_equation() -> None:
         _ = e.value(0.1)
 
 
+def test_equation_no_variables_with_range() -> None:
+    text = (
+        b"<equation>"
+        b'<value variables="">0.25</value>'
+        b'<uncertainty variables="">0.002</uncertainty>'
+        b"<unit>m</unit>"
+        b"<ranges>"
+        b'<range variable=""><minimum>15.0</minimum><maximum>25.0</maximum></range>'
+        b"</ranges>"
+        b"</equation>"
+    )
+    e = Equation.from_xml(XML(text))
+    assert e.value.equation == "0.25"
+    assert e.value.variables == ()
+    assert e.value.ranges == {"": Range(15, 25)}
+    assert e.value() == 0.25
+    assert e.value(15) == 0.25
+    assert np.array_equal(e.value([15, 16, 17]), [0.25, 0.25, 0.25])
+    assert e.uncertainty.equation == "0.002"
+    assert e.uncertainty.variables == ()
+    assert e.uncertainty.ranges == {"": Range(15, 25)}
+    assert e.uncertainty() == 0.002
+    assert e.uncertainty(15) == 0.002
+    assert np.array_equal(e.uncertainty([15, 16, 17]), [0.002, 0.002, 0.002])
+    assert e.unit == "m"
+    assert np.isinf(e.degree_freedom)
+    assert e.comment == ""
+    assert tostring(e.to_xml()) == text
+
+    with pytest.raises(ValueError, match=r"not within the range"):
+        _ = e.value(10)
+
+
 def test_serialised_gtc_xml() -> None:
     ar = pr.Archive()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
     ar.add(x=ureal(1, 0.1))  # pyright: ignore[reportUnknownMemberType]

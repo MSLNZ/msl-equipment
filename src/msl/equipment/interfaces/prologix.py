@@ -884,8 +884,6 @@ def find_prologix(  # noqa: C901, PLR0915
             " ".join(["arp", *arp_option, host_str]), stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
         )
         stdout, stderr = await shell.communicate()
-        if stderr:  # arp command not available?
-            return
 
         addresses: set[str] = set()
         addresses.add(host_str)
@@ -907,6 +905,10 @@ def find_prologix(  # noqa: C901, PLR0915
             mac = mac.replace(":", "-")
             description += f" (MAC Address: {mac})"
             addresses.add(f"prologix-{mac}")
+        elif stderr:  # arp command not available?
+            logger.debug(
+                "OSError: %s [Cannot determine MAC address of Prologix ENET-GPIB Controller]", stderr.decode().rstrip()
+            )
 
         devices[host] = PrologixDevice(
             description=description,

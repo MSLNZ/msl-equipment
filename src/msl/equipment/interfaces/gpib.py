@@ -268,6 +268,11 @@ def find_listeners(*, include_sad: bool = False) -> list[str]:  # noqa: C901
         logger.debug("%s: %s", e.__class__.__name__, msg)
         return devices
 
+    # suppress stderr messages from the gpib library (in particular linux-gpib)
+    new_stderr = open(os.devnull, "wb")  # noqa: PTH123, SIM115
+    old_stderr = os.dup(2)
+    _ = os.dup2(new_stderr.fileno(), 2)
+
     assert GPIB.gpib_library is not None  # noqa: S101
     lib = GPIB.gpib_library.lib
     asked = c_int()
@@ -300,6 +305,10 @@ def find_listeners(*, include_sad: bool = False) -> list[str]:  # noqa: C901
 
         # close handle
         lib.ibonl(handle, 0)
+
+    _ = os.dup2(old_stderr, 2)
+    os.close(old_stderr)
+    new_stderr.close()
 
     return devices
 

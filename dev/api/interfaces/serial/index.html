@@ -2248,6 +2248,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#serial-prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#msl.equipment.interfaces.serial.Serial" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4742,6 +4753,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#serial-prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#msl.equipment.interfaces.serial.Serial" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4911,6 +4933,20 @@
 
 
 <h1 id="serial">Serial<a class="headerlink" href="#serial" title="Permanent link">¤</a></h1>
+<h2 id="serial-prerequisites">Prerequisites<a class="headerlink" href="#serial-prerequisites" title="Permanent link">¤</a></h2>
+<p>If you are communicating with a Serial device on Windows, you already have permission (from the operating system) to access the serial port (or USB-to-Serial adaptor). If you receive an <em>Access is denied</em> error message when connecting to a serial port, that indicates the serial port is already open in another application.</p>
+<p>If you are using Linux or macOS and receive a <em>Device or resource busy</em> error message when connecting to a serial port, that indicates the serial port is already open in another application. A <em>Permission denied</em> error can be solved by either running your application as the root user or by adding the current user to the same <em>group</em> that the serial port belongs to.</p>
+<p>To determine the <em>group</em> that a serial port (e.g., <code>/dev/ttyUSB0</code>) belongs to, run the following.</p>
+<div class="highlight"><pre><span></span><code><span class="go">ls -l /dev/ttyUSB0</span>
+</code></pre></div>
+<p>The output will be similar to</p>
+<div class="highlight"><pre><span></span><code><span class="go">crw-rw---- 1 root dialout 4, 64 Feb 20 17:23 /dev/ttyUSB0</span>
+</code></pre></div>
+<p>where it is shown that this serial port belongs to the <code>dialout</code> <em>group</em>.</p>
+<p>Add the current user to the appropriate <em>group</em> (e.g., <code>dialout</code> for the above case)</p>
+<div class="highlight"><pre><span></span><code><span class="go">sudo usermod -a -G dialout $USER</span>
+</code></pre></div>
+<p>and then log out and in again (or restart the computer if you still encounter permission issues after re-logging in).</p>
 
 
 <div class="doc doc-object doc-class">

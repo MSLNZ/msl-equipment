@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import os
 import platform
+import subprocess
 import sys
 from argparse import SUPPRESS, ArgumentParser, RawTextHelpFormatter
 from importlib.metadata import version
@@ -111,7 +112,7 @@ def maybe_enable_ansi() -> None:
     # The following fixes ANSI escape sequences if Windows PowerShell or Command Prompt
     # is still being used outside of Windows Terminal (prefer to not have a dependency on colorama)
     # https://bugs.python.org/issue30075
-    _ = os.system("")  # noqa: S605, S607
+    _ = subprocess.call("", shell=True)  # noqa: S602, S607
 
 
 def log_warn(
@@ -137,7 +138,7 @@ def log_unchecked(
         msg = message
     else:
         # https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
-        uri = f"{uri_scheme}://file/{message}"
+        uri = f"{uri_scheme}://file/{Path(message).resolve()}"
         msg = f"\033]8;;{uri}\033\\{message}\033]8;;\033\\"
 
     (colour, reset) = ("", "") if no_colour else (YELLOW, RESET)

@@ -4,6 +4,7 @@ You may use any XML validating tool to validate [equipment registers][] and [con
 
 ## Install {: #validate-install }
 
+<!--
 `msl-equipment-validate` is available on [PyPI](https://pypi.org/project/msl-equipment-validate/) and can be installed with a variety of Python package managers.
 
 === "pip"
@@ -20,8 +21,9 @@ You may use any XML validating tool to validate [equipment registers][] and [con
     ```console
     uv tool install msl-equipment-validate
     ```
+-->
 
-The source code is hosted on GitHub and to install the development version you can run the following.
+`msl-equipment-validate` is currently only available for installation from source. It can be installed using a variety of package managers.
 
 === "pip"
     ```console
@@ -54,19 +56,33 @@ You may also want to create a command alias, since the executable name `msl-equi
     ```
 
 === "Windows"
-    You can create an alias in your PowerShell profile script. To determine where this file is located, run the following command from your terminal, e.g., PowerShell or Windows Terminal (not Command Prompt)
+    You can create a function in your PowerShell profile script. To determine where this file is located, run the following command from your terminal, e.g., PowerShell or Windows Terminal (not Command Prompt). The output of this command will display the path to your _profile_ file.
 
     ```console
-    echo $PROFILE
+    echo $profile
     ```
 
-    Open (or create) the `Microsoft.PowerShell_profile.ps1` file that was displayed in the previous command in a text editor and add the following line
+    If this file does not exist, you can create it by running.
+
+    ```console
+    New-Item -Path $profile -ItemType File -Force
+    ```
+
+    Open the file,
+
+    ```console
+    notepad $profile
+    ```
+
+    add the following lines (you may also want to specify default arguments after the executable name),
 
     ```powershell
-    Set-Alias check C:\Update\to\be\the\path\to\msl-equipment-validate.exe
+    function check {
+        C:\Update\to\be\the\path\to\msl-equipment-validate.exe
+    }
     ```
 
-    save it then open a new terminal (or run `. $PROFILE` in the current terminal to reload the PowerShell profile).
+    save it and then open a new terminal (or run `. $profile` in the current terminal to reload the PowerShell profile).
 
     !!! warning "Caution"
         If you get an error that the profile script *cannot be loaded because running scripts is disabled on this system*, run the following command in an elevated (admin) terminal
@@ -75,7 +91,7 @@ You may also want to create a command alias, since the executable name `msl-equi
         Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
         ```
 
-        then restart the terminal.
+        then open a new terminal.
 
 ## Usage {: #validate-usage }
 

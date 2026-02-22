@@ -134,7 +134,11 @@ class MXSeries(
         _ = self.write("*CLS")
 
     def decrement_current(self, channel: int) -> None:
-        """Decrement the current limit by step size of the output channel.
+        """Decrement the current by step size for the output channel.
+
+        !!! note "See also"
+            [get_current_step_size][msl.equipment_resources.aim_tti.mx_series.MXSeries.get_current_step_size],
+            [set_current_step_size][msl.equipment_resources.aim_tti.mx_series.MXSeries.set_current_step_size]
 
         Args:
             channel: The output channel. The first output channel is 1 (not 0).
@@ -142,7 +146,11 @@ class MXSeries(
         self._write_and_check(f"DECI{channel}")
 
     def decrement_voltage(self, channel: int, *, verify: bool = True) -> None:
-        """Decrement the voltage by step size of the output channel.
+        """Decrement the voltage by step size for the output channel.
+
+        !!! note "See also"
+            [get_voltage_step_size][msl.equipment_resources.aim_tti.mx_series.MXSeries.get_voltage_step_size],
+            [set_voltage_step_size][msl.equipment_resources.aim_tti.mx_series.MXSeries.set_voltage_step_size]
 
         Args:
             channel: The output channel. The first output channel is 1 (not 0).
@@ -185,13 +193,13 @@ class MXSeries(
         return float(reply[2:])
 
     def get_current_step_size(self, channel: int) -> float:
-        """Get the current limit step size of the output channel.
+        """Get the current step size of the output channel.
 
         Args:
             channel: The output channel. The first output channel is 1 (not 0).
 
         Returns:
-            The current limit step size (in Amps).
+            The current step size (in Amps).
         """
         reply = self._query_and_check(f"DELTAI{channel}?")
         return float(reply[7:])
@@ -204,7 +212,7 @@ class MXSeries(
 
         Returns:
             If the trip point is enabled then returns the trip point value in Amps.
-            Otherwise, returns `None` if the over-current protection is disabled.
+                Otherwise, returns `None` if the over-current protection is disabled.
         """
         reply = self._query_and_check(f"OCP{channel}?")
         if reply.endswith("OFF"):
@@ -219,7 +227,7 @@ class MXSeries(
 
         Returns:
             If the trip point is enabled then returns the trip point value in Volts.
-            Otherwise, returns `None` if the over-voltage protection is disabled.
+                Otherwise, returns `None` if the over-voltage protection is disabled.
         """
         reply = self._query_and_check(f"OVP{channel}?")
         if reply.endswith("OFF"):
@@ -245,8 +253,7 @@ class MXSeries(
             channel: The output channel. The first output channel is 1 (not 0).
 
         Returns:
-            The output voltage range index. See the manual for more details.
-            For example, 2 &#8594; 35V/3A.
+            The output voltage range index, e.g., 2 &#8594; 35V/3A. See the manual for more details.
         """
         return int(self._query_and_check(f"VRANGE{channel}?"))
 
@@ -283,7 +290,11 @@ class MXSeries(
         return int(self._query_and_check("CONFIG?"))
 
     def increment_current(self, channel: int) -> None:
-        """Increment the current limit by the step size of the output channel.
+        """Increment the current by the step size for the output channel.
+
+        !!! note "See also"
+            [get_current_step_size][msl.equipment_resources.aim_tti.mx_series.MXSeries.get_current_step_size],
+            [set_current_step_size][msl.equipment_resources.aim_tti.mx_series.MXSeries.set_current_step_size]
 
         Args:
             channel: The output channel. The first output channel is 1 (not 0).
@@ -291,7 +302,11 @@ class MXSeries(
         self._write_and_check(f"INCI{channel}")
 
     def increment_voltage(self, channel: int, *, verify: bool = True) -> None:
-        """Increment the voltage by the step size of the output channel.
+        """Increment the voltage by the step size for the output channel.
+
+        !!! note "See also"
+            [get_voltage_step_size][msl.equipment_resources.aim_tti.mx_series.MXSeries.get_voltage_step_size],
+            [set_voltage_step_size][msl.equipment_resources.aim_tti.mx_series.MXSeries.set_voltage_step_size]
 
         Args:
             channel: The output channel. The first output channel is 1 (not 0).
@@ -374,11 +389,11 @@ class MXSeries(
         self._write_and_check(f"DAMPING{channel} {mode}")
 
     def set_current_step_size(self, channel: int, size: float) -> None:
-        """Set the current limit step size of the output channel.
+        """Set the current step size of the output channel.
 
         Args:
             channel: The output channel. The first output channel is 1 (not 0).
-            size: The current limit step size, in Amps.
+            size: The current step size, in Amps.
         """
         self._write_and_check(f"DELTAI{channel} {size}")
 
@@ -549,7 +564,7 @@ class MXSeries(
 
                 * `{1: False}` &#8594; channel 1 does not turn on
                 * `{2: 100}` &#8594; channel 2 has a 100-ms delay
-                * `{1: 100, 3: True}` &#8594;` channel 1 has a 100-ms delay and channel 3 turns on immediately
+                * `{1: 100, 3: True}` &#8594; channel 1 has a 100-ms delay and channel 3 turns on immediately
                 * `{1: 100, 2: 200, 3: 300}` &#8594; channel 1 has a 100-ms delay, channel 2 has a 200-ms delay
                     and channel 3 has a 300-ms delay
         """

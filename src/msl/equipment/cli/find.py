@@ -100,7 +100,7 @@ class VXI11Thread(Thread):
         super().__init__(target=function)
 
 
-def find_equipment(  # noqa: C901
+def find_equipment(  # noqa: C901, PLR0912
     *,
     ip: list[str] | None = None,
     timeout: float = 2,
@@ -143,13 +143,22 @@ def find_equipment(  # noqa: C901
 
     logger.debug("Searching for Serial ports")
     for info in sorted(comports()):
+        if info.hwid == "n/a":
+            continue
+
         num_found += 1
-        addresses: list[str] = []
-        if info.device.startswith("COM"):
-            addresses.append(info.device)
-        elif info.device.startswith("/dev"):
-            addresses.append(f"ASRL{info.device}")
-        devices[info.device] = Device(type=DeviceType.ASRL, addresses=addresses, description=info.description)
+        addresses = [info.device] if info.device.startswith("COM") else [f"ASRL{info.device}"]
+
+        description = info.manufacturer or ""
+        if info.product:
+            description += f" {info.product}"
+        if info.serial_number:
+            description += f" {info.serial_number}"
+        if not description:
+            description = info.description
+        description += f" - {info.hwid}"
+
+        devices[info.device] = Device(type=DeviceType.ASRL, addresses=addresses, description=description)
 
     if gpib_library:
         os.environ["GPIB_LIBRARY"] = gpib_library

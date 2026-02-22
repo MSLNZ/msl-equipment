@@ -815,11 +815,10 @@ class PicoScope(SDK, manufacturer=r"Pico\s*Tech", model=r"[23456]\d{3}[A-Z]"):
         return bool(ready.value)
 
     def is_trigger_or_pulse_width_qualifier_enabled(self) -> tuple[bool, bool]:
-        """This function discovers whether a trigger, or pulse width triggering, is enabled.
+        """This function checks whether the trigger or pulse-width qualifier is enabled.
 
         Returns:
-            Whether the trigger is enabled and the pulse-width qualifier is enabled,
-            i.e., `(trigger, pwq)`.
+            Whether the trigger is enabled and the pulse-width qualifier is enabled, i.e., `(trigger, pwq)`.
         """
         trigger_enabled = c_int16()
         pulse_width_qualifier_enabled = c_int16()

@@ -56,6 +56,7 @@ def test_connect() -> None:
     assert c._load_library.gateway is None  # pyright: ignore[reportPrivateUsage] # noqa: SLF001
     assert c.path.startswith(str(path))
     assert c.sdk.add(1, 1) == 2
+    c.disconnect()
 
 
 def test_direct_invalid_address() -> None:

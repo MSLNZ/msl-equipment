@@ -421,7 +421,7 @@ def test_reconnect_tcp(tcp_server: type[TCPServer], caplog: pytest.LogCaptureFix
     messages = caplog.messages
     assert len(messages) == 5
     if is_windows:
-        assert messages[0].rstrip() == f"Socket<|| at {address}> Timeout occurred after 0.1 second(s)."
+        assert messages[0].rstrip() == f"Socket<|| at {address}> Timeout occurred after 0.1 second(s)"
     else:
         assert messages[0].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")
     assert messages[1].startswith(f"Socket<|| at {address}> Cannot connect to {host}:{port}")

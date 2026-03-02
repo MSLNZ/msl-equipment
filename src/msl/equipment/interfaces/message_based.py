@@ -433,17 +433,24 @@ class MSLConnectionError(OSError):
         logger.debug("%r %s", interface, message)
         super().__init__(f"{interface!r}\n{message}")
 
+        self.message: str = message
+        """[str][] &mdash; The error message."""
+
 
 class MSLTimeoutError(TimeoutError):
     """A timeout exception for I/O operations."""
 
-    def __init__(self, interface: MessageBased, message: str = "") -> None:
+    def __init__(self, interface: MessageBased, message: str | None = None) -> None:
         """A timeout exception for I/O operations.
 
         Args:
             interface: A message-based interface subclass.
             message: An optional message to append to the generic timeout error message.
         """
-        msg = f"Timeout occurred after {interface.timeout} second(s). {message}"
+        suffix = f". {message}" if message else ""
+        msg = f"Timeout occurred after {interface.timeout} second(s){suffix}"
         logger.debug("%r %s", interface, msg)
         super().__init__(f"{interface!r}\n{msg}")
+
+        self.message: str = msg
+        """[str][] &mdash; The error message."""

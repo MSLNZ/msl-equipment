@@ -36,6 +36,7 @@ class K10CR(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"K10CR"):
 
         self._is_slot_system: bool = False
         self._has_encoder: bool = False  # EncoderFitted false
+        self._start_update_msgs_while_waiting: bool = True
 
         # 200 steps per revolution
         # 2048 micro-steps per full step

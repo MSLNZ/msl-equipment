@@ -20,8 +20,8 @@ connection = Connection(
     model="KST101",
     serial="26000908",
     timeout=5,
-    # actuator="ZFS13B",  # If not using Thorlabs software on the computer, the actuator/stage must be specified
     # init=True,  # If you want to initialise the motor to default parameters
+    # actuator="ZFS13B",  # If not using Thorlabs software on the computer, the actuator/stage must be specified
 )
 
 

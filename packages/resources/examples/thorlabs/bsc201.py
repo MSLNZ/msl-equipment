@@ -20,6 +20,7 @@ connection = Connection(
     model="BSC201",
     serial="40876748",
     timeout=5,
+    init=True,  # If you want to initialise the motor to default parameters (only valid for BSC201 with rotation stage)
     # stage="NR360S/M",  # If not using Thorlabs software on the computer, the actuator/stage must be specified
 )
 

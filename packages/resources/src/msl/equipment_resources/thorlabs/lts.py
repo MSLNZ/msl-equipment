@@ -33,6 +33,7 @@ class LTS(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"LTS"):
 
         self._is_slot_system: bool = False
         self._has_encoder: bool = False  # EncoderFitted false
+        self._start_update_msgs_while_waiting: bool = True
 
         micro_steps = 2048.0 if self.hardware_info().hardware_version >= 3 else 128.0  # noqa: PLR2004
         steps = 200.0 * micro_steps  # 200 steps per revolution

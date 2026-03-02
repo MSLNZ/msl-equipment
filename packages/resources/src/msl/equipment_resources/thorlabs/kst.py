@@ -62,6 +62,7 @@ class KST(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"KST"):
 
         self._is_slot_system: bool = False
         self._has_encoder: bool = False  # EncoderFitted false
+        self._start_update_msgs_while_waiting: bool = True
 
         if "ZFS" in device:
             #  6mm: ZFS06

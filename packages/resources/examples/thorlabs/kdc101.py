@@ -20,8 +20,8 @@ connection = Connection(
     model="KDC101",
     serial="27251265",
     timeout=5,
-    # actuator="Z825B",  # If not using Thorlabs software on the computer, the actuator/stage must be specified
     # init=True,  # If you want to initialise the motor to default parameters
+    # actuator="Z825B",  # If not using Thorlabs software on the computer, the actuator/stage must be specified
 )
 
 

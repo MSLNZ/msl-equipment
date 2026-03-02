@@ -7,7 +7,15 @@ from typing import TYPE_CHECKING
 
 from msl.equipment.interfaces.message_based import MSLConnectionError
 
-from .motion import Convert, ThorlabsMotion, find_device
+from .motion import (
+    Convert,
+    ThorlabsHomeParameters,
+    ThorlabsLimitParameters,
+    ThorlabsMotion,
+    ThorlabsMoveParameters,
+    ThorlabsPowerParameters,
+    find_device,
+)
 
 if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
@@ -16,7 +24,7 @@ if TYPE_CHECKING:
 class BSC(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"BSC2"):
     """Communicate with a BSC20x Series motion controller from Thorlabs."""
 
-    def __init__(self, equipment: Equipment) -> None:  # noqa: C901, PLR0912
+    def __init__(self, equipment: Equipment) -> None:  # noqa: C901, PLR0912, PLR0915
         """Communicate with a BSC20x Series motion controller from Thorlabs.
 
         The NR360S or HDR50 rotation stage, DRV series of actuators and the NRT
@@ -54,16 +62,9 @@ class BSC(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"BSC2"):
             )
             raise MSLConnectionError(self, msg)
 
-        if self._init_defaults:
-            msg = (
-                "Specifying init=True in the Connection properties is not supported for a BSC20x Series "
-                "controller. Call the class methods to set the motor parameters for a particular channel "
-                "or use Thorlabs software to persist the parameters."
-            )
-            raise ValueError(msg)
-
         self._is_slot_system: bool = False
         self._has_encoder: bool = False  # EncoderFitted false
+        self._start_update_msgs_while_waiting: bool = False
 
         # Many of the device names could include HS or /M so use "in" instead of "=="
         actuator_type = 0
@@ -100,3 +101,101 @@ class BSC(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"BSC2"):
 
         if actuator_type > 0:
             _ = self.write(0x04FE, param1=actuator_type, dest=0x50)  # MGMSG_MOT_SET_TSTACTUATORTYPE
+
+        if self._init_defaults:
+            if self.hardware_info().num_channels > 1:
+                msg = (
+                    "Specifying init=True in the Connection properties is not supported for a BSC20x Series "
+                    "controller with multiple channels. Call the class methods to set the motor parameters "
+                    "for a particular channel or use Thorlabs software to persist the parameters."
+                )
+                raise MSLConnectionError(self, msg)
+
+            channel = 1
+            if "NR360S" in device:
+                _init_nr360s(self, channel)
+            elif "HDR50" in device:
+                _init_hdr50(self, channel)
+            else:
+                msg = (
+                    f"Specifying init=True in the Connection properties is not currently supported for {device!r}."
+                    f"Call the class methods to set the motor parameters for a particular channel or use Thorlabs "
+                    f"software to persist the parameters."
+                )
+                raise MSLConnectionError(self, msg)
+
+
+def _init_nr360s(bsc: BSC, channel: int) -> None:
+    bsc.set_backlash(1.0)
+    bsc.set_power_parameters(
+        ThorlabsPowerParameters(
+            channel=channel,
+            resting=15,
+            moving=30,
+        )
+    )
+    bsc.set_move_parameters(
+        ThorlabsMoveParameters(
+            channel=channel,
+            min_velocity=0.0,
+            max_velocity=50.0,
+            acceleration=25.0,
+        )
+    )
+    bsc.set_home_parameters(
+        ThorlabsHomeParameters(
+            channel=channel,
+            direction="reverse",  # HomeDir 2
+            limit_switch="reverse",  # HomeLimitSwitch 1
+            velocity=6.0,
+            offset=0.6,
+        )
+    )
+    bsc.set_limit_parameters(
+        ThorlabsLimitParameters(
+            channel=channel,
+            cw_hardware=3,
+            ccw_hardware=1,
+            cw_software=3.0,
+            ccw_software=1.0,
+            mode=129,
+        )
+    )
+
+
+def _init_hdr50(bsc: BSC, channel: int) -> None:
+    bsc.set_backlash(1.0)
+    bsc.set_power_parameters(
+        ThorlabsPowerParameters(
+            channel=channel,
+            resting=15,
+            moving=30,
+        )
+    )
+    bsc.set_move_parameters(
+        ThorlabsMoveParameters(
+            channel=channel,
+            min_velocity=0.0,
+            max_velocity=50.0,
+            acceleration=25.0,
+        )
+    )
+    bsc.set_home_parameters(
+        ThorlabsHomeParameters(
+            channel=channel,
+            direction="reverse",  # HomeDir 2
+            limit_switch="reverse",  # HomeLimitSwitch 1
+            velocity=6.0,
+            offset=3.0,
+        )
+    )
+    bsc.set_limit_parameters(
+        ThorlabsLimitParameters(
+            channel=channel,
+            cw_hardware=2,
+            ccw_hardware=1,
+            cw_software=3.0,
+            ccw_software=1.0,
+            mode=129,
+        )
+    )

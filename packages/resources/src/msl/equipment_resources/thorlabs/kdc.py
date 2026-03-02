@@ -88,6 +88,7 @@ class KDC(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"KDC"):
 
         self._is_slot_system: bool = False
         self._has_encoder: bool = False  # EncoderFitted false
+        self._start_update_msgs_while_waiting: bool = True
 
         if self._init_defaults:
             if "PRM" in device:  # check must come first, since model number could be PRM1Z8 or PRM1/MZ8

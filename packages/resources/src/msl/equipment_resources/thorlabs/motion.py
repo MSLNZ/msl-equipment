@@ -290,23 +290,6 @@ class ThorlabsMotion(Interface):
             acceleration=self._acceleration.to_mm_or_degree(acceleration),
         )
 
-    def get_power_parameters(self, channel: int = 1) -> ThorlabsPowerParameters:
-        """Get the power parameters that are used by the motion controller.
-
-        Args:
-            channel: The channel to get the power parameters of.
-
-        Returns:
-            The power parameters when the motor is at rest and moving.
-        """
-        reply = self.query(0x0427, param1=channel)  # MGMSG_MOT_REQ_POWERPARAMS
-        ch, resting, moving = unpack("<HHH", reply)
-        return ThorlabsPowerParameters(
-            channel=ch,
-            resting=resting,
-            moving=moving,
-        )
-
     def hardware_info(self) -> ThorlabsHardwareInfo:
         """Get the hardware information.
 
@@ -569,17 +552,6 @@ class ThorlabsMotion(Interface):
         data = pack("<Hiii", parameters.channel, minimum, acceleration, maximum)
         _ = self.write(0x0413, data=data)  # MGMSG_MOT_SET_VELPARAMS
 
-    def set_power_parameters(self, parameters: ThorlabsPowerParameters) -> None:
-        """Set the power parameters that are used by the motion controller.
-
-        Args:
-            parameters: Power parameters. It is recommended to call
-                [get_power_parameters][msl.equipment_resources.thorlabs.motion.ThorlabsMotion.get_power_parameters]
-                first and then update the appropriate attributes.
-        """
-        data = pack("<HHH", parameters.channel, parameters.resting, parameters.moving)
-        _ = self.write(0x0426, data=data)  # MGMSG_MOT_SET_POWERPARAMS
-
     def start_auto_updates(self) -> None:
         """Start automatic updates from the Thorlabs motion controller.
 
@@ -812,21 +784,6 @@ class ThorlabsLimitParameters:
     cw_software: float
     ccw_software: float
     mode: int
-
-
-@dataclass
-class ThorlabsPowerParameters:
-    """Parameters used when powering the motor.
-
-    Attributes:
-        channel (int): The channel associated with the power parameters.
-        resting (int): Percentage of full power to supply when the motor is at rest, in the range [1, 100].
-        moving (int): Percentage of full power to supply when the motor is moving, in the range [1, 100].
-    """
-
-    channel: int
-    resting: int
-    moving: int
 
 
 def find_device(equipment: Equipment) -> str | None:

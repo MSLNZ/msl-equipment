@@ -13,7 +13,6 @@ from .motion import (
     ThorlabsLimitParameters,
     ThorlabsMotion,
     ThorlabsMoveParameters,
-    ThorlabsPowerParameters,
     find_device,
 )
 
@@ -127,13 +126,6 @@ class BSC(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"BSC2"):
 
 def _init_nr360s(bsc: BSC, channel: int) -> None:
     bsc.set_backlash(1.0)
-    bsc.set_power_parameters(
-        ThorlabsPowerParameters(
-            channel=channel,
-            resting=15,
-            moving=30,
-        )
-    )
     bsc.set_move_parameters(
         ThorlabsMoveParameters(
             channel=channel,
@@ -165,13 +157,6 @@ def _init_nr360s(bsc: BSC, channel: int) -> None:
 
 def _init_hdr50(bsc: BSC, channel: int) -> None:
     bsc.set_backlash(1.0)
-    bsc.set_power_parameters(
-        ThorlabsPowerParameters(
-            channel=channel,
-            resting=15,
-            moving=30,
-        )
-    )
     bsc.set_move_parameters(
         ThorlabsMoveParameters(
             channel=channel,

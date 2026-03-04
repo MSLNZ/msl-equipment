@@ -26,7 +26,7 @@ class KDC(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"KDC"):
     def __init__(self, equipment: Equipment) -> None:
         """Communicate with a KDC101 motion controller from Thorlabs.
 
-        The Z8, Z9 and PRM series of actuators/stages are supported.
+        The Z8, Z9 and PRM series of actuators and stages are supported.
 
         Regular-expression patterns that are used to select this Resource when
         [connect()][msl.equipment.schema.Equipment.connect] is called.

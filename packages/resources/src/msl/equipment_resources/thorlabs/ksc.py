@@ -142,10 +142,10 @@ class KSC(Interface, manufacturer=r"Thorlabs", model=r"KSC"):
         return KSC.TriggerMode(m1), KSC.TriggerPolarity(p1), KSC.TriggerMode(m2), KSC.TriggerPolarity(p2)
 
     def hardware_info(self) -> ThorlabsHardwareInfo:
-        """Get the hardware information.
+        """Get the hardware information about the Solenoid controller.
 
         Returns:
-            The hardware information about the Solenoid Controller.
+            The hardware information.
         """
         return self._motion.hardware_info()
 
@@ -272,9 +272,9 @@ class KSC(Interface, manufacturer=r"Thorlabs", model=r"KSC"):
         """Get the status of the Solenoid Controller.
 
         Returns:
-            The status. A 32-bit value that represents the current status of the motion controller.
+            The status. A 32-bit value that represents the current status of the Solenoid controller.
                 Each of the 32 bits acts as a flag (0 or 1), simultaneously indicating 32 distinct
-                operating conditions of the motion controller.
+                operating conditions of the Solenoid controller.
         """
         return self._motion.status()
 

@@ -1,5 +1,7 @@
 # MFF101/MFF102
 
+Communicate with a Motorised Filter Flip mount from Thorlabs.
+
 ::: msl.equipment_resources.thorlabs.mff.MFF
     options:
         inherited_members: true

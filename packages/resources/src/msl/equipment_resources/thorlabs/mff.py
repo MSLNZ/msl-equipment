@@ -13,6 +13,8 @@ from msl.equipment.schema import Interface
 from .motion import ThorlabsMotion
 
 if TYPE_CHECKING:
+    from typing import Literal
+
     from msl.equipment.schema import Equipment
 
     from .motion import ThorlabsHardwareInfo
@@ -76,15 +78,15 @@ class MFF(Interface, manufacturer=r"Thorlabs", model=r"MFF"):
         return FlipperParameters(params[1] * 1e-3, FlipperIO(o1, s1, pw1 * 1e-3), FlipperIO(o2, s2, pw2 * 1e-3))
 
     def hardware_info(self) -> ThorlabsHardwareInfo:
-        """Get the hardware information.
+        """Get the hardware information about the Filter Flipper.
 
         Returns:
-            The hardware information about the Filter Flipper.
+            The hardware information.
         """
         return self._motion.hardware_info()
 
     def identify(self) -> None:
-        """Instruct Filter Flipper to identify itself by flashing its LED."""
+        """Instruct the Filter Flipper to identify itself by flashing its LED."""
         self._motion.identify()
 
     def is_enabled(self) -> bool:
@@ -105,29 +107,42 @@ class MFF(Interface, manufacturer=r"Thorlabs", model=r"MFF"):
         """
         return bool(self.status() & 0x10)
 
-    def move_to(self, position: int, *, wait: bool = True) -> None:
-        """Move to a position.
+    def move_to(self, position: Literal[1, 2], *, wait: bool = True) -> None:
+        """Move the Filter Flipper to a position.
 
         Args:
-            position: The position to move to (either 1 or 2).
+            position: The position to move to (either `1` or `2`).
             wait: Whether to wait for the move to complete before returning to the calling program.
         """
         if position not in {1, 2}:
-            msg = f"Invalid position {position}, must be 1 or 2"
+            msg = f"Invalid Filter Flipper position {position}, must be 1 or 2"
             raise ValueError(msg)
 
         _ = self._motion.write(0x046A, param1=1, param2=position, dest=0x50)  # MGMSG_MOT_MOVE_JOG
         if wait:
             self.wait_until_moved()
 
-    def position(self) -> int:
-        """Get the position of the Filter Flipper, either 1 or 2 (or 0 if moving)."""
+    @property
+    def position(self) -> Literal[-1, 1, 2]:
+        """Get/set the position of the Filter Flipper, either `1` or `2` (returns `-1` if moving).
+
+        Setting the position using this property attribute waits for the move to complete
+        before returning to the calling program. If you do not want to wait, use
+        [move_to][msl.equipment_resources.thorlabs.mff.MFF.move_to] with `wait=False`.
+        """
         status = self.status()
         if status & 0x01:  # forward (CW) hardware limit switch is active
             return 1
         if status & 0x02:  # reverse (CCW) hardware limit switch is active
             return 2
-        return 0
+        return -1
+
+    @position.setter
+    def position(self, value: Literal[-1, 1, 2]) -> None:
+        if value == -1:
+            msg = "Invalid Filter Flipper position -1, must be 1 or 2"
+            raise ValueError(msg)
+        self.move_to(value, wait=True)
 
     def set_parameters(self, parameters: FlipperParameters) -> None:
         """Set the operating parameters.
@@ -159,9 +174,9 @@ class MFF(Interface, manufacturer=r"Thorlabs", model=r"MFF"):
         """Get the status of the Filter Flipper.
 
         Returns:
-            The status. A 32-bit value that represents the current status of the motion controller.
+            The status. A 32-bit value that represents the current status of the Filter Flipper.
                 Each of the 32 bits acts as a flag (0 or 1), simultaneously indicating 32 distinct
-                operating conditions of the motion controller.
+                operating conditions of the Filter Flipper.
         """
         return self._motion.status()
 
@@ -186,7 +201,7 @@ class MFF(Interface, manufacturer=r"Thorlabs", model=r"MFF"):
         Args:
             wait: Whether to wait for the move to complete before returning to the calling program.
         """
-        position = 2 if self.position() == 1 else 1
+        position = 2 if self.position == 1 else 1
         self.move_to(position, wait=wait)
 
     def wait_until_moved(self) -> None:
@@ -198,15 +213,15 @@ class MFF(Interface, manufacturer=r"Thorlabs", model=r"MFF"):
 
 @dataclass
 class FlipperIO:
-    """Filter flipper Digital I/O parameters.
+    """Filter Flipper Digital I/O parameters.
 
     Attributes:
         operating_mode (int): The operating mode:
 
-            * 1 &mdash; _Input_ Toggle position
-            * 2 &mdash; _Input_ Go to position
-            * 3 &mdash; _Output_ At position
-            * 4 &mdash; _Output_ In motion
+            * 1 &mdash; Toggle position (_Input_)
+            * 2 &mdash; Go to position (_Input_)
+            * 3 &mdash; At position (_Output_)
+            * 4 &mdash; In motion (_Output_)
 
         signal_mode (int): Input/Output signal mode. The value depends on whether
             `operating_mode` is an _Input_ or an _Output_:

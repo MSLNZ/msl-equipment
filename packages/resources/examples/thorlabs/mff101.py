@@ -34,7 +34,7 @@ if not flipper.is_enabled():
     flipper.enable()
 
 # Get the original position
-original = flipper.position()
+original = flipper.position
 print(f"At: {original}")
 
 # Toggle the position
@@ -42,11 +42,11 @@ print("Toggle...")
 flipper.toggle()
 
 # Get the new position
-print(f"At: {flipper.position()}")
+print(f"At: {flipper.position}")
 
 # Move back to the original position
-flipper.move_to(original)
-print(f"At: {flipper.position()}")
+flipper.position = original
+print(f"At: {flipper.position}")
 
 # Disconnect from the flip mount
 flipper.disconnect()

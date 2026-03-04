@@ -153,7 +153,15 @@ nav:
     - Raicol Crystals:
       - resources/raicol/tec.md
     - Thorlabs:
+      - resources/thorlabs/bsc.md
       - resources/thorlabs/fwxx2c.md
+      - resources/thorlabs/k10cr.md
+      - resources/thorlabs/kdc.md
+      - resources/thorlabs/ksc.md
+      - resources/thorlabs/kst.md
+      - resources/thorlabs/lts.md
+      - resources/thorlabs/mff.md
+      - resources/thorlabs/motion.md
     - Vaisala:
       - resources/vaisala/ptb330.md
       - resources/vaisala/ptu300.md

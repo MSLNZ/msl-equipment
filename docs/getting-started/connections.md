@@ -120,8 +120,13 @@ Each [Interface][connections-interfaces] has a syntax for the [Connection][msl.e
   </tr>
   <tr>
     <td>SERIAL</td>
-    <td>(ASRL|COM|ASRLCOM)port[::INSTR]</td>
-    <td>The text <code>ASRL</code>, <code>COM</code> or <code>ASRLCOM</code> followed by the serial port address</td>
+    <td>
+      (ASRL|COM|ASRLCOM)port[::INSTR]<br/>
+      (ASRL|COM|ASRLCOM)?::pattern
+    </td>
+    <td>
+      The text <code>ASRL</code>, <code>COM</code> or <code>ASRLCOM</code> followed by the serial port address. Specifying <code>?</code> as the port address (followed by <code>::</code>) will use the search <b><i>pattern</i></b> to find a serial port that matches the description of the port, as shown when <a href="../../api/#cli-find">find</a> is run. The <b><i>pattern</i></b> supports <a href="https://regexr.com/" target="_blank">regular-expression</a> syntax.
+    </td>
   </tr>
   <tr>
     <td>SOCKET</td>
@@ -292,6 +297,16 @@ The following are examples of the addresses that may be used to connect to equip
     <td>SERIAL</td>
     <td>ASRLCOM2</td>
     <td>Compatible with PyVISA-py syntax</td>
+  </tr>
+  <tr>
+    <td>SERIAL</td>
+    <td>COM?::18071105A</td>
+    <td>Find the serial port that contains <code>18071105A</code> in the port description</td>
+  </tr>
+  <tr>
+    <td>SERIAL</td>
+    <td>ASRL?::VID:PID=067B:2303</td>
+    <td>Find the serial port that contains <code>VID:PID=067B:2303</code> in the port description</td>
   </tr>
   <tr>
     <td>SOCKET</td>

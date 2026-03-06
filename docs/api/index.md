@@ -54,9 +54,13 @@ This will display a description about the type of interface, the equipment that 
 
 ```console
 ASRL Ports
-  COM1 [Communications Port (COM1)]
-  COM2 [Communications Port (COM2)]
-  COM3 [Intel(R) Active Management Technology - SOL (COM3)]
+  COM1 [Intel PCI\VEN_8086&DEV_A13D&SYS_72141043&REV_31\3&14588619&1&B4]
+  COM2 [PI 18071105A VID:PID=0647:0100 SER=18071105A]
+  COM3 [Prolific VID:PID=067B:2303 LOCATION=1-8]
+FTDI Devices
+  FTDI2::0x0403::0xfaf0::40874293 [APT Stepper Motor Controller]
+  FTDI2::0x0403::0xfaf0::27259213 [Brushed Motor Controller]
+  FTDI2::0x0403::0xfaf0::26007245 [Stepper Controller]
 GPIB Devices
   GPIB0::5::INSTR
 LXI Devices

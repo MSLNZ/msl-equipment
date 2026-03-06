@@ -142,7 +142,7 @@ class Serial(MessageBased, regex=REGEX):
 
     @property
     def serial(self) -> serial.Serial:
-        """[pySerial.Serial][serial.Serial] &mdash; Returns the reference to the `pySerial` instance."""
+        """Returns the reference to the [pySerial.Serial][serial.Serial]{:target="_blank"} instance."""
         return self._serial
 
 

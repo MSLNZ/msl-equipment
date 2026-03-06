@@ -22,6 +22,7 @@ from usb.backend import (  # type: ignore[import-untyped]  # pyright: ignore[rep
 )
 
 from msl.equipment import Connection
+from tests import protocol_mock  # pyright: ignore[reportUnusedImport]  # noqa: F401
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -223,7 +224,7 @@ class TCPServer:
             self._conn.connect((self.host, self.port))
 
         with contextlib.suppress(ConnectionError):
-            self._conn.sendall(b"SHUTDOWN" + (self.term if self.term else b""))
+            self._conn.sendall(b"SHUTDOWN" + (self.term or b""))
 
         self._thread.join()
         self._thread = None

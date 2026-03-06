@@ -10,12 +10,11 @@ from enum import IntEnum
 from threading import Thread
 from typing import TYPE_CHECKING
 
-from serial.tools.list_ports import comports
-
 from msl.equipment.dns_service_discovery import find_lxi
 from msl.equipment.interfaces.ftdi import find_ftd2xx_devices
 from msl.equipment.interfaces.gpib import find_listeners
 from msl.equipment.interfaces.prologix import find_prologix
+from msl.equipment.interfaces.serial import find_ports
 from msl.equipment.interfaces.usb import find_usb
 from msl.equipment.interfaces.vxi11 import find_vxi11
 from msl.equipment.utils import ipv4_addresses, logger
@@ -100,7 +99,7 @@ class VXI11Thread(Thread):
         super().__init__(target=function)
 
 
-def find_equipment(  # noqa: C901, PLR0912
+def find_equipment(  # noqa: C901
     *,
     ip: list[str] | None = None,
     timeout: float = 2,
@@ -141,24 +140,9 @@ def find_equipment(  # noqa: C901, PLR0912
     for thread in threads:
         thread.start()
 
-    logger.debug("Searching for Serial ports")
-    for info in sorted(comports()):
-        if info.hwid == "n/a":
-            continue
-
+    for sd in find_ports():
         num_found += 1
-        addresses = [info.device] if info.device.startswith("COM") else [f"ASRL{info.device}"]
-
-        description = info.manufacturer or ""
-        if info.product:
-            description += f" {info.product}"
-        if info.serial_number:
-            description += f" {info.serial_number}"
-        if not description:
-            description = info.description
-        description += f" - {info.hwid}"
-
-        devices[info.device] = Device(type=DeviceType.ASRL, addresses=addresses, description=description)
+        devices[sd.device] = Device(type=DeviceType.ASRL, addresses=[sd.address], description=sd.description)
 
     if gpib_library:
         os.environ["GPIB_LIBRARY"] = gpib_library

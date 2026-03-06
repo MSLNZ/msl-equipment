@@ -39,7 +39,6 @@ class SerialServer(serial.SerialBase):
         Args:
             content: The content of the response message.
         """
-        self._previous_write = b""
         self._queue.put(content)
 
     def clear_response_queue(self) -> None:
@@ -54,6 +53,7 @@ class SerialServer(serial.SerialBase):
     def read(self, size: int = 1) -> bytes:  # pyright: ignore[reportImplicitOverride]  # noqa: ARG002
         """Mock a read."""
         data = self._previous_write if self._queue.empty() else self._queue.get()
+        self._previous_write = b""
         if data.startswith(b"1/0"):
             _ = 1 / 0
         return data

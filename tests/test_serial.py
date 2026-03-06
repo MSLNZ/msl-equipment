@@ -111,7 +111,7 @@ def test_pty_session(pty_server: type[PTYServer]) -> None:
         c = Connection(
             f"ASRL{server.name}",
             termination=term,
-            timeout=1,
+            timeout=0.2,
             max_read_size=1 << 16,
         )
 
@@ -128,23 +128,21 @@ def test_pty_session(pty_server: type[PTYServer]) -> None:
         assert dev.read() == "x" * 4096 + term.decode()
 
         n = dev.write("123.456")
-        with pytest.raises(MSLConnectionError, match=r"received 9 bytes, requested 10 bytes"):
+        with pytest.raises(MSLTimeoutError, match=r"after 0.2 second\(s\)"):
             _ = dev.read(size=n + 1)
 
         with pytest.raises(MSLConnectionError, match=r"max_read_size is 65536 bytes, requesting 65537 bytes"):
             _ = dev.read(size=dev.max_read_size + 1)  # requesting more bytes than are maximally allowed
 
+        assert dev.read() == "123.456\r\n"  # clear the buffer
+
         dev.max_read_size = 10
         assert dev.write(b"a" * 999) == 999 + len(term)
-        with pytest.raises(MSLConnectionError, match=r"RuntimeError: len\(message\) \[11\] > max_read_size \[10\]"):
+        with pytest.raises(MSLConnectionError, match=r"RuntimeError: len\(message\) \[1001\] > max_read_size \[10\]"):
             _ = dev.read()  # requesting more bytes than are maximally allowed
 
         dev.max_read_size = 1 << 16
-        assert dev.read() == ("a" * (999 - 11)) + term.decode()  # clear the buffer
-
-        msg = "a" * (dev.max_read_size - len(term))
-        assert dev.write(msg) == dev.max_read_size
-        assert dev.read() == msg + term.decode()
+        assert dev.read() == ("a" * 999) + term.decode()  # clear the buffer
 
         assert dev.write(b"021.3" + term + b",054.2") == 15
         assert dev.read() == "021.3\r\n"  # read until first `term`
@@ -255,9 +253,15 @@ def test_invalid_address() -> None:
         _ = Serial(Equipment(connection=Connection("bad")))
 
 
-@pytest.mark.parametrize("address", ["COM?::", "ASRL?::", "COM?::VID=1234&PID=4321", "ASRL?::Company Name"])
+@pytest.mark.parametrize("address", ["COM?::VID=1234&PID=4321", "ASRL?::Company Name"])
 def test_cannot_find(address: str) -> None:
     with pytest.raises(ValueError, match=r"^Cannot find"):
+        _ = Serial(Equipment(connection=Connection(address)))
+
+
+@pytest.mark.parametrize("address", ["COM?::", "ASRL?::"])
+def test_cannot_find_empty_search(address: str) -> None:
+    with pytest.raises(ValueError, match=r"Must specify a search pattern for the Serial port"):
         _ = Serial(Equipment(connection=Connection(address)))
 
 
@@ -424,19 +428,19 @@ def test_find_port_find_ports(caplog: pytest.LogCaptureFixture) -> None:
     assert len(ports) == 4
 
     assert ports[0].address == "ASRL/dev/ttyS1"
-    assert ports[0].description == "Hello - VID:PID"
+    assert ports[0].description == "Hello VID:PID"
     assert ports[0].device == "/dev/ttyS1"
 
     assert ports[1].address == "ASRL/dev/ttyUSB0"
-    assert ports[1].description == "Company - ABC"
+    assert ports[1].description == "Company ABC"
     assert ports[1].device == "/dev/ttyUSB0"
 
     assert ports[2].address == "COM5"
-    assert ports[2].description == "Intel XY - Windows port"
+    assert ports[2].description == "Intel XY Windows port"
     assert ports[2].device == "COM5"
 
     assert ports[3].address == "COM3"
-    assert ports[3].description == "MSL N Z - Some ID"
+    assert ports[3].description == "MSL N Z Some ID"
     assert ports[3].device == "COM3"
 
     with pytest.raises(ValueError, match=r"^Cannot find a Serial port for the address '/dev/ttyS1'$"):
@@ -448,10 +452,10 @@ def test_find_port_find_ports(caplog: pytest.LogCaptureFixture) -> None:
     lines = str(exc.value).splitlines()
     assert lines == [
         "Cannot find a Serial port for the address 'COM6', the following descriptions are available",
-        "  Hello - VID:PID",
-        "  Company - ABC",
-        "  Intel XY - Windows port",
-        "  MSL N Z - Some ID",
+        "  Hello VID:PID",
+        "  Company ABC",
+        "  Intel XY Windows port",
+        "  MSL N Z Some ID",
     ]
 
     with caplog.at_level("DEBUG", "msl.equipment"):

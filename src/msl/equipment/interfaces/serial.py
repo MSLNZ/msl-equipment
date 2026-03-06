@@ -214,7 +214,7 @@ def find_ports(ports: list[ListPortInfo] | None = None) -> Iterator[SerialPort]:
             description += f" {port.serial_number}"
         if not description:
             description = port.description
-        description += f" - {port.hwid}"
+        description += f" {port.hwid}"
 
         yield SerialPort(address, description, port.device)
 
@@ -230,11 +230,14 @@ def find_port(search: str, address: str, ports: list[ListPortInfo] | None = None
     Returns:
         The port url that can be passed to `_init_serial`.
     """
+    if not search:
+        msg = f"Must specify a search pattern for the Serial port, address={address!r}"
+        raise ValueError(msg)
+
     descriptions: list[str] = []
     pattern = re.compile(search)
     for port in find_ports(ports):
-        match = pattern.search(port.description)
-        if match is not None:
+        if pattern.search(port.description) is not None:
             logger.debug("Found matching Serial port %r", port.device)
             return port.device
         descriptions.append(port.description)

@@ -11,7 +11,7 @@ def test_from_config() -> None:
     connections.clear()
     assert len(connections) == 0
 
-    _ = Config("tests/resources/config.xml")
+    _ = Config("tests/data/config.xml")
     assert len(connections) == 7
     assert "MSLE.M.092" in connections
     assert "unknown" not in connections

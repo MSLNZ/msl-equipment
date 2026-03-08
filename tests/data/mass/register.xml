@@ -123,7 +123,7 @@
                         <conditions />
                         <acceptanceCriteria />
                         <file>
-                            <url sheet="2024-May" cells="B2:D25">tests/resources/irradiance.xlsx</url>
+                            <url sheet="2024-May" cells="B2:D25">tests/data/irradiance.xlsx</url>
                             <sha256>70d79d2eb24dc2515faaf4ab7fa3540e5a73ca6080181908a0ea87a309293609</sha256>
                         </file>
                     </report>

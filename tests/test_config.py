@@ -112,9 +112,9 @@ def test_environ_path(caplog: pytest.LogCaptureFixture) -> None:  # cSpell: igno
     assert splitted.count("docs") == 1
 
     assert str(Path("tests")) in splitted
-    assert str(Path("tests/resources")) not in splitted
-    assert str(Path("tests/resources/light")) not in splitted
-    assert str(Path("tests/resources/mass")) not in splitted
+    assert str(Path("tests/data")) not in splitted
+    assert str(Path("tests/data/light")) not in splitted
+    assert str(Path("tests/data/mass")) not in splitted
 
     assert caplog.messages == ["skipped append to PATH: None", "skipped append to PATH: 'tests/test_config.py'"]
 
@@ -221,10 +221,10 @@ def test_registers_directory() -> None:
     text = """<?xml version="1.0" encoding="utf-8" ?>
     <msl>
         <a>A</a>
-        <register>tests/resources/mass</register>
+        <register>tests/data/mass</register>
     </msl>
     """
-    # The "bad" XML file in tests/resources/mass/.hidden is ignored
+    # The "bad" XML file in tests/data/mass/.hidden is ignored
     c = Config(StringIO(text))
     assert len(c.registers) == 1
     assert str(c.registers["Mass"]) == "Register(team='Mass' (3 equipment))"
@@ -234,7 +234,7 @@ def test_registers_file() -> None:
     text = """<?xml version="1.0" encoding="utf-8" ?>
     <msl>
         <a>A</a>
-        <register>tests/resources/mass/register.xml</register>
+        <register>tests/data/mass/register.xml</register>
     </msl>
     """
     c = Config(StringIO(text))
@@ -243,7 +243,7 @@ def test_registers_file() -> None:
 
 
 def test_source_types() -> None:
-    path = str(Path(__file__).parent / "resources" / "config.xml")
+    path = str(Path(__file__).parent / "data" / "config.xml")
     assert Config(path).path == path
     assert Config(path.encode()).path == path
     assert Config(Path(path)).path == path
@@ -264,7 +264,7 @@ def test_source_types() -> None:
 
 
 def test_equipment_sequence() -> None:
-    c = Config(Path(__file__).parent / "resources" / "config.xml")
+    c = Config(Path(__file__).parent / "data" / "config.xml")
 
     assert len(c.equipment) == 3
     assert repr(c.equipment) == "<ConfigEquipment (3 equipment elements)>"
@@ -277,7 +277,7 @@ def test_equipment_sequence() -> None:
 
 
 def test_equipment_raises() -> None:
-    c = Config(Path(__file__).parent / "resources" / "config.xml")
+    c = Config(Path(__file__).parent / "data" / "config.xml")
 
     with pytest.raises(IndexError):
         _ = c.equipment[100]
@@ -287,7 +287,7 @@ def test_equipment_raises() -> None:
 
 
 def test_equipment_names_eids() -> None:
-    c = Config(Path(__file__).parent / "resources" / "config.xml")
+    c = Config(Path(__file__).parent / "data" / "config.xml")
     assert c.equipment.names == ("dmm", "photodiode", "monochromator")
     assert c.equipment.eids == ("MSLE.M.092", "MSLE.O.103", "MSLE.O.061")
 
@@ -298,8 +298,8 @@ def test_equipment_names_eids() -> None:
             <equipment eid="MSLE.O.061" name="bob"/>
             <equipment eid="MSLE.O.231"/>
 
-            <register>tests/resources/mass</register>
-            <register>tests/resources/light</register>
+            <register>tests/data/mass</register>
+            <register>tests/data/light</register>
         </config>
     """
 
@@ -313,7 +313,7 @@ def test_equipment_missing_register() -> None:
         <config>
             <equipment eid="MSLE.M.092"/>
             <equipment eid="MSLE.O.103"/>
-            <register>tests/resources/mass</register>
+            <register>tests/data/mass</register>
         </config>
     """
 

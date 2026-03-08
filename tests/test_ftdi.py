@@ -34,7 +34,7 @@ IS_WINDOWS = sys.platform == "win32"
 @pytest.fixture
 def mock_d2xx() -> Iterator[None]:
     _D2XX.ftd2xx = None
-    os.environ["D2XX_LIBRARY"] = "tests/resources/d2xx"
+    os.environ["D2XX_LIBRARY"] = "tests/data/d2xx"
     yield
     _D2XX.ftd2xx = None
     _ = os.environ.pop("D2XX_LIBRARY", "")

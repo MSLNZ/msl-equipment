@@ -15,9 +15,9 @@
     <equipment eid="MSLE.O.103" name="photodiode" manufacturer="MSL" std="B03"/>
     <equipment eid="MSLE.O.061" name="monochromator"/>
 
-    <register>tests/resources/mass</register>
-    <register>tests/resources/light</register>
+    <register>tests/data/mass</register>
+    <register>tests/data/light</register>
 
-    <connections>tests/resources/connections.xml</connections>
+    <connections>tests/data/connections.xml</connections>
 
 </config>

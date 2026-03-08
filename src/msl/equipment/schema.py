@@ -2950,7 +2950,7 @@ class Register:
 
         <!--
         >>> from msl.equipment import Register
-        >>> register = Register("tests/resources/mass/register.xml")
+        >>> register = Register("tests/data/mass/register.xml")
 
         -->
 

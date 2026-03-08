@@ -1,14 +1,7 @@
+# cSpell: ignore easybus
 from __future__ import annotations
 
-# cSpell: ignore easybus
-from typing import TYPE_CHECKING
-
-try:
-    import pty  # pyright: ignore[reportUnusedImport]  # noqa: F401
-
-    has_pty = True
-except ImportError:
-    has_pty = False
+from typing import TYPE_CHECKING, cast
 
 import pytest
 
@@ -16,32 +9,32 @@ from msl.equipment import Connection, MSLConnectionError
 from msl.equipment.resources import GMH3000
 
 if TYPE_CHECKING:
-    from conftest import PTYServer
+    from tests.protocol_mock import SerialServer
 
 
-@pytest.mark.skipif(not has_pty, reason="pty is not available")
-def test_easybus_pty(pty_server: type[PTYServer]) -> None:
-    with pty_server() as server:
-        connection = Connection(
-            address=f"ASRL{server.name}",
-            manufacturer="Greisinger",
-            model="GMH3710-GE",
-            timeout=1,
-        )
+def test_easybus() -> None:
+    connection = Connection(
+        address="ASRL/mock://",
+        manufacturer="Greisinger",
+        model="GMH3710-GE",
+        timeout=1,
+    )
 
-        with connection.connect() as dev:
-            assert isinstance(dev, GMH3000)
+    with connection.connect() as dev:
+        assert isinstance(dev, GMH3000)
 
-            server.add_response(b"\xfe\x05&q\x00H\xf7\x80\t")
-            assert dev.value() == 21.76
+        server = cast("SerialServer", cast("object", dev.serial))
 
-            server.add_response(b"\xfe\x05&\x72\xff\x84\x00\xfc\x05")
-            assert dev.value() == -0.04
+        server.add_response(b"\xfe\x05&q\x00H\xf7\x80\t")
+        assert dev.value() == 21.76
 
-            server.add_response(b"\xfe\xf5\xf8O\x00g\xbf0\xe3")  # min measurement range request
-            server.add_response(b"\xfe\xf5\xf8N\x00r\x964\xec")  # max measurement range request
-            assert dev.measurement_range() == (-200.0, 850.0)
+        server.add_response(b"\xfe\x05&\x72\xff\x84\x00\xfc\x05")
+        assert dev.value() == -0.04
 
-            server.add_response(b"\xfe\r\x1ep\xf6\x91\xdf\xed\x0b")  # "No sensor" error code
-            with pytest.raises(MSLConnectionError, match="No sensor"):
-                _ = dev.value()
+        server.add_response(b"\xfe\xf5\xf8O\x00g\xbf0\xe3")  # min measurement range request
+        server.add_response(b"\xfe\xf5\xf8N\x00r\x964\xec")  # max measurement range request
+        assert dev.measurement_range() == (-200.0, 850.0)
+
+        server.add_response(b"\xfe\r\x1ep\xf6\x91\xdf\xed\x0b")  # "No sensor" error code
+        with pytest.raises(MSLConnectionError, match="No sensor"):
+            _ = dev.value()

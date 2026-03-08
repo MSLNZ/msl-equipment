@@ -6,7 +6,7 @@ from . import avantes, cmi, electron_dynamics, isotech, mks, nkt, optosigma
 from .aim_tti import MXSeries
 from .avantes import AvaSpec
 from .cmi import SIA3
-from .dataray import WinCamD
+from .dataray import DataRay
 from .electron_dynamics import TCSeries
 from .energetiq import EQ99
 from .greisinger import GMH3000
@@ -43,6 +43,7 @@ __all__: list[str] = [
     "SHOT702",
     "SIA3",
     "AvaSpec",
+    "DataRay",
     "FWxx2C",
     "MXSeries",
     "MilliK",
@@ -52,7 +53,6 @@ __all__: list[str] = [
     "RaicolTEC",
     "SuperK",
     "TCSeries",
-    "WinCamD",
     "avantes",
     "cmi",
     "electron_dynamics",

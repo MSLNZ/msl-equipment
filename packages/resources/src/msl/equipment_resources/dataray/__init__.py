@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .wincamd import WinCamD
+from .wincamd import DataRay
 
 __all__: list[str] = [
-    "WinCamD",
+    "DataRay",
 ]

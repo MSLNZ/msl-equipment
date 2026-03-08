@@ -23,13 +23,13 @@ root_path = Path(__file__).parent.parent.parent.parent / "tests"
 def test_recursive() -> None:
     files = recursive(Path("tests"))
     assert files == [
-        Path("tests/resources/config.xml"),
-        Path("tests/resources/connections.xml"),
-        Path("tests/resources/light/register.xml"),
+        Path("tests/data/config.xml"),
+        Path("tests/data/connections.xml"),
+        Path("tests/data/light/register.xml"),
         # the 'tests/mass/.hidden' directory is not included
-        Path("tests/resources/mass/not-a-register.xml"),
-        Path("tests/resources/mass/register.xml"),
-        Path("tests/resources/mass/register2.xml"),
+        Path("tests/data/mass/not-a-register.xml"),
+        Path("tests/data/mass/register.xml"),
+        Path("tests/data/mass/register2.xml"),
     ]
 
 
@@ -485,7 +485,7 @@ def test_cli_success(reset_summary: None, capsys: pytest.CaptureFixture[str]) ->
     assert reset_summary is None
     assert Summary.num_issues == 0
 
-    code = cli(["-n", "tests/resources/light/register.xml"])
+    code = cli(["-n", "tests/data/light/register.xml"])
     assert code == 0
 
     out, err = capsys.readouterr()
@@ -539,7 +539,7 @@ def test_duplicate_eid_different_directories(reset_summary: None, caplog: pytest
     assert lines[2] == "  expected: 7a91267cfb529388a99762b891ee4b7a12463e83b5d55809f76a0c8e76c71886"
     assert lines[3] == "  <sha256>: 70d79d2eb24dc2515faaf4ab7fa3540e5a73ca6080181908a0ea87a309293609"
 
-    mass_register = Path(root_path) / "resources" / "mass" / "register.xml"
+    mass_register = Path(root_path) / "data" / "mass" / "register.xml"
     assert r[2].message == (
         f"ERROR {mass_register}:4:0\n  Duplicate equipment ID 'MSLE.M.001' also found in {register_a}, line 4"
     )
@@ -683,11 +683,11 @@ def test_skip_checksum_strict_warning(
 
     r = caplog.records
 
-    path = root_path / "resources" / "mass" / "register.xml"
+    path = root_path / "data" / "mass" / "register.xml"
     assert r[0].levelname == "WARNING"
     assert r[0].message == f"WARN  {path}:125:0\n  Skipped validation of <file> for 'XYZ|A|b'"
 
-    path = root_path / "resources" / "mass" / "register2.xml"
+    path = root_path / "data" / "mass" / "register2.xml"
     assert r[1].levelname == "WARNING"
     assert r[1].message == f"WARN  {path}:31:0\n  Skipped validation of <digitalReport> for 'Measurement|Stds|Lab'"
 

@@ -1,4 +1,4 @@
-"""Connect to a WinCamD beam-profiling camera from [DataRay](https://www.dataray.com/){:target="_blank"}.
+"""Connect to a beam-profiling camera from [DataRay](https://www.dataray.com/){:target="_blank"}.
 
 Tested with the WinCamD-LCM-8.0E45 (x64) software version.
 """
@@ -25,11 +25,11 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-class WinCamD(SDK, manufacturer=r"Data\s*Ray", model=r"WinCamD"):
-    """Connect to a WinCamD beam-profiling camera from [DataRay](https://www.dataray.com/){:target="_blank"}."""
+class DataRay(SDK, manufacturer=r"Data\s*Ray", model=r""):
+    """Connect to a beam-profiling camera from [DataRay](https://www.dataray.com/){:target="_blank"}."""
 
     def __init__(self, equipment: Equipment) -> None:
-        r"""Connect to a WinCamD beam-profiling camera from DataRay.
+        r"""Connect to a beam-profiling camera from DataRay.
 
         The bitness (32 or 64 bit) of the DataRay Beam Profiling Software that
         is installed must match the bitness of the Python interpreter that is used
@@ -39,14 +39,14 @@ class WinCamD(SDK, manufacturer=r"Data\s*Ray", model=r"WinCamD"):
         [connect()][msl.equipment.schema.Equipment.connect] is called.
         ```python
         manufacturer=r"Data\s*Ray"
-        model=r"WinCamD"
+        model=r""
         ```
 
         Args:
             equipment: An [Equipment][] instance.
 
         A [Connection][msl.equipment.schema.Connection] instance supports the following _properties_
-        for the `WinCamD` class.
+        for the `DataRay` class.
 
         Attributes: Connection Properties:
             area_filter (int | None): Area filter:

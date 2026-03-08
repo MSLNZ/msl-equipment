@@ -20,7 +20,7 @@ from msl.equipment.interfaces.serial import (
 )
 
 if TYPE_CHECKING:
-    from tests.conftest import PTYServer
+    from conftest import PTYServer
     from tests.protocol_mock import SerialServer
 
 

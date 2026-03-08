@@ -9,7 +9,7 @@ from msl.equipment import Connection, Equipment, MSLConnectionError
 from msl.equipment.interfaces.zeromq import ZeroMQ, parse_zmq_address
 
 if TYPE_CHECKING:
-    from tests.conftest import ZMQServer
+    from conftest import ZMQServer
 
 
 @pytest.mark.parametrize(

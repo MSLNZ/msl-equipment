@@ -10,7 +10,7 @@ from msl.equipment import USB, USBTMC, Connection, MSLConnectionError, MSLTimeou
 from msl.equipment.interfaces.usbtmc import Capabilities, _Message  # pyright: ignore[reportPrivateUsage]
 
 if TYPE_CHECKING:
-    from tests.conftest import USBBackend
+    from conftest import USBBackend
 
 
 @pytest.mark.parametrize(

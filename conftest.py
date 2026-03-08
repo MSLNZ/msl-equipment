@@ -143,6 +143,7 @@ class TCPServer:
         self.term: bytes | None = term
         self._thread: Thread | None = None
         self._queue: Queue[bytes] = Queue()
+        self._requests_responses: dict[bytes, bytes] = {}
         self._conn: socket.socket | None = None
         self._sock: socket.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._sock.bind((host, port))
@@ -165,10 +166,22 @@ class TCPServer:
         """
         self._queue.put(content)
 
+    def add_requests_responses(self, mapping: dict[bytes, bytes]) -> None:
+        """Add requests and the corresponding response.
+
+        Args:
+            mapping: A request -> response mapping.
+        """
+        self._requests_responses.update(mapping)
+
     def clear_response_queue(self) -> None:
         """Clear the server's response queue."""
         with self._queue.mutex:
             self._queue.queue.clear()
+
+    def clear_requests_responses(self) -> None:
+        """Clear the request -> response mapping."""
+        self._requests_responses.clear()
 
     @property
     def host(self) -> str:
@@ -207,7 +220,12 @@ class TCPServer:
                     self._conn.sendall(b"NOT TERMINATED")
                     continue
 
-                self._conn.sendall(data if self._queue.empty() else self._queue.get())
+                request = bytes(data)
+                response = self._requests_responses.get(request)
+                if response is None:
+                    response = request if self._queue.empty() else self._queue.get()
+
+                self._conn.sendall(response)
 
         self._thread = Thread(target=_start, args=(self.term,), daemon=True)
         self._thread.start()
@@ -223,7 +241,7 @@ class TCPServer:
             self._conn.connect((self.host, self.port))
 
         with contextlib.suppress(ConnectionError):
-            self._conn.sendall(b"SHUTDOWN" + (self.term if self.term else b""))
+            self._conn.sendall(b"SHUTDOWN" + (self.term or b""))
 
         self._thread.join()
         self._thread = None
@@ -721,7 +739,7 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
 
     def clear_halt(self, handle: int, ep: int) -> None:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
         """Mock a clear-halt request."""
-        if ep == 0x81:
+        if ep == 0x81:  # noqa: PLR2004
             msg = "Mocked Bulk-IN clear-halt issue"
             raise usb.core.USBError(msg)  # pyright: ignore[reportUnknownMemberType]
 
@@ -739,20 +757,20 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         timeout: int,  # pyright: ignore[reportUnusedParameter]  # noqa: ARG002
     ) -> int:
         """Return the number of bytes written (for OUT transfers) or to read (for IN transfers)."""
-        if request_type == 1234:
+        if request_type == 1234:  # noqa: PLR2004
             msg = "Transfer error"
             raise usb.core.USBError(msg)  # pyright: ignore[reportUnknownMemberType]
 
-        if request_type == 9999:
+        if request_type == 9999:  # noqa: PLR2004
             msg = "timeout"
             raise usb.core.USBTimeoutError(msg)  # pyright: ignore[reportUnknownMemberType]
 
-        if request_type == 0xC0:  # FTDI control IN request
+        if request_type == 0xC0:  # FTDI control IN request  # noqa: PLR2004
             buffer = self._ctrl_queue.get()
             data[: len(buffer)] = array("B", buffer)
             return len(buffer)
 
-        if request_type == 0xA1 and request == 7:  # USBTMC GET_CAPABILITIES
+        if request_type == 0xA1 and request == 7:  # USBTMC GET_CAPABILITIES  # noqa: PLR2004
             data[:] = array("B", [1, 0, 0, 0, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0])
             return len(data)
 
@@ -761,12 +779,12 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
             data[: len(buffer)] = array("B", buffer)
             return len(buffer)
 
-        if request == 0x06:  # get_descriptor()
+        if request == 0x06:  # get_descriptor()  # noqa: PLR2004
             if index == 0:  # langid request
                 data[:4] = array("B", [4, 3, 9, 4])  # langid = 1033
                 return 4
 
-            if index == 1033:
+            if index == 1033:  # noqa: PLR2004
                 serial = self._device.serial.encode("utf-16-le")
                 n = len(serial) + 2
                 data[:2] = array("B", [n, 3])
@@ -817,7 +835,7 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
             ep_address, attributes = (0x81, 0x02)  # Bulk-IN
         elif ep == 1:
             ep_address, attributes = (0x02, 0x02)  # Bulk-OUT
-        elif ep == 2:
+        elif ep == 2:  # noqa: PLR2004
             ep_address, attributes = (0x83, 0x03)  # Interrupt-IN
         else:
             msg = f"Mocked USBBackend: get_endpoint_descriptor() endpoint {ep} not handled"
@@ -873,29 +891,35 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
 
 @pytest.fixture
 def http_server() -> type[HTTPServer]:
+    """Fixture for a HTTPServer."""
     return HTTPServer
 
 
 @pytest.fixture
 def tcp_server() -> type[TCPServer]:
+    """Fixture for a TCPServer."""
     return TCPServer
 
 
 @pytest.fixture
 def udp_server() -> type[UDPServer]:
+    """Fixture for a UDPServer."""
     return UDPServer
 
 
 @pytest.fixture
 def zmq_server() -> type[ZMQServer]:
+    """Fixture for a ZMQServer."""
     return ZMQServer
 
 
 @pytest.fixture
 def pty_server() -> type[PTYServer]:
+    """Fixture for a PTYServer."""
     return PTYServer
 
 
 @pytest.fixture
 def usb_backend() -> USBBackend:
+    """Fixture for a USBBackend."""
     return USBBackend()

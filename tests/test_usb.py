@@ -20,7 +20,7 @@ from msl.equipment.interfaces.usb import (
 )
 
 if TYPE_CHECKING:
-    from tests.conftest import USBBackend
+    from conftest import USBBackend
 
 IS_WINDOWS = sys.platform == "win32"
 

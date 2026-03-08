@@ -25,7 +25,7 @@ from msl.equipment.interfaces.ftdi import (
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from tests.conftest import USBBackend
+    from conftest import USBBackend
 
 FTX = 0x1000
 IS_WINDOWS = sys.platform == "win32"

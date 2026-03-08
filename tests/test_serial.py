@@ -14,7 +14,7 @@ from msl.equipment import Connection, Equipment, MSLConnectionError, MSLTimeoutE
 from msl.equipment.interfaces.serial import _init_serial, parse_serial_address  # pyright: ignore[reportPrivateUsage]
 
 if TYPE_CHECKING:
-    from tests.conftest import PTYServer
+    from conftest import PTYServer
 
 
 @pytest.mark.parametrize(

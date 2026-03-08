@@ -13,8 +13,6 @@ import serial
 if TYPE_CHECKING:
     from typing import Any
 
-serial.protocol_handler_packages.append("tests")
-
 
 class SerialServer(serial.SerialBase):
     """A Mocked Serial port."""
@@ -24,6 +22,7 @@ class SerialServer(serial.SerialBase):
         super().__init__(port, **kwargs)
         self._previous_write: bytes = b""
         self._queue: Queue[bytes] = Queue()
+        self._requests_responses: dict[bytes, bytes] = {}
 
     def _reconfigure_port(self) -> None:
         """Does nothing."""
@@ -34,17 +33,29 @@ class SerialServer(serial.SerialBase):
         return 1
 
     def add_response(self, content: bytes) -> None:
-        """Add a response to the server's queue and empty the previous write message.
+        """Add a response to the server's queue.
 
         Args:
             content: The content of the response message.
         """
         self._queue.put(content)
 
+    def add_requests_responses(self, mapping: dict[bytes, bytes]) -> None:
+        """Add requests and the corresponding response.
+
+        Args:
+            mapping: A request -> response mapping.
+        """
+        self._requests_responses.update(mapping)
+
     def clear_response_queue(self) -> None:
         """Clear the server's response queue."""
         with self._queue.mutex:
             self._queue.queue.clear()
+
+    def clear_requests_responses(self) -> None:
+        """Clear the request -> response mapping."""
+        self._requests_responses.clear()
 
     def open(self) -> None:
         """Sets the `is_open` attribute to `True`."""
@@ -52,15 +63,18 @@ class SerialServer(serial.SerialBase):
 
     def read(self, size: int = 1) -> bytes:  # pyright: ignore[reportImplicitOverride]  # noqa: ARG002
         """Mock a read."""
-        data = self._previous_write if self._queue.empty() else self._queue.get()
+        response = self._requests_responses.get(self._previous_write)
+        if response is None:
+            response = self._previous_write if self._queue.empty() else self._queue.get()
+
         self._previous_write = b""
-        if data.startswith(b"1/0"):
+        if response.startswith(b"1/0"):
             _ = 1 / 0
-        return data
+        return response
 
     def write(self, b: bytes) -> int:  # type: ignore[override]  # pyright: ignore[reportImplicitOverride, reportIncompatibleMethodOverride]
         """Mock a write."""
-        self._previous_write = b if self._queue.empty() else b""
+        self._previous_write = b
         return len(b)
 
 

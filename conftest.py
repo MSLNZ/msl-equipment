@@ -15,6 +15,7 @@ from time import sleep
 from typing import TYPE_CHECKING
 
 import pytest
+import serial
 import usb  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
 import zmq
 from usb.backend import (  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
@@ -22,7 +23,6 @@ from usb.backend import (  # type: ignore[import-untyped]  # pyright: ignore[rep
 )
 
 from msl.equipment import Connection
-from tests import protocol_mock  # pyright: ignore[reportUnusedImport]  # noqa: F401
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -41,6 +41,8 @@ if TYPE_CHECKING:
 
 
 IS_WINDOWS = sys.platform == "win32"
+
+serial.protocol_handler_packages.append("tests")
 
 
 class HTTPRequestHandler(BaseHTTPRequestHandler):

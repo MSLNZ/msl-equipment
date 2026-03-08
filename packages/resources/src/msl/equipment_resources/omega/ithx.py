@@ -10,7 +10,7 @@ This class is compatible with the following model numbers:
 * iTHX-2
 """
 
-# cSpell: ignore DMSW SRBF ECONNRESET SRYRST
+# cSpell: ignore DMSW ECONNRESET SRYRST
 from __future__ import annotations
 
 import re

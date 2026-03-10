@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema version="0.2.1.dev24+g82e39d718"
+<xsd:schema version="0.2.1.dev26+g30b5bae28"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
             xmlns:gtc="https://measurement.govt.nz/gtc/xml"
@@ -277,6 +277,7 @@
             <xsd:simpleType>
                 <xsd:restriction base="xsd:string">
                     <xsd:enumeration value="AC"/>
+                    <xsd:enumeration value="Actuator"/>
                     <xsd:enumeration value="Amplifier"/>
                     <xsd:enumeration value="Aperture"/>
                     <xsd:enumeration value="Balance"/>
@@ -293,6 +294,7 @@
                     <xsd:enumeration value="Detector"/>
                     <xsd:enumeration value="DMM"/>
                     <xsd:enumeration value="Driver"/>
+                    <xsd:enumeration value="Filter"/>
                     <xsd:enumeration value="Gateway"/>
                     <xsd:enumeration value="Gauge"/>
                     <xsd:enumeration value="Hygrometer"/>
@@ -320,6 +322,7 @@
                     <xsd:enumeration value="Rule"/>
                     <xsd:enumeration value="Sample"/>
                     <xsd:enumeration value="Set"/>
+                    <xsd:enumeration value="Shutter"/>
                     <xsd:enumeration value="Source"/>
                     <xsd:enumeration value="SPRT"/>
                     <xsd:enumeration value="Stabiliser"/>
@@ -337,6 +340,7 @@
                     <xsd:enumeration value="Voltage"/>
                     <xsd:enumeration value="Wavelength"/>
                     <xsd:enumeration value="Weight"/>
+                    <xsd:enumeration value="Wheel"/>
                 </xsd:restriction>
             </xsd:simpleType>
         </xsd:list>

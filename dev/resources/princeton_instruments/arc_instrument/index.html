@@ -8859,9 +8859,9 @@ for the <code>ARC_Instrument</code> wrapper.</p>
     <span class="n">p</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span>
 
     <span class="n">_load_sdk</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sdk_path&quot;</span><span class="p">,</span> <span class="s2">&quot;ARC_Instrument_x64.dll&quot;</span><span class="p">))</span>
-    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
+    <span class="k">assert</span> <span class="n">PrincetonInstruments</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="p">:</span> <span class="n">CDLL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="p">:</span> <span class="n">CDLL</span> <span class="o">=</span> <span class="n">PrincetonInstruments</span><span class="o">.</span><span class="n">_SDK</span>
     <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;open&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
         <span class="n">num_found</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_num_found_inst_ports</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">num_found</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>

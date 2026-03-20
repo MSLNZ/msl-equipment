@@ -1,6 +1,6 @@
 """Base class for the Modbus protocol."""
 
-# cSpell: ignore HHHB
+# cSpell: ignore HHHB unpackbits
 from __future__ import annotations
 
 import re
@@ -16,7 +16,7 @@ from .message_based import MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
-    from typing import Any
+    from typing import Any, Literal
 
     from numpy.typing import DTypeLike, NDArray
 
@@ -97,8 +97,27 @@ class Modbus(Interface, regex=REGEX):
         msg = EXCEPTIONS.get(pdu[1], f"Unknown Modbus exception code 0x{pdu[1]:02X}")
         raise MSLConnectionError(self, msg)
 
-    def read_coils(self) -> None:
-        pass
+    def read_coils(self, address: int, *, count: int = 1, device_id: int = 1) -> ModbusPDU:
+        """Read coils (function code `0x01`).
+
+        Args:
+            address: Starting register address to read from. Must be in the range [0, 65535].
+            count: The number of coil registers to read. Must be in the range [1, 2000].
+            device_id: Modbus device ID.
+
+        Returns:
+            The Modbus Protocol Data Unit of the response.
+        """
+        if count > 2000:  # noqa: PLR2004
+            msg = f"Requesting to read {count} coils, maximum allowed is 2000"
+            raise ValueError(msg)
+
+        function_code = 0x01
+        _ = self.write(function_code, data=pack(">HH", address, count), device_id=device_id)
+        device_id, response = self.read()
+        pdu = ModbusPDU(device_id, response[0], response[2:], count=count)
+        self._check_function_code(function_code, pdu)
+        return pdu
 
     def read_discrete_inputs(self) -> None:
         pass
@@ -110,17 +129,21 @@ class Modbus(Interface, regex=REGEX):
         """Read input registers (function code `0x04`).
 
         Args:
-            address: Start address to read from.
-            count: The number of 16-bit registers to read.
+            address: Starting register address to read from. Must be in the range [0, 65535].
+            count: The number of 16-bit registers to read. Must be in the range [1, 125].
             device_id: Modbus device ID.
 
         Returns:
             The Modbus Protocol Data Unit of the response.
         """
+        if count > 125:  # noqa: PLR2004
+            msg = f"Requesting to read {count} input registers, maximum allowed is 125"
+            raise ValueError(msg)
+
         function_code = 0x04
         _ = self.write(function_code, data=pack(">HH", address, count), device_id=device_id)
         device_id, response = self.read()
-        pdu = ModbusPDU(device_id, response[0], response[2:])
+        pdu = ModbusPDU(device_id, response[0], response[2:], count=count)
         self._check_function_code(function_code, pdu)
         return pdu
 
@@ -181,7 +204,7 @@ class Modbus(Interface, regex=REGEX):
         """Write multiple coils (function code `0x0F`).
 
         Args:
-            address: Start register address to write to. Must be in the range [0, 65535].
+            address: Starting register address to write to. Must be in the range [0, 65535].
             values: A sequence of booleans to write. Sets the ON/OFF state of multiple coils
                 in the device. The maximum sequence length is 1968.
             device_id: Modbus device ID.
@@ -229,7 +252,7 @@ class Modbus(Interface, regex=REGEX):
         """Write to a block of contiguous registers (function code `0x10`).
 
         Args:
-            address: Start register address to write to. Must be in the range [0, 65535].
+            address: Starting register address to write to. Must be in the range [0, 65535].
             values: A sequence of values to write. The maximum sequence length is 123.
                 Each value must be in the range [0, 65535]. See also
                 [to_uint16_array][msl.equipment.interfaces.modbus.Modbus.to_uint16_array].
@@ -276,9 +299,10 @@ class Modbus(Interface, regex=REGEX):
 class ModbusPDU:
     """Modbus Protocol Data Unit."""
 
-    def __init__(self, device_id: int, function_code: int, data: bytes) -> None:
+    def __init__(self, device_id: int, function_code: int, data: bytes, count: int | None = None) -> None:
         """Modbus Protocol Data Unit."""
-        self._count: int = 0
+        self.count: int | None = count
+        """[int][] &mdash; The number of registers that were requested to read."""
 
         self.device_id: int = device_id
         """[int][] &mdash; Modbus device ID."""
@@ -295,51 +319,67 @@ class ModbusPDU:
 
     def array(self, dtype: DTypeLike) -> NDArray[Any]:
         """[numpy.ndarray][] &mdash; Returns the register data as a [numpy.ndarray][] of the specified `dtype`."""
-        dtype = np.dtype(dtype).newbyteorder(">")
+        if isinstance(dtype, str) and dtype[0] not in "<>=|":
+            dtype = ">" + dtype  # force big endian
+        elif isinstance(dtype, type):
+            dtype = np.dtype(dtype).newbyteorder(">")  # force big endian
         return np.frombuffer(self.data, dtype=">u2").view(dtype)
+
+    def bits(self, bitorder: Literal["big", "little"] = "little") -> NDArray[np.bool]:
+        """[numpy.ndarray][] &mdash; Returns the states of the register bits that were requested."""
+        data = np.frombuffer(self.data, dtype=np.uint8)
+        return np.unpackbits(data, count=self.count, bitorder=bitorder).astype(np.bool)
 
     def decode(self, encoding: str = "utf-8") -> str:
         """[str][] &mdash; Returns the decoded response data using the `encoding` codec."""
         return self.data.decode(encoding)
 
-    def float32(self) -> float:
+    def float32(self, byteorder: Literal["big", "little"] = "big") -> float:
         """[float][] &mdash; Returns the register data as a 32-bit, floating-point number."""
-        f32: float = unpack(">f", self.data)[0]
+        b = ">" if byteorder == "big" else "<"
+        f32: float = unpack(b + "f", self.data)[0]
         return f32
 
-    def float64(self) -> float:
+    def float64(self, byteorder: Literal["big", "little"] = "big") -> float:
         """[float][] &mdash; Returns the register data as a 64-bit, floating-point number."""
-        f64: float = unpack(">d", self.data)[0]
+        b = ">" if byteorder == "big" else "<"
+        f64: float = unpack(b + "d", self.data)[0]
         return f64
 
-    def int16(self) -> int:
+    def int16(self, byteorder: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as a signed, 16-bit integer."""
-        i16: int = unpack(">h", self.data)[0]
+        b = ">" if byteorder == "big" else "<"
+        i16: int = unpack(b + "h", self.data)[0]
         return i16
 
-    def int32(self) -> int:
+    def int32(self, byteorder: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as a signed, 32-bit integer."""
-        i32: int = unpack(">i", self.data)[0]
+        b = ">" if byteorder == "big" else "<"
+        i32: int = unpack(b + "i", self.data)[0]
         return i32
 
-    def int64(self) -> int:
+    def int64(self, byteorder: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as a signed, 64-bit integer."""
-        i64: int = unpack(">q", self.data)[0]
+        b = ">" if byteorder == "big" else "<"
+        i64: int = unpack(b + "q", self.data)[0]
         return i64
 
-    def uint16(self) -> int:
+    def uint16(self, byteorder: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as an unsigned, 16-bit integer."""
-        u16: int = unpack(">H", self.data)[0]
+        b = ">" if byteorder == "big" else "<"
+        u16: int = unpack(b + "H", self.data)[0]
         return u16
 
-    def uint32(self) -> int:
+    def uint32(self, byteorder: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as an unsigned, 32-bit integer."""
-        u32: int = unpack(">I", self.data)[0]
+        b = ">" if byteorder == "big" else "<"
+        u32: int = unpack(b + "I", self.data)[0]
         return u32
 
-    def uint64(self) -> int:
+    def uint64(self, byteorder: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as an unsigned, 64-bit integer."""
-        u64: int = unpack(">Q", self.data)[0]
+        b = ">" if byteorder == "big" else "<"
+        u64: int = unpack(b + "Q", self.data)[0]
         return u64
 
     def unpack(self, format: str) -> tuple[Any, ...]:  # noqa: A002
@@ -467,7 +507,7 @@ class ParsedModbusAddress(NamedTuple):
     """The parsed result of a VISA-style address for the Modbus interface.
 
     Args:
-        address: Address to use for the Serial or Socket interface.
+        address: The VISA-style address to use for the Serial or Socket interface.
         framer: ASCII, RTU or SOCKET framer.
     """
 

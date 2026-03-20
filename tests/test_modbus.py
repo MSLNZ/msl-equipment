@@ -75,7 +75,7 @@ def test_parse_address_valid(address: str, expected: ParsedModbusAddress) -> Non
     assert parse_modbus_address(address) == expected
 
 
-def test_modbus_pdu() -> None:
+def test_modbus_pdu_str() -> None:
     pdu = ModbusPDU(1, 2, b"")
     assert pdu.data == b""
     assert pdu.device_id == 1
@@ -88,46 +88,112 @@ def test_modbus_pdu() -> None:
     assert pdu.function_code == 10
     assert str(pdu) == "ModbusPDU(device_id=200, function_code=0x0A, data=b'Hello')"
 
-    expected = -1000
-    pdu = ModbusPDU(1, 1, expected.to_bytes(2, "big", signed=True))
-    assert pdu.int16() == expected
 
-    expected = 12345
-    pdu = ModbusPDU(1, 1, expected.to_bytes(2, "big"))
-    assert pdu.uint16() == expected
+def test_modbus_pdu_int16() -> None:
+    pdu = ModbusPDU(1, 1, b"\xfc\x18")
+    assert pdu.int16() == -1000
+    assert pdu.int16("big") == -1000
+    assert pdu.int16("little") == 6396
 
-    expected = -1_000_000
-    pdu = ModbusPDU(1, 1, expected.to_bytes(4, "big", signed=True))
-    assert pdu.int32() == expected
 
-    expected = 123456789
-    pdu = ModbusPDU(1, 1, expected.to_bytes(4, "big"))
-    assert pdu.uint32() == expected
+def test_modbus_pdu_uint16() -> None:
+    pdu = ModbusPDU(1, 1, bytes([48, 57]))
+    assert pdu.uint16() == 12345
+    assert pdu.uint16("big") == 12345
+    assert pdu.uint16("little") == 14640
 
-    expected = -1 << 42
-    pdu = ModbusPDU(1, 1, expected.to_bytes(8, "big", signed=True))
-    assert pdu.int64() == expected
 
-    expected = 1 << 42
-    pdu = ModbusPDU(1, 1, expected.to_bytes(8, "big"))
-    assert pdu.uint64() == expected
+def test_modbus_pdu_int32() -> None:
+    pdu = ModbusPDU(1, 1, b"\xff\xf0\xbd\xc0")
+    assert pdu.int32() == -1_000_000
+    assert pdu.int32("big") == -1_000_000
+    assert pdu.int32("little") == -1061293825
 
+
+def test_modbus_pdu_uint32() -> None:
+    pdu = ModbusPDU(1, 1, b"\x07[\xcd\x15")
+    assert pdu.uint32() == 123456789
+    assert pdu.uint32("big") == 123456789
+    assert pdu.uint32("little") == 365779719
+
+
+def test_modbus_pdu_int64() -> None:
+    pdu = ModbusPDU(1, 1, b"\xff\xff\xfc\x00\x00\x00\x00\x00")
+    assert pdu.int64() == -4398046511104
+    assert pdu.int64("big") == -4398046511104
+    assert pdu.int64("little") == 16580607
+
+
+def test_modbus_pdu_uint64() -> None:
+    pdu = ModbusPDU(1, 1, b"\x00\x00\x04\x00\x00\x00\x00\x00")
+    assert pdu.uint64() == 4398046511104
+    assert pdu.uint64("big") == 4398046511104
+    assert pdu.uint64("little") == 262144
+
+
+def test_modbus_pdu_float32() -> None:
     pdu = ModbusPDU(1, 1, b"Dz\x00\x00")
     assert pdu.float32() == 1000.0
+    assert pdu.float32("big") == 1000.0
+    assert pdu.float32("little") == 4.3860641933366774e-41
 
+
+def test_modbus_pdu_float64() -> None:
     pdu = ModbusPDU(1, 1, b"\xc12\xc4\xb0\x00\x00\x00\x00")
     assert pdu.float64() == -1.23e6
+    assert pdu.float64("big") == -1.23e6
+    assert pdu.float64("little") == 1.4652248266e-314
 
+
+def test_modbus_pdu_decode() -> None:
     pdu = ModbusPDU(1, 1, b"hello")
     assert pdu.decode() == "hello"
+    assert pdu.decode("ascii") == "hello"
 
+    with pytest.raises(LookupError):
+        _ = pdu.decode("invalid")
+
+
+def test_modbus_pdu_array() -> None:
     data = b"\x40\xf8\x11\x5f\x40\xd4\x8c\x8a\x40\xb5\xbb\x8a\x40\x90\x78\x9c"
-    expected_array = np.array([7.7521205, 6.6421556, 5.679143, 4.514723], dtype=">f4")
     pdu = ModbusPDU(1, 1, data)
-    assert np.array_equal(pdu.array(">f4"), expected_array)
-    assert np.array_equal(pdu.array("<f4"), expected_array)
-    assert np.array_equal(pdu.array("f4"), expected_array)
-    assert np.array_equal(pdu.array(np.float32), expected_array)
+
+    f4_big = np.frombuffer(data, dtype=">f4")
+    f4_little = np.frombuffer(data, dtype="<f4")
+    assert np.array_equal(pdu.array("f4"), f4_big)
+    assert np.array_equal(pdu.array(">f4"), f4_big)
+    assert np.array_equal(pdu.array("<f4"), f4_little)
+    assert np.array_equal(pdu.array(np.float32), f4_big)
+    assert np.array_equal(pdu.array(np.dtype(">f4")), f4_big)
+    assert np.array_equal(pdu.array(np.dtype("<f4")), f4_little)
+
+    f8_big = np.frombuffer(data, dtype=">f8")
+    f8_little = np.frombuffer(data, dtype="<f8")
+    assert np.array_equal(pdu.array("f8"), f8_big)
+    assert np.array_equal(pdu.array(">f8"), f8_big)
+    assert np.array_equal(pdu.array("<f8"), f8_little)
+    assert np.array_equal(pdu.array(np.float64), f8_big)
+    assert np.array_equal(pdu.array(float), f8_big)
+    assert np.array_equal(pdu.array(np.dtype(">f8")), f8_big)
+    assert np.array_equal(pdu.array(np.dtype("<f8")), f8_little)
+
+
+def test_modbus_pdu_bits() -> None:
+    pdu = ModbusPDU(1, 1, b"\x01")
+    assert np.array_equal(pdu.bits(), [True, False, False, False, False, False, False, False])
+    assert np.array_equal(pdu.bits("big"), [False, False, False, False, False, False, False, True])
+
+    pdu = ModbusPDU(1, 1, b"\x01", count=1)
+    assert np.array_equal(pdu.bits(), [True])
+    assert np.array_equal(pdu.bits("big"), [False])
+
+    pdu = ModbusPDU(1, 1, 0b0110_0001.to_bytes(1, "big"), count=7)
+    assert np.array_equal(pdu.bits(), [True, False, False, False, False, True, True])
+    assert np.array_equal(pdu.bits("big"), [False, True, True, False, False, False, False])
+
+    pdu = ModbusPDU(1, 1, 0b0110_0001.to_bytes(1, "big"), count=8)
+    assert np.array_equal(pdu.bits(), [True, False, False, False, False, True, True, False])
+    assert np.array_equal(pdu.bits("big"), [False, True, True, False, False, False, False, True])
 
 
 def test_to_register_values() -> None:
@@ -247,14 +313,95 @@ def test_modbus_exception_code(tcp_server: type[TCPServer]) -> None:
                 _ = dev.read()
 
 
+def test_tcp_read_coils(tcp_server: type[TCPServer]) -> None:
+    with tcp_server(term=None) as server:
+        connection = Connection(f"Modbus::{server.host}::{server.port}", timeout=1)
+
+        dev: Modbus
+        with connection.connect() as dev:
+            with pytest.raises(ValueError, match=r"maximum allowed is 2000"):
+                _ = dev.read_coils(1, count=2001)
+
+            pdu = dev.read_coils(5130, count=17, device_id=240)
+            assert pdu.data == b"\n\x00\x11"  # last 3 bytes of struct.pack(">HH", 5130, 17) == b'\x14\n\x00\x11'
+            assert pdu.count == 17
+            assert pdu.device_id == 240
+            assert pdu.function_code == 1
+
+            # Response from MODBUS Application Protocol Specification V1.1b3
+            server.add_response(b"\x00\x02\x00\x00\x00\x06\xf0\x01\x03\xcd\x6b\x05")
+            pdu = dev.read_coils(0, count=8 + 8 + 3)  # address ignored
+            assert pdu.data == b"\xcd\x6b\x05"
+            assert pdu.count == 19
+            assert pdu.device_id == 240  # \xF0
+            assert pdu.function_code == 1
+            # fmt: off
+            # 1  1  0  0  1  1  0  1   0  1  1  0  1  0  1  1   0 0 0 0 0 1  0  1
+            # 27 26 25 24 23 22 21 20  35 34 33 32 31 30 29 28  X X X X X 38 37 36
+            assert np.array_equal(pdu.bits(), [
+                # 20     21    22    23     24     25    26    27    28    29     30    31     32    33    34     35    36     37    38  # noqa: E501
+                True, False, True, True, False, False, True, True, True, True, False, True, False, True, True, False, True, False, True  # noqa: E501
+            ])
+            # fmt: on
+
+            server.add_response(b"\x00\x03\x00\x00\x00\x04\xf0\x01\x01\x01")
+            pdu = dev.read_coils(0)  # address ignored
+            assert pdu.data == b"\x01"
+            assert pdu.count == 1
+            assert pdu.device_id == 240  # \xF0
+            assert pdu.function_code == 1
+            assert np.array_equal(pdu.bits(), [True])
+            assert np.array_equal(pdu.bits("big"), [False])
+            pdu.count = None
+            assert np.array_equal(pdu.bits(), [True, False, False, False, False, False, False, False])
+            assert np.array_equal(pdu.bits("big"), [False, False, False, False, False, False, False, True])
+
+            server.add_response(b"\x00\x03\x00\x00\x00\x04\x01\x01\x01\x01")
+            with pytest.raises(MSLConnectionError, match=r"transaction ID 3, expected 4$"):
+                _ = dev.read_coils(0)
+
+            server.add_response(b"\x00\x05\x00\x00\x00\x04\x01\x02\x01\x01")
+            with pytest.raises(MSLConnectionError, match=r"function code 0x02, expected 0x01$"):
+                _ = dev.read_coils(0)
+
+            # https://github.com/pymodbus-dev/pymodbus/issues/2630
+            server.add_response(b"\x00\x06\x00\x00\x00\x05\xf1\x01\x02\xf5\xff")
+            pdu = dev.read_coils(0, count=16)  # address ignored
+            assert pdu.data == b"\xf5\xff"
+            assert pdu.count == 16
+            assert pdu.device_id == 241  # \xF1
+            assert pdu.function_code == 1
+            assert np.array_equal(
+                pdu.bits(),
+                [True, False, True, False, True, True, True, True, True, True, True, True, True, True, True, True],
+            )
+
+            # https://www.fernhillsoftware.com/help/drivers/modbus/modbus-protocol.html#readCoils
+            server.add_response(b"\x00\x07\x00\x00\x00\x05\x02\x01\x02\x80\x02")
+            pdu = dev.read_coils(0, count=12)  # address ignored
+            assert pdu.data == b"\x80\x02"
+            assert pdu.count == 12
+            assert pdu.device_id == 2
+            assert pdu.function_code == 1
+            assert np.array_equal(
+                #                     33     34     35     36     37     38     39    40     41    42     43     44
+                pdu.bits(),
+                [False, False, False, False, False, False, False, True, False, True, False, False],
+            )
+
+
 def test_tcp_read_input_registers(tcp_server: type[TCPServer]) -> None:
     with tcp_server(term=None) as server:
         connection = Connection(f"Modbus::{server.host}::{server.port}", timeout=1)
 
         dev: Modbus
         with connection.connect() as dev:
+            with pytest.raises(ValueError, match=r"maximum allowed is 125"):
+                _ = dev.read_input_registers(1, count=126)
+
             server.add_response(b"\x00\x01\x00\x00\x00\x05\x01\x04\x02\x00\x11")
             pdu = dev.read_input_registers(55100)
+            assert pdu.count == 1
             assert pdu.data == b"\x00\x11"
             assert pdu.device_id == 1
             assert pdu.function_code == 4
@@ -270,6 +417,7 @@ def test_tcp_read_input_registers(tcp_server: type[TCPServer]) -> None:
 
             server.add_response(b"\x00\x04\x00\x00\x00\x07\x01\x04\x04\x00\x11\x22\x33")
             pdu = dev.read_input_registers(55100, count=2)
+            assert pdu.count == 2
             assert pdu.data == b"\x00\x11\x22\x33"
             assert pdu.device_id == 1
             assert pdu.function_code == 4

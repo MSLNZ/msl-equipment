@@ -328,7 +328,7 @@ class ModbusPDU:
     def bits(self, bitorder: Literal["big", "little"] = "little") -> NDArray[np.bool]:
         """[numpy.ndarray][] &mdash; Returns the states of the register bits that were requested."""
         data = np.frombuffer(self.data, dtype=np.uint8)
-        return np.unpackbits(data, count=self.count, bitorder=bitorder).astype(np.bool)
+        return np.unpackbits(data, count=self.count, bitorder=bitorder).astype(bool)
 
     def decode(self, encoding: str = "utf-8") -> str:
         """[str][] &mdash; Returns the decoded response data using the `encoding` codec."""

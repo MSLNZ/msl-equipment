@@ -384,9 +384,9 @@ def test_tcp_read_coils(tcp_server: type[TCPServer]) -> None:
             assert pdu.device_id == 2
             assert pdu.function_code == 1
             assert np.array_equal(
-                #                     33     34     35     36     37     38     39    40     41    42     43     44
-                pdu.bits(),
+                #      33     34     35     36     37     38     39    40     41    42     43     44
                 [False, False, False, False, False, False, False, True, False, True, False, False],
+                pdu.bits()
             )
 
 

@@ -102,7 +102,7 @@ class Modbus(Interface, regex=REGEX):
 
         Args:
             address: Starting register address to read from. Must be in the range [0, 65535].
-            count: The number of coil registers to read. Must be in the range [1, 2000].
+            count: The number of coils to read. Must be in the range [1, 2000].
             device_id: Modbus device ID.
 
         Returns:
@@ -119,8 +119,27 @@ class Modbus(Interface, regex=REGEX):
         self._check_function_code(function_code, pdu)
         return pdu
 
-    def read_discrete_inputs(self) -> None:
-        pass
+    def read_discrete_inputs(self, address: int, *, count: int = 1, device_id: int = 1) -> ModbusPDU:
+        """Read discrete inputs (function code `0x02`).
+
+        Args:
+            address: Starting register address to read from. Must be in the range [0, 65535].
+            count: The number of discrete inputs to read. Must be in the range [1, 2000].
+            device_id: Modbus device ID.
+
+        Returns:
+            The Modbus Protocol Data Unit of the response.
+        """
+        if count > 2000:  # noqa: PLR2004
+            msg = f"Requesting to read {count} discrete inputs, maximum allowed is 2000"
+            raise ValueError(msg)
+
+        function_code = 0x02
+        _ = self.write(function_code, data=pack(">HH", address, count), device_id=device_id)
+        device_id, response = self.read()
+        pdu = ModbusPDU(device_id, response[0], response[2:], count=count)
+        self._check_function_code(function_code, pdu)
+        return pdu
 
     def read_holding_registers(self) -> None:
         pass

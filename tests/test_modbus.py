@@ -319,7 +319,7 @@ def test_tcp_read_coils(tcp_server: type[TCPServer]) -> None:
 
         dev: Modbus
         with connection.connect() as dev:
-            with pytest.raises(ValueError, match=r"maximum allowed is 2000"):
+            with pytest.raises(ValueError, match=r"2001 coils, maximum allowed is 2000"):
                 _ = dev.read_coils(1, count=2001)
 
             pdu = dev.read_coils(5130, count=17, device_id=240)
@@ -356,7 +356,7 @@ def test_tcp_read_coils(tcp_server: type[TCPServer]) -> None:
             assert np.array_equal(pdu.bits(), [True, False, False, False, False, False, False, False])
             assert np.array_equal(pdu.bits("big"), [False, False, False, False, False, False, False, True])
 
-            server.add_response(b"\x00\x03\x00\x00\x00\x04\x01\x01\x01\x01")
+            server.add_response(b"\x00\x03\x00\x00\x00\x03\x01\x01\x01")
             with pytest.raises(MSLConnectionError, match=r"transaction ID 3, expected 4$"):
                 _ = dev.read_coils(0)
 
@@ -386,8 +386,69 @@ def test_tcp_read_coils(tcp_server: type[TCPServer]) -> None:
             assert np.array_equal(
                 #      33     34     35     36     37     38     39    40     41    42     43     44
                 [False, False, False, False, False, False, False, True, False, True, False, False],
-                pdu.bits()
+                pdu.bits(),
             )
+
+
+def test_tcp_read_discrete_inputs(tcp_server: type[TCPServer]) -> None:
+    with tcp_server(term=None) as server:
+        connection = Connection(f"Modbus::{server.host}::{server.port}", timeout=1)
+
+        dev: Modbus
+        with connection.connect() as dev:
+            with pytest.raises(ValueError, match=r"2001 discrete inputs, maximum allowed is 2000"):
+                _ = dev.read_discrete_inputs(1, count=2001)
+
+            pdu = dev.read_discrete_inputs(1020, count=10, device_id=31)
+            assert pdu.data == b"\xfc\x00\n"  # last 3 bytes of struct.pack(">HH", 5130, 17) == b'\x03\xfc\x00\n'
+            assert pdu.count == 10
+            assert pdu.device_id == 31
+            assert pdu.function_code == 2
+
+            # Response from MODBUS Application Protocol Specification V1.1b3
+            server.add_response(b"\x00\x02\x00\x00\x00\x06\x04\x02\x03\xac\xdb\x35")
+            pdu = dev.read_discrete_inputs(0, count=8 + 8 + 6)  # address ignored
+            assert pdu.data == b"\xac\xdb\x35"
+            assert pdu.count == 22
+            assert pdu.device_id == 4
+            assert pdu.function_code == 2
+            # fmt: off
+            #   1   0   1   0   1   1   0   0    1   1   0   1   1   0   1   1  0 0   1   1   0   1   0   1
+            # 204 203 202 201 200 199 198 197  212 211 210 209 208 207 206 205  X X 218 217 216 215 214 213
+            assert np.array_equal(pdu.bits(), [
+                # 197    198   199   200    201   202    203   204   205   206    207   208   209    210   211   212   213    214   215    216   217   218  # noqa: E501
+                False, False, True, True, False, True, False, True, True, True, False, True, True, False, True, True, True, False, True, False, True, True  # noqa: E501
+            ])
+            # fmt: on
+
+            server.add_response(b"\x00\x03\x00\x00\x00\x04\xf0\x02\x01\x01")
+            pdu = dev.read_discrete_inputs(0)  # address ignored
+            assert pdu.data == b"\x01"
+            assert pdu.count == 1
+            assert pdu.device_id == 240  # \xF0
+            assert pdu.function_code == 2
+            assert np.array_equal(pdu.bits(), [True])
+            assert np.array_equal(pdu.bits("big"), [False])
+            pdu.count = None
+            assert np.array_equal(pdu.bits(), [True, False, False, False, False, False, False, False])
+            assert np.array_equal(pdu.bits("big"), [False, False, False, False, False, False, False, True])
+
+            server.add_response(b"\x00\x01\x00\x00\x00\x03\x02\x01\x01")
+            with pytest.raises(MSLConnectionError, match=r"transaction ID 1, expected 4$"):
+                _ = dev.read_discrete_inputs(0)
+
+            server.add_response(b"\x00\x05\x00\x00\x00\x04\x01\x05\x01\x01")
+            with pytest.raises(MSLConnectionError, match=r"function code 0x05, expected 0x02$"):
+                _ = dev.read_discrete_inputs(0)
+
+            # https://www.fernhillsoftware.com/help/drivers/modbus/modbus-protocol.html#readInputs
+            server.add_response(b"\x00\x06\x00\x00\x00\x05\x08\x02\x02\x05\x00")
+            pdu = dev.read_discrete_inputs(0, count=16)  # address ignored
+            assert pdu.data == b"\x05\x00"
+            assert pdu.count == 16
+            assert pdu.device_id == 8
+            assert pdu.function_code == 2
+            assert np.array_equal(pdu.bits(), [True, False, True] + [False] * 13)
 
 
 def test_tcp_read_input_registers(tcp_server: type[TCPServer]) -> None:

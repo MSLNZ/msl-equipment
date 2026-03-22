@@ -106,7 +106,9 @@ class Modbus(Interface, regex=REGEX):
             device_id: Modbus device ID.
 
         Returns:
-            The Modbus Protocol Data Unit of the response.
+            The Modbus Protocol Data Unit of the response. Call the
+                [bits][msl.equipment.interfaces.modbus.ModbusPDU.bits] method to get the
+                ON/OFF state of each coil.
         """
         if count > 2000:  # noqa: PLR2004
             msg = f"Requesting to read {count} coils, maximum allowed is 2000"
@@ -128,7 +130,9 @@ class Modbus(Interface, regex=REGEX):
             device_id: Modbus device ID.
 
         Returns:
-            The Modbus Protocol Data Unit of the response.
+            The Modbus Protocol Data Unit of the response. Call the
+                [bits][msl.equipment.interfaces.modbus.ModbusPDU.bits] method to get the
+                ON/OFF state of each discrete input.
         """
         if count > 2000:  # noqa: PLR2004
             msg = f"Requesting to read {count} discrete inputs, maximum allowed is 2000"
@@ -141,8 +145,27 @@ class Modbus(Interface, regex=REGEX):
         self._check_function_code(function_code, pdu)
         return pdu
 
-    def read_holding_registers(self) -> None:
-        pass
+    def read_holding_registers(self, address: int, *, count: int = 1, device_id: int = 1) -> ModbusPDU:
+        """Read holding registers (function code `0x03`).
+
+        Args:
+            address: Starting register address to read from. Must be in the range [0, 65535].
+            count: The number of 16-bit registers to read. Must be in the range [1, 125].
+            device_id: Modbus device ID.
+
+        Returns:
+            The Modbus Protocol Data Unit of the response.
+        """
+        if count > 125:  # noqa: PLR2004
+            msg = f"Requesting to read {count} holding registers, maximum allowed is 125"
+            raise ValueError(msg)
+
+        function_code = 0x03
+        _ = self.write(function_code, data=pack(">HH", address, count), device_id=device_id)
+        device_id, response = self.read()
+        pdu = ModbusPDU(device_id, response[0], response[2:], count=count)
+        self._check_function_code(function_code, pdu)
+        return pdu
 
     def read_input_registers(self, address: int, *, count: int = 1, device_id: int = 1) -> ModbusPDU:
         """Read input registers (function code `0x04`).
@@ -163,6 +186,24 @@ class Modbus(Interface, regex=REGEX):
         _ = self.write(function_code, data=pack(">HH", address, count), device_id=device_id)
         device_id, response = self.read()
         pdu = ModbusPDU(device_id, response[0], response[2:], count=count)
+        self._check_function_code(function_code, pdu)
+        return pdu
+
+    def read_exception_status(self, *, device_id: int = 1) -> ModbusPDU:
+        """Read exception status (function code `0x07`).
+
+        Args:
+            device_id: Modbus device ID.
+
+        Returns:
+            The Modbus Protocol Data Unit of the response. Call the
+                [bits][msl.equipment.interfaces.modbus.ModbusPDU.bits] method to get the
+                ON/OFF state of each exception-status bit.
+        """
+        function_code = 0x07
+        _ = self.write(function_code, device_id=device_id)
+        device_id, response = self.read()
+        pdu = ModbusPDU(device_id, response[0], data=response[1:], count=8)
         self._check_function_code(function_code, pdu)
         return pdu
 
@@ -321,7 +362,7 @@ class ModbusPDU:
     def __init__(self, device_id: int, function_code: int, data: bytes, count: int | None = None) -> None:
         """Modbus Protocol Data Unit."""
         self.count: int | None = count
-        """[int][] &mdash; The number of registers that were requested to read."""
+        """[int][] &mdash; The number of registers/coils that were requested to read."""
 
         self.device_id: int = device_id
         """[int][] &mdash; Modbus device ID."""
@@ -338,9 +379,7 @@ class ModbusPDU:
 
     def array(self, dtype: DTypeLike) -> NDArray[Any]:
         """[numpy.ndarray][] &mdash; Returns the register data as a [numpy.ndarray][] of the specified `dtype`."""
-        if isinstance(dtype, str) and dtype[0] not in "<>=|":
-            dtype = ">" + dtype  # force big endian
-        elif isinstance(dtype, type):
+        if isinstance(dtype, type) or (isinstance(dtype, str) and dtype[0] not in "<>=|"):
             dtype = np.dtype(dtype).newbyteorder(">")  # force big endian
         return np.frombuffer(self.data, dtype=">u2").view(dtype)
 

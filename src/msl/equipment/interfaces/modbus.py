@@ -1,6 +1,6 @@
 """Base class for the Modbus protocol."""
 
-# cSpell: ignore HHHB unpackbits
+# cSpell: ignore HHHB HHHHB unpackbits
 from __future__ import annotations
 
 import re
@@ -82,6 +82,32 @@ class Modbus(Interface, regex=REGEX):
         if hasattr(self, "_framer"):
             self._framer.disconnect()
             super().disconnect()
+
+    def mask_write_register(
+        self, address: int, *, and_mask: int = 65535, or_mask: int = 0, device_id: int = 1
+    ) -> ModbusPDU:
+        """Mask Write Register (function code `0x016`).
+
+        Modifies the contents of the specified holding-register address using a combination of an AND mask,
+        an OR mask, and the register's current contents. This method can be used to set or clear individual
+        bits in the holding register.
+
+        Args:
+            address: Holding register address. Must be in the range [0, 65535].
+            and_mask: The AND bitmask to apply to the register address. Must be in the range [0, 65535].
+            or_mask: The OR bitmask to apply to the register address. Must be in the range [0, 65535].
+            device_id: Modbus device ID.
+
+        Returns:
+            The Modbus Protocol Data Unit of the response. The response data is the result after
+                the register masks have been written.
+        """
+        function_code = 0x16
+        _ = self.write(function_code, data=pack(">HHH", address, and_mask, or_mask), device_id=device_id)
+        device_id, response = self.read()
+        pdu = ModbusPDU(device_id, response[0], response[1:])
+        self._check_function_code(function_code, pdu)
+        return pdu
 
     def read(self) -> tuple[int, bytes]:
         """Read a Modbus message.
@@ -207,6 +233,73 @@ class Modbus(Interface, regex=REGEX):
         self._check_function_code(function_code, pdu)
         return pdu
 
+    def readwrite_registers(
+        self,
+        *,
+        read_address: int = 0,
+        read_count: int = 0,
+        write_address: int = 0,
+        address: int | None = None,
+        values: int | Sequence[int] | NDArray[np.uint16] | None = None,
+        device_id: int = 1,
+    ) -> ModbusPDU:
+        """Read/Write registers (function code `0x17`).
+
+        Performs a combination of one read operation and one write operation in a single Modbus transaction.
+        The write operation is performed before the read operation.
+
+        Args:
+            read_address: Starting holding-register address to read from. Must be in the range [0, 65535].
+            read_count: The number of 16-bit registers to read. Must be in the range [1, 125].
+            write_address: Starting holding-register address to write to. Must be in the range [0, 65535].
+            address: Use as both the read and write address. Must be in the range [0, 65535].
+            values: A sequence of values to write or a single value to write. The maximum sequence length is 121.
+                Each value must be in the range [0, 65535]. See also
+                [to_register_values][msl.equipment.interfaces.modbus.Modbus.to_register_values].
+            device_id: Modbus device ID.
+
+        Returns:
+            The Modbus Protocol Data Unit of the response.
+        """
+        if read_count > 125:  # noqa: PLR2004
+            msg = f"Requesting to read {read_count} holding registers, maximum allowed is 125"
+            raise ValueError(msg)
+
+        if values is None:
+            values = []
+        elif isinstance(values, int):
+            values = [values]
+
+        n = len(values)
+        if n > 121:  # noqa: PLR2004
+            msg = f"Too many values, {n}, to write to the Modbus registers, must be <= 121"
+            raise ValueError(msg)
+
+        if isinstance(values, np.ndarray):
+            if values.dtype.str != ">u2":
+                msg = f"numpy array must have a dtype of '>u2', got {values.dtype.str!r}"
+                raise ValueError(msg)
+            data = values.tobytes()
+        elif n == 0:
+            data = b""
+        else:
+            data = pack(f">{n}H", *values)
+
+        if address is not None:
+            read_address = address
+            write_address = address
+
+        function_code = 0x17
+        _ = self.write(
+            function_code,
+            data=pack(">HHHHB", read_address, read_count, write_address, n, 2 * n) + data,
+            device_id=device_id,
+        )
+        device_id, response = self.read()
+        pdu = ModbusPDU(device_id, response[0], data=response[2:], count=read_count)
+        self._check_function_code(function_code, pdu)
+        return pdu
+
     @staticmethod
     def to_register_values(
         data: float | Sequence[float] | NDArray[np.number], dtype: DTypeLike = np.uint16
@@ -315,7 +408,7 @@ class Modbus(Interface, regex=REGEX):
             address: Starting register address to write to. Must be in the range [0, 65535].
             values: A sequence of values to write. The maximum sequence length is 123.
                 Each value must be in the range [0, 65535]. See also
-                [to_uint16_array][msl.equipment.interfaces.modbus.Modbus.to_uint16_array].
+                [to_register_values][msl.equipment.interfaces.modbus.Modbus.to_register_values].
             device_id: Modbus device ID.
 
         Returns:

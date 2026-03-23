@@ -739,3 +739,91 @@ def test_tcp_write_coils(tcp_server: type[TCPServer]) -> None:
                 ],
             )
             assert pdu.data == b"\x21\xac\x00\x13\x03\x89\x4d\x06"
+
+
+def test_tcp_mask_write_register(tcp_server: type[TCPServer]) -> None:
+    with tcp_server(term=None) as server:
+        connection = Connection(f"Modbus::{server.host}::{server.port}", timeout=1)
+
+        dev: Modbus
+        with connection.connect() as dev:
+            pdu = dev.mask_write_register(4, and_mask=0xF2, or_mask=0x25)
+            assert pdu.data == b"\x00\x04\x00\xf2\x00\x25"
+            assert pdu.function_code == 0x16
+            assert pdu.count is None
+            assert pdu.unpack(">HHH") == (4, 0xF2, 0x25)
+            assert np.array_equal(pdu.array("uint16"), [4, 0xF2, 0x25])
+            assert pdu.device_id == 1
+
+            with pytest.raises(struct.error):
+                _ = dev.mask_write_register(0, or_mask=70_000)
+
+            with pytest.raises(struct.error):
+                _ = dev.mask_write_register(0, and_mask=70_000)
+
+            with pytest.raises(struct.error):
+                _ = dev.mask_write_register(70_000)
+
+            pdu = dev.mask_write_register(0, device_id=2)
+            assert pdu.data == b"\x00\x00\xff\xff\x00\x00"
+            assert pdu.function_code == 0x16
+            assert pdu.count is None
+            assert pdu.unpack(">HHH") == (0, 0xFFFF, 0)
+            assert np.array_equal(pdu.array("uint16"), [0, 0xFFFF, 0])
+            assert pdu.device_id == 2
+
+
+def test_tcp_readwrite_registers(tcp_server: type[TCPServer]) -> None:
+    with tcp_server(term=None) as server:
+        connection = Connection(f"Modbus::{server.host}::{server.port}", timeout=1)
+
+        dev: Modbus
+        with connection.connect() as dev:
+            pdu = dev.readwrite_registers()
+            assert pdu.count == 0
+            assert pdu.device_id == 1
+            assert pdu.function_code == 0x17
+            assert pdu.data == b"\x00\x00\x00\x00\x00\x00\x00\x00"
+
+            with pytest.raises(ValueError, match=r"holding registers, maximum allowed is 125"):
+                _ = dev.readwrite_registers(read_count=126)
+
+            pdu = dev.readwrite_registers(read_address=33, read_count=1, write_address=4)
+            assert pdu.count == 1
+            assert pdu.device_id == 1
+            assert pdu.function_code == 0x17
+            assert pdu.data == b"\x21\x00\x01\x00\x04\x00\x00\x00"
+
+            pdu = dev.readwrite_registers(address=10, read_count=40, values=1000, device_id=8)
+            assert pdu.count == 40
+            assert pdu.device_id == 8
+            assert pdu.function_code == 0x17
+            assert pdu.data == b"\x0a\x00\x28\x00\x0a\x00\x01\x02\x03\xe8"
+
+            with pytest.raises(ValueError, match=r"must be <= 121"):
+                _ = dev.readwrite_registers(values=[1] * 122)
+
+            pdu = dev.readwrite_registers(read_address=3, read_count=6, write_address=14, values=[1, 2, 3])
+            assert pdu.count == 6
+            assert pdu.device_id == 1
+            assert pdu.function_code == 0x17
+            assert pdu.data == b"\x03\x00\x06\x00\x0e\x00\x03\x06\x00\x01\x00\x02\x00\x03"
+
+            pdu = dev.readwrite_registers(
+                read_address=3, read_count=6, write_address=14, values=np.array([1, 2, 3], dtype=">u2")
+            )
+            assert pdu.count == 6
+            assert pdu.device_id == 1
+            assert pdu.function_code == 0x17
+            assert pdu.data == b"\x03\x00\x06\x00\x0e\x00\x03\x06\x00\x01\x00\x02\x00\x03"
+
+            with pytest.raises(ValueError, match=r"dtype of '>u2'"):
+                _ = dev.readwrite_registers(values=np.array([1, 2, 3], dtype="<u2"))
+
+            server.add_response(b"\x00\x06\x00\x00\x00\x0f\x0d\x17\x0c\x00\xfe\x0a\xcd\x00\x01\x00\x03\x00\x0d\x00\xff")
+            pdu = dev.readwrite_registers(read_address=3, read_count=6, write_address=14)
+            assert pdu.count == 6
+            assert pdu.device_id == 13
+            assert pdu.function_code == 0x17
+            assert pdu.data == b"\x00\xfe\x0a\xcd\x00\x01\x00\x03\x00\x0d\x00\xff"
+            assert np.array_equal(pdu.array("uint16"), [254, 2765, 1, 3, 13, 255])

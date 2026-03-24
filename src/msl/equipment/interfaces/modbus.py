@@ -15,7 +15,7 @@ from msl.equipment.schema import Connection, Interface
 from .message_based import MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterator, Sequence
     from typing import Any, Literal
 
     from numpy.typing import DTypeLike, NDArray
@@ -72,7 +72,7 @@ class Modbus(Interface, regex=REGEX):
             msg = "Only SOCKET frames are currently supported"
             raise MSLConnectionError(self, msg)
 
-    def _check_function_code(self, function_code: int, pdu: ModbusPDU) -> None:
+    def _check_function_code(self, function_code: int, pdu: ModbusPDU | ModbusIdentification) -> None:
         if pdu.function_code != function_code:
             msg = f"Received unexpected Modbus function code 0x{pdu.function_code:02X}, expected 0x{function_code:02X}"
             raise MSLConnectionError(self._framer.interface, msg)
@@ -146,6 +146,46 @@ class Modbus(Interface, regex=REGEX):
         pdu = ModbusPDU(device_id, response[0], response[2:], count=count)
         self._check_function_code(function_code, pdu)
         return pdu
+
+    def read_device_identification(
+        self, *, code_id: Literal[1, 2, 3, 4] = 1, object_id: int = 0, device_id: int = 1
+    ) -> ModbusIdentification:
+        """Read device Identification (function code `0x2B`, Modbus Encapsulated Interface type `0x0E`).
+
+        The read device identification interface is modelled as an address space composed
+        of a set of addressable data elements. The data elements are called objects and an
+        object ID identifies them.
+
+        Args:
+            code_id: Read device ID code.
+
+                * `1` &mdash; *Basic* device identification
+                * `2` &mdash; *Regular* device identification
+                * `3` &mdash; *Extended* device identification
+                * `4` &mdash; A *specific* identification object
+
+            object_id: The object ID to read.
+
+                * `0` &mdash; Vendor name (*Basic*)
+                * `1` &mdash; Product code (*Basic*)
+                * `2` &mdash; Major/minor revision (*Basic*)
+                * `3` &mdash; Vendor url (*Regular*)
+                * `4` &mdash; Product name (*Regular*)
+                * `5` &mdash; Model name (*Regular*)
+                * `6` &mdash; User application name (*Regular*)
+                * `7` to `127` &mdash; Reserved for future use
+                * `128` to `255` &mdash; Device dependant (*Extended*)
+
+            device_id: Modbus device ID.
+
+        Returns:
+            The Modbus device identification.
+        """
+        function_code = 0x2B
+        _ = self.write(function_code, data=pack(">BBB", 0x0E, code_id, object_id), device_id=device_id)
+        identification = ModbusIdentification(*self.read())
+        self._check_function_code(function_code, identification)
+        return identification
 
     def read_discrete_inputs(self, address: int, *, count: int = 1, device_id: int = 1) -> ModbusPDU:
         """Read discrete inputs (function code `0x02`).
@@ -233,7 +273,7 @@ class Modbus(Interface, regex=REGEX):
         self._check_function_code(function_code, pdu)
         return pdu
 
-    def readwrite_registers(
+    def read_write_registers(
         self,
         *,
         read_address: int = 0,
@@ -540,6 +580,129 @@ class ModbusPDU:
         for more details.
         """
         return unpack(format, self.data)
+
+
+class ModbusObject(NamedTuple):
+    """Modbus device-identification object."""
+
+    id: int
+    value: bytes
+
+
+class ModbusIdentification:
+    """Modbus device identification."""
+
+    def __init__(self, device_id: int, response: bytes) -> None:
+        r"""Modbus device identification.
+
+        Do not instantiate directly. This class is returned by the
+        [read_device_identification][msl.equipment.interfaces.modbus.Modbus.read_device_identification] method.
+
+        <!--
+        >>> from msl.equipment.interfaces.modbus import ModbusIdentification
+        >>> identification = ModbusIdentification(1, b"\x2b\x0e\x01\x83\x00\x00\x03\x00\x03MSL\x01\x02NZ\x02\x045.16")
+
+        -->
+
+        Example usage:
+
+        ```pycon
+        >>> identification
+        ModbusIdentification(code_id=1, conformity=0x83, more_follows=False, next_object_id=0, ids=[0, 1, 2])
+        >>> for obj in identification:
+        ...     print(f"{obj.id}: {obj.value}")
+        0: b'MSL'
+        1: b'NZ'
+        2: b'5.16'
+        >>> identification[0]  # object ID = 0, Manufacturer
+        b'MSL'
+        >>> identification[1]  # object ID = 1, Product code
+        b'NZ'
+        >>> identification[2]  # object ID = 2, Revision
+        b'5.16'
+        >>> identification[3]
+        Traceback (most recent call last):
+        ...
+        KeyError: 'A device-identification object with id 3 is not in the Modbus response'
+        >>> assert identification.get(3) is None  # returns None instead of raising an error
+
+        ```
+
+
+        """
+        self.function_code: int = response[0]
+        """[int][] &mdash; Modbus function code."""
+
+        self.mei_type: int = response[1]
+        """[int][] &mdash; Modbus Encapsulated Interface (MEI) type."""
+
+        self.code_id: int = response[2]
+        """[int][] &mdash; Read device ID code of the request."""
+
+        self.conformity: int = response[3]
+        """[int][] &mdash; Identification conformity level of the device and type of supported access."""
+
+        self.device_id: int = device_id
+        """[int][] &mdash; Modbus device ID."""
+
+        self.more_follows: bool = bool(response[4])
+        """[bool][] &mdash; Whether the identification data doesn't fit into a single response and several
+        request/response transactions are required."""
+
+        self.next_object_id: int = response[5]
+        """[int][] &mdash; If [more_follows][msl.equipment.interfaces.modbus.ModbusIdentification.more_follows]
+        is `True`, the identification of the next object to be asked."""
+
+        self.objects: list[ModbusObject] = []
+        """[list][][[ModbusObject][msl.equipment.interfaces.modbus.ModbusObject]] &mdash; The
+        device-identification objects."""
+
+        offset = 7
+        while offset < len(response):
+            oid, length = response[offset : offset + 2]
+            value = response[offset + 2 : offset + 2 + length]
+            self.objects.append(ModbusObject(id=oid, value=value))
+            offset += 2 + length
+
+    def __getitem__(self, object_id: int) -> bytes:
+        """Returns the corresponding value for a device-identification object."""
+        value = self.get(object_id)
+        if value is not None:
+            return value
+
+        msg = f"A device-identification object with id {object_id} is not in the Modbus response"
+        raise KeyError(msg)
+
+    def __len__(self) -> int:
+        """Returns the number of objects."""
+        return len(self.objects)
+
+    def __iter__(self) -> Iterator[ModbusObject]:
+        """Returns an iterator of ModbusObject's."""
+        return iter(self.objects)
+
+    def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
+        """Returns the string representation."""
+        ids = [o.id for o in self]
+        return (
+            f"{self.__class__.__name__}(code_id={self.code_id}, conformity=0x{self.conformity:02X}, "
+            f"more_follows={self.more_follows}, next_object_id={self.next_object_id}, ids={ids})"
+        )
+
+    def get(self, object_id: int) -> bytes | None:
+        """Get the value of an object ID.
+
+        Args:
+            object_id: The ID of a device-identification object.
+
+        Returns:
+            The corresponding value or `None` if a device-identification object with id `object_id`
+                is not in the Modbus response.
+        """
+        for o in self:
+            if o.id == object_id:
+                return o.value
+        return None
 
 
 # Exception codes 0x05 and 0x06 do not represent Modbus errors that should be raised, but treat them as such for now

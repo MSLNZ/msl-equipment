@@ -779,37 +779,37 @@ def test_tcp_readwrite_registers(tcp_server: type[TCPServer]) -> None:
 
         dev: Modbus
         with connection.connect() as dev:
-            pdu = dev.readwrite_registers()
+            pdu = dev.read_write_registers()
             assert pdu.count == 0
             assert pdu.device_id == 1
             assert pdu.function_code == 0x17
             assert pdu.data == b"\x00\x00\x00\x00\x00\x00\x00\x00"
 
             with pytest.raises(ValueError, match=r"holding registers, maximum allowed is 125"):
-                _ = dev.readwrite_registers(read_count=126)
+                _ = dev.read_write_registers(read_count=126)
 
-            pdu = dev.readwrite_registers(read_address=33, read_count=1, write_address=4)
+            pdu = dev.read_write_registers(read_address=33, read_count=1, write_address=4)
             assert pdu.count == 1
             assert pdu.device_id == 1
             assert pdu.function_code == 0x17
             assert pdu.data == b"\x21\x00\x01\x00\x04\x00\x00\x00"
 
-            pdu = dev.readwrite_registers(address=10, read_count=40, values=1000, device_id=8)
+            pdu = dev.read_write_registers(address=10, read_count=40, values=1000, device_id=8)
             assert pdu.count == 40
             assert pdu.device_id == 8
             assert pdu.function_code == 0x17
             assert pdu.data == b"\x0a\x00\x28\x00\x0a\x00\x01\x02\x03\xe8"
 
             with pytest.raises(ValueError, match=r"must be <= 121"):
-                _ = dev.readwrite_registers(values=[1] * 122)
+                _ = dev.read_write_registers(values=[1] * 122)
 
-            pdu = dev.readwrite_registers(read_address=3, read_count=6, write_address=14, values=[1, 2, 3])
+            pdu = dev.read_write_registers(read_address=3, read_count=6, write_address=14, values=[1, 2, 3])
             assert pdu.count == 6
             assert pdu.device_id == 1
             assert pdu.function_code == 0x17
             assert pdu.data == b"\x03\x00\x06\x00\x0e\x00\x03\x06\x00\x01\x00\x02\x00\x03"
 
-            pdu = dev.readwrite_registers(
+            pdu = dev.read_write_registers(
                 read_address=3, read_count=6, write_address=14, values=np.array([1, 2, 3], dtype=">u2")
             )
             assert pdu.count == 6
@@ -818,12 +818,129 @@ def test_tcp_readwrite_registers(tcp_server: type[TCPServer]) -> None:
             assert pdu.data == b"\x03\x00\x06\x00\x0e\x00\x03\x06\x00\x01\x00\x02\x00\x03"
 
             with pytest.raises(ValueError, match=r"dtype of '>u2'"):
-                _ = dev.readwrite_registers(values=np.array([1, 2, 3], dtype="<u2"))
+                _ = dev.read_write_registers(values=np.array([1, 2, 3], dtype="<u2"))
 
             server.add_response(b"\x00\x06\x00\x00\x00\x0f\x0d\x17\x0c\x00\xfe\x0a\xcd\x00\x01\x00\x03\x00\x0d\x00\xff")
-            pdu = dev.readwrite_registers(read_address=3, read_count=6, write_address=14)
+            pdu = dev.read_write_registers(read_address=3, read_count=6, write_address=14)
             assert pdu.count == 6
             assert pdu.device_id == 13
             assert pdu.function_code == 0x17
             assert pdu.data == b"\x00\xfe\x0a\xcd\x00\x01\x00\x03\x00\x0d\x00\xff"
             assert np.array_equal(pdu.array("uint16"), [254, 2765, 1, 3, 13, 255])
+
+
+def test_tcp_read_device_identification(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
+    with tcp_server(term=None) as server:
+        connection = Connection(f"Modbus::{server.host}::{server.port}", timeout=1)
+
+        dev: Modbus
+        with connection.connect() as dev:
+            server.add_response(
+                b"\x00\x01\x00\x00\x00\x1f\x0a\x2b\x0e\x01\x83\x00\x00\x03\x00\x07Vaisala\x01\x06PTU300\x02\x045.16"
+            )
+            pdu = dev.read_device_identification()
+            assert pdu.device_id == 0x0A
+            assert pdu.function_code == 0x2B
+            assert pdu.mei_type == 0x0E
+            assert pdu.code_id == 0x01
+            assert pdu.conformity == 0x83
+            assert pdu.more_follows is False
+            assert pdu.next_object_id == 0x00
+            assert len(pdu) == 3
+            assert pdu[0] == b"Vaisala"
+            assert pdu[1] == b"PTU300"
+            assert pdu[2] == b"5.16"
+            assert pdu.get(3) is None
+            with pytest.raises(KeyError, match=r"id 3 is not in the Modbus response"):
+                _ = pdu[3]
+            for o in pdu:  # iterable
+                assert o.id > -1
+                assert isinstance(o.value, bytes)
+            assert str(pdu) == (
+                "ModbusIdentification(code_id=1, conformity=0x83, more_follows=False, next_object_id=0, ids=[0, 1, 2])"
+            )
+            assert str(pdu.objects) == (
+                "[ModbusObject(id=0, value=b'Vaisala'),"
+                " ModbusObject(id=1, value=b'PTU300'),"
+                " ModbusObject(id=2, value=b'5.16')]"
+            )
+
+            response = (
+                b"\x00\x02\x00\x00\x00\x80\x01\x2b\x0e"
+                b"\x02\x81\xff\x04\x05"
+                b"\x00\x07Vaisala"
+                b"\x01\x06PTU300"
+                b"\x02\x045.16"
+                b"\x03\x17http://www.vaisala.com/"
+                b"\x04FVaisala Combined Pressure, Humidity and Temperature Transmitter PTU300"
+            )
+            server.add_response(response)
+            pdu = dev.read_device_identification(code_id=2)
+            assert pdu.device_id == 1
+            assert pdu.function_code == 0x2B
+            assert pdu.mei_type == 0x0E
+            assert pdu.code_id == 2
+            assert pdu.conformity == 0x81
+            assert pdu.more_follows is True
+            assert pdu.next_object_id == 4
+            assert len(pdu) == 5
+            assert pdu[0] == b"Vaisala"
+            assert pdu[1] == b"PTU300"
+            assert pdu[2] == b"5.16"
+            assert pdu[3] == b"http://www.vaisala.com/"
+            assert pdu[4] == b"Vaisala Combined Pressure, Humidity and Temperature Transmitter PTU300"
+
+            response = (
+                b"\x00\x03\x00\x00\x00\xa3\x01\x2b\x0e"
+                b"\x03\x83\x00\x00\x08"
+                b"\x00\x07Vaisala"
+                b"\x01\x06PTU300"
+                b"\x02\x045.16"
+                b"\x03\x17http://www.vaisala.com/"
+                b"\x04FVaisala Combined Pressure, Humidity and Temperature Transmitter PTU300"
+                b"\x80\x08P4040154"
+                b"\x81\n2018-10-04"
+                b"\x82\x0bVaisala/HEL"
+            )
+            server.add_response(response)
+            pdu = dev.read_device_identification(code_id=3)
+            assert pdu.device_id == 1
+            assert pdu.function_code == 0x2B
+            assert pdu.mei_type == 0x0E
+            assert pdu.code_id == 3
+            assert pdu.conformity == 0x83
+            assert pdu.more_follows is False
+            assert pdu.next_object_id == 0
+            assert len(pdu) == 8
+            assert pdu[0] == b"Vaisala"
+            assert pdu[1] == b"PTU300"
+            assert pdu[2] == b"5.16"
+            assert pdu[3] == b"http://www.vaisala.com/"
+            assert pdu[4] == b"Vaisala Combined Pressure, Humidity and Temperature Transmitter PTU300"
+            assert pdu[128] == b"P4040154"
+            assert pdu[129] == b"2018-10-04"
+            assert pdu[130] == b"Vaisala/HEL"
+
+            server.add_response(b"\x00\x04\x00\x00\x00\x0d\x01\x2b\x0e\x04\x01\x00\x01\x01\x00\x03ABC")
+            pdu = dev.read_device_identification(code_id=4)
+            assert pdu.device_id == 1
+            assert pdu.function_code == 0x2B
+            assert pdu.mei_type == 0x0E
+            assert pdu.code_id == 4
+            assert pdu.conformity == 1
+            assert pdu.more_follows is False
+            assert pdu.next_object_id == 1
+            assert len(pdu) == 1
+            assert pdu[0] == b"ABC"
+
+            server.add_response(b"\x00\x05\x00\x00\x00\x12\x09\x2b\x0e\x04\x83\x00\x00\x01\x80\x08P4040154")
+            pdu = dev.read_device_identification(code_id=4, object_id=128, device_id=9)
+            assert pdu.device_id == 9
+            assert pdu.function_code == 0x2B
+            assert pdu.mei_type == 0x0E
+            assert pdu.code_id == 4
+            assert pdu.conformity == 0x83
+            assert pdu.more_follows is False
+            assert pdu.next_object_id == 0
+            assert len(pdu) == 1
+            assert pdu[128] == b"P4040154"

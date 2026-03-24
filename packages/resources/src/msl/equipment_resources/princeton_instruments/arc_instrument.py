@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", model=r"."):
+class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", model=r""):
     """Wrapper around the `ARC_Instrument.dll` SDK from [Princeton Instruments]{:target="_blank"}.
 
     [Princeton Instruments]: https://www.princetoninstruments.com/
@@ -44,7 +44,7 @@ class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", mod
         [connect()][msl.equipment.schema.Equipment.connect] is called.
         ```python
         manufacturer=r"Princeton Instruments"
-        model=r"."
+        model=r""
         ```
 
         Args:
@@ -66,9 +66,9 @@ class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", mod
         p = equipment.connection.properties
 
         _load_sdk(p.get("sdk_path", "ARC_Instrument_x64.dll"))
-        assert self._sdk is not None  # noqa: S101
+        assert PrincetonInstruments._SDK is not None  # noqa: S101
 
-        self._sdk: CDLL = self._sdk
+        self._sdk: CDLL = PrincetonInstruments._SDK
         if p.get("open", True):
             num_found = self.get_num_found_inst_ports()
             if num_found == 0:
@@ -4419,6 +4419,7 @@ def _load_sdk(path: str, pi: PrincetonInstruments | None = None) -> None:
     # ARC_set_SpectraHub_Trig_Off
 
     sdk = LoadLibrary(path, "windll").lib
+    PrincetonInstruments._SDK = sdk  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
 
     # Make sure that the version of the DLL is okay.
     # Used the header file from ARC_Instrument v2.0.3 to implement this wrapper.
@@ -4441,5 +4442,3 @@ def _load_sdk(path: str, pi: PrincetonInstruments | None = None) -> None:
     if not sdk.ARC_Init():
         msg = "PrincetonInstrumentsError: Cannot initialize the SDK"
         raise RuntimeError(msg)
-
-    PrincetonInstruments._SDK = sdk  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001

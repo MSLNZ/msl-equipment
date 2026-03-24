@@ -22,8 +22,8 @@ from msl.equipment.utils import (
 if TYPE_CHECKING:
     from typing import Literal
 
+    from conftest import HTTPServer
     from msl.equipment._types import MessageDataType
-    from tests.conftest import HTTPServer
 
 
 class MyEnum(enum.Enum):

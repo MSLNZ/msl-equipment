@@ -1,68 +1,52 @@
-"""
-This example shows how to communicate with a SH05 (shutter)
-connected to a KSC101 (KCube Solenoid).
-"""
-import os
+"""Communicate with a KSC101 (KCube Solenoid) with a SH05 (shutter) attached."""
+
+from __future__ import annotations
+
 import time
+from typing import TYPE_CHECKING
 
-from msl.equipment import (
-    EquipmentRecord,
-    ConnectionRecord,
-    Backend,
+from msl.equipment import Connection
+
+if TYPE_CHECKING:
+    from msl.equipment.resources import KSC
+
+# You may want to replace "FTDI2" with "FTDI" if you are not using the Kinesis or XA software.
+# Using "FTDI2" requires the D2XX driver to be installed for the solenoid controller.
+# Using "FTDI" requires a libusb-compatible driver to be installed for the solenoid controller.
+# Update 68000297 with the serial number of your solenoid controller.
+connection = Connection(
+    "FTDI2::0x0403::0xfaf0::68000297",
+    manufacturer="Thorlabs",
+    model="KSC101",
+    serial="68000297",
+    timeout=5,
+    # init=True,  # If you want to initialise the solenoid controller to default parameters
 )
-from msl.equipment.resources.thorlabs import MotionControl
 
-# ensure that the Kinesis folder is available on PATH
-os.environ['PATH'] += os.pathsep + 'C:/Program Files/Thorlabs/Kinesis'
+# Connect to the controller
+controller: KSC = connection.connect()
 
-record = EquipmentRecord(
-    manufacturer='Thorlabs',
-    model='KSC101',
-    serial='68000297',  # update for your device
-    connection=ConnectionRecord(
-        backend=Backend.MSL,
-        address='SDK::Thorlabs.MotionControl.KCube.Solenoid.dll',
-    ),
-)
+# Print information about the controller
+print(controller.hardware_info())
+print(f"Operating mode: {controller.operating_mode!r}")
+print(f"Cycle parameters: {controller.get_cycle_parameters()}")
+print(f"Display parameters: {controller.get_display_parameters()}")
+print(f"Trigger parameters: {controller.get_trigger_parameters()}")
 
+# Check the position of the safety key
+if not controller.is_key_unlocked():
+    print("WARNING! The safety key is in the locked position, shutter will not open")
 
-def is_open():
-    return shutter.get_operating_state() == 1
+# Set the operating mode to MANUAL
+controller.operating_mode = controller.OperatingMode.MANUAL
 
+# Open the shutter
+controller.open_shutter()
 
-# avoid the FT_DeviceNotFound error
-MotionControl.build_device_list()
+time.sleep(2)
 
-# connect to the KCube Solenoid
-shutter = record.connect()
-print('Connected to {}'.format(shutter))
+# Close the shutter
+controller.close_shutter()
 
-# start polling at 200 ms
-shutter.start_polling(200)
-
-# set the operating mode to SC_OperatingModes.SC_Manual
-shutter.set_operating_mode('Manual')
-
-for i in range(5):
-
-    # set the operating state to SC_OperatingStates.SC_Active
-    print('Opening the shutter...')
-    shutter.set_operating_state('Active')
-    while not is_open():
-        time.sleep(0.05)
-    print('  Is the shutter open? {}'.format(is_open()))
-
-    time.sleep(1)
-
-    # set the operating state to SC_OperatingStates.SC_Inactive
-    print('Closing the shutter...')
-    shutter.set_operating_state('Inactive')
-    while is_open():
-        time.sleep(0.05)
-    print('  Is the shutter open? {}'.format(is_open()))
-
-    time.sleep(1)
-
-# stop polling and close the connection
-shutter.stop_polling()
-shutter.disconnect()
+# Disconnect from the controller
+controller.disconnect()

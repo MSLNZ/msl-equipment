@@ -1,8 +1,12 @@
 # msl-equipment-resources
 
-Resources to communicate with equipment.
+[![CI Status](https://github.com/MSLNZ/msl-equipment/actions/workflows/ci.yml/badge.svg)](https://github.com/MSLNZ/msl-equipment/actions/workflows/ci.yml)
+[![Docs Status](https://github.com/MSLNZ/msl-equipment/actions/workflows/docs.yml/badge.svg)](https://github.com/MSLNZ/msl-equipment/actions/workflows/docs.yml)
 
-## Compatibility
-`msl-equipment` is tested with Python 3.8+ on Windows, Linux and macOS; however, some of the [resources] might not work for your application because the resource may depend on an external dependency (e.g., the SDK provided by a manufacturer) and this external dependency might not be available for your operating system.
+Resources are custom classes for interfacing with specific equipment that are used with [msl-equipment](https://mslnz.github.io/msl-equipment/dev/).
 
-[resources]: https://msl-equipment.readthedocs.io/en/latest/resources.html
+## Install
+This package will eventually be published to PyPI. For now, you can [install from source](https://mslnz.github.io/msl-equipment/dev/resources/#install).
+
+## Documentation
+The documentation for `msl-equipment-resources` can be found [here](https://mslnz.github.io/msl-equipment/dev/resources/).

@@ -4,7 +4,7 @@ An equipment register can be stored in a single XML file or distributed across m
 
 ```pycon
 >>> from msl.equipment import Register
->>> register = Register("tests/resources/mass/register.xml")
+>>> register = Register("tests/data/mass/register.xml")
 
 ```
 

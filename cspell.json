@@ -21,7 +21,7 @@
         "mkdocs.yml",
         "pyproject.toml",
         "CHANGELOG.md",
-        "tests/resources",
+        "tests/data",
         "packages/validate/src/msl/equipment_validate/schema/equipment-register.xsd"
     ],
     "words": [

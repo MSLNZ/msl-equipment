@@ -12,7 +12,7 @@ from msl.equipment import Backend, Connection, Equipment, Parity, PyVISA, StopBi
 from msl.equipment.interfaces.pyvisa import _prepare_kwargs  # pyright: ignore[reportPrivateUsage]
 
 if TYPE_CHECKING:
-    from tests.conftest import TCPServer
+    from conftest import TCPServer
 
 
 def teardown_module() -> None:

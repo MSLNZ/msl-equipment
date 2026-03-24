@@ -6,7 +6,7 @@ from . import avantes, cmi, electron_dynamics, isotech, mks, nkt, optosigma
 from .aim_tti import MXSeries
 from .avantes import AvaSpec
 from .cmi import SIA3
-from .dataray import WinCamD
+from .dataray import DataRay
 from .electron_dynamics import TCSeries
 from .energetiq import EQ99
 from .greisinger import GMH3000
@@ -19,13 +19,20 @@ from .optronic_labs import OL756, OLxxA
 from .picotech import PT104, PicoScope, picoscope
 from .princeton_instruments import PrincetonInstruments
 from .raicol import RaicolTEC
-from .thorlabs import FWxx2C
+from .thorlabs import BSC, K10CR, KDC, KSC, KST, LTS, MFF, FWxx2C
 from .vaisala import PTB330, PTU300
 
 __all__: list[str] = [
+    "BSC",
     "EQ99",
     "GMH3000",
     "ITHX",
+    "K10CR",
+    "KDC",
+    "KSC",
+    "KST",
+    "LTS",
+    "MFF",
     "NKT",
     "NKTDLL",
     "OL756",
@@ -36,6 +43,7 @@ __all__: list[str] = [
     "SHOT702",
     "SIA3",
     "AvaSpec",
+    "DataRay",
     "FWxx2C",
     "MXSeries",
     "MilliK",
@@ -45,7 +53,6 @@ __all__: list[str] = [
     "RaicolTEC",
     "SuperK",
     "TCSeries",
-    "WinCamD",
     "avantes",
     "cmi",
     "electron_dynamics",

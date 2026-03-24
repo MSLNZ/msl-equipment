@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 @pytest.fixture
 def mock_gpib() -> Iterator[None]:
     GPIB.gpib_library = None
-    os.environ["GPIB_LIBRARY"] = "tests/resources/gpib"
+    os.environ["GPIB_LIBRARY"] = "tests/data/gpib"
     yield
     GPIB.gpib_library = None
     _ = os.environ.pop("GPIB_LIBRARY")

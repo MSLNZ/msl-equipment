@@ -10,7 +10,7 @@ from msl.equipment import Connection, Equipment, MSLConnectionError, MSLTimeoutE
 from msl.equipment.interfaces.socket import parse_socket_address
 
 if TYPE_CHECKING:
-    from tests.conftest import TCPServer, UDPServer
+    from conftest import TCPServer, UDPServer
 
 
 def test_tcp_socket_read(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915

@@ -748,7 +748,7 @@ _handles: list[int] = []
 
 
 @final
-class AvaSpec(SDK, manufacturer=r"Avantes", model=r"."):
+class AvaSpec(SDK, manufacturer=r"Avantes", model=r""):
     """Wrapper around the `avaspec` SDK from [Avantes](https://www.avantes.com/){:target="_blank"}."""
 
     def __init__(self, equipment: Equipment) -> None:
@@ -758,7 +758,7 @@ class AvaSpec(SDK, manufacturer=r"Avantes", model=r"."):
         [connect()][msl.equipment.schema.Equipment.connect] is called.
         ```python
         manufacturer=r"Avantes"
-        model=r"."
+        model=r""
         ```
 
         Args:

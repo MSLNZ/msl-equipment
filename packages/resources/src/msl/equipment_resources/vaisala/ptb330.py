@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 from .ptu300 import PTU300
 
 
-class PTB330(PTU300, manufacturer=r"Vaisala", model=r"^PTB330$", flags=re.IGNORECASE):
+class PTB330(PTU300, manufacturer=r"Vaisala", model=r"PTB330", flags=re.IGNORECASE):
     """[Vaisala](https://www.vaisala.com/en){:target="_blank"} PTB330 Barometer."""
 
     def __init__(self, equipment: Equipment) -> None:
@@ -34,7 +34,7 @@ class PTB330(PTU300, manufacturer=r"Vaisala", model=r"^PTB330$", flags=re.IGNORE
         [connect()][msl.equipment.schema.Equipment.connect] is called.
         ```python
         manufacturer=r"Vaisala"
-        model=r"^PTB330$"
+        model=r"PTB330"
         flags=IGNORECASE
         ```
 

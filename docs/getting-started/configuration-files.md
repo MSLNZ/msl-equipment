@@ -122,7 +122,7 @@ The [Config][] class is used to load a configuration file
 
 ```pycon
 >>> from msl.equipment import Config
->>> cfg = Config("tests/resources/config.xml")
+>>> cfg = Config("tests/data/config.xml")
 
 ```
 

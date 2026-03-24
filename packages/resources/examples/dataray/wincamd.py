@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 from msl.equipment import Connection
 
 if TYPE_CHECKING:
-    from msl.equipment.resources import WinCamD
+    from msl.equipment.resources import DataRay
 
 connection = Connection(
     "SDK::DATARAYOCX",
@@ -23,7 +23,7 @@ connection = Connection(
 # Connect to the camera (a GUI will be displayed).
 # The GUI must remain open to have access to the DataRay OCX library.
 # The text "Error in oglInitialize invalid operation" might be printed, ignore it.
-camera: WinCamD = connection.connect()
+camera: DataRay = connection.connect()
 
 # Wait until the camera has been configured (e.g., set the image size, ROI, major/minor mode, ...)
 camera.wait_to_configure()

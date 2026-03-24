@@ -8,7 +8,7 @@ from msl.equipment import Connection, Equipment, MessageBased, MSLConnectionErro
 from msl.equipment.interfaces.prologix import find_prologix, parse_prologix_address
 
 if TYPE_CHECKING:
-    from tests.conftest import TCPServer
+    from conftest import TCPServer
 
 
 @pytest.mark.parametrize(

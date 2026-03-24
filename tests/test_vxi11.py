@@ -11,7 +11,7 @@ from msl.equipment.interfaces import vxi11
 from msl.equipment.interfaces.vxi11 import VXI11, AcceptStatus, AuthStatus, MessageType, RejectStatus, ReplyStatus
 
 if TYPE_CHECKING:
-    from tests.conftest import TCPServer
+    from conftest import TCPServer
 
 
 IS_WINDOWS = sys.platform == "win32"

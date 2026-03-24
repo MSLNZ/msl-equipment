@@ -121,7 +121,7 @@ def test_cli_unknown(capsys: pytest.CaptureFixture[str]) -> None:
 
 @pytest.mark.skipif(no_libusb, reason="libusb1 not available in CI")
 def test_cli_find_json(capsys: pytest.CaptureFixture[str]) -> None:
-    args = ["find", "-i", "127.0.0.1", "-t", "0.1", "-g", f"tests/resources/gpib.{gpib_ext}", "-j"]
+    args = ["find", "-i", "127.0.0.1", "-t", "0.1", "-g", f"tests/data/gpib.{gpib_ext}", "-j"]
     assert cli(args) == 0
 
     out, err = capsys.readouterr()
@@ -147,7 +147,7 @@ def test_cli_find_verbose(
 
     libtype = "windll" if sys.platform == "win32" else "cdll"
 
-    gpib_file = Path().parent / "tests" / "resources" / f"gpib.{gpib_ext}"
+    gpib_file = Path().parent / "tests" / "data" / f"gpib.{gpib_ext}"
     args = ["find", "-i", "127.0.0.1", "-v", "-t", "0.1", "-g", str(gpib_file), "-b", "openusb", "-x", "d2xx.ignore"]
     assert cli(args) == 0
 

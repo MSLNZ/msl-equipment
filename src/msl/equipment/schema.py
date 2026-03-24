@@ -2492,23 +2492,8 @@ class Equipment:
         if self.connection is None:
             # Cannot simply call super(). Must specify (type, object) since the dataclass uses slots=True
             super(Equipment, self).__setattr__("connection", connections[self.id])  # noqa: UP008
-            assert self.connection is not None  # noqa: S101
 
-        for backend in backends:
-            if backend.handles(self.connection):
-                return backend.cls(self)
-
-        for resource in resources:
-            if resource.handles(self):
-                return resource.cls(self)
-
-        address = self.connection.address
-        for interface in interfaces:
-            if interface.handles(address):
-                return interface.cls(self)
-
-        msg = f"Cannot determine the interface from the address {address!r}"
-        raise ValueError(msg)
+        return _find_interface_class(self)(self)
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> Equipment:
@@ -2965,7 +2950,7 @@ class Register:
 
         <!--
         >>> from msl.equipment import Register
-        >>> register = Register("tests/resources/mass/register.xml")
+        >>> register = Register("tests/data/mass/register.xml")
 
         -->
 
@@ -3365,6 +3350,27 @@ class _Resource:
         if self.manufacturer and not self.manufacturer.search(equipment.manufacturer):
             return False
         return not (self.model and not self.model.search(equipment.model))
+
+
+def _find_interface_class(equipment: Equipment) -> type[Interface]:
+    """Find the Interface class for the specified Equipment."""
+    assert equipment.connection is not None  # noqa: S101
+
+    for backend in backends:
+        if backend.handles(equipment.connection):
+            return backend.cls
+
+    for resource in resources:
+        if resource.handles(equipment):
+            return resource.cls
+
+    address = equipment.connection.address
+    for interface in interfaces:
+        if interface.handles(address):
+            return interface.cls
+
+    msg = f"Cannot determine the interface from the address {address!r}"
+    raise ValueError(msg)
 
 
 resources: list[_Resource] = []

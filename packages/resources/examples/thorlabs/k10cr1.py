@@ -1,4 +1,4 @@
-"""Communicate with an LTS150/M translation stage."""
+"""Communicate with a K10CR1/M rotation stage."""
 
 from __future__ import annotations
 
@@ -8,36 +8,36 @@ from typing import TYPE_CHECKING
 from msl.equipment import Connection
 
 if TYPE_CHECKING:
-    from msl.equipment.resources import LTS
+    from msl.equipment.resources import K10CR
 
 # You may want to replace "FTDI2" with "FTDI" if you are not using the Kinesis or XA software.
-# Using "FTDI2" requires the D2XX driver to be installed for the translation stage.
-# Using "FTDI" requires a libusb-compatible driver to be installed for the translation stage.
-# Update 45870601 with the serial number of your translation stage.
+# Using "FTDI2" requires the D2XX driver to be installed for the rotation stage.
+# Using "FTDI" requires a libusb-compatible driver to be installed for the rotation stage.
+# Update 55264734 with the serial number of your rotation stage.
 connection = Connection(
-    "FTDI2::0x0403::0xfaf0::45870601",
+    "FTDI2::0x0403::0xfaf0::55264734",
     manufacturer="Thorlabs",
-    model="LTS150/M",
-    serial="45870601",
+    model="K10CR1/M",
+    serial="55264734",
     timeout=5,
     # init=True,  # If you want to initialise the motor to default parameters
 )
 
 
 def callback(position: float, encoder: int, status: int) -> None:
-    """Receives the position (in mm), encoder counts and motor status."""
+    """Receives the position (in degrees), encoder counts and motor status."""
     print(f"  Callback {position:9.6f} {encoder:7d} 0b{status:032b}")
 
 
 # Connect to the stage
-stage: LTS = connection.connect()
+stage: K10CR = connection.connect()
 
 # Print information about the stage
 print(stage.get_home_parameters())
 print(stage.get_limit_parameters())
 print(stage.get_move_parameters())
 print(stage.hardware_info())
-print(f"Backlash={stage.get_backlash()} {stage.unit}")
+print(f"Backlash={stage.get_backlash()}{stage.unit}")
 
 # Optional: Set a callback function that is called while the stage is moving
 stage.set_callback(callback)
@@ -51,20 +51,20 @@ if not stage.is_homed():
     print("Homing stage...")
     stage.home()
 
-# Move to 10 mm (absolute move)
-print(f"Move to 10 {stage.unit}")
+# Move to 10 degrees (absolute move)
+print(f"Move to 10{stage.unit}")
 stage.move_to(10)
 
-# Move by 5 mm (relative move)
-print(f"Move by 5 {stage.unit}")
+# Move by 5 degrees (relative move)
+print(f"Move by 5{stage.unit}")
 stage.move_by(5)
 
-# Move by -5 mm (relative move)
-print(f"Move by -5 {stage.unit}")
+# Move by -5 degrees (relative move)
+print(f"Move by -5{stage.unit}")
 stage.move_by(-5)
 
-# Move to 0 mm (absolute move), but don't wait until the stage has finished moving
-print(f"Move to 0 {stage.unit}")
+# Move to 0 degrees (absolute move), but don't wait until the stage has finished moving
+print(f"Move to 0{stage.unit}")
 stage.move_to(0, wait=False)
 
 # Do other stuff while the stage is moving...
@@ -76,7 +76,7 @@ print("Waiting...")
 stage.wait_until_moved()
 
 # Get the current position
-print(f"At: {stage.position()} {stage.unit} [encoder={stage.encoder()}]")
+print(f"At: {stage.position()}{stage.unit} [encoder={stage.encoder()}]")
 
 # Disconnect from the stage
 stage.disconnect()

@@ -68,8 +68,10 @@ class Modbus(Interface, regex=REGEX):
         self._framer: Framer
         if parsed.framer == FramerType.SOCKET:
             self._framer = SocketFramer(interface)
+        elif parsed.framer == FramerType.RTU:
+            self._framer = RTUFramer(interface)
         else:
-            msg = "Only SOCKET frames are currently supported"
+            msg = "Only SOCKET and RTU frames are currently supported"
             raise MSLConnectionError(self, msg)
 
     def _check_function_code(self, function_code: int, pdu: ModbusPDU | ModbusIdentification) -> None:
@@ -609,6 +611,8 @@ class ModbusIdentification:
         ```pycon
         >>> identification
         ModbusIdentification(code_id=1, conformity=0x83, more_follows=False, next_object_id=0, ids=[0, 1, 2])
+        >>> identification.objects
+        [ModbusObject(id=0, value=b'MSL'), ModbusObject(id=1, value=b'NZ'), ModbusObject(id=2, value=b'5.16')]
         >>> for obj in identification:
         ...     print(f"{obj.id}: {obj.value}")
         0: b'MSL'
@@ -815,6 +819,81 @@ class SocketFramer(Framer):
         # Protocol ID = 0
         msg = pack(">HHHB", self.transaction_id, 0, len(pdu) + 1, device_id) + pdu
         return self.interface.write(msg)
+
+
+class RTUFramer(Framer):
+    """Modbus framer for a socket."""
+
+    crc_table: list[int] | None = None
+
+    @staticmethod
+    def generate_crc_table() -> list[int]:
+        """Generate the CRC table and store it as the class attribute."""
+        table: list[int] = []
+        for byte in range(256):
+            crc = 0
+            for _ in range(8):
+                if (byte ^ crc) & 0x0001:
+                    crc = (crc >> 1) ^ 0xA001
+                else:
+                    crc >>= 1
+                byte >>= 1  # noqa: PLW2901
+            table.append(crc)
+        return table
+
+    @staticmethod
+    def calculate_crc(payload: bytes) -> bytes:
+        """Calculate the CRC value of an RTU payload."""
+        if RTUFramer.crc_table is None:
+            RTUFramer.crc_table = RTUFramer.generate_crc_table()
+
+        crc = 0xFFFF
+        for byte in payload:
+            idx = RTUFramer.crc_table[(crc ^ byte) & 0xFF]
+            crc = ((crc >> 8) & 0xFF) ^ idx
+
+        return crc.to_bytes(2, "little")
+
+    def read(self) -> tuple[int, bytes]:  # pyright: ignore[reportImplicitOverride]
+        """Read a framed Modbus message.
+
+        Returns:
+            The (device ID, Modbus Protocol Data Unit response).
+        """
+        device_id, function_code, byte1 = self.interface.read(size=3, decode=False)
+        pdu = bytearray([function_code, byte1])
+
+        if function_code > 0x80:  # noqa: PLR2004
+            pass  # Modbus error
+        elif function_code == 0x2B and byte1 == 0x0E:  # read_device_identification  # noqa: PLR2004
+            pdu.extend(self.interface.read(size=5, decode=False))
+            for _ in range(pdu[6]):
+                id_length = self.interface.read(size=2, decode=False)
+                pdu.extend(id_length)
+                pdu.extend(self.interface.read(size=id_length[1], decode=False))
+        else:
+            pdu.extend(self.interface.read(size=byte1, decode=False))
+
+        payload = bytes(pdu)
+        crc = self.interface.read(size=2, decode=False)
+        expected_crc = self.calculate_crc(device_id.to_bytes() + payload)
+        if expected_crc != crc:
+            msg = f"Received unexpected Modbus CRC value {crc!r}, expected {expected_crc!r}"
+            raise MSLConnectionError(self.interface, msg)
+        return device_id, payload
+
+    def write(self, device_id: int, pdu: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
+        """Write a framed Modbus message.
+
+        Args:
+            device_id: Modbus device ID.
+            pdu: Modbus Protocol Data Unit request.
+
+        Returns:
+            The number of bytes written.
+        """
+        payload = device_id.to_bytes() + pdu
+        return self.interface.write(payload + self.calculate_crc(payload))
 
 
 class ParsedModbusAddress(NamedTuple):

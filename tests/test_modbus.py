@@ -11,12 +11,13 @@ from msl.equipment.interfaces.modbus import (
     FramerType,
     ModbusPDU,
     ParsedModbusAddress,
+    RTUFramer,
     SocketFramer,
     parse_modbus_address,
 )
 
 if TYPE_CHECKING:
-    from tests.conftest import TCPServer, UDPServer
+    from conftest import TCPServer, UDPServer
 
 
 @pytest.mark.parametrize(
@@ -73,6 +74,25 @@ def test_parse_address_invalid(address: str) -> None:
 )
 def test_parse_address_valid(address: str, expected: ParsedModbusAddress) -> None:
     assert parse_modbus_address(address) == expected
+
+
+@pytest.mark.parametrize(
+    ("payload", "crc"),
+    [
+        (b"\x02\x01\x00\x20\x00\x0c", b"\x3d\xf6"),
+        (b"\x02\x01\x02\x80\x02", b"\x1d\xfd"),
+        (b"\x01\x02\x01\xf4\x00\x20", b"\x39\xdc"),
+        (b"\x01\x02\x02\x05\x00", b"\xba\xe8"),
+        (b"\x01\x03\x02\x58\x00\x02", b"\x44\x60"),
+        (b"\x01\x03\x04\x03\xe8\x13\x88", b"\x77\x15"),
+        (b"\x1c\x10\x00\x64\x00\x02\x04\x03\xe8\x07\xd8", b"\x19\x02"),
+        (b"\x1c\x10\x00\x64\x00\x02", b"\x03\x9a"),
+        (b"\x01\x04\x00\xc8\x00\x02", b"\xf0\x35"),
+        (b"\x01\x04\x04\x27\x10\xc3\x50", b"\xa0\x39"),
+    ],
+)
+def test_crc16(payload: bytes, crc: bytes) -> None:
+    assert RTUFramer.calculate_crc(payload) == crc
 
 
 def test_modbus_pdu_str() -> None:
@@ -773,7 +793,7 @@ def test_tcp_mask_write_register(tcp_server: type[TCPServer]) -> None:
             assert pdu.device_id == 2
 
 
-def test_tcp_readwrite_registers(tcp_server: type[TCPServer]) -> None:
+def test_tcp_read_write_registers(tcp_server: type[TCPServer]) -> None:
     with tcp_server(term=None) as server:
         connection = Connection(f"Modbus::{server.host}::{server.port}", timeout=1)
 

@@ -22,11 +22,12 @@ if TYPE_CHECKING:
 
     from msl.equipment.schema import Equipment
 
-    from .message_based import MessageBased
+    from .serial import Serial
+    from .socket import Socket
 
 
 REGEX = re.compile(
-    r"^MODBUS::((?P<dev>/dev/[^\s:]+)|(?P<com>COM\d+)|(?P<host>[^\s:]+)(::(?P<port>\d+))?)(::(?P<framer>(ASCII|RTU|SOCKET))?)?(?P<udp>::UDP)?$",
+    r"^MODBUS::((?P<mock>/mock://)|(?P<dev>/dev/[^\s:]+)|(?P<com>COM\d+)|(?P<host>[^\s:]+)(::(?P<port>\d+))?)(::(?P<framer>(ASCII|RTU|SOCKET))?)?(?P<udp>::UDP)?$",
     flags=re.IGNORECASE,
 )
 
@@ -56,7 +57,7 @@ class Modbus(Interface, regex=REGEX):
 
         c = Connection(parsed.address, properties=equipment.connection.properties)
         try:
-            interface: MessageBased = c.connect()
+            interface: Serial | Socket = c.connect()
         except (MSLConnectionError, MSLTimeoutError) as e:
             raise MSLConnectionError(self, e.message) from None
 
@@ -738,13 +739,13 @@ class FramerType(Enum):
 class Framer:
     """Generic class to write/read a Modbus frame."""
 
-    def __init__(self, interface: MessageBased) -> None:
+    def __init__(self, interface: Serial | Socket) -> None:
         """Generic class to write/read a Modbus frame.
 
         Args:
             interface: The underlying MessageBased interface.
         """
-        self.interface: MessageBased = interface
+        self.interface: Serial | Socket = interface
 
     def disconnect(self) -> None:
         """Disconnect from the underlying MessageBased interface."""
@@ -783,7 +784,7 @@ class Framer:
 class SocketFramer(Framer):
     """Modbus framer for a socket."""
 
-    def __init__(self, interface: MessageBased) -> None:
+    def __init__(self, interface: Serial | Socket) -> None:
         """Modbus framer for a socket."""
         super().__init__(interface)
         self.transaction_id: int = 0
@@ -860,25 +861,27 @@ class RTUFramer(Framer):
         Returns:
             The (device ID, Modbus Protocol Data Unit response).
         """
-        device_id, function_code, byte1 = self.interface.read(size=3, decode=False)
-        pdu = bytearray([function_code, byte1])
+        device_id, function_code, byte3 = self.interface.read(size=3, decode=False)
+        pdu = bytearray([function_code, byte3])
 
-        if function_code > 0x80:  # noqa: PLR2004
-            pass  # Modbus error
-        elif function_code == 0x2B and byte1 == 0x0E:  # read_device_identification  # noqa: PLR2004
+        if function_code == 0x2B and byte3 == 0x0E:  # read_device_identification  # noqa: PLR2004
             pdu.extend(self.interface.read(size=5, decode=False))
             for _ in range(pdu[6]):
                 id_length = self.interface.read(size=2, decode=False)
                 pdu.extend(id_length)
                 pdu.extend(self.interface.read(size=id_length[1], decode=False))
-        else:
-            pdu.extend(self.interface.read(size=byte1, decode=False))
+        elif function_code in (0x01, 0x02, 0x03, 0x04, 0x17):
+            pdu.extend(self.interface.read(size=byte3, decode=False))
+        elif function_code in (0x05, 0x06, 0x0F, 0x10):
+            pdu.extend(self.interface.read(size=3, decode=False))
+        elif function_code == 0x16:  # noqa: PLR2004
+            pdu.extend(self.interface.read(size=5, decode=False))
 
         payload = bytes(pdu)
         crc = self.interface.read(size=2, decode=False)
         expected_crc = self.calculate_crc(device_id.to_bytes() + payload)
         if expected_crc != crc:
-            msg = f"Received unexpected Modbus CRC value {crc!r}, expected {expected_crc!r}"
+            msg = f"Received unexpected Modbus CRC value 0x{crc.hex()}, expected 0x{expected_crc.hex()}"
             raise MSLConnectionError(self.interface, msg)
         return device_id, payload
 
@@ -921,8 +924,14 @@ def parse_modbus_address(address: str) -> ParsedModbusAddress | None:
     if match is None:
         return None
 
-    address = match["dev"] or match["com"]
-    if not address:
+    if match["mock"]:
+        return ParsedModbusAddress(address="ASRL/mock://", framer=FramerType.RTU)
+
+    if match["dev"]:
+        address = "ASRL" + match["dev"]
+    elif match["com"]:
+        address = match["com"]
+    else:
         protocol = "UDP" if match["udp"] else "TCP"
         address = f"{protocol}::{match['host']}::{match['port'] or '502'}"
 

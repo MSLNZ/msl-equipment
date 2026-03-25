@@ -879,7 +879,7 @@ class RTUFramer(Framer):
 
         payload = bytes(pdu)
         crc = self.interface.read(size=2, decode=False)
-        expected_crc = self.calculate_crc(device_id.to_bytes() + payload)
+        expected_crc = self.calculate_crc(device_id.to_bytes(1, "big") + payload)
         if expected_crc != crc:
             msg = f"Received unexpected Modbus CRC value 0x{crc.hex()}, expected 0x{expected_crc.hex()}"
             raise MSLConnectionError(self.interface, msg)
@@ -895,7 +895,7 @@ class RTUFramer(Framer):
         Returns:
             The number of bytes written.
         """
-        payload = device_id.to_bytes() + pdu
+        payload = device_id.to_bytes(1, "big") + pdu
         return self.interface.write(payload + self.calculate_crc(payload))
 
 

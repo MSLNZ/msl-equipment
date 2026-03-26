@@ -1,9 +1,10 @@
 """Base class for the Modbus protocol."""
 
-# cSpell: ignore HHHB HHHHB unpackbits
+# cSpell: ignore HHHB HHHHB unpackbits hexlify unhexlify
 from __future__ import annotations
 
 import re
+from binascii import hexlify, unhexlify
 from enum import Enum
 from struct import pack, unpack
 from typing import TYPE_CHECKING, NamedTuple
@@ -72,8 +73,8 @@ class Modbus(Interface, regex=REGEX):
         elif parsed.framer == FramerType.RTU:
             self._framer = RTUFramer(interface)
         else:
-            msg = "Only SOCKET and RTU frames are currently supported"
-            raise MSLConnectionError(self, msg)
+            interface.read_termination = b"\n"
+            self._framer = ASCIIFramer(interface)
 
     def _check_function_code(self, function_code: int, pdu: ModbusPDU | ModbusIdentification) -> None:
         if pdu.function_code != function_code:
@@ -782,7 +783,7 @@ class Framer:
 
 
 class SocketFramer(Framer):
-    """Modbus framer for a socket."""
+    """Modbus TCP/UDP framer."""
 
     def __init__(self, interface: Serial | Socket) -> None:
         """Modbus framer for a socket."""
@@ -823,7 +824,7 @@ class SocketFramer(Framer):
 
 
 class RTUFramer(Framer):
-    """Modbus framer for a socket."""
+    """Modbus RTU framer."""
 
     crc_table: list[int] | None = None
 
@@ -864,18 +865,18 @@ class RTUFramer(Framer):
         device_id, function_code, byte3 = self.interface.read(size=3, decode=False)
         pdu = bytearray([function_code, byte3])
 
-        if function_code == 0x2B and byte3 == 0x0E:  # read_device_identification  # noqa: PLR2004
-            pdu.extend(self.interface.read(size=5, decode=False))
-            for _ in range(pdu[6]):
-                id_length = self.interface.read(size=2, decode=False)
-                pdu.extend(id_length)
-                pdu.extend(self.interface.read(size=id_length[1], decode=False))
-        elif function_code in (0x01, 0x02, 0x03, 0x04, 0x17):
+        if function_code in (0x01, 0x02, 0x03, 0x04, 0x17):
             pdu.extend(self.interface.read(size=byte3, decode=False))
         elif function_code in (0x05, 0x06, 0x0F, 0x10):
             pdu.extend(self.interface.read(size=3, decode=False))
         elif function_code == 0x16:  # noqa: PLR2004
             pdu.extend(self.interface.read(size=5, decode=False))
+        elif function_code == 0x2B and byte3 == 0x0E:  # read_device_identification  # noqa: PLR2004
+            pdu.extend(self.interface.read(size=5, decode=False))
+            for _ in range(pdu[6]):
+                id_length = self.interface.read(size=2, decode=False)
+                pdu.extend(id_length)
+                pdu.extend(self.interface.read(size=id_length[1], decode=False))
 
         payload = bytes(pdu)
         crc = self.interface.read(size=2, decode=False)
@@ -897,6 +898,48 @@ class RTUFramer(Framer):
         """
         payload = device_id.to_bytes(1, "big") + pdu
         return self.interface.write(payload + self.calculate_crc(payload))
+
+
+class ASCIIFramer(Framer):
+    """Modbus ASCII framer."""
+
+    @staticmethod
+    def calculate_lrc(payload: bytes) -> int:
+        """Calculate the LRC value of an ASCII payload."""
+        return ((sum(payload) ^ 0xFF) + 1) & 0xFF
+
+    def read(self) -> tuple[int, bytes]:  # pyright: ignore[reportImplicitOverride]
+        """Read a framed Modbus message.
+
+        Returns:
+            The (device ID, Modbus Protocol Data Unit response).
+        """
+        response = self.interface.read(decode=False)
+        if response[0] != 0x3A:  # noqa: PLR2004
+            msg = f"Received unexpected start of Modbus ASCII frame value 0x{response[0]:02X}, expected 0x3A"
+            raise MSLConnectionError(self.interface, msg)
+
+        response = unhexlify(response[1:-2])
+        expected_lrc = self.calculate_lrc(response[:-1])
+        if expected_lrc != response[-1]:
+            msg = f"Received unexpected Modbus LRC value {response[-1]}, expected {expected_lrc}"
+            raise MSLConnectionError(self.interface, msg)
+
+        return response[0], response[1:-1]
+
+    def write(self, device_id: int, pdu: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
+        """Write a framed Modbus message.
+
+        Args:
+            device_id: Modbus device ID.
+            pdu: Modbus Protocol Data Unit request.
+
+        Returns:
+            The number of bytes written.
+        """
+        lrc = self.calculate_lrc(device_id.to_bytes(1, "big") + pdu)
+        msg = b":" + f"{device_id:02X}".encode() + hexlify(pdu).upper() + f"{lrc:02X}".encode() + b"\r\n"
+        return self.interface.write(msg)
 
 
 class ParsedModbusAddress(NamedTuple):
@@ -924,13 +967,12 @@ def parse_modbus_address(address: str) -> ParsedModbusAddress | None:
     if match is None:
         return None
 
-    if match["mock"]:
-        return ParsedModbusAddress(address="ASRL/mock://", framer=FramerType.RTU)
-
     if match["dev"]:
         address = "ASRL" + match["dev"]
     elif match["com"]:
         address = match["com"]
+    elif match["mock"]:
+        address = "ASRL" + match["mock"]
     else:
         protocol = "UDP" if match["udp"] else "TCP"
         address = f"{protocol}::{match['host']}::{match['port'] or '502'}"

@@ -8,6 +8,7 @@ import pytest
 
 from msl.equipment import Connection, Equipment, Modbus, MSLConnectionError, Serial
 from msl.equipment.interfaces.modbus import (
+    ASCIIFramer,
     FramerType,
     ModbusPDU,
     ParsedModbusAddress,
@@ -78,6 +79,7 @@ def test_parse_address_invalid(address: str) -> None:
             ParsedModbusAddress(address="UDP::192.168.1.100::502", framer=FramerType.SOCKET),
         ),
         ("MODBUS::/mock://", ParsedModbusAddress(address="ASRL/mock://", framer=FramerType.RTU)),
+        ("MODBUS::/mock://::ASCII", ParsedModbusAddress(address="ASRL/mock://", framer=FramerType.ASCII)),
     ],
 )
 def test_parse_address_valid(address: str, expected: ParsedModbusAddress) -> None:
@@ -101,6 +103,29 @@ def test_parse_address_valid(address: str, expected: ParsedModbusAddress) -> Non
 )
 def test_crc16(payload: bytes, crc: bytes) -> None:
     assert RTUFramer.calculate_crc(payload) == crc
+
+
+@pytest.mark.parametrize(
+    ("payload", "lrc"),
+    [
+        (b"\x04\x01\x00\x0a\x00\x0d", 0xE4),
+        (b"\x04\x01\x02\x0a\x11", 0xDE),
+        (b"\x04\x02\x00\x0a\x00\x0d", 0xE3),
+        (b"\x04\x02\x02\x0a\x11", 0xDD),
+        (b"\x01\x03\x00\x00\x00\x02", 0xFA),
+        (b"\x01\x03\x04\x00\x06\x00\x05", 0xED),
+        (b"\x01\x04\x00\x00\x00\x02", 0xF9),
+        (b"\x01\x04\x04\x00\x06\x00\x05", 0xEC),
+        (b"\x11\x05\x00\xac\x00\xff", 0x3F),
+        (b"\x11\x06\x00\x01\x00\x03", 0xE5),
+        (b"\x11\x0f\x00\x13\x00\x0a\x02\xcd\x01", 0xF3),
+        (b"\x11\x0f\x00\x13\x00\x0a", 0xC3),
+        (b"\x11\x10\x00\x01\x00\x02\x04\x0a\x01\x02", 0xCB),
+        (b"\x11\x10\x00\x01\x00\x02", 0xDC),
+    ],
+)
+def test_lrc(payload: bytes, lrc: int) -> None:
+    assert ASCIIFramer.calculate_lrc(payload) == lrc
 
 
 def test_modbus_pdu_str() -> None:
@@ -418,6 +443,24 @@ def test_rtu_modbus_exception_code() -> None:
         _ = dev.read()
 
     assert dev.write(130, data=b"\x0d") == 5
+    with pytest.raises(MSLConnectionError, match=r"Unknown Modbus exception code 0x0D"):
+        _ = dev.read()
+
+    dev.disconnect()
+
+
+def test_ascii_modbus_exception_code() -> None:
+    dev: Modbus = Connection("Modbus::/mock://::ASCII").connect()
+
+    assert dev.write(130, data=b"\x01") == 11
+    with pytest.raises(MSLConnectionError, match=r"function code is not supported"):
+        _ = dev.read()
+
+    assert dev.write(130, data=b"\x04") == 11
+    with pytest.raises(MSLConnectionError, match=r"unrecoverable error occurred"):
+        _ = dev.read()
+
+    assert dev.write(130, data=b"\x0d") == 11
     with pytest.raises(MSLConnectionError, match=r"Unknown Modbus exception code 0x0D"):
         _ = dev.read()
 
@@ -1520,5 +1563,40 @@ def test_rtu_read_device_identification() -> None:  # noqa: PLR0915
     assert pdu.next_object_id == 0
     assert len(pdu) == 1
     assert pdu[128] == b"P4040154"
+
+    dev.disconnect()
+
+
+def test_ascii_read() -> None:
+    dev: Modbus = Connection("Modbus::/mock://::ASCII").connect()
+    server = cast_server(dev)
+
+    assert dev.write(0x04, data=b"\x00\xfa\x03\x06\xb7\x09\x0b\x0d\xf0", device_id=0x7B) == 27
+    assert server.read() == b":7B0400FA0306B7090B0DF0B6\r\n"
+
+    assert dev.write(0x02, data=b"\xaa\x09\x00\xfa\xf0\x06\xb7\x0d\x0b\x03", device_id=0xCC) == 29
+    assert dev.read() == (0xCC, b"\x02\xaa\x09\x00\xfa\xf0\x06\xb7\x0d\x0b\x03")
+
+    dev.disconnect()
+
+
+def test_ascii_bad_start_frame() -> None:
+    dev: Modbus = Connection("Modbus::/mock://::ASCII").connect()
+    server = cast_server(dev)
+
+    server.add_response(b"?030201FA\r\n")
+    with pytest.raises(MSLConnectionError, match=r"value 0x3F, expected 0x3A"):
+        _ = dev.read_coils(1)
+
+    dev.disconnect()
+
+
+def test_ascii_bad_lrc() -> None:
+    dev: Modbus = Connection("Modbus::/mock://::ASCII").connect()
+    server = cast_server(dev)
+
+    server.add_response(b":03020100\r\n")
+    with pytest.raises(MSLConnectionError, match=r"value 0, expected 250"):
+        _ = dev.read_coils(1)
 
     dev.disconnect()

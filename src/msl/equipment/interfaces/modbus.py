@@ -7,6 +7,7 @@ import re
 from binascii import hexlify, unhexlify
 from enum import Enum
 from struct import pack, unpack
+from threading import Lock
 from typing import TYPE_CHECKING, NamedTuple
 
 import numpy as np
@@ -62,6 +63,8 @@ class Modbus(Interface, regex=REGEX):
         except (MSLConnectionError, MSLTimeoutError) as e:
             raise MSLConnectionError(self, e.message) from None
 
+        self._lock: Lock = Lock()
+
         interface._str = self._str  # noqa: SLF001
         interface._repr = self._repr  # noqa: SLF001
         interface.read_termination = None
@@ -76,9 +79,9 @@ class Modbus(Interface, regex=REGEX):
             interface.read_termination = b"\n"
             self._framer = ASCIIFramer(interface)
 
-    def _check_function_code(self, function_code: int, pdu: ModbusPDU | ModbusIdentification) -> None:
-        if pdu.function_code != function_code:
-            msg = f"Received unexpected Modbus function code 0x{pdu.function_code:02X}, expected 0x{function_code:02X}"
+    def _check_function_code(self, function_code: int, mr: ModbusResponse | ModbusIdentification) -> None:
+        if mr.function_code != function_code:
+            msg = f"Received unexpected Modbus function code 0x{mr.function_code:02X}, expected 0x{function_code:02X}"
             raise MSLConnectionError(self._framer.interface, msg)
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
@@ -89,7 +92,7 @@ class Modbus(Interface, regex=REGEX):
 
     def mask_write_register(
         self, address: int, *, and_mask: int = 65535, or_mask: int = 0, device_id: int = 1
-    ) -> ModbusPDU:
+    ) -> ModbusResponse:
         """Mask Write Register (function code `0x016`).
 
         Modifies the contents of the specified holding-register address using a combination of an AND mask,
@@ -106,28 +109,36 @@ class Modbus(Interface, regex=REGEX):
             The Modbus Protocol Data Unit of the response. The response data is the result after
                 the register masks have been written.
         """
-        function_code = 0x16
-        _ = self.write(function_code, data=pack(">HHH", address, and_mask, or_mask), device_id=device_id)
-        device_id, response = self.read()
-        pdu = ModbusPDU(device_id, response[0], response[1:])
-        self._check_function_code(function_code, pdu)
-        return pdu
+        with self._lock:
+            function_code = 0x16
+            _ = self.write(function_code, data=pack(">HHH", address, and_mask, or_mask), device_id=device_id)
+            device_id, response = self.read(10)
+            mr = ModbusResponse(device_id, response[0], response[1:])
+            self._check_function_code(function_code, mr)
+            return mr
 
-    def read(self) -> tuple[int, bytes]:
+    def read(self, size: int | None = None) -> tuple[int, bytes]:
         """Read a Modbus message.
+
+        Args:
+            size: The number of bytes to read, i.e., the size of the Application Data Unit (ADU).
+                Only used with RTU frames. If the third byte in the response message specifies the
+                *Byte Count* (e.g., first: Device ID, second: Function Code, third: Byte Count),
+                then the `size` parameter does not need to be specified. The `size` parameter is
+                ignored for ASCII frames or if using the TCP/UDP interface.
 
         Returns:
             The Modbus device ID and the Protocol Data Unit of the response, i.e., `(ID, PDU)`.
         """
-        device_id, pdu = self._framer.read()
+        device_id, pdu = self._framer.read(size)
         if pdu[0] <= 0x80:  # noqa: PLR2004
             return device_id, pdu
 
-        # Consider handling exception code 5 and 6 differently (don't raise an error)
+        # Consider handling exception code 5 and 6 differently (i.e., don't raise an error)
         msg = EXCEPTIONS.get(pdu[1], f"Unknown Modbus exception code 0x{pdu[1]:02X}")
         raise MSLConnectionError(self, msg)
 
-    def read_coils(self, address: int, *, count: int = 1, device_id: int = 1) -> ModbusPDU:
+    def read_coils(self, address: int, *, count: int = 1, device_id: int = 1) -> ModbusResponse:
         """Read coils (function code `0x01`).
 
         Args:
@@ -137,19 +148,20 @@ class Modbus(Interface, regex=REGEX):
 
         Returns:
             The Modbus Protocol Data Unit of the response. Call the
-                [bits][msl.equipment.interfaces.modbus.ModbusPDU.bits] method to get the
+                [bits][msl.equipment.interfaces.modbus.ModbusResponse.bits] method to get the
                 ON/OFF state of each coil.
         """
         if count > 2000:  # noqa: PLR2004
             msg = f"Requesting to read {count} coils, maximum allowed is 2000"
             raise ValueError(msg)
 
-        function_code = 0x01
-        _ = self.write(function_code, data=pack(">HH", address, count), device_id=device_id)
-        device_id, response = self.read()
-        pdu = ModbusPDU(device_id, response[0], response[2:], count=count)
-        self._check_function_code(function_code, pdu)
-        return pdu
+        with self._lock:
+            function_code = 0x01
+            _ = self.write(function_code, data=pack(">HH", address, count), device_id=device_id)
+            device_id, response = self.read()
+            mr = ModbusResponse(device_id, response[0], response[2:], count=count)
+            self._check_function_code(function_code, mr)
+            return mr
 
     def read_device_identification(
         self, *, code_id: Literal[1, 2, 3, 4] = 1, object_id: int = 0, device_id: int = 1
@@ -164,8 +176,8 @@ class Modbus(Interface, regex=REGEX):
             code_id: Read device ID code.
 
                 * `1` &mdash; *Basic* device identification
-                * `2` &mdash; *Regular* device identification
-                * `3` &mdash; *Extended* device identification
+                * `2` &mdash; *Regular* device identification (includes *Basic*)
+                * `3` &mdash; *Extended* device identification (includes *Regular*)
                 * `4` &mdash; A *specific* identification object
 
             object_id: The object ID to read.
@@ -185,13 +197,14 @@ class Modbus(Interface, regex=REGEX):
         Returns:
             The Modbus device identification.
         """
-        function_code = 0x2B
-        _ = self.write(function_code, data=pack(">BBB", 0x0E, code_id, object_id), device_id=device_id)
-        identification = ModbusIdentification(*self.read())
-        self._check_function_code(function_code, identification)
-        return identification
+        with self._lock:
+            function_code = 0x2B
+            _ = self.write(function_code, data=pack(">BBB", 0x0E, code_id, object_id), device_id=device_id)
+            identification = ModbusIdentification(*self.read())
+            self._check_function_code(function_code, identification)
+            return identification
 
-    def read_discrete_inputs(self, address: int, *, count: int = 1, device_id: int = 1) -> ModbusPDU:
+    def read_discrete_inputs(self, address: int, *, count: int = 1, device_id: int = 1) -> ModbusResponse:
         """Read discrete inputs (function code `0x02`).
 
         Args:
@@ -201,21 +214,22 @@ class Modbus(Interface, regex=REGEX):
 
         Returns:
             The Modbus Protocol Data Unit of the response. Call the
-                [bits][msl.equipment.interfaces.modbus.ModbusPDU.bits] method to get the
+                [bits][msl.equipment.interfaces.modbus.ModbusResponse.bits] method to get the
                 ON/OFF state of each discrete input.
         """
         if count > 2000:  # noqa: PLR2004
             msg = f"Requesting to read {count} discrete inputs, maximum allowed is 2000"
             raise ValueError(msg)
 
-        function_code = 0x02
-        _ = self.write(function_code, data=pack(">HH", address, count), device_id=device_id)
-        device_id, response = self.read()
-        pdu = ModbusPDU(device_id, response[0], response[2:], count=count)
-        self._check_function_code(function_code, pdu)
-        return pdu
+        with self._lock:
+            function_code = 0x02
+            _ = self.write(function_code, data=pack(">HH", address, count), device_id=device_id)
+            device_id, response = self.read()
+            mr = ModbusResponse(device_id, response[0], response[2:], count=count)
+            self._check_function_code(function_code, mr)
+            return mr
 
-    def read_holding_registers(self, address: int, *, count: int = 1, device_id: int = 1) -> ModbusPDU:
+    def read_holding_registers(self, address: int, *, count: int = 1, device_id: int = 1) -> ModbusResponse:
         """Read holding registers (function code `0x03`).
 
         Args:
@@ -230,14 +244,15 @@ class Modbus(Interface, regex=REGEX):
             msg = f"Requesting to read {count} holding registers, maximum allowed is 125"
             raise ValueError(msg)
 
-        function_code = 0x03
-        _ = self.write(function_code, data=pack(">HH", address, count), device_id=device_id)
-        device_id, response = self.read()
-        pdu = ModbusPDU(device_id, response[0], response[2:], count=count)
-        self._check_function_code(function_code, pdu)
-        return pdu
+        with self._lock:
+            function_code = 0x03
+            _ = self.write(function_code, data=pack(">HH", address, count), device_id=device_id)
+            device_id, response = self.read()
+            mr = ModbusResponse(device_id, response[0], response[2:], count=count)
+            self._check_function_code(function_code, mr)
+            return mr
 
-    def read_input_registers(self, address: int, *, count: int = 1, device_id: int = 1) -> ModbusPDU:
+    def read_input_registers(self, address: int, *, count: int = 1, device_id: int = 1) -> ModbusResponse:
         """Read input registers (function code `0x04`).
 
         Args:
@@ -252,14 +267,15 @@ class Modbus(Interface, regex=REGEX):
             msg = f"Requesting to read {count} input registers, maximum allowed is 125"
             raise ValueError(msg)
 
-        function_code = 0x04
-        _ = self.write(function_code, data=pack(">HH", address, count), device_id=device_id)
-        device_id, response = self.read()
-        pdu = ModbusPDU(device_id, response[0], response[2:], count=count)
-        self._check_function_code(function_code, pdu)
-        return pdu
+        with self._lock:
+            function_code = 0x04
+            _ = self.write(function_code, data=pack(">HH", address, count), device_id=device_id)
+            device_id, response = self.read()
+            mr = ModbusResponse(device_id, response[0], response[2:], count=count)
+            self._check_function_code(function_code, mr)
+            return mr
 
-    def read_exception_status(self, *, device_id: int = 1) -> ModbusPDU:
+    def read_exception_status(self, *, device_id: int = 1) -> ModbusResponse:
         """Read exception status (function code `0x07`).
 
         Args:
@@ -267,15 +283,16 @@ class Modbus(Interface, regex=REGEX):
 
         Returns:
             The Modbus Protocol Data Unit of the response. Call the
-                [bits][msl.equipment.interfaces.modbus.ModbusPDU.bits] method to get the
+                [bits][msl.equipment.interfaces.modbus.ModbusResponse.bits] method to get the
                 ON/OFF state of each exception-status bit.
         """
-        function_code = 0x07
-        _ = self.write(function_code, device_id=device_id)
-        device_id, response = self.read()
-        pdu = ModbusPDU(device_id, response[0], data=response[1:], count=8)
-        self._check_function_code(function_code, pdu)
-        return pdu
+        with self._lock:
+            function_code = 0x07
+            _ = self.write(function_code, device_id=device_id)
+            device_id, response = self.read(5)
+            mr = ModbusResponse(device_id, response[0], data=response[1:], count=8)
+            self._check_function_code(function_code, mr)
+            return mr
 
     def read_write_registers(
         self,
@@ -286,7 +303,7 @@ class Modbus(Interface, regex=REGEX):
         address: int | None = None,
         values: int | Sequence[int] | NDArray[np.uint16] | None = None,
         device_id: int = 1,
-    ) -> ModbusPDU:
+    ) -> ModbusResponse:
         """Read/Write registers (function code `0x17`).
 
         Performs a combination of one read operation and one write operation in a single Modbus transaction.
@@ -333,16 +350,17 @@ class Modbus(Interface, regex=REGEX):
             read_address = address
             write_address = address
 
-        function_code = 0x17
-        _ = self.write(
-            function_code,
-            data=pack(">HHHHB", read_address, read_count, write_address, n, 2 * n) + data,
-            device_id=device_id,
-        )
-        device_id, response = self.read()
-        pdu = ModbusPDU(device_id, response[0], data=response[2:], count=read_count)
-        self._check_function_code(function_code, pdu)
-        return pdu
+        with self._lock:
+            function_code = 0x17
+            _ = self.write(
+                function_code,
+                data=pack(">HHHHB", read_address, read_count, write_address, n, 2 * n) + data,
+                device_id=device_id,
+            )
+            device_id, response = self.read()
+            mr = ModbusResponse(device_id, response[0], data=response[2:], count=read_count)
+            self._check_function_code(function_code, mr)
+            return mr
 
     @staticmethod
     def to_register_values(
@@ -358,7 +376,8 @@ class Modbus(Interface, regex=REGEX):
                 Only used if `value` is not already a numpy array.
 
         Returns:
-            An array that can be passed to [write_registers][msl.equipment.interfaces.modbus.Modbus.write_registers].
+            An array that can be passed to [write_registers][msl.equipment.interfaces.modbus.Modbus.write_registers]
+                or [read_write_registers][msl.equipment.interfaces.modbus.Modbus.read_write_registers].
         """
         if isinstance(data, (float, int)):
             data = [data]
@@ -379,7 +398,7 @@ class Modbus(Interface, regex=REGEX):
         """
         return self._framer.write(device_id, function_code.to_bytes(1, "big") + (data or b""))
 
-    def write_coil(self, address: int, value: bool, *, device_id: int = 1) -> ModbusPDU:  # noqa: FBT001
+    def write_coil(self, address: int, value: bool, *, device_id: int = 1) -> ModbusResponse:  # noqa: FBT001
         """Write single coil (function code `0x05`).
 
         Args:
@@ -390,14 +409,17 @@ class Modbus(Interface, regex=REGEX):
         Returns:
             An echo of the request, after the register contents have been written.
         """
-        function_code = 0x05
-        _ = self.write(function_code, data=pack(">HH", address, 0xFF00 if value else 0x0000), device_id=device_id)
-        device_id, response = self.read()
-        pdu = ModbusPDU(device_id, response[0], response[1:])
-        self._check_function_code(function_code, pdu)
-        return pdu
+        with self._lock:
+            function_code = 0x05
+            _ = self.write(function_code, data=pack(">HH", address, 0xFF00 if value else 0x0000), device_id=device_id)
+            device_id, response = self.read(8)
+            mr = ModbusResponse(device_id, response[0], response[1:])
+            self._check_function_code(function_code, mr)
+            return mr
 
-    def write_coils(self, address: int, values: Sequence[bool] | NDArray[np.bool], *, device_id: int = 1) -> ModbusPDU:
+    def write_coils(
+        self, address: int, values: Sequence[bool] | NDArray[np.bool], *, device_id: int = 1
+    ) -> ModbusResponse:
         """Write multiple coils (function code `0x0F`).
 
         Args:
@@ -411,21 +433,22 @@ class Modbus(Interface, regex=REGEX):
                 and the number of registers that were written to.
         """
         n = len(values)
-        if n > 0x07B0:  # noqa: PLR2004
-            msg = f"Too many values, {n}, to write to the Modbus coils, must be <= {0x07B0}"
+        if n > 1968:  # noqa: PLR2004
+            msg = f"Too many values, {n}, to write to the Modbus coils, must be <= 1968"
             raise ValueError(msg)
 
         data = np.packbits(np.asarray(values, dtype=bool), bitorder="little").tobytes()
         data = pack(">HHB", address, n, len(data)) + data
 
-        function_code = 0x0F
-        _ = self.write(function_code, data=data, device_id=device_id)
-        device_id, response = self.read()
-        pdu = ModbusPDU(device_id, response[0], response[1:])
-        self._check_function_code(function_code, pdu)
-        return pdu
+        with self._lock:
+            function_code = 0x0F
+            _ = self.write(function_code, data=data, device_id=device_id)
+            device_id, response = self.read(8)
+            mr = ModbusResponse(device_id, response[0], response[1:])
+            self._check_function_code(function_code, mr)
+            return mr
 
-    def write_register(self, address: int, value: int, *, device_id: int = 1) -> ModbusPDU:
+    def write_register(self, address: int, value: int, *, device_id: int = 1) -> ModbusResponse:
         """Write a single holding register value (function code `0x06`).
 
         Args:
@@ -436,16 +459,17 @@ class Modbus(Interface, regex=REGEX):
         Returns:
             An echo of the request, after the register contents have been written.
         """
-        function_code = 0x06
-        _ = self.write(function_code, data=pack(">HH", address, value), device_id=device_id)
-        device_id, response = self.read()
-        pdu = ModbusPDU(device_id, response[0], response[1:])
-        self._check_function_code(function_code, pdu)
-        return pdu
+        with self._lock:
+            function_code = 0x06
+            _ = self.write(function_code, data=pack(">HH", address, value), device_id=device_id)
+            device_id, response = self.read(8)
+            mr = ModbusResponse(device_id, response[0], response[1:])
+            self._check_function_code(function_code, mr)
+            return mr
 
     def write_registers(
         self, address: int, values: Sequence[int] | NDArray[np.uint16], *, device_id: int = 1
-    ) -> ModbusPDU:
+    ) -> ModbusResponse:
         """Write to a block of contiguous registers (function code `0x10`).
 
         Args:
@@ -472,12 +496,13 @@ class Modbus(Interface, regex=REGEX):
         else:
             data = pack(f">HHB{n}H", address, n, 2 * n, *values)
 
-        function_code = 0x010
-        _ = self.write(function_code, data=data, device_id=device_id)
-        device_id, response = self.read()
-        pdu = ModbusPDU(device_id, response[0], response[1:])
-        self._check_function_code(function_code, pdu)
-        return pdu
+        with self._lock:
+            function_code = 0x010
+            _ = self.write(function_code, data=data, device_id=device_id)
+            device_id, response = self.read(8)
+            mr = ModbusResponse(device_id, response[0], response[1:])
+            self._check_function_code(function_code, mr)
+            return mr
 
     @property
     def timeout(self) -> float | None:
@@ -493,11 +518,36 @@ class Modbus(Interface, regex=REGEX):
         self._framer.timeout = value
 
 
-class ModbusPDU:
-    """Modbus Protocol Data Unit."""
+class ModbusResponse:
+    """Modbus response."""
 
     def __init__(self, device_id: int, function_code: int, data: bytes, count: int | None = None) -> None:
-        """Modbus Protocol Data Unit."""
+        """Modbus response.
+
+        Do not instantiate directly. This class is returned by most [Modbus][msl.equipment.interfaces.modbus.Modbus]
+        methods.
+
+        <!--
+        >>> device = Connection("Modbus::/mock://").connect()
+        >>> device._framer.interface.serial.add_response(bytes([1, 3, 8, 3, 232, 0, 16, 203, 132, 16, 229, 206, 73]))
+        >>> device._framer.interface.serial.add_response(bytes([1, 4, 4, 65, 172, 0, 0, 47, 153]))
+
+        -->
+
+        Example usage:
+
+        ```pycon
+        >>> mr = device.read_holding_registers(1, count=4)
+        >>> mr.array("uint16")
+        array([ 1000,    16, 52100,  4325], dtype='>u2')
+
+        >>> mr = device.read_input_registers(780, count=2)
+        >>> mr.float32()
+        21.5
+
+        ```
+
+        """
         self.count: int | None = count
         """[int][] &mdash; The number of registers/coils that were requested to read."""
 
@@ -512,7 +562,10 @@ class ModbusPDU:
 
     def __repr__(self) -> str:  # pyright: ignore[reportImplicitOverride]
         """Returns the string representation."""
-        return f"ModbusPDU(device_id={self.device_id}, function_code=0x{self.function_code:02X}, data={self.data!r})"
+        return (
+            f"{self.__class__.__name__}(device_id={self.device_id}, "
+            f"function_code=0x{self.function_code:02X}, data={self.data!r})"
+        )
 
     def array(self, dtype: DTypeLike) -> NDArray[Any]:
         """[numpy.ndarray][] &mdash; Returns the register data as a [numpy.ndarray][] of the specified `dtype`."""
@@ -520,68 +573,68 @@ class ModbusPDU:
             dtype = np.dtype(dtype).newbyteorder(">")  # force big endian
         return np.frombuffer(self.data, dtype=">u2").view(dtype)
 
-    def bits(self, bitorder: Literal["big", "little"] = "little") -> NDArray[np.bool]:
+    def bits(self, bit_order: Literal["big", "little"] = "little") -> NDArray[np.bool]:
         """[numpy.ndarray][] &mdash; Returns the states of the register bits that were requested."""
         data = np.frombuffer(self.data, dtype=np.uint8)
-        return np.unpackbits(data, count=self.count, bitorder=bitorder).astype(bool)
+        return np.unpackbits(data, count=self.count, bitorder=bit_order).astype(bool)
 
     def decode(self, encoding: str = "utf-8") -> str:
         """[str][] &mdash; Returns the decoded response data using the `encoding` codec."""
         return self.data.decode(encoding)
 
-    def float32(self, byteorder: Literal["big", "little"] = "big") -> float:
+    def float32(self, byte_order: Literal["big", "little"] = "big") -> float:
         """[float][] &mdash; Returns the register data as a 32-bit, floating-point number."""
-        b = ">" if byteorder == "big" else "<"
+        b = ">" if byte_order == "big" else "<"
         f32: float = unpack(b + "f", self.data)[0]
         return f32
 
-    def float64(self, byteorder: Literal["big", "little"] = "big") -> float:
+    def float64(self, byte_order: Literal["big", "little"] = "big") -> float:
         """[float][] &mdash; Returns the register data as a 64-bit, floating-point number."""
-        b = ">" if byteorder == "big" else "<"
+        b = ">" if byte_order == "big" else "<"
         f64: float = unpack(b + "d", self.data)[0]
         return f64
 
-    def int16(self, byteorder: Literal["big", "little"] = "big") -> int:
+    def int16(self, byte_order: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as a signed, 16-bit integer."""
-        b = ">" if byteorder == "big" else "<"
+        b = ">" if byte_order == "big" else "<"
         i16: int = unpack(b + "h", self.data)[0]
         return i16
 
-    def int32(self, byteorder: Literal["big", "little"] = "big") -> int:
+    def int32(self, byte_order: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as a signed, 32-bit integer."""
-        b = ">" if byteorder == "big" else "<"
+        b = ">" if byte_order == "big" else "<"
         i32: int = unpack(b + "i", self.data)[0]
         return i32
 
-    def int64(self, byteorder: Literal["big", "little"] = "big") -> int:
+    def int64(self, byte_order: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as a signed, 64-bit integer."""
-        b = ">" if byteorder == "big" else "<"
+        b = ">" if byte_order == "big" else "<"
         i64: int = unpack(b + "q", self.data)[0]
         return i64
 
-    def uint16(self, byteorder: Literal["big", "little"] = "big") -> int:
+    def uint16(self, byte_order: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as an unsigned, 16-bit integer."""
-        b = ">" if byteorder == "big" else "<"
+        b = ">" if byte_order == "big" else "<"
         u16: int = unpack(b + "H", self.data)[0]
         return u16
 
-    def uint32(self, byteorder: Literal["big", "little"] = "big") -> int:
+    def uint32(self, byte_order: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as an unsigned, 32-bit integer."""
-        b = ">" if byteorder == "big" else "<"
+        b = ">" if byte_order == "big" else "<"
         u32: int = unpack(b + "I", self.data)[0]
         return u32
 
-    def uint64(self, byteorder: Literal["big", "little"] = "big") -> int:
+    def uint64(self, byte_order: Literal["big", "little"] = "big") -> int:
         """[int][] &mdash; Returns the register data as an unsigned, 64-bit integer."""
-        b = ">" if byteorder == "big" else "<"
+        b = ">" if byte_order == "big" else "<"
         u64: int = unpack(b + "Q", self.data)[0]
         return u64
 
     def unpack(self, format: str) -> tuple[Any, ...]:  # noqa: A002
-        """[int][] &mdash; Return a tuple containing the register data unpacked according to the `format` string.
+        """[tuple][] &mdash; Return a tuple containing the register data unpacked according to the `format` string.
 
-        Modbus data is in big-endian byte order, see [Byte Order, Size, and Alignment][byte-order-size-and-alignment]
-        for more details.
+        See [Byte Order, Size, and Alignment][byte-order-size-and-alignment] for more details
+        about the `format` parameter. Modbus data is in big-endian byte order.
         """
         return unpack(format, self.data)
 
@@ -633,7 +686,6 @@ class ModbusIdentification:
         >>> assert identification.get(3) is None  # returns None instead of raising an error
 
         ```
-
 
         """
         self.function_code: int = response[0]
@@ -752,8 +804,11 @@ class Framer:
         """Disconnect from the underlying MessageBased interface."""
         self.interface.disconnect()
 
-    def read(self) -> tuple[int, bytes]:
+    def read(self, size: int | None = None) -> tuple[int, bytes]:  # pyright: ignore[reportUnusedParameter]
         """Read a framed Modbus message.
+
+        Args:
+            size: The number of bytes to read. Only required for the RTU framer.
 
         Returns:
             The (device ID, Modbus Protocol Data Unit response).
@@ -765,7 +820,7 @@ class Framer:
 
         Args:
             device_id: Modbus device ID.
-            pdu: Modbus Protocol Data Unit request.
+            pdu: Modbus Protocol Data Unit of the request.
 
         Returns:
             The number of bytes written.
@@ -790,8 +845,11 @@ class SocketFramer(Framer):
         super().__init__(interface)
         self.transaction_id: int = 0
 
-    def read(self) -> tuple[int, bytes]:  # pyright: ignore[reportImplicitOverride]
+    def read(self, size: int | None = None) -> tuple[int, bytes]:  # pyright: ignore[reportImplicitOverride]  # noqa: ARG002
         """Read a framed Modbus message.
+
+        Args:
+            size: Ignored.
 
         Returns:
             The (device ID, Modbus Protocol Data Unit response).
@@ -856,8 +914,11 @@ class RTUFramer(Framer):
 
         return crc.to_bytes(2, "little")
 
-    def read(self) -> tuple[int, bytes]:  # pyright: ignore[reportImplicitOverride]
+    def read(self, size: int | None = None) -> tuple[int, bytes]:  # pyright: ignore[reportImplicitOverride]
         """Read a framed Modbus message.
+
+        Args:
+            size: The number of bytes to read.
 
         Returns:
             The (device ID, Modbus Protocol Data Unit response).
@@ -865,21 +926,22 @@ class RTUFramer(Framer):
         device_id, function_code, byte3 = self.interface.read(size=3, decode=False)
         pdu = bytearray([function_code, byte3])
 
-        if function_code in (0x01, 0x02, 0x03, 0x04, 0x17):
-            pdu.extend(self.interface.read(size=byte3, decode=False))
-        elif function_code in (0x05, 0x06, 0x0F, 0x10):
-            pdu.extend(self.interface.read(size=3, decode=False))
-        elif function_code == 0x16:  # noqa: PLR2004
-            pdu.extend(self.interface.read(size=5, decode=False))
+        if function_code > 0x80:  # noqa: PLR2004
+            crc = self.interface.read(size=2, decode=False)
         elif function_code == 0x2B and byte3 == 0x0E:  # read_device_identification  # noqa: PLR2004
             pdu.extend(self.interface.read(size=5, decode=False))
             for _ in range(pdu[6]):
                 id_length = self.interface.read(size=2, decode=False)
                 pdu.extend(id_length)
                 pdu.extend(self.interface.read(size=id_length[1], decode=False))
+            crc = self.interface.read(size=2, decode=False)
+        else:
+            size = byte3 + 2 if size is None else size - 3
+            remainder = self.interface.read(size=size, decode=False)
+            pdu.extend(remainder[:-2])
+            crc = remainder[-2:]
 
         payload = bytes(pdu)
-        crc = self.interface.read(size=2, decode=False)
         expected_crc = self.calculate_crc(device_id.to_bytes(1, "big") + payload)
         if expected_crc != crc:
             msg = f"Received unexpected Modbus CRC value 0x{crc.hex()}, expected 0x{expected_crc.hex()}"
@@ -908,8 +970,11 @@ class ASCIIFramer(Framer):
         """Calculate the LRC value of an ASCII payload."""
         return ((sum(payload) ^ 0xFF) + 1) & 0xFF
 
-    def read(self) -> tuple[int, bytes]:  # pyright: ignore[reportImplicitOverride]
+    def read(self, size: int | None = None) -> tuple[int, bytes]:  # pyright: ignore[reportImplicitOverride]  # noqa: ARG002
         """Read a framed Modbus message.
+
+        Args:
+            size: Ignored.
 
         Returns:
             The (device ID, Modbus Protocol Data Unit response).

@@ -1,4 +1,4 @@
-"""Base class for the Modbus protocol."""
+"""Base class for the Modbus protocol (specification v1.1b3)."""
 
 # cSpell: ignore HHHB HHHHB unpackbits hexlify unhexlify
 from __future__ import annotations
@@ -35,10 +35,10 @@ REGEX = re.compile(
 
 
 class Modbus(Interface, regex=REGEX):
-    """Base class for the Modbus protocol."""
+    """Base class for the Modbus protocol (specification v1.1b3)."""
 
     def __init__(self, equipment: Equipment) -> None:
-        """Base class for the Modbus protocol.
+        """Base class for the Modbus protocol (specification v1.1b3).
 
         Args:
             equipment: An [Equipment][] instance.
@@ -640,10 +640,10 @@ class ModbusResponse:
         return u64
 
     def unpack(self, format: str) -> tuple[Any, ...]:  # noqa: A002
-        """[tuple][] &mdash; Return a tuple containing the register data unpacked according to the `format` string.
+        """[tuple][] &mdash; Returns a tuple containing the register data unpacked according to the `format` string.
 
-        See [Byte Order, Size, and Alignment][byte-order-size-and-alignment] for more details
-        about the `format` parameter. Modbus data is in big-endian byte order.
+        See [Byte Order, Size, and Alignment][struct-alignment] and [Format Characters][format-characters]
+        for more details about the `format` parameter. Modbus data is typically in big-endian byte order.
         """
         return unpack(format, self.data)
 
@@ -652,7 +652,10 @@ class ModbusObject(NamedTuple):
     """Modbus device-identification object."""
 
     id: int
+    """[int][] &mdash; The device-identification object ID."""
+
     value: bytes
+    """[bytes][] &mdash; The value associated with the device-identification object ID."""
 
 
 class ModbusIdentification:

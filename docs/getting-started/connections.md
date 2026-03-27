@@ -45,6 +45,7 @@ The following interface classes are available
 * [FTDI][] &mdash; For equipment that use a Future Technology Devices International (FTDI) chip
 * [GPIB][] &mdash; For equipment that use the GPIB (IEEE 488) protocol
 * [HiSLIP][] &mdash; For equipment that use the [HiSLIP](https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf){:target="_blank"} protocol
+* [Modbus][] &mdash; For equipment that use the [Modbus](https://www.modbus.org/){:target="_blank"} protocol
 * [Prologix][] &mdash; Use [Prologix](https://prologix.biz/){:target="_blank"} hardware to establish a connection to GPIB-compatible equipment
 * [SDK][] &mdash; For equipment that use a Software Development Kit (SDK) for communication
 * [Serial][] &mdash; For equipment that is connected through a serial port (or a USB-to-Serial adaptor)
@@ -95,6 +96,14 @@ Each [Interface][connections-interfaces] has a syntax for the [Connection][msl.e
       <b><i>host</i></b> &ndash; Hostname or IP address of the device<br/>
       <b><i>hislip#</i></b> &ndash; The text <code>hislip</code> followed by a numeric sub address (e.g., hislip0)<br/>
       <b><i>port</i></b> &ndash; The network port number [default=4880]
+    </td>
+  </tr>
+  <tr>
+    <td>Modbus</td>
+    <td>MODBUS::address[::ASCII|RTU|SOCKET][::UDP]</td>
+    <td>
+      <b><i>address</i></b> &ndash; Serial port or IP address (hostname)<br/>
+      <i>The prefix MODBUS is case insensitive</i>
     </td>
   </tr>
   <tr>
@@ -237,6 +246,26 @@ The following are examples of the addresses that may be used to connect to equip
     <td>HiSLIP</td>
     <td>TCPIP::10.12.114.50::hislip0,5000::INSTR</td>
     <td>A HiSLIP LAN instrument, host=10.12.114.50, port=5000</td>
+  </tr>
+  <tr>
+    <td>MODBUS</td>
+    <td>Modbus::192.168.1.68</td>
+    <td>A Modbus device at IP address 192.168.1.68 (default TCP network protocol, default SOCKET framer)</td>
+  </tr>
+  <tr>
+    <td>MODBUS</td>
+    <td>Modbus::192.168.1.69::UDP</td>
+    <td>A Modbus device at IP address 192.168.1.69, using the UDP network protocol</td>
+  </tr>
+  <tr>
+    <td>MODBUS</td>
+    <td>Modbus::/dev/ttyS1</td>
+    <td>A Modbus device at the Serial port /dev/ttyS1, using default RTU frames</td>
+  </tr>
+  <tr>
+    <td>MODBUS</td>
+    <td>Modbus::COM3::ASCII</td>
+    <td>A Modbus device at the Serial port COM3, using ASCII frames</td>
   </tr>
   <tr>
     <td>PROLOGIX</td>

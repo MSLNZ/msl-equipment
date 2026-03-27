@@ -527,14 +527,19 @@ class ModbusResponse:
         Do not instantiate directly. This class is returned by most [Modbus][msl.equipment.interfaces.modbus.Modbus]
         methods.
 
+        Example usage:
+
         <!--
+        >>> import numpy
+        >>> if tuple(map(int, numpy.__version__.split(".")))[0] < 2:
+        ...     import pytest
+        ...     pytest.skip("numpy too old, prints dtype='uint16'")
         >>> device = Connection("Modbus::/mock://").connect()
         >>> device._framer.interface.serial.add_response(bytes([1, 3, 8, 3, 232, 0, 16, 203, 132, 16, 229, 206, 73]))
         >>> device._framer.interface.serial.add_response(bytes([1, 4, 4, 65, 172, 0, 0, 47, 153]))
+        >>> device._framer.interface.serial.add_response(bytes([1, 1, 1, 98, 208, 97]))
 
         -->
-
-        Example usage:
 
         ```pycon
         >>> mr = device.read_holding_registers(1, count=4)
@@ -544,6 +549,10 @@ class ModbusResponse:
         >>> mr = device.read_input_registers(780, count=2)
         >>> mr.float32()
         21.5
+
+        >>> mr = device.read_coils(1250, count=6)
+        >>> mr.bits()
+        array([False,  True, False, False, False,  True])
 
         ```
 
@@ -655,13 +664,13 @@ class ModbusIdentification:
         Do not instantiate directly. This class is returned by the
         [read_device_identification][msl.equipment.interfaces.modbus.Modbus.read_device_identification] method.
 
+        Example usage:
+
         <!--
         >>> from msl.equipment.interfaces.modbus import ModbusIdentification
         >>> identification = ModbusIdentification(1, b"\x2b\x0e\x01\x83\x00\x00\x03\x00\x03MSL\x01\x02NZ\x02\x045.16")
 
         -->
-
-        Example usage:
 
         ```pycon
         >>> identification

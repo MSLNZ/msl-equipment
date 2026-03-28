@@ -83,7 +83,7 @@ def _find_device(parsed: ParsedUSBAddress, backend: Any) -> Any:  # noqa: ANN401
         if match is not None and (dev.bus == int(match["bus"])) and (dev.address == int(match["address"])):
             return dev
 
-        with contextlib.suppress(NotImplementedError, ValueError):
+        with contextlib.suppress(NotImplementedError, ValueError, usb.core.USBError):
             if dev.serial_number == parsed.serial_id:
                 return dev
 
@@ -100,14 +100,14 @@ class _USBDevice:
         self.address: int | None = usb_core_device.address
 
         info: list[str] = []
-        with contextlib.suppress(NotImplementedError, ValueError):
+        with contextlib.suppress(NotImplementedError, ValueError, usb.core.USBError):
             info.append(usb_core_device.manufacturer.rstrip() or "")
-        with contextlib.suppress(NotImplementedError, ValueError):
+        with contextlib.suppress(NotImplementedError, ValueError, usb.core.USBError):
             info.append(usb_core_device.product.rstrip() or "")
         self.description: str = ", ".join(item for item in info if item) or UNKNOWN_USB_DEVICE
 
         serial = ""
-        with contextlib.suppress(NotImplementedError, ValueError):
+        with contextlib.suppress(NotImplementedError, ValueError, usb.core.USBError):
             serial = usb_core_device.serial_number or ""
 
         self.serial: str = serial

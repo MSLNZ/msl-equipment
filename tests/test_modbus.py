@@ -1640,3 +1640,13 @@ def test_find_modbus_identification_bad_response(tcp_server: type[TCPServer], re
         assert server.host in devices
         assert devices[server.host].description == "Device identification contains invalid data"
         assert devices[server.host].addresses == [f"Modbus::{server.host}"]
+
+
+def test_find_modbus_identification_timeout(tcp_server: type[TCPServer]) -> None:
+    with tcp_server(term=b"\x00") as server:
+        server.add_response(b"\x00\x01\x00\x00\x00\xff\x00")  # waiting for 0xFF - 1 bytes
+        devices = find_modbus(ip=[server.host], port=server.port, timeout=0.1)
+        assert len(devices) == 1
+        assert server.host in devices
+        assert devices[server.host].description == "Device identification not available"
+        assert devices[server.host].addresses == [f"Modbus::{server.host}"]

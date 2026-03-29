@@ -1121,7 +1121,7 @@ def find_modbus(
         if response[0] < 0x80:  # noqa: PLR2004
             try:
                 mi = ModbusIdentification(1, response)
-                description = ", ".join(obj.value.decode() for obj in mi)
+                description = ", ".join(obj.value.decode("utf-8") for obj in mi)
             except (IndexError, UnicodeDecodeError):
                 description = "Device identification contains invalid data"
 

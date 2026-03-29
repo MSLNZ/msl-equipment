@@ -14,6 +14,7 @@ from msl.equipment.interfaces.modbus import (
     ParsedModbusAddress,
     RTUFramer,
     SocketFramer,
+    find_modbus,
     parse_modbus_address,
 )
 
@@ -1600,3 +1601,42 @@ def test_ascii_bad_lrc() -> None:
         _ = dev.read_coils(1)
 
     dev.disconnect()
+
+
+def test_find_modbus(tcp_server: type[TCPServer]) -> None:
+    with tcp_server(term=b"\x00") as server:
+        server.add_response(
+            b"\x00\x01\x00\x00\x00\x21\x01\x2b\x0e\x01\x83\x00\x00\x03\x00\x08Measure!\x01\x02NZ\x02\t1.2.3dev4"
+        )
+        devices = find_modbus(ip=[server.host], port=server.port, timeout=0.1)
+        assert len(devices) == 1
+        assert server.host in devices
+        assert devices[server.host].description == "Measure!, NZ, 1.2.3dev4"
+        assert devices[server.host].addresses == [f"Modbus::{server.host}"]
+
+
+def test_find_modbus_identification_not_supported(tcp_server: type[TCPServer]) -> None:
+    with tcp_server(term=b"\x00") as server:
+        server.add_response(b"\x00\x01\x00\x00\x00\x05\x01\xab\x01")
+        devices = find_modbus(ip=[server.host], port=server.port, timeout=0.1)
+        assert len(devices) == 1
+        assert server.host in devices
+        assert devices[server.host].description == "Device identification not available"
+        assert devices[server.host].addresses == [f"Modbus::{server.host}"]
+
+
+@pytest.mark.parametrize(
+    "response",
+    [
+        b"\x00\x01\x00\x00\x00\x05\x01\x09\x08\x07\x06",  # IndexError
+        b"\x00\x01\x00\x00\x00\x12\x01\x2b\x0e\x01\x83\x00\x00\x03\x00\x08Me\xa1sure!",  # UnicodeDecodeError
+    ],
+)
+def test_find_modbus_identification_bad_response(tcp_server: type[TCPServer], response: bytes) -> None:
+    with tcp_server(term=b"\x00") as server:
+        server.add_response(response)
+        devices = find_modbus(ip=[server.host], port=server.port, timeout=0.1)
+        assert len(devices) == 1
+        assert server.host in devices
+        assert devices[server.host].description == "Device identification contains invalid data"
+        assert devices[server.host].addresses == [f"Modbus::{server.host}"]

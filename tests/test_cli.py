@@ -153,21 +153,22 @@ def test_cli_find_verbose(
 
     m = caplog.messages
     assert m[0] == "Start searching for devices"
-    assert m[1] == "Broadcasting for Prologix ENET-GPIB Controllers: {'127.0.0.1'}"
-    assert m[2] == "Broadcasting for LXI devices: {'127.0.0.1'}"
-    assert m[3] == "Broadcasting for VXI-11 devices: {'127.0.0.1'}"
-    assert m[4] == "Searching for Serial ports"
-    assert m[5] == "Searching for GPIB devices (include_sad=False)"
-    assert m[6] == f"Loaded {gpib_file.resolve()}"
-    assert m[7] == "Searching for USB devices (backend='openusb')"
-    assert m[8] == "ValueError: Cannot load the requested 'openusb' PyUSB backend"
-    assert m[9] == "Searching for equipment that use the D2XX driver (d2xx_library='d2xx.ignore')"
+    assert m[1] == "Broadcasting for Modbus devices: {'127.0.0.1'}"
+    assert m[2] == "Broadcasting for Prologix ENET-GPIB Controllers: {'127.0.0.1'}"
+    assert m[3] == "Broadcasting for LXI devices: {'127.0.0.1'}"
+    assert m[4] == "Broadcasting for VXI-11 devices: {'127.0.0.1'}"
+    assert m[5] == "Searching for Serial ports"
+    assert m[6] == "Searching for GPIB devices (include_sad=False)"
+    assert m[7] == f"Loaded {gpib_file.resolve()}"
+    assert m[8] == "Searching for USB devices (backend='openusb')"
+    assert m[9] == "ValueError: Cannot load the requested 'openusb' PyUSB backend"
+    assert m[10] == "Searching for equipment that use the D2XX driver (d2xx_library='d2xx.ignore')"
     assert (
-        m[10]
+        m[11]
         == f"OSError: Cannot find 'd2xx.ignore' for libtype={libtype!r}, download library from https://ftdichip.com/drivers/d2xx-drivers/"
     )
-    assert m[11] == "Waiting approximately 0.1 second(s) for network devices to respond..."
-    assert re.match(r"Found \d+ devices", m[12])
+    assert m[12] == "Waiting approximately 0.1 second(s) for network devices to respond..."
+    assert re.match(r"Found \d+ device\(s\)", m[13])
 
     # check stdout, but must ignore all Serial devices
     out, _ = capsys.readouterr()
@@ -208,6 +209,12 @@ def test_find_print_stdout(capsys: pytest.CaptureFixture[str]) -> None:
             webserver="",
         ),
         Device(
+            type=DeviceType.MODBUS,
+            addresses=["Modbus::COM2"],
+            description="A, Modbus, device",
+            webserver="",
+        ),
+        Device(
             type=DeviceType.GPIB,
             addresses=["GPIB::1", "GPIB0::2::INSTR"],
             description="",
@@ -230,6 +237,12 @@ def test_find_print_stdout(capsys: pytest.CaptureFixture[str]) -> None:
             addresses=["USB::1::2::a"],
             description="Manufacturer",
             webserver="ignored",
+        ),
+        Device(
+            type=DeviceType.MODBUS,
+            addresses=["Modbus::/dev/ttyS1"],
+            description="Another, Modbus, device",
+            webserver="",
         ),
         Device(
             type=DeviceType.VXI11,
@@ -306,6 +319,9 @@ LXI Devices
     TCPIP::169.254.100.4::5025::SOCKET
     TCPIP::169.254.100.4::hislip0::INSTR
     TCPIP::169.254.100.4::inst0::INSTR
+MODBUS Devices
+  Modbus::COM2 [A, Modbus, device]
+  Modbus::/dev/ttyS1 [Another, Modbus, device]
 PROLOGIX Devices
   Prologix GPIB-ETHERNET Controller version 01.06.06.00 (MAC Address: 00-01-02-03-04-05)
     Prologix::169.254.100.2::1234::GPIB::<PAD>[::<SAD>]

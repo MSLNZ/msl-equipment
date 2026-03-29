@@ -17,7 +17,7 @@ from msl.equipment.schema import Connection, Interface
 from .message_based import MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator, Sequence
+    from collections.abc import Awaitable, Iterator, Sequence
     from typing import Any, Literal
 
     from numpy.typing import DTypeLike, NDArray
@@ -1062,3 +1062,80 @@ def parse_modbus_address(address: str) -> ParsedModbusAddress | None:
         framer = FramerType.RTU
 
     return ParsedModbusAddress(address=address, framer=framer)
+
+
+class ModbusDevice(NamedTuple):
+    """A Modbus device on the network."""
+
+    description: str
+    addresses: list[str]
+
+
+def find_modbus(
+    *,
+    ip: Sequence[str] | None = None,
+    port: int = 502,
+    timeout: float = 1,
+) -> dict[str, ModbusDevice]:
+    """Find all Modbus devices that are on the network.
+
+    Args:
+        ip: The IP address(es) on the local computer to use to search for
+            Modbus devices. If not specified, uses all network interfaces.
+        port: The port number of the Modbus protocol.
+        timeout: The maximum number of seconds to wait for a reply.
+
+    Returns:
+        The Modbus devices that were found.
+    """
+    import asyncio  # noqa: PLC0415
+
+    from msl.equipment.utils import ipv4_addresses, logger  # noqa: PLC0415
+
+    all_ips = ipv4_addresses() if not ip else set(ip)
+    logger.debug("Broadcasting for Modbus devices: %s", all_ips)
+
+    async def find_single(host: tuple[int, ...]) -> None:
+        """Asynchronously find a single Modbus device."""
+        host_str = "{}.{}.{}.{}".format(*host)
+        try:
+            reader, writer = await asyncio.wait_for(asyncio.open_connection(host_str, port), timeout=timeout)
+        except (OSError, asyncio.TimeoutError):
+            return
+
+        # Read device identification, device id 1, read code id 1, object id 0
+        writer.write(b"\x00\x01\x00\x00\x00\x05\x01\x2b\x0e\x01\x00")
+        await writer.drain()
+
+        try:
+            header = await asyncio.wait_for(reader.read(n=7), timeout=timeout)
+            _, _, remaining, _ = unpack(">HHHB", header)
+            response = await asyncio.wait_for(reader.read(n=remaining - 1), timeout=timeout)
+        except (OSError, asyncio.TimeoutError):
+            response = b"\xab\x01"  # set a reply with function code 0x2b not supported
+        finally:
+            writer.close()
+            await writer.wait_closed()
+
+        description = "Device identification not available"
+        if response[0] < 0x80:  # noqa: PLR2004
+            try:
+                mi = ModbusIdentification(1, response)
+                description = ", ".join(obj.value.decode() for obj in mi)
+            except (IndexError, UnicodeDecodeError):
+                description = "Device identification contains invalid data"
+
+        devices[host] = ModbusDevice(description=description, addresses=[f"Modbus::{host_str}"])
+
+    async def find_all() -> None:
+        """Asynchronously find all Modbus devices."""
+        tasks: list[Awaitable[None]] = []
+        for item in all_ips:
+            splitted = item.split(".")
+            a, b, c = map(int, (item for item in splitted[:3]))
+            tasks.extend([find_single((a, b, c, d)) for d in range(1, 255)])
+        _ = await asyncio.gather(*tasks)
+
+    devices: dict[tuple[int, ...], ModbusDevice] = {}
+    asyncio.run(find_all())
+    return {".".join(str(v) for v in k): devices[k] for k in sorted(devices)}

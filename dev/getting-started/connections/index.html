@@ -2157,6 +2157,8 @@
       
         
       
+        
+      
     
     
     
@@ -2280,6 +2282,34 @@
     
   
     HiSLIP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/interfaces/modbus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Modbus
   
 
     
@@ -5209,6 +5239,7 @@
 <li><a class="autorefs autorefs-internal" href="../../api/interfaces/ftdi/#ftdi">FTDI</a> &mdash; For equipment that use a Future Technology Devices International (FTDI) chip</li>
 <li><a class="autorefs autorefs-internal" href="../../api/interfaces/gpib/#gpib">GPIB</a> &mdash; For equipment that use the GPIB (IEEE 488) protocol</li>
 <li><a class="autorefs autorefs-internal" href="../../api/interfaces/hislip/#hislip">HiSLIP</a> &mdash; For equipment that use the <a href="https://www.ivifoundation.org/downloads/Protocol%20Specifications/IVI-6.1_HiSLIP-2.0-2020-04-23.pdf" target="_blank">HiSLIP</a> protocol</li>
+<li><a class="autorefs autorefs-internal" href="../../api/interfaces/modbus/#modbus">Modbus</a> &mdash; For equipment that use the <a href="https://www.modbus.org/" target="_blank">Modbus</a> protocol</li>
 <li><a class="autorefs autorefs-internal" href="../../api/interfaces/prologix/#prologix">Prologix</a> &mdash; Use <a href="https://prologix.biz/" target="_blank">Prologix</a> hardware to establish a connection to GPIB-compatible equipment</li>
 <li><a class="autorefs autorefs-internal" href="../../api/interfaces/sdk/#sdk">SDK</a> &mdash; For equipment that use a Software Development Kit (SDK) for communication</li>
 <li><a class="autorefs autorefs-internal" href="../../api/interfaces/serial/#serial">Serial</a> &mdash; For equipment that is connected through a serial port (or a USB-to-Serial adaptor)</li>
@@ -5262,6 +5293,14 @@
       <b><i>host</i></b> &ndash; Hostname or IP address of the device<br/>
       <b><i>hislip#</i></b> &ndash; The text <code>hislip</code> followed by a numeric sub address (e.g., hislip0)<br/>
       <b><i>port</i></b> &ndash; The network port number [default=4880]
+    </td>
+  </tr>
+  <tr>
+    <td>Modbus</td>
+    <td>MODBUS::address[::ASCII|RTU|SOCKET][::UDP]</td>
+    <td>
+      <b><i>address</i></b> &ndash; Serial port address or IP address (hostname). If a non-default network port must be specified, <code>address</code> can be expressed as <code>host::port</code><br/>
+      <i>The prefix MODBUS is case insensitive</i>
     </td>
   </tr>
   <tr>
@@ -5402,6 +5441,31 @@
     <td>HiSLIP</td>
     <td>TCPIP::10.12.114.50::hislip0,5000::INSTR</td>
     <td>A HiSLIP LAN instrument, host=10.12.114.50, port=5000</td>
+  </tr>
+  <tr>
+    <td>MODBUS</td>
+    <td>Modbus::192.168.1.50</td>
+    <td>A Modbus device at IP address 192.168.1.50 (default TCP network protocol, default network port 502, default SOCKET frames)</td>
+  </tr>
+  <tr>
+    <td>MODBUS</td>
+    <td>Modbus::abc-xyz::5000</td>
+    <td>A Modbus device with the hostname abc-xyz at port 5000 (default TCP network protocol, default SOCKET frames)</td>
+  </tr>
+  <tr>
+    <td>MODBUS</td>
+    <td>Modbus::192.168.1.80::UDP</td>
+    <td>A Modbus device at IP address 192.168.1.80 using the UDP network protocol (default network port 502, default SOCKET frames)</td>
+  </tr>
+  <tr>
+    <td>MODBUS</td>
+    <td>Modbus::/dev/ttyS1</td>
+    <td>A Modbus device at the Serial port /dev/ttyS1 (default RTU frames)</td>
+  </tr>
+  <tr>
+    <td>MODBUS</td>
+    <td>Modbus::COM3::ASCII</td>
+    <td>A Modbus device at the Serial port COM3 using ASCII frames</td>
   </tr>
   <tr>
     <td>PROLOGIX</td>

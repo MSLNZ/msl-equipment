@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, cast
 import numpy as np
 import pytest
 
-from msl.equipment import Connection, Equipment, Modbus, MSLConnectionError, Serial
+from msl.equipment import Connection, Equipment, Modbus, MSLConnectionError, Serial, Socket
 from msl.equipment.interfaces.modbus import (
     ASCIIFramer,
     FramerType,
@@ -64,16 +64,16 @@ def test_parse_address_invalid(address: str) -> None:
         ("MODBUS::ASCII", ParsedModbusAddress(address="TCP::ASCII::502", framer=FramerType.SOCKET)),
         ("MODBUS::rtu::rtu", ParsedModbusAddress(address="TCP::rtu::502", framer=FramerType.RTU)),
         (
-            "MODBUS::company.com::1234::SOCKET",
-            ParsedModbusAddress(address="TCP::company.com::1234", framer=FramerType.SOCKET),
+            "MODBUS::company-com::1234::SOCKET",
+            ParsedModbusAddress(address="TCP::company-com::1234", framer=FramerType.SOCKET),
         ),
         (
-            "MODBUS::company.com::1234::SOCKET::UDP",
-            ParsedModbusAddress(address="UDP::company.com::1234", framer=FramerType.SOCKET),
+            "MODBUS::company-com::1234::SOCKET::UDP",
+            ParsedModbusAddress(address="UDP::company-com::1234", framer=FramerType.SOCKET),
         ),
         (
-            "MODBUS::company.com::1234::UDP",
-            ParsedModbusAddress(address="UDP::company.com::1234", framer=FramerType.SOCKET),
+            "MODBUS::company-com::1234::UDP",
+            ParsedModbusAddress(address="UDP::company-com::1234", framer=FramerType.SOCKET),
         ),
         (
             "MODBUS::192.168.1.100::UDP",
@@ -339,6 +339,7 @@ def test_tcp_repr_str(tcp_server: type[TCPServer]) -> None:
         assert dev.timeout is None
         assert str(dev) == "Modbus<A|B|C>"
         assert repr(dev) == f"Modbus<A|B|C at TCP::{server.host}::{server.port}>"
+        assert isinstance(dev.interface, Socket)
         dev.disconnect()
 
 
@@ -352,6 +353,7 @@ def test_udp_repr_str(udp_server: type[UDPServer]) -> None:
         assert str(dev) == "Modbus<A|B|C>"
         assert repr(dev) == f"Modbus<A|B|C at UDP::{server.host}::{server.port}>"
         assert dev.timeout == 0.9
+        assert isinstance(dev.interface, Socket)
         dev.disconnect()
 
 
@@ -377,6 +379,7 @@ def test_rtu_repr_str() -> None:
     assert iface.serial.bytesize == 7
     assert iface.serial.parity == "E"
     assert iface.serial.stopbits == 2
+    assert isinstance(dev.interface, Serial)
     dev.disconnect()
 
 

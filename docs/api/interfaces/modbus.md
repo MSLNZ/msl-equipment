@@ -1,5 +1,9 @@
 # Modbus
 
+## Prerequisites {: #modbus-prerequisites }
+
+See [this][serial-prerequisites] section if you are communicating with a Modbus device on Linux or macOS via the [Serial][] interface. Otherwise, there are no prerequisites to follow on Windows or if using a network [Socket][] for the interface.
+
 ::: msl.equipment.interfaces.modbus.Modbus
     options:
         show_root_full_path: false

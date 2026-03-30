@@ -102,7 +102,7 @@ Each [Interface][connections-interfaces] has a syntax for the [Connection][msl.e
     <td>Modbus</td>
     <td>MODBUS::address[::ASCII|RTU|SOCKET][::UDP]</td>
     <td>
-      <b><i>address</i></b> &ndash; Serial port or IP address (hostname)<br/>
+      <b><i>address</i></b> &ndash; Serial port address or IP address (hostname). If a non-default network port must be specified, <code>address</code> can be expressed as <code>host::port</code><br/>
       <i>The prefix MODBUS is case insensitive</i>
     </td>
   </tr>
@@ -249,23 +249,28 @@ The following are examples of the addresses that may be used to connect to equip
   </tr>
   <tr>
     <td>MODBUS</td>
-    <td>Modbus::192.168.1.68</td>
-    <td>A Modbus device at IP address 192.168.1.68 (default TCP network protocol, default SOCKET framer)</td>
+    <td>Modbus::192.168.1.50</td>
+    <td>A Modbus device at IP address 192.168.1.50 (default TCP network protocol, default network port 502, default SOCKET frames)</td>
   </tr>
   <tr>
     <td>MODBUS</td>
-    <td>Modbus::192.168.1.69::UDP</td>
-    <td>A Modbus device at IP address 192.168.1.69, using the UDP network protocol</td>
+    <td>Modbus::abc-xyz::5000</td>
+    <td>A Modbus device with the hostname abc-xyz at port 5000 (default TCP network protocol, default SOCKET frames)</td>
+  </tr>
+  <tr>
+    <td>MODBUS</td>
+    <td>Modbus::192.168.1.80::UDP</td>
+    <td>A Modbus device at IP address 192.168.1.80 using the UDP network protocol (default network port 502, default SOCKET frames)</td>
   </tr>
   <tr>
     <td>MODBUS</td>
     <td>Modbus::/dev/ttyS1</td>
-    <td>A Modbus device at the Serial port /dev/ttyS1, using default RTU frames</td>
+    <td>A Modbus device at the Serial port /dev/ttyS1 (default RTU frames)</td>
   </tr>
   <tr>
     <td>MODBUS</td>
     <td>Modbus::COM3::ASCII</td>
-    <td>A Modbus device at the Serial port COM3, using ASCII frames</td>
+    <td>A Modbus device at the Serial port COM3 using ASCII frames</td>
   </tr>
   <tr>
     <td>PROLOGIX</td>

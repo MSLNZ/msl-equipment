@@ -6414,8 +6414,8 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
             <td>
               <div class="doc-md-description">
                 <p>The maximum number of attempts to try to reconnect with the equipment.
-If &lt;1, keep trying until a connection is successful. If the maximum number
-of attempts has been reached then an exception is raise.</p>
+If &le; 0, keep trying until a connection is successful. If the maximum number
+of attempts has been reached then an exception is raised.</p>
               </div>
             </td>
             <td>
@@ -6451,8 +6451,8 @@ of attempts has been reached then an exception is raise.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        max_attempts: The maximum number of attempts to try to reconnect with the equipment.</span>
-<span class="sd">            If &amp;lt;1, keep trying until a connection is successful. If the maximum number</span>
-<span class="sd">            of attempts has been reached then an exception is raise.</span>
+<span class="sd">            If &amp;le; 0, keep trying until a connection is successful. If the maximum number</span>
+<span class="sd">            of attempts has been reached then an exception is raised.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">family</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">family</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>

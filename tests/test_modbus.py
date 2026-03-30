@@ -24,9 +24,8 @@ if TYPE_CHECKING:
 
 
 def cast_server(dev: Modbus) -> SerialServer:
-    framer = dev._framer  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
-    assert isinstance(framer.interface, Serial)
-    return cast("SerialServer", cast("object", framer.interface.serial))
+    assert isinstance(dev.interface, Serial)
+    return cast("SerialServer", cast("object", dev.interface.serial))
 
 
 @pytest.mark.parametrize(
@@ -80,7 +79,7 @@ def test_parse_address_invalid(address: str) -> None:
             ParsedModbusAddress(address="UDP::192.168.1.100::502", framer=FramerType.SOCKET),
         ),
         ("MODBUS::/mock://", ParsedModbusAddress(address="ASRL/mock://", framer=FramerType.RTU)),
-        ("MODBUS::/mock://::ASCII", ParsedModbusAddress(address="ASRL/mock://", framer=FramerType.ASCII)),
+        ("MoDbUs::/mock://::ascII", ParsedModbusAddress(address="ASRL/mock://", framer=FramerType.ASCII)),
     ],
 )
 def test_parse_address_valid(address: str, expected: ParsedModbusAddress) -> None:
@@ -102,7 +101,7 @@ def test_parse_address_valid(address: str, expected: ParsedModbusAddress) -> Non
         (b"\x01\x04\x04\x27\x10\xc3\x50", b"\xa0\x39"),
     ],
 )
-def test_crc16(payload: bytes, crc: bytes) -> None:
+def test_crc(payload: bytes, crc: bytes) -> None:
     assert RTUFramer.calculate_crc(payload) == crc
 
 
@@ -374,7 +373,7 @@ def test_rtu_repr_str() -> None:
     assert str(dev) == "Modbus<A|B|C>"
     assert repr(dev) == "Modbus<A|B|C at ASRL/mock://>"
     assert dev.timeout == 0.9
-    iface = cast("Serial", dev._framer.interface)  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    iface = cast("Serial", dev.interface)
     assert iface.serial.baudrate == 19200
     assert iface.serial.bytesize == 7
     assert iface.serial.parity == "E"

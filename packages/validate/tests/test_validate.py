@@ -107,13 +107,16 @@ def test_recursive_invalid_xml(
     )
 
     r = caplog.records
-    assert r[0].message == f"ERROR {register}:4:1\n  Premature end of data in tag register line 2, line 4, column 1"
+    assert (
+        r[0].message
+        == f"ERROR {register}:4:1\n  XMLSyntaxError: Premature end of data in tag register line 2, line 4, column 1"
+    )
 
     if exit_first:
         assert len(r) == 1
         assert summary.num_issues == 1
     else:
-        assert r[1].message == "ERROR missing.xml:0:0\n  Cannot parse missing.xml"
+        assert r[1].message == "ERROR missing.xml:0:0\n  OSError: Cannot parse missing.xml"
         assert len(r) == 2
         assert summary.num_issues == 2
 

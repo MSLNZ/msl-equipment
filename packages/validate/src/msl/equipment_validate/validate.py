@@ -220,11 +220,24 @@ def parse(*, file: Path, uri_scheme: URIScheme, no_colour: bool) -> ElementTree 
     """
     try:
         return etree.parse(file)
-    except OSError:
-        log_error(file=file, line=0, message=f"Cannot parse {file}", uri_scheme=uri_scheme, no_colour=no_colour)
+    except OSError as e:
+        log_error(
+            file=file,
+            line=0,
+            message=f"{e.__class__.__name__}: Cannot parse {file}",
+            uri_scheme=uri_scheme,
+            no_colour=no_colour,
+        )
     except etree.XMLSyntaxError as e:
         line, column = e.position
-        log_error(file=file, line=line, column=column, message=e.msg, uri_scheme=uri_scheme, no_colour=no_colour)
+        log_error(
+            file=file,
+            line=line,
+            column=column,
+            message=f"{e.__class__.__name__}: {e.msg}",
+            uri_scheme=uri_scheme,
+            no_colour=no_colour,
+        )
 
     return None
 

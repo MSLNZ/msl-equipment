@@ -6,6 +6,7 @@ from .ftdi import FTDI
 from .gpib import GPIB
 from .hislip import HiSLIP
 from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
+from .modbus import Modbus
 from .nidaq import NIDAQ
 from .prologix import Prologix
 from .pyvisa import PyVISA
@@ -29,6 +30,7 @@ __all__: list[str] = [
     "MSLConnectionError",
     "MSLTimeoutError",
     "MessageBased",
+    "Modbus",
     "Prologix",
     "PyVISA",
     "Serial",

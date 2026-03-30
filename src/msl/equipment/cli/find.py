@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING
 from msl.equipment.dns_service_discovery import find_lxi
 from msl.equipment.interfaces.ftdi import find_ftd2xx_devices
 from msl.equipment.interfaces.gpib import find_listeners
+from msl.equipment.interfaces.modbus import find_modbus
 from msl.equipment.interfaces.prologix import find_prologix
 from msl.equipment.interfaces.serial import find_ports
 from msl.equipment.interfaces.usb import find_usb
@@ -34,6 +35,7 @@ class DeviceType(IntEnum):
     VXI11 = 4
     USB = 5
     FTDI = 6
+    MODBUS = 7
 
 
 @dataclass
@@ -44,6 +46,23 @@ class Device:
     addresses: list[str]
     description: str = ""
     webserver: str = ""
+
+
+class ModbusThread(Thread):
+    """Scan for Modbus devices on the network."""
+
+    devices: ClassVar[dict[str, Device]] = {}
+
+    def __init__(self, ips: list[str], timeout: float) -> None:
+        """Scan for Modbus devices on the network."""
+
+        def function() -> None:
+            ModbusThread.devices = {
+                k: Device(type=DeviceType.MODBUS, addresses=v.addresses, description=v.description)
+                for k, v in find_modbus(ip=ips, timeout=timeout).items()
+            }
+
+        super().__init__(target=function)
 
 
 class PrologixThread(Thread):
@@ -132,7 +151,8 @@ def find_equipment(  # noqa: C901
     devices: dict[str, Device] = {}
 
     ips = ip if ip is not None else list(ipv4_addresses())
-    threads: list[PrologixThread | LXIThread | VXI11Thread] = [
+    threads: list[ModbusThread | PrologixThread | LXIThread | VXI11Thread] = [
+        ModbusThread(ips, timeout),
         PrologixThread(ips, timeout),
         LXIThread(ips, timeout),
         VXI11Thread(ips, timeout),
@@ -176,7 +196,7 @@ def find_equipment(  # noqa: C901
                 num_found += 1
                 devices[name] = device
 
-    logger.debug("Found %d devices", num_found)
+    logger.debug("Found %d device(s)", num_found)
     return list(devices.values())
 
 
@@ -192,7 +212,7 @@ def print_stdout(found: list[Device]) -> None:
                 continue
             if typ == DeviceType.GPIB:
                 print("  " + "\n  ".join(device.addresses))
-            elif typ in {DeviceType.ASRL, DeviceType.USB, DeviceType.FTDI}:
+            elif typ in {DeviceType.ASRL, DeviceType.USB, DeviceType.FTDI, DeviceType.MODBUS}:
                 print(f"  {device.addresses[0]} [{device.description}]")
             else:
                 webserver = f" [webserver: {device.webserver}]" if device.webserver else ""

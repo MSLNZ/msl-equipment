@@ -101,6 +101,7 @@ nav:
       - api/interfaces/ftdi.md
       - api/interfaces/gpib.md
       - api/interfaces/hislip.md
+      - api/interfaces/modbus.md
       - api/interfaces/prologix.md
       - api/interfaces/sdk.md
       - api/interfaces/serial.md

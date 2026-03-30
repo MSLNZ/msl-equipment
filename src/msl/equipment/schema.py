@@ -2812,7 +2812,7 @@ class Register:
     def find(self, pattern: str | re.Pattern[str], *, flags: int = 0) -> Iterator[Equipment]:  # noqa: C901
         """Find equipment in the register.
 
-        The following attributes are used in the search:
+        The following values are used in the search:
 
         * keywords: [Equipment][msl.equipment.schema.Equipment]
         * description: [Equipment][msl.equipment.schema.Equipment]

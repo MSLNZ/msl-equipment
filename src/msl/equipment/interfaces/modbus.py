@@ -55,15 +55,18 @@ class Modbus(Interface, regex=REGEX):
             msg = f"Invalid Modbus address {equipment.connection.address!r}"
             raise ValueError(msg)
 
+        self._lock: Lock = Lock()
         self._repr: str = self._str[:-1] + f" at {parsed.address}>"
+        self._parsed: ParsedModbusAddress = parsed
+        self._connect()
 
-        c = Connection(parsed.address, properties=equipment.connection.properties)
+    def _connect(self) -> None:
+        assert self.equipment.connection is not None  # noqa: S101
+        c = Connection(self._parsed.address, properties=self.equipment.connection.properties)
         try:
             interface: Serial | Socket = c.connect()
         except (MSLConnectionError, MSLTimeoutError) as e:
             raise MSLConnectionError(self, e.message) from None
-
-        self._lock: Lock = Lock()
 
         interface._str = self._str  # noqa: SLF001
         interface._repr = self._repr  # noqa: SLF001
@@ -71,9 +74,9 @@ class Modbus(Interface, regex=REGEX):
         interface.write_termination = None
 
         self._framer: Framer
-        if parsed.framer == FramerType.SOCKET:
+        if self._parsed.framer == FramerType.SOCKET:
             self._framer = SocketFramer(interface)
-        elif parsed.framer == FramerType.RTU:
+        elif self._parsed.framer == FramerType.RTU:
             self._framer = RTUFramer(interface)
         else:
             interface.read_termination = b"\n"
@@ -362,6 +365,25 @@ class Modbus(Interface, regex=REGEX):
             mr = ModbusResponse(device_id, response[0], data=response[2:], count=read_count)
             self._check_function_code(function_code, mr)
             return mr
+
+    def reconnect(self, max_attempts: int = 1) -> None:
+        """Reconnect to the Modbus equipment.
+
+        Args:
+            max_attempts: The maximum number of attempts to try to reconnect with the equipment.
+                If &le; 0, keep trying until a connection is successful. If the maximum number
+                of attempts has been reached then an exception is raised.
+        """
+        self._framer.disconnect()
+
+        attempt = 0
+        while True:
+            attempt += 1
+            try:
+                return self._connect()
+            except (MSLConnectionError, MSLTimeoutError):
+                if 0 < max_attempts <= attempt:
+                    raise
 
     @staticmethod
     def to_register_values(

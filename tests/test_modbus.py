@@ -1653,3 +1653,33 @@ def test_find_modbus_identification_timeout(tcp_server: type[TCPServer]) -> None
         assert server.host in devices
         assert devices[server.host].description == "Device identification not available"
         assert devices[server.host].addresses == [f"Modbus::{server.host}"]
+
+
+def test_reconnect(tcp_server: type[TCPServer]) -> None:
+    server = tcp_server(term=None)
+    connection = Connection(f"Modbus::{server.host}::{server.port}", timeout=0.1)
+
+    server.start()
+    dev: Modbus = connection.connect()
+
+    mr = dev.read_coils(5130, count=17)
+    assert mr.data == b"\n\x00\x11"  # last 3 bytes of struct.pack(">HH", 5130, 17) == b'\x14\n\x00\x11'
+
+    dev.disconnect()
+
+    assert isinstance(dev.interface, Socket)
+    assert dev.interface.socket.fileno() == -1
+
+    server.start()
+    dev.reconnect()
+
+    assert dev.interface.socket.fileno() != -1
+
+    mr = dev.read_coils(5130, count=17)
+    assert mr.data == b"\n\x00\x11"  # last 3 bytes of struct.pack(">HH", 5130, 17) == b'\x14\n\x00\x11'
+
+    dev.disconnect()
+    server.stop()
+
+    with pytest.raises(MSLConnectionError):
+        dev.reconnect(max_attempts=2)

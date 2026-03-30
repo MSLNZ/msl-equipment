@@ -139,8 +139,8 @@ class Socket(MessageBased, regex=REGEX):
 
         Args:
             max_attempts: The maximum number of attempts to try to reconnect with the equipment.
-                If &lt;1, keep trying until a connection is successful. If the maximum number
-                of attempts has been reached then an exception is raise.
+                If &le; 0, keep trying until a connection is successful. If the maximum number
+                of attempts has been reached then an exception is raised.
         """
         self._socket.close()
         self._socket = socket.socket(family=self._socket.family, type=self._socket.type)

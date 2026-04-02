@@ -58,7 +58,7 @@ Save the following bash script as, for example, `install-linux-gpib.sh` and (opt
     echo "Installed, next steps:"
     echo "1. Edit the value of 'board_type' in the 'interface' section of /etc/gpib.conf"
     echo "   For the list of supported board types, see https://linux-gpib.sourceforge.io/doc_html/supported-hardware.html"
-    echo "   For example, for a NI GPIB-USB-HS+ controller set board_type = "ni_usb_b"
+    echo "   For example, for a NI GPIB-USB-HS+ controller set board_type = \"ni_usb_b\""
     echo ""
     echo "   $ sudo nano /etc/gpib.conf"
     echo ""

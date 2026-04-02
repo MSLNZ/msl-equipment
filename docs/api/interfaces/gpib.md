@@ -55,13 +55,26 @@ Save the following bash script as, for example, `install-linux-gpib.sh` and (opt
     sudo addgroup gpib
     sudo usermod -a -G gpib $(whoami)
 
+    echo "Installed, next steps:"
+    echo "1. Edit the value of 'board_type' in the 'interface' section of /etc/gpib.conf"
+    echo "   For the list of supported board types, see https://linux-gpib.sourceforge.io/doc_html/supported-hardware.html"
+    echo "   For example, for a NI GPIB-USB-HS+ controller set board_type = "ni_usb_b"
     echo ""
-    echo "Plug the GPIB-USB controller(s) into the appropriate USB port and run 'sudo gpib_config'"
-    echo "to update the 'board_type' for the controller(s) that you are using."
-    echo "If you get an error, for example,"
-    echo "  failed to open device file '/dev/gpib0'"
-    echo "unplug/re-plug the GPIB-USB controller (or restart the computer) and run 'sudo gpib_config' again."
-    echo "You may also delete the linux-gpib-$VERSION directory and the linux-gpib-$VERSION.tar.gz file."
+    echo "   $ sudo nano /etc/gpib.conf"
+    echo ""
+    echo "2. Plug in the GPIB-USB controller and make sure that it is listed as a USB device"
+    echo "   $ lsusb"
+    echo ""
+    echo "3. Check the GPIB configuration, the following command should run without displaying an error"
+    echo "   $ sudo gpib_config"
+    echo ""
+    echo "   If you get an error similar to:"
+    echo "     failed to configure boardtype: ni_pci"
+    echo "     failed to configure board"
+    echo "     main: Invalid argument"
+    echo "   that means you specified the wrong board_type in Step 1"
+    echo ""
+    echo "4. You may delete the linux-gpib-$VERSION directory and the linux-gpib-$VERSION.tar.gz file"
     ```
 
 Make the script executable,

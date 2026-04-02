@@ -5797,23 +5797,23 @@ sudo<span class="w"> </span>usermod<span class="w"> </span>-a<span class="w"> </
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Installed, next steps:&quot;</span>
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;1. Edit the value of &#39;board_type&#39; in the &#39;interface&#39; section of /etc/gpib.conf&quot;</span>
 <span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   For the list of supported board types, see https://linux-gpib.sourceforge.io/doc_html/supported-hardware.html&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   For example, for a NI GPIB-USB-HS+ controller set board_type = &quot;</span>ni_usb_b<span class="s2">&quot;</span>
-<span class="s2">echo &quot;&quot;</span>
-<span class="s2">echo &quot;</span><span class="w">   </span>$<span class="w"> </span>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/gpib.conf<span class="s2">&quot;</span>
-<span class="s2">echo &quot;&quot;</span>
-<span class="s2">echo &quot;</span><span class="m">2</span>.<span class="w"> </span>Plug<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>GPIB-USB<span class="w"> </span>controller<span class="w"> </span>and<span class="w"> </span>make<span class="w"> </span>sure<span class="w"> </span>that<span class="w"> </span>it<span class="w"> </span>is<span class="w"> </span>listed<span class="w"> </span>as<span class="w"> </span>a<span class="w"> </span>USB<span class="w"> </span>device<span class="s2">&quot;</span>
-<span class="s2">echo &quot;</span><span class="w">   </span>$<span class="w"> </span>lsusb<span class="s2">&quot;</span>
-<span class="s2">echo &quot;&quot;</span>
-<span class="s2">echo &quot;</span><span class="m">3</span>.<span class="w"> </span>Check<span class="w"> </span>the<span class="w"> </span>GPIB<span class="w"> </span>configuration,<span class="w"> </span>the<span class="w"> </span>following<span class="w"> </span><span class="nb">command</span><span class="w"> </span>should<span class="w"> </span>run<span class="w"> </span>without<span class="w"> </span>displaying<span class="w"> </span>an<span class="w"> </span>error<span class="s2">&quot;</span>
-<span class="s2">echo &quot;</span><span class="w">   </span>$<span class="w"> </span>sudo<span class="w"> </span>gpib_config<span class="s2">&quot;</span>
-<span class="s2">echo &quot;&quot;</span>
-<span class="s2">echo &quot;</span><span class="w">   </span>If<span class="w"> </span>you<span class="w"> </span>get<span class="w"> </span>an<span class="w"> </span>error<span class="w"> </span>similar<span class="w"> </span>to:<span class="s2">&quot;</span>
-<span class="s2">echo &quot;</span><span class="w">     </span>failed<span class="w"> </span>to<span class="w"> </span>configure<span class="w"> </span>boardtype:<span class="w"> </span>ni_pci<span class="s2">&quot;</span>
-<span class="s2">echo &quot;</span><span class="w">     </span>failed<span class="w"> </span>to<span class="w"> </span>configure<span class="w"> </span>board<span class="s2">&quot;</span>
-<span class="s2">echo &quot;</span><span class="w">     </span>main:<span class="w"> </span>Invalid<span class="w"> </span>argument<span class="s2">&quot;</span>
-<span class="s2">echo &quot;</span><span class="w">   </span>that<span class="w"> </span>means<span class="w"> </span>you<span class="w"> </span>specified<span class="w"> </span>the<span class="w"> </span>wrong<span class="w"> </span>board_type<span class="w"> </span><span class="k">in</span><span class="w"> </span>Step<span class="w"> </span><span class="m">1</span><span class="s2">&quot;</span>
-<span class="s2">echo &quot;&quot;</span>
-<span class="s2">echo &quot;</span><span class="m">4</span>.<span class="w"> </span>You<span class="w"> </span>may<span class="w"> </span>delete<span class="w"> </span>the<span class="w"> </span>linux-gpib-<span class="nv">$VERSION</span><span class="w"> </span>directory<span class="w"> </span>and<span class="w"> </span>the<span class="w"> </span>linux-gpib-<span class="nv">$VERSION</span>.tar.gz<span class="w"> </span>file<span class="s2">&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   For example, for a NI GPIB-USB-HS+ controller set board_type = \&quot;ni_usb_b\&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   </span>$<span class="s2"> sudo nano /etc/gpib.conf&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;2. Plug in the GPIB-USB controller and make sure that it is listed as a USB device&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   </span>$<span class="s2"> lsusb&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;3. Check the GPIB configuration, the following command should run without displaying an error&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   </span>$<span class="s2"> sudo gpib_config&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   If you get an error similar to:&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;     failed to configure boardtype: ni_pci&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;     failed to configure board&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;     main: Invalid argument&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   that means you specified the wrong board_type in Step 1&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;4. You may delete the linux-gpib-</span><span class="nv">$VERSION</span><span class="s2"> directory and the linux-gpib-</span><span class="nv">$VERSION</span><span class="s2">.tar.gz file&quot;</span>
 </code></pre></div>
 </details>
 <p>Make the script executable,</p>

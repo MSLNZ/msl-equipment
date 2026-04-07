@@ -2247,6 +2247,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#msl.equipment.schema.LatestReport.recalibrate_reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;recalibrate_reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msl.equipment.schema.LatestReport.report_issue_date" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6807,6 +6818,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#msl.equipment.schema.LatestReport.recalibrate_reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;recalibrate_reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msl.equipment.schema.LatestReport.report_issue_date" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -8124,24 +8146,24 @@ is active (in use) or inactive (not in use).</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2479</span>
-<span class="normal">2480</span>
-<span class="normal">2481</span>
-<span class="normal">2482</span>
-<span class="normal">2483</span>
-<span class="normal">2484</span>
-<span class="normal">2485</span>
-<span class="normal">2486</span>
-<span class="normal">2487</span>
-<span class="normal">2488</span>
-<span class="normal">2489</span>
-<span class="normal">2490</span>
-<span class="normal">2491</span>
-<span class="normal">2492</span>
-<span class="normal">2493</span>
-<span class="normal">2494</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2494</span>
 <span class="normal">2495</span>
-<span class="normal">2496</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Any</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
+<span class="normal">2496</span>
+<span class="normal">2497</span>
+<span class="normal">2498</span>
+<span class="normal">2499</span>
+<span class="normal">2500</span>
+<span class="normal">2501</span>
+<span class="normal">2502</span>
+<span class="normal">2503</span>
+<span class="normal">2504</span>
+<span class="normal">2505</span>
+<span class="normal">2506</span>
+<span class="normal">2507</span>
+<span class="normal">2508</span>
+<span class="normal">2509</span>
+<span class="normal">2510</span>
+<span class="normal">2511</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Any</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Connect to the equipment for computer control.</span>
 
 <span class="sd">    The following sequence is used to decide how the connection is established.</span>
@@ -8261,22 +8283,7 @@ is active (in use) or inactive (not in use).</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2498</span>
-<span class="normal">2499</span>
-<span class="normal">2500</span>
-<span class="normal">2501</span>
-<span class="normal">2502</span>
-<span class="normal">2503</span>
-<span class="normal">2504</span>
-<span class="normal">2505</span>
-<span class="normal">2506</span>
-<span class="normal">2507</span>
-<span class="normal">2508</span>
-<span class="normal">2509</span>
-<span class="normal">2510</span>
-<span class="normal">2511</span>
-<span class="normal">2512</span>
-<span class="normal">2513</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2513</span>
 <span class="normal">2514</span>
 <span class="normal">2515</span>
 <span class="normal">2516</span>
@@ -8296,7 +8303,22 @@ is active (in use) or inactive (not in use).</p>
 <span class="normal">2530</span>
 <span class="normal">2531</span>
 <span class="normal">2532</span>
-<span class="normal">2533</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">2533</span>
+<span class="normal">2534</span>
+<span class="normal">2535</span>
+<span class="normal">2536</span>
+<span class="normal">2537</span>
+<span class="normal">2538</span>
+<span class="normal">2539</span>
+<span class="normal">2540</span>
+<span class="normal">2541</span>
+<span class="normal">2542</span>
+<span class="normal">2543</span>
+<span class="normal">2544</span>
+<span class="normal">2545</span>
+<span class="normal">2546</span>
+<span class="normal">2547</span>
+<span class="normal">2548</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Equipment</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into an [Equipment][msl.equipment.schema.Equipment] instance.</span>
 
@@ -8458,21 +8480,21 @@ the equipment does not have performance checks entered in the register.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2636</span>
-<span class="normal">2637</span>
-<span class="normal">2638</span>
-<span class="normal">2639</span>
-<span class="normal">2640</span>
-<span class="normal">2641</span>
-<span class="normal">2642</span>
-<span class="normal">2643</span>
-<span class="normal">2644</span>
-<span class="normal">2645</span>
-<span class="normal">2646</span>
-<span class="normal">2647</span>
-<span class="normal">2648</span>
-<span class="normal">2649</span>
-<span class="normal">2650</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_performance_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">quantity</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LatestPerformanceCheck</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2651</span>
+<span class="normal">2652</span>
+<span class="normal">2653</span>
+<span class="normal">2654</span>
+<span class="normal">2655</span>
+<span class="normal">2656</span>
+<span class="normal">2657</span>
+<span class="normal">2658</span>
+<span class="normal">2659</span>
+<span class="normal">2660</span>
+<span class="normal">2661</span>
+<span class="normal">2662</span>
+<span class="normal">2663</span>
+<span class="normal">2664</span>
+<span class="normal">2665</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_performance_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">quantity</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LatestPerformanceCheck</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the latest performance check.</span>
 
 <span class="sd">    Args:</span>
@@ -8544,22 +8566,7 @@ the equipment does not have performance checks entered in the register.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2601</span>
-<span class="normal">2602</span>
-<span class="normal">2603</span>
-<span class="normal">2604</span>
-<span class="normal">2605</span>
-<span class="normal">2606</span>
-<span class="normal">2607</span>
-<span class="normal">2608</span>
-<span class="normal">2609</span>
-<span class="normal">2610</span>
-<span class="normal">2611</span>
-<span class="normal">2612</span>
-<span class="normal">2613</span>
-<span class="normal">2614</span>
-<span class="normal">2615</span>
-<span class="normal">2616</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2616</span>
 <span class="normal">2617</span>
 <span class="normal">2618</span>
 <span class="normal">2619</span>
@@ -8577,7 +8584,22 @@ the equipment does not have performance checks entered in the register.</p>
 <span class="normal">2631</span>
 <span class="normal">2632</span>
 <span class="normal">2633</span>
-<span class="normal">2634</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_performance_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">LatestPerformanceCheck</span><span class="p">]:</span>
+<span class="normal">2634</span>
+<span class="normal">2635</span>
+<span class="normal">2636</span>
+<span class="normal">2637</span>
+<span class="normal">2638</span>
+<span class="normal">2639</span>
+<span class="normal">2640</span>
+<span class="normal">2641</span>
+<span class="normal">2642</span>
+<span class="normal">2643</span>
+<span class="normal">2644</span>
+<span class="normal">2645</span>
+<span class="normal">2646</span>
+<span class="normal">2647</span>
+<span class="normal">2648</span>
+<span class="normal">2649</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_performance_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">LatestPerformanceCheck</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Yields the latest performance check for every _measurand_ and _component_.</span>
 
 <span class="sd">    Yields:</span>
@@ -8761,28 +8783,28 @@ calibration reports entered in the register.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2707</span>
-<span class="normal">2708</span>
-<span class="normal">2709</span>
-<span class="normal">2710</span>
-<span class="normal">2711</span>
-<span class="normal">2712</span>
-<span class="normal">2713</span>
-<span class="normal">2714</span>
-<span class="normal">2715</span>
-<span class="normal">2716</span>
-<span class="normal">2717</span>
-<span class="normal">2718</span>
-<span class="normal">2719</span>
-<span class="normal">2720</span>
-<span class="normal">2721</span>
-<span class="normal">2722</span>
-<span class="normal">2723</span>
-<span class="normal">2724</span>
-<span class="normal">2725</span>
-<span class="normal">2726</span>
-<span class="normal">2727</span>
-<span class="normal">2728</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_report</span><span class="p">(</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2729</span>
+<span class="normal">2730</span>
+<span class="normal">2731</span>
+<span class="normal">2732</span>
+<span class="normal">2733</span>
+<span class="normal">2734</span>
+<span class="normal">2735</span>
+<span class="normal">2736</span>
+<span class="normal">2737</span>
+<span class="normal">2738</span>
+<span class="normal">2739</span>
+<span class="normal">2740</span>
+<span class="normal">2741</span>
+<span class="normal">2742</span>
+<span class="normal">2743</span>
+<span class="normal">2744</span>
+<span class="normal">2745</span>
+<span class="normal">2746</span>
+<span class="normal">2747</span>
+<span class="normal">2748</span>
+<span class="normal">2749</span>
+<span class="normal">2750</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_report</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">quantity</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;issue&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;stop&quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LatestReport</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the latest calibration report.</span>
@@ -8899,22 +8921,7 @@ calibration reports entered in the register.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2652</span>
-<span class="normal">2653</span>
-<span class="normal">2654</span>
-<span class="normal">2655</span>
-<span class="normal">2656</span>
-<span class="normal">2657</span>
-<span class="normal">2658</span>
-<span class="normal">2659</span>
-<span class="normal">2660</span>
-<span class="normal">2661</span>
-<span class="normal">2662</span>
-<span class="normal">2663</span>
-<span class="normal">2664</span>
-<span class="normal">2665</span>
-<span class="normal">2666</span>
-<span class="normal">2667</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2667</span>
 <span class="normal">2668</span>
 <span class="normal">2669</span>
 <span class="normal">2670</span>
@@ -8952,7 +8959,29 @@ calibration reports entered in the register.</p>
 <span class="normal">2702</span>
 <span class="normal">2703</span>
 <span class="normal">2704</span>
-<span class="normal">2705</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;issue&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;stop&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">LatestReport</span><span class="p">]:</span>
+<span class="normal">2705</span>
+<span class="normal">2706</span>
+<span class="normal">2707</span>
+<span class="normal">2708</span>
+<span class="normal">2709</span>
+<span class="normal">2710</span>
+<span class="normal">2711</span>
+<span class="normal">2712</span>
+<span class="normal">2713</span>
+<span class="normal">2714</span>
+<span class="normal">2715</span>
+<span class="normal">2716</span>
+<span class="normal">2717</span>
+<span class="normal">2718</span>
+<span class="normal">2719</span>
+<span class="normal">2720</span>
+<span class="normal">2721</span>
+<span class="normal">2722</span>
+<span class="normal">2723</span>
+<span class="normal">2724</span>
+<span class="normal">2725</span>
+<span class="normal">2726</span>
+<span class="normal">2727</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">latest_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;issue&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;stop&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">LatestReport</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Yields the latest calibration report for every _measurand_ and _component_.</span>
 
 <span class="sd">    Args:</span>
@@ -8984,10 +9013,16 @@ calibration reports entered in the register.</p>
                     <span class="n">latest</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">report_issue_date</span>
 
             <span class="k">if</span> <span class="n">report</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ref_date</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">report</span><span class="o">.</span><span class="n">measurement_start_date</span>
+                    <span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">recalibrate_reference</span> <span class="o">==</span> <span class="s2">&quot;start&quot;</span>
+                    <span class="k">else</span> <span class="n">report</span><span class="o">.</span><span class="n">measurement_stop_date</span>
+                <span class="p">)</span>
+
                 <span class="k">yield</span> <span class="n">LatestReport</span><span class="p">(</span>
                     <span class="n">calibration_interval</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">calibration_interval</span><span class="p">,</span>
                     <span class="n">name</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                    <span class="n">next_calibration_date</span><span class="o">=</span><span class="n">_future_date</span><span class="p">(</span><span class="n">latest</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">calibration_interval</span><span class="p">),</span>
+                    <span class="n">next_calibration_date</span><span class="o">=</span><span class="n">_future_date</span><span class="p">(</span><span class="n">ref_date</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">calibration_interval</span><span class="p">),</span>
                     <span class="n">quantity</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span>
                     <span class="nb">id</span><span class="o">=</span><span class="n">report</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
                     <span class="n">report_issue_date</span><span class="o">=</span><span class="n">report</span><span class="o">.</span><span class="n">report_issue_date</span><span class="p">,</span>
@@ -8998,6 +9033,7 @@ calibration reports entered in the register.</p>
                     <span class="n">entered_by</span><span class="o">=</span><span class="n">report</span><span class="o">.</span><span class="n">entered_by</span><span class="p">,</span>
                     <span class="n">checked_by</span><span class="o">=</span><span class="n">report</span><span class="o">.</span><span class="n">checked_by</span><span class="p">,</span>
                     <span class="n">checked_date</span><span class="o">=</span><span class="n">report</span><span class="o">.</span><span class="n">checked_date</span><span class="p">,</span>
+                    <span class="n">recalibrate_reference</span><span class="o">=</span><span class="n">report</span><span class="o">.</span><span class="n">recalibrate_reference</span><span class="p">,</span>
                     <span class="n">conditions</span><span class="o">=</span><span class="n">report</span><span class="o">.</span><span class="n">conditions</span><span class="p">,</span>
                     <span class="n">acceptance_criteria</span><span class="o">=</span><span class="n">report</span><span class="o">.</span><span class="n">acceptance_criteria</span><span class="p">,</span>
                     <span class="n">cvd_equations</span><span class="o">=</span><span class="n">report</span><span class="o">.</span><span class="n">cvd_equations</span><span class="p">,</span>
@@ -9071,22 +9107,7 @@ as an XML element.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2535</span>
-<span class="normal">2536</span>
-<span class="normal">2537</span>
-<span class="normal">2538</span>
-<span class="normal">2539</span>
-<span class="normal">2540</span>
-<span class="normal">2541</span>
-<span class="normal">2542</span>
-<span class="normal">2543</span>
-<span class="normal">2544</span>
-<span class="normal">2545</span>
-<span class="normal">2546</span>
-<span class="normal">2547</span>
-<span class="normal">2548</span>
-<span class="normal">2549</span>
-<span class="normal">2550</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2550</span>
 <span class="normal">2551</span>
 <span class="normal">2552</span>
 <span class="normal">2553</span>
@@ -9135,7 +9156,22 @@ as an XML element.</p>
 <span class="normal">2596</span>
 <span class="normal">2597</span>
 <span class="normal">2598</span>
-<span class="normal">2599</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">2599</span>
+<span class="normal">2600</span>
+<span class="normal">2601</span>
+<span class="normal">2602</span>
+<span class="normal">2603</span>
+<span class="normal">2604</span>
+<span class="normal">2605</span>
+<span class="normal">2606</span>
+<span class="normal">2607</span>
+<span class="normal">2608</span>
+<span class="normal">2609</span>
+<span class="normal">2610</span>
+<span class="normal">2611</span>
+<span class="normal">2612</span>
+<span class="normal">2613</span>
+<span class="normal">2614</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Equipment][msl.equipment.schema.Equipment] class into an XML element.</span>
 
 <span class="sd">    The [connection][msl.equipment.schema.Equipment.connection] attribute is not included</span>
@@ -9345,7 +9381,7 @@ the value is <code>0</code>.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The date that the equipment is due for a re-calibration.</p>
+        <p>The date that the equipment is due for a recalibration.</p>
 <p>If the <a class="autorefs autorefs-internal" title="            calibration_interval
 
 
@@ -9466,21 +9502,21 @@ the equipment needs to be re-calibrated.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2302</span>
-<span class="normal">2303</span>
-<span class="normal">2304</span>
-<span class="normal">2305</span>
-<span class="normal">2306</span>
-<span class="normal">2307</span>
-<span class="normal">2308</span>
-<span class="normal">2309</span>
-<span class="normal">2310</span>
-<span class="normal">2311</span>
-<span class="normal">2312</span>
-<span class="normal">2313</span>
-<span class="normal">2314</span>
-<span class="normal">2315</span>
-<span class="normal">2316</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_calibration_due</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">months</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2317</span>
+<span class="normal">2318</span>
+<span class="normal">2319</span>
+<span class="normal">2320</span>
+<span class="normal">2321</span>
+<span class="normal">2322</span>
+<span class="normal">2323</span>
+<span class="normal">2324</span>
+<span class="normal">2325</span>
+<span class="normal">2326</span>
+<span class="normal">2327</span>
+<span class="normal">2328</span>
+<span class="normal">2329</span>
+<span class="normal">2330</span>
+<span class="normal">2331</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_calibration_due</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">months</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine if the equipment needs to be re-calibrated.</span>
 
 <span class="sd">    Args:</span>
@@ -10098,7 +10134,7 @@ the value is <code>0</code>.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The date that the equipment is due for a re-calibration.</p>
+        <p>The date that the equipment is due for a recalibration.</p>
 <p>If the <a class="autorefs autorefs-internal" title="            calibration_interval
 
 
@@ -10471,21 +10507,21 @@ the equipment needs to be re-calibrated.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2302</span>
-<span class="normal">2303</span>
-<span class="normal">2304</span>
-<span class="normal">2305</span>
-<span class="normal">2306</span>
-<span class="normal">2307</span>
-<span class="normal">2308</span>
-<span class="normal">2309</span>
-<span class="normal">2310</span>
-<span class="normal">2311</span>
-<span class="normal">2312</span>
-<span class="normal">2313</span>
-<span class="normal">2314</span>
-<span class="normal">2315</span>
-<span class="normal">2316</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_calibration_due</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">months</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2317</span>
+<span class="normal">2318</span>
+<span class="normal">2319</span>
+<span class="normal">2320</span>
+<span class="normal">2321</span>
+<span class="normal">2322</span>
+<span class="normal">2323</span>
+<span class="normal">2324</span>
+<span class="normal">2325</span>
+<span class="normal">2326</span>
+<span class="normal">2327</span>
+<span class="normal">2328</span>
+<span class="normal">2329</span>
+<span class="normal">2330</span>
+<span class="normal">2331</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_calibration_due</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">months</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine if the equipment needs to be re-calibrated.</span>
 
 <span class="sd">    Args:</span>
@@ -10655,6 +10691,7 @@ the equipment needs to be re-calibrated.</p>
     <span class="n">entered_by</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">checked_by</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">checked_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">recalibrate_reference</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span>
     <span class="n">conditions</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Conditions
 (Any) (msl.equipment.schema.Conditions)" href="../conditions/#msl.equipment.schema.Conditions">Conditions</a></span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="            Conditions
 (Any) (msl.equipment.schema.Conditions)" href="../conditions/#msl.equipment.schema.Conditions">Conditions</a></span><span class="p">(),</span>
@@ -11296,7 +11333,7 @@ the value is <code>0</code>.</p>
 
     <div class="doc doc-contents ">
 
-        <p>The date that the equipment is due for a re-calibration.</p>
+        <p>The date that the equipment is due for a recalibration.</p>
 <p>If the <a class="autorefs autorefs-internal" title="            calibration_interval
 
 
@@ -11336,6 +11373,49 @@ the equipment was last calibrated.</p>
   
       dataclass
   " href="../measurand/#msl.equipment.schema.Measurand">Measurand</a> quantity.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="msl.equipment.schema.LatestReport.recalibrate_reference" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">recalibrate_reference</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#msl.equipment.schema.LatestReport.recalibrate_reference" class="headerlink" title="Permanent link">¤</a></h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">recalibrate_reference</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;stop&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;start&#39;</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Whether to use the <a class="autorefs autorefs-internal" title="            measurement_start_date
+
+
+  
+      instance-attribute
+  " href="../report/#msl.equipment.schema.Report.measurement_start_date">measurement_start_date</a>
+or the <a class="autorefs autorefs-internal" title="            measurement_stop_date
+
+
+  
+      instance-attribute
+  " href="../report/#msl.equipment.schema.Report.measurement_stop_date">measurement_stop_date</a>, along with
+<a class="autorefs autorefs-internal" title="            calibration_interval
+
+
+  
+      instance-attribute
+  " href="../measurand/#msl.equipment.schema.Measurand.calibration_interval">calibration_interval</a>, to determine when
+a recalibration is due.</p>
 
     </div>
 
@@ -11547,18 +11627,7 @@ the equipment was last calibrated.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1877</span>
-<span class="normal">1878</span>
-<span class="normal">1879</span>
-<span class="normal">1880</span>
-<span class="normal">1881</span>
-<span class="normal">1882</span>
-<span class="normal">1883</span>
-<span class="normal">1884</span>
-<span class="normal">1885</span>
-<span class="normal">1886</span>
-<span class="normal">1887</span>
-<span class="normal">1888</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1888</span>
 <span class="normal">1889</span>
 <span class="normal">1890</span>
 <span class="normal">1891</span>
@@ -11596,7 +11665,19 @@ the equipment was last calibrated.</p>
 <span class="normal">1923</span>
 <span class="normal">1924</span>
 <span class="normal">1925</span>
-<span class="normal">1926</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1926</span>
+<span class="normal">1927</span>
+<span class="normal">1928</span>
+<span class="normal">1929</span>
+<span class="normal">1930</span>
+<span class="normal">1931</span>
+<span class="normal">1932</span>
+<span class="normal">1933</span>
+<span class="normal">1934</span>
+<span class="normal">1935</span>
+<span class="normal">1936</span>
+<span class="normal">1937</span>
+<span class="normal">1938</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Report</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Report][msl.equipment.schema.Report] instance.</span>
 
@@ -11636,6 +11717,7 @@ the equipment was last calibrated.</p>
         <span class="n">report_issue_date</span><span class="o">=</span><span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
         <span class="n">measurement_start_date</span><span class="o">=</span><span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
         <span class="n">measurement_stop_date</span><span class="o">=</span><span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+        <span class="n">recalibrate_reference</span><span class="o">=</span><span class="s2">&quot;stop&quot;</span> <span class="k">if</span> <span class="n">element</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;recalibrateReference&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">}</span> <span class="k">else</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span>
         <span class="n">issuing_laboratory</span><span class="o">=</span><span class="n">IssuingLaboratory</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
         <span class="n">technical_procedure</span><span class="o">=</span><span class="n">element</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">conditions</span><span class="o">=</span><span class="n">Conditions</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span>
@@ -11725,21 +11807,21 @@ the equipment needs to be re-calibrated.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2302</span>
-<span class="normal">2303</span>
-<span class="normal">2304</span>
-<span class="normal">2305</span>
-<span class="normal">2306</span>
-<span class="normal">2307</span>
-<span class="normal">2308</span>
-<span class="normal">2309</span>
-<span class="normal">2310</span>
-<span class="normal">2311</span>
-<span class="normal">2312</span>
-<span class="normal">2313</span>
-<span class="normal">2314</span>
-<span class="normal">2315</span>
-<span class="normal">2316</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_calibration_due</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">months</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2317</span>
+<span class="normal">2318</span>
+<span class="normal">2319</span>
+<span class="normal">2320</span>
+<span class="normal">2321</span>
+<span class="normal">2322</span>
+<span class="normal">2323</span>
+<span class="normal">2324</span>
+<span class="normal">2325</span>
+<span class="normal">2326</span>
+<span class="normal">2327</span>
+<span class="normal">2328</span>
+<span class="normal">2329</span>
+<span class="normal">2330</span>
+<span class="normal">2331</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_calibration_due</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">months</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine if the equipment needs to be re-calibrated.</span>
 
 <span class="sd">    Args:</span>
@@ -11811,19 +11893,7 @@ the equipment needs to be re-calibrated.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1928</span>
-<span class="normal">1929</span>
-<span class="normal">1930</span>
-<span class="normal">1931</span>
-<span class="normal">1932</span>
-<span class="normal">1933</span>
-<span class="normal">1934</span>
-<span class="normal">1935</span>
-<span class="normal">1936</span>
-<span class="normal">1937</span>
-<span class="normal">1938</span>
-<span class="normal">1939</span>
-<span class="normal">1940</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1940</span>
 <span class="normal">1941</span>
 <span class="normal">1942</span>
 <span class="normal">1943</span>
@@ -11846,7 +11916,22 @@ the equipment needs to be re-calibrated.</p>
 <span class="normal">1960</span>
 <span class="normal">1961</span>
 <span class="normal">1962</span>
-<span class="normal">1963</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">1963</span>
+<span class="normal">1964</span>
+<span class="normal">1965</span>
+<span class="normal">1966</span>
+<span class="normal">1967</span>
+<span class="normal">1968</span>
+<span class="normal">1969</span>
+<span class="normal">1970</span>
+<span class="normal">1971</span>
+<span class="normal">1972</span>
+<span class="normal">1973</span>
+<span class="normal">1974</span>
+<span class="normal">1975</span>
+<span class="normal">1976</span>
+<span class="normal">1977</span>
+<span class="normal">1978</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Report][msl.equipment.schema.Report] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
@@ -11868,6 +11953,9 @@ the equipment needs to be re-calibrated.</p>
 
     <span class="n">stop</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;measurementStopDate&quot;</span><span class="p">)</span>
     <span class="n">stop</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurement_stop_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+
+    <span class="n">recalibrate_element</span> <span class="o">=</span> <span class="n">start</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recalibrate_reference</span> <span class="o">==</span> <span class="s2">&quot;start&quot;</span> <span class="k">else</span> <span class="n">stop</span>
+    <span class="n">recalibrate_element</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;recalibrateReference&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">)</span>
 
     <span class="n">e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">issuing_laboratory</span><span class="o">.</span><span class="n">to_xml</span><span class="p">())</span>
 

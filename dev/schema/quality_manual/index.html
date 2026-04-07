@@ -5538,22 +5538,7 @@ and/or maintenance to the equipment.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2166</span>
-<span class="normal">2167</span>
-<span class="normal">2168</span>
-<span class="normal">2169</span>
-<span class="normal">2170</span>
-<span class="normal">2171</span>
-<span class="normal">2172</span>
-<span class="normal">2173</span>
-<span class="normal">2174</span>
-<span class="normal">2175</span>
-<span class="normal">2176</span>
-<span class="normal">2177</span>
-<span class="normal">2178</span>
-<span class="normal">2179</span>
-<span class="normal">2180</span>
-<span class="normal">2181</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2181</span>
 <span class="normal">2182</span>
 <span class="normal">2183</span>
 <span class="normal">2184</span>
@@ -5573,7 +5558,22 @@ and/or maintenance to the equipment.</p>
 <span class="normal">2198</span>
 <span class="normal">2199</span>
 <span class="normal">2200</span>
-<span class="normal">2201</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">2201</span>
+<span class="normal">2202</span>
+<span class="normal">2203</span>
+<span class="normal">2204</span>
+<span class="normal">2205</span>
+<span class="normal">2206</span>
+<span class="normal">2207</span>
+<span class="normal">2208</span>
+<span class="normal">2209</span>
+<span class="normal">2210</span>
+<span class="normal">2211</span>
+<span class="normal">2212</span>
+<span class="normal">2213</span>
+<span class="normal">2214</span>
+<span class="normal">2215</span>
+<span class="normal">2216</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">QualityManual</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into an [QualityManual][msl.equipment.schema.QualityManual] instance.</span>
 
@@ -5666,22 +5666,7 @@ and/or maintenance to the equipment.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2203</span>
-<span class="normal">2204</span>
-<span class="normal">2205</span>
-<span class="normal">2206</span>
-<span class="normal">2207</span>
-<span class="normal">2208</span>
-<span class="normal">2209</span>
-<span class="normal">2210</span>
-<span class="normal">2211</span>
-<span class="normal">2212</span>
-<span class="normal">2213</span>
-<span class="normal">2214</span>
-<span class="normal">2215</span>
-<span class="normal">2216</span>
-<span class="normal">2217</span>
-<span class="normal">2218</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2218</span>
 <span class="normal">2219</span>
 <span class="normal">2220</span>
 <span class="normal">2221</span>
@@ -5698,7 +5683,22 @@ and/or maintenance to the equipment.</p>
 <span class="normal">2232</span>
 <span class="normal">2233</span>
 <span class="normal">2234</span>
-<span class="normal">2235</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">2235</span>
+<span class="normal">2236</span>
+<span class="normal">2237</span>
+<span class="normal">2238</span>
+<span class="normal">2239</span>
+<span class="normal">2240</span>
+<span class="normal">2241</span>
+<span class="normal">2242</span>
+<span class="normal">2243</span>
+<span class="normal">2244</span>
+<span class="normal">2245</span>
+<span class="normal">2246</span>
+<span class="normal">2247</span>
+<span class="normal">2248</span>
+<span class="normal">2249</span>
+<span class="normal">2250</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [QualityManual][msl.equipment.schema.QualityManual] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>

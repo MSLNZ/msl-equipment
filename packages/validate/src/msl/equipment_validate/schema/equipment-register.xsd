@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema version="0.2.1.dev28+gfde41b934"
+<xsd:schema version="0.2.1.dev31+gce8f735a5"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
             xmlns:gtc="https://measurement.govt.nz/gtc/xml"
@@ -159,6 +159,7 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="A-wing cabinets"/>
             <xsd:enumeration value="CMM Lab"/>
             <xsd:enumeration value="Contact thermometry lab"/>
             <xsd:enumeration value="Cryogenic Radiometer"/>
@@ -622,8 +623,23 @@
     <xsd:simpleType name="degreeFreedomDouble">
         <xsd:annotation>
             <xsd:documentation>
-               The degrees of freedom. If not specified, the degrees of freedom
-               shall be considered to be \\(+\infty\\).
+                The degrees of freedom. If not specified, the degrees of freedom
+                shall be considered to be \\(+\infty\\).
+
+                [GUM Tree Calculator (GTC)](https://gtc.readthedocs.io/en/stable/index.html)
+                has functions to calculate the degrees of freedom from a coverage factor
+                and the coverage probability. The
+                [k_to_dof](https://gtc.readthedocs.io/en/stable/API/reporting_functions.html#reporting.k_to_dof)
+                function should be used for real-valued quantities (univariate) and the
+                [k2_to_dof](https://gtc.readthedocs.io/en/stable/API/reporting_functions.html#reporting.k2_to_dof)
+                function should be used for complex-valued quantities (bivariate).
+
+                ```python
+                from GTC import reporting
+
+                # A coverage factor of 2.0 with a 95% level of confidence
+                dof = reporting.k_to_dof(2.0, 95)
+                ```
             </xsd:documentation>
         </xsd:annotation>
         <xsd:restriction base="xsd:double">
@@ -2014,7 +2030,7 @@
                 ```xml
                 {report id="Humidity/2023/1024" enteredBy="Lenice Evergreen"}
                   {reportIssueDate}2023-08-18{/reportIssueDate}
-                  {measurementStartDate}2023-08-08{/measurementStartDate}
+                  {measurementStartDate recalibrateReference="true"}2023-08-08{/measurementStartDate}
                   {measurementStopDate}2023-08-14{/measurementStopDate}
                   {issuingLaboratory}MSL{/issuingLaboratory}
                   {technicalProcedure}MSLT.H.062{/technicalProcedure}
@@ -2052,7 +2068,7 @@
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
-            <xsd:element name="measurementStartDate" type="xsd:date">
+            <xsd:element name="measurementStartDate">
                 <xsd:annotation>
                     <xsd:documentation>
                         The date that the calibration measurement started.
@@ -2063,8 +2079,34 @@
                         i) the date(s) of performance of the laboratory activity
                     </xsd:documentation>
                 </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:date">
+                            <xsd:attribute name="recalibrateReference" type="xsd:boolean">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        Whether to use `measurementStartDate` along with `calibrationInterval`
+                                        (see [measurand](#type_measurand)) to define when a recalibration is due.
+
+                                        Either the `measurementStartDate` or the `measurementStopDate` element
+                                        can specify `recalibrateReference="true"` but not both.
+
+                                        Not specifying the `recalibrateReference` attribute shall be
+                                        considered equivalent to `recalibrateReference="false"`.
+
+                                        If neither `measurementStartDate` nor `measurementStopDate` specify
+                                        `recalibrateReference="true"` it is recommended that `measurementStartDate`
+                                        be used with `calibrationInterval` to define when a recalibration is due.
+
+                                        Supported values: _0_, _1_, _false_, _true_
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
             </xsd:element>
-            <xsd:element name="measurementStopDate" type="xsd:date">
+            <xsd:element name="measurementStopDate">
                 <xsd:annotation>
                     <xsd:documentation>
                         The date that the calibration measurement stopped.
@@ -2075,6 +2117,32 @@
                         i) the date(s) of performance of the laboratory activity
                     </xsd:documentation>
                 </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:date">
+                            <xsd:attribute name="recalibrateReference" type="xsd:boolean">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        Whether to use `measurementStopDate` along with `calibrationInterval`
+                                        (see [measurand](#type_measurand)) to define when a recalibration is due.
+
+                                        Either the `measurementStartDate` or the `measurementStopDate` element
+                                        can specify `recalibrateReference="true"` but not both.
+
+                                        Not specifying the `recalibrateReference` attribute shall be
+                                        considered equivalent to `recalibrateReference="false"`.
+
+                                        If neither `measurementStartDate` nor `measurementStopDate` specify
+                                        `recalibrateReference="true"` it is recommended that `measurementStartDate`
+                                        be used with `calibrationInterval` to define when a recalibration is due.
+
+                                        Supported values: _0_, _1_, _false_, _true_
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
             </xsd:element>
             <xsd:element name="issuingLaboratory">
                 <xsd:annotation>

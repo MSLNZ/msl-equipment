@@ -440,6 +440,9 @@ def validate(  # noqa: C901, PLR0911, PLR0912
             ok = validate_checked_by_checked_date(report, info)
             if (not ok) and exit_first:
                 return ids
+            ok = validate_recalibrate_reference(report, info)
+            if (not ok) and exit_first:
+                return ids
         for pc in equipment.xpath(".//reg:performanceCheck", namespaces=ns_map):
             ok = validate_checked_by_checked_date(pc, info)
             if (not ok) and exit_first:
@@ -851,3 +854,28 @@ def validate_checked_by_checked_date(element: Element, info: Info) -> bool:
             return False
 
     return is_valid
+
+
+def validate_recalibrate_reference(element: Element, info: Info) -> bool:
+    """Validates that recalibrateReference="true" is specified at most once.
+
+    Checks that measurementStartDate and measurementStopDate cannot both have
+    recalibrateReference="true" as an attribute.
+
+    Returns whether the element is valid.
+    """
+    _, start, stop = element[:3]  # schema forces order
+    ref_start = start.get("recalibrateReference") in {"1", "true"}
+    ref_stop = stop.get("recalibrateReference") in {"1", "true"}
+
+    if ref_start and ref_stop:
+        log_error(
+            file=info.url,
+            line=start.sourceline or 0,
+            message="measurementStartDate and measurementStopDate cannot both specify recalibrateReference as true",
+            uri_scheme=info.uri_scheme,
+            no_colour=info.no_colour,
+        )
+        return False
+
+    return True

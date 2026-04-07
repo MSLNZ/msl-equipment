@@ -1507,6 +1507,7 @@ def test_report_minimal() -> None:
     assert r.report_issue_date == date(2023, 8, 18)
     assert r.measurement_start_date == date(2023, 8, 8)
     assert r.measurement_stop_date == date(2023, 8, 14)
+    assert r.recalibrate_reference == "start"
     assert r.issuing_laboratory.lab == "MSL"
     assert r.issuing_laboratory.person == ""
     assert r.technical_procedure == "Anything"
@@ -1533,7 +1534,17 @@ def test_report_minimal() -> None:
     assert len(r.tables) == 0
     with pytest.raises(IndexError):
         _ = r.table
-    assert tostring(r.to_xml()) == text
+    assert tostring(r.to_xml()) == (
+        b'<report id="ABC" enteredBy="Me">'
+        b"<reportIssueDate>2023-08-18</reportIssueDate>"
+        b'<measurementStartDate recalibrateReference="true">2023-08-08</measurementStartDate>'
+        b"<measurementStopDate>2023-08-14</measurementStopDate>"
+        b"<issuingLaboratory>MSL</issuingLaboratory>"
+        b"<technicalProcedure>Anything</technicalProcedure>"
+        b"<conditions />"
+        b"<acceptanceCriteria />"
+        b"</report>"
+    )
     assert str(r) == "Report(id='ABC')"
 
 
@@ -1542,7 +1553,7 @@ def test_report() -> None:
         b'<report id="ABC" enteredBy="Me" checkedBy="A" checkedDate="2025-01-01">'
         b"<reportIssueDate>2023-08-18</reportIssueDate>"
         b"<measurementStartDate>2023-08-08</measurementStartDate>"
-        b"<measurementStopDate>2023-08-14</measurementStopDate>"
+        b'<measurementStopDate recalibrateReference="true">2023-08-14</measurementStopDate>'
         b"<issuingLaboratory>MSL</issuingLaboratory>"
         b"<technicalProcedure>Anything</technicalProcedure>"
         b'<conditions><temperature unit="C">25</temperature></conditions>'
@@ -1587,6 +1598,7 @@ def test_report() -> None:
     assert r.report_issue_date == date(2023, 8, 18)
     assert r.measurement_start_date == date(2023, 8, 8)
     assert r.measurement_stop_date == date(2023, 8, 14)
+    assert r.recalibrate_reference == "stop"
     assert r.issuing_laboratory.lab == "MSL"
     assert r.issuing_laboratory.person == ""
     assert r.technical_procedure == "Anything"
@@ -1637,7 +1649,7 @@ def test_component() -> None:
         b'<component name="Probe 1">'
         b'<report id="ABC" enteredBy="Me">'
         b"<reportIssueDate>2023-08-18</reportIssueDate>"
-        b"<measurementStartDate>2023-08-08</measurementStartDate>"
+        b'<measurementStartDate recalibrateReference="true">2023-08-08</measurementStartDate>'
         b"<measurementStopDate>2023-08-14</measurementStopDate>"
         b"<issuingLaboratory>MSL</issuingLaboratory>"
         b"<technicalProcedure>Anything</technicalProcedure>"
@@ -1687,7 +1699,7 @@ def test_measurand() -> None:
         b'<report id="ABC" enteredBy="Me">'
         b"<reportIssueDate>2023-08-18</reportIssueDate>"
         b"<measurementStartDate>2023-08-08</measurementStartDate>"
-        b"<measurementStopDate>2023-08-14</measurementStopDate>"
+        b'<measurementStopDate recalibrateReference="true">2023-08-14</measurementStopDate>'
         b"<issuingLaboratory>MSL</issuingLaboratory>"
         b"<technicalProcedure>Anything</technicalProcedure>"
         b"<conditions />"

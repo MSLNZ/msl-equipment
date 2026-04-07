@@ -1772,6 +1772,11 @@ class Report:
         entered_by: The name of the person who initially entered the `<report>` element in the register.
         checked_by: The name of the person who checked the information in the `<report>` element.
         checked_date: The date that the information in the `<report>` element was last checked.
+        recalibrate_reference: Whether to use the
+            [measurement_start_date][msl.equipment.schema.Report.measurement_start_date]
+            or the [measurement_stop_date][msl.equipment.schema.Report.measurement_stop_date], along with
+            [calibration_interval][msl.equipment.schema.Measurand.calibration_interval], to determine when
+            a recalibration is due.
         conditions: The conditions under which the report is valid.
         acceptance_criteria: Acceptance criteria for the calibration report.
         cvd_equations: Calibration data is expressed as Callendar-Van Dusen equations.
@@ -1807,6 +1812,12 @@ class Report:
 
     checked_date: _date | None = None
     """The date that the information in the `<report>` element was last checked."""
+
+    recalibrate_reference: Literal["start", "stop"] = "start"
+    """Whether to use the [measurement_start_date][msl.equipment.schema.Report.measurement_start_date]
+    or the [measurement_stop_date][msl.equipment.schema.Report.measurement_stop_date], along with
+    [calibration_interval][msl.equipment.schema.Measurand.calibration_interval], to determine when
+    a recalibration is due."""
 
     conditions: Conditions = field(default_factory=Conditions)
     """The conditions under which the report is valid."""
@@ -1914,6 +1925,7 @@ class Report:
             report_issue_date=_date.fromisoformat(element[0].text or ""),
             measurement_start_date=_date.fromisoformat(element[1].text or ""),
             measurement_stop_date=_date.fromisoformat(element[2].text or ""),
+            recalibrate_reference="stop" if element[2].get("recalibrateReference") in {"1", "true"} else "start",
             issuing_laboratory=IssuingLaboratory.from_xml(element[3]),
             technical_procedure=element[4].text or "",
             conditions=Conditions.from_xml(element[5]),
@@ -1947,6 +1959,9 @@ class Report:
 
         stop = SubElement(e, "measurementStopDate")
         stop.text = self.measurement_stop_date.isoformat()
+
+        recalibrate_element = start if self.recalibrate_reference == "start" else stop
+        recalibrate_element.set("recalibrateReference", "true")
 
         e.append(self.issuing_laboratory.to_xml())
 
@@ -2289,7 +2304,7 @@ class Latest:
     """The [Component][msl.equipment.schema.Component] name."""
 
     next_calibration_date: _date = _date(1875, 5, 20)
-    """The date that the equipment is due for a re-calibration.
+    """The date that the equipment is due for a recalibration.
 
     If the [calibration_interval][msl.equipment.schema.Latest.calibration_interval] is `0`,
     i.e., the equipment is calibrated on demand, this date is equal to the date that
@@ -2681,10 +2696,16 @@ class Equipment:
                         latest = r.report_issue_date
 
                 if report is not None:
+                    ref_date = (
+                        report.measurement_start_date
+                        if report.recalibrate_reference == "start"
+                        else report.measurement_stop_date
+                    )
+
                     yield LatestReport(
                         calibration_interval=m.calibration_interval,
                         name=c.name,
-                        next_calibration_date=_future_date(latest, m.calibration_interval),
+                        next_calibration_date=_future_date(ref_date, m.calibration_interval),
                         quantity=m.quantity,
                         id=report.id,
                         report_issue_date=report.report_issue_date,
@@ -2695,6 +2716,7 @@ class Equipment:
                         entered_by=report.entered_by,
                         checked_by=report.checked_by,
                         checked_date=report.checked_date,
+                        recalibrate_reference=report.recalibrate_reference,
                         conditions=report.conditions,
                         acceptance_criteria=report.acceptance_criteria,
                         cvd_equations=report.cvd_equations,

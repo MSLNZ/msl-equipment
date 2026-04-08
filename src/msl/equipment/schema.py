@@ -1960,7 +1960,7 @@ class Report:
         stop = SubElement(e, "measurementStopDate")
         stop.text = self.measurement_stop_date.isoformat()
 
-        recalibrate_element = start if self.recalibrate_reference == "start" else stop
+        recalibrate_element = stop if self.recalibrate_reference == "stop" else start
         recalibrate_element.set("recalibrateReference", "true")
 
         e.append(self.issuing_laboratory.to_xml())
@@ -2697,9 +2697,9 @@ class Equipment:
 
                 if report is not None:
                     ref_date = (
-                        report.measurement_start_date
-                        if report.recalibrate_reference == "start"
-                        else report.measurement_stop_date
+                        report.measurement_stop_date
+                        if report.recalibrate_reference == "stop"
+                        else report.measurement_start_date
                     )
 
                     yield LatestReport(

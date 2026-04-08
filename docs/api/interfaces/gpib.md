@@ -11,8 +11,9 @@ Consult the manufacturer's website for the appropriate software to install for t
 
 * [NI-488.2](https://www.ni.com/en/support/downloads/drivers/download.ni-488-2.html#575749){:target="_blank"}
 * [Keysight IO Libraries Suite](https://www.keysight.com/vn/en/lib/software-detail/computer-software/io-libraries-suite-downloads-2175637.html){:target="_blank"}
+* [Rohde & Schwarz VISA](https://www.rohde-schwarz.com/ca/driver-pages/remote-control/3-visa-and-tools_231388.html){:target="_blank"}
 
-or you may even want to [build your own](https://github.com/xyphro/UsbGpib){:target="_blank"} GPIB adaptor.
+or you may want to [build your own](https://github.com/xyphro/UsbGpib){:target="_blank"} GPIB adaptor.
 
 ### Debian/Ubuntu {: #gpib-prerequisites-linux }
 If you are using Linux as your operating system, you may want to consider using the [linux-gpib](https://linux-gpib.sourceforge.io/){:target="_blank"} project to communicate with [supported GPIB hardware](https://linux-gpib.sourceforge.io/doc_html/supported-hardware.html){:target="_blank"}.
@@ -88,6 +89,9 @@ then run it to install the *linux-gpib* driver and to allow for access to the GP
 ```command
 ./install-linux-gpib.sh
 ```
+
+!!! warning
+    *linux-gpib* is installed for the running kernel. If the kernel is updated, *linux-gpib* must be reinstalled.
 
 ::: msl.equipment.interfaces.gpib.GPIB
     options:

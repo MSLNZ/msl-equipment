@@ -5753,8 +5753,9 @@
 <ul>
 <li><a href="https://www.ni.com/en/support/downloads/drivers/download.ni-488-2.html#575749" target="_blank">NI-488.2</a></li>
 <li><a href="https://www.keysight.com/vn/en/lib/software-detail/computer-software/io-libraries-suite-downloads-2175637.html" target="_blank">Keysight IO Libraries Suite</a></li>
+<li><a href="https://www.rohde-schwarz.com/ca/driver-pages/remote-control/3-visa-and-tools_231388.html" target="_blank">Rohde &amp; Schwarz VISA</a></li>
 </ul>
-<p>or you may even want to <a href="https://github.com/xyphro/UsbGpib" target="_blank">build your own</a> GPIB adaptor.</p>
+<p>or you may want to <a href="https://github.com/xyphro/UsbGpib" target="_blank">build your own</a> GPIB adaptor.</p>
 <h3 id="gpib-prerequisites-linux">Debian/Ubuntu<a class="headerlink" href="#gpib-prerequisites-linux" title="Permanent link">¤</a></h3>
 <p>If you are using Linux as your operating system, you may want to consider using the <a href="https://linux-gpib.sourceforge.io/" target="_blank">linux-gpib</a> project to communicate with <a href="https://linux-gpib.sourceforge.io/doc_html/supported-hardware.html" target="_blank">supported GPIB hardware</a>.</p>
 <p>Save the following bash script as, for example, <code>install-linux-gpib.sh</code> and (optionally) update the value of the <code>VERSION</code> parameter to be the <a href="https://sourceforge.net/projects/linux-gpib/files/linux-gpib%20for%203.x.x%20and%202.6.x%20kernels/" target="_blank">latest linux-gpib</a> release number.</p>
@@ -5822,6 +5823,10 @@ sudo<span class="w"> </span>usermod<span class="w"> </span>-a<span class="w"> </
 <p>then run it to install the <em>linux-gpib</em> driver and to allow for access to the GPIB hardware without needing to be the root user.</p>
 <div class="highlight"><pre><span></span><code>./install-linux-gpib.sh
 </code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><em>linux-gpib</em> is installed for the running kernel. If the kernel is updated, <em>linux-gpib</em> must be reinstalled.</p>
+</div>
 
 
 <div class="doc doc-object doc-class">

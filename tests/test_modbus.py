@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import struct
+import sys
 from typing import TYPE_CHECKING, cast
 
 import numpy as np
@@ -21,6 +22,9 @@ from msl.equipment.interfaces.modbus import (
 if TYPE_CHECKING:
     from conftest import TCPServer, UDPServer
     from tests.protocol_mock import SerialServer
+
+
+PREFIX = "COM" if sys.platform == "win32" else "ASRL"
 
 
 def cast_server(dev: Modbus) -> SerialServer:
@@ -80,6 +84,15 @@ def test_parse_address_invalid(address: str) -> None:
         ),
         ("MODBUS::/mock://", ParsedModbusAddress(address="ASRL/mock://", framer=FramerType.RTU)),
         ("MoDbUs::/mock://::ascII", ParsedModbusAddress(address="ASRL/mock://", framer=FramerType.ASCII)),
+        ("Modbus::?::VID=12&PID=34", ParsedModbusAddress(address=f"{PREFIX}?::VID=12&PID=34", framer=FramerType.RTU)),
+        (
+            "ModBUS::?::a1 [,.&*^] bc::ASCII",
+            ParsedModbusAddress(address=f"{PREFIX}?::a1 [,.&*^] bc", framer=FramerType.ASCII),
+        ),
+        (
+            "MODBUS::?::(Company|Name)::RTU",
+            ParsedModbusAddress(address=f"{PREFIX}?::(Company|Name)", framer=FramerType.RTU),
+        ),
     ],
 )
 def test_parse_address_valid(address: str, expected: ParsedModbusAddress) -> None:

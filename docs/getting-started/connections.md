@@ -48,7 +48,7 @@ The following interface classes are available
 * [Modbus][] &mdash; For equipment that use the [Modbus](https://www.modbus.org/){:target="_blank"} protocol
 * [Prologix][] &mdash; Use [Prologix](https://prologix.biz/){:target="_blank"} hardware to establish a connection to GPIB-compatible equipment
 * [SDK][] &mdash; For equipment that use a Software Development Kit (SDK) for communication
-* [Serial][] &mdash; For equipment that is connected through a serial port (or a USB-to-Serial adaptor)
+* [Serial][] &mdash; For equipment that is connected through a Serial port (or a USB-to-Serial adaptor)
 * [Socket][] &mdash; For equipment that is connected through a network socket
 * [USB][] &mdash; For equipment that use the (raw) USB protocol
 * [USBTMC][] &mdash; For equipment that use the [USB Test & Measurement Class](https://www.usb.org/document-library/test-measurement-class-specification){:target="_blank"} protocol
@@ -100,9 +100,14 @@ Each [Interface][connections-interfaces] has a syntax for the [Connection][msl.e
   </tr>
   <tr>
     <td>Modbus</td>
-    <td>MODBUS::address[::ASCII|RTU|SOCKET][::UDP]</td>
     <td>
-      <b><i>address</i></b> &ndash; Serial port address or IP address (hostname). If a non-default network port must be specified, <code>address</code> can be expressed as <code>host::port</code><br/>
+    MODBUS::address[::ASCII|RTU|SOCKET][::UDP]<br/>
+    MODBUS::?::pattern[::ASCII|RTU]
+    </td>
+    <td>
+      <b><i>address</i></b> &ndash; Serial port address or IP address (hostname). If a non-standard network port is required (default is 502), <code>address</code> is expressed as <code>host::port</code><br/>
+      <b><i>pattern</i></b> &ndash; Specifying <code>?</code> as the Serial port address will use the search <b><i>pattern</i></b> to find a Serial port that matches the description of the port, as shown when <a href="../../api/#cli-find">find</a> is run. The <b><i>pattern</i></b> supports <a href="https://regexr.com/" target="_blank">regular-expression</a> syntax.<br/>
+      RTU is the default framer for a Serial device and SOCKET is the default framer for a network device.<br/>
       <i>The prefix MODBUS is case insensitive</i>
     </td>
   </tr>
@@ -134,7 +139,7 @@ Each [Interface][connections-interfaces] has a syntax for the [Connection][msl.e
       (ASRL|COM|ASRLCOM)?::pattern
     </td>
     <td>
-      The text <code>ASRL</code>, <code>COM</code> or <code>ASRLCOM</code> followed by the serial port address. Specifying <code>?</code> as the port address (followed by <code>::</code>) will use the search <b><i>pattern</i></b> to find a serial port that matches the description of the port, as shown when <a href="../../api/#cli-find">find</a> is run. The <b><i>pattern</i></b> supports <a href="https://regexr.com/" target="_blank">regular-expression</a> syntax.
+      The text <code>ASRL</code>, <code>COM</code> or <code>ASRLCOM</code> followed by the Serial port address. Specifying <code>?</code> as the port address (followed by <code>::</code>) will use the search <b><i>pattern</i></b> to find a Serial port that matches the description of the port, as shown when <a href="../../api/#cli-find">find</a> is run. The <b><i>pattern</i></b> supports <a href="https://regexr.com/" target="_blank">regular-expression</a> syntax.
     </td>
   </tr>
   <tr>
@@ -273,6 +278,16 @@ The following are examples of the addresses that may be used to connect to equip
     <td>A Modbus device at the Serial port COM3 using ASCII frames</td>
   </tr>
   <tr>
+    <td>MODBUS</td>
+    <td>Modbus::?::VID=12&PID=34</td>
+    <td>Find the Serial port that contains <code>VID=12&PID=34</code> in the port description (default RTU frames) and use that port for the Modbus device</td>
+  </tr>
+  <tr>
+    <td>MODBUS</td>
+    <td>Modbus::?::VID=12&PID=34::ASCII</td>
+    <td>Find the Serial port that contains <code>VID=12&PID=34</code> in the port description (use ASCII frames) and use that port for the Modbus device</td>
+  </tr>
+  <tr>
     <td>PROLOGIX</td>
     <td>Prologix::192.168.1.110::1234::6</td>
     <td>The GPIB-ETHERNET Controller, host=192.168.1.110, port=1234, primary GPIB address=6</td>
@@ -315,12 +330,12 @@ The following are examples of the addresses that may be used to connect to equip
   <tr>
     <td>SERIAL</td>
     <td>COM2</td>
-    <td>A serial port on Windows</td>
+    <td>A Serial port on Windows</td>
   </tr>
   <tr>
     <td>SERIAL</td>
     <td>ASRL/dev/ttyS1</td>
-    <td>A serial port on Linux</td>
+    <td>A Serial port on Linux</td>
   </tr>
   <tr>
     <td>SERIAL</td>
@@ -335,12 +350,12 @@ The following are examples of the addresses that may be used to connect to equip
   <tr>
     <td>SERIAL</td>
     <td>COM?::18071105A</td>
-    <td>Find the serial port that contains <code>18071105A</code> in the port description</td>
+    <td>Find the Serial port that contains <code>18071105A</code> in the port description</td>
   </tr>
   <tr>
     <td>SERIAL</td>
     <td>ASRL?::VID:PID=067B:2303</td>
-    <td>Find the serial port that contains <code>VID:PID=067B:2303</code> in the port description</td>
+    <td>Find the Serial port that contains <code>VID:PID=067B:2303</code> in the port description</td>
   </tr>
   <tr>
     <td>SOCKET</td>

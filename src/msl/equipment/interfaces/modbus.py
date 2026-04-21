@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import re
+import sys
 from binascii import hexlify, unhexlify
 from enum import Enum
 from struct import pack, unpack
@@ -29,7 +30,7 @@ if TYPE_CHECKING:
 
 
 REGEX = re.compile(
-    r"^MODBUS::((?P<mock>/mock://)|(?P<dev>/dev/[^\s:]+)|(?P<com>COM\d+)|(?P<host>[^\s:]+)(::(?P<port>\d+))?)(::(?P<framer>(ASCII|RTU|SOCKET))?)?(?P<udp>::UDP)?$",
+    r"^MODBUS::((?P<mock>/mock://)|(?P<find>\?::[^:]+)|(?P<dev>/dev/[^\s:]+)|(?P<com>COM\d+)|(?P<host>[^\s:]+)(::(?P<port>\d+))?)(::(?P<framer>(ASCII|RTU|SOCKET))?)?(?P<udp>::UDP)?$",
     flags=re.IGNORECASE,
 )
 
@@ -1080,6 +1081,9 @@ def parse_modbus_address(address: str) -> ParsedModbusAddress | None:
         address = match["com"]
     elif match["mock"]:
         address = "ASRL" + match["mock"]
+    elif match["find"]:
+        prefix = "COM" if sys.platform == "win32" else "ASRL"
+        address = prefix + match["find"]
     else:
         protocol = "UDP" if match["udp"] else "TCP"
         address = f"{protocol}::{match['host']}::{match['port'] or '502'}"

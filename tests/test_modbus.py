@@ -93,6 +93,18 @@ def test_parse_address_invalid(address: str) -> None:
             "MODBUS::?::(Company|Name)::RTU",
             ParsedModbusAddress(address=f"{PREFIX}?::(Company|Name)", framer=FramerType.RTU),
         ),
+        (
+            "Modbus::?::VID:PID=067B:2303",
+            ParsedModbusAddress(address=f"{PREFIX}?::VID:PID=067B:2303", framer=FramerType.RTU),
+        ),
+        (
+            "Modbus::?::VID:PID=067B:2303::RTU",
+            ParsedModbusAddress(address=f"{PREFIX}?::VID:PID=067B:2303", framer=FramerType.RTU),
+        ),
+        (
+            "Modbus::?::VID:PID=067B:2303::ASCII",
+            ParsedModbusAddress(address=f"{PREFIX}?::VID:PID=067B:2303", framer=FramerType.ASCII),
+        ),
     ],
 )
 def test_parse_address_valid(address: str, expected: ParsedModbusAddress) -> None:

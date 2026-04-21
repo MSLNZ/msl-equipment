@@ -270,22 +270,22 @@ The following are examples of the addresses that may be used to connect to equip
   <tr>
     <td>MODBUS</td>
     <td>Modbus::/dev/ttyS1</td>
-    <td>A Modbus device at the Serial port /dev/ttyS1 (default RTU frames)</td>
+    <td>Modbus device(s) at the Serial port /dev/ttyS1 (default RTU frames)</td>
   </tr>
   <tr>
     <td>MODBUS</td>
     <td>Modbus::COM3::ASCII</td>
-    <td>A Modbus device at the Serial port COM3 using ASCII frames</td>
+    <td>Modbus device(s) at the Serial port COM3 using ASCII frames</td>
   </tr>
   <tr>
     <td>MODBUS</td>
-    <td>Modbus::?::VID=12&PID=34</td>
-    <td>Find the Serial port that contains <code>VID=12&PID=34</code> in the port description (default RTU frames) and use that port for the Modbus device</td>
+    <td>Modbus::?::15632AB</td>
+    <td>Find the Serial port that contains <code>15632AB</code> in the port description and use that port for the Modbus device(s) (default RTU frames)</td>
   </tr>
   <tr>
     <td>MODBUS</td>
-    <td>Modbus::?::VID=12&PID=34::ASCII</td>
-    <td>Find the Serial port that contains <code>VID=12&PID=34</code> in the port description (use ASCII frames) and use that port for the Modbus device</td>
+    <td>Modbus::?::VID:PID=067B:2303::ASCII</td>
+    <td>Find the Serial port that contains <code>VID:PID=067B:2303</code> in the port description and use that port for the Modbus device(s) (use ASCII frames)</td>
   </tr>
   <tr>
     <td>PROLOGIX</td>

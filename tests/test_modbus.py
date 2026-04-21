@@ -86,8 +86,8 @@ def test_parse_address_invalid(address: str) -> None:
         ("MoDbUs::/mock://::ascII", ParsedModbusAddress(address="ASRL/mock://", framer=FramerType.ASCII)),
         ("Modbus::?::VID=12&PID=34", ParsedModbusAddress(address=f"{PREFIX}?::VID=12&PID=34", framer=FramerType.RTU)),
         (
-            "ModBUS::?::a1 [,.&*^] bc::ASCII",
-            ParsedModbusAddress(address=f"{PREFIX}?::a1 [,.&*^] bc", framer=FramerType.ASCII),
+            "ModBUS::?::a1 [:,;.&*^=_-+] bc::ASCII",
+            ParsedModbusAddress(address=f"{PREFIX}?::a1 [:,;.&*^=_-+] bc", framer=FramerType.ASCII),
         ),
         (
             "MODBUS::?::(Company|Name)::RTU",

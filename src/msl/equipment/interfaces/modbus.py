@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
 
 REGEX = re.compile(
-    r"^MODBUS::((?P<mock>/mock://)|(?P<find>\?::[^:]+)|(?P<dev>/dev/[^\s:]+)|(?P<com>COM\d+)|(?P<host>[^\s:]+)(::(?P<port>\d+))?)(::(?P<framer>(ASCII|RTU|SOCKET))?)?(?P<udp>::UDP)?$",
+    r"^MODBUS::((?P<mock>/mock://)|(?P<find>\?::.+?(?=::|$))|(?P<dev>/dev/[^\s:]+)|(?P<com>COM\d+)|(?P<host>[^\s:]+)(::(?P<port>\d+))?)(::(?P<framer>(ASCII|RTU|SOCKET))?)?(?P<udp>::UDP)?$",
     flags=re.IGNORECASE,
 )
 

@@ -361,7 +361,7 @@ def recursive_validate(  # noqa: C901, PLR0912, PLR0913
     return summary
 
 
-def validate(  # noqa: C901, PLR0911, PLR0912, PLR0915
+def validate(  # noqa: C901, PLR0911, PLR0912
     *,
     path: str,
     tree: ElementTree,
@@ -391,7 +391,7 @@ def validate(  # noqa: C901, PLR0911, PLR0912, PLR0915
         ids[id_.text] = (path, id_.sourceline)
         name = f"{manufacturer.text}|{model.text}|{serial.text}"
         info = Info(url=path, exit_first=exit_first, uri_scheme=uri_scheme, debug_name=name, no_colour=no_colour)
-        for digital_report in equipment.xpath(".//reg:digitalReport", namespaces=ns_map):
+        for digital_report in equipment.xpath("./reg:calibrations//reg:digitalReport", namespaces=ns_map):
             Summary.num_digital_report += 1
             if skip_checksum:
                 msg = f"Skipped validation of <digitalReport> for {name!r}"
@@ -403,16 +403,12 @@ def validate(  # noqa: C901, PLR0911, PLR0912, PLR0915
             ok = validate_file(digital_report, roots=roots, info=info, name="digitalReport")
             if (not ok) and exit_first:
                 return ids
-        for equation in equipment.xpath(".//reg:equation", namespaces=ns_map):
-            if not is_parent_report_or_performance_check(equation):
-                continue
+        for equation in equipment.xpath("./reg:calibrations//reg:equation", namespaces=ns_map):
             Summary.num_equation += 1
             ok = validate_equation(equation, ns_map=ns_map, info=info)
             if (not ok) and exit_first:
                 return ids
-        for file in equipment.xpath(".//reg:file", namespaces=ns_map):
-            if not is_parent_report_or_performance_check(file):
-                continue
+        for file in equipment.xpath("./reg:calibrations//reg:file", namespaces=ns_map):
             Summary.num_file += 1
             if skip_checksum:
                 msg = f"Skipped validation of <file> for {name!r}"
@@ -422,23 +418,17 @@ def validate(  # noqa: C901, PLR0911, PLR0912, PLR0915
             ok = validate_file(file, roots=roots, info=info, name="file")
             if (not ok) and exit_first:
                 return ids
-        for serialised in equipment.xpath(".//reg:serialised", namespaces=ns_map):
-            if not is_parent_report_or_performance_check(serialised):
-                continue
+        for serialised in equipment.xpath("./reg:calibrations//reg:serialised", namespaces=ns_map):
             Summary.num_serialised += 1
             ok = validate_serialised(serialised, info=info)
             if (not ok) and exit_first:
                 return ids
-        for table in equipment.xpath(".//reg:table", namespaces=ns_map):
-            if not is_parent_report_or_performance_check(table):
-                continue
+        for table in equipment.xpath("./reg:calibrations//reg:table", namespaces=ns_map):
             Summary.num_table += 1
             ok = validate_table(table, info=info)
             if (not ok) and exit_first:
                 return ids
-        for coefficients in equipment.xpath(".//reg:cvdCoefficients", namespaces=ns_map):
-            if not is_parent_report_or_performance_check(coefficients):
-                continue
+        for coefficients in equipment.xpath("./reg:calibrations//reg:cvdCoefficients", namespaces=ns_map):
             Summary.num_cvd += 1
             ok = validate_cvd(coefficients, info=info)
             if (not ok) and exit_first:
@@ -458,14 +448,6 @@ def validate(  # noqa: C901, PLR0911, PLR0912, PLR0915
             if (not ok) and exit_first:
                 return ids
     return ids
-
-
-def is_parent_report_or_performance_check(element: Element) -> bool:
-    """Checks if the tag of the parent element is "report" or "performanceCheck"."""
-    parent = element.getparent()
-    if parent is None:
-        return False
-    return str(parent.tag).endswith(("report", "performanceCheck"))
 
 
 def validate_equation(equation: Element, *, ns_map: dict[str, str], info: Info) -> bool:

@@ -13,7 +13,6 @@ from msl.equipment_validate import log_warn
 from msl.equipment_validate.validate import (
     Info,
     Summary,
-    is_parent_report_or_performance_check,
     log_debug,
     log_error,
     log_info,
@@ -2364,7 +2363,7 @@ def test_validation_skipped_if_not_in_report_or_performance_check(
     tmp_path: Path,
     reset_summary: None,
 ) -> None:
-    # Some elements, such as <referenceMaterials>, contain the msl:any schema type
+    # Some elements, such as <specifications>, contain the msl:any schema type
     # for the children and is therefore not validated. If these "Any" elements happen
     # to contain a child element with the tag named
     #     cvdCoefficients, equation, file, serialised, or table
@@ -2381,7 +2380,16 @@ def test_validation_skipped_if_not_in_report_or_performance_check(
             <model>Leggy 574</model>
             <serial>10000000</serial>
             <description>A Coordinate Measuring Machine</description>
-            <specifications/>
+            <specifications>
+                <cvdCoefficients>1</cvdCoefficients>
+                <equation>
+                    <value variable="L">0.28 + L/1000</value>
+                    <unit>mm</unit>
+                </equation>
+                <file>foo</file>
+                <serialised>bar</serialised>
+                <table>baz</table>
+            </specifications>
             <location>CMM Lab</location>
             <status>Active</status>
             <loggable>false</loggable>
@@ -2391,16 +2399,7 @@ def test_validation_skipped_if_not_in_report_or_performance_check(
             <alterations/>
             <firmware/>
             <specifiedRequirements/>
-            <referenceMaterials>
-                <cvdCoefficients>1</cvdCoefficients>
-                <equation>
-                    <value variable="L">0.28 + L/1000</value>
-                    <unit>mm</unit>
-                </equation>
-                <file>foo</file>
-                <serialised>bar</serialised>
-                <table>bar</table>
-            </referenceMaterials>
+            <referenceMaterials/>
             <qualityManual/>
         </equipment>
     </register>
@@ -2422,9 +2421,3 @@ def test_validation_skipped_if_not_in_report_or_performance_check(
 
     assert summary.num_issues == 0
     assert summary.num_report == 0
-
-
-def test_is_parent_report_or_performance_check() -> None:
-    e = E.report(E.type("bool"))
-    assert e.getparent() is None
-    assert is_parent_report_or_performance_check(e) is False

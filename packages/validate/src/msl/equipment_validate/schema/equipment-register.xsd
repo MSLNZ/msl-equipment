@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema version="0.2.1.dev31+gce8f735a5"
+<xsd:schema version="0.2.1.dev33+g0d0bdf576"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
             xmlns:gtc="https://measurement.govt.nz/gtc/xml"
@@ -281,11 +281,14 @@
                     <xsd:enumeration value="Actuator"/>
                     <xsd:enumeration value="Amplifier"/>
                     <xsd:enumeration value="Aperture"/>
+					<xsd:enumeration value="Atomic"/>
                     <xsd:enumeration value="Balance"/>
                     <xsd:enumeration value="Barometer"/>
                     <xsd:enumeration value="Block"/>
                     <xsd:enumeration value="Bridge"/>
+					<xsd:enumeration value="Calliper"/>
                     <xsd:enumeration value="Camera"/>
+					<xsd:enumeration value="CMM"/>
                     <xsd:enumeration value="Comparator"/>
                     <xsd:enumeration value="Component"/>
                     <xsd:enumeration value="Controller"/>
@@ -296,7 +299,9 @@
                     <xsd:enumeration value="Detector"/>
                     <xsd:enumeration value="DMM"/>
                     <xsd:enumeration value="Driver"/>
+					<xsd:enumeration value="EDM"/>
                     <xsd:enumeration value="Filter"/>
+					<xsd:enumeration value="Force"/>
                     <xsd:enumeration value="Gateway"/>
                     <xsd:enumeration value="Gauge"/>
                     <xsd:enumeration value="Hygrometer"/>
@@ -304,11 +309,14 @@
                     <xsd:enumeration value="Interferometer"/>
                     <xsd:enumeration value="Lamp"/>
                     <xsd:enumeration value="Laser"/>
+					<xsd:enumeration value="Level"/>
                     <xsd:enumeration value="Linescale"/>
                     <xsd:enumeration value="Lock-in"/>
                     <xsd:enumeration value="Measure"/>
                     <xsd:enumeration value="Mechanical"/>
                     <xsd:enumeration value="Meter"/>
+					<xsd:enumeration value="Micrometer"/>
+					<xsd:enumeration value="Microscope"/>
                     <xsd:enumeration value="Monochromator"/>
                     <xsd:enumeration value="Motor"/>
                     <xsd:enumeration value="Multiplexor"/>
@@ -317,14 +325,18 @@
                     <xsd:enumeration value="Optical"/>
                     <xsd:enumeration value="Oscilloscope"/>
                     <xsd:enumeration value="Photomultiplier"/>
+					<xsd:enumeration value="Platen"/>
                     <xsd:enumeration value="Power"/>
+					<xsd:enumeration value="Projector"/>
                     <xsd:enumeration value="PRT"/>
                     <xsd:enumeration value="Pyro"/>
                     <xsd:enumeration value="Radiation"/>
                     <xsd:enumeration value="Resistance"/>
                     <xsd:enumeration value="Rotation"/>
+					<xsd:enumeration value="Roundness"/>
                     <xsd:enumeration value="Rule"/>
                     <xsd:enumeration value="Sample"/>
+					<xsd:enumeration value="Sensor"/>
                     <xsd:enumeration value="Set"/>
                     <xsd:enumeration value="Shutter"/>
                     <xsd:enumeration value="Source"/>
@@ -332,6 +344,7 @@
                     <xsd:enumeration value="Stabiliser"/>
                     <xsd:enumeration value="Stage"/>
                     <xsd:enumeration value="Stepper"/>
+					<xsd:enumeration value="Surveying"/>
                     <xsd:enumeration value="Tape"/>
                     <xsd:enumeration value="Temperature"/>
                     <xsd:enumeration value="Thermocouple"/>

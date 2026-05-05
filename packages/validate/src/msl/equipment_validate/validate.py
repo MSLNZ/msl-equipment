@@ -361,7 +361,7 @@ def recursive_validate(  # noqa: C901, PLR0912, PLR0913
     return summary
 
 
-def validate(  # noqa: C901, PLR0911, PLR0912
+def validate(  # noqa: C901, PLR0911, PLR0912, PLR0915
     *,
     path: str,
     tree: ElementTree,
@@ -404,11 +404,15 @@ def validate(  # noqa: C901, PLR0911, PLR0912
             if (not ok) and exit_first:
                 return ids
         for equation in equipment.xpath(".//reg:equation", namespaces=ns_map):
+            if not is_parent_report_or_performance_check(equation):
+                continue
             Summary.num_equation += 1
             ok = validate_equation(equation, ns_map=ns_map, info=info)
             if (not ok) and exit_first:
                 return ids
         for file in equipment.xpath(".//reg:file", namespaces=ns_map):
+            if not is_parent_report_or_performance_check(file):
+                continue
             Summary.num_file += 1
             if skip_checksum:
                 msg = f"Skipped validation of <file> for {name!r}"
@@ -419,16 +423,22 @@ def validate(  # noqa: C901, PLR0911, PLR0912
             if (not ok) and exit_first:
                 return ids
         for serialised in equipment.xpath(".//reg:serialised", namespaces=ns_map):
+            if not is_parent_report_or_performance_check(serialised):
+                continue
             Summary.num_serialised += 1
             ok = validate_serialised(serialised, info=info)
             if (not ok) and exit_first:
                 return ids
         for table in equipment.xpath(".//reg:table", namespaces=ns_map):
+            if not is_parent_report_or_performance_check(table):
+                continue
             Summary.num_table += 1
             ok = validate_table(table, info=info)
             if (not ok) and exit_first:
                 return ids
         for coefficients in equipment.xpath(".//reg:cvdCoefficients", namespaces=ns_map):
+            if not is_parent_report_or_performance_check(coefficients):
+                continue
             Summary.num_cvd += 1
             ok = validate_cvd(coefficients, info=info)
             if (not ok) and exit_first:
@@ -448,6 +458,14 @@ def validate(  # noqa: C901, PLR0911, PLR0912
             if (not ok) and exit_first:
                 return ids
     return ids
+
+
+def is_parent_report_or_performance_check(element: Element) -> bool:
+    """Checks if the tag of the parent element is "report" or "performanceCheck"."""
+    parent = element.getparent()
+    if parent is None:
+        return False
+    return str(parent.tag).endswith(("report", "performanceCheck"))
 
 
 def validate_equation(equation: Element, *, ns_map: dict[str, str], info: Info) -> bool:

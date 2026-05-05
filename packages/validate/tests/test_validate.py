@@ -13,6 +13,7 @@ from msl.equipment_validate import log_warn
 from msl.equipment_validate.validate import (
     Info,
     Summary,
+    is_parent_report_or_performance_check,
     log_debug,
     log_error,
     log_info,
@@ -2357,3 +2358,73 @@ def test_recursive_with_recalibrate_reference(
         assert Summary.num_issues == 2
 
     assert summary.num_report == 4
+
+
+def test_validation_skipped_if_not_in_report_or_performance_check(
+    tmp_path: Path,
+    reset_summary: None,
+) -> None:
+    # Some elements, such as <referenceMaterials>, contain the msl:any schema type
+    # for the children and is therefore not validated. If these "Any" elements happen
+    # to contain a child element with the tag named
+    #     cvdCoefficients, equation, file, serialised, or table
+    # then the child element should not be validated (since it can be anything).
+    assert reset_summary is None
+    assert Summary.num_issues == 0
+
+    register = tmp_path / "register.xml"
+    _ = register.write_text("""<?xml version='1.0' encoding='utf-8'?>
+    <register team="Length" xmlns="https://measurement.govt.nz/equipment-register">
+        <equipment keywords="CMM" enteredBy ="Joseph Borbely">
+            <id>MSLE.L.112</id>
+            <manufacturer>Mit-u</manufacturer>
+            <model>Leggy 574</model>
+            <serial>10000000</serial>
+            <description>A Coordinate Measuring Machine</description>
+            <specifications/>
+            <location>CMM Lab</location>
+            <status>Active</status>
+            <loggable>false</loggable>
+            <traceable>true</traceable>
+            <calibrations/>
+            <maintenance/>
+            <alterations/>
+            <firmware/>
+            <specifiedRequirements/>
+            <referenceMaterials>
+                <cvdCoefficients>1</cvdCoefficients>
+                <equation>
+                    <value variable="L">0.28 + L/1000</value>
+                    <unit>mm</unit>
+                </equation>
+                <file>foo</file>
+                <serialised>bar</serialised>
+                <table>bar</table>
+            </referenceMaterials>
+            <qualityManual/>
+        </equipment>
+    </register>
+    """)
+
+    er_schema = etree.XMLSchema(file=schema_dir / "equipment-register.xsd")
+    c_schema = etree.XMLSchema(file=schema_dir / "connections.xsd")
+
+    summary = recursive_validate(
+        files=[register],
+        er_schema=er_schema,
+        c_schema=c_schema,
+        roots=[],
+        exit_first=False,
+        uri_scheme=None,
+        skip_checksum=False,
+        no_colour=True,
+    )
+
+    assert summary.num_issues == 0
+    assert summary.num_report == 0
+
+
+def test_is_parent_report_or_performance_check() -> None:
+    e = E.report(E.type("bool"))
+    assert e.getparent() is None
+    assert is_parent_report_or_performance_check(e) is False

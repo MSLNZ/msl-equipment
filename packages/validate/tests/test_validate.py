@@ -2366,7 +2366,7 @@ def test_validation_skipped_if_not_in_report_or_performance_check(
     # Some elements, such as <specifications>, contain the msl:any schema type
     # for the children and is therefore not validated. If these "Any" elements happen
     # to contain a child element with the tag named
-    #     cvdCoefficients, equation, file, serialised, or table
+    #     cvdCoefficients, digitalReport, equation, equipment, file, serialised, or table
     # then the child element should not be validated (since it can be anything).
     assert reset_summary is None
     assert Summary.num_issues == 0
@@ -2382,10 +2382,12 @@ def test_validation_skipped_if_not_in_report_or_performance_check(
             <description>A Coordinate Measuring Machine</description>
             <specifications>
                 <cvdCoefficients>1</cvdCoefficients>
+                <digitalReport>pdf</digitalReport>
                 <equation>
                     <value variable="L">0.28 + L/1000</value>
                     <unit>mm</unit>
                 </equation>
+                <equipment>hello</equipment>
                 <file>foo</file>
                 <serialised>bar</serialised>
                 <table>baz</table>
@@ -2421,3 +2423,4 @@ def test_validation_skipped_if_not_in_report_or_performance_check(
 
     assert summary.num_issues == 0
     assert summary.num_report == 0
+    assert summary.num_equipment == 1

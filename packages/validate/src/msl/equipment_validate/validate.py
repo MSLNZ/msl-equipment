@@ -386,7 +386,7 @@ def validate(  # noqa: C901, PLR0911, PLR0912
         A mapping between the equipment id and `(file path, sourceline of the equipment id)`.
     """
     ids: dict[str, tuple[str, int]] = {}
-    for equipment in tree.xpath("//reg:equipment", namespaces=ns_map):
+    for equipment in tree.xpath("./reg:equipment", namespaces=ns_map):
         id_, manufacturer, model, serial = equipment[:4]  # schema forces order
         ids[id_.text] = (path, id_.sourceline)
         name = f"{manufacturer.text}|{model.text}|{serial.text}"

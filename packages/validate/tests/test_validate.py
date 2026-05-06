@@ -1017,7 +1017,7 @@ def test_equation_multiple_variable_issues(info: Info, caplog: pytest.LogCapture
         "ERROR register.xml:2:0\n"
         "  The equation variables and the range variables are not the same for 'Name'\n"
         "  equation variables: x\n"
-        "  range variables   : x, y, x"
+        "  range variables   : x, y"
     )
 
     assert len(r) == 2
@@ -1277,6 +1277,54 @@ def test_equation_no_variables_with_range_repeated(info: Info, caplog: pytest.Lo
         "ERROR register.xml:6:0\n  The names of the range variables are not unique for 'Name': ['', '']"
     )
 
+    assert len(r) == 1
+
+
+def test_equation_value_and_uncertainty_overlapping_variables_valid(info: Info) -> None:
+    equation = """
+        <equation xmlns="eqn">
+          <value variables="x y">1.2*x + 0.2*y</value>
+          <uncertainty variables="x">1.0/x</uncertainty>
+          <unit>m</unit>
+          <ranges>
+            <range variable="x">
+              <minimum>1e2</minimum>
+              <maximum>2e2</maximum>
+            </range>
+            <range variable="y">
+              <minimum>1e2</minimum>
+              <maximum>2e2</maximum>
+            </range>
+          </ranges>
+        </equation>
+    """
+    assert validate_equation(etree.XML(equation), info=info, ns_map={"reg": "eqn"})
+
+
+def test_equation_value_and_uncertainty_same_variables_range_invalid(
+    info: Info, caplog: pytest.LogCaptureFixture
+) -> None:
+    equation = """
+        <equation xmlns="eqn">
+          <value variables="x y">1.2*x + 0.2*y</value>
+          <uncertainty variables="x y">y/x</uncertainty>
+          <unit>m</unit>
+          <ranges>
+            <range variable="y">
+              <minimum>1e2</minimum>
+              <maximum>2e2</maximum>
+            </range>
+          </ranges>
+        </equation>
+    """
+    r = caplog.records
+    assert not validate_equation(etree.XML(equation), info=info, ns_map={"reg": "eqn"})
+    assert r[0].message == (
+        "ERROR register.xml:2:0\n"
+        "  The equation variables and the range variables are not the same for 'Name'\n"
+        "  equation variables: x, y\n"
+        "  range variables   : y"
+    )
     assert len(r) == 1
 
 

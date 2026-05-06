@@ -464,8 +464,7 @@ def validate_equation(equation: Element, *, ns_map: dict[str, str], info: Info) 
     val_names = value.attrib["variables"].split()
     un_names = uncertainty.attrib["variables"].split()
 
-    names = val_names + un_names
-    names_set = set(names)
+    names_set = set(val_names + un_names)
 
     range_names = equation.xpath(".//reg:range/@variable", namespaces=ns_map)
     range_name_set = set(range_names)
@@ -482,14 +481,13 @@ def validate_equation(equation: Element, *, ns_map: dict[str, str], info: Info) 
     # the returned list contains an empty string, ['']. We need to check for repeated range elements
     # with variables="" (i.e. ['', '']), which we just did above, but we now need to remove an empty
     # string from the range list to match what .split() does
-    range_names = [name for name in range_names if name]
-    range_name_set = set(range_names)
+    range_name_set = {name for name in range_names if name}
 
-    if len(names) != len(range_names) or names_set.difference(range_name_set):
+    if len(names_set) != len(range_name_set) or names_set.difference(range_name_set):
         msg = (
             f"The equation variables and the range variables are not the same for {info.debug_name!r}\n"
-            f"  equation variables: {', '.join(names)}\n"
-            f"  range variables   : {', '.join(range_names)}"
+            f"  equation variables: {', '.join(sorted(names_set))}\n"
+            f"  range variables   : {', '.join(sorted(range_name_set))}"
         )
         log_error(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour)
         is_valid = False

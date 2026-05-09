@@ -243,4 +243,4 @@ extra:
 
 extra_javascript:
   - javascripts/arithmatex.js
-  - https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.js
+  - https://unpkg.com/mathjax@4/tex-mml-chtml.js

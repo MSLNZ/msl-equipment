@@ -10,3 +10,10 @@ window.MathJax = {
     processHtmlClass: "arithmatex"
   }
 };
+
+document$.subscribe(() => {
+  MathJax.startup.output.clearCache()
+  MathJax.typesetClear()
+  MathJax.texReset()
+  // MathJax.typesetPromise() // The piecewise equation in cvd_equation.md does not render properly when enabled
+})

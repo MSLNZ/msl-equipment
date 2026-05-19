@@ -14,6 +14,7 @@ This class is compatible with the following model numbers:
 from __future__ import annotations
 
 import re
+import time
 from typing import TYPE_CHECKING
 
 from msl.equipment.interfaces import MSLConnectionError, Socket
@@ -70,19 +71,19 @@ class ITHX(Socket, manufacturer=r"OMEGA", model=r"iTHX-[2DMSW][3D]?", flags=re.I
         """
         return self._get("H", probe)
 
-    def reset(self, *, password: str | None = None, port: int = 2002, wait: bool = True) -> None:
+    def reset(self, *, password: str | None = None, port: int = 2002, wait: float = 5) -> None:
         """Power reset (reboot) the iServer.
 
-        Some iServers accept the reset command to be sent via the TCP/UDP protocol and
+        Some iServer's accept the reset command to be sent via the TCP/UDP protocol and
         some require the reset command to be sent via the Telnet protocol.
 
         Args:
-            password: The administrator's password of the iServer. If not specified then uses the
-                default manufacturer's password. Only used if the iServer needs to be reset via
-                the Telnet protocol.
+            password: The administrator's password to use for the Telnet session with the iServer.
+                If not specified then uses the default manufacturer's password. Only used if the
+                iServer must be reset via the Telnet protocol.
             port: The Telnet port number.
-            wait: Whether to wait for the connection to the iServer to be re-established before
-                returning to the calling program. Rebooting an iServer takes about 10 to 15 seconds.
+            wait: The number of seconds to wait before trying to reconnect with the iServer.
+                A value &le; 0 means to not wait and to not reconnect.
         """
 
         def use_telnet() -> None:
@@ -107,7 +108,7 @@ class ITHX(Socket, manufacturer=r"OMEGA", model=r"iTHX-[2DMSW][3D]?", flags=re.I
                 _ = sock.send(b"reset\r")
                 reply = sock.recv(256)
                 if reply.startswith(b"WRONG_CMD"):
-                    reply = "iTHX device does support the RESET command"
+                    reply = "iTHX device does not support the RESET command"
                     raise MSLConnectionError(self, reply)
 
         # The manual indicates that iTHX-W3, iTHX-D3, iTHX-SD and iTHX-M accept the *SRYRST command
@@ -119,12 +120,14 @@ class ITHX(Socket, manufacturer=r"OMEGA", model=r"iTHX-[2DMSW][3D]?", flags=re.I
         elif reply == "Serial Time Out":
             # this was the reply that was received with an iTHX-W
             # which does not recognize the *SRYRST command
+            _ = self.read()  # there is another b'\r' in the buffer
             use_telnet()
         else:
             msg = f"Received an unexpected reply, {reply!r}, for the *SRYRST command"
             raise MSLConnectionError(self, msg)
 
-        if wait:
+        if wait > 0:
+            time.sleep(wait)
             self.reconnect(max_attempts=-1)
 
     def _get(self, message: str, probe: int) -> float:

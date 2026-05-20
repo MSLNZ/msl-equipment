@@ -5435,26 +5435,15 @@
 
 <a href="#msl.equipment_resources.omega.ithx.ITHX.reset" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">reset</span><span class="p">(</span>
-    <span class="o">*</span><span class="p">,</span>
-    <span class="n">wait</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">password</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">port</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">2002</span><span class="p">,</span>
-    <span class="n">timeout</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">2002</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">=</span> <span class="mi">5</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Power reset the iServer.</p>
-<p>Some iServers accept the reset command (<code>*SRYRST</code>) to be sent via the TCP/UDP protocol and
+        <p>Power reset (reboot) the iServer.</p>
+<p>Some iServer's accept the reset command to be sent via the TCP/UDP protocol and
 some require the reset command to be sent via the Telnet protocol.</p>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-<p>The <code>telnetlib</code> module was removed from the standard library in Python 3.13.
-If you need Telnet support consider using a third-party library from PyPI.
-You can review the source code of this method to see how Telnet messages
-are sent to the device to perform the reset.</p>
-</div>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -5470,23 +5459,6 @@ are sent to the device to perform the reset.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                <code>wait</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Whether to wait for the connection to the iServer to be re-established before
-returning to the calling program. Rebooting an iServer takes about 10 to 15 seconds.</p>
-              </div>
-            </td>
-            <td>
-                  <code>True</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
                 <code>password</code>
             </td>
             <td>
@@ -5494,9 +5466,9 @@ returning to the calling program. Rebooting an iServer takes about 10 to 15 seco
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The administrator's password of the iServer. If not specified then uses the
-default manufacturer's password. Only used if the iServer needs to be reset via
-the Telnet protocol.</p>
+                <p>The administrator's password to use for the Telnet session with the iServer.
+If not specified then uses the default manufacturer's password. Only used if the
+iServer must be reset via the Telnet protocol.</p>
               </div>
             </td>
             <td>
@@ -5512,7 +5484,7 @@ the Telnet protocol.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The port to use for the Telnet connection.</p>
+                <p>The Telnet port number.</p>
               </div>
             </td>
             <td>
@@ -5521,18 +5493,19 @@ the Telnet protocol.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>timeout</code>
+                <code>wait</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The timeout value to use during the Telnet session.</p>
+                <p>The number of seconds to wait before trying to reconnect with the iServer.
+A value &le; 0 means to not wait and to not reconnect.</p>
               </div>
             </td>
             <td>
-                  <code>10</code>
+                  <code>5</code>
             </td>
           </tr>
       </tbody>
@@ -5598,80 +5571,64 @@ the Telnet protocol.</p>
 <span class="normal">128</span>
 <span class="normal">129</span>
 <span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span>
-<span class="normal">136</span>
-<span class="normal">137</span>
-<span class="normal">138</span>
-<span class="normal">139</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2002</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Power reset the iServer.</span>
+<span class="normal">131</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2002</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Power reset (reboot) the iServer.</span>
 
-<span class="sd">    Some iServers accept the reset command (`*SRYRST`) to be sent via the TCP/UDP protocol and</span>
+<span class="sd">    Some iServer&#39;s accept the reset command to be sent via the TCP/UDP protocol and</span>
 <span class="sd">    some require the reset command to be sent via the Telnet protocol.</span>
 
-<span class="sd">    !!! info</span>
-<span class="sd">        The `telnetlib` module was removed from the standard library in Python 3.13.</span>
-<span class="sd">        If you need Telnet support consider using a third-party library from PyPI.</span>
-<span class="sd">        You can review the source code of this method to see how Telnet messages</span>
-<span class="sd">        are sent to the device to perform the reset.</span>
-
 <span class="sd">    Args:</span>
-<span class="sd">        wait: Whether to wait for the connection to the iServer to be re-established before</span>
-<span class="sd">            returning to the calling program. Rebooting an iServer takes about 10 to 15 seconds.</span>
-<span class="sd">        password: The administrator&#39;s password of the iServer. If not specified then uses the</span>
-<span class="sd">            default manufacturer&#39;s password. Only used if the iServer needs to be reset via</span>
-<span class="sd">            the Telnet protocol.</span>
-<span class="sd">        port: The port to use for the Telnet connection.</span>
-<span class="sd">        timeout: The timeout value to use during the Telnet session.</span>
+<span class="sd">        password: The administrator&#39;s password to use for the Telnet session with the iServer.</span>
+<span class="sd">            If not specified then uses the default manufacturer&#39;s password. Only used if the</span>
+<span class="sd">            iServer must be reset via the Telnet protocol.</span>
+<span class="sd">        port: The Telnet port number.</span>
+<span class="sd">        wait: The number of seconds to wait before trying to reconnect with the iServer.</span>
+<span class="sd">            A value &amp;le; 0 means to not wait and to not reconnect.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">use_telnet</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="c1"># telnetlib was removed in Python 3.13</span>
-            <span class="kn">from</span><span class="w"> </span><span class="nn">telnetlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Telnet</span>  <span class="c1"># type: ignore[import-not-found]  # pyright: ignore[reportUnknownVariableType, reportMissingImports]  # noqa: I001, PLC0415</span>
-        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;iTHX reset requires telnet, which is no longer part of the Python standard library&quot;</span>
-            <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>  <span class="c1"># noqa: PLC0415</span>
 
-        <span class="n">pw</span> <span class="o">=</span> <span class="n">password</span> <span class="ow">or</span> <span class="s2">&quot;00000000&quot;</span>
-        <span class="k">with</span> <span class="n">Telnet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span> <span class="k">as</span> <span class="n">tn</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]  # noqa: S312</span>
-            <span class="n">tn</span><span class="o">.</span><span class="n">read_until</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;Password:&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]</span>
-            <span class="n">tn</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pw</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="o">+</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]</span>
-            <span class="n">tn</span><span class="o">.</span><span class="n">read_until</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;Login Successful&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]</span>
-            <span class="n">tn</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;reset</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]</span>
-            <span class="n">tn</span><span class="o">.</span><span class="n">read_until</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;The unit will reset in 5 seconds.&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]</span>
+        <span class="k">with</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">()</span> <span class="k">as</span> <span class="n">sock</span><span class="p">:</span>
+            <span class="n">sock</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+            <span class="n">sock</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
 
-        <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
-            <span class="c1"># 5 seconds from the Telnet message</span>
-            <span class="c1"># 10 seconds for the time it takes to reboot</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">reconnect</span><span class="p">(</span><span class="n">max_attempts</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># wait until a password request is received</span>
+            <span class="n">reply</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="sa">b</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;?&quot;</span><span class="p">)):</span>
+                <span class="n">reply</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
 
-    <span class="c1"># according to the manual, these models require Telnet</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">model</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;iTHX-W&quot;</span><span class="p">,</span> <span class="s2">&quot;iTHX-2&quot;</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="n">use_telnet</span><span class="p">()</span>
+            <span class="n">pw</span> <span class="o">=</span> <span class="n">password</span> <span class="ow">or</span> <span class="s2">&quot;00000000&quot;</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pw</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="o">+</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">reply</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
+            <span class="k">if</span> <span class="sa">b</span><span class="s2">&quot;failure&quot;</span> <span class="ow">in</span> <span class="n">reply</span> <span class="ow">or</span> <span class="sa">b</span><span class="s2">&quot;Invalid&quot;</span> <span class="ow">in</span> <span class="n">reply</span><span class="p">:</span>
+                <span class="n">reply</span> <span class="o">=</span> <span class="s2">&quot;Invalid iTHX telnet password&quot;</span>
+                <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reply</span><span class="p">)</span>
 
-    <span class="c1"># The manual indicates that iTHX-W3, iTHX-D3, iTHX-SD and iTHX-M</span>
-    <span class="c1"># all accept the *SRYRST command</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;reset</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">reply</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;WRONG_CMD&quot;</span><span class="p">):</span>
+                <span class="n">reply</span> <span class="o">=</span> <span class="s2">&quot;iTHX device does not support the RESET command&quot;</span>
+                <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reply</span><span class="p">)</span>
+
+    <span class="c1"># The manual indicates that iTHX-W3, iTHX-D3, iTHX-SD and iTHX-M accept the *SRYRST command</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*SRYRST&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="s2">&quot;Reset&quot;</span><span class="p">:</span>
         <span class="c1"># this was the reply that was received with an iTHX-W3</span>
         <span class="c1"># which accepts the reset command via TCP/UDP</span>
-        <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">reconnect</span><span class="p">(</span><span class="n">max_attempts</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">pass</span>
     <span class="k">elif</span> <span class="n">reply</span> <span class="o">==</span> <span class="s2">&quot;Serial Time Out&quot;</span><span class="p">:</span>
         <span class="c1"># this was the reply that was received with an iTHX-W</span>
         <span class="c1"># which does not recognize the *SRYRST command</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># there is another b&#39;\r&#39; in the buffer</span>
         <span class="n">use_telnet</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Received an unexpected reply, </span><span class="si">{</span><span class="n">reply</span><span class="si">!r}</span><span class="s2">, for the *SRYRST command&quot;</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">wait</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">wait</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reconnect</span><span class="p">(</span><span class="n">max_attempts</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5766,17 +5723,17 @@ the Telnet protocol.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>packages/resources/src/msl/equipment_resources/omega/ithx.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">159</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
 <span class="normal">160</span>
-<span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probe</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">celsius</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="normal">161</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probe</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">celsius</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the temperature.</span>
 
 <span class="sd">    Args:</span>

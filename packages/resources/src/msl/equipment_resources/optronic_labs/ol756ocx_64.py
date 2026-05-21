@@ -20,8 +20,8 @@ if TYPE_CHECKING:
 
     from numpy.typing import NDArray
 
-    from msl.equipment._types import PathLike
     from msl.equipment.schema import Equipment
+    from msl.equipment.typing import PathLike
 
 
 class OL756(Interface, manufacturer=r"Optronic", model=r"(OL)?\s*756", flags=re.IGNORECASE):

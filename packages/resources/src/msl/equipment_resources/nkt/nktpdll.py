@@ -41,10 +41,10 @@ if TYPE_CHECKING:
     from ctypes import CDLL, _CFunctionType  # pyright: ignore[reportPrivateUsage]
     from typing import Any
 
-    from msl.equipment._types import PathLike
     from msl.equipment.schema import Equipment
+    from msl.equipment.typing import PathLike
 
-    from ..types import NKTDeviceStatusCallback, NKTPortStatusCallback, NKTRegisterStatusCallback  # noqa: TID252
+    from ..typing import NKTDeviceStatusCallback, NKTPortStatusCallback, NKTRegisterStatusCallback  # noqa: TID252
 
 
 # The example code that comes with the SDK uses NKTP_SDK_PATH

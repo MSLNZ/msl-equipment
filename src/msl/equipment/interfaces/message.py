@@ -17,8 +17,8 @@ from msl.equipment.utils import from_bytes, logger, to_bytes
 if TYPE_CHECKING:
     from typing import Literal
 
-    from msl.equipment._types import MessageDataType, MessageFormat, NumpyArray1D, Sequence1D
     from msl.equipment.schema import Equipment
+    from msl.equipment.typing import MessageDataType, MessageFormat, NumpyArray1D, Sequence1D
 
 
 class Message(Interface, append=False):
@@ -192,9 +192,9 @@ class Message(Interface, append=False):
                 [dtype][numpy.dtype] supports. For messages that are of scalar type (i.e., a single number)
                 it is more efficient to not specify `dtype` but to pass the returned message to the
                 [int][] or [float][] class to convert the message to the appropriate numeric type.
-                See [MessageDataType][msl.equipment._types.MessageDataType] for more details.
+                See [MessageDataType][msl.equipment.typing.MessageDataType] for more details.
             fmt: The format that the returned message data is in. Ignored if `dtype` is `None`.
-                See [MessageFormat][msl.equipment._types.MessageFormat] for more details.
+                See [MessageFormat][msl.equipment.typing.MessageFormat] for more details.
             size: The number of bytes to read. Ignored if the value is `None`.
 
         Returns:
@@ -274,9 +274,9 @@ class Message(Interface, append=False):
                 [dtype][numpy.dtype] supports. For messages that are of scalar type (i.e., a single number)
                 it is more efficient to not specify `dtype` but to pass the returned message to the
                 [int][] or [float][] class to convert the message to the appropriate numeric type.
-                See [MessageDataType][msl.equipment._types.MessageDataType] for more details.
+                See [MessageDataType][msl.equipment.typing.MessageDataType] for more details.
             fmt: The format that the returned message data is in. Ignored if `dtype` is `None`.
-                See [MessageFormat][msl.equipment._types.MessageFormat] for more details.
+                See [MessageFormat][msl.equipment.typing.MessageFormat] for more details.
             size: The number of bytes to read. Ignored if the value is `None`.
 
         Returns:
@@ -376,10 +376,10 @@ class Message(Interface, append=False):
             message: The message to write to the equipment.
             data: The data to append to `message`.
             dtype: The data type to use to convert each element in `data` to bytes. Ignored
-                if `data` is `None`. See [MessageDataType][msl.equipment._types.MessageDataType]
+                if `data` is `None`. See [MessageDataType][msl.equipment.typing.MessageDataType]
                 for more details.
             fmt: The format to use to convert `data` to bytes. Ignored if `data` is `None`.
-                See [MessageFormat][msl.equipment._types.MessageFormat] for more details.
+                See [MessageFormat][msl.equipment.typing.MessageFormat] for more details.
 
         Returns:
             The number of bytes written.

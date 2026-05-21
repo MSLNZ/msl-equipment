@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from typing import Literal
 
     from conftest import HTTPServer
-    from msl.equipment._types import MessageDataType
+    from msl.equipment.typing import MessageDataType
 
 
 class MyEnum(enum.Enum):

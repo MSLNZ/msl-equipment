@@ -15,8 +15,8 @@ if TYPE_CHECKING:
     from typing import Literal
     from xml.etree.ElementTree import Element
 
-    from ._types import XMLSource
     from .schema import Equipment
+    from .typing import XMLSource
 
 
 def _sources(text: str | None, tag: Literal["register", "connections"]) -> list[Path | Element[str]]:

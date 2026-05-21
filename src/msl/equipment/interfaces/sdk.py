@@ -13,8 +13,8 @@ from msl.loadlib import LoadLibrary
 if TYPE_CHECKING:
     from typing import Any
 
-    from msl.equipment._types import PathLike
     from msl.equipment.schema import Equipment
+    from msl.equipment.typing import PathLike
     from msl.loadlib._types import LibType
     from msl.loadlib.activex import Application
 

@@ -95,7 +95,7 @@ nav:
     - api/readings.md
     - api/enumerations.md
     - api/exceptions.md
-    - api/types.md
+    - api/typing.md
     - Interfaces:
       - api/interfaces/index.md
       - api/interfaces/ftdi.md
@@ -167,7 +167,7 @@ nav:
       - resources/vaisala/ptb330.md
       - resources/vaisala/ptu300.md
     - resources/multi_message.md
-    - resources/types.md
+    - resources/typing.md
   - Validate: validate.md
   - WebApp: webapp.md
 

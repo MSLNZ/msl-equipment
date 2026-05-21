@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     from ctypes import CDLL
     from typing import Any
 
-    from msl.equipment._types import PathLike
     from msl.equipment.schema import Equipment
+    from msl.equipment.typing import PathLike
 
 
 class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", model=r""):

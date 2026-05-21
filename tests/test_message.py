@@ -10,7 +10,7 @@ from msl.equipment import Connection, Equipment, MSLConnectionError
 from msl.equipment.interfaces import Message
 
 if TYPE_CHECKING:
-    from msl.equipment._types import NumpyArray1D
+    from msl.equipment.typing import NumpyArray1D
 
 
 def test_termination() -> None:  # noqa: PLR0915

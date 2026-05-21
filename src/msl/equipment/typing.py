@@ -23,7 +23,7 @@ class SupportsRead(Protocol[_T_co]):
 PathLike = Union[str, bytes, os.PathLike[str], os.PathLike[bytes]]  # pyright: ignore[reportDeprecated]
 """A [path-like object][]."""
 
-XMLSource = Union[int, PathLike, SupportsRead[bytes] | SupportsRead[str]]  # pyright: ignore[reportDeprecated]
+XMLSource = Union[int, PathLike, SupportsRead[bytes], SupportsRead[str]]  # pyright: ignore[reportDeprecated]
 """A [path-like object][] or a [file-like object][] for parsing XML content."""
 
 MessageFormat = Literal["ascii", "hp", "ieee"] | None
@@ -62,13 +62,13 @@ Possible values are:
 MessageDataType = type[int] | type[float] | type[np.number] | str
 """Data type to use to read(write) bytes from(to) equipment.
 
-The data type to use to convert each element in a [Sequence1D][msl.equipment._types.Sequence1D]
-to. If the corresponding [MessageFormat][msl.equipment._types.MessageFormat] is `ascii` then the
+The data type to use to convert each element in a [Sequence1D][msl.equipment.typing.Sequence1D]
+to. If the corresponding [MessageFormat][msl.equipment.typing.MessageFormat] is `ascii` then the
 data type value must be of type [str][] and it is used as the `format_spec` argument in [format][]
-to first convert each element in [Sequence1D][msl.equipment._types.Sequence1D] to a string, and
+to first convert each element in [Sequence1D][msl.equipment.typing.Sequence1D] to a string, and
 then it is encoded (e.g., `'.2e'` converts each element to scientific notation with two digits
 after the decimal point). If the data type includes a byte-order character, it is ignored. For
-all other values of [MessageFormat][msl.equipment._types.MessageFormat], the data type can be any
+all other values of [MessageFormat][msl.equipment.typing.MessageFormat], the data type can be any
 object that numpy [dtype][numpy.dtype] supports (e.g., `'H'`, `'uint16'` and [ushort][numpy.ushort]
 are equivalent values to convert each element to an *unsigned short*). If a byte-order character is
 specified then it is used, otherwise the native byte order of the CPU architecture is used. See

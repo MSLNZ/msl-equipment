@@ -60,7 +60,7 @@ if TYPE_CHECKING:
 
     from msl.equipment.schema import Equipment
 
-    from ..types import (  # noqa: TID252
+    from ..typing import (  # noqa: TID252
         PicoTechBlockReadyCallback,
         PicoTechDataReadyCallback,
         PicoTechStreamingReadyCallback,

@@ -41,7 +41,7 @@ if TYPE_CHECKING:
 
     from msl.equipment.schema import Equipment
 
-    from ..types import AvaSpecCallback  # noqa: TID252
+    from ..typing import AvaSpecCallback  # noqa: TID252
 
 
 IS_WINDOWS = sys.platform == "win32"

@@ -16,7 +16,7 @@ from xml.etree.ElementTree import XML, ParseError
 import numpy as np
 
 if TYPE_CHECKING:
-    from ._types import EnumType, MessageDataType, MessageFormat, NumpyArray1D, Sequence1D
+    from .typing import EnumType, MessageDataType, MessageFormat, NumpyArray1D, Sequence1D
 
 
 logger = logging.getLogger(__package__)

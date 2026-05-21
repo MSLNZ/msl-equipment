@@ -128,8 +128,8 @@ addopts = [
     "--doctest-modules",
     "--doctest-glob=*.md",
     "--import-mode=importlib",
-    "--ignore=src/msl/equipment/_types.py",
-    "--ignore=packages/resources/src/msl/equipment_resources/types.py",
+    "--ignore=src/msl/equipment/typing.py",
+    "--ignore=packages/resources/src/msl/equipment_resources/typing.py",
     "--ignore=packages/resources/examples",
 ]
 doctest_optionflags = "ELLIPSIS"
@@ -138,7 +138,7 @@ doctest_optionflags = "ELLIPSIS"
 branch = true
 data_file = ".cache/coverage/.coverage"
 omit = [
-    "src/msl/equipment/_types.py",
+    "src/msl/equipment/typing.py",
     "**/_version.py",
     "packages/validate/tests/*.py",
 ]

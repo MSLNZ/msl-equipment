@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
     from numpy.typing import ArrayLike, DTypeLike, NDArray
 
-    from ._types import PathLike, Sequence1D, XMLSource
+    from .typing import PathLike, Sequence1D, XMLSource
 
     A = TypeVar("A", bound="Any")
     L = TypeVar("L", bound="Latest")

@@ -31,7 +31,7 @@ jobs:
           Invoke-WebRequest -Uri https://github.com/libusb/libusb/releases/download/v1.0.29/libusb-1.0.29.7z -OutFile libusb.7z
           7z e libusb.7z -oC:\Windows\System32 VS2022\MS64\dll\libusb-1.0.dll
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
           enable-cache: false
       - name: Run tests

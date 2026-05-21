@@ -239,7 +239,7 @@ def ipv4_addresses() -> set[str]:
         addresses = {a for a in out.decode().split() if a[4] != ":"}
     else:
         ps = subprocess.Popen("ifconfig", stdout=subprocess.PIPE)  # pyright: ignore[reportUnreachable]  # noqa: S607
-        output = subprocess.check_output(("grep", "inet "), stdin=ps.stdout)
+        output = subprocess.check_output(["grep", "inet"], stdin=ps.stdout)  # noqa: S607
         _ = ps.wait()
         addresses = {line.split()[1] for line in output.decode().splitlines()}
     addresses.discard("127.0.0.1")

@@ -306,7 +306,7 @@ def parse_lxi_webserver(host: str, port: int = 80, timeout: float = 10) -> LXIDe
         # LXI Device Specification 2022 (Revision 1.6), Section 10.2
         response = urlopen(f"{base_url}/lxi/identification", timeout=timeout)  # noqa: S310
     except HTTPError as e:
-        if e.getcode() == 404:  # noqa: PLR2004
+        if e.status == 404:  # noqa: PLR2004
             # The URL for the XML document does not exist, parse the webserver's homepage
             with urlopen(base_url, timeout=timeout) as r:  # noqa: S310
                 return _parse_lxi_html(r.read().decode("utf-8"))

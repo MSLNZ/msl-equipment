@@ -317,7 +317,7 @@ def test_timeout(tcp_server: type[TCPServer]) -> None:  # noqa: PLR0915
 
     dev.timeout = 0
     assert dev._timeout == 0.0  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
-    assert dev._io_timeout_ms == 0  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
+    assert dev._io_timeout_ms == 0  # type: ignore[unreachable]  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
     assert dev.socket.gettimeout() == 1.0 + 0.0 + 0.0  # 1 + io_timeout + lock_timeout
 
     dev.timeout = None

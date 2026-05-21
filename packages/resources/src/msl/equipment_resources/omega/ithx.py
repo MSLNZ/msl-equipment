@@ -45,8 +45,8 @@ class ITHX(Socket, manufacturer=r"OMEGA", model=r"iTHX-[2DMSW][3D]?", flags=re.I
             equipment: An [Equipment][] instance.
         """
         super().__init__(equipment)
-        self.read_termination: bytes = b"\r"
-        self.write_termination: bytes = b"\r"
+        self._read_termination: bytes | None = b"\r"
+        self._write_termination: bytes | None = b"\r"
 
     def dewpoint(self, probe: Literal[1, 2] = 1, *, celsius: bool = True) -> float:
         """Read the dewpoint.

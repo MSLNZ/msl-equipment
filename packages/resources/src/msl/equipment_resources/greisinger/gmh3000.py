@@ -54,8 +54,8 @@ class GMH3000(Serial, manufacturer=r"Greisinger", model=r"GMH\s*3\d{3}"):
         super().__init__(equipment)
 
         # termination characters are not used
-        self.read_termination: None = None
-        self.write_termination: None = None
+        self._read_termination: bytes | None = None
+        self._write_termination: bytes | None = None
 
         self._address: int = self._invert(int(props.get("gmh_address", 1)))
 
@@ -64,7 +64,7 @@ class GMH3000(Serial, manufacturer=r"Greisinger", model=r"GMH\s*3\d{3}"):
         for i in range(len(reply) // 3):
             i *= 3  # noqa: PLW2901
             if self._crc(*reply[i : i + 2]) != reply[i + 2]:
-                msg = f"Invalid CRC checksum in reply: {reply}"
+                msg = f"Invalid CRC checksum in reply: {reply!r}"
                 raise MSLConnectionError(self, msg)
 
     @staticmethod
@@ -125,7 +125,7 @@ class GMH3000(Serial, manufacturer=r"Greisinger", model=r"GMH\s*3\d{3}"):
         _ = self.write(bytes(request))
         header = self.read(size=3, decode=False)
         if self._crc(*header[:2]) != header[2]:
-            msg = f"Invalid CRC checksum in header: {header}"
+            msg = f"Invalid CRC checksum in header: {header!r}"
             raise MSLConnectionError(self, msg)
 
         # bit 1 and 2 represent the message length (including the header) in bytes

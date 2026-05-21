@@ -52,7 +52,7 @@ class EQ99(Serial, manufacturer=r"Energetiq", model=r"EQ-99(-MGR)?", flags=re.IG
 
         The unit remains in remote mode.
         """
-        _ = self._write_check("*RST")
+        self._write_check("*RST")
 
     def get_beep(self) -> bool:
         """Query whether beeps are enabled.

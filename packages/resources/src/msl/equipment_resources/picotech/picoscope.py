@@ -55,7 +55,7 @@ if TYPE_CHECKING:
     from ctypes import _CFunctionType  # pyright: ignore[reportPrivateUsage]
     from typing import Any, Callable, Never
 
-    from msl.loadlib.types import PathLike
+    from msl.loadlib._types import PathLike
     from numpy.typing import NDArray
 
     from msl.equipment.schema import Equipment
@@ -2092,7 +2092,8 @@ class _TimeUnits(IntEnum):
     @staticmethod
     def to_float(unit: int) -> float:
         """Convert the enum value to a floating-point number in seconds."""
-        return 10 ** (3 * unit) * 1e-15
+        seconds: float = 10 ** (3 * unit) * 1e-15
+        return seconds
 
 
 class SweepType(IntEnum):

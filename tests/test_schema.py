@@ -667,8 +667,8 @@ def test_range_bounds_valid(value: float | ArrayLike) -> None:
     r = Range(-100, 100)
     assert r.minimum == -100
     assert r.maximum == 100
-    assert r == (-100, 100)
     assert r.check_within_range(value)
+    assert r == (-100, 100)
 
 
 @pytest.mark.parametrize("value", [-1, 2e6, [1.001, 2], np.array([[11, -22], [-33, 44]])])

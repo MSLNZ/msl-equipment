@@ -121,9 +121,9 @@ class MilliK(MultiMessageBased, manufacturer=r"Iso.*Tech.*", model=r"milli.*K.*"
             equipment: An [Equipment][] instance.
         """
         super().__init__(equipment)
-        self.rstrip: bool = True
-        self.read_termination: bytes = b"\r"
-        self.write_termination: bytes = b"\r"
+        self._rstrip: bool = True
+        self._read_termination: bytes | None = b"\r"
+        self._write_termination: bytes | None = b"\r"
 
         # REMOTE mode speeds up communication and is required for voltage measurements
         _ = self.write("MILLIK:REMOTE")
@@ -233,10 +233,10 @@ class MilliK(MultiMessageBased, manufacturer=r"Iso.*Tech.*", model=r"milli.*K.*"
                 yield c, sum(readings) / len(readings)
 
     @overload
-    def read_channel(self, channel: int, n: Literal[1] = 1) -> float: ...
+    def read_channel(self, channel: int, n: int) -> list[float]: ...
 
     @overload
-    def read_channel(self, channel: int, n: int) -> list[float]: ...
+    def read_channel(self, channel: int, n: Literal[1] = 1) -> float: ...
 
     def read_channel(self, channel: int, n: int = 1) -> float | list[float]:
         """Read a configured channel.

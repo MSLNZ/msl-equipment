@@ -151,8 +151,8 @@ class PR4000B(Serial, manufacturer=r"^MKS", model=r"PR4000B", flags=re.IGNORECAS
         assert equipment.connection is not None  # noqa: S101
         equipment.connection.properties.setdefault("data_bits", DataBits.SEVEN)
         super().__init__(equipment)
-        self.read_termination: bytes = b"\r"
-        self.write_termination: bytes = b"\r"
+        self._read_termination: bytes | None = b"\r"
+        self._write_termination: bytes | None = b"\r"
 
     def _check(self, command: str) -> str:
         """Send a command then check the reply for an error.
@@ -975,8 +975,8 @@ class PR4000B(Serial, manufacturer=r"^MKS", model=r"PR4000B", flags=re.IGNORECAS
             channel: The channel number.
             enable: Whether to enable or disable the valve state.
         """
-        if channel == 0:  # pyright: ignore[reportUnnecessaryComparison]
-            msg = (  # pyright: ignore[reportUnreachable]
+        if channel == 0:  # type: ignore[comparison-overlap]  # pyright: ignore[reportUnnecessaryComparison]
+            msg = (  # type: ignore[unreachable]  # pyright: ignore[reportUnreachable]
                 "The manual indicates that you can specify channel=0 "
                 "to set both valves simultaneously, but that does not work"
             )

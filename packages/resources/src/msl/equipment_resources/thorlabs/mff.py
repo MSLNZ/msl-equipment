@@ -201,7 +201,7 @@ class MFF(Interface, manufacturer=r"Thorlabs", model=r"MFF"):
         Args:
             wait: Whether to wait for the move to complete before returning to the calling program.
         """
-        position = 2 if self.position == 1 else 1
+        position: Literal[1, 2] = 2 if self.position == 1 else 1
         self.move_to(position, wait=wait)
 
     def wait_until_moved(self) -> None:

@@ -17,7 +17,7 @@ from .status import PICO_INFO, PICO_OK, PICO_STATUS, Error, PicoInfo
 if TYPE_CHECKING:
     from typing import Any, Literal
 
-    from msl.loadlib.types import PathLike
+    from msl.loadlib._types import PathLike
 
     from msl.equipment.schema import Equipment
 
@@ -76,7 +76,7 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
                 If `True`, then `ip_address` must be specified.
         """
         self._handle: int | None = None
-        libtype = "windll" if IS_WINDOWS else "cdll"
+        libtype: Literal["windll", "cdll"] = "windll" if IS_WINDOWS else "cdll"
         super().__init__(equipment, libtype=libtype)
 
         sdk = self.sdk
@@ -189,7 +189,7 @@ class PT104(SDK, manufacturer=r"Pico\s*Tech", model=r"PT[-]?104"):
             msg = f"Invalid communication type {communication}"
             raise ValueError(msg)
 
-        libtype = "windll" if IS_WINDOWS else "cdll"
+        libtype: Literal["windll", "cdll"] = "windll" if IS_WINDOWS else "cdll"
         sdk = LoadLibrary(path, libtype=libtype)
         result = sdk.lib.UsbPt104Enumerate(byref(details), byref(c_int16(len(details))), t_val)
         if result != PICO_OK:

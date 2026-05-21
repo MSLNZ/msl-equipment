@@ -1928,7 +1928,7 @@ def _load_sdk(path: str, nkt: NKTDLL | None = None) -> None:
         _check_device_result = nkt._check_device_result  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
         _check_register_result = nkt._check_register_result  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
 
-    functions = {  # pyright: ignore[reportUnknownVariableType]
+    functions: dict[str, tuple[Any, ...]] = {
         # Port functions
         "getAllPorts": (None, _log_debug, [("portnames", POINTER(c_char)), ("maxLen", POINTER(c_ushort))]),
         "getOpenPorts": (None, _log_debug, [("portnames", POINTER(c_char)), ("maxLen", POINTER(c_ushort))]),
@@ -2531,7 +2531,7 @@ def _load_sdk(path: str, nkt: NKTDLL | None = None) -> None:
     }
 
     NKTDLL._SDK = LoadLibrary(path).lib  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
-    for key, value in functions.items():  # pyright: ignore[reportUnknownVariableType]
+    for key, value in functions.items():
         attr = getattr(NKTDLL._SDK, key)  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
         attr.restype, attr.errcheck = value[:2]
         attr.argtypes = [t for _, t in value[2]]

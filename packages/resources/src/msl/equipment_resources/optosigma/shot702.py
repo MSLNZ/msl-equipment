@@ -99,8 +99,8 @@ class SHOT702(Serial, manufacturer=r"Opto\s*Sigma|Sigma\s*Koki", model=r"SHOT-70
         equipment.connection.properties.setdefault("baud_rate", 38400)
         super().__init__(equipment)
 
-        self.read_termination: bytes = b"\r\n"
-        self.write_termination: bytes = b"\r\n"
+        self._read_termination: bytes | None = b"\r\n"
+        self._write_termination: bytes | None = b"\r\n"
 
         self._status_regex: Pattern[str] = re.compile(r"(-*)\s*(\d+),(-*)\s*(\d+),([XK]),([LMWK]),([BR])")
         self._speed_regex: Pattern[str] = re.compile(r"S(\d+)F(\d+)R(\d+)S(\d+)F(\d+)R(\d+)")

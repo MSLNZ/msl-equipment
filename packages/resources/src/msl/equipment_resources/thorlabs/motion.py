@@ -211,6 +211,7 @@ class ThorlabsMotion(Interface):
             Encoder counts (number of pulses).
         """
         # MGMSG_MOT_REQ_ENCCOUNTER or MGMSG_MOT_REQ_POSCOUNTER
+        counts: int
         msg_id = 0x040A if self._has_encoder else 0x0411
         _, counts = unpack("<Hi", self.query(msg_id, param1=channel))
         return counts
@@ -792,7 +793,7 @@ def find_device(equipment: Equipment) -> str | None:
     """Parse C:/ProgramData/Thorlabs/MotionControl/ThorlabsDeviceConfiguration.xml for a device."""
     assert equipment.connection is not None  # noqa: S101
     p = equipment.connection.properties
-    device = p.get("actuator", p.get("stage", ""))
+    device: str = p.get("actuator", p.get("stage", ""))
     if device:
         return device
 

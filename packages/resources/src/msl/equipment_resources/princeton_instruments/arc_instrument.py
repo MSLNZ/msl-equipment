@@ -2313,7 +2313,7 @@ def _load_sdk(path: str, pi: PrincetonInstruments | None = None) -> None:
 
     _errcheck = __errcheck if pi is None else pi._errcheck  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
 
-    functions = {  # pyright: ignore[reportUnknownVariableType]
+    functions: dict[str, tuple[Any, ...]] = {
         "ARC_Init": (c_bool, _log_errcheck, []),
         "ARC_IsInited": (c_bool, _log_errcheck, []),
         "ARC_Ver": (
@@ -4434,7 +4434,7 @@ def _load_sdk(path: str, pi: PrincetonInstruments | None = None) -> None:
         )
         raise RuntimeError(msg)
 
-    for key, value in functions.items():  # pyright: ignore[reportUnknownVariableType]
+    for key, value in functions.items():
         attr = getattr(sdk, key)
         attr.restype, attr.errcheck = value[:2]
         attr.argtypes = [typ for _, typ in value[2]]

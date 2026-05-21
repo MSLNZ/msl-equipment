@@ -151,7 +151,8 @@ class DataRay(SDK, manufacturer=r"Data\s*Ray", model=r""):
     @property
     def exposure_time(self) -> float:
         """Returns the exposure time, in ms."""
-        return self.sdk.Exposure(self._ocx.camera_index)
+        exposure: float = self.sdk.Exposure(self._ocx.camera_index)
+        return exposure
 
     @property
     def homogeneity(self) -> float:
@@ -264,7 +265,8 @@ class DataRay(SDK, manufacturer=r"Data\s*Ray", model=r""):
     @property
     def wavelength(self) -> float:
         """Get/Set the wavelength, in nm, of the incident light."""
-        return self.sdk.Wavelength * 1e3
+        wavelength: float = self.sdk.Wavelength * 1e3
+        return wavelength
 
     @wavelength.setter
     def wavelength(self, value: float) -> None:

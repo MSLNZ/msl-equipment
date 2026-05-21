@@ -27,7 +27,7 @@ class RaicolTEC(Serial, manufacturer=r"Raicol", model=r"TEC"):
             equipment: An [Equipment][] instance.
         """
         super().__init__(equipment)
-        self.write_termination: bytes = b"\n"
+        self._write_termination: bytes | None = b"\n"
 
     def get_setpoint(self) -> float:
         """Get the setpoint temperature.

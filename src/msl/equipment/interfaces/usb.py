@@ -18,7 +18,7 @@ import usb  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeS
 
 from msl.equipment.utils import logger
 
-from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
+from .message import Message, MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from array import array
@@ -248,7 +248,7 @@ def _endpoint(cls: USB, interface: Any, direction: int, typ: int) -> Endpoint | 
     )
 
 
-class USB(MessageBased, regex=REGEX):
+class USB(Message, regex=REGEX):
     """Base class for (raw) USB communication."""
 
     class CtrlDirection(IntEnum):
@@ -296,7 +296,7 @@ class USB(MessageBased, regex=REGEX):
 
         A [Connection][msl.equipment.schema.Connection] instance supports the following _properties_
         for the USB communication protocol, as well as the _properties_ defined in
-        [MessageBased][msl.equipment.interfaces.message_based.MessageBased].
+        [Message][msl.equipment.interfaces.message.Message].
 
         Attributes: Connection Properties:
             bAlternateSetting (int): The value of `bAlternateSetting` of the USB Interface Descriptor.
@@ -394,7 +394,7 @@ class USB(MessageBased, regex=REGEX):
         self._intr_out: Endpoint | None = _endpoint(self, interface, usb.util.ENDPOINT_OUT, usb.util.ENDPOINT_TYPE_INTR)
 
     def _read(self, size: int | None) -> bytes:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         original_timeout = self._timeout_ms
         timeout = original_timeout
         address = self._bulk_in.address
@@ -436,12 +436,12 @@ class USB(MessageBased, regex=REGEX):
         return bytes(msg)
 
     def _set_interface_timeout(self) -> None:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         # libusb docs: For an unlimited timeout, use value 0
         self._timeout_ms = 0 if self._timeout is None else round(self._timeout * 1000)
 
     def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         address = self._bulk_out.address
         original_timeout = self._timeout_ms
         timeout = original_timeout

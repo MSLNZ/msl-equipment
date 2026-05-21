@@ -11,7 +11,7 @@ import time
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, overload
 
-from msl.equipment_resources.multi_message_based import MultiMessageBased
+from msl.equipment_resources.multi_message import MultiMessage
 
 from msl.equipment.interfaces import GPIB, MSLConnectionError
 from msl.equipment.utils import logger
@@ -46,7 +46,7 @@ ETX = 0x03
 MAX_LAMPS = 9
 
 
-class OLxxA(MultiMessageBased, manufacturer=r"Optronic", model=r"(OL)?\s*(16|65|83)A", flags=re.IGNORECASE):
+class OLxxA(MultiMessage, manufacturer=r"Optronic", model=r"(OL)?\s*(16|65|83)A", flags=re.IGNORECASE):
     """Communicate with a DC current source from [Optronic Laboratories](https://optroniclabs.com/){:target="_blank"}."""
 
     def __init__(self, equipment: Equipment) -> None:

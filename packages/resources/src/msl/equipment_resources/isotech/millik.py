@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import TYPE_CHECKING, overload
 
-from msl.equipment_resources.multi_message_based import MultiMessageBased
+from msl.equipment_resources.multi_message import MultiMessage
 
 from msl.equipment.interfaces import MSLConnectionError
 from msl.equipment.utils import to_enum
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
     from typing import Literal
 
-    from msl.equipment.interfaces import MessageBased
+    from msl.equipment.interfaces import Message
     from msl.equipment.schema import Equipment
 
 
@@ -103,7 +103,7 @@ class MilliKDevice:
     firmware: str
 
 
-class MilliK(MultiMessageBased, manufacturer=r"Iso.*Tech.*", model=r"milli.*K.*", flags=re.IGNORECASE):
+class MilliK(MultiMessage, manufacturer=r"Iso.*Tech.*", model=r"milli.*K.*", flags=re.IGNORECASE):
     """[IsoTech](https://isotech.co.uk/) milliK Precision Thermometer."""
 
     def __init__(self, equipment: Equipment) -> None:
@@ -284,7 +284,7 @@ class MilliK(MultiMessageBased, manufacturer=r"Iso.*Tech.*", model=r"milli.*K.*"
         return readings
 
 
-def _find_channel_numbers(instance: MessageBased) -> tuple[list[str], list[int]]:
+def _find_channel_numbers(instance: Message) -> tuple[list[str], list[int]]:
     """Find the number of millisKanner Channel Expanders connected, if any, and hence the valid channel numbers.
 
     Up to 4 millisKanner can be connected to a single milliK.

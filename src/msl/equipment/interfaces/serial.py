@@ -11,7 +11,7 @@ import serial
 from msl.equipment.enumerations import DataBits, Parity, StopBits
 from msl.equipment.utils import logger, to_enum
 
-from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
+from .message import Message, MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -28,7 +28,7 @@ REGEX = re.compile(
 )
 
 
-class Serial(MessageBased, regex=REGEX):
+class Serial(Message, regex=REGEX):
     """Base class for equipment that is connected through a Serial port (or a USB-to-Serial adaptor)."""
 
     def __init__(self, equipment: Equipment) -> None:
@@ -39,11 +39,10 @@ class Serial(MessageBased, regex=REGEX):
 
         A [Connection][msl.equipment.schema.Connection] instance supports the following _properties_
         for the serial communication protocol, as well as the _properties_ defined in
-        [MessageBased][msl.equipment.interfaces.message_based.MessageBased]. The
-        [DataBits][msl.equipment.enumerations.DataBits], [Parity][msl.equipment.enumerations.Parity]
-        and [StopBits][msl.equipment.enumerations.StopBits] enumeration names and values may also
-        be used. For properties that specify an _alias_, you may also use the alternative name as
-        the property name. See [serial.Serial][] for more details.
+        [Message][msl.equipment.interfaces.message.Message]. The [DataBits][msl.equipment.enumerations.DataBits],
+        [Parity][msl.equipment.enumerations.Parity] and [StopBits][msl.equipment.enumerations.StopBits] enumeration
+        names and values may also be used. For properties that specify an _alias_, you may also use the alternative
+        name as the property name. See [serial.Serial][] for more details.
 
         Attributes: Connection Properties:
             baud_rate (int): The baud rate (_alias:_ baudrate). _Default: `9600`_
@@ -80,7 +79,7 @@ class Serial(MessageBased, regex=REGEX):
             raise MSLConnectionError(self, str(e)) from None
 
     def _read(self, size: int | None) -> bytes:  # pyright: ignore[reportImplicitOverride]  # noqa: C901
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         original_timeout = self._serial.timeout
         t0 = time.time()
         while True:
@@ -125,13 +124,13 @@ class Serial(MessageBased, regex=REGEX):
         return bytes(msg)
 
     def _set_interface_timeout(self) -> None:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         if hasattr(self, "_serial"):
             self._serial.timeout = self._timeout
             self._serial.write_timeout = self._timeout
 
     def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         return self._serial.write(message) or 0
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]

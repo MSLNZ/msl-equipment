@@ -914,7 +914,7 @@ class PicoScope(SDK, manufacturer=r"Pico\s*Tech", model=r"[23456]\d{3}[A-Z]"):
         This function can be used to check that the already opened device is still
         connected to the USB port and communication is successful.
 
-        Raises [MSLConnectionError][msl.equipment.interfaces.message_based.MSLConnectionError]
+        Raises [MSLConnectionError][msl.equipment.interfaces.message.MSLConnectionError]
         if pinging was not successful.
         """
         self._f("PingUnit", self._handle)

@@ -10,7 +10,7 @@ from enum import IntEnum
 from threading import Lock
 from typing import TYPE_CHECKING, NamedTuple, overload
 
-from msl.equipment.interfaces.message_based import MSLConnectionError, MSLTimeoutError
+from msl.equipment.interfaces.message import MSLConnectionError, MSLTimeoutError
 from msl.equipment.interfaces.serial import Serial, parse_serial_address
 from msl.equipment.interfaces.socket import Socket
 from msl.equipment.schema import Interface

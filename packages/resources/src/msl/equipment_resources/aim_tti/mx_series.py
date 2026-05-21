@@ -11,7 +11,7 @@ import re
 import time
 from typing import TYPE_CHECKING
 
-from msl.equipment_resources.multi_message_based import MultiMessageBased
+from msl.equipment_resources.multi_message import MultiMessage
 
 from msl.equipment.interfaces import MSLConnectionError
 
@@ -58,7 +58,7 @@ EXECUTION_ERROR_CODES = {
 
 
 class MXSeries(
-    MultiMessageBased,
+    MultiMessage,
     manufacturer=r"Aim\s*[-&_]?\s*(and)?\s*T(hurlby)?\s*T(handar)?\s*I(nstruments)?",
     model=r"MX1[80][03][TQ]P",
     flags=re.IGNORECASE,

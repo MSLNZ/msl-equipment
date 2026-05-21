@@ -5,7 +5,7 @@ from __future__ import annotations
 from .ftdi import FTDI
 from .gpib import GPIB
 from .hislip import HiSLIP
-from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
+from .message import Message, MSLConnectionError, MSLTimeoutError
 from .modbus import Modbus
 from .nidaq import NIDAQ
 from .prologix import Prologix
@@ -29,7 +29,7 @@ __all__: list[str] = [
     "HiSLIP",
     "MSLConnectionError",
     "MSLTimeoutError",
-    "MessageBased",
+    "Message",
     "Modbus",
     "Prologix",
     "PyVISA",

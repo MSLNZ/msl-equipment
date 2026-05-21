@@ -97,7 +97,7 @@ When adding a new resource to the [repository]{:target="_blank"} the following s
 
 ## Multiple interfaces
 
-If the equipment supports multiple interfaces for message-based protocols (e.g., [Socket][msl.equipment.interfaces.socket.Socket], [Serial][msl.equipment.interfaces.serial.Serial], [GPIB][msl.equipment.interfaces.gpib.GPIB], ...) you can create a resource that inherits from the [MultiMessageBased][msl.equipment_resources.multi_message_based.MultiMessageBased] class. Upon calling [super][] in the subclass, the connection is established with the appropriate protocol class.
+If the equipment supports multiple interfaces for message-based protocols (e.g., [Socket][msl.equipment.interfaces.socket.Socket], [Serial][msl.equipment.interfaces.serial.Serial], [GPIB][msl.equipment.interfaces.gpib.GPIB], ...) you can create a resource that inherits from the [MultiMessage][msl.equipment_resources.multi_message.MultiMessage] class. Upon calling [super][] in the subclass, the connection is established with the appropriate protocol class.
 
 
 [fork]: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo

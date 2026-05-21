@@ -16,7 +16,7 @@ from msl.equipment.enumerations import ATNState, RENMode
 from msl.equipment.utils import logger, to_enum
 from msl.loadlib import LoadLibrary
 
-from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
+from .message import Message, MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from ctypes import _NamedFuncPointer, _Pointer  # pyright: ignore[reportPrivateUsage]
@@ -324,7 +324,7 @@ def _convert_timeout(value: float | None) -> int:
         return min(bisect_right(_TIMEOUTS, value), len(_TIMEOUTS) - 1)
 
 
-class GPIB(MessageBased, regex=REGEX):
+class GPIB(Message, regex=REGEX):
     """Base class for GPIB communication."""
 
     gpib_library: LoadLibrary | None = None
@@ -337,7 +337,7 @@ class GPIB(MessageBased, regex=REGEX):
 
         A [Connection][msl.equipment.schema.Connection] instance supports the following _properties_
         for the GPIB communication protocol, as well as the _properties_ defined in
-        [MessageBased][msl.equipment.interfaces.message_based.MessageBased].
+        [Message][msl.equipment.interfaces.message.Message].
 
         Attributes: Connection Properties:
             eos_mode (int): Specifies the end-of-string character and mode
@@ -447,7 +447,7 @@ class GPIB(MessageBased, regex=REGEX):
         return result
 
     def _set_interface_timeout(self) -> None:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         if not hasattr(self, "_is_board"):
             return
 
@@ -463,7 +463,7 @@ class GPIB(MessageBased, regex=REGEX):
         self._timeout: float | None = None if index == 0 else _TIMEOUTS[index]
 
     def _read(self, size: int | None) -> bytes:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         chunk_size = 20480  # 20kB = 20 * 1024
         data = create_string_buffer(chunk_size)
         buffer = bytearray()
@@ -483,7 +483,7 @@ class GPIB(MessageBased, regex=REGEX):
         return bytes(buffer)
 
     def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         self._lib.ibwrt(self._handle, message, len(message))
         return self.count()
 
@@ -491,7 +491,7 @@ class GPIB(MessageBased, regex=REGEX):
         """Get a GPIB configuration setting (board or device).
 
         This method is the [ibask](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibask.html)
-        function, it should not be confused with the [query][msl.equipment.interfaces.message_based.MessageBased.query]
+        function, it should not be confused with the [query][msl.equipment.interfaces.message.Message.query]
         method.
 
         Args:
@@ -793,7 +793,7 @@ class GPIB(MessageBased, regex=REGEX):
 
     @property
     def read_termination(self) -> bytes | None:  # pyright: ignore[reportImplicitOverride]
-        """The termination character sequence that is used for the [read][msl.equipment.interfaces.message_based.MessageBased.read] method.
+        """The termination character sequence that is used for the [read][msl.equipment.interfaces.message.Message.read] method.
 
         By default, reading stops when the EOI line is asserted.
         """  # noqa: E501

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from msl.equipment import Connection, Equipment, MessageBased, MSLConnectionError, Prologix
+from msl.equipment import Connection, Equipment, Message, MSLConnectionError, Prologix
 from msl.equipment.interfaces.prologix import find_prologix, parse_prologix_address
 
 if TYPE_CHECKING:
@@ -67,10 +67,10 @@ def test_parse_address_valid(address: str, expected: tuple[bool, str, int, int |
     assert parsed.sad == sad
 
 
-def test_connection_message_based_attributes() -> None:
-    # Prologix must have the same public attributes as MessageBased
+def test_connection_message_attributes() -> None:
+    # Prologix must have the same public attributes as `Message`
     dir_p = dir(Prologix)
-    dir_mb = dir(MessageBased)
+    dir_mb = dir(Message)
 
     for attr in dir_mb:
         if attr.startswith("_"):
@@ -102,7 +102,7 @@ def test_connection_message_based_attributes() -> None:
             continue
         assert attr in dir_mb
 
-    # as well as these private methods that are called by MultiMessageBased
+    # as well as these private methods that are called by `MultiMessage`
     assert "_read" in dir_p
     assert "_set_interface_max_read_size" in dir_p
     assert "_set_interface_timeout" in dir_p

@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-class MessageBased(Interface, append=False):
+class Message(Interface, append=False):
     """Base class for equipment that use message-based communication."""
 
     def __init__(self, equipment: Equipment) -> None:
@@ -35,26 +35,26 @@ class MessageBased(Interface, append=False):
 
         Attributes: Connection Properties:
             encoding (str): Encoding to used for
-                [read][msl.equipment.interfaces.message_based.MessageBased.read] and
-                [write][msl.equipment.interfaces.message_based.MessageBased.write] operations.
+                [read][msl.equipment.interfaces.message.Message.read] and
+                [write][msl.equipment.interfaces.message.Message.write] operations.
                 _Default: `utf-8`_
             max_read_size (int): Maximum number of bytes that can be
-                [read][msl.equipment.interfaces.message_based.MessageBased.read].
+                [read][msl.equipment.interfaces.message.Message.read].
                 _Default: `1048576` (1 MB)_
             read_termination (bytes | str): Termination character(s) to use for
-                [read][msl.equipment.interfaces.message_based.MessageBased.read] messages.
+                [read][msl.equipment.interfaces.message.Message.read] messages.
                 _Default: `\n`_
             rstrip (bool): Whether to remove trailing whitespace from
-                [read][msl.equipment.interfaces.message_based.MessageBased.read] messages.
+                [read][msl.equipment.interfaces.message.Message.read] messages.
                 _Default: `False`_
             termination (bytes | str): Sets both `read_termination` and `write_termination`
                 to the same termination character(s).
             timeout (float | None): Timeout, in seconds, for
-                [read][msl.equipment.interfaces.message_based.MessageBased.read] and
-                [write][msl.equipment.interfaces.message_based.MessageBased.write] operations.
+                [read][msl.equipment.interfaces.message.Message.read] and
+                [write][msl.equipment.interfaces.message.Message.write] operations.
                 _Default: `None`_
             write_termination (bytes | str): Termination character(s) to use for
-                [write][msl.equipment.interfaces.message_based.MessageBased.write] messages.
+                [write][msl.equipment.interfaces.message.Message.write] messages.
                 _Default: `\r\n`_
         """
         super().__init__(equipment)
@@ -103,8 +103,8 @@ class MessageBased(Interface, append=False):
 
     @property
     def encoding(self) -> str:
-        """The encoding that is used for [read][msl.equipment.interfaces.message_based.MessageBased.read]
-        and [write][msl.equipment.interfaces.message_based.MessageBased.write] operations.
+        """The encoding that is used for [read][msl.equipment.interfaces.message.Message.read]
+        and [write][msl.equipment.interfaces.message.Message.write] operations.
         """  # noqa: D205
         return self._encoding
 
@@ -121,7 +121,7 @@ class MessageBased(Interface, append=False):
 
     @property
     def max_read_size(self) -> int:
-        """The maximum number of bytes that can be [read][msl.equipment.interfaces.message_based.MessageBased.read]."""
+        """The maximum number of bytes that can be [read][msl.equipment.interfaces.message.Message.read]."""
         return self._max_read_size
 
     @max_read_size.setter
@@ -180,8 +180,8 @@ class MessageBased(Interface, append=False):
         fmt: MessageFormat = None,
         size: int | None = None,
     ) -> bytes | str | NumpyArray1D:
-        """Convenience method for performing a [write][msl.equipment.interfaces.message_based.MessageBased.write]
-        followed by a [read][msl.equipment.interfaces.message_based.MessageBased.read].
+        """Convenience method for performing a [write][msl.equipment.interfaces.message.Message.write]
+        followed by a [read][msl.equipment.interfaces.message.Message.read].
 
         Args:
             message: The message to write to the equipment.
@@ -252,19 +252,19 @@ class MessageBased(Interface, append=False):
         This method will block until one of the following conditions is fulfilled:
 
         1. `size` bytes have been received &mdash; only if `size` is not `None`.
-        2. the [read_termination][msl.equipment.interfaces.message_based.MessageBased.read_termination]
+        2. the [read_termination][msl.equipment.interfaces.message.Message.read_termination]
            byte(s) is(are) received &mdash; only if
-           [read_termination][msl.equipment.interfaces.message_based.MessageBased.read_termination]
+           [read_termination][msl.equipment.interfaces.message.Message.read_termination]
            is not `None`.
-        3. a timeout occurs &mdash; only if [timeout][msl.equipment.interfaces.message_based.MessageBased.timeout]
+        3. a timeout occurs &mdash; only if [timeout][msl.equipment.interfaces.message.Message.timeout]
            is not `None`. If a timeout occurs, an
-           [MSLTimeoutError][msl.equipment.interfaces.message_based.MSLTimeoutError] is raised.
-        4. [max_read_size][msl.equipment.interfaces.message_based.MessageBased.max_read_size]
+           [MSLTimeoutError][msl.equipment.interfaces.message.MSLTimeoutError] is raised.
+        4. [max_read_size][msl.equipment.interfaces.message.Message.max_read_size]
            bytes have been received. If the maximum number of bytes have been read, an
-           [MSLConnectionError][msl.equipment.interfaces.message_based.MSLConnectionError] is raised.
+           [MSLConnectionError][msl.equipment.interfaces.message.MSLConnectionError] is raised.
 
         !!! tip
-            You may also want to set the [rstrip][msl.equipment.interfaces.message_based.MessageBased.rstrip]
+            You may also want to set the [rstrip][msl.equipment.interfaces.message.Message.rstrip]
             value for the class instance.
 
         Args:
@@ -321,7 +321,7 @@ class MessageBased(Interface, append=False):
     @property
     def read_termination(self) -> bytes | None:
         """The termination character sequence that is used for a
-        [read][msl.equipment.interfaces.message_based.MessageBased.read] operation.
+        [read][msl.equipment.interfaces.message.Message.read] operation.
 
         Reading stops when the equipment stops sending data or the `read_termination`
         character sequence is detected. If you set the `read_termination` to be equal
@@ -338,7 +338,7 @@ class MessageBased(Interface, append=False):
 
     @property
     def rstrip(self) -> bool:
-        """Whether to remove trailing whitespace from [read][msl.equipment.interfaces.message_based.MessageBased.read] messages."""  # noqa: E501
+        """Whether to remove trailing whitespace from [read][msl.equipment.interfaces.message.Message.read] messages."""
         return self._rstrip
 
     @rstrip.setter
@@ -347,8 +347,8 @@ class MessageBased(Interface, append=False):
 
     @property
     def timeout(self) -> float | None:
-        """The timeout, in seconds, for [read][msl.equipment.interfaces.message_based.MessageBased.read]
-        and [write][msl.equipment.interfaces.message_based.MessageBased.write] operations.
+        """The timeout, in seconds, for [read][msl.equipment.interfaces.message.Message.read]
+        and [write][msl.equipment.interfaces.message.Message.write] operations.
 
         A value &lt;0 will set the timeout to be `None` (blocking mode).
         """  # noqa: D205
@@ -405,7 +405,7 @@ class MessageBased(Interface, append=False):
     @property
     def write_termination(self) -> bytes | None:
         """The termination character sequence that is appended to
-        [write][msl.equipment.interfaces.message_based.MessageBased.write] messages.
+        [write][msl.equipment.interfaces.message.Message.write] messages.
 
         If you set the `write_termination` to be equal to a variable of type
         [str][], it will be encoded as [bytes][].
@@ -440,7 +440,7 @@ class MSLConnectionError(OSError):
 class MSLTimeoutError(TimeoutError):
     """A timeout exception for I/O operations."""
 
-    def __init__(self, interface: MessageBased, message: str | None = None) -> None:
+    def __init__(self, interface: Message, message: str | None = None) -> None:
         """A timeout exception for I/O operations.
 
         Args:

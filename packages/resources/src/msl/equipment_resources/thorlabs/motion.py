@@ -13,7 +13,7 @@ from time import sleep
 from typing import TYPE_CHECKING, NamedTuple
 
 from msl.equipment.interfaces.ftdi import FTDI
-from msl.equipment.interfaces.message_based import MSLConnectionError
+from msl.equipment.interfaces.message import MSLConnectionError
 from msl.equipment.schema import Interface
 
 if TYPE_CHECKING:

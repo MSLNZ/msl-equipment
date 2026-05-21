@@ -10,7 +10,7 @@ from zmq.constants import SocketType
 
 from msl.equipment.utils import to_enum
 
-from .message_based import MessageBased, MSLConnectionError
+from .message import Message, MSLConnectionError
 
 if TYPE_CHECKING:
     from zmq.sugar.context import Context
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 REGEX = re.compile(r"^ZMQ::(?P<host>[^\s:]+)::(?P<port>\d+)", flags=re.IGNORECASE)
 
 
-class ZeroMQ(MessageBased, regex=REGEX):
+class ZeroMQ(Message, regex=REGEX):
     """Base class for equipment that use the [ZeroMQ](https://zeromq.org/) communication protocol."""
 
     def __init__(self, equipment: Equipment) -> None:
@@ -33,7 +33,7 @@ class ZeroMQ(MessageBased, regex=REGEX):
 
         A [Connection][msl.equipment.schema.Connection] instance supports the following _properties_
         for the [ZeroMQ](https://zeromq.org/) communication protocol, as well as the _properties_
-        defined in [MessageBased][msl.equipment.interfaces.message_based.MessageBased].
+        defined in [Message][msl.equipment.interfaces.message.Message].
         The [ZeroMQ](https://zeromq.org/) protocol does not use termination characters, so if
         termination characters are specified the value is ignored and is set to `None`.
 
@@ -73,19 +73,19 @@ class ZeroMQ(MessageBased, regex=REGEX):
             raise MSLConnectionError(self, msg) from None
 
     def _read(self, size: int | None) -> bytes:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         reply = self._socket.recv(flags=0, copy=True)
         if size is None:
             return reply
         return reply[:size]
 
     def _set_interface_max_read_size(self) -> None:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         if hasattr(self, "_socket"):
             self._socket.setsockopt(zmq.MAXMSGSIZE, self.max_read_size)
 
     def _set_interface_timeout(self) -> None:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         if hasattr(self, "_socket"):
             # ZeroMQ requires the timeout to be an integer with units of milliseconds (-1 is Infinity)
             timeout_ms = -1 if self._timeout is None else int(self._timeout * 1000)
@@ -93,7 +93,7 @@ class ZeroMQ(MessageBased, regex=REGEX):
             self._socket.setsockopt(zmq.SNDTIMEO, timeout_ms)
 
     def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         self._socket.send(message, flags=0, copy=True)
         return len(message)
 

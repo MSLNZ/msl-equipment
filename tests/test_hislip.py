@@ -9,7 +9,7 @@ import pytest
 from msl.loadlib.utils import get_available_port
 
 from msl.equipment import Connection, Equipment, HiSLIP, MSLConnectionError, MSLTimeoutError
-from msl.equipment.interfaces.hislip import PORT, AsyncInitialize, Message, parse_hislip_address
+from msl.equipment.interfaces.hislip import PORT, AsyncInitialize, HiSLIPMessage, parse_hislip_address
 
 IS_WINDOWS = sys.platform == "win32"
 
@@ -239,18 +239,19 @@ def test_invalid_address() -> None:
 
 
 def test_message_as_string() -> None:
-    assert str(Message()) == "Message(type=UNDEFINED, control_code=0, parameter=0, payload=b'')"
-    assert repr(Message()) == "Message(type=UNDEFINED, control_code=0, parameter=0, payload=b'')"
+    assert str(HiSLIPMessage()) == "HiSLIPMessage(type=UNDEFINED, control_code=0, parameter=0, payload=b'')"
+    assert repr(HiSLIPMessage()) == "HiSLIPMessage(type=UNDEFINED, control_code=0, parameter=0, payload=b'')"
 
     msg = AsyncInitialize(4, 3, b"x" * 25)
     assert (
-        str(msg) == "Message(type=AsyncInitialize, control_code=4, parameter=3, payload=b'xxxxxxxxxxxxxxxxxxxxxxxxx')"
+        str(msg)
+        == "HiSLIPMessage(type=AsyncInitialize, control_code=4, parameter=3, payload=b'xxxxxxxxxxxxxxxxxxxxxxxxx')"
     )
 
     msg = AsyncInitialize(payload=b"abcdefghijklmnopqrstuvwxyz" * 4)
     assert (
         str(msg)
-        == "Message(type=AsyncInitialize, control_code=0, parameter=0, payload[len=104]=b'abcdefghijklmnopqrstuvwxy'...b'bcdefghijklmnopqrstuvwxyz')"  # cSpell: ignore bcdefghijklmnopqrstuvwxyz  # noqa: E501
+        == "HiSLIPMessage(type=AsyncInitialize, control_code=0, parameter=0, payload[len=104]=b'abcdefghijklmnopqrstuvwxy'...b'bcdefghijklmnopqrstuvwxyz')"  # cSpell: ignore bcdefghijklmnopqrstuvwxyz  # noqa: E501
     )
 
 

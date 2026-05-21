@@ -19,7 +19,7 @@ from msl.equipment.enumerations import DataBits, Parity, StopBits
 from msl.equipment.utils import logger, to_enum
 from msl.loadlib import LoadLibrary
 
-from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
+from .message import Message, MSLConnectionError, MSLTimeoutError
 from .usb import USB
 
 if TYPE_CHECKING:
@@ -715,7 +715,7 @@ class _D2XX:
         return wrote.value
 
 
-class FTDI(MessageBased, regex=REGEX):
+class FTDI(Message, regex=REGEX):
     """Base class for equipment that use a Future Technology Devices International (FTDI) chip for communication."""
 
     def __init__(self, equipment: Equipment) -> None:
@@ -726,13 +726,12 @@ class FTDI(MessageBased, regex=REGEX):
 
         A [Connection][msl.equipment.schema.Connection] instance supports the following _properties_
         for the FTDI communication protocol, as well as the _properties_ defined in
-        [MessageBased][msl.equipment.interfaces.message_based.MessageBased]. The
-        [DataBits][msl.equipment.enumerations.DataBits],
+        [Message][msl.equipment.interfaces.message.Message]. The [DataBits][msl.equipment.enumerations.DataBits],
         [Parity][msl.equipment.enumerations.Parity] and [StopBits][msl.equipment.enumerations.StopBits]
         enumeration names or values may also be used. For properties that specify an _alias_, you
         may also use the alternative name as the property name. The
-        [read_termination][msl.equipment.interfaces.message_based.MessageBased.read_termination] and
-        [write_termination][msl.equipment.interfaces.message_based.MessageBased.write_termination] values
+        [read_termination][msl.equipment.interfaces.message.Message.read_termination] and
+        [write_termination][msl.equipment.interfaces.message.Message.write_termination] values
         are automatically set to `None` (termination characters are not used in the FTDI protocol).
 
         Attributes: Connection Properties:
@@ -843,7 +842,7 @@ class FTDI(MessageBased, regex=REGEX):
         return result
 
     def _read(self, size: int | None = None) -> bytes:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         if self._d2xx is not None:
             return self._d2xx.read(size)
 
@@ -900,14 +899,14 @@ class FTDI(MessageBased, regex=REGEX):
                 timeout = max(1, original_timeout - elapsed_time)
 
     def _set_interface_timeout(self) -> None:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         if self._d2xx is not None:
             self._d2xx.timeout = self.timeout
         elif self._libusb is not None:
             self._libusb.timeout = self.timeout
 
     def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         if self._d2xx is not None:
             return self._d2xx.write(message)
 

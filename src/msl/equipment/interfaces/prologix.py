@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, overload
 from msl.equipment.schema import Connection, Equipment, Interface
 from msl.equipment.utils import ipv4_addresses, logger, to_bytes
 
-from .message_based import MSLConnectionError
+from .message import MSLConnectionError
 from .serial import Serial
 from .socket import Socket
 
@@ -226,22 +226,22 @@ class Prologix(Interface, regex=REGEX):
             _ = self._controller.write(self._addr)
 
     def _read(self, size: int | None) -> bytes:
-        # Called in MultiMessageBased
+        # Called in `MultiMessage`
         # Don't call self._controller.read because "++read eoi" must be sent
         return self.read(size=size, decode=False)
 
     def _set_interface_max_read_size(self) -> None:
-        # Called in MultiMessageBased.__init__().
+        # Called in MultiMessage.__init__().
         # Here it's a no operation since self._controller gets the appropriate max_read_size when it is created.
         return
 
     def _set_interface_timeout(self) -> None:
-        # Called in MultiMessageBased.__init__().
+        # Called in MultiMessage.__init__().
         # Here it's a no operation since self._controller gets the appropriate timeout when it is created.
         return
 
     def _write(self, message: bytes) -> int:
-        # Called in MultiMessageBased
+        # Called in `MultiMessage`
         # Don't call self._controller.write because the message must be checked for characters that must be escaped
         return self.write(message)
 
@@ -482,7 +482,7 @@ class Prologix(Interface, regex=REGEX):
     ) -> bytes | str | NumpyArray1D:
         r"""Read a message from the equipment.
 
-        See [MessageBased.read()][msl.equipment.interfaces.message_based.MessageBased.read] for more
+        See [Message.read()][msl.equipment.interfaces.message.Message.read] for more
         details about when this method returns.
 
         !!! note "See Also"

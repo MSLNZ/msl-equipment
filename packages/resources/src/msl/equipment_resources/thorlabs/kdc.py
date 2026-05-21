@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from msl.equipment.interfaces.message_based import MSLConnectionError
+from msl.equipment.interfaces.message import MSLConnectionError
 
 from .motion import (
     Convert,

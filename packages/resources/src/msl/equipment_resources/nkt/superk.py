@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from enum import IntEnum
 from typing import TYPE_CHECKING, NamedTuple
 
-from msl.equipment.interfaces.message_based import MSLConnectionError
+from msl.equipment.interfaces.message import MSLConnectionError
 
 from .nkt import NKT
 
@@ -187,7 +187,7 @@ class SuperK(NKT, manufacturer=r"^NKT", model=r"SuperK"):
     def ensure_interlock_ok(self) -> None:
         """Make sure that the interlock is okay.
 
-        Raises [MSLConnectionError][msl.equipment.interfaces.message_based.MSLConnectionError]
+        Raises [MSLConnectionError][msl.equipment.interfaces.message.MSLConnectionError]
         if it is not okay and it cannot be reset.
         """
         register, dtype = self._settings[_Key.interlock]

@@ -24,7 +24,7 @@ from typing import TYPE_CHECKING
 from msl.equipment.enumerations import RENMode
 from msl.equipment.utils import logger, to_enum
 
-from .message_based import MSLConnectionError
+from .message import MSLConnectionError
 from .usb import USB
 
 if TYPE_CHECKING:
@@ -119,7 +119,7 @@ class Capabilities:
                 and `LOCAL_LOCKOUT` requests.
             accepts_service_request (bool): Whether the device accepts a service request.
             accepts_term_char (bool): Whether the device supports ending a Bulk-IN transfer when a byte matches the
-                [read_termination][msl.equipment.interfaces.message_based.MessageBased.read_termination] character.
+                [read_termination][msl.equipment.interfaces.message.Message.read_termination] character.
             accepts_trigger (bool): Whether the device accepts the `TRIGGER` request.
             is_488_interface (bool): Whether the device understands all mandatory SCPI commands, accepts a service
                 request and is a 488.2 interface. See *Appendix 2: IEEE 488.2 compatibility* in

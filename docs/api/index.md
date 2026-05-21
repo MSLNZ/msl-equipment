@@ -21,7 +21,7 @@ and there are [enumeration][enumerations] classes and a [Readings][] class.
     device: GPIB = Connection("GPIB::22").connect()
     ```
 
-The [MSLConnectionError][msl.equipment.interfaces.message_based.MSLConnectionError] and [MSLTimeoutError][msl.equipment.interfaces.message_based.MSLTimeoutError] classes are raised if there are issues when communicating with equipment.
+The [MSLConnectionError][msl.equipment.interfaces.message.MSLConnectionError] and [MSLTimeoutError][msl.equipment.interfaces.message.MSLTimeoutError] classes are raised if there are issues when communicating with equipment.
 
 ## Command Line Interface
 

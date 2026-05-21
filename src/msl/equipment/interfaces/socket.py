@@ -7,7 +7,7 @@ import socket
 import time
 from typing import TYPE_CHECKING, NamedTuple
 
-from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
+from .message import Message, MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
@@ -18,7 +18,7 @@ REGEX = re.compile(
 )
 
 
-class Socket(MessageBased, regex=REGEX):
+class Socket(Message, regex=REGEX):
     """Base class for equipment that is connected through a socket."""
 
     def __init__(self, equipment: Equipment) -> None:
@@ -29,7 +29,7 @@ class Socket(MessageBased, regex=REGEX):
 
         A [Connection][msl.equipment.schema.Connection] instance supports the following _properties_
         for the socket communication protocol, as well as the _properties_ defined in
-        [MessageBased][msl.equipment.interfaces.message_based.MessageBased].
+        [Message][msl.equipment.interfaces.message.Message].
 
         Attributes: Connection Properties:
             buffer_size (int): The maximum number of bytes to read at a time. _Default: `4096`_
@@ -68,7 +68,7 @@ class Socket(MessageBased, regex=REGEX):
                 raise MSLConnectionError(self, msg) from None
 
     def _read(self, size: int | None) -> bytes:  # pyright: ignore[reportImplicitOverride]  # noqa: C901, PLR0912
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         original_timeout = self._socket.gettimeout()
         t0 = time.time()
         while True:
@@ -116,12 +116,12 @@ class Socket(MessageBased, regex=REGEX):
         return bytes(msg)
 
     def _set_interface_timeout(self) -> None:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         if hasattr(self, "_socket"):
             self._socket.settimeout(self._timeout)
 
     def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         if self._is_stream:
             self._socket.sendall(message)
         else:

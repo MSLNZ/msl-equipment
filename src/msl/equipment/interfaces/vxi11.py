@@ -31,7 +31,7 @@ from typing import TYPE_CHECKING, overload
 
 from msl.equipment.utils import LXIDevice, ipv4_addresses, logger, parse_lxi_webserver
 
-from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
+from .message import Message, MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
@@ -790,7 +790,7 @@ class CoreClient(VXIClient):
         return size
 
 
-class VXI11(MessageBased, regex=REGEX):
+class VXI11(Message, regex=REGEX):
     """Base class for the [VXI-11](http://www.vxibus.org/specifications.html) communication protocol."""
 
     def __init__(self, equipment: Equipment) -> None:
@@ -801,7 +801,7 @@ class VXI11(MessageBased, regex=REGEX):
 
         A [Connection][msl.equipment.schema.Connection] instance supports the following _properties_
         for the [VXI-11](http://www.vxibus.org/specifications.html) communication protocol, as well
-        as the _properties_ defined in [MessageBased][msl.equipment.interfaces.message_based.MessageBased].
+        as the _properties_ defined in [Message][msl.equipment.interfaces.message.Message].
 
         Attributes: Connection Properties:
             buffer_size (int): The maximum number of bytes to read at a time. _Default: `4096`_
@@ -833,7 +833,7 @@ class VXI11(MessageBased, regex=REGEX):
         self.lock_timeout = props.get("lock_timeout", 0)
 
         # A non-empty read_termination value is applied by default in
-        # MessageBased if the user did not specify one. Set it back
+        # `Message` if the user did not specify one. Set it back
         # to None if a read-termination character was not explicitly specified.
         if "read_termination" not in props and "termination" not in props:
             self.read_termination = None  # pyright: ignore[reportUnannotatedClassAttribute]
@@ -874,7 +874,7 @@ class VXI11(MessageBased, regex=REGEX):
         return OperationFlag.NULL
 
     def _read(self, size: int | None) -> bytes:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         assert self._core_client is not None  # noqa: S101
         request_size = self._buffer_size if size is None else min(size, self._buffer_size)
 
@@ -925,7 +925,7 @@ class VXI11(MessageBased, regex=REGEX):
         return bytes(msg)
 
     def _set_interface_timeout(self) -> None:  # pyright: ignore[reportImplicitOverride]
-        # Overrides method in MessageBased
+        # Overrides method in `Message`
         if self._timeout is None:
             # use 1 day as equivalent to a socket in blocking mode
             self._io_timeout_ms = 86400000
@@ -948,7 +948,7 @@ class VXI11(MessageBased, regex=REGEX):
             self._abort_client.set_timeout(timeout)
 
     def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         assert self._core_client is not None  # noqa: S101
         flags = self._init_flag()
         offset = 0

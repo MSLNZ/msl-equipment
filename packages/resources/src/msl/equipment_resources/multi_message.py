@@ -4,21 +4,21 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from msl.equipment.interfaces import MessageBased, MSLConnectionError
+from msl.equipment.interfaces import Message, MSLConnectionError
 from msl.equipment.schema import Connection
 
 if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-class MultiMessageBased(MessageBased, append=False):
+class MultiMessage(Message, append=False):
     """A resource that supports multiple interfaces for message-based communication."""
 
     def __init__(self, equipment: Equipment) -> None:
         """A resource that supports multiple interfaces for message-based communication.
 
         A [Connection][msl.equipment.schema.Connection] instance supports the same _properties_ as
-        [MessageBased][msl.equipment.interfaces.message_based.MessageBased].
+        [Message][msl.equipment.interfaces.message.Message].
 
         Args:
             equipment: An [Equipment][] instance.
@@ -31,7 +31,7 @@ class MultiMessageBased(MessageBased, append=False):
 
         try:
             # Let the address (not the manufacturer/model) decide which interface to use
-            self._interface: MessageBased = Connection(c.address, **c.properties).connect()
+            self._interface: Message = Connection(c.address, **c.properties).connect()
         except MSLConnectionError as e:
             lines = str(e).splitlines()
             raise MSLConnectionError(self, message="\n".join(lines[1:])) from None

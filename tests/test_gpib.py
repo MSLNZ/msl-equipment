@@ -14,7 +14,7 @@ from msl.equipment.interfaces.gpib import (
     find_listeners,
     parse_gpib_address,
 )
-from msl.equipment.interfaces.message_based import MSLTimeoutError
+from msl.equipment.interfaces.message import MSLTimeoutError
 
 if TYPE_CHECKING:
     from collections.abc import Iterator

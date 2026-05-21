@@ -15,7 +15,7 @@ import numpy as np
 
 from msl.equipment.schema import Connection, Interface
 
-from .message_based import MSLConnectionError, MSLTimeoutError
+from .message import MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Iterator, Sequence
@@ -839,12 +839,12 @@ class Framer:
         """Generic class to write/read a Modbus frame.
 
         Args:
-            interface: The underlying MessageBased interface.
+            interface: The underlying interface.
         """
         self.interface: Serial | Socket = interface
 
     def disconnect(self) -> None:
-        """Disconnect from the underlying MessageBased interface."""
+        """Disconnect from the underlying interface."""
         self.interface.disconnect()
 
     def read(self, size: int | None = None) -> tuple[int, bytes]:  # pyright: ignore[reportUnusedParameter]

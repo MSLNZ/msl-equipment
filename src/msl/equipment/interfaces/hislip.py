@@ -17,14 +17,14 @@ from enum import IntEnum
 from struct import Struct, pack, unpack
 from typing import TYPE_CHECKING
 
-from .message_based import MessageBased, MSLConnectionError, MSLTimeoutError
+from .message import Message, MSLConnectionError, MSLTimeoutError
 
 if TYPE_CHECKING:
     from typing import Any, ClassVar, TypeVar
 
     from msl.equipment.schema import Equipment
 
-    T = TypeVar("T", bound="Message")
+    T = TypeVar("T", bound="HiSLIPMessage")
 
 
 REGEX = re.compile(
@@ -36,7 +36,7 @@ ONE_DAY = 86400.0  # use 1 day as equivalent to waiting forever for a lock
 
 
 # Table 4, Section 2.5: Numeric Values of Message Type codes
-class MessageType(IntEnum):
+class HiSLIPMessageType(IntEnum):
     """Message types."""
 
     Initialize = 0
@@ -108,7 +108,7 @@ class HiSLIPError(OSError):
 
     _mapping: ClassVar[dict[int, bytes]] = {}  # each subclass must override
 
-    def __init__(self, message_type: MessageType, control_code: int, reason: str = "") -> None:
+    def __init__(self, message_type: HiSLIPMessageType, control_code: int, reason: str = "") -> None:
         """Base class for HiSLIP exceptions.
 
         Args:
@@ -120,13 +120,13 @@ class HiSLIPError(OSError):
         if control_code not in self._mapping:
             control_code = ErrorType.UNIDENTIFIED
         self.reason: str | None = reason
-        self._message: Message = Message()
+        self._message: HiSLIPMessage = HiSLIPMessage()
         self._message.type = message_type
         self._message.control_code = control_code
         self._message.payload = self._mapping[control_code]
 
     @property
-    def message(self) -> Message:
+    def message(self) -> HiSLIPMessage:
         """The error message that can be written to the server."""
         return self._message
 
@@ -158,7 +158,7 @@ class FatalError(HiSLIPError):
             control_code: The control code from the server response.
             reason: Additional information to display in exception string.
         """
-        super().__init__(MessageType.FatalError, control_code, reason)
+        super().__init__(HiSLIPMessageType.FatalError, control_code, reason)
 
 
 # Table 16, Section 6.3: Error Notification Transaction
@@ -181,15 +181,15 @@ class Error(HiSLIPError):
             control_code: The control code from the server response.
             reason: Additional information to display in exception string.
         """
-        super().__init__(MessageType.Error, control_code, reason)
+        super().__init__(HiSLIPMessageType.Error, control_code, reason)
 
 
-class Message:
+class HiSLIPMessage:
     """A HiSLIP message."""
 
     header: Struct = Struct("!2s2BIQ")
     prologue: bytes = b"HS"
-    type: MessageType = MessageType.UNDEFINED
+    type: HiSLIPMessageType = HiSLIPMessageType.UNDEFINED
 
     def __init__(
         self, control_code: int = 0, parameter: int = 0, payload: bytes | bytearray | memoryview = b""
@@ -215,7 +215,7 @@ class Message:
             payload = f"payload[len={self.length_payload}]={self.payload[:25]!r}...{self.payload[-25:]!r}"
 
         name = self.type.name
-        return f"Message(type={name}, control_code={self.control_code}, parameter={self.parameter}, {payload})"
+        return f"HiSLIPMessage(type={name}, control_code={self.control_code}, parameter={self.parameter}, {payload})"
 
     @property
     def length_payload(self) -> int:
@@ -254,22 +254,22 @@ class Message:
         return self.header.size + self.length_payload
 
 
-class FatalErrorMessage(Message):
+class FatalErrorMessage(HiSLIPMessage):
     """FatalErrorMessage message."""
 
-    type: MessageType = MessageType.FatalError
+    type: HiSLIPMessageType = HiSLIPMessageType.FatalError
 
 
-class ErrorMessage(Message):
+class ErrorMessage(HiSLIPMessage):
     """ErrorMessage message."""
 
-    type: MessageType = MessageType.Error
+    type: HiSLIPMessageType = HiSLIPMessageType.Error
 
 
-class Initialize(Message):
+class Initialize(HiSLIPMessage):
     """Initialize message."""
 
-    type: MessageType = MessageType.Initialize
+    type: HiSLIPMessageType = HiSLIPMessageType.Initialize
 
     def __init__(self, major: int, minor: int, client_id: bytes, sub_address: bytes) -> None:
         """Create an Initialize message.
@@ -287,10 +287,10 @@ class Initialize(Message):
         (self.parameter,) = self.repack("!I", "!2B2s", major, minor, client_id)
 
 
-class InitializeResponse(Message):
+class InitializeResponse(HiSLIPMessage):
     """InitializeResponse message."""
 
-    type: MessageType = MessageType.InitializeResponse
+    type: HiSLIPMessageType = HiSLIPMessageType.InitializeResponse
 
     # Flags from Table 12 (Step 3), Section 6.1: Initialization Transaction
     _OVERLAP_MODE: int = 1 << 0
@@ -324,28 +324,28 @@ class InitializeResponse(Message):
         return _id
 
 
-class Data(Message):
+class Data(HiSLIPMessage):
     """Data message."""
 
-    type: MessageType = MessageType.Data
+    type: HiSLIPMessageType = HiSLIPMessageType.Data
 
 
-class DataEnd(Message):
+class DataEnd(HiSLIPMessage):
     """DataEnd message."""
 
-    type: MessageType = MessageType.DataEnd
+    type: HiSLIPMessageType = HiSLIPMessageType.DataEnd
 
 
-class AsyncLock(Message):
+class AsyncLock(HiSLIPMessage):
     """AsyncLock message."""
 
-    type: MessageType = MessageType.AsyncLock
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncLock
 
 
-class AsyncLockResponse(Message):
+class AsyncLockResponse(HiSLIPMessage):
     """AsyncLockResponse message."""
 
-    type: MessageType = MessageType.AsyncLockResponse
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncLockResponse
 
     # Table 19 and 20, Section 6.5: Lock Transaction
     _FAILURE: int = 0
@@ -374,16 +374,16 @@ class AsyncLockResponse(Message):
         return self.control_code == self._SHARED
 
 
-class AsyncLockInfo(Message):
+class AsyncLockInfo(HiSLIPMessage):
     """AsyncLockInfo message."""
 
-    type: MessageType = MessageType.AsyncLockInfo
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncLockInfo
 
 
-class AsyncLockInfoResponse(Message):
+class AsyncLockInfoResponse(HiSLIPMessage):
     """AsyncLockInfoResponse message."""
 
-    type: MessageType = MessageType.AsyncLockInfoResponse
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncLockInfoResponse
 
     @property
     def exclusive(self) -> bool:
@@ -396,28 +396,28 @@ class AsyncLockInfoResponse(Message):
         return self.parameter
 
 
-class AsyncRemoteLocalControl(Message):
+class AsyncRemoteLocalControl(HiSLIPMessage):
     """AsyncRemoteLocalControl message."""
 
-    type: MessageType = MessageType.AsyncRemoteLocalControl
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncRemoteLocalControl
 
 
-class AsyncRemoteLocalResponse(Message):
+class AsyncRemoteLocalResponse(HiSLIPMessage):
     """AsyncRemoteLocalResponse message."""
 
-    type: MessageType = MessageType.AsyncRemoteLocalResponse
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncRemoteLocalResponse
 
 
-class AsyncDeviceClear(Message):
+class AsyncDeviceClear(HiSLIPMessage):
     """AsyncDeviceClear message."""
 
-    type: MessageType = MessageType.AsyncDeviceClear
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncDeviceClear
 
 
-class AsyncDeviceClearAcknowledge(Message):
+class AsyncDeviceClearAcknowledge(HiSLIPMessage):
     """AsyncDeviceClearAcknowledge message."""
 
-    type: MessageType = MessageType.AsyncDeviceClearAcknowledge
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncDeviceClearAcknowledge
 
     @property
     def feature_bitmap(self) -> int:
@@ -425,34 +425,34 @@ class AsyncDeviceClearAcknowledge(Message):
         return self.control_code
 
 
-class DeviceClearComplete(Message):
+class DeviceClearComplete(HiSLIPMessage):
     """DeviceClearComplete message."""
 
-    type: MessageType = MessageType.DeviceClearComplete
+    type: HiSLIPMessageType = HiSLIPMessageType.DeviceClearComplete
 
 
-class DeviceClearAcknowledge(Message):
+class DeviceClearAcknowledge(HiSLIPMessage):
     """DeviceClearAcknowledge message."""
 
-    type: MessageType = MessageType.DeviceClearAcknowledge
+    type: HiSLIPMessageType = HiSLIPMessageType.DeviceClearAcknowledge
 
 
-class Trigger(Message):
+class Trigger(HiSLIPMessage):
     """Trigger message."""
 
-    type: MessageType = MessageType.Trigger
+    type: HiSLIPMessageType = HiSLIPMessageType.Trigger
 
 
-class AsyncMaximumMessageSize(Message):
+class AsyncMaximumMessageSize(HiSLIPMessage):
     """AsyncMaximumMessageSize message."""
 
-    type: MessageType = MessageType.AsyncMaximumMessageSize
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncMaximumMessageSize
 
 
-class AsyncMaximumMessageSizeResponse(Message):
+class AsyncMaximumMessageSizeResponse(HiSLIPMessage):
     """AsyncMaximumMessageSizeResponse message."""
 
-    type: MessageType = MessageType.AsyncMaximumMessageSizeResponse
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncMaximumMessageSizeResponse
 
     @property
     def maximum_message_size(self) -> int:
@@ -461,28 +461,28 @@ class AsyncMaximumMessageSizeResponse(Message):
         return size
 
 
-class GetDescriptors(Message):
+class GetDescriptors(HiSLIPMessage):
     """GetDescriptors message."""
 
-    type: MessageType = MessageType.GetDescriptors
+    type: HiSLIPMessageType = HiSLIPMessageType.GetDescriptors
 
 
-class GetDescriptorsResponse(Message):
+class GetDescriptorsResponse(HiSLIPMessage):
     """GetDescriptorsResponse message."""
 
-    type: MessageType = MessageType.GetDescriptorsResponse
+    type: HiSLIPMessageType = HiSLIPMessageType.GetDescriptorsResponse
 
 
-class AsyncInitialize(Message):
+class AsyncInitialize(HiSLIPMessage):
     """AsyncInitialize message."""
 
-    type: MessageType = MessageType.AsyncInitialize
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncInitialize
 
 
-class AsyncInitializeResponse(Message):
+class AsyncInitializeResponse(HiSLIPMessage):
     """AsyncInitializeResponse message."""
 
-    type: MessageType = MessageType.AsyncInitializeResponse
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncInitializeResponse
 
     # Flags from Table 3, Section 2.4: Summary of HiSLIP Messages
     SECURE_CONNECTION_SUPPORTED: int = 1 << 0
@@ -498,16 +498,16 @@ class AsyncInitializeResponse(Message):
         return pack("!H", self.parameter)
 
 
-class AsyncStatusQuery(Message):
+class AsyncStatusQuery(HiSLIPMessage):
     """AsyncStatusQuery message."""
 
-    type: MessageType = MessageType.AsyncStatusQuery
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncStatusQuery
 
 
-class AsyncStatusResponse(Message):
+class AsyncStatusResponse(HiSLIPMessage):
     """AsyncStatusResponse message."""
 
-    type: MessageType = MessageType.AsyncStatusResponse
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncStatusResponse
 
     @property
     def status(self) -> int:
@@ -515,22 +515,22 @@ class AsyncStatusResponse(Message):
         return self.control_code
 
 
-class StartTLS(Message):
+class StartTLS(HiSLIPMessage):
     """StartTLS message."""
 
-    type: MessageType = MessageType.StartTLS
+    type: HiSLIPMessageType = HiSLIPMessageType.StartTLS
 
 
-class AsyncStartTLS(Message):
+class AsyncStartTLS(HiSLIPMessage):
     """AsyncStartTLS message."""
 
-    type: MessageType = MessageType.AsyncStartTLS
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncStartTLS
 
 
-class AsyncStartTLSResponse(Message):
+class AsyncStartTLSResponse(HiSLIPMessage):
     """AsyncStartTLSResponse message."""
 
-    type: MessageType = MessageType.AsyncStartTLSResponse
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncStartTLSResponse
 
     @property
     def busy(self) -> bool:
@@ -548,22 +548,22 @@ class AsyncStartTLSResponse(Message):
         return self.control_code == 3  # noqa: PLR2004
 
 
-class EndTLS(Message):
+class EndTLS(HiSLIPMessage):
     """EndTLS message."""
 
-    type: MessageType = MessageType.EndTLS
+    type: HiSLIPMessageType = HiSLIPMessageType.EndTLS
 
 
-class AsyncEndTLS(Message):
+class AsyncEndTLS(HiSLIPMessage):
     """AsyncEndTLS message."""
 
-    type: MessageType = MessageType.AsyncEndTLS
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncEndTLS
 
 
-class AsyncEndTLSResponse(Message):
+class AsyncEndTLSResponse(HiSLIPMessage):
     """AsyncEndTLSResponse message."""
 
-    type: MessageType = MessageType.AsyncEndTLSResponse
+    type: HiSLIPMessageType = HiSLIPMessageType.AsyncEndTLSResponse
 
     @property
     def busy(self) -> bool:
@@ -581,16 +581,16 @@ class AsyncEndTLSResponse(Message):
         return self.control_code == 3  # noqa: PLR2004
 
 
-class GetSaslMechanismList(Message):
+class GetSaslMechanismList(HiSLIPMessage):
     """GetSaslMechanismList message."""
 
-    type: MessageType = MessageType.GetSaslMechanismList
+    type: HiSLIPMessageType = HiSLIPMessageType.GetSaslMechanismList
 
 
-class GetSaslMechanismListResponse(Message):
+class GetSaslMechanismListResponse(HiSLIPMessage):
     """GetSaslMechanismListResponse message."""
 
-    type: MessageType = MessageType.GetSaslMechanismListResponse
+    type: HiSLIPMessageType = HiSLIPMessageType.GetSaslMechanismListResponse
 
     @property
     def data(self) -> list[bytes]:
@@ -598,22 +598,22 @@ class GetSaslMechanismListResponse(Message):
         return bytes(self.payload).split()
 
 
-class AuthenticationStart(Message):
+class AuthenticationStart(HiSLIPMessage):
     """AuthenticationStart message."""
 
-    type: MessageType = MessageType.AuthenticationStart
+    type: HiSLIPMessageType = HiSLIPMessageType.AuthenticationStart
 
 
-class AuthenticationExchange(Message):
+class AuthenticationExchange(HiSLIPMessage):
     """AuthenticationExchange message."""
 
-    type: MessageType = MessageType.AuthenticationExchange
+    type: HiSLIPMessageType = HiSLIPMessageType.AuthenticationExchange
 
 
-class AuthenticationResult(Message):
+class AuthenticationResult(HiSLIPMessage):
     """AuthenticationResult message."""
 
-    type: MessageType = MessageType.AuthenticationResult
+    type: HiSLIPMessageType = HiSLIPMessageType.AuthenticationResult
 
     # Flags in Table 3, Section 2.4: Summary of HiSLIP Messages
     _FAILED: int = 1 << 0
@@ -728,15 +728,15 @@ class HiSLIPClient:
             size += received_size
         message.payload = payload
 
-        if typ == MessageType.FatalError:
+        if typ == HiSLIPMessageType.FatalError:
             raise FatalError(code, reason=payload.decode("ascii"))
 
-        if typ == MessageType.Error:
+        if typ == HiSLIPMessageType.Error:
             raise Error(code, reason=payload.decode("ascii"))
 
-        if message.type == MessageType.UNDEFINED:
+        if message.type == HiSLIPMessageType.UNDEFINED:
             try:
-                message.type = MessageType(typ)
+                message.type = HiSLIPMessageType(typ)
             except ValueError as e:
                 raise Error(ErrorType.BAD_MESSAGE_TYPE, reason=str(e)) from None
         elif message.type != typ:
@@ -772,7 +772,7 @@ class HiSLIPClient:
         """The reference to the socket."""
         return self._socket
 
-    def write(self, message: Message) -> None:
+    def write(self, message: HiSLIPMessage) -> None:
         """Write a message to the server.
 
         Args:
@@ -905,11 +905,11 @@ class SyncClient(HiSLIPClient):
         data = bytearray()
         t0 = time.time()
         while not_done:
-            msg = self.read(Message(), chunk_size=chunk_size)
+            msg = self.read(HiSLIPMessage(), chunk_size=chunk_size)
 
             # These 'if' statements follow the guidelines in
             # Section 3.1.2: Synchronized Mode Client Requirements
-            if msg.type == MessageType.DataEnd:
+            if msg.type == HiSLIPMessageType.DataEnd:
                 # 4. If the client initially detects AsyncInterrupted, it shall
                 # also discard any further Data or DataEND messages from the
                 # server until Interrupted is encountered.
@@ -932,7 +932,7 @@ class SyncClient(HiSLIPClient):
                 self._rmt = 1  # msg contains the Response Message Terminator (RMT)
                 not_done = False
 
-            elif msg.type == MessageType.Data:
+            elif msg.type == HiSLIPMessageType.Data:
                 # 4. If the client initially detects AsyncInterrupted, it shall
                 # also discard any further Data or DataEND messages from the
                 # server until Interrupted is encountered.
@@ -953,7 +953,7 @@ class SyncClient(HiSLIPClient):
                     data.clear()
                     continue
 
-            elif msg.type == MessageType.AsyncInterrupted:
+            elif msg.type == HiSLIPMessageType.AsyncInterrupted:
                 async_interrupted_received = True
 
                 # 4. When the client receives Interrupted or AsyncInterrupted,
@@ -974,7 +974,7 @@ class SyncClient(HiSLIPClient):
 
                 continue
 
-            elif msg.type == MessageType.Interrupted:
+            elif msg.type == HiSLIPMessageType.Interrupted:
                 interrupted_received = True
 
                 # 4. When the client receives Interrupted or AsyncInterrupted, it
@@ -1042,7 +1042,7 @@ class SyncClient(HiSLIPClient):
             raise RuntimeError(msg)
 
         view = memoryview(data)  # avoids unnecessarily copying of slices
-        max_size = self._maximum_server_message_size - Message.header.size
+        max_size = self._maximum_server_message_size - HiSLIPMessage.header.size
         remaining = len(data)
         while remaining > 0:
             if remaining > max_size:
@@ -1273,7 +1273,7 @@ class AsyncClient(HiSLIPClient):
         return self.read(AsyncEndTLSResponse())
 
 
-class HiSLIP(MessageBased, regex=REGEX):
+class HiSLIP(Message, regex=REGEX):
     """Base class for the HiSLIP communication protocol."""
 
     def __init__(self, equipment: Equipment) -> None:
@@ -1286,7 +1286,7 @@ class HiSLIP(MessageBased, regex=REGEX):
 
         A [Connection][msl.equipment.schema.Connection] instance supports the following _properties_
         for the HiSLIP communication protocol, as well as the _properties_ defined in
-        [MessageBased][msl.equipment.interfaces.message_based.MessageBased].
+        [Message][msl.equipment.interfaces.message.Message].
 
         Attributes: Connection Properties:
             buffer_size (int): The maximum number of bytes to read at a time. _Default: `4096`_
@@ -1354,7 +1354,7 @@ class HiSLIP(MessageBased, regex=REGEX):
         self._async.maximum_server_message_size = r.maximum_message_size
 
     def _set_interface_timeout(self) -> None:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         if not hasattr(self, "_async"):
             return
 
@@ -1401,7 +1401,7 @@ class HiSLIP(MessageBased, regex=REGEX):
         super().disconnect()
 
     def _read(self, size: int | None) -> bytes:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         try:
             return bytes(self._sync.receive(size=size, max_size=self._max_read_size, chunk_size=self._buffer_size))
         except HiSLIPError as e:
@@ -1434,7 +1434,7 @@ class HiSLIP(MessageBased, regex=REGEX):
                 if 0 < max_attempts <= attempt:
                     raise
 
-    def _send_fatal_error(self, message: Message) -> None:
+    def _send_fatal_error(self, message: HiSLIPMessage) -> None:
         # IVI-6.1: IVI High-Speed LAN Instrument Protocol (HiSLIP)
         # 23 April 2020 (Revision 2.0)
         # Section 6.2: Fatal Error Detection and Synchronization Recovery
@@ -1445,7 +1445,7 @@ class HiSLIP(MessageBased, regex=REGEX):
         self.disconnect()
 
     def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
-        """Overrides method in MessageBased."""
+        """Overrides method in `Message`."""
         try:
             return self._sync.send(message)
         except HiSLIPError as e:

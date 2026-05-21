@@ -8110,7 +8110,7 @@ i.e., <code>(current, latest, is_required)</code>.</p>
   </span>
 
 <a href="#msl.equipment_resources.picotech.picoscope.PicoScope.enumerate_units" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">enumerate_units</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n"><span title="msl.loadlib.types.PathLike">PathLike</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list">list</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">enumerate_units</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="msl.loadlib._types.PathLike" href="https://mslnz.github.io/msl-loadlib/latest/api/types/#msl.loadlib._types.PathLike">PathLike</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list">list</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -8138,7 +8138,7 @@ i.e., <code>(current, latest, is_required)</code>.</p>
                 <code>path</code>
             </td>
             <td>
-                  <code><span title="msl.loadlib.types.PathLike">PathLike</span></code>
+                  <code><a class="autorefs autorefs-external" title="msl.loadlib._types.PathLike" href="https://mslnz.github.io/msl-loadlib/latest/api/types/#msl.loadlib._types.PathLike">PathLike</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -17947,8 +17947,7 @@ is called.</p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2386</span>
-<span class="normal">2387</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2387</span>
 <span class="normal">2388</span>
 <span class="normal">2389</span>
 <span class="normal">2390</span>
@@ -17956,7 +17955,8 @@ is called.</p>
 <span class="normal">2392</span>
 <span class="normal">2393</span>
 <span class="normal">2394</span>
-<span class="normal">2395</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Channel</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="n">TriggerState</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;DONT_CARE&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">2395</span>
+<span class="normal">2396</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Channel</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="n">TriggerState</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;DONT_CARE&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger condition.</span>
 
 <span class="sd">    Args:</span>
@@ -18347,8 +18347,7 @@ Can be an enum member name (case insensitive) or value.</p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2492</span>
-<span class="normal">2493</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2493</span>
 <span class="normal">2494</span>
 <span class="normal">2495</span>
 <span class="normal">2496</span>
@@ -18361,7 +18360,8 @@ Can be an enum member name (case insensitive) or value.</p>
 <span class="normal">2503</span>
 <span class="normal">2504</span>
 <span class="normal">2505</span>
-<span class="normal">2506</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">2506</span>
+<span class="normal">2507</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">direction</span><span class="p">:</span> <span class="n">DigitalDirection</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
@@ -18629,8 +18629,7 @@ Can be an enum member name (case insensitive) or value.</p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2410</span>
-<span class="normal">2411</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2411</span>
 <span class="normal">2412</span>
 <span class="normal">2413</span>
 <span class="normal">2414</span>
@@ -18647,7 +18646,8 @@ Can be an enum member name (case insensitive) or value.</p>
 <span class="normal">2425</span>
 <span class="normal">2426</span>
 <span class="normal">2427</span>
-<span class="normal">2428</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">2428</span>
+<span class="normal">2429</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Channel</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">direction</span><span class="p">:</span> <span class="n">ThresholdDirection</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">&quot;rising&quot;</span><span class="p">,</span>
@@ -20202,8 +20202,7 @@ the lower threshold before it will fire. It is scaled in 16-bit counts.</p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>packages/resources/src/msl/equipment_resources/picotech/picoscope.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2445</span>
-<span class="normal">2446</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2446</span>
 <span class="normal">2447</span>
 <span class="normal">2448</span>
 <span class="normal">2449</span>
@@ -20235,7 +20234,8 @@ the lower threshold before it will fire. It is scaled in 16-bit counts.</p>
 <span class="normal">2475</span>
 <span class="normal">2476</span>
 <span class="normal">2477</span>
-<span class="normal">2478</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">2478</span>
+<span class="normal">2479</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">threshold_upper</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">threshold_upper_hysteresis</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>

@@ -6758,8 +6758,8 @@ not implemented.</p>
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
     <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;data_bits&quot;</span><span class="p">,</span> <span class="n">DataBits</span><span class="o">.</span><span class="n">SEVEN</span><span class="p">)</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">read_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">write_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_read_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -13033,8 +13033,8 @@ member name or value. For example, <code>SignalMode.OFF</code>, <code>1</code>, 
 <span class="sd">        channel: The channel number.</span>
 <span class="sd">        enable: Whether to enable or disable the valve state.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">channel</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportUnnecessaryComparison]</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>  <span class="c1"># pyright: ignore[reportUnreachable]</span>
+    <span class="k">if</span> <span class="n">channel</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># type: ignore[comparison-overlap]  # pyright: ignore[reportUnnecessaryComparison]</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>  <span class="c1"># type: ignore[unreachable]  # pyright: ignore[reportUnreachable]</span>
             <span class="s2">&quot;The manual indicates that you can specify channel=0 &quot;</span>
             <span class="s2">&quot;to set both valves simultaneously, but that does not work&quot;</span>
         <span class="p">)</span>

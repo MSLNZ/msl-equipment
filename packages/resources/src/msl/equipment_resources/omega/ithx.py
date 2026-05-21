@@ -102,14 +102,14 @@ class ITHX(Socket, manufacturer=r"OMEGA", model=r"iTHX-[2DMSW][3D]?", flags=re.I
                 _ = sock.send(pw.encode() + b"\r")
                 reply = sock.recv(256)
                 if b"failure" in reply or b"Invalid" in reply:
-                    reply = "Invalid iTHX telnet password"
-                    raise MSLConnectionError(self, reply)
+                    msg = "Invalid iTHX telnet password"
+                    raise MSLConnectionError(self, msg)
 
                 _ = sock.send(b"reset\r")
                 reply = sock.recv(256)
                 if reply.startswith(b"WRONG_CMD"):
-                    reply = "iTHX device does not support the RESET command"
-                    raise MSLConnectionError(self, reply)
+                    msg = "iTHX device does not support the RESET command"
+                    raise MSLConnectionError(self, msg)
 
         # The manual indicates that iTHX-W3, iTHX-D3, iTHX-SD and iTHX-M accept the *SRYRST command
         reply = self.query("*SRYRST").strip()

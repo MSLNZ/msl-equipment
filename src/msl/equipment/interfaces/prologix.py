@@ -226,22 +226,22 @@ class Prologix(Interface, regex=REGEX):
             _ = self._controller.write(self._addr)
 
     def _read(self, size: int | None) -> bytes:
-        # Called in `MultiMessage`
+        # Called in `MultiInterface`
         # Don't call self._controller.read because "++read eoi" must be sent
         return self.read(size=size, decode=False)
 
     def _set_interface_max_read_size(self) -> None:
-        # Called in MultiMessage.__init__().
+        # Called in MultiInterface.__init__().
         # Here it's a no operation since self._controller gets the appropriate max_read_size when it is created.
         return
 
     def _set_interface_timeout(self) -> None:
-        # Called in MultiMessage.__init__().
+        # Called in MultiInterface.__init__().
         # Here it's a no operation since self._controller gets the appropriate timeout when it is created.
         return
 
     def _write(self, message: bytes) -> int:
-        # Called in `MultiMessage`
+        # Called in `MultiInterface`
         # Don't call self._controller.write because the message must be checked for characters that must be escaped
         return self.write(message)
 

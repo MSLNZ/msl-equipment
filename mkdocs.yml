@@ -166,7 +166,7 @@ nav:
     - Vaisala:
       - resources/vaisala/ptb330.md
       - resources/vaisala/ptu300.md
-    - resources/multi_message.md
+    - resources/multi_interface.md
     - resources/typing.md
   - Validate: validate.md
   - WebApp: webapp.md

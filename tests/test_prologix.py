@@ -102,7 +102,7 @@ def test_connection_message_attributes() -> None:
             continue
         assert attr in dir_mb
 
-    # as well as these private methods that are called by `MultiMessage`
+    # as well as these private methods that are called by `MultiInterface`
     assert "_read" in dir_p
     assert "_set_interface_max_read_size" in dir_p
     assert "_set_interface_timeout" in dir_p

@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import TYPE_CHECKING, overload
 
-from msl.equipment_resources.multi_message import MultiMessage
+from msl.equipment_resources.multi_interface import MultiInterface
 
 from msl.equipment.interfaces import MSLConnectionError
 from msl.equipment.utils import to_enum
@@ -103,7 +103,7 @@ class MilliKDevice:
     firmware: str
 
 
-class MilliK(MultiMessage, manufacturer=r"Iso.*Tech.*", model=r"milli.*K.*", flags=re.IGNORECASE):
+class MilliK(MultiInterface, manufacturer=r"Iso.*Tech.*", model=r"milli.*K.*", flags=re.IGNORECASE):
     """[IsoTech](https://isotech.co.uk/) milliK Precision Thermometer."""
 
     def __init__(self, equipment: Equipment) -> None:

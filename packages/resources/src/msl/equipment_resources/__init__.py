@@ -12,6 +12,7 @@ from .energetiq import EQ99
 from .greisinger import GMH3000
 from .isotech import MilliK
 from .mks import PR4000B
+from .multi_interface import MultiInterface
 from .nkt import NKT, NKTDLL, SuperK
 from .omega import ITHX
 from .optosigma import SHOT702
@@ -47,6 +48,7 @@ __all__: list[str] = [
     "FWxx2C",
     "MXSeries",
     "MilliK",
+    "MultiInterface",
     "OLxxA",
     "PicoScope",
     "PrincetonInstruments",

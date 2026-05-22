@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-class MultiMessage(Message, append=False):
+class MultiInterface(Message, append=False):
     """A resource that supports multiple interfaces for message-based communication."""
 
     def __init__(self, equipment: Equipment) -> None:

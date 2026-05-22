@@ -4677,14 +4677,14 @@
   
   
     <li class="md-nav__item">
-      <a href="multi_message/" class="md-nav__link">
+      <a href="multi_interface/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    MultiMessage
+    MultiInterface
   
 
     
@@ -4968,10 +4968,10 @@
 <p>Add at least one example on how to use the resource to the <code>packages/resources/examples</code> directory. Create a new <em>manufacturer</em> sub-directory if it does not already exist.</p>
 </li>
 <li>
-<p>From the <code>packages/resources</code> directory, lint <code>uv run ruff check</code>, format <code>uv run ruff format</code> and type check <code>uv run basedpyright</code>, <code>uv run mypy .</code> the code. These checks are also performed once you do Step 12. Type checking with <a href="https://mypy.readthedocs.io/en/stable/index.html" target="_blank">mypy</a> requires the <code>MYPYPATH=src</code> environment variable to be defined to fix the <em>Source file found twice under different module names</em> issue.</p>
+<p>From the root directory of the repository, lint <code>uv run ruff check</code>, format <code>uv run ruff format</code> and type check <code>uv run basedpyright</code>, <code>uv run mypy .</code> the code. These checks are also performed once you do Step 12.</p>
 </li>
 <li>
-<p>If you are able to create a test for the new resource, that does not depend on the equipment being attached to a computer, add a test to the <code>packages/resources/tests</code> directory. Run <code>uv run pytest</code> to verify the tests pass.</p>
+<p>If you are able to create a test for the new resource, that does not depend on the equipment being attached to a computer, add a test to the <code>packages/resources/tests</code> directory. From the root directory of the repository, run <code>uv run pytest</code> to verify the tests pass.</p>
 </li>
 <li>
 <p>To add the resource to the documentation, create a new Markdown file in the <code>docs/resources</code> directory. The format follows the <code>docs/resources/MANUFACTURER/MODEL.md</code> structure. Also, add the new resource, alphabetically, to the <em>nav:</em> &rarr; <em>Resources:</em> &rarr; <em>MANUFACTURER:</em> section in the <code>mkdocs.yml</code> file. Follow what is done for the other resources.</p>
@@ -4993,8 +4993,8 @@
 <p>If the equipment supports multiple interfaces for message-based protocols (e.g., <a class="autorefs autorefs-internal" title="            Socket
 (Message)" href="../api/interfaces/socket/#msl.equipment.interfaces.socket.Socket">Socket</a>, <a class="autorefs autorefs-internal" title="            Serial
 (Message)" href="../api/interfaces/serial/#msl.equipment.interfaces.serial.Serial">Serial</a>, <a class="autorefs autorefs-internal" title="            GPIB
-(Message)" href="../api/interfaces/gpib/#msl.equipment.interfaces.gpib.GPIB">GPIB</a>, ...) you can create a resource that inherits from the <a class="autorefs autorefs-internal" title="            MultiMessage
-(Message)" href="multi_message/#msl.equipment_resources.multi_message.MultiMessage">MultiMessage</a> class. Upon calling <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#super">super</a> in the subclass, the connection is established with the appropriate protocol class.</p>
+(Message)" href="../api/interfaces/gpib/#msl.equipment.interfaces.gpib.GPIB">GPIB</a>, ...) you can create a resource that inherits from the <a class="autorefs autorefs-internal" title="            MultiInterface
+(Message)" href="multi_interface/#msl.equipment_resources.multi_interface.MultiInterface">MultiInterface</a> class. Upon calling <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#super">super</a> in the subclass, the connection is established with the appropriate interface class.</p>
 
 
 

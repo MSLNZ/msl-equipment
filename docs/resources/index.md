@@ -81,9 +81,9 @@ When adding a new resource to the [repository]{:target="_blank"} the following s
 
 5. Add at least one example on how to use the resource to the `packages/resources/examples` directory. Create a new *manufacturer* sub-directory if it does not already exist.
 
-6. From the `packages/resources` directory, lint `uv run ruff check`, format `uv run ruff format` and type check `uv run basedpyright`, `uv run mypy .` the code. These checks are also performed once you do Step 12. Type checking with [mypy]{:target="_blank"} requires the `MYPYPATH=src` environment variable to be defined to fix the *Source file found twice under different module names* issue.
+6. From the root directory of the repository, lint `uv run ruff check`, format `uv run ruff format` and type check `uv run basedpyright`, `uv run mypy .` the code. These checks are also performed once you do Step 12.
 
-7. If you are able to create a test for the new resource, that does not depend on the equipment being attached to a computer, add a test to the `packages/resources/tests` directory. Run `uv run pytest` to verify the tests pass.
+7. If you are able to create a test for the new resource, that does not depend on the equipment being attached to a computer, add a test to the `packages/resources/tests` directory. From the root directory of the repository, run `uv run pytest` to verify the tests pass.
 
 8. To add the resource to the documentation, create a new Markdown file in the `docs/resources` directory. The format follows the `docs/resources/MANUFACTURER/MODEL.md` structure. Also, add the new resource, alphabetically, to the *nav:* &rarr; *Resources:* &rarr; *MANUFACTURER:* section in the `mkdocs.yml` file. Follow what is done for the other resources.
 

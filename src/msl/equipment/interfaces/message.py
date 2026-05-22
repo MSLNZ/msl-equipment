@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from typing import Literal
 
     from msl.equipment.schema import Equipment
-    from msl.equipment.typing import MessageDataType, MessageFormat, NumpyArray1D, Sequence1D
+    from msl.equipment.typing import MessageDataFormat, MessageDataType, NumpyArray1D, Sequence1D
 
 
 class Message(Interface, append=False):
@@ -142,7 +142,7 @@ class Message(Interface, append=False):
         delay: float = 0.0,
         decode: Literal[True] = True,
         dtype: None = None,
-        fmt: MessageFormat = ...,
+        fmt: MessageDataFormat = ...,
         size: int | None = ...,
     ) -> str: ...
 
@@ -154,7 +154,7 @@ class Message(Interface, append=False):
         delay: float = 0.0,
         decode: Literal[False] = False,
         dtype: None = None,
-        fmt: MessageFormat = ...,
+        fmt: MessageDataFormat = ...,
         size: int | None = ...,
     ) -> bytes: ...
 
@@ -166,7 +166,7 @@ class Message(Interface, append=False):
         delay: float = 0.0,
         decode: bool = ...,
         dtype: MessageDataType = ...,
-        fmt: MessageFormat = ...,
+        fmt: MessageDataFormat = ...,
         size: int | None = ...,
     ) -> NumpyArray1D: ...
 
@@ -177,7 +177,7 @@ class Message(Interface, append=False):
         delay: float = 0.0,
         decode: bool = True,
         dtype: MessageDataType | None = None,
-        fmt: MessageFormat = None,
+        fmt: MessageDataFormat = None,
         size: int | None = None,
     ) -> bytes | str | NumpyArray1D:
         """Convenience method for performing a [write][msl.equipment.interfaces.message.Message.write]
@@ -194,7 +194,7 @@ class Message(Interface, append=False):
                 [int][] or [float][] class to convert the message to the appropriate numeric type.
                 See [MessageDataType][msl.equipment.typing.MessageDataType] for more details.
             fmt: The format that the returned message data is in. Ignored if `dtype` is `None`.
-                See [MessageFormat][msl.equipment.typing.MessageFormat] for more details.
+                See [MessageDataFormat][msl.equipment.typing.MessageDataFormat] for more details.
             size: The number of bytes to read. Ignored if the value is `None`.
 
         Returns:
@@ -215,7 +215,7 @@ class Message(Interface, append=False):
         *,
         decode: Literal[True] = True,
         dtype: None = None,
-        fmt: MessageFormat = ...,
+        fmt: MessageDataFormat = ...,
         size: int | None = ...,
     ) -> str: ...
 
@@ -225,7 +225,7 @@ class Message(Interface, append=False):
         *,
         decode: Literal[False] = False,
         dtype: None = None,
-        fmt: MessageFormat = ...,
+        fmt: MessageDataFormat = ...,
         size: int | None = ...,
     ) -> bytes: ...
 
@@ -235,7 +235,7 @@ class Message(Interface, append=False):
         *,
         decode: bool = ...,
         dtype: MessageDataType = ...,
-        fmt: MessageFormat = ...,
+        fmt: MessageDataFormat = ...,
         size: int | None = ...,
     ) -> NumpyArray1D: ...
 
@@ -244,7 +244,7 @@ class Message(Interface, append=False):
         *,
         decode: bool = True,
         dtype: MessageDataType | None = None,
-        fmt: MessageFormat = None,
+        fmt: MessageDataFormat = None,
         size: int | None = None,
     ) -> bytes | str | NumpyArray1D:
         """Read a message from the equipment.
@@ -276,7 +276,7 @@ class Message(Interface, append=False):
                 [int][] or [float][] class to convert the message to the appropriate numeric type.
                 See [MessageDataType][msl.equipment.typing.MessageDataType] for more details.
             fmt: The format that the returned message data is in. Ignored if `dtype` is `None`.
-                See [MessageFormat][msl.equipment.typing.MessageFormat] for more details.
+                See [MessageDataFormat][msl.equipment.typing.MessageDataFormat] for more details.
             size: The number of bytes to read. Ignored if the value is `None`.
 
         Returns:
@@ -368,18 +368,23 @@ class Message(Interface, append=False):
         *,
         data: Sequence1D | None = None,
         dtype: MessageDataType = "<f",
-        fmt: MessageFormat = "ieee",
+        fmt: MessageDataFormat = "ieee",
     ) -> int:
         """Write a message to the equipment.
 
         Args:
             message: The message to write to the equipment.
             data: The data to append to `message`.
-            dtype: The data type to use to convert each element in `data` to bytes. Ignored
-                if `data` is `None`. See [MessageDataType][msl.equipment.typing.MessageDataType]
-                for more details.
+            dtype: The data type to use to convert each element in `data` to bytes. Ignored if `data`
+                is `None`. If the `fmt` value is `ascii` then the `dtype` value must be a [str][] and
+                it is used as the `format_spec` argument in [format][] to convert each element in `data`
+                to a string (e.g., `dtype='.2e'` converts each element to scientific notation with two
+                digits after the decimal point). For all other values of `fmt` the data type can be any
+                object that numpy [dtype][numpy.dtype] supports, e.g., `'H'`, `'uint16'` and
+                [ushort][numpy.ushort] are equivalent values to convert each element to an *unsigned short*.
+                See [MessageDataType][msl.equipment.typing.MessageDataType] for more details.
             fmt: The format to use to convert `data` to bytes. Ignored if `data` is `None`.
-                See [MessageFormat][msl.equipment.typing.MessageFormat] for more details.
+                See [MessageDataFormat][msl.equipment.typing.MessageDataFormat] for more details.
 
         Returns:
             The number of bytes written.

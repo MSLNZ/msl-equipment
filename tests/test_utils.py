@@ -175,11 +175,13 @@ def test_to_bytes_ieee() -> None:
     assert to_bytes(range(10), fmt="ieee", dtype=">f") == expected
     assert to_bytes(list(range(10)), fmt="ieee", dtype=">f") == expected
     assert to_bytes(np.array(range(10)), fmt="ieee", dtype=">f") == expected
+    assert to_bytes(range(10), fmt="ieee", dtype=np.dtype(">f")) == expected
 
     expected = b"#220\x00\x00\x01\x00\x02\x00\x03\x00\x04\x00\x05\x00\x06\x00\x07\x00\x08\x00\t\x00"
     assert to_bytes(range(10), fmt="ieee", dtype=np.uint16) == expected
     assert to_bytes(list(range(10)), fmt="ieee", dtype="ushort") == expected
     assert to_bytes(np.array(range(10)), fmt="ieee", dtype="H") == expected
+    assert to_bytes(np.array(range(10)), fmt="ieee", dtype=np.dtype(np.uint16)) == expected
 
     expected = b"#15\x01\x00\x01\x01\x00"
     assert to_bytes([True, False, True, True, False], fmt="ieee", dtype=np.uint8) == expected
@@ -242,7 +244,7 @@ def test_to_bytes_raises() -> None:
     with pytest.raises(ValueError, match=r"Unknown format code 'H'"):
         _ = to_bytes(range(10), fmt="ascii", dtype="H")
 
-    with pytest.raises(TypeError, match=r"dtype must be of type str"):
+    with pytest.raises(TypeError, match=r"dtype must be a string for the `ascii` format"):
         _ = to_bytes(range(10), fmt="ascii", dtype=float)
 
     with pytest.raises(OverflowError, match=r"length too big for IEEE-488.2 specification"):

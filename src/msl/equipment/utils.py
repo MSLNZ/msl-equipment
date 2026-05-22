@@ -16,7 +16,7 @@ from xml.etree.ElementTree import XML, ParseError
 import numpy as np
 
 if TYPE_CHECKING:
-    from .typing import EnumType, MessageDataType, MessageFormat, NumpyArray1D, Sequence1D
+    from .typing import EnumType, MessageDataFormat, MessageDataType, NumpyArray1D, Sequence1D
 
 
 logger = logging.getLogger(__package__)
@@ -91,7 +91,7 @@ def to_primitive(text: str | bytes) -> bool | float | str:
     return text
 
 
-def to_bytes(seq: Sequence1D, *, fmt: MessageFormat = None, dtype: MessageDataType = "<f") -> bytes:
+def to_bytes(seq: Sequence1D, *, fmt: MessageDataFormat = None, dtype: MessageDataType = "<f") -> bytes:
     """Convert a sequence of numbers into bytes.
 
     Args:
@@ -104,7 +104,7 @@ def to_bytes(seq: Sequence1D, *, fmt: MessageFormat = None, dtype: MessageDataTy
     """
     if fmt == "ascii":
         if not isinstance(dtype, str):
-            msg = f"dtype must be of type str, got {type(dtype)}"
+            msg = f"dtype must be a string for the `ascii` format, got {type(dtype)}"
             raise TypeError(msg)
 
         format_spec = dtype.lstrip("@=<>!")
@@ -135,7 +135,7 @@ def to_bytes(seq: Sequence1D, *, fmt: MessageFormat = None, dtype: MessageDataTy
 
 
 def from_bytes(  # noqa: C901, PLR0912, PLR0915
-    buffer: bytes | bytearray | str, fmt: MessageFormat = "ieee", dtype: MessageDataType = "<f"
+    buffer: bytes | bytearray | str, fmt: MessageDataFormat = "ieee", dtype: MessageDataType = "<f"
 ) -> NumpyArray1D:
     """Convert bytes into an array.
 

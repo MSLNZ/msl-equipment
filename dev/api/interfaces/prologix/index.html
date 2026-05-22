@@ -1931,14 +1931,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../types/" class="md-nav__link">
+      <a href="../../typing/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    types
+    typing
   
 
     
@@ -5062,14 +5062,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/multi_message_based/" class="md-nav__link">
+      <a href="../../../resources/multi_message/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    MultiMessageBased
+    MultiMessage
   
 
     
@@ -5090,14 +5090,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../resources/types/" class="md-nav__link">
+      <a href="../../../resources/typing/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    types
+    typing
   
 
     
@@ -5654,9 +5654,9 @@ GPIB Address) is an integer value between 96 and 126 (SAD is optional). For exam
         <p>A <a class="autorefs autorefs-internal" title="            Connection" href="../../connection/#msl.equipment.schema.Connection">Connection</a> instance supports the following <em>properties</em>
 for using Prologix hardware, as well as the <em>properties</em> defined in
 <a class="autorefs autorefs-internal" title="            Serial
-(MessageBased)" href="../serial/#msl.equipment.interfaces.serial.Serial">Serial</a> (for a GPIB-USB Controller) and in
+(Message)" href="../serial/#msl.equipment.interfaces.serial.Serial">Serial</a> (for a GPIB-USB Controller) and in
 <a class="autorefs autorefs-internal" title="            Socket
-(MessageBased)" href="../socket/#msl.equipment.interfaces.socket.Socket">Socket</a> (for a GPIB-ETHERNET Controller).</p>
+(Message)" href="../socket/#msl.equipment.interfaces.socket.Socket">Socket</a> (for a GPIB-ETHERNET Controller).</p>
 
 
 <p><span class="doc-section-title">Connection Properties:</span></p>
@@ -6062,8 +6062,8 @@ to re-enable it afterwards. Only the <code>escape_characters</code> property is 
 
 <a href="#msl.equipment.interfaces.prologix.Prologix.controller" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="n">controller</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Serial
-(MessageBased) (msl.equipment.interfaces.serial.Serial)" href="../serial/#msl.equipment.interfaces.serial.Serial">Serial</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            Socket
-(MessageBased) (msl.equipment.interfaces.socket.Socket)" href="../socket/#msl.equipment.interfaces.socket.Socket">Socket</a></span>
+(Message) (msl.equipment.interfaces.serial.Serial)" href="../serial/#msl.equipment.interfaces.serial.Serial">Serial</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            Socket
+(Message) (msl.equipment.interfaces.socket.Socket)" href="../socket/#msl.equipment.interfaces.socket.Socket">Socket</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6394,9 +6394,9 @@ for the <em>serial_poll</em> command, <a class="autorefs autorefs-internal" titl
 
         <p>Disconnect from the equipment.</p>
 <p>Calling this method does not close the underlying <a class="autorefs autorefs-internal" title="            Serial
-(MessageBased)" href="../serial/#msl.equipment.interfaces.serial.Serial">Serial</a>
+(Message)" href="../serial/#msl.equipment.interfaces.serial.Serial">Serial</a>
 or <a class="autorefs autorefs-internal" title="            Socket
-(MessageBased)" href="../socket/#msl.equipment.interfaces.socket.Socket">Socket</a> connection to the Prologix Controller since
+(Message)" href="../socket/#msl.equipment.interfaces.socket.Socket">Socket</a> connection to the Prologix Controller since
 the connection to the Prologix Controller may still be required to send messages to other GPIB
 devices that are attached to the Controller.</p>
 
@@ -6686,12 +6686,12 @@ least 150 microseconds.</p>
     <span class="n">delay</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="n">decode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageFormat
+    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment._types.MessageFormat)" href="../../types/#msl.equipment._types.MessageFormat">MessageFormat</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
 </code></pre></div><div class="doc-signature highlight"><pre><span></span><code><span class="nf">query</span><span class="p">(</span>
@@ -6700,12 +6700,12 @@ least 150 microseconds.</p>
     <span class="n">delay</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="n">decode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageFormat
+    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment._types.MessageFormat)" href="../../types/#msl.equipment._types.MessageFormat">MessageFormat</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span>
 </code></pre></div><div class="doc-signature highlight"><pre><span></span><code><span class="nf">query</span><span class="p">(</span>
@@ -6718,20 +6718,20 @@ least 150 microseconds.</p>
 
   
       module-attribute
-   (msl.equipment._types.MessageDataType)" href="../../types/#msl.equipment._types.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageFormat
+   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment._types.MessageFormat)" href="../../types/#msl.equipment._types.MessageFormat">MessageFormat</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="            NumpyArray1D
 
 
   
       module-attribute
-   (msl.equipment._types.NumpyArray1D)" href="../../types/#msl.equipment._types.NumpyArray1D">NumpyArray1D</a></span>
+   (msl.equipment.typing.NumpyArray1D)" href="../../typing/#msl.equipment.typing.NumpyArray1D">NumpyArray1D</a></span>
 </code></pre></div>          </div>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">query</span><span class="p">(</span>
     <span class="n">message</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
@@ -6743,20 +6743,20 @@ least 150 microseconds.</p>
 
   
       module-attribute
-   (msl.equipment._types.MessageDataType)" href="../../types/#msl.equipment._types.MessageDataType">MessageDataType</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageFormat
+   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment._types.MessageFormat)" href="../../types/#msl.equipment._types.MessageFormat">MessageFormat</a></span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            NumpyArray1D
 
 
   
       module-attribute
-   (msl.equipment._types.NumpyArray1D)" href="../../types/#msl.equipment._types.NumpyArray1D">NumpyArray1D</a></span>
+   (msl.equipment.typing.NumpyArray1D)" href="../../typing/#msl.equipment.typing.NumpyArray1D">NumpyArray1D</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6835,7 +6835,7 @@ or keep the message as <a class="autorefs autorefs-external" href="https://docs.
 
   
       module-attribute
-   (msl.equipment._types.MessageDataType)" href="../../types/#msl.equipment._types.MessageDataType">MessageDataType</a> | None</code>
+   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6848,7 +6848,7 @@ See <a class="autorefs autorefs-internal" title="            MessageDataType
 
   
       module-attribute
-  " href="../../types/#msl.equipment._types.MessageDataType">MessageDataType</a> for more details.</p>
+  " href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a> for more details.</p>
               </div>
             </td>
             <td>
@@ -6860,22 +6860,22 @@ See <a class="autorefs autorefs-internal" title="            MessageDataType
                 <code>fmt</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            MessageFormat
+                  <code><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment._types.MessageFormat)" href="../../types/#msl.equipment._types.MessageFormat">MessageFormat</a></code>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></code>
             </td>
             <td>
               <div class="doc-md-description">
                 <p>The format that the returned message data is in. Ignored if <code>dtype</code> is <code>None</code>.
-See <a class="autorefs autorefs-internal" title="            MessageFormat
+See <a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-  " href="../../types/#msl.equipment._types.MessageFormat">MessageFormat</a> for more details.</p>
+  " href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a> for more details.</p>
               </div>
             </td>
             <td>
@@ -6918,7 +6918,7 @@ See <a class="autorefs autorefs-internal" title="            MessageFormat
 
   
       module-attribute
-   (msl.equipment._types.NumpyArray1D)" href="../../types/#msl.equipment._types.NumpyArray1D">NumpyArray1D</a></code>
+   (msl.equipment.typing.NumpyArray1D)" href="../../typing/#msl.equipment.typing.NumpyArray1D">NumpyArray1D</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6988,7 +6988,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="n">delay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="n">decode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">MessageDataType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageFormat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">NumpyArray1D</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convenience method for performing a [write][msl.equipment.interfaces.prologix.Prologix.write]</span>
@@ -7003,9 +7003,9 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 <span class="sd">            [dtype][numpy.dtype] supports. For messages that are of scalar type (i.e., a single number)</span>
 <span class="sd">            it is more efficient to not specify `dtype` but to pass the returned message to the</span>
 <span class="sd">            [int][] or [float][] class to convert the message to the appropriate numeric type.</span>
-<span class="sd">            See [MessageDataType][msl.equipment._types.MessageDataType] for more details.</span>
+<span class="sd">            See [MessageDataType][msl.equipment.typing.MessageDataType] for more details.</span>
 <span class="sd">        fmt: The format that the returned message data is in. Ignored if `dtype` is `None`.</span>
-<span class="sd">            See [MessageFormat][msl.equipment._types.MessageFormat] for more details.</span>
+<span class="sd">            See [MessageDataFormat][msl.equipment.typing.MessageDataFormat] for more details.</span>
 <span class="sd">        size: The number of bytes to read. Ignored if the value is `None`.</span>
 
 <span class="sd">    Returns:</span>
@@ -7048,24 +7048,24 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="o">*</span><span class="p">,</span>
     <span class="n">decode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageFormat
+    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment._types.MessageFormat)" href="../../types/#msl.equipment._types.MessageFormat">MessageFormat</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
 </code></pre></div><div class="doc-signature highlight"><pre><span></span><code><span class="nf">read</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">decode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageFormat
+    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment._types.MessageFormat)" href="../../types/#msl.equipment._types.MessageFormat">MessageFormat</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span>
 </code></pre></div><div class="doc-signature highlight"><pre><span></span><code><span class="nf">read</span><span class="p">(</span>
@@ -7076,20 +7076,20 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 
   
       module-attribute
-   (msl.equipment._types.MessageDataType)" href="../../types/#msl.equipment._types.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageFormat
+   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment._types.MessageFormat)" href="../../types/#msl.equipment._types.MessageFormat">MessageFormat</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">...</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="            NumpyArray1D
 
 
   
       module-attribute
-   (msl.equipment._types.NumpyArray1D)" href="../../types/#msl.equipment._types.NumpyArray1D">NumpyArray1D</a></span>
+   (msl.equipment.typing.NumpyArray1D)" href="../../typing/#msl.equipment.typing.NumpyArray1D">NumpyArray1D</a></span>
 </code></pre></div>          </div>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">read</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
@@ -7099,26 +7099,26 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 
   
       module-attribute
-   (msl.equipment._types.MessageDataType)" href="../../types/#msl.equipment._types.MessageDataType">MessageDataType</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageFormat
+   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment._types.MessageFormat)" href="../../types/#msl.equipment._types.MessageFormat">MessageFormat</a></span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            NumpyArray1D
 
 
   
       module-attribute
-   (msl.equipment._types.NumpyArray1D)" href="../../types/#msl.equipment._types.NumpyArray1D">NumpyArray1D</a></span>
+   (msl.equipment.typing.NumpyArray1D)" href="../../typing/#msl.equipment.typing.NumpyArray1D">NumpyArray1D</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>Read a message from the equipment.</p>
-<p>See <a class="autorefs autorefs-internal" title="            read" href="../#msl.equipment.interfaces.message_based.MessageBased.read">MessageBased.read()</a> for more
+<p>See <a class="autorefs autorefs-internal" title="            read" href="../#msl.equipment.interfaces.message.Message.read">Message.read()</a> for more
 details about when this method returns.</p>
 <div class="admonition note">
 <p class="admonition-title">See Also</p>
@@ -7164,7 +7164,7 @@ or keep the message as <a class="autorefs autorefs-external" href="https://docs.
 
   
       module-attribute
-   (msl.equipment._types.MessageDataType)" href="../../types/#msl.equipment._types.MessageDataType">MessageDataType</a> | None</code>
+   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7177,7 +7177,7 @@ See <a class="autorefs autorefs-internal" title="            MessageDataType
 
   
       module-attribute
-  " href="../../types/#msl.equipment._types.MessageDataType">MessageDataType</a> for more details.</p>
+  " href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a> for more details.</p>
               </div>
             </td>
             <td>
@@ -7189,22 +7189,22 @@ See <a class="autorefs autorefs-internal" title="            MessageDataType
                 <code>fmt</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            MessageFormat
+                  <code><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment._types.MessageFormat)" href="../../types/#msl.equipment._types.MessageFormat">MessageFormat</a></code>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></code>
             </td>
             <td>
               <div class="doc-md-description">
                 <p>The format that the returned message data is in. Ignored if <code>dtype</code> is <code>None</code>.
-See <a class="autorefs autorefs-internal" title="            MessageFormat
+See <a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-  " href="../../types/#msl.equipment._types.MessageFormat">MessageFormat</a> for more details.</p>
+  " href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a> for more details.</p>
               </div>
             </td>
             <td>
@@ -7247,7 +7247,7 @@ See <a class="autorefs autorefs-internal" title="            MessageFormat
 
   
       module-attribute
-   (msl.equipment._types.NumpyArray1D)" href="../../types/#msl.equipment._types.NumpyArray1D">NumpyArray1D</a></code>
+   (msl.equipment.typing.NumpyArray1D)" href="../../typing/#msl.equipment.typing.NumpyArray1D">NumpyArray1D</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7304,12 +7304,12 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="o">*</span><span class="p">,</span>
     <span class="n">decode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">MessageDataType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageFormat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">NumpyArray1D</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Read a message from the equipment.</span>
 
-<span class="sd">    See [MessageBased.read()][msl.equipment.interfaces.message_based.MessageBased.read] for more</span>
+<span class="sd">    See [Message.read()][msl.equipment.interfaces.message.Message.read] for more</span>
 <span class="sd">    details about when this method returns.</span>
 
 <span class="sd">    !!! note &quot;See Also&quot;</span>
@@ -7322,9 +7322,9 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 <span class="sd">            [dtype][numpy.dtype] supports. For messages that are of scalar type (i.e., a single number)</span>
 <span class="sd">            it is more efficient to not specify `dtype` but to pass the returned message to the</span>
 <span class="sd">            [int][] or [float][] class to convert the message to the appropriate numeric type.</span>
-<span class="sd">            See [MessageDataType][msl.equipment._types.MessageDataType] for more details.</span>
+<span class="sd">            See [MessageDataType][msl.equipment.typing.MessageDataType] for more details.</span>
 <span class="sd">        fmt: The format that the returned message data is in. Ignored if `dtype` is `None`.</span>
-<span class="sd">            See [MessageFormat][msl.equipment._types.MessageFormat] for more details.</span>
+<span class="sd">            See [MessageDataFormat][msl.equipment.typing.MessageDataFormat] for more details.</span>
 <span class="sd">        size: The number of bytes to read. Ignored if the value is `None`.</span>
 
 <span class="sd">    Returns:</span>
@@ -8251,19 +8251,19 @@ if the SRQ line is not asserted. A value of <code>None</code> means wait forever
 
   
       module-attribute
-   (msl.equipment._types.Sequence1D)" href="../../types/#msl.equipment._types.Sequence1D">Sequence1D</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+   (msl.equipment.typing.Sequence1D)" href="../../typing/#msl.equipment.typing.Sequence1D">Sequence1D</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageDataType
 
 
   
       module-attribute
-   (msl.equipment._types.MessageDataType)" href="../../types/#msl.equipment._types.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="s2">&quot;&lt;f&quot;</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageFormat
+   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="s2">&quot;&lt;f&quot;</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment._types.MessageFormat)" href="../../types/#msl.equipment._types.MessageFormat">MessageFormat</a></span> <span class="o">=</span> <span class="s2">&quot;ieee&quot;</span>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="s2">&quot;ieee&quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
@@ -8319,7 +8319,7 @@ if the SRQ line is not asserted. A value of <code>None</code> means wait forever
 
   
       module-attribute
-   (msl.equipment._types.Sequence1D)" href="../../types/#msl.equipment._types.Sequence1D">Sequence1D</a> | None</code>
+   (msl.equipment.typing.Sequence1D)" href="../../typing/#msl.equipment.typing.Sequence1D">Sequence1D</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8340,18 +8340,23 @@ if the SRQ line is not asserted. A value of <code>None</code> means wait forever
 
   
       module-attribute
-   (msl.equipment._types.MessageDataType)" href="../../types/#msl.equipment._types.MessageDataType">MessageDataType</a></code>
+   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The data type to use to convert each element in <code>data</code> to bytes. Ignored
-if <code>data</code> is <code>None</code>. See <a class="autorefs autorefs-internal" title="            MessageDataType
+                <p>The data type to use to convert each element in <code>data</code> to bytes. Ignored if <code>data</code>
+is <code>None</code>. If the <code>fmt</code> value is <code>ascii</code> then the <code>dtype</code> value must be a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> and
+it is used as the <code>format_spec</code> argument in <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#format">format</a> to convert each element in <code>data</code>
+to a string (e.g., <code>dtype='.2e'</code> converts each element to scientific notation with two
+digits after the decimal point). For all other values of <code>fmt</code> the data type can be any
+object that numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype">dtype</a> supports, e.g., <code>'H'</code>, <code>'uint16'</code> and
+<a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.ushort">ushort</a> are equivalent values to convert each element to an <em>unsigned short</em>.
+See <a class="autorefs autorefs-internal" title="            MessageDataType
 
 
   
       module-attribute
-  " href="../../types/#msl.equipment._types.MessageDataType">MessageDataType</a>
-for more details.</p>
+  " href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a> for more details.</p>
               </div>
             </td>
             <td>
@@ -8363,22 +8368,22 @@ for more details.</p>
                 <code>fmt</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-internal" title="            MessageFormat
+                  <code><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment._types.MessageFormat)" href="../../types/#msl.equipment._types.MessageFormat">MessageFormat</a></code>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></code>
             </td>
             <td>
               <div class="doc-md-description">
                 <p>The format to use to convert <code>data</code> to bytes. Ignored if <code>data</code> is <code>None</code>.
-See <a class="autorefs autorefs-internal" title="            MessageFormat
+See <a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-  " href="../../types/#msl.equipment._types.MessageFormat">MessageFormat</a> for more details.</p>
+  " href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a> for more details.</p>
               </div>
             </td>
             <td>
@@ -8466,13 +8471,18 @@ See <a class="autorefs autorefs-internal" title="            MessageFormat
 <span class="normal">753</span>
 <span class="normal">754</span>
 <span class="normal">755</span>
-<span class="normal">756</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span>
+<span class="normal">756</span>
+<span class="normal">757</span>
+<span class="normal">758</span>
+<span class="normal">759</span>
+<span class="normal">760</span>
+<span class="normal">761</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">message</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Sequence1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">MessageDataType</span> <span class="o">=</span> <span class="s2">&quot;&lt;f&quot;</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageFormat</span> <span class="o">=</span> <span class="s2">&quot;ieee&quot;</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="s2">&quot;ieee&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a message to the equipment.</span>
 
@@ -8482,11 +8492,16 @@ See <a class="autorefs autorefs-internal" title="            MessageFormat
 <span class="sd">    Args:</span>
 <span class="sd">        message: The message to write to the equipment.</span>
 <span class="sd">        data: The data to append to `message`.</span>
-<span class="sd">        dtype: The data type to use to convert each element in `data` to bytes. Ignored</span>
-<span class="sd">            if `data` is `None`. See [MessageDataType][msl.equipment._types.MessageDataType]</span>
-<span class="sd">            for more details.</span>
+<span class="sd">        dtype: The data type to use to convert each element in `data` to bytes. Ignored if `data`</span>
+<span class="sd">            is `None`. If the `fmt` value is `ascii` then the `dtype` value must be a [str][] and</span>
+<span class="sd">            it is used as the `format_spec` argument in [format][] to convert each element in `data`</span>
+<span class="sd">            to a string (e.g., `dtype=&#39;.2e&#39;` converts each element to scientific notation with two</span>
+<span class="sd">            digits after the decimal point). For all other values of `fmt` the data type can be any</span>
+<span class="sd">            object that numpy [dtype][numpy.dtype] supports, e.g., `&#39;H&#39;`, `&#39;uint16&#39;` and</span>
+<span class="sd">            [ushort][numpy.ushort] are equivalent values to convert each element to an *unsigned short*.</span>
+<span class="sd">            See [MessageDataType][msl.equipment.typing.MessageDataType] for more details.</span>
 <span class="sd">        fmt: The format to use to convert `data` to bytes. Ignored if `data` is `None`.</span>
-<span class="sd">            See [MessageFormat][msl.equipment._types.MessageFormat] for more details.</span>
+<span class="sd">            See [MessageDataFormat][msl.equipment.typing.MessageDataFormat] for more details.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of bytes written.</span>

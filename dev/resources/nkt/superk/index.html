@@ -1926,14 +1926,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../api/types/" class="md-nav__link">
+      <a href="../../../api/typing/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    types
+    typing
   
 
     
@@ -4974,14 +4974,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../multi_message_based/" class="md-nav__link">
+      <a href="../../multi_message/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    MultiMessageBased
+    MultiMessage
   
 
     
@@ -5002,14 +5002,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../types/" class="md-nav__link">
+      <a href="../../typing/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    types
+    typing
   
 
     
@@ -6295,7 +6295,7 @@ the text on the front panel.</p>
 
         <p>Make sure that the interlock is okay.</p>
 <p>Raises <a class="autorefs autorefs-internal" title="            MSLConnectionError
-(OSError)" href="../../../api/exceptions/#msl.equipment.interfaces.message_based.MSLConnectionError">MSLConnectionError</a>
+(OSError)" href="../../../api/exceptions/#msl.equipment.interfaces.message.MSLConnectionError">MSLConnectionError</a>
 if it is not okay and it cannot be reset.</p>
 
 
@@ -6327,7 +6327,7 @@ if it is not okay and it cannot be reset.</p>
 <span class="normal">210</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ensure_interlock_ok</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Make sure that the interlock is okay.</span>
 
-<span class="sd">    Raises [MSLConnectionError][msl.equipment.interfaces.message_based.MSLConnectionError]</span>
+<span class="sd">    Raises [MSLConnectionError][msl.equipment.interfaces.message.MSLConnectionError]</span>
 <span class="sd">    if it is not okay and it cannot be reset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">register</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settings</span><span class="p">[</span><span class="n">_Key</span><span class="o">.</span><span class="n">interlock</span><span class="p">]</span>

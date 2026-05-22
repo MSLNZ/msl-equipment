@@ -1926,14 +1926,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../api/types/" class="md-nav__link">
+      <a href="../../../api/typing/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    types
+    typing
   
 
     
@@ -5981,14 +5981,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../multi_message_based/" class="md-nav__link">
+      <a href="../../multi_message/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    MultiMessageBased
+    MultiMessage
   
 
     
@@ -6009,14 +6009,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../types/" class="md-nav__link">
+      <a href="../../typing/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    types
+    typing
   
 
     
@@ -9239,7 +9239,7 @@ since <a class="autorefs autorefs-internal" title="            run_block" href="
 
   
       module-attribute
-   (msl.equipment_resources.types.PicoTechStreamingReadyCallback)" href="../../types/#msl.equipment_resources.types.PicoTechStreamingReadyCallback">PicoTechStreamingReadyCallback</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">strict</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span>
+   (msl.equipment_resources.typing.PicoTechStreamingReadyCallback)" href="../../typing/#msl.equipment_resources.typing.PicoTechStreamingReadyCallback">PicoTechStreamingReadyCallback</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">strict</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
@@ -9272,7 +9272,7 @@ beforehand to set up streaming.</p>
 
   
       module-attribute
-   (msl.equipment_resources.types.PicoTechStreamingReadyCallback)" href="../../types/#msl.equipment_resources.types.PicoTechStreamingReadyCallback">PicoTechStreamingReadyCallback</a></code>
+   (msl.equipment_resources.typing.PicoTechStreamingReadyCallback)" href="../../typing/#msl.equipment_resources.typing.PicoTechStreamingReadyCallback">PicoTechStreamingReadyCallback</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10170,7 +10170,7 @@ with bit 0 denoting Channel A (i.e., <code>(num_samples, overflow)</code>).</p>
 
   
       module-attribute
-   (msl.equipment_resources.types.PicoTechDataReadyCallback)" href="../../types/#msl.equipment_resources.types.PicoTechDataReadyCallback">PicoTechDataReadyCallback</a></span><span class="p">,</span>
+   (msl.equipment_resources.typing.PicoTechDataReadyCallback)" href="../../typing/#msl.equipment_resources.typing.PicoTechDataReadyCallback">PicoTechDataReadyCallback</a></span><span class="p">,</span>
     <span class="n">num_samples</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">start</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">factor</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -10208,7 +10208,7 @@ It returns the data to the callback.</p>
 
   
       module-attribute
-   (msl.equipment_resources.types.PicoTechDataReadyCallback)" href="../../types/#msl.equipment_resources.types.PicoTechDataReadyCallback">PicoTechDataReadyCallback</a></code>
+   (msl.equipment_resources.typing.PicoTechDataReadyCallback)" href="../../typing/#msl.equipment_resources.typing.PicoTechDataReadyCallback">PicoTechDataReadyCallback</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -11997,7 +11997,7 @@ corresponding to the proposed configuration.</p>
 <p>This function can be used to check that the already opened device is still
 connected to the USB port and communication is successful.</p>
 <p>Raises <a class="autorefs autorefs-internal" title="            MSLConnectionError
-(OSError)" href="../../../api/exceptions/#msl.equipment.interfaces.message_based.MSLConnectionError">MSLConnectionError</a>
+(OSError)" href="../../../api/exceptions/#msl.equipment.interfaces.message.MSLConnectionError">MSLConnectionError</a>
 if pinging was not successful.</p>
 
 
@@ -12018,7 +12018,7 @@ if pinging was not successful.</p>
 <span class="sd">    This function can be used to check that the already opened device is still</span>
 <span class="sd">    connected to the USB port and communication is successful.</span>
 
-<span class="sd">    Raises [MSLConnectionError][msl.equipment.interfaces.message_based.MSLConnectionError]</span>
+<span class="sd">    Raises [MSLConnectionError][msl.equipment.interfaces.message.MSLConnectionError]</span>
 <span class="sd">    if pinging was not successful.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="s2">&quot;PingUnit&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">)</span>
@@ -12112,7 +12112,7 @@ if pinging was not successful.</p>
 
   
       module-attribute
-   (msl.equipment_resources.types.PicoTechBlockReadyCallback)" href="../../types/#msl.equipment_resources.types.PicoTechBlockReadyCallback">PicoTechBlockReadyCallback</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+   (msl.equipment_resources.typing.PicoTechBlockReadyCallback)" href="../../typing/#msl.equipment_resources.typing.PicoTechBlockReadyCallback">PicoTechBlockReadyCallback</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">segment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
 </code></pre></div>
@@ -12160,7 +12160,7 @@ The value must be &ge; 0.</p>
 
   
       module-attribute
-   (msl.equipment_resources.types.PicoTechBlockReadyCallback)" href="../../types/#msl.equipment_resources.types.PicoTechBlockReadyCallback">PicoTechBlockReadyCallback</a> | None</code>
+   (msl.equipment_resources.typing.PicoTechBlockReadyCallback)" href="../../typing/#msl.equipment_resources.typing.PicoTechBlockReadyCallback">PicoTechBlockReadyCallback</a> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -20770,7 +20770,7 @@ within a single rapid block run.</p>
 
   
       module-attribute
-   (msl.equipment_resources.types.PicoTechBlockReadyCallback)" href="../../types/#msl.equipment_resources.types.PicoTechBlockReadyCallback">PicoTechBlockReadyCallback</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="ctypes._CFunctionType">_CFunctionType</span></span>
+   (msl.equipment_resources.typing.PicoTechBlockReadyCallback)" href="../../typing/#msl.equipment_resources.typing.PicoTechBlockReadyCallback">PicoTechBlockReadyCallback</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="ctypes._CFunctionType">_CFunctionType</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -20814,7 +20814,7 @@ for an example usage.</p>
 
   
       module-attribute
-   (msl.equipment_resources.types.PicoTechDataReadyCallback)" href="../../types/#msl.equipment_resources.types.PicoTechDataReadyCallback">PicoTechDataReadyCallback</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="ctypes._CFunctionType">_CFunctionType</span></span>
+   (msl.equipment_resources.typing.PicoTechDataReadyCallback)" href="../../typing/#msl.equipment_resources.typing.PicoTechDataReadyCallback">PicoTechDataReadyCallback</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="ctypes._CFunctionType">_CFunctionType</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -20858,7 +20858,7 @@ for an example usage.</p>
 
   
       module-attribute
-   (msl.equipment_resources.types.PicoTechStreamingReadyCallback)" href="../../types/#msl.equipment_resources.types.PicoTechStreamingReadyCallback">PicoTechStreamingReadyCallback</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="ctypes._CFunctionType">_CFunctionType</span></span>
+   (msl.equipment_resources.typing.PicoTechStreamingReadyCallback)" href="../../typing/#msl.equipment_resources.typing.PicoTechStreamingReadyCallback">PicoTechStreamingReadyCallback</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="ctypes._CFunctionType">_CFunctionType</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">

@@ -11,9 +11,7 @@ import re
 import time
 from typing import TYPE_CHECKING
 
-from msl.equipment_resources.multi_interface import MultiInterface
-
-from msl.equipment.interfaces import MSLConnectionError
+from msl.equipment.interfaces import MSLConnectionError, MultiInterface
 
 if TYPE_CHECKING:
     from typing import Literal

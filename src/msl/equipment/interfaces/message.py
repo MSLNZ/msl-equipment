@@ -11,7 +11,7 @@ from usb.core import (  # type: ignore[import-untyped]  # pyright: ignore[report
     USBTimeoutError,  # pyright: ignore[reportUnknownVariableType]
 )
 
-from msl.equipment.schema import Interface
+from msl.equipment.schema import Connection, Interface
 from msl.equipment.utils import from_bytes, logger, to_bytes
 
 if TYPE_CHECKING:
@@ -459,3 +459,70 @@ class MSLTimeoutError(TimeoutError):
 
         self.message: str = msg
         """[str][] &mdash; The error message."""
+
+
+class MultiInterface(Message, append=False):
+    """Base class for equipment that supports multiple message-based interfaces."""
+
+    def __init__(self, equipment: Equipment) -> None:
+        """Base class for equipment that supports multiple message-based interfaces.
+
+        If the equipment supports multiple interfaces for message-based protocols (e.g.,
+        [Socket][msl.equipment.interfaces.socket.Socket], [Serial][msl.equipment.interfaces.serial.Serial],
+        [GPIB][msl.equipment.interfaces.gpib.GPIB], ...) you can create a resource that inherits from
+        the [MultiInterface][msl.equipment.interfaces.message.MultiInterface] class. Upon calling
+        [super()][super] in the subclass, the connection is established with the appropriate interface class.
+
+        A [Connection][msl.equipment.schema.Connection] instance supports the same _properties_ as
+        [Message][msl.equipment.interfaces.message.Message].
+
+        Args:
+            equipment: An [Equipment][] instance.
+        """
+        self._connected: bool = False
+        super().__init__(equipment)
+
+        c = equipment.connection
+        assert c is not None  # noqa: S101
+
+        try:
+            # Let the address (not the manufacturer/model) decide which interface to use
+            self._interface: Message = Connection(c.address, **c.properties).connect()
+        except MSLConnectionError as e:
+            lines = str(e).splitlines()
+            raise MSLConnectionError(self, message="\n".join(lines[1:])) from None
+
+        self._connected = True
+        self._set_interface_max_read_size()
+        self._set_interface_timeout()
+
+    def _read(self, size: int | None) -> bytes:  # pyright: ignore[reportImplicitOverride]
+        """Read from the interface."""
+        return self._interface._read(size=size)  # noqa: SLF001
+
+    def _set_interface_max_read_size(self) -> None:  # pyright: ignore[reportImplicitOverride]
+        """Some connections need to be notified of the max_read_size change.
+
+        The connection subclass must override this method to notify the backend.
+        """
+        if self._connected:
+            self._interface.max_read_size = self.max_read_size
+
+    def _set_interface_timeout(self) -> None:  # pyright: ignore[reportImplicitOverride]
+        """Some connections (e.g. serial, socket) need to be notified of the timeout change.
+
+        The connection subclass must override this method to notify the backend.
+        """
+        if self._connected:
+            self._interface.timeout = self.timeout
+
+    def _write(self, message: bytes) -> int:  # pyright: ignore[reportImplicitOverride]
+        """Write the message."""
+        return self._interface._write(message)  # noqa: SLF001
+
+    def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
+        """Disconnect from the equipment."""
+        if self._connected:
+            self._interface.disconnect()
+            super().disconnect()
+            self._connected = False

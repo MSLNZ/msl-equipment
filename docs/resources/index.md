@@ -36,7 +36,7 @@ Some of the resources might not work in your application because the resource mi
 
 ## Create a resource
 
-To create a new resource you must create a class that inherits from [Interface][msl.equipment.schema.Interface] and specify the manufacturer and model number (product series) that the resource can be used for. This inheritance may also be acquired by sub-classing from one of the [interface][connections-interfaces] protocols (see also [Multiple interfaces][]).
+To create a new resource you must create a class that inherits from [Interface][msl.equipment.schema.Interface] and specify the manufacturer and model number (product series) that the resource can be used for. This inheritance may also be acquired by sub-classing from one of the [interface][connections-interfaces] protocols.
 
 The following example shows how to create a new resource for equipment that use the RS-232 protocol for communication. The values specified for the `manufacturer` and `model` support a [regular-expression pattern](https://regexr.com/){:target="_blank"}.
 
@@ -94,10 +94,6 @@ When adding a new resource to the [repository]{:target="_blank"} the following s
 11. Run the spell checker `cspell .`. Since this step requires [Node.js and npm]{:target="_blank"} to be installed, you may skip it. This check is also performed once you do Step 12.
 
 12. If running the tests pass and linting, formatting, type/spell checking and building the documentation do not show errors/warnings then create a [pull request]{:target="_blank"}.
-
-## Multiple interfaces
-
-If the equipment supports multiple interfaces for message-based protocols (e.g., [Socket][msl.equipment.interfaces.socket.Socket], [Serial][msl.equipment.interfaces.serial.Serial], [GPIB][msl.equipment.interfaces.gpib.GPIB], ...) you can create a resource that inherits from the [MultiInterface][msl.equipment_resources.multi_interface.MultiInterface] class. Upon calling [super][] in the subclass, the connection is established with the appropriate interface class.
 
 
 [fork]: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo

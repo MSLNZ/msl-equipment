@@ -11,9 +11,7 @@ import time
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, overload
 
-from msl.equipment_resources.multi_interface import MultiInterface
-
-from msl.equipment.interfaces import GPIB, MSLConnectionError
+from msl.equipment.interfaces import GPIB, MSLConnectionError, MultiInterface
 from msl.equipment.utils import logger
 
 if TYPE_CHECKING:

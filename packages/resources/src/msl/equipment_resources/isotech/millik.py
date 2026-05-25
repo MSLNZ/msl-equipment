@@ -11,9 +11,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import TYPE_CHECKING, overload
 
-from msl.equipment_resources.multi_interface import MultiInterface
-
-from msl.equipment.interfaces import MSLConnectionError
+from msl.equipment.interfaces import MSLConnectionError, MultiInterface
 from msl.equipment.utils import to_enum
 
 if TYPE_CHECKING:

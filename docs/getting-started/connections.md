@@ -55,6 +55,8 @@ The following interface classes are available
 * [VXI11][] &mdash; For equipment that use the [VXI-11](http://www.vxibus.org/specifications.html){:target="_blank"} protocol
 * [ZeroMQ][] &mdash; For equipment that use the [ZeroMQ](https://zeromq.org/){:target="_blank"} protocol
 
+and [MultiInterface][msl.equipment.interfaces.message.MultiInterface] for equipment that supports multiple message-based interfaces.
+
 ### Address Syntax
 
 Each [Interface][connections-interfaces] has a syntax for the [Connection][msl.equipment.schema.Connection] [address][msl.equipment.schema.Connection.address] that it supports. The following table shows the syntax for each Interface. Optional segments are shown in square brackets `[ ]` and capital letters represent literal text.

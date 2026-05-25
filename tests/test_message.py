@@ -6,15 +6,16 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pytest
 
-from msl.equipment import Connection, Equipment, MSLConnectionError
-from msl.equipment.interfaces import Message
+from msl.equipment import Connection, Equipment, Message, MSLConnectionError, MultiInterface
 
 if TYPE_CHECKING:
+    from conftest import TCPServer
     from msl.equipment.typing import NumpyArray1D
 
 
-def test_termination() -> None:  # noqa: PLR0915
-    mb = Message(Equipment(connection=Connection("COM1")))
+@pytest.mark.parametrize("iface", [Message, MultiInterface])
+def test_termination(iface: type[Message | MultiInterface]) -> None:  # noqa: PLR0915
+    mb = iface(Equipment(connection=Connection("COM1")))
 
     mb.encoding = "cp1252"
     assert mb.encoding == "cp1252"
@@ -79,8 +80,9 @@ def test_termination() -> None:  # noqa: PLR0915
     assert mb.write_termination == b"abc"
 
 
-def test_timeout_value() -> None:
-    mb = Message(Equipment(connection=Connection("COM1")))
+@pytest.mark.parametrize("iface", [Message, MultiInterface])
+def test_timeout_value(iface: type[Message | MultiInterface]) -> None:
+    mb = iface(Equipment(connection=Connection("COM1")))
     assert mb.timeout is None
     mb.timeout = 10
     assert isinstance(mb.timeout, float)
@@ -97,8 +99,9 @@ def test_timeout_value() -> None:
     assert mb.timeout == 99
 
 
-def test_max_read_size_value() -> None:
-    mb = Message(Equipment(connection=Connection("COM1")))
+@pytest.mark.parametrize("iface", [Message, MultiInterface])
+def test_max_read_size_value(iface: type[Message | MultiInterface]) -> None:
+    mb = iface(Equipment(connection=Connection("COM1")))
     assert mb.max_read_size == 1 << 20
 
     with pytest.raises(ValueError, match=r"must be >= 1, got 0"):
@@ -111,8 +114,9 @@ def test_max_read_size_value() -> None:
         r: str = mb.read(size=124)  # noqa: F841
 
 
-def test_rstrip() -> None:
-    mb = Message(Equipment(connection=Connection("COM1")))
+@pytest.mark.parametrize("iface", [Message, MultiInterface])
+def test_rstrip(iface: type[Message | MultiInterface]) -> None:
+    mb = iface(Equipment(connection=Connection("COM1")))
     assert not mb.rstrip
     mb.rstrip = True
     assert mb.rstrip
@@ -216,3 +220,17 @@ def test_type_annotation_read_query() -> None:  # noqa: PLR0915
         q17: NumpyArray1D = mb.query("hi", size=100, dtype=int, decode=False, fmt="hp")  # noqa: F841
     with pytest.raises(MSLConnectionError, match=match):
         q18: NumpyArray1D = mb.query(b"hi", fmt="ieee", dtype=int, decode=True)  # noqa: F841
+
+
+def test_multi_interface_read_write(tcp_server: type[TCPServer]) -> None:
+    with tcp_server() as server:
+        address = f"TCP::{server.host}::{server.port}"
+        c = Connection(address, manufacturer="ABC", model="123", termination=server.term, timeout=1)
+        with MultiInterface(Equipment(connection=c)) as mb:
+            assert mb.write("hello") == 6
+            assert mb.read() == "hello\n"
+
+
+def test_multi_interface_connection_error() -> None:
+    with pytest.raises(MSLConnectionError, match=r"MultiInterface<ABC|123|X at COM254>\ncould not open port"):
+        _ = MultiInterface(Equipment(connection=Connection("COM254"), manufacturer="ABC", model="123", serial="X"))

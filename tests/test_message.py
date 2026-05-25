@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 @pytest.mark.parametrize("iface", [Message, MultiInterface])
 def test_termination(iface: type[Message | MultiInterface]) -> None:  # noqa: PLR0915
-    mb = iface(Equipment(connection=Connection("COM1")))
+    mb = iface(Equipment(connection=Connection("ASRL/mock://")))
 
     mb.encoding = "cp1252"
     assert mb.encoding == "cp1252"
@@ -75,14 +75,14 @@ def test_termination(iface: type[Message | MultiInterface]) -> None:  # noqa: PL
     with pytest.raises(LookupError):
         mb.encoding = "unknown"
 
-    mb = Message(Equipment(connection=Connection("COM1", termination="abc")))
+    mb = Message(Equipment(connection=Connection("ASRL/mock://", termination="abc")))
     assert mb.read_termination == b"abc"
     assert mb.write_termination == b"abc"
 
 
 @pytest.mark.parametrize("iface", [Message, MultiInterface])
 def test_timeout_value(iface: type[Message | MultiInterface]) -> None:
-    mb = iface(Equipment(connection=Connection("COM1")))
+    mb = iface(Equipment(connection=Connection("ASRL/mock://")))
     assert mb.timeout is None
     mb.timeout = 10
     assert isinstance(mb.timeout, float)
@@ -95,13 +95,13 @@ def test_timeout_value(iface: type[Message | MultiInterface]) -> None:
     mb.timeout = None
     assert mb.timeout is None
 
-    mb = Message(Equipment(connection=Connection("COM1", timeout=99)))
+    mb = iface(Equipment(connection=Connection("ASRL/mock://", timeout=99)))
     assert mb.timeout == 99
 
 
 @pytest.mark.parametrize("iface", [Message, MultiInterface])
 def test_max_read_size_value(iface: type[Message | MultiInterface]) -> None:
-    mb = iface(Equipment(connection=Connection("COM1")))
+    mb = iface(Equipment(connection=Connection("ASRL/mock://")))
     assert mb.max_read_size == 1 << 20
 
     with pytest.raises(ValueError, match=r"must be >= 1, got 0"):
@@ -116,16 +116,16 @@ def test_max_read_size_value(iface: type[Message | MultiInterface]) -> None:
 
 @pytest.mark.parametrize("iface", [Message, MultiInterface])
 def test_rstrip(iface: type[Message | MultiInterface]) -> None:
-    mb = iface(Equipment(connection=Connection("COM1")))
+    mb = iface(Equipment(connection=Connection("ASRL/mock://")))
     assert not mb.rstrip
     mb.rstrip = True
     assert mb.rstrip
 
 
 def test_write() -> None:
-    mb = Message(Equipment(connection=Connection("COM1")))
+    mb = Message(Equipment(connection=Connection("COM254")))
 
-    match = r"Message<|| at COM1>"
+    match = r"Message<\|\| at COM254>"
     with pytest.raises(MSLConnectionError, match=match):
         _ = mb.write("hi", data=[1, 2, 3])
 
@@ -140,9 +140,9 @@ def test_write() -> None:
 
 def test_type_annotation_read_query() -> None:  # noqa: PLR0915
     # A test for type checking with mypy and pyright for the overload signatures
-    mb = Message(Equipment(connection=Connection("COM1")))
+    mb = Message(Equipment(connection=Connection("COM254")))
 
-    match = r"Message<|| at COM1>"
+    match = r"Message<\|\| at COM254>"
     with pytest.raises(MSLConnectionError, match=match):
         r1: str = mb.read()  # noqa: F841
     with pytest.raises(MSLConnectionError, match=match):

@@ -149,6 +149,8 @@ def test_mock_read_write(mock_gpib: None) -> None:
     assert dev.read() == "A" * 10
     assert dev.query("10 A's", decode=False) == b"A" * 10
     assert dev.read(size=5) == "A" * 5
+    assert dev.read(size=20) == "A" * 20
+    assert dev.read(size=12) == "A" * 12
 
     dev.max_read_size = 9
     with pytest.raises(MSLConnectionError, match=r"Maximum read size exceeded"):

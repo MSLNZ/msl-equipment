@@ -474,6 +474,8 @@ class GPIB(Message, regex=REGEX):
                 msg = f"Maximum read size exceeded: {len(buffer)} > {self._max_read_size}\nbuffer: {buffer}"
                 raise MSLConnectionError(self, msg)
             if sta & 0x2000:  # END
+                if size is not None and len(buffer) < size:
+                    continue
                 break
 
         # always read until END so that the next _read() is correct,

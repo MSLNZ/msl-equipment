@@ -2573,8 +2573,6 @@
       
         
       
-        
-      
     
     
     
@@ -4677,34 +4675,6 @@
   
   
     <li class="md-nav__item">
-      <a href="multi_interface/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    MultiInterface
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="typing/" class="md-nav__link">
         
   
@@ -4846,17 +4816,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#multiple-interfaces" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Multiple interfaces
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -4911,7 +4870,7 @@
 </div>
 </div>
 <h2 id="create-a-resource">Create a resource<a class="headerlink" href="#create-a-resource" title="Permanent link">¤</a></h2>
-<p>To create a new resource you must create a class that inherits from <a class="autorefs autorefs-internal" title="            Interface" href="../api/interfaces/#msl.equipment.schema.Interface">Interface</a> and specify the manufacturer and model number (product series) that the resource can be used for. This inheritance may also be acquired by sub-classing from one of the <a class="autorefs autorefs-internal" title="Interfaces" href="../getting-started/connections/#connections-interfaces">interface</a> protocols (see also <a class="autorefs autorefs-internal" href="#multiple-interfaces">Multiple interfaces</a>).</p>
+<p>To create a new resource you must create a class that inherits from <a class="autorefs autorefs-internal" title="            Interface" href="../api/interfaces/#msl.equipment.schema.Interface">Interface</a> and specify the manufacturer and model number (product series) that the resource can be used for. This inheritance may also be acquired by sub-classing from one of the <a class="autorefs autorefs-internal" title="Interfaces" href="../getting-started/connections/#connections-interfaces">interface</a> protocols.</p>
 <p>The following example shows how to create a new resource for equipment that use the RS-232 protocol for communication. The values specified for the <code>manufacturer</code> and <code>model</code> support a <a href="https://regexr.com/" target="_blank">regular-expression pattern</a>.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># my_resource.py</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
@@ -4989,12 +4948,6 @@
 <p>If running the tests pass and linting, formatting, type/spell checking and building the documentation do not show errors/warnings then create a <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork" target="_blank">pull request</a>.</p>
 </li>
 </ol>
-<h2 id="multiple-interfaces">Multiple interfaces<a class="headerlink" href="#multiple-interfaces" title="Permanent link">¤</a></h2>
-<p>If the equipment supports multiple interfaces for message-based protocols (e.g., <a class="autorefs autorefs-internal" title="            Socket
-(Message)" href="../api/interfaces/socket/#msl.equipment.interfaces.socket.Socket">Socket</a>, <a class="autorefs autorefs-internal" title="            Serial
-(Message)" href="../api/interfaces/serial/#msl.equipment.interfaces.serial.Serial">Serial</a>, <a class="autorefs autorefs-internal" title="            GPIB
-(Message)" href="../api/interfaces/gpib/#msl.equipment.interfaces.gpib.GPIB">GPIB</a>, ...) you can create a resource that inherits from the <a class="autorefs autorefs-internal" title="            MultiInterface
-(Message)" href="multi_interface/#msl.equipment_resources.multi_interface.MultiInterface">MultiInterface</a> class. Upon calling <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#super">super</a> in the subclass, the connection is established with the appropriate interface class.</p>
 
 
 

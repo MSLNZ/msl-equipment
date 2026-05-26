@@ -467,15 +467,19 @@ class GPIB(Message, regex=REGEX):
         chunk_size = 20480  # 20kB = 20 * 1024
         data = create_string_buffer(chunk_size)
         buffer = bytearray()
+        ibrd = self._lib.ibrd
+        ibcntl = self._lib.ibcntl
+        handle = self._handle
+        max_read_size = self._max_read_size
         while True:
-            sta: int = self._lib.ibrd(self._handle, data, chunk_size)
-            buffer.extend(data[: self.count()])  # type: ignore[arg-type]
-            if len(buffer) > self._max_read_size:
-                msg = f"Maximum read size exceeded: {len(buffer)} > {self._max_read_size}\nbuffer: {buffer}"
+            sta: int = ibrd(handle, data, chunk_size)
+            buffer.extend(data[: ibcntl()])  # type: ignore[arg-type]
+            if len(buffer) > max_read_size:
+                msg = f"Maximum read size exceeded: {len(buffer)} > {max_read_size}\nbuffer: {buffer}"
                 raise MSLConnectionError(self, msg)
+            if size is not None and len(buffer) < size:
+                continue
             if sta & 0x2000:  # END
-                if size is not None and len(buffer) < size:
-                    continue
                 break
 
         # always read until END so that the next _read() is correct,
@@ -640,7 +644,8 @@ class GPIB(Message, regex=REGEX):
         Returns:
             The number of bytes sent or received.
         """
-        return int(self._lib.ibcntl())
+        count: int = self._lib.ibcntl()
+        return count
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
         """Close the GPIB connection."""

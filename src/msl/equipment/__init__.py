@@ -23,6 +23,7 @@ from .interfaces import (
     PyVISA,
     Serial,
     Socket,
+    ZeroMQ,
 )
 from .readings import Readings
 from .record_types import ConnectionRecord, EquipmentRecord
@@ -127,6 +128,7 @@ __all__: list[str] = [
     "Status",
     "StopBits",
     "Table",
+    "ZeroMQ",
     "__version__",
     "version_tuple",
 ]

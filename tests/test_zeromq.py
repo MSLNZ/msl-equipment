@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from array import array
 from typing import TYPE_CHECKING
 
+import numpy as np
 import pytest
 import zmq
 
-from msl.equipment import Connection, Equipment, MSLConnectionError
-from msl.equipment.interfaces.zeromq import ZeroMQ, parse_zmq_address
+from msl.equipment import Connection, Equipment, MSLConnectionError, ZeroMQ
+from msl.equipment.interfaces.zeromq import parse_zmq_address
 
 if TYPE_CHECKING:
     from conftest import ZMQServer
@@ -180,3 +182,69 @@ def test_set_interface(zmq_server: type[ZMQServer]) -> None:
 def test_no_connection_instance() -> None:
     with pytest.raises(TypeError, match=r"A Connection is not associated"):
         _ = ZeroMQ(Equipment())
+
+
+def test_multipart(zmq_server: type[ZMQServer]) -> None:
+    with zmq_server() as server:
+        conn = Connection(f"ZMQ::{server.host}::{server.port}")
+        dev: ZeroMQ
+        with conn.connect() as dev:
+            # the following test are primarily checks for when running type
+            # checkers against the `ZMQMultiPart` definition
+
+            out = dev.write_multipart([array("w", b"wwww")])
+            assert out is None
+            list_bytes = dev.read_multipart()
+            assert list_bytes == [b"wwww"]
+
+            out = dev.write_multipart([array("b", b"b")])
+            assert out is None
+            list_bytes = dev.read_multipart()
+            assert list_bytes == [b"b"]
+
+            out = dev.write_multipart([array("H", b"HH")])
+            assert out is None
+            list_bytes = dev.read_multipart()
+            assert list_bytes == [b"HH"]
+
+            out = dev.write_multipart([array("d", b"dddddddd")])
+            assert out is None
+            list_bytes = dev.read_multipart()
+            assert list_bytes == [b"dddddddd"]
+
+            out = dev.write_multipart([b"bytes"])
+            assert out is None
+            list_bytes = dev.read_multipart()
+            assert list_bytes == [b"bytes"]
+
+            out = dev.write_multipart([bytearray(b"bytearray")])
+            assert out is None
+            list_bytes = dev.read_multipart()
+            assert list_bytes == [b"bytearray"]
+
+            out = dev.write_multipart([memoryview(b"memoryview")])
+            assert out is None
+            list_bytes = dev.read_multipart()
+            assert list_bytes == [b"memoryview"]
+
+            out = dev.write_multipart([zmq.Frame(b"frame")])
+            assert out is None
+            list_bytes = dev.read_multipart()
+            assert list_bytes == [b"frame"]
+
+            out = dev.write_multipart([np.array([1, 2])])
+            assert out is None
+            list_bytes = dev.read_multipart()
+            assert list_bytes == [b"\x01\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00"]
+
+            out = dev.write_multipart([np.array([1, 2], dtype="b")], copy=True)
+            assert out is None
+            list_bytes = dev.read_multipart(copy=True)
+            assert list_bytes == [b"\x01\x02"]
+
+            mt = dev.write_multipart([b"hello"], copy=False)
+            assert isinstance(mt, zmq.MessageTracker)
+            list_frame = dev.read_multipart(copy=False)
+            assert len(list_frame) == 1
+            assert isinstance(list_frame[0], zmq.Frame)
+            assert list_frame[0].bytes == b"hello"

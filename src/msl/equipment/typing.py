@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import array
 import os
 from collections.abc import Sequence
 from enum import Enum
 from typing import Literal, Protocol, TypeVar, Union  # pyright: ignore[reportDeprecated]
 
 import numpy as np
+import zmq
+from numpy.typing import NDArray
 
 _T_co = TypeVar("_T_co", covariant=True)
 
@@ -73,3 +76,15 @@ Sequence1D = Sequence[float] | NumpyArray1D
 
 EnumType = TypeVar("EnumType", bound=Enum)
 """An [Enum][enum.Enum] subclass."""
+
+ZMQMultiPart = Sequence[
+    bytes
+    | bytearray
+    | memoryview
+    | array.array[int]
+    | array.array[float]
+    | array.array[str]
+    | NDArray[np.generic]
+    | zmq.Frame
+]
+"""A sequence of objects that support the readable-buffer protocol to be written as a multipart ZeroMQ message."""

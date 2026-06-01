@@ -23,6 +23,66 @@ and there are [enumeration][enumerations] classes and a [Readings][] class.
 
 The [MSLConnectionError][msl.equipment.interfaces.message.MSLConnectionError] and [MSLTimeoutError][msl.equipment.interfaces.message.MSLTimeoutError] classes are raised if there are issues when communicating with equipment.
 
+## A ZeroMQ Server
+
+If you would like to allow equipment that has a non-Ethernet interface (e.g., GPIB or RS-232) to be controllable from any computer that is on the network you can use a client-server protocol using the [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] and [ZeroMQServer][msl.equipment.interfaces.zeromq.ZeroMQServer] classes. The following example illustrates the concept. Run `server.py` on a computer that is physically connected to the equipment and `client.py` can be run on any computer on the network.
+
+=== "client.py"
+    ```python
+    from msl.equipment import Connection, ZeroMQ
+
+    client: ZeroMQ
+    with Connection("ZMQ::192.168.1.100::5555").connect() as client:
+        # A unique (and privately known) client identity b"let me in!" is
+        # sent with the request to create an exclusive client-server pair
+        _ = client.write_multipart([b"let me in!", b"*IDN?"])
+        print(client.read())
+    ```
+
+=== "server.py"
+    ```python
+    from __future__ import annotations
+
+    from msl.equipment import Connection, Serial, ZeroMQServer
+
+    class DMM(ZeroMQServer):
+        """Allow for a digital multimeter to be available on the network."""
+
+        def __init__(self, port: int) -> None:
+            super().__init__(port=port)
+
+            # Create the connection to the digital multimeter
+            self.dmm: Serial = Connection("COM2").connect()
+
+        def handle_request(self, msg_parts: list[bytes]) -> bytes:
+            """Handle a request and return the reply (as bytes).
+
+            The server can be accessed by any device on the network.
+            If you want an exclusive client-server pair you can either use
+            a zmq.PAIR `socket_type` when creating an instance of the client
+            and server classes or you can include a unique (and privately known)
+            identity as the first item in a `ZeroMQ.write_multipart` message
+            that the ZeroMQ client sends.
+            """
+            identity, *message = msg_parts
+            if identity != b"let me in!":
+                return b"PermissionError: You are not allowed to do this"
+
+            # Process the different `message` values that you want to support
+            if message[0] == b"*IDN?":
+                return self.dmm.query("*IDN?", decode=False)
+
+            return b"Unhandled message: " + b"".join(message)
+
+        def shutdown_handler(self) -> None:
+            """Disconnect from the digital multimeter when the server shuts down."""
+            self.dmm.disconnect()
+
+
+    server = DMM(port=5555)
+    server.run_forever()
+    ```
+
 ## Command Line Interface
 
 A command-line interface is also available to find equipment, [validate][] XML files against the schema or start the [web application][]. Validation and the web application require that the `msl-equipment-validate` and `msl-equipment-webapp` packages are installed.

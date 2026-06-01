@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import threading
 from array import array
 from typing import TYPE_CHECKING
 
@@ -7,7 +8,7 @@ import numpy as np
 import pytest
 import zmq
 
-from msl.equipment import Connection, Equipment, MSLConnectionError, ZeroMQ
+from msl.equipment import Connection, Equipment, MSLConnectionError, ZeroMQ, ZeroMQServer
 from msl.equipment.interfaces.zeromq import parse_zmq_address
 
 if TYPE_CHECKING:
@@ -248,3 +249,71 @@ def test_multipart(zmq_server: type[ZMQServer]) -> None:
             assert len(list_frame) == 1
             assert isinstance(list_frame[0], zmq.Frame)
             assert list_frame[0].bytes == b"hello"
+
+
+def test_server(capsys: pytest.CaptureFixture[str]) -> None:
+
+    class Server(ZeroMQServer):
+        """Server example."""
+
+        def __init__(self, port: int) -> None:
+            super().__init__(port=port)
+
+        def handle_request(self, msg_parts: list[bytes]) -> bytes:  # pyright: ignore[reportImplicitOverride]
+            return b"".join(msg_parts)
+
+    port = 52817
+    server = Server(port)
+
+    thread = threading.Thread(target=server.run_forever, daemon=True)
+    thread.start()
+
+    client: ZeroMQ = Connection(f"ZMQ::localhost::{port}").connect()
+    assert client.write(b"hello") == 5
+    assert client.read(decode=False) == b"hello"
+
+    server.shutdown_server()
+    thread.join()
+
+    out, err = capsys.readouterr()
+    assert out.rstrip().endswith("Press Ctrl+C to shut down the server")
+    assert not err
+
+
+def test_server_no_display(capsys: pytest.CaptureFixture[str]) -> None:
+
+    class Server(ZeroMQServer):
+        """Server example."""
+
+        def __init__(self, port: int) -> None:
+            super().__init__(port=port)
+
+        def handle_request(self, msg_parts: list[bytes]) -> bytes:  # pyright: ignore[reportImplicitOverride]
+            return b"".join(msg_parts)
+
+    port = 52817
+    server = Server(port)
+
+    thread = threading.Thread(target=server.run_forever, daemon=True, kwargs={"show": False})
+    thread.start()
+
+    client: ZeroMQ = Connection(f"ZMQ::localhost::{port}").connect()
+    assert client.write_multipart([b"h", b"i"]) is None
+    assert client.read_multipart() == [b"hi"]
+
+    server.shutdown_server()
+    thread.join()
+
+    out, err = capsys.readouterr()
+    assert not out
+    assert not err
+
+
+def test_server_not_implemented_error() -> None:
+
+    class Server(ZeroMQServer):
+        """Server example."""
+
+    server = Server()
+    with pytest.raises(NotImplementedError):
+        _ = server.handle_request([])

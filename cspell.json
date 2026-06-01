@@ -224,6 +224,7 @@
         "plugdev",
         "PMAP",
         "PMAPPROC",
+        "POLLIN",
         "preopen",
         "PROC",
         "Prologix",

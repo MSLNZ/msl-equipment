@@ -6,6 +6,7 @@ import re
 from typing import TYPE_CHECKING, NamedTuple, overload
 
 import zmq
+import zmq.asyncio
 
 from msl.equipment.utils import to_enum
 
@@ -15,6 +16,7 @@ if TYPE_CHECKING:
     from typing import Literal
 
     from zmq.sugar.context import Context
+    from zmq.sugar.poll import Poller
     from zmq.sugar.socket import SyncSocket
     from zmq.sugar.tracker import MessageTracker
 
@@ -194,6 +196,166 @@ class ZeroMQ(Message, regex=REGEX):
         """
         out: MessageTracker | None = self._socket.send_multipart(msg_parts, flags=flags, copy=copy, track=track)  # pyright: ignore[reportUnknownMemberType]
         return out
+
+
+class ZeroMQServer:
+    """Start a server to handle requests for the [ZeroMQ](https://zeromq.org/) protocol.
+
+    See [here][a-zeromq-server] for an example usage.
+    """
+
+    def __init__(
+        self,
+        *,
+        protocol: str = "tcp",
+        host: str = "*",
+        port: int = 0,
+        socket_type: int | str | zmq.SocketType = "REP",
+    ) -> None:
+        """Start a server to handle requests for the [ZeroMQ](https://zeromq.org/) protocol.
+
+        Args:
+            protocol: ZeroMQ protocol (`tcp`, `udp`, `pgm`, `inproc`, `ipc`).
+            host: The network interface (IP address) to use to bind the server, If `*`, listen
+                on all available network interfaces simultaneously.
+            port: The port to bind the server to. If `0`, binds the server to a random port.
+            socket_type: ZeroMQ socket type. Can also be a [SocketType][zmq.SocketType] enum
+                member name (case insensitive) or value.
+        """
+        import zmq.asyncio  # noqa: PLC0415
+
+        self._socket_type: zmq.SocketType = to_enum(socket_type, zmq.SocketType, to_upper=True)
+
+        self.context: zmq.asyncio.Context = zmq.asyncio.Context()
+        """[Context][zmq.asyncio.Context] &mdash; The asynchronous ZMQ context."""
+
+        self.socket: zmq.asyncio.Socket = self.context.socket(self._socket_type)
+        """[Socket][zmq.asyncio.Socket] &mdash; The asynchronous ZMQ socket."""
+
+        self._interrupt: _Interrupter = _Interrupter()
+
+        if port <= 0:
+            port = self.socket.bind_to_random_port(f"{protocol}://{host}")
+        else:
+            _ = self.socket.bind(f"{protocol}://{host}:{port}")
+
+        self.port: int = port
+        """[int][] &mdash; The port number that the server is running on."""
+
+        self.address: str = self.socket.getsockopt_string(zmq.LAST_ENDPOINT)
+        """[str][] &mdash; The ZMQ address that the server is using."""
+
+        self._poller: Poller = zmq.Poller()
+        self._poller.register(self.socket, zmq.POLLIN)
+        self._poller.register(self._interrupt.aborter, zmq.POLLIN)
+
+    def __del__(self) -> None:
+        """Calls `_shutdown`."""
+        self._shutdown()
+
+    def _shutdown(self) -> None:
+        """Shut down the server."""
+        if hasattr(self, "address") and not self.socket.closed:
+            self.socket.unbind(self.address)
+        self._interrupt.shutdown()
+        self.context.destroy()
+
+    async def _start(self) -> None:
+        """Start the server."""
+        from zmq.utils.win32 import allow_interrupt  # noqa: PLC0415
+
+        p = self._poller
+        s = self.socket
+        with allow_interrupt(self._interrupt):
+            while True:
+                socks = dict(p.poll())
+                if socks.get(s) == zmq.POLLIN:
+                    request = await s.recv_multipart()
+                    reply = self.handle_request(request)
+                    _ = await s.send(reply)
+                else:
+                    break
+
+    def handle_request(self, msg_parts: list[bytes]) -> bytes:  # pyright: ignore[reportUnusedParameter]
+        """Handle a *single* request.
+
+        !!! warning
+            You must override this method.
+
+        Args:
+            msg_parts: The request message.
+
+        Returns:
+            The response.
+        """
+        msg = "Override the `handle_request` method to handle the request message"
+        raise NotImplementedError(msg)
+
+    def run_forever(self, *, show: bool = True) -> None:
+        """Run the server.
+
+        Args:
+            show: Whether to print information about the running server.
+        """
+        import asyncio  # noqa: PLC0415
+        import sys  # noqa: PLC0415
+
+        if show:
+            msg = (
+                f"{self.__class__.__name__} running on {self.address!r} using a {self._socket_type.name!r} socket\n"
+                "Press Ctrl+C to shut down the server"
+            )
+            print(msg)  # noqa: T201
+
+        try:
+            if sys.version_info < (3, 12):
+                if sys.platform == "win32":
+                    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())  # pyright: ignore[reportUnreachable]
+                asyncio.run(self._start())
+            else:
+                asyncio.run(self._start(), loop_factory=asyncio.SelectorEventLoop)
+        except KeyboardInterrupt:  # pragma: no cover
+            pass
+        finally:
+            self.shutdown_handler()
+            self._shutdown()
+
+    def shutdown_handler(self) -> None:
+        """You can override this method in the subclass to perform any necessary clean up.
+
+        This method is called after [run_forever][msl.equipment.interfaces.zeromq.ZeroMQServer.run_forever]
+        finishes but before the [socket][msl.equipment.interfaces.zeromq.ZeroMQServer.socket] is unbound
+        and the [context][msl.equipment.interfaces.zeromq.ZeroMQServer.context] is terminated.
+        """
+
+    def shutdown_server(self) -> None:
+        """Shut down the server.
+
+        Pressing `Ctrl+C` in the terminal that the service is running in will also shut down the server.
+        """
+        self._interrupt()
+
+
+class _Interrupter:
+    """Handle Ctrl+C on Windows."""
+
+    def __init__(self) -> None:
+        self.context: Context[SyncSocket] = zmq.Context()
+
+        self.publisher: SyncSocket = self.context.socket(zmq.PUB)
+        _ = self.publisher.bind("inproc://ctrl+c")
+
+        self.aborter: SyncSocket = self.context.socket(zmq.SUB)
+        self.aborter.setsockopt(zmq.SUBSCRIBE, b"")
+        _ = self.aborter.connect("inproc://ctrl+c")
+
+    def __call__(self) -> None:
+        self.publisher.send(b"")
+
+    def shutdown(self) -> None:
+        self.publisher.close()
+        self.aborter.close()
+        self.context.destroy()
 
 
 class ParsedZMQAddress(NamedTuple):

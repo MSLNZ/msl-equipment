@@ -16,7 +16,7 @@ from .socket import Socket
 from .usb import USB
 from .usbtmc import USBTMC
 from .vxi11 import VXI11
-from .zeromq import ZeroMQ
+from .zeromq import ZeroMQ, ZeroMQServer
 
 __all__: list[str] = [
     "FTDI",
@@ -37,4 +37,5 @@ __all__: list[str] = [
     "Serial",
     "Socket",
     "ZeroMQ",
+    "ZeroMQServer",
 ]

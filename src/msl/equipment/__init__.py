@@ -24,6 +24,7 @@ from .interfaces import (
     Serial,
     Socket,
     ZeroMQ,
+    ZeroMQServer,
 )
 from .readings import Readings
 from .record_types import ConnectionRecord, EquipmentRecord
@@ -129,6 +130,7 @@ __all__: list[str] = [
     "StopBits",
     "Table",
     "ZeroMQ",
+    "ZeroMQServer",
     "__version__",
     "version_tuple",
 ]

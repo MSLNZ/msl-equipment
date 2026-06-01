@@ -2068,6 +2068,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#msl.equipment.typing.ZMQMultiPart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;ZMQMultiPart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#msl.equipment.typing.SupportsRead" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5013,6 +5024,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#msl.equipment.typing.ZMQMultiPart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;ZMQMultiPart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#msl.equipment.typing.SupportsRead" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5308,6 +5330,39 @@
 
 </div>
 
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="msl.equipment.typing.ZMQMultiPart" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">ZMQMultiPart</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#msl.equipment.typing.ZMQMultiPart" class="headerlink" title="Permanent link">¤</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">ZMQMultiPart</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="collections.abc.Sequence" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence">Sequence</a></span><span class="p">[</span>
+    <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span>
+    <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytearray">bytearray</a></span>
+    <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#memoryview">memoryview</a></span>
+    <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="array.array" href="https://docs.python.org/3/library/array.html#array.array">array</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="array.array" href="https://docs.python.org/3/library/array.html#array.array">array</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="array.array" href="https://docs.python.org/3/library/array.html#array.array">array</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.NDArray" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.NDArray">NDArray</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="numpy.generic" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.generic">generic</a></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="zmq.Frame" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.Frame">Frame</a></span>
+<span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>A sequence of objects that support the readable-buffer protocol to be written as a multipart ZeroMQ message.</p>
+
+    </div>
+
+</div>
+
 
 
 <div class="doc doc-object doc-class">
@@ -5366,9 +5421,9 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/typing.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_T_co</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_T_co</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read from the stream.&quot;&quot;&quot;</span>
     <span class="o">...</span>
 </code></pre></div></td></tr></table></div>

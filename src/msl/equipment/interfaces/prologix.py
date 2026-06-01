@@ -358,7 +358,7 @@ class Prologix(Interface, regex=REGEX):
                 return h
 
     @overload
-    def query(  # pyright: ignore[reportOverlappingOverload]  # pragma: no cover
+    def query(  # pyright: ignore[reportOverlappingOverload]
         self,
         message: bytes | str,
         *,
@@ -370,7 +370,7 @@ class Prologix(Interface, regex=REGEX):
     ) -> str: ...
 
     @overload
-    def query(  # pragma: no cover
+    def query(
         self,
         message: bytes | str,
         *,
@@ -382,7 +382,7 @@ class Prologix(Interface, regex=REGEX):
     ) -> bytes: ...
 
     @overload
-    def query(  # pragma: no cover
+    def query(
         self,
         message: bytes | str,
         *,
@@ -443,7 +443,7 @@ class Prologix(Interface, regex=REGEX):
         return self.read(decode=decode, size=size)
 
     @overload
-    def read(  # pyright: ignore[reportOverlappingOverload]  # pragma: no cover
+    def read(  # pyright: ignore[reportOverlappingOverload]
         self,
         *,
         decode: Literal[True] = True,
@@ -453,7 +453,7 @@ class Prologix(Interface, regex=REGEX):
     ) -> str: ...
 
     @overload
-    def read(  # pragma: no cover
+    def read(
         self,
         *,
         decode: Literal[False] = False,
@@ -463,7 +463,7 @@ class Prologix(Interface, regex=REGEX):
     ) -> bytes: ...
 
     @overload
-    def read(  # pragma: no cover
+    def read(
         self,
         *,
         decode: bool = ...,

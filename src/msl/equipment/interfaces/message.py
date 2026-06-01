@@ -135,7 +135,7 @@ class Message(Interface, append=False):
         self._set_interface_max_read_size()
 
     @overload
-    def query(  # pyright: ignore[reportOverlappingOverload]  # pragma: no cover
+    def query(  # pyright: ignore[reportOverlappingOverload]
         self,
         message: bytes | str,
         *,
@@ -147,7 +147,7 @@ class Message(Interface, append=False):
     ) -> str: ...
 
     @overload
-    def query(  # pragma: no cover
+    def query(
         self,
         message: bytes | str,
         *,
@@ -159,7 +159,7 @@ class Message(Interface, append=False):
     ) -> bytes: ...
 
     @overload
-    def query(  # pragma: no cover
+    def query(
         self,
         message: bytes | str,
         *,
@@ -210,7 +210,7 @@ class Message(Interface, append=False):
         return self.read(decode=decode, size=size)
 
     @overload
-    def read(  # pyright: ignore[reportOverlappingOverload]  # pragma: no cover
+    def read(  # pyright: ignore[reportOverlappingOverload]
         self,
         *,
         decode: Literal[True] = True,
@@ -220,7 +220,7 @@ class Message(Interface, append=False):
     ) -> str: ...
 
     @overload
-    def read(  # pragma: no cover
+    def read(
         self,
         *,
         decode: Literal[False] = False,
@@ -230,7 +230,7 @@ class Message(Interface, append=False):
     ) -> bytes: ...
 
     @overload
-    def read(  # pragma: no cover
+    def read(
         self,
         *,
         decode: bool = ...,

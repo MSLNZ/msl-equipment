@@ -419,15 +419,15 @@ class RPCClient:
 
     @overload
     @staticmethod
-    def unpack_opaque(data: bytes) -> bytes: ...  # pragma: no cover
+    def unpack_opaque(data: bytes) -> bytes: ...
 
     @overload
     @staticmethod
-    def unpack_opaque(data: bytearray) -> bytearray: ...  # pragma: no cover
+    def unpack_opaque(data: bytearray) -> bytearray: ...
 
     @overload
     @staticmethod
-    def unpack_opaque(data: memoryview) -> memoryview: ...  # pragma: no cover
+    def unpack_opaque(data: memoryview) -> memoryview: ...
 
     @staticmethod
     def unpack_opaque(data: bytes | bytearray | memoryview) -> bytes | bytearray | memoryview:

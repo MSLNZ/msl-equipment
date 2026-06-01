@@ -507,7 +507,7 @@ class USB(Message, regex=REGEX):
 
     # Cannot know what type is returned until runtime
     @overload
-    def ctrl_transfer(  # pyright: ignore[reportOverlappingOverload]  # pragma: no cover
+    def ctrl_transfer(  # pyright: ignore[reportOverlappingOverload]
         self,
         request_type: int,
         request: int,
@@ -519,7 +519,7 @@ class USB(Message, regex=REGEX):
     # PyUSB always returns int if an array[int] is passed in (for both OUT and IN transfers)
     # or for an OUT transfer (assume OUT if bytes | bytearray | str are passed in)
     @overload
-    def ctrl_transfer(  # pragma: no cover
+    def ctrl_transfer(
         self,
         request_type: int,
         request: int,
@@ -530,7 +530,7 @@ class USB(Message, regex=REGEX):
 
     # Assume an IN transfer
     @overload
-    def ctrl_transfer(  # pragma: no cover
+    def ctrl_transfer(
         self,
         request_type: int,
         request: int,

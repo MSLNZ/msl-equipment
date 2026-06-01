@@ -149,6 +149,7 @@ exclude_lines = [
   "pragma: no branch",
   "if TYPE_CHECKING:",
   "if __name__ == .__main__.:",
+  "@overload",
 ]
 include_namespace_packages = true
 

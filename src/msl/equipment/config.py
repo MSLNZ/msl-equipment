@@ -186,19 +186,19 @@ class Config:
         return f"<{self._source.__class__.__name__}>"
 
     @overload
-    def value(self, path: str, default: None = None) -> bool | float | str | None: ...  # pragma: no cover
+    def value(self, path: str, default: None = None) -> bool | float | str | None: ...
 
     @overload
-    def value(self, path: str, default: bool) -> bool: ...  # pragma: no cover  # noqa: FBT001
+    def value(self, path: str, default: bool) -> bool: ...  # noqa: FBT001
 
     @overload
-    def value(self, path: str, default: int) -> int: ...  # pragma: no cover
+    def value(self, path: str, default: int) -> int: ...
 
     @overload
-    def value(self, path: str, default: float) -> float: ...  # pragma: no cover
+    def value(self, path: str, default: float) -> float: ...
 
     @overload
-    def value(self, path: str, default: str) -> str: ...  # pragma: no cover
+    def value(self, path: str, default: str) -> str: ...
 
     def value(self, path: str, default: bool | float | str | None = None) -> bool | float | str | None:  # noqa: FBT001
         """Gets the value (text) associated with the first matching element.

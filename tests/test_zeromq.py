@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 import threading
 from array import array
 from typing import TYPE_CHECKING
@@ -12,6 +13,8 @@ from msl.equipment import Connection, Equipment, MSLConnectionError, ZeroMQ, Zer
 from msl.equipment.interfaces.zeromq import parse_zmq_address
 
 if TYPE_CHECKING:
+    from typing import Literal
+
     from conftest import ZMQServer
 
 
@@ -185,7 +188,7 @@ def test_no_connection_instance() -> None:
         _ = ZeroMQ(Equipment())
 
 
-def test_multipart(zmq_server: type[ZMQServer]) -> None:
+def test_multipart(zmq_server: type[ZMQServer]) -> None:  # noqa: PLR0915
     with zmq_server() as server:
         conn = Connection(f"ZMQ::{server.host}::{server.port}")
         dev: ZeroMQ
@@ -193,7 +196,8 @@ def test_multipart(zmq_server: type[ZMQServer]) -> None:
             # the following test are primarily checks for when running type
             # checkers against the `ZMQMultiPart` definition
 
-            out = dev.write_multipart([array("w", b"wwww")])
+            t: Literal["u", "w"] = "u" if sys.version_info < (3, 13) else "w"
+            out = dev.write_multipart([array(t, b"wwww")])
             assert out is None
             list_bytes = dev.read_multipart()
             assert list_bytes == [b"wwww"]

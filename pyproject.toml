@@ -238,7 +238,7 @@ max-args = 7
     "INP001", # implicit-namespace-package
     "PERF203", # try-except-in-loop
     "T201",  # Allow print statements
-    "T203",  # Allpw pprint statements
+    "T203",  # Allow pprint statements
 ]
 "packages/resources/src/msl/equipment_resources/picotech/status.py" = [
     "E501",  # line-too-long

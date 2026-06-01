@@ -237,10 +237,14 @@ def test_multipart(zmq_server: type[ZMQServer]) -> None:  # noqa: PLR0915
             list_bytes = dev.read_multipart()
             assert list_bytes == [b"frame"]
 
+            is_windows_and_python_3_8 = sys.platform == "win32" and sys.version_info < (3, 9)
             out = dev.write_multipart([np.array([1, 2])])
             assert out is None
             list_bytes = dev.read_multipart()
-            assert list_bytes == [b"\x01\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00"]
+            if is_windows_and_python_3_8:
+                assert list_bytes == [b"\x01\x00\x00\x00\x02\x00\x00\x00"]
+            else:
+                assert list_bytes == [b"\x01\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00"]
 
             out = dev.write_multipart([np.array([1, 2], dtype="b")], copy=True)
             assert out is None

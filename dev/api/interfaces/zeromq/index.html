@@ -5521,8 +5521,7 @@ termination characters are specified the value is ignored and is set to <code>No
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/msl/equipment/interfaces/zeromq.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">33</span>
-<span class="normal">34</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
 <span class="normal">35</span>
 <span class="normal">36</span>
 <span class="normal">37</span>
@@ -5572,7 +5571,8 @@ termination characters are specified the value is ignored and is set to <code>No
 <span class="normal">81</span>
 <span class="normal">82</span>
 <span class="normal">83</span>
-<span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">84</span>
+<span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for equipment that use the [ZeroMQ](https://zeromq.org/) communication protocol.</span>
 
 <span class="sd">    Args:</span>
@@ -5871,14 +5871,14 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/zeromq.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">111</span>
-<span class="normal">112</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">112</span>
 <span class="normal">113</span>
 <span class="normal">114</span>
 <span class="normal">115</span>
 <span class="normal">116</span>
 <span class="normal">117</span>
-<span class="normal">118</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
+<span class="normal">118</span>
+<span class="normal">119</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Close the socket connection and terminate the context.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_socket&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">BLOCKY</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -6735,8 +6735,8 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
             <td>
               <div class="doc-md-description">
                 <p>Should the message frame(s) be received in a copying or non-copying manner?
-If <code>False</code> a <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.Frame">Frame</a> object is returned for each part, if <code>True</code> a
-copy of the bytes is made for each frame.</p>
+If <code>False</code>, a <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.Frame">Frame</a> object is returned for each message part,
+otherwise a copy of the bytes is made for each frame.</p>
               </div>
             </td>
             <td>
@@ -6753,7 +6753,7 @@ copy of the bytes is made for each frame.</p>
             <td>
               <div class="doc-md-description">
                 <p>Should the message frame(s) be tracked for notification that ZeroMQ has
-finished with it? (ignored if <code>copy=True</code>)</p>
+finished with it? Ignored if <code>copy=True</code>.</p>
               </div>
             </td>
             <td>
@@ -6789,8 +6789,7 @@ finished with it? (ignored if <code>copy=True</code>)</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/zeromq.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">129</span>
-<span class="normal">130</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">130</span>
 <span class="normal">131</span>
 <span class="normal">132</span>
 <span class="normal">133</span>
@@ -6806,7 +6805,8 @@ finished with it? (ignored if <code>copy=True</code>)</p>
 <span class="normal">143</span>
 <span class="normal">144</span>
 <span class="normal">145</span>
-<span class="normal">146</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_multipart</span><span class="p">(</span>
+<span class="normal">146</span>
+<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_multipart</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">flags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">track</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">zmq</span><span class="o">.</span><span class="n">Frame</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a multipart message.</span>
@@ -6815,10 +6815,10 @@ finished with it? (ignored if <code>copy=True</code>)</p>
 <span class="sd">        flags: The only supported flag is [DONTWAIT][zmq.Flag.DONTWAIT]</span>
 <span class="sd">            (which has a `zmq.NOBLOCK` alias).</span>
 <span class="sd">        copy: Should the message frame(s) be received in a copying or non-copying manner?</span>
-<span class="sd">            If `False` a [Frame][zmq.Frame] object is returned for each part, if `True` a</span>
-<span class="sd">            copy of the bytes is made for each frame.</span>
+<span class="sd">            If `False`, a [Frame][zmq.Frame] object is returned for each message part,</span>
+<span class="sd">            otherwise a copy of the bytes is made for each frame.</span>
 <span class="sd">        track: Should the message frame(s) be tracked for notification that ZeroMQ has</span>
-<span class="sd">            finished with it? (ignored if `copy=True`)</span>
+<span class="sd">            finished with it? Ignored if `copy=True`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        If `copy=True` returns a [list][][[bytes][]], otherwise a [list][][[Frame][zmq.Frame]].</span>
@@ -7222,8 +7222,8 @@ message part before the last message.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Should the frame(s) be sent in a copying or non-copying manner?
-If <code>False</code>, frames smaller than <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.Socket.copy_threshold">copy_threshold</a>
+                <p>Should the message frame(s) be sent in a copying or non-copying manner?
+If <code>False</code>, messages smaller than <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.Socket.copy_threshold">copy_threshold</a>
 bytes are copied anyway.</p>
               </div>
             </td>
@@ -7240,8 +7240,8 @@ bytes are copied anyway.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Should the frame(s) be tracked for notification that ZeroMQ has
-finished with it (ignored if <code>copy=True</code>)?</p>
+                <p>Should the message frame(s) be tracked for notification that ZeroMQ has
+finished with it? Ignored if <code>copy=True</code>.</p>
               </div>
             </td>
             <td>
@@ -7269,7 +7269,7 @@ finished with it (ignored if <code>copy=True</code>)?</p>
               <div class="doc-md-description">
                 <p>If <code>copy=True</code> returns <code>None</code>, otherwise a <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.MessageTracker">MessageTracker</a> object
 that will have its <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.MessageTracker.done">done</a> property be <code>False</code> until
-the last write is completed.</p>
+the last write has completed.</p>
               </div>
             </td>
           </tr>
@@ -7279,8 +7279,7 @@ the last write is completed.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/zeromq.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">166</span>
-<span class="normal">167</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">167</span>
 <span class="normal">168</span>
 <span class="normal">169</span>
 <span class="normal">170</span>
@@ -7311,7 +7310,8 @@ the last write is completed.</p>
 <span class="normal">195</span>
 <span class="normal">196</span>
 <span class="normal">197</span>
-<span class="normal">198</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write_multipart</span><span class="p">(</span>
+<span class="normal">198</span>
+<span class="normal">199</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write_multipart</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">msg_parts</span><span class="p">:</span> <span class="n">ZMQMultiPart</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -7331,16 +7331,16 @@ the last write is completed.</p>
 <span class="sd">                The [SNDMORE][zmq.Flag.SNDMORE] flag is automatically added to each</span>
 <span class="sd">                message part before the last message.</span>
 
-<span class="sd">        copy: Should the frame(s) be sent in a copying or non-copying manner?</span>
-<span class="sd">            If `False`, frames smaller than [copy_threshold][zmq.Socket.copy_threshold]</span>
+<span class="sd">        copy: Should the message frame(s) be sent in a copying or non-copying manner?</span>
+<span class="sd">            If `False`, messages smaller than [copy_threshold][zmq.Socket.copy_threshold]</span>
 <span class="sd">            bytes are copied anyway.</span>
-<span class="sd">        track: Should the frame(s) be tracked for notification that ZeroMQ has</span>
-<span class="sd">            finished with it (ignored if `copy=True`)?</span>
+<span class="sd">        track: Should the message frame(s) be tracked for notification that ZeroMQ has</span>
+<span class="sd">            finished with it? Ignored if `copy=True`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        If `copy=True` returns `None`, otherwise a [MessageTracker][zmq.MessageTracker] object</span>
 <span class="sd">            that will have its [done][zmq.MessageTracker.done] property be `False` until</span>
-<span class="sd">            the last write is completed.</span>
+<span class="sd">            the last write has completed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">out</span><span class="p">:</span> <span class="n">MessageTracker</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">(</span><span class="n">msg_parts</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="n">track</span><span class="o">=</span><span class="n">track</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]</span>
     <span class="k">return</span> <span class="n">out</span>
@@ -7369,9 +7369,10 @@ the last write is completed.</p>
 <a href="#msl.equipment.interfaces.zeromq.ZeroMQServer" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">ZeroMQServer</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">protocol</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;tcp&quot;</span><span class="p">,</span>
+    <span class="n">allow</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="collections.abc.Iterable" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable">Iterable</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">host</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
     <span class="n">port</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">protocol</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;tcp&quot;</span><span class="p">,</span>
     <span class="n">socket_type</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="zmq.SocketType" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.SocketType">SocketType</a></span> <span class="o">=</span> <span class="s2">&quot;REP&quot;</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -7381,7 +7382,9 @@ the last write is completed.</p>
 
 
         <p>Start a server to handle requests for the <a href="https://zeromq.org/">ZeroMQ</a> protocol.</p>
-<p>See <a class="autorefs autorefs-internal" title="A ZeroMQ Server" href="../../#a-zeromq-server">here</a> for an example usage.</p>
+<p>This class is useful if you would like to allow equipment that has a non-Ethernet interface
+(e.g., GPIB or RS-232) to be controllable from any computer that is on the network.</p>
+<p>See <a class="autorefs autorefs-internal" title="A ZeroMQ Server" href="../../#a-zeromq-server">here</a> for examples on how to use this class.</p>
 
 
 
@@ -7398,18 +7401,21 @@ the last write is completed.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                <code>protocol</code>
+                <code>allow</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="collections.abc.Iterable" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable">Iterable</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>ZeroMQ protocol (<code>tcp</code>, <code>udp</code>, <code>pgm</code>, <code>inproc</code>, <code>ipc</code>).</p>
+                <p>The IPv4 address(es), or hostname(s), that are allowed to connect to the server.
+If not specified, all IP addresses can connect. If a hostname cannot be resolved
+to an IPv4 address a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/socket.html#socket.gaierror">gaierror</a> is raised, in which case you must
+explicitly specify the IPv4 address instead of the hostname.</p>
               </div>
             </td>
             <td>
-                  <code>&#39;tcp&#39;</code>
+                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -7421,8 +7427,8 @@ the last write is completed.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The network interface (IP address) to use to bind the server, If <code>*</code>, listen
-on all available network interfaces simultaneously.</p>
+                <p>The network interface (IP address) to bind the server to. If <code>*</code>, the server
+listens on all available network interfaces simultaneously.</p>
               </div>
             </td>
             <td>
@@ -7438,11 +7444,27 @@ on all available network interfaces simultaneously.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The port to bind the server to. If <code>0</code>, binds the server to a random port.</p>
+                <p>The port to bind the server to. If <code>0</code>, binds the server to any available port.</p>
               </div>
             </td>
             <td>
                   <code>0</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>protocol</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The ZeroMQ protocol (<code>tcp</code>, <code>udp</code>, <code>pgm</code>, <code>inproc</code>, <code>ipc</code>) to use.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;tcp&#39;</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -7454,7 +7476,7 @@ on all available network interfaces simultaneously.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>ZeroMQ socket type. Can also be a <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.SocketType">SocketType</a> enum
+                <p>The ZeroMQ socket type. Can also be a <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.SocketType">SocketType</a> enum
 member name (case insensitive) or value.</p>
               </div>
             </td>
@@ -7474,11 +7496,7 @@ member name (case insensitive) or value.</p>
 
                   <details class="mkdocstrings-source">
                     <summary>Source code in <code>src/msl/equipment/interfaces/zeromq.py</code></summary>
-                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">207</span>
-<span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">211</span>
 <span class="normal">212</span>
 <span class="normal">213</span>
 <span class="normal">214</span>
@@ -7517,48 +7535,96 @@ member name (case insensitive) or value.</p>
 <span class="normal">247</span>
 <span class="normal">248</span>
 <span class="normal">249</span>
-<span class="normal">250</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">protocol</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;tcp&quot;</span><span class="p">,</span>
+    <span class="n">allow</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
     <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">protocol</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;tcp&quot;</span><span class="p">,</span>
     <span class="n">socket_type</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SocketType</span> <span class="o">=</span> <span class="s2">&quot;REP&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Start a server to handle requests for the [ZeroMQ](https://zeromq.org/) protocol.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        protocol: ZeroMQ protocol (`tcp`, `udp`, `pgm`, `inproc`, `ipc`).</span>
-<span class="sd">        host: The network interface (IP address) to use to bind the server, If `*`, listen</span>
-<span class="sd">            on all available network interfaces simultaneously.</span>
-<span class="sd">        port: The port to bind the server to. If `0`, binds the server to a random port.</span>
-<span class="sd">        socket_type: ZeroMQ socket type. Can also be a [SocketType][zmq.SocketType] enum</span>
+<span class="sd">        allow: The IPv4 address(es), or hostname(s), that are allowed to connect to the server.</span>
+<span class="sd">            If not specified, all IP addresses can connect. If a hostname cannot be resolved</span>
+<span class="sd">            to an IPv4 address a [gaierror][socket.gaierror] is raised, in which case you must</span>
+<span class="sd">            explicitly specify the IPv4 address instead of the hostname.</span>
+<span class="sd">        host: The network interface (IP address) to bind the server to. If `*`, the server</span>
+<span class="sd">            listens on all available network interfaces simultaneously.</span>
+<span class="sd">        port: The port to bind the server to. If `0`, binds the server to any available port.</span>
+<span class="sd">        protocol: The ZeroMQ protocol (`tcp`, `udp`, `pgm`, `inproc`, `ipc`) to use.</span>
+<span class="sd">        socket_type: The ZeroMQ socket type. Can also be a [SocketType][zmq.SocketType] enum</span>
 <span class="sd">            member name (case insensitive) or value.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">zmq.asyncio</span>  <span class="c1"># noqa: PLC0415</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_protocol_host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">protocol</span><span class="si">}</span><span class="s2">://</span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_auth</span><span class="p">:</span> <span class="n">AsyncioAuthenticator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt</span><span class="p">:</span> <span class="n">_Interrupter</span> <span class="o">=</span> <span class="n">_Interrupter</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">:</span> <span class="n">zmq</span><span class="o">.</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Context</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Context</span><span class="p">()</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;[Context][zmq.asyncio.Context] &amp;mdash; The asynchronous ZeroMQ context.&quot;&quot;&quot;</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_socket_type</span><span class="p">:</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SocketType</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">socket_type</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SocketType</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">:</span> <span class="n">zmq</span><span class="o">.</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Context</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Context</span><span class="p">()</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[Context][zmq.asyncio.Context] &amp;mdash; The asynchronous ZMQ context.&quot;&quot;&quot;</span>
-
     <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="p">:</span> <span class="n">zmq</span><span class="o">.</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Socket</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_socket_type</span><span class="p">)</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[Socket][zmq.asyncio.Socket] &amp;mdash; The asynchronous ZMQ socket.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;[Socket][zmq.asyncio.Socket] &amp;mdash; The asynchronous ZeroMQ socket.&quot;&quot;&quot;</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt</span><span class="p">:</span> <span class="n">_Interrupter</span> <span class="o">=</span> <span class="n">_Interrupter</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">allow</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">socket</span><span class="w"> </span><span class="kn">import</span> <span class="n">gethostbyname</span>  <span class="c1"># noqa: PLC0415</span>
 
-    <span class="k">if</span> <span class="n">port</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">bind_to_random_port</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">protocol</span><span class="si">}</span><span class="s2">://</span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">protocol</span><span class="si">}</span><span class="s2">://</span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">zmq.auth.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncioAuthenticator</span>  <span class="c1"># noqa: PLC0415</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">allow</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">allow</span> <span class="o">=</span> <span class="p">[</span><span class="n">allow</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_auth</span> <span class="o">=</span> <span class="n">AsyncioAuthenticator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_auth</span><span class="o">.</span><span class="n">allow</span><span class="p">(</span><span class="o">*</span><span class="p">{</span><span class="n">gethostbyname</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">allow</span><span class="p">})</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">port</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; The port number that the server is running on.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; The port number that the server is running on.</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">getsockopt_string</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">LAST_ENDPOINT</span><span class="p">)</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[str][] &amp;mdash; The ZMQ address that the server is using.&quot;&quot;&quot;</span>
+<span class="sd">    If a value of `0` was used to instantiate the class, the port value</span>
+<span class="sd">    will become non-zero once the server is bound, which occurs when</span>
+<span class="sd">    [run_forever][msl.equipment.interfaces.zeromq.ZeroMQServer.run_forever]</span>
+<span class="sd">    is called.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">_poller</span><span class="p">:</span> <span class="n">Poller</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">Poller</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;[str][] &amp;mdash; The ZeroMQ address that the server is using.</span>
+
+<span class="sd">    The value is initially an empty string, but has a non-empty value once</span>
+<span class="sd">    [run_forever][msl.equipment.interfaces.zeromq.ZeroMQServer.run_forever]</span>
+<span class="sd">    is called.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_poller</span><span class="p">:</span> <span class="n">zmq</span><span class="o">.</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Poller</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Poller</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_poller</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">POLLIN</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_poller</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_interrupt</span><span class="o">.</span><span class="n">aborter</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">POLLIN</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -7592,7 +7658,10 @@ member name (case insensitive) or value.</p>
 
     <div class="doc doc-contents ">
 
-        <p><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> &mdash; The ZMQ address that the server is using.</p>
+        <p><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> &mdash; The ZeroMQ address that the server is using.</p>
+<p>The value is initially an empty string, but has a non-empty value once
+<a class="autorefs autorefs-internal" title="            run_forever" href="#msl.equipment.interfaces.zeromq.ZeroMQServer.run_forever">run_forever</a>
+is called.</p>
 
     </div>
 
@@ -7616,7 +7685,7 @@ member name (case insensitive) or value.</p>
 
     <div class="doc doc-contents ">
 
-        <p><a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.asyncio.html#zmq.asyncio.Context">Context</a> &mdash; The asynchronous ZMQ context.</p>
+        <p><a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.asyncio.html#zmq.asyncio.Context">Context</a> &mdash; The asynchronous ZeroMQ context.</p>
 
     </div>
 
@@ -7641,6 +7710,10 @@ member name (case insensitive) or value.</p>
     <div class="doc doc-contents ">
 
         <p><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> &mdash; The port number that the server is running on.</p>
+<p>If a value of <code>0</code> was used to instantiate the class, the port value
+will become non-zero once the server is bound, which occurs when
+<a class="autorefs autorefs-internal" title="            run_forever" href="#msl.equipment.interfaces.zeromq.ZeroMQServer.run_forever">run_forever</a>
+is called.</p>
 
     </div>
 
@@ -7664,7 +7737,7 @@ member name (case insensitive) or value.</p>
 
     <div class="doc doc-contents ">
 
-        <p><a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.asyncio.html#zmq.asyncio.Socket">Socket</a> &mdash; The asynchronous ZMQ socket.</p>
+        <p><a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.asyncio.html#zmq.asyncio.Socket">Socket</a> &mdash; The asynchronous ZeroMQ socket.</p>
 
     </div>
 
@@ -7681,14 +7754,19 @@ member name (case insensitive) or value.</p>
 
 
 <a href="#msl.equipment.interfaces.zeromq.ZeroMQServer.handle_request" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">handle_request</span><span class="p">(</span><span class="n">msg_parts</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list">list</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">handle_request</span><span class="p">(</span><span class="n">msg_parts</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list">list</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            ZMQMultiPart
+
+
+  
+      module-attribute
+   (msl.equipment.typing.ZMQMultiPart)" href="../../typing/#msl.equipment.typing.ZMQMultiPart">ZMQMultiPart</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>Handle a <em>single</em> request.</p>
 <div class="admonition warning">
-<p class="admonition-title">Warning</p>
+<p class="admonition-title">Attention</p>
 <p>You must override this method.</p>
 </div>
 
@@ -7713,7 +7791,13 @@ member name (case insensitive) or value.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The request message.</p>
+                <p>The request message. You can choose to write a message using the
+<a class="autorefs autorefs-internal" title="            write_multipart" href="#msl.equipment.interfaces.zeromq.ZeroMQ.write_multipart">write_multipart</a>
+method to separate the method name from the arguments when processing the
+request on the server. Even if you use the
+<a class="autorefs autorefs-internal" title="            write" href="#msl.equipment.interfaces.zeromq.ZeroMQ.write">write</a> method to send a
+request as bytes or a string, the <code>handle_request</code> method will always
+receive a list of bytes.</p>
               </div>
             </td>
             <td>
@@ -7735,11 +7819,16 @@ member name (case insensitive) or value.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a> | <a class="autorefs autorefs-internal" title="            ZMQMultiPart
+
+
+  
+      module-attribute
+   (msl.equipment.typing.ZMQMultiPart)" href="../../typing/#msl.equipment.typing.ZMQMultiPart">ZMQMultiPart</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The response.</p>
+                <p>The response. Can either be bytes or a sequence of objects that support the readable-buffer protocol.</p>
               </div>
             </td>
           </tr>
@@ -7749,30 +7838,42 @@ member name (case insensitive) or value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/zeromq.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">279</span>
-<span class="normal">280</span>
-<span class="normal">281</span>
-<span class="normal">282</span>
-<span class="normal">283</span>
-<span class="normal">284</span>
-<span class="normal">285</span>
-<span class="normal">286</span>
-<span class="normal">287</span>
-<span class="normal">288</span>
-<span class="normal">289</span>
-<span class="normal">290</span>
-<span class="normal">291</span>
-<span class="normal">292</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">handle_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportUnusedParameter]</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">handle_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">ZMQMultiPart</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportUnusedParameter]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle a *single* request.</span>
 
-<span class="sd">    !!! warning</span>
+<span class="sd">    !!! warning &quot;Attention&quot;</span>
 <span class="sd">        You must override this method.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        msg_parts: The request message.</span>
+<span class="sd">        msg_parts: The request message. You can choose to write a message using the</span>
+<span class="sd">            [write_multipart][msl.equipment.interfaces.zeromq.ZeroMQ.write_multipart]</span>
+<span class="sd">            method to separate the method name from the arguments when processing the</span>
+<span class="sd">            request on the server. Even if you use the</span>
+<span class="sd">            [write][msl.equipment.interfaces.zeromq.ZeroMQ.write] method to send a</span>
+<span class="sd">            request as bytes or a string, the `handle_request` method will always</span>
+<span class="sd">            receive a list of bytes.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        The response.</span>
+<span class="sd">        The response. Can either be bytes or a sequence of objects that support the readable-buffer protocol.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Override the `handle_request` method to handle the request message&quot;</span>
     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -7790,7 +7891,7 @@ member name (case insensitive) or value.</p>
 
 
 <a href="#msl.equipment.interfaces.zeromq.ZeroMQServer.run_forever" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">run_forever</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">show</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">run_forever</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7811,7 +7912,7 @@ member name (case insensitive) or value.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                <code>show</code>
+                <code>info</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
@@ -7831,56 +7932,42 @@ member name (case insensitive) or value.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/zeromq.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">294</span>
-<span class="normal">295</span>
-<span class="normal">296</span>
-<span class="normal">297</span>
-<span class="normal">298</span>
-<span class="normal">299</span>
-<span class="normal">300</span>
-<span class="normal">301</span>
-<span class="normal">302</span>
-<span class="normal">303</span>
-<span class="normal">304</span>
-<span class="normal">305</span>
-<span class="normal">306</span>
-<span class="normal">307</span>
-<span class="normal">308</span>
-<span class="normal">309</span>
-<span class="normal">310</span>
-<span class="normal">311</span>
-<span class="normal">312</span>
-<span class="normal">313</span>
-<span class="normal">314</span>
-<span class="normal">315</span>
-<span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span>
-<span class="normal">319</span>
-<span class="normal">320</span>
-<span class="normal">321</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_forever</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">show</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_forever</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the server.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        show: Whether to print information about the running server.</span>
+<span class="sd">        info: Whether to print information about the running server.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>  <span class="c1"># noqa: PLC0415</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>  <span class="c1"># noqa: PLC0415</span>
-
-    <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> running on </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="si">!r}</span><span class="s2"> using a </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_socket_type</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> socket</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;Press Ctrl+C to shut down the server&quot;</span>
-        <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>  <span class="c1"># noqa: T201</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
                 <span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop_policy</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">WindowsSelectorEventLoopPolicy</span><span class="p">())</span>  <span class="c1"># pyright: ignore[reportUnreachable]</span>
-            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">())</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">(</span><span class="n">info</span><span class="o">=</span><span class="n">info</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">(),</span> <span class="n">loop_factory</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">SelectorEventLoop</span><span class="p">)</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">(</span><span class="n">info</span><span class="o">=</span><span class="n">info</span><span class="p">),</span> <span class="n">loop_factory</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">SelectorEventLoop</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
         <span class="k">pass</span>
     <span class="k">finally</span><span class="p">:</span>
@@ -7923,13 +8010,13 @@ and the <a class="autorefs autorefs-internal" title="            context
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/zeromq.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">323</span>
-<span class="normal">324</span>
-<span class="normal">325</span>
-<span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span>
-<span class="normal">329</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">shutdown_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">shutdown_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;You can override this method in the subclass to perform any necessary clean up.</span>
 
 <span class="sd">    This method is called after [run_forever][msl.equipment.interfaces.zeromq.ZeroMQServer.run_forever]</span>
@@ -7956,20 +8043,20 @@ and the <a class="autorefs autorefs-internal" title="            context
     <div class="doc doc-contents ">
 
         <p>Shut down the server.</p>
-<p>Pressing <code>Ctrl+C</code> in the terminal that the service is running in will also shut down the server.</p>
+<p>Pressing <code>Ctrl+C</code> in the terminal that the server is running in will also shut down the server.</p>
 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/interfaces/zeromq.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">331</span>
-<span class="normal">332</span>
-<span class="normal">333</span>
-<span class="normal">334</span>
-<span class="normal">335</span>
-<span class="normal">336</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">shutdown_server</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">shutdown_server</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Shut down the server.</span>
 
-<span class="sd">    Pressing `Ctrl+C` in the terminal that the service is running in will also shut down the server.</span>
+<span class="sd">    Pressing `Ctrl+C` in the terminal that the server is running in will also shut down the server.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>

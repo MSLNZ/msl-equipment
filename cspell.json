@@ -111,6 +111,7 @@
         "fromiter",
         "FTDI",
         "fwxx",
+        "gaierror",
         "gethostname",
         "GETPORT",
         "GPIB",

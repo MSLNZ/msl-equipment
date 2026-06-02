@@ -1,5 +1,7 @@
 # API Overview
 
+## Overview {: #api-overview-toc }
+
 Although this package contains many classes and functions, the classes that you may typically create instances of are
 
 * [Config][] &mdash; if you want to load equipment registers and communicate with equipment
@@ -25,25 +27,33 @@ The [MSLConnectionError][msl.equipment.interfaces.message.MSLConnectionError] an
 
 ## A ZeroMQ Server
 
-If you would like to allow equipment that has a non-Ethernet interface (e.g., GPIB or RS-232) to be controllable from any computer that is on the network you can use a client-server protocol using the [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] and [ZeroMQServer][msl.equipment.interfaces.zeromq.ZeroMQServer] classes. The following example illustrates the concept. Run `server.py` on a computer that is physically connected to the equipment and `client.py` can be run on any computer on the network.
+If you would like to allow equipment that has a non-Ethernet interface (e.g., GPIB or RS-232) to be controllable from any computer that is on the network you can use a client-server protocol using the [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] and [ZeroMQServer][msl.equipment.interfaces.zeromq.ZeroMQServer] classes. The following examples illustrate the concept. Run `server.py` on a computer that is physically connected to the equipment and `client.py` can be run on any computer on the network.
+
+By default, the server will process requests that are sent by any computer on the network (option 1 below). If you want to control which client(s) the server will process requests for, you can implement either option 2, 3 or 4.
+
+1. Allow requests from any client (see [Allow any][1-allow-any] below).
+2. Specify the IP address(es), or hostname(s), of the clients that are allowed to send requests to the server when the server is created (see [Use an allow list][2-use-an-allow-list] below).
+3. Use a [PAIR][zmq.SocketType.PAIR] `socket_type` when creating an instance of the client and the server (see [Use a PAIR][3-use-a-pair] below).
+4. Include a unique and privately known *identity* as the first item in a [write_multipart][msl.equipment.interfaces.zeromq.ZeroMQ.write_multipart] message that the client sends. The server verifies the *identity* before processing the request (see [Use an identity][4-use-an-identity] below).
+
+### 1. Allow any
 
 === "client.py"
     ```python
+    # The server has an IP address of 192.168.1.100 and is running on port 5555
     from msl.equipment import Connection, ZeroMQ
 
     client: ZeroMQ
     with Connection("ZMQ::192.168.1.100::5555").connect() as client:
-        # A unique (and privately known) client identity b"let me in!" is
-        # sent with the request to create an exclusive client-server pair
-        _ = client.write_multipart([b"let me in!", b"*IDN?"])
-        print(client.read())
+        print(client.query("*IDN?"))
     ```
 
 === "server.py"
     ```python
     from __future__ import annotations
 
-    from msl.equipment import Connection, Serial, ZeroMQServer
+    from msl.equipment import Connection, GPIB, ZeroMQServer
+    from msl.equipment.typing import ZMQMultiPart
 
     class DMM(ZeroMQServer):
         """Allow for a digital multimeter to be available on the network."""
@@ -52,35 +62,172 @@ If you would like to allow equipment that has a non-Ethernet interface (e.g., GP
             super().__init__(port=port)
 
             # Create the connection to the digital multimeter
-            self.dmm: Serial = Connection("COM2").connect()
+            self.dmm: GPIB = Connection("GPIB::18").connect()
 
-        def handle_request(self, msg_parts: list[bytes]) -> bytes:
-            """Handle a request and return the reply (as bytes).
-
-            The server can be accessed by any device on the network.
-            If you want an exclusive client-server pair you can either use
-            a zmq.PAIR `socket_type` when creating an instance of the client
-            and server classes or you can include a unique (and privately known)
-            identity as the first item in a `ZeroMQ.write_multipart` message
-            that the ZeroMQ client sends.
-            """
-            identity, *message = msg_parts
-            if identity != b"let me in!":
-                return b"PermissionError: You are not allowed to do this"
-
-            # Process the different `message` values that you want to support
-            if message[0] == b"*IDN?":
+        def handle_request(self, msg_parts: list[bytes]) -> bytes | ZMQMultiPart:
+            """Handle a request and return the reply."""
+            # Process the requests that you want to support
+            if msg_parts[0] == b"*IDN?":
                 return self.dmm.query("*IDN?", decode=False)
 
-            return b"Unhandled message: " + b"".join(message)
+            # Send a reply that the server does not support the request
+            return b"Unsupported request: " + b" ".join(msg_parts)
 
         def shutdown_handler(self) -> None:
             """Disconnect from the digital multimeter when the server shuts down."""
             self.dmm.disconnect()
 
+    if __name__ == "__main__":
+        server = DMM(port=5555)
+        server.run_forever()
+    ```
 
-    server = DMM(port=5555)
-    server.run_forever()
+### 2. Use an allow list
+
+=== "client.py"
+    ```python
+    # The server has an IP address of 192.168.1.100 and is running on port 5555
+    from msl.equipment import Connection, ZeroMQ
+
+    client: ZeroMQ
+    with Connection("ZMQ::192.168.1.100::5555").connect() as client:
+        print(client.query("*IDN?"))
+    ```
+
+=== "server.py"
+    ```python
+    from __future__ import annotations
+
+    from msl.equipment import Connection, GPIB, ZeroMQServer
+    from msl.equipment.typing import ZMQMultiPart
+
+    class DMM(ZeroMQServer):
+        """Allow for a digital multimeter to be available on the network."""
+
+        def __init__(self, port: int, allow: str) -> None:
+            super().__init__(port=port, allow=allow)
+
+            # Create the connection to the digital multimeter
+            self.dmm: GPIB = Connection("GPIB::18").connect()
+
+        def handle_request(self, msg_parts: list[bytes]) -> bytes | ZMQMultiPart:
+            """Handle a request and return the reply."""
+            # Process the requests that you want to support
+            if msg_parts[0] == b"*IDN?":
+                return self.dmm.query("*IDN?", decode=False)
+
+            # Send a reply that the server does not support the request
+            return b"Unsupported request: " + b" ".join(msg_parts)
+
+        def shutdown_handler(self) -> None:
+            """Disconnect from the digital multimeter when the server shuts down."""
+            self.dmm.disconnect()
+
+    if __name__ == "__main__":
+        # The client has an IP address of 192.168.1.58
+        # You can also specify a sequence of IP addresses to allow
+        server = DMM(port=5555, allow="192.168.1.58")
+        server.run_forever()
+    ```
+
+### 3. Use a [PAIR][zmq.SocketType.PAIR]
+
+=== "client.py"
+    ```python
+    # The server has an IP address of 192.168.1.100 and is running on port 5555
+    from msl.equipment import Connection, ZeroMQ
+
+    client: ZeroMQ
+    with Connection("ZMQ::192.168.1.100::5555", socket_type="PAIR").connect() as client:
+        print(client.query("*IDN?"))
+    ```
+
+=== "server.py"
+    ```python
+    from __future__ import annotations
+
+    from msl.equipment import Connection, GPIB, ZeroMQServer
+    from msl.equipment.typing import ZMQMultiPart
+
+    class DMM(ZeroMQServer):
+        """Allow for a digital multimeter to be available on the network."""
+
+        def __init__(self, port: int, socket_type: str) -> None:
+            super().__init__(port=port, socket_type=socket_type)
+
+            # Create the connection to the digital multimeter
+            self.dmm: GPIB = Connection("GPIB::18").connect()
+
+        def handle_request(self, msg_parts: list[bytes]) -> bytes | ZMQMultiPart:
+            """Handle a request and return the reply."""
+            # Process the different requests that you want to support
+            if msg_parts[0] == b"*IDN?":
+                return self.dmm.query("*IDN?", decode=False)
+
+            # Send a reply that the server does not support the request
+            return b"Unsupported request: " + b" ".join(msg_parts)
+
+        def shutdown_handler(self) -> None:
+            """Disconnect from the digital multimeter when the server shuts down."""
+            self.dmm.disconnect()
+
+    if __name__ == "__main__":
+        server = DMM(port=5555, socket_type="PAIR")
+        server.run_forever()
+    ```
+
+### 4. Use an identity
+
+=== "client.py"
+    ```python
+    # The server has an IP address of 192.168.1.100 and is running on port 5555
+    from msl.equipment import Connection, ZeroMQ
+
+    client: ZeroMQ
+    with Connection("ZMQ::192.168.1.100::5555").connect() as client:
+        # The client identity b"let me in!" is sent with each request
+        _ = client.write_multipart([b"let me in!", b"*IDN?"])
+        print(client.read())
+    ```
+
+=== "server.py"
+    ```python
+    from __future__ import annotations
+
+    from msl.equipment import Connection, GPIB, ZeroMQServer
+    from msl.equipment.typing import ZMQMultiPart
+
+    class DMM(ZeroMQServer):
+        """Allow for a digital multimeter to be available on the network."""
+
+        def __init__(self, port: int) -> None:
+            super().__init__(port=port)
+
+            # Create the connection to the digital multimeter
+            self.dmm: GPIB = Connection("GPIB::18").connect()
+
+        def handle_request(self, msg_parts: list[bytes]) -> bytes | ZMQMultiPart:
+            """Handle a request and return the reply."""
+            identity, *request = msg_parts
+
+            # Check the identity of the client
+            if identity != b"let me in!":
+                return b"PermissionError: You are not allowed to do this"
+
+            # Process the requests that you want to support
+            if request[0] == b"*IDN?":
+                return self.dmm.query("*IDN?", decode=False)
+
+            # Send a reply that the server does not support the request
+            return b"Unsupported request: " + b" ".join(request)
+
+        def shutdown_handler(self) -> None:
+            """Disconnect from the digital multimeter when the server shuts down."""
+            self.dmm.disconnect()
+
+    if __name__ == "__main__":
+        server = DMM(port=5555)
+        server.run_forever()
     ```
 
 ## Command Line Interface

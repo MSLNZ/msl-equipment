@@ -10,10 +10,10 @@ The following instructions are intended to be a starting point if you are having
 Download the latest `libusb` library from the [repository](https://github.com/libusb/libusb/releases){:target="_blank"}.
 
 !!! tip
-    Here, version 1.0.29 is downloaded. Update this value in the following command if there is a new release.
+    Here, version 1.0.30 is downloaded. Update this value in the following command if there is a new release.
 
 ```console
-Invoke-WebRequest -Uri https://github.com/libusb/libusb/releases/download/v1.0.29/libusb-1.0.29.7z -OutFile libusb.7z
+Invoke-WebRequest -Uri https://github.com/libusb/libusb/releases/download/v1.0.30/libusb-1.0.30.7z -OutFile libusb.7z
 ```
 
 Use [7zip](https://7-zip.org/){:target="_blank"} to extract the zip file. First, install 7zip if it's not already.

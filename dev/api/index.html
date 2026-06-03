@@ -4937,21 +4937,26 @@
 (OSError)" href="exceptions/#msl.equipment.interfaces.message.MSLConnectionError">MSLConnectionError</a> and <a class="autorefs autorefs-internal" title="            MSLTimeoutError
 (TimeoutError)" href="exceptions/#msl.equipment.interfaces.message.MSLTimeoutError">MSLTimeoutError</a> classes are raised if there are issues when communicating with equipment.</p>
 <h2 id="equipment-server">Equipment Server<a class="headerlink" href="#equipment-server" title="Permanent link">¤</a></h2>
-<p>If you would like to allow equipment that has a non-Ethernet interface (e.g., GPIB, RS-232, USB) to be controllable from any computer that is on the network, you can use a client-server protocol using the <a class="autorefs autorefs-internal" title="            ZeroMQ
+<p>If you would like to allow equipment that has a non-Ethernet interface (e.g., GPIB, RS-232, USB) to be connectable from any computer that is on the network, you can use a client-server protocol using the <a class="autorefs autorefs-internal" title="            ZeroMQ
 (Message)" href="interfaces/zeromq/#msl.equipment.interfaces.zeromq.ZeroMQ">ZeroMQ</a> and <a class="autorefs autorefs-internal" title="            ZeroMQServer
-(ABC)" href="interfaces/zeromq/#msl.equipment.interfaces.zeromq.ZeroMQServer">ZeroMQServer</a> classes. The following examples illustrate the concept. Run <code>server.py</code> on a computer that is physically connected to the equipment and <code>client.py</code> can be run on any computer on the network.</p>
+(ABC)" href="interfaces/zeromq/#msl.equipment.interfaces.zeromq.ZeroMQServer">ZeroMQServer</a> classes. The following examples illustrate the concept. Run <code>server.py</code> on the computer that is physically connected to the equipment and <code>client.py</code> can be run on any computer on the network.</p>
 <p>When using the <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.SocketType.REQ">REQ</a> (client) and <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.SocketType.REP">REP</a> (server) socket types, a client must always read the response after sending a request. This means that a client cannot perform a <a class="autorefs autorefs-internal" title="            write" href="interfaces/zeromq/#msl.equipment.interfaces.zeromq.ZeroMQ.write">write</a> and/or a <a class="autorefs autorefs-internal" title="            write_multipart" href="interfaces/zeromq/#msl.equipment.interfaces.zeromq.ZeroMQ.write_multipart">write_multipart</a> sequentially.</p>
-<p>By default, the server will process requests that are sent by <em>any</em> computer on the network (example 1 below). If you want to control which client(s) the server will process requests for, you can implement example 2, 3 or 4.</p>
+<p>By default, the server will process requests that are sent by <em>any</em> computer on the network (example 1 below). If you want to control which client(s) the server will process requests for, you can take guidance from example 2, 3 or 4.</p>
 <ol>
-<li>Allow requests from any client (see <a class="autorefs autorefs-internal" title="1. Allow any" href="#1-allow-any">Allow any</a> below). This example uses the <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.SocketType.REQ">REQ</a> (client) and <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.SocketType.REP">REP</a> (server) protocol so the client must always read a response, even if the action is only to write a message to the equipment.</li>
-<li>Specify the IP address(es), or hostname(s), of the clients that are allowed to send requests to the server when the server is instantiated (see <a class="autorefs autorefs-internal" title="2. Allow specific" href="#2-allow-specific">Allow specific</a> below). The only difference compared to example 1 is the addition of the <code>allow="192.168.1.58"</code> keyword argument when the <code>DMM</code> server class is instantiated.</li>
-<li>Use a <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.SocketType.PAIR">PAIR</a> <code>socket_type</code> when creating an instance of the client and the server (see <a class="autorefs autorefs-internal" title="3. Use a " href="#3-use-a-pair">Use a PAIR</a> below). When using a <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.SocketType.PAIR">PAIR</a> socket, the client can send multiple <em>writes</em> without performing a <em>read</em> and the server can return <code>None</code> from the <a class="autorefs autorefs-internal" title="            handle_request
+<li>Allow requests from any client (see <a class="autorefs autorefs-internal" title="1. Allow any" href="#1-allow-any">Allow any</a> below). This example uses the <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.SocketType.REQ">REQ</a> (client) and <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.SocketType.REP">REP</a> (server) socket types so the client must always read a response, even if the action is only to write a message to the equipment.</li>
+<li>Specify the IP address(es), or hostname(s), of the clients that are allowed to send requests to the server when the server is instantiated (see <a class="autorefs autorefs-internal" title="2. Allow specific" href="#2-allow-specific">Allow specific</a> below). The <a class="autorefs autorefs-internal" title="            handle_request
+
+
+  
+      abstractmethod
+  " href="interfaces/zeromq/#msl.equipment.interfaces.zeromq.ZeroMQServer.handle_request">handle_request</a> method on the server is also implemented in a different way than in example 1.</li>
+<li>Use a <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.SocketType.PAIR">PAIR</a> socket type when creating an instance of the client and server (see <a class="autorefs autorefs-internal" title="3. Use a " href="#3-use-a-pair">Use a PAIR</a> below). When using a <a class="autorefs autorefs-external" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.SocketType.PAIR">PAIR</a> socket, the client can send multiple <em>writes</em> without performing a <em>read</em> and the server can return <code>None</code> from the <a class="autorefs autorefs-internal" title="            handle_request
 
 
   
       abstractmethod
   " href="interfaces/zeromq/#msl.equipment.interfaces.zeromq.ZeroMQServer.handle_request">handle_request</a> method.</li>
-<li>Include a unique and privately known (between the client and server) <em>identity</em> as the first item in a <a class="autorefs autorefs-internal" title="            write_multipart" href="interfaces/zeromq/#msl.equipment.interfaces.zeromq.ZeroMQ.write_multipart">write_multipart</a> message that the client sends. The server verifies the <em>identity</em> before processing the request (see <a class="autorefs autorefs-internal" title="4. Use an identity" href="#4-use-an-identity">Use an identity</a> below).</li>
+<li>Include a unique and privately known (between the client and server) <em>identity</em> as the first item in a multipart message that the client sends. The server verifies the <em>identity</em> before processing the request (see <a class="autorefs autorefs-internal" title="4. Use an identity" href="#4-use-an-identity">Use an identity</a> below). Note, this is not a form of secure network communication since messages are sent across the network in plain text. This example assumes that you have trustworthy people on your network and you simply do not want someone to accidentally take control of your equipment. The ZeroMQ protocol has a way to encrypt messages, but that is not of interest here.</li>
 </ol>
 <h3 id="1-allow-any">1. Allow any<a class="headerlink" href="#1-allow-any" title="Permanent link">¤</a></h3>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">client.py</label><label for="__tabbed_1_2">server.py</label></div>
@@ -4966,9 +4971,8 @@
     <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
 
     <span class="c1"># The client only wants to write a message to the equipment</span>
-    <span class="n">client</span><span class="o">.</span><span class="n">write_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">&quot;ignored&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*RST&quot;</span><span class="p">])</span>
     <span class="c1"># But the client must still read a response for the REQ-REP protocol</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">&quot;ignored&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*RST&quot;</span><span class="p">])</span>
 
     <span class="c1"># The client only wants to read a message from the equipment</span>
     <span class="c1"># The server knows that an empty request is for a read only</span>
@@ -5017,26 +5021,26 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">client.py</label><label for="__tabbed_2_2">server.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="c1"># The server has an IP address of 192.168.1.8 and is running on port 5555</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># The client sends the action to perform in a multipart message</span>
+<span class="c1"># The client always gets a list[bytes] as a response (with a length of 1)</span>
+<span class="c1"># The server has an IP address of 192.168.1.8 and is running on port 5555</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">ZeroMQ</span>
 
 <span class="n">client</span><span class="p">:</span> <span class="n">ZeroMQ</span>
 <span class="k">with</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;ZMQ::192.168.1.8::5555&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
-    <span class="c1"># The client performs a query</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
+    <span class="c1"># The client wants to query the equipment</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">&quot;query&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">]))</span>
 
     <span class="c1"># The client only wants to write a message to the equipment</span>
-    <span class="n">client</span><span class="o">.</span><span class="n">write_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">&quot;ignored&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*RST&quot;</span><span class="p">])</span>
-    <span class="c1"># But the client must still read a response for the REQ-REP protocol</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">&quot;write&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*RST&quot;</span><span class="p">])</span>
 
     <span class="c1"># The client only wants to read a message from the equipment</span>
-    <span class="c1"># The server knows that an empty request is for a read only</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">&quot;read&quot;</span><span class="p">]))</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="c1"># The server includes an `allow` keyword argument of the client&#39;s IP address</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># The client sends the action to perform as the first item in `msg_parts`</span>
+<span class="c1"># The server includes an `allow` keyword argument of the client&#39;s IP address</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">GPIB</span><span class="p">,</span> <span class="n">ZeroMQServer</span>
@@ -5053,15 +5057,16 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">handle_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ZMQServerResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle a request and return the response.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg_parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="n">msg_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">decode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">action</span><span class="p">,</span> <span class="o">*</span><span class="n">message</span> <span class="o">=</span> <span class="n">msg_parts</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;query&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">decode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-        <span class="c1"># Otherwise, only write a message (the message is the second item)</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="k">return</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>  <span class="c1"># Cannot return None</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;write&quot;</span><span class="p">:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">return</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>  <span class="c1"># Cannot return None</span>
+
+        <span class="c1"># Otherwise, perform a read</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">decode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">shutdown_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Disconnect from the digital multimeter when the server shuts down.&quot;&quot;&quot;</span>
@@ -5100,6 +5105,7 @@
 </div>
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><span class="c1"># The server is instantiated using the `socket_type=&quot;PAIR&quot;` keyword argument</span>
+<span class="c1"># The server can return `None` to not send a response</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">GPIB</span><span class="p">,</span> <span class="n">ZeroMQServer</span>
@@ -5149,23 +5155,20 @@
 
 <span class="n">client</span><span class="p">:</span> <span class="n">ZeroMQ</span>
 <span class="k">with</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;ZMQ::192.168.1.8::5555&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
-    <span class="c1"># The client performs a successful authenticated query</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">write_multipart</span><span class="p">([</span><span class="n">identity</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="c1"># The client makes an unauthorised query</span>
+    <span class="c1"># Response is &quot;PermissionError: ...&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
 
-    <span class="c1"># The client performs an unsuccessful authenticated query</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">write_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">&quot;bad identity&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>  <span class="c1"># Response is &quot;PermissionError: ...&quot;</span>
+    <span class="c1"># The client makes a successful authenticated query</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="n">identity</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">]))</span>
 
     <span class="c1"># The client only wants to write a message to the equipment</span>
-    <span class="n">client</span><span class="o">.</span><span class="n">write_multipart</span><span class="p">([</span><span class="n">identity</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;ignored&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*RST&quot;</span><span class="p">])</span>
     <span class="c1"># But the client must still read a response for the REQ-REP protocol</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="n">identity</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;ignored&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*RST&quot;</span><span class="p">])</span>
 
     <span class="c1"># The client only wants to read a message from the equipment</span>
     <span class="c1"># The server knows that an empty request is for a read only</span>
-    <span class="n">client</span><span class="o">.</span><span class="n">write_multipart</span><span class="p">([</span><span class="n">identity</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="n">identity</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">]))</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">

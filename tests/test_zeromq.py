@@ -263,7 +263,7 @@ def test_multipart(zmq_server: type[ZMQServer]) -> None:  # noqa: PLR0915
 def test_zmq_server(capsys: pytest.CaptureFixture[str]) -> None:
 
     class Server(ZeroMQServer):
-        def handle_request(self, msg_parts: list[bytes]) -> ZMQServerResponse:  # pyright: ignore[reportImplicitOverride]
+        def handle_request(self, msg_parts: list[bytes]) -> ZMQServerResponse:  # pyright: ignore[reportImplicitOverride]  # noqa: PLR0911
             request = msg_parts[0]
             if request == b"empty":
                 return b""
@@ -273,8 +273,10 @@ def test_zmq_server(capsys: pytest.CaptureFixture[str]) -> None:
                 return array("b", b"b")
             if request == b"frame":
                 return zmq.Frame(b"frame")
-            if request == b"string":
+            if request == b"bytes":
                 return b"".join(msg_parts)
+            if request == b"tuple":
+                return (b"1", bytearray(b"2"), array("b", b"3"))
             return [b"a", bytearray(b"b"), array("b", b"c")]
 
         def shutdown_handler(self) -> None:  # pyright: ignore[reportImplicitOverride]
@@ -298,7 +300,10 @@ def test_zmq_server(capsys: pytest.CaptureFixture[str]) -> None:
 
     assert client.query(b"array", decode=False) == b"b"
     assert client.query(b"frame", decode=False) == b"frame"
-    assert client.query(b"string", decode=False) == b"string"
+    assert client.query(b"bytes", decode=False) == b"bytes"
+
+    assert client.write(b"tuple") == 5
+    assert client.read_multipart() == [b"1", b"2", b"3"]
 
     # read() will only read a single ZMQ Frame
     assert client.write(b"else") == 4

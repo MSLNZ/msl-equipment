@@ -198,59 +198,52 @@ def test_multipart(zmq_server: type[ZMQServer]) -> None:  # noqa: PLR0915
             # checkers against the `ZMQMultiPart` definition
 
             t: Literal["u", "w"] = "u" if sys.version_info < (3, 13) else "w"
-            out = dev.write_multipart([array(t, b"wwww")])
-            assert out is None
-            list_bytes = dev.read_multipart()
-            assert list_bytes == [b"wwww"]
+            assert dev.write_multipart([array(t, b"wwww")]) is None
+            assert dev.read_multipart() == [b"wwww"]
+            assert dev.query_multipart([array(t, b"wwww")]) == [b"wwww"]
 
-            out = dev.write_multipart([array("b", b"b")])
-            assert out is None
-            list_bytes = dev.read_multipart()
-            assert list_bytes == [b"b"]
+            assert dev.write_multipart([array("b", b"b")]) is None
+            assert dev.read_multipart() == [b"b"]
+            assert dev.query_multipart([array("b", b"b")]) == [b"b"]
 
-            out = dev.write_multipart([array("H", b"HH")])
-            assert out is None
-            list_bytes = dev.read_multipart()
-            assert list_bytes == [b"HH"]
+            assert dev.write_multipart([array("H", b"HH")]) is None
+            assert dev.read_multipart() == [b"HH"]
+            assert dev.query_multipart([array("H", b"HH")]) == [b"HH"]
 
-            out = dev.write_multipart([array("d", b"dddddddd")])
-            assert out is None
-            list_bytes = dev.read_multipart()
-            assert list_bytes == [b"dddddddd"]
+            assert dev.write_multipart([array("d", b"dddddddd")]) is None
+            assert dev.read_multipart() == [b"dddddddd"]
+            assert dev.query_multipart([array("d", b"dddddddd")]) == [b"dddddddd"]
 
-            out = dev.write_multipart([b"bytes"])
-            assert out is None
-            list_bytes = dev.read_multipart()
-            assert list_bytes == [b"bytes"]
+            assert dev.write_multipart([b"bytes"]) is None
+            assert dev.read_multipart() == [b"bytes"]
+            assert dev.query_multipart([b"bytes"]) == [b"bytes"]
 
-            out = dev.write_multipart([bytearray(b"bytearray")])
-            assert out is None
-            list_bytes = dev.read_multipart()
-            assert list_bytes == [b"bytearray"]
+            assert dev.write_multipart([bytearray(b"bytearray")]) is None
+            assert dev.read_multipart() == [b"bytearray"]
+            assert dev.query_multipart((bytearray(b"bytearray"),)) == [b"bytearray"]
 
-            out = dev.write_multipart([memoryview(b"memoryview")])
-            assert out is None
-            list_bytes = dev.read_multipart()
-            assert list_bytes == [b"memoryview"]
+            assert dev.write_multipart((memoryview(b"memoryview"),)) is None
+            assert dev.read_multipart() == [b"memoryview"]
+            assert dev.query_multipart([memoryview(b"memoryview")]) == [b"memoryview"]
 
-            out = dev.write_multipart([zmq.Frame(b"frame")])
-            assert out is None
-            list_bytes = dev.read_multipart()
-            assert list_bytes == [b"frame"]
+            assert dev.write_multipart([zmq.Frame(b"frame")]) is None
+            assert dev.read_multipart() == [b"frame"]
+            assert dev.query_multipart([zmq.Frame(b"frame")]) == [b"frame"]
 
             is_windows_and_python_3_8 = sys.platform == "win32" and sys.version_info < (3, 9)
-            out = dev.write_multipart([np.array([1, 2])])
-            assert out is None
+            assert dev.write_multipart([np.array([1, 2])]) is None
             list_bytes = dev.read_multipart()
+            list_bytes2 = dev.query_multipart([np.array([1, 2])])
             if is_windows_and_python_3_8:
                 assert list_bytes == [b"\x01\x00\x00\x00\x02\x00\x00\x00"]
+                assert list_bytes2 == [b"\x01\x00\x00\x00\x02\x00\x00\x00"]
             else:
                 assert list_bytes == [b"\x01\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00"]
+                assert list_bytes2 == [b"\x01\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00"]
 
-            out = dev.write_multipart([np.array([1, 2], dtype="b")], copy=True)
-            assert out is None
-            list_bytes = dev.read_multipart(copy=True)
-            assert list_bytes == [b"\x01\x02"]
+            assert dev.write_multipart([np.array([1, 2], dtype="b")], copy=True) is None
+            assert dev.read_multipart(copy=True) == [b"\x01\x02"]
+            assert dev.query_multipart([np.array([1, 2], dtype="b")], copy=True) == [b"\x01\x02"]
 
             mt = dev.write_multipart([b"hello"], copy=False)
             assert isinstance(mt, zmq.MessageTracker)
@@ -258,6 +251,11 @@ def test_multipart(zmq_server: type[ZMQServer]) -> None:  # noqa: PLR0915
             assert len(list_frame) == 1
             assert isinstance(list_frame[0], zmq.Frame)
             assert list_frame[0].bytes == b"hello"
+
+            list_frame2 = dev.query_multipart([b"hello"], copy=False, delay=0.01)
+            assert len(list_frame2) == 1
+            assert isinstance(list_frame2[0], zmq.Frame)
+            assert list_frame2[0].bytes == b"hello"
 
 
 def test_zmq_server(capsys: pytest.CaptureFixture[str]) -> None:
@@ -276,14 +274,14 @@ def test_zmq_server(capsys: pytest.CaptureFixture[str]) -> None:
             if request == b"bytes":
                 return b"".join(msg_parts)
             if request == b"tuple":
-                return (b"1", bytearray(b"2"), array("b", b"3"))
+                return b"1", bytearray(b"2"), array("b", b"3")
             return [b"a", bytearray(b"b"), array("b", b"c")]
 
         def shutdown_handler(self) -> None:  # pyright: ignore[reportImplicitOverride]
             _ = sys.stderr.write("foo")
 
-    server = Server()
-    assert server.address == "tcp://*"
+    server = Server(host="127.0.0.1")
+    assert server.address == "tcp://127.0.0.1:*"
 
     thread = threading.Thread(target=server.start, daemon=True)
     thread.start()
@@ -315,7 +313,7 @@ def test_zmq_server(capsys: pytest.CaptureFixture[str]) -> None:
     assert client.write(b"else") == 4
     assert client.read_multipart() == [b"a", b"b", b"c"]
 
-    assert server.address == f"tcp://0.0.0.0:{server.port}"
+    assert server.address == f"tcp://127.0.0.1:{server.port}"
 
     server.shutdown_server()
     thread.join()

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import time
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, NamedTuple, overload
 
@@ -118,6 +119,63 @@ class ZeroMQ(Message, regex=REGEX):
             self._socket.close()
             self._context.term()
             super().disconnect()
+
+    @overload
+    def query_multipart(
+        self,
+        msg_parts: Sequence[ZMQBuffer],
+        *,
+        delay: float = ...,
+        flags: int = ...,
+        copy: Literal[True],
+        track: bool = ...,
+    ) -> list[bytes]: ...
+
+    @overload
+    def query_multipart(
+        self,
+        msg_parts: Sequence[ZMQBuffer],
+        *,
+        delay: float = ...,
+        flags: int = ...,
+        copy: Literal[False],
+        track: bool = ...,
+    ) -> list[zmq.Frame]: ...
+
+    @overload
+    def query_multipart(
+        self, msg_parts: Sequence[ZMQBuffer], *, delay: float = ..., flags: int = ..., track: bool = ...
+    ) -> list[bytes]: ...
+
+    def query_multipart(
+        self,
+        msg_parts: Sequence[ZMQBuffer],
+        *,
+        delay: float = 0,
+        flags: int = 0,
+        copy: bool = True,
+        track: bool = False,
+    ) -> list[zmq.Frame] | list[bytes]:
+        """Convenience method for performing a [write_multipart][..write_multipart] followed by a [read_multipart][..read_multipart].
+
+        Args:
+            msg_parts: A sequence of objects to send as a multipart message.
+            delay: Time delay, in seconds, to wait between the _write_ and _read_ operations.
+            flags: The only supported flag is [DONTWAIT][zmq.Flag.DONTWAIT]
+                (which has a `zmq.NOBLOCK` alias). Only passed to [read_multipart][..read_multipart].
+            copy: Should the message frame(s) be received in a copying or non-copying manner?
+                If `False`, a [Frame][zmq.Frame] object is returned for each message part,
+                otherwise a copy of the bytes is made for each frame. Only passed to [read_multipart][..read_multipart].
+            track: Should the message frame(s) be tracked for notification that ZeroMQ has
+                finished with it? Ignored if `copy=True`. Only passed to [read_multipart][..read_multipart].
+
+        Returns:
+            If `copy=True` returns a [list][][[bytes][]], otherwise a [list][][[Frame][zmq.Frame]].
+        """  # noqa: E501
+        _ = self._socket.send_multipart(msg_parts)  # pyright: ignore[reportUnknownMemberType]
+        if delay > 0:
+            time.sleep(delay)
+        return self._socket.recv_multipart(flags=flags, copy=copy, track=track)
 
     @overload
     def read_multipart(self, flags: int = ..., *, copy: Literal[True], track: bool = ...) -> list[bytes]: ...
@@ -262,9 +320,7 @@ class ZeroMQServer(ABC):
         is called.
         """
 
-        address = f"{protocol}://{host}"
-        if port > 0:
-            address += f":{port}"
+        address = f"{protocol}://{host}:{port or '*'}"
 
         self.address: str = address
         """[str][] &mdash; The ZeroMQ address that the server is using, i.e., `protocol://host:port`.
@@ -301,12 +357,10 @@ class ZeroMQServer(ABC):
             self._auth.start()
             self.socket.zap_domain = b"global"
 
-        if self.port <= 0:
-            self.port = self.socket.bind_to_random_port(self.address)
-        else:
-            _ = self.socket.bind(self.address)
-
+        _ = self.socket.bind(self.address)
         self.address = self.socket.getsockopt_string(zmq.LAST_ENDPOINT)
+        if self.port <= 0:
+            self.port = int(self.address.rsplit(":", 1)[1])
 
         if info:
             msg = (

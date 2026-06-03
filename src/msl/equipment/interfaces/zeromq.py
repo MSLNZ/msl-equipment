@@ -325,10 +325,10 @@ class ZeroMQServer(ABC):
                     reply = self.handle_request(request)
                     if reply is None:
                         pass
-                    elif hasattr(reply, "__buffer__"):
-                        _ = await s.send(reply)
+                    elif isinstance(reply, (list, tuple)):
+                        _ = await s.send_multipart(reply)  # pyright: ignore[reportUnknownMemberType]
                     else:
-                        _ = await s.send_multipart(reply)  # pyright: ignore[reportUnknownMemberType, reportArgumentType]
+                        _ = await s.send(reply)
                 else:
                     break
 

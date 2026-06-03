@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
-import array
 import os
+import sys
 from collections.abc import Sequence
 from enum import Enum
 from typing import Literal, Protocol, TypeVar, Union  # pyright: ignore[reportDeprecated]
 
 import numpy as np
 import zmq
-from numpy.typing import NDArray
 
 _T_co = TypeVar("_T_co", covariant=True)
 
@@ -77,14 +76,20 @@ Sequence1D = Sequence[float] | NumpyArray1D
 EnumType = TypeVar("EnumType", bound=Enum)
 """An [Enum][enum.Enum] subclass."""
 
-ZMQMultiPart = Sequence[
-    bytes
-    | bytearray
-    | memoryview
-    | array.array[int]
-    | array.array[float]
-    | array.array[str]
-    | NDArray[np.generic]
-    | zmq.Frame
-]
-"""A sequence of objects that support the readable-buffer protocol to be written as a multipart ZeroMQ message."""
+if sys.version_info < (3, 12):
+
+    class Buffer(Protocol):  # pyright: ignore[reportUnreachable]  # noqa: D101
+        def __buffer__(self, flags: int, /) -> memoryview: ...  # noqa: D105
+else:
+    from collections.abc import Buffer
+
+
+ZMQBuffer = Buffer | zmq.Frame
+"""An object that supports the [buffer protocol][collections.abc.Buffer] to be written as a [ZeroMQ][] message.
+
+Some objects that support the buffer protocol are [bytes][], [bytearray][], [memoryview][],
+[array][array.array], a numpy [ndarray][numpy.ndarray] and a ZeroMQ [Frame][zmq.Frame].
+"""
+
+ZMQServerResponse = ZMQBuffer | Sequence[ZMQBuffer] | None
+"""A response from the ZeroMQ [handle_request][msl.equipment.interfaces.zeromq.ZeroMQServer.handle_request] method."""

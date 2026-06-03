@@ -25,27 +25,39 @@ and there are [enumeration][enumerations] classes and a [Readings][] class.
 
 The [MSLConnectionError][msl.equipment.interfaces.message.MSLConnectionError] and [MSLTimeoutError][msl.equipment.interfaces.message.MSLTimeoutError] classes are raised if there are issues when communicating with equipment.
 
-## A ZeroMQ Server
+## Equipment Server
 
-If you would like to allow equipment that has a non-Ethernet interface (e.g., GPIB or RS-232) to be controllable from any computer that is on the network you can use a client-server protocol using the [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] and [ZeroMQServer][msl.equipment.interfaces.zeromq.ZeroMQServer] classes. The following examples illustrate the concept. Run `server.py` on a computer that is physically connected to the equipment and `client.py` can be run on any computer on the network.
+If you would like to allow equipment that has a non-Ethernet interface (e.g., GPIB, RS-232, USB) to be controllable from any computer that is on the network, you can use a client-server protocol using the [ZeroMQ][msl.equipment.interfaces.zeromq.ZeroMQ] and [ZeroMQServer][msl.equipment.interfaces.zeromq.ZeroMQServer] classes. The following examples illustrate the concept. Run `server.py` on a computer that is physically connected to the equipment and `client.py` can be run on any computer on the network.
 
-By default, the server will process requests that are sent by any computer on the network (option 1 below). If you want to control which client(s) the server will process requests for, you can implement either option 2, 3 or 4.
+When using the [REQ][zmq.SocketType.REQ] (client) and [REP][zmq.SocketType.REP] (server) socket types, a client must always read the response after sending a request. This means that a client cannot perform a [write][msl.equipment.interfaces.zeromq.ZeroMQ.write] and/or a [write_multipart][msl.equipment.interfaces.zeromq.ZeroMQ.write_multipart] sequentially.
 
-1. Allow requests from any client (see [Allow any][1-allow-any] below).
-2. Specify the IP address(es), or hostname(s), of the clients that are allowed to send requests to the server when the server is created (see [Use an allow list][2-use-an-allow-list] below).
-3. Use a [PAIR][zmq.SocketType.PAIR] `socket_type` when creating an instance of the client and the server (see [Use a PAIR][3-use-a-pair] below).
-4. Include a unique and privately known *identity* as the first item in a [write_multipart][msl.equipment.interfaces.zeromq.ZeroMQ.write_multipart] message that the client sends. The server verifies the *identity* before processing the request (see [Use an identity][4-use-an-identity] below).
+By default, the server will process requests that are sent by *any* computer on the network (example 1 below). If you want to control which client(s) the server will process requests for, you can implement example 2, 3 or 4.
+
+1. Allow requests from any client (see [Allow any][1-allow-any] below). This example uses the [REQ][zmq.SocketType.REQ] (client) and [REP][zmq.SocketType.REP] (server) protocol so the client must always read a response, even if the action is only to write a message to the equipment.
+2. Specify the IP address(es), or hostname(s), of the clients that are allowed to send requests to the server when the server is instantiated (see [Allow specific][2-allow-specific] below). The only difference compared to example 1 is the addition of the `allow="192.168.1.58"` keyword argument when the `DMM` server class is instantiated.
+3. Use a [PAIR][zmq.SocketType.PAIR] `socket_type` when creating an instance of the client and the server (see [Use a PAIR][3-use-a-pair] below). When using a [PAIR][zmq.SocketType.PAIR] socket, the client can send multiple *writes* without performing a *read* and the server can return `None` from the [handle_request][msl.equipment.interfaces.zeromq.ZeroMQServer.handle_request] method.
+4. Include a unique and privately known (between the client and server) *identity* as the first item in a [write_multipart][msl.equipment.interfaces.zeromq.ZeroMQ.write_multipart] message that the client sends. The server verifies the *identity* before processing the request (see [Use an identity][4-use-an-identity] below).
 
 ### 1. Allow any
 
 === "client.py"
     ```python
-    # The server has an IP address of 192.168.1.100 and is running on port 5555
+    # The server has an IP address of 192.168.1.8 and is running on port 5555
     from msl.equipment import Connection, ZeroMQ
 
     client: ZeroMQ
-    with Connection("ZMQ::192.168.1.100::5555").connect() as client:
+    with Connection("ZMQ::192.168.1.8::5555").connect() as client:
+        # The client performs a query
         print(client.query("*IDN?"))
+
+        # The client only wants to write a message to the equipment
+        client.write_multipart([b"ignored", b"*RST"])
+        # But the client must still read a response for the REQ-REP protocol
+        _ = client.read()
+
+        # The client only wants to read a message from the equipment
+        # The server knows that an empty request is for a read only
+        print(client.query(b""))
     ```
 
 === "server.py"
@@ -53,7 +65,7 @@ By default, the server will process requests that are sent by any computer on th
     from __future__ import annotations
 
     from msl.equipment import Connection, GPIB, ZeroMQServer
-    from msl.equipment.typing import ZMQMultiPart
+    from msl.equipment.typing import ZMQServerResponse
 
     class DMM(ZeroMQServer):
         """Allow for a digital multimeter to be available on the network."""
@@ -64,14 +76,17 @@ By default, the server will process requests that are sent by any computer on th
             # Create the connection to the digital multimeter
             self.dmm: GPIB = Connection("GPIB::18").connect()
 
-        def handle_request(self, msg_parts: list[bytes]) -> bytes | ZMQMultiPart:
-            """Handle a request and return the reply."""
-            # Process the requests that you want to support
-            if msg_parts[0] == b"*IDN?":
-                return self.dmm.query("*IDN?", decode=False)
+        def handle_request(self, msg_parts: list[bytes]) -> ZMQServerResponse:
+            """Handle a request and return the response."""
+            if len(msg_parts) == 1:
+                message = msg_parts[0]
+                if not message:
+                    return self.dmm.read(decode=False)
+                return self.dmm.query(message, decode=False)
 
-            # Send a reply that the server does not support the request
-            return b"Unsupported request: " + b" ".join(msg_parts)
+            # Otherwise, only write a message (the message is the second item)
+            _ = self.dmm.write(msg_parts[1])
+            return b""  # Cannot return None
 
         def shutdown_handler(self) -> None:
             """Disconnect from the digital multimeter when the server shuts down."""
@@ -79,27 +94,38 @@ By default, the server will process requests that are sent by any computer on th
 
     if __name__ == "__main__":
         server = DMM(port=5555)
-        server.run_forever()
+        server.start()
     ```
 
-### 2. Use an allow list
+### 2. Allow specific
 
 === "client.py"
     ```python
-    # The server has an IP address of 192.168.1.100 and is running on port 5555
+    # The server has an IP address of 192.168.1.8 and is running on port 5555
     from msl.equipment import Connection, ZeroMQ
 
     client: ZeroMQ
-    with Connection("ZMQ::192.168.1.100::5555").connect() as client:
+    with Connection("ZMQ::192.168.1.8::5555").connect() as client:
+        # The client performs a query
         print(client.query("*IDN?"))
+
+        # The client only wants to write a message to the equipment
+        client.write_multipart([b"ignored", b"*RST"])
+        # But the client must still read a response for the REQ-REP protocol
+        _ = client.read()
+
+        # The client only wants to read a message from the equipment
+        # The server knows that an empty request is for a read only
+        print(client.query(b""))
     ```
 
 === "server.py"
     ```python
+    # The server includes an `allow` keyword argument of the client's IP address
     from __future__ import annotations
 
     from msl.equipment import Connection, GPIB, ZeroMQServer
-    from msl.equipment.typing import ZMQMultiPart
+    from msl.equipment.typing import ZMQServerResponse
 
     class DMM(ZeroMQServer):
         """Allow for a digital multimeter to be available on the network."""
@@ -110,14 +136,17 @@ By default, the server will process requests that are sent by any computer on th
             # Create the connection to the digital multimeter
             self.dmm: GPIB = Connection("GPIB::18").connect()
 
-        def handle_request(self, msg_parts: list[bytes]) -> bytes | ZMQMultiPart:
-            """Handle a request and return the reply."""
-            # Process the requests that you want to support
-            if msg_parts[0] == b"*IDN?":
-                return self.dmm.query("*IDN?", decode=False)
+        def handle_request(self, msg_parts: list[bytes]) -> ZMQServerResponse:
+            """Handle a request and return the response."""
+            if len(msg_parts) == 1:
+                message = msg_parts[0]
+                if not message:
+                    return self.dmm.read(decode=False)
+                return self.dmm.query(message, decode=False)
 
-            # Send a reply that the server does not support the request
-            return b"Unsupported request: " + b" ".join(msg_parts)
+            # Otherwise, only write a message (the message is the second item)
+            _ = self.dmm.write(msg_parts[1])
+            return b""  # Cannot return None
 
         def shutdown_handler(self) -> None:
             """Disconnect from the digital multimeter when the server shuts down."""
@@ -127,27 +156,38 @@ By default, the server will process requests that are sent by any computer on th
         # The client has an IP address of 192.168.1.58
         # You can also specify a sequence of IP addresses to allow
         server = DMM(port=5555, allow="192.168.1.58")
-        server.run_forever()
+        server.start()
     ```
 
 ### 3. Use a [PAIR][zmq.SocketType.PAIR]
 
 === "client.py"
     ```python
-    # The server has an IP address of 192.168.1.100 and is running on port 5555
+    # The connection is created using the `socket_type="PAIR"` keyword argument
+    # The server has an IP address of 192.168.1.8 and is running on port 5555
     from msl.equipment import Connection, ZeroMQ
 
     client: ZeroMQ
-    with Connection("ZMQ::192.168.1.100::5555", socket_type="PAIR").connect() as client:
+    with Connection("ZMQ::192.168.1.8::5555", socket_type="PAIR").connect() as client:
+        # The client performs a query
         print(client.query("*IDN?"))
+
+        # The client can perform multiple writes without needing to perform a read
+        client.write_multipart([b"ignored", b"*RST"])
+        client.write_multipart([b"ignored", b"*CLS"])
+
+        # The client only wants to read a message from the equipment
+        # The server knows that an empty request is for a read only
+        print(client.query(b""))
     ```
 
 === "server.py"
     ```python
+    # The server is instantiated using the `socket_type="PAIR"` keyword argument
     from __future__ import annotations
 
     from msl.equipment import Connection, GPIB, ZeroMQServer
-    from msl.equipment.typing import ZMQMultiPart
+    from msl.equipment.typing import ZMQServerResponse
 
     class DMM(ZeroMQServer):
         """Allow for a digital multimeter to be available on the network."""
@@ -158,14 +198,17 @@ By default, the server will process requests that are sent by any computer on th
             # Create the connection to the digital multimeter
             self.dmm: GPIB = Connection("GPIB::18").connect()
 
-        def handle_request(self, msg_parts: list[bytes]) -> bytes | ZMQMultiPart:
-            """Handle a request and return the reply."""
-            # Process the different requests that you want to support
-            if msg_parts[0] == b"*IDN?":
-                return self.dmm.query("*IDN?", decode=False)
+        def handle_request(self, msg_parts: list[bytes]) -> ZMQServerResponse:
+            """Handle a request and return the response."""
+            if len(msg_parts) == 1:
+                message = msg_parts[0]
+                if not message:
+                    return self.dmm.read(decode=False)
+                return self.dmm.query(message, decode=False)
 
-            # Send a reply that the server does not support the request
-            return b"Unsupported request: " + b" ".join(msg_parts)
+            # Otherwise, only write a message (the message is the second item)
+            _ = self.dmm.write(msg_parts[1])
+            return None  # Return None to not send a response
 
         def shutdown_handler(self) -> None:
             """Disconnect from the digital multimeter when the server shuts down."""
@@ -173,29 +216,48 @@ By default, the server will process requests that are sent by any computer on th
 
     if __name__ == "__main__":
         server = DMM(port=5555, socket_type="PAIR")
-        server.run_forever()
+        server.start()
     ```
 
 ### 4. Use an identity
 
 === "client.py"
     ```python
-    # The server has an IP address of 192.168.1.100 and is running on port 5555
+    # The client must include its identity in every request message
+    # The server has an IP address of 192.168.1.8 and is running on port 5555
     from msl.equipment import Connection, ZeroMQ
 
+    identity = b"let me in!"
+
     client: ZeroMQ
-    with Connection("ZMQ::192.168.1.100::5555").connect() as client:
-        # The client identity b"let me in!" is sent with each request
-        _ = client.write_multipart([b"let me in!", b"*IDN?"])
+    with Connection("ZMQ::192.168.1.8::5555").connect() as client:
+        # The client performs a successful authenticated query
+        _ = client.write_multipart([identity, b"*IDN?"])
+        print(client.read())
+
+        # The client performs an unsuccessful authenticated query
+        _ = client.write_multipart([b"bad identity", b"*IDN?"])
+        print(client.read())  # Response is "PermissionError: ..."
+
+        # The client only wants to write a message to the equipment
+        client.write_multipart([identity, b"ignored", b"*RST"])
+        # But the client must still read a response for the REQ-REP protocol
+        _ = client.read()
+
+        # The client only wants to read a message from the equipment
+        # The server knows that an empty request is for a read only
+        client.write_multipart([identity, b""])
         print(client.read())
     ```
 
 === "server.py"
     ```python
+    # The client must include its identity in every request message
+    # The server verifies the identity before processing the request
     from __future__ import annotations
 
     from msl.equipment import Connection, GPIB, ZeroMQServer
-    from msl.equipment.typing import ZMQMultiPart
+    from msl.equipment.typing import ZMQServerResponse
 
     class DMM(ZeroMQServer):
         """Allow for a digital multimeter to be available on the network."""
@@ -206,20 +268,23 @@ By default, the server will process requests that are sent by any computer on th
             # Create the connection to the digital multimeter
             self.dmm: GPIB = Connection("GPIB::18").connect()
 
-        def handle_request(self, msg_parts: list[bytes]) -> bytes | ZMQMultiPart:
-            """Handle a request and return the reply."""
+        def handle_request(self, msg_parts: list[bytes]) -> ZMQServerResponse:
+            """Handle a request and return the response."""
             identity, *request = msg_parts
 
             # Check the identity of the client
             if identity != b"let me in!":
                 return b"PermissionError: You are not allowed to do this"
 
-            # Process the requests that you want to support
-            if request[0] == b"*IDN?":
-                return self.dmm.query("*IDN?", decode=False)
+            if len(request) == 1:
+                message = request[0]
+                if not message:
+                    return self.dmm.read(decode=False)
+                return self.dmm.query(message, decode=False)
 
-            # Send a reply that the server does not support the request
-            return b"Unsupported request: " + b" ".join(request)
+            # Otherwise, only write a message (the second item in `request`)
+            _ = self.dmm.write(request[1])
+            return b""  # Cannot return None
 
         def shutdown_handler(self) -> None:
             """Disconnect from the digital multimeter when the server shuts down."""
@@ -227,7 +292,7 @@ By default, the server will process requests that are sent by any computer on th
 
     if __name__ == "__main__":
         server = DMM(port=5555)
-        server.run_forever()
+        server.start()
     ```
 
 ## Command Line Interface

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, NamedTuple, overload
 
 import zmq
@@ -13,7 +14,7 @@ from msl.equipment.utils import to_enum
 from .message import Message, MSLConnectionError
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterable, Sequence
     from typing import Literal
 
     from zmq.auth.asyncio import AsyncioAuthenticator
@@ -22,7 +23,7 @@ if TYPE_CHECKING:
     from zmq.sugar.tracker import MessageTracker
 
     from msl.equipment.schema import Equipment
-    from msl.equipment.typing import ZMQMultiPart
+    from msl.equipment.typing import ZMQBuffer, ZMQServerResponse
 
 
 REGEX = re.compile(r"^ZMQ::(?P<host>[^\s:]+)::(?P<port>\d+)", flags=re.IGNORECASE)
@@ -153,20 +154,20 @@ class ZeroMQ(Message, regex=REGEX):
 
     @overload
     def write_multipart(
-        self, msg_parts: ZMQMultiPart, *, flags: int = ..., copy: Literal[True], track: bool = ...
+        self, msg_parts: Sequence[ZMQBuffer], *, flags: int = ..., copy: Literal[True], track: bool = ...
     ) -> None: ...
 
     @overload
     def write_multipart(
-        self, msg_parts: ZMQMultiPart, *, flags: int = ..., copy: Literal[False], track: bool = ...
+        self, msg_parts: Sequence[ZMQBuffer], *, flags: int = ..., copy: Literal[False], track: bool = ...
     ) -> zmq.MessageTracker: ...
 
     @overload
-    def write_multipart(self, msg_parts: ZMQMultiPart, *, flags: int = ..., track: bool = ...) -> None: ...
+    def write_multipart(self, msg_parts: Sequence[ZMQBuffer], *, flags: int = ..., track: bool = ...) -> None: ...
 
     def write_multipart(
         self,
-        msg_parts: ZMQMultiPart,
+        msg_parts: Sequence[ZMQBuffer],
         *,
         flags: int = 0,
         copy: bool = True,
@@ -199,13 +200,13 @@ class ZeroMQ(Message, regex=REGEX):
         return out
 
 
-class ZeroMQServer:
+class ZeroMQServer(ABC):
     """Start a server to handle requests for the [ZeroMQ](https://zeromq.org/) protocol.
 
     This class is useful if you would like to allow equipment that has a non-Ethernet interface
-    (e.g., GPIB or RS-232) to be controllable from any computer that is on the network.
+    (e.g., GPIB, RS-232, USB) to be controllable from any computer that is on the network.
 
-    See [here][a-zeromq-server] for examples on how to use this class.
+    See [here][equipment-server] for examples on how to use this class.
     """
 
     def __init__(
@@ -227,11 +228,10 @@ class ZeroMQServer:
             host: The network interface (IP address) to bind the server to. If `*`, the server
                 listens on all available network interfaces simultaneously.
             port: The port to bind the server to. If `0`, binds the server to any available port.
-            protocol: The ZeroMQ protocol (`tcp`, `udp`, `pgm`, `inproc`, `ipc`) to use.
+            protocol: The ZeroMQ protocol to use (`tcp`, `udp`, `pgm`, `inproc`, `ipc`).
             socket_type: The ZeroMQ socket type. Can also be a [SocketType][zmq.SocketType] enum
                 member name (case insensitive) or value.
         """
-        self._protocol_host: str = f"{protocol}://{host}"
         self._auth: AsyncioAuthenticator | None = None
         self._interrupt: _Interrupter = _Interrupter()
 
@@ -257,18 +257,19 @@ class ZeroMQServer:
         self.port: int = port
         """[int][] &mdash; The port number that the server is running on.
 
-        If a value of `0` was used to instantiate the class, the port value
-        will become non-zero once the server is bound, which occurs when
-        [run_forever][msl.equipment.interfaces.zeromq.ZeroMQServer.run_forever]
+        If a value of `0` is used to instantiate the class, the port value will become
+        non-zero once [start][msl.equipment.interfaces.zeromq.ZeroMQServer.start]
         is called.
         """
 
-        self.address: str = ""
-        """[str][] &mdash; The ZeroMQ address that the server is using.
+        address = f"{protocol}://{host}"
+        if port > 0:
+            address += f":{port}"
 
-        The value is initially an empty string, but has a non-empty value once
-        [run_forever][msl.equipment.interfaces.zeromq.ZeroMQServer.run_forever]
-        is called.
+        self.address: str = address
+        """[str][] &mdash; The ZeroMQ address that the server is using, i.e., `protocol://host:port`.
+
+        The value is updated once [start][msl.equipment.interfaces.zeromq.ZeroMQServer.start] is called.
         """
 
         self._poller: zmq.asyncio.Poller = zmq.asyncio.Poller()
@@ -301,9 +302,9 @@ class ZeroMQServer:
             self.socket.zap_domain = b"global"
 
         if self.port <= 0:
-            self.port = self.socket.bind_to_random_port(self._protocol_host)
+            self.port = self.socket.bind_to_random_port(self.address)
         else:
-            _ = self.socket.bind(f"{self._protocol_host}:{self.port}")
+            _ = self.socket.bind(self.address)
 
         self.address = self.socket.getsockopt_string(zmq.LAST_ENDPOINT)
 
@@ -322,36 +323,39 @@ class ZeroMQServer:
                 if socks.get(s) == zmq.POLLIN:
                     request = await s.recv_multipart()
                     reply = self.handle_request(request)
-                    if isinstance(reply, bytes):
+                    if reply is None:
+                        pass
+                    elif hasattr(reply, "__buffer__"):
                         _ = await s.send(reply)
                     else:
-                        _ = await s.send_multipart(reply)  # pyright: ignore[reportUnknownMemberType]
+                        _ = await s.send_multipart(reply)  # pyright: ignore[reportUnknownMemberType, reportArgumentType]
                 else:
                     break
 
-    def handle_request(self, msg_parts: list[bytes]) -> bytes | ZMQMultiPart:  # pyright: ignore[reportUnusedParameter]
+    @abstractmethod
+    def handle_request(self, msg_parts: list[bytes]) -> ZMQServerResponse:
         """Handle a *single* request.
 
         !!! warning "Attention"
             You must override this method.
 
         Args:
-            msg_parts: The request message. You can choose to write a message using the
+            msg_parts: The request message. A client can choose to write a request using the
                 [write_multipart][msl.equipment.interfaces.zeromq.ZeroMQ.write_multipart]
-                method to separate the method name from the arguments when processing the
-                request on the server. Even if you use the
-                [write][msl.equipment.interfaces.zeromq.ZeroMQ.write] method to send a
-                request as bytes or a string, the `handle_request` method will always
-                receive a list of bytes.
+                method to clearly separate different parts of the request message for the
+                server to process, e.g., separating the name of the function to call from
+                the function parameters.
 
         Returns:
-            The response. Can either be bytes or a sequence of objects that support the readable-buffer protocol.
+            The response. Can be one or more objects that support the buffer protocol or
+                `None` (do not send a response). A server cannot return `None` when using the
+                [REQ][zmq.SocketType.REQ] (client) and [REP][zmq.SocketType.REP] (server)
+                socket types since a client must always read the response after sending
+                a request. Return empty bytes (`b""`) instead of `None` in this case.
         """
-        msg = "Override the `handle_request` method to handle the request message"
-        raise NotImplementedError(msg)
 
-    def run_forever(self, *, info: bool = True) -> None:
-        """Run the server.
+    def start(self, *, info: bool = True) -> None:
+        """Start the server.
 
         Args:
             info: Whether to print information about the running server.
@@ -361,8 +365,8 @@ class ZeroMQServer:
 
         try:
             if sys.version_info < (3, 12):
-                if sys.platform == "win32":
-                    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())  # pyright: ignore[reportUnreachable]
+                if sys.platform == "win32":  # pyright: ignore[reportUnreachable]
+                    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
                 asyncio.run(self._start(info=info))
             else:
                 asyncio.run(self._start(info=info), loop_factory=asyncio.SelectorEventLoop)
@@ -375,10 +379,11 @@ class ZeroMQServer:
     def shutdown_handler(self) -> None:
         """You can override this method in the subclass to perform any necessary clean up.
 
-        This method is called after [run_forever][msl.equipment.interfaces.zeromq.ZeroMQServer.run_forever]
-        finishes but before the [socket][msl.equipment.interfaces.zeromq.ZeroMQServer.socket] is unbound
-        and the [context][msl.equipment.interfaces.zeromq.ZeroMQServer.context] is terminated.
+        This method is called after [start][msl.equipment.interfaces.zeromq.ZeroMQServer.start]
+        finishes but before the [socket][msl.equipment.interfaces.zeromq.ZeroMQServer.socket] is
+        unbound and the [context][msl.equipment.interfaces.zeromq.ZeroMQServer.context] is terminated.
         """
+        return
 
     def shutdown_server(self) -> None:
         """Shut down the server.

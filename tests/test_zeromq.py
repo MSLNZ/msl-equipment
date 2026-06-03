@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from typing import Literal
 
     from conftest import ZMQServer
-    from msl.equipment.typing import ZMQMultiPart
+    from msl.equipment.typing import ZMQServerResponse
 
 
 @pytest.mark.parametrize(
@@ -263,23 +263,54 @@ def test_multipart(zmq_server: type[ZMQServer]) -> None:  # noqa: PLR0915
 def test_zmq_server(capsys: pytest.CaptureFixture[str]) -> None:
 
     class Server(ZeroMQServer):
-        def handle_request(self, msg_parts: list[bytes]) -> bytes | ZMQMultiPart:  # pyright: ignore[reportImplicitOverride]
-            return b"".join(msg_parts)
+        def handle_request(self, msg_parts: list[bytes]) -> ZMQServerResponse:  # pyright: ignore[reportImplicitOverride]
+            request = msg_parts[0]
+            if request == b"empty":
+                return b""
+            if request == b"numpy":
+                return np.array([1, 2], dtype=int)
+            if request == b"array":
+                return array("b", b"b")
+            if request == b"frame":
+                return zmq.Frame(b"frame")
+            if request == b"string":
+                return b"".join(msg_parts)
+            return [b"a", bytearray(b"b"), array("b", b"c")]
 
         def shutdown_handler(self) -> None:  # pyright: ignore[reportImplicitOverride]
             _ = sys.stderr.write("foo")
 
     server = Server()
+    assert server.address == "tcp://*"
 
-    thread = threading.Thread(target=server.run_forever, daemon=True)
+    thread = threading.Thread(target=server.start, daemon=True)
     thread.start()
 
     while not server.port:
         pass
 
     client: ZeroMQ = Connection(f"ZMQ::localhost::{server.port}").connect()
-    assert client.write(b"hello") == 5
-    assert client.read(decode=False) == b"hello"
+    assert client.write(b"empty") == 5
+    assert client.read(decode=False) == b""
+
+    reply = client.query(b"numpy", decode=False)
+    assert np.array_equal(np.frombuffer(reply, dtype=int), [1, 2])
+
+    assert client.query(b"array", decode=False) == b"b"
+    assert client.query(b"frame", decode=False) == b"frame"
+    assert client.query(b"string", decode=False) == b"string"
+
+    # read() will only read a single ZMQ Frame
+    assert client.write(b"else") == 4
+    assert client.read(decode=False) == b"a"
+    assert client.read(decode=False) == b"b"
+    assert client.read(decode=False) == b"c"
+
+    # read_multipart() will read all Frames
+    assert client.write(b"else") == 4
+    assert client.read_multipart() == [b"a", b"b", b"c"]
+
+    assert server.address == f"tcp://0.0.0.0:{server.port}"
 
     server.shutdown_server()
     thread.join()
@@ -292,21 +323,21 @@ def test_zmq_server(capsys: pytest.CaptureFixture[str]) -> None:
 def test_zmq_server_port_and_no_display(capsys: pytest.CaptureFixture[str]) -> None:
 
     class Server(ZeroMQServer):
-        def __init__(self, port: int) -> None:
-            super().__init__(port=port)
-
-        def handle_request(self, msg_parts: list[bytes]) -> bytes | ZMQMultiPart:  # pyright: ignore[reportImplicitOverride]
+        def handle_request(self, msg_parts: list[bytes]) -> ZMQServerResponse:  # pyright: ignore[reportImplicitOverride]
             return b"".join(msg_parts)
 
     port = 52817
-    server = Server(port)
+    server = Server(port=port)
+    assert server.address == "tcp://*:52817"
 
-    thread = threading.Thread(target=server.run_forever, daemon=True, kwargs={"info": False})
+    thread = threading.Thread(target=server.start, daemon=True, kwargs={"info": False})
     thread.start()
 
     client: ZeroMQ = Connection(f"ZMQ::localhost::{port}").connect()
     assert client.write_multipart([b"h", b"i"]) is None
     assert client.read_multipart() == [b"hi"]
+
+    assert server.address == "tcp://0.0.0.0:52817"
 
     server.shutdown_server()
     thread.join()
@@ -316,25 +347,15 @@ def test_zmq_server_port_and_no_display(capsys: pytest.CaptureFixture[str]) -> N
     assert not err
 
 
-def test_zmq_server_not_implemented_error() -> None:
-
-    class Server(ZeroMQServer):
-        """Server example."""
-
-    server = Server()
-    with pytest.raises(NotImplementedError):
-        _ = server.handle_request([])
-
-
 def test_zmq_server_multipart_reply() -> None:
 
     class Server(ZeroMQServer):
-        def handle_request(self, msg_parts: list[bytes]) -> bytes | ZMQMultiPart:  # pyright: ignore[reportImplicitOverride]
+        def handle_request(self, msg_parts: list[bytes]) -> ZMQServerResponse:  # pyright: ignore[reportImplicitOverride]
             return msg_parts
 
     server = Server()
 
-    thread = threading.Thread(target=server.run_forever, daemon=True)
+    thread = threading.Thread(target=server.start, daemon=True)
     thread.start()
 
     while not server.port:
@@ -351,20 +372,33 @@ def test_zmq_server_multipart_reply() -> None:
 def test_zmq_server_zmq_pair() -> None:
 
     class Server(ZeroMQServer):
-        def handle_request(self, msg_parts: list[bytes]) -> bytes | ZMQMultiPart:  # pyright: ignore[reportImplicitOverride]  # noqa: ARG002
+        def handle_request(self, msg_parts: list[bytes]) -> ZMQServerResponse:  # pyright: ignore[reportImplicitOverride]
+            if msg_parts[0] == b"skip":
+                return None
+            if msg_parts[0] == b"hello":
+                return [b"world"]
             return b"bar"
 
     server = Server(socket_type="PAIR")
 
-    thread = threading.Thread(target=server.run_forever, daemon=True)
+    thread = threading.Thread(target=server.start, daemon=True)
     thread.start()
 
     while not server.port:
         pass
 
+    # Can write multiple messages without performing a read when using a zmq.PAIR
     client: ZeroMQ = Connection(f"ZMQ::localhost::{server.port}", socket_type="PAIR").connect()
     assert client.query(b"foo", decode=False) == b"bar"
+    assert client.write(b"skip") == 4
+    assert client.query(b"foo", decode=False) == b"bar"
+    assert client.write(b"skip") == 4
+    assert client.write(b"hello") == 5
+    assert client.read_multipart() == [b"world"]
+    assert client.query("hello", decode=False) == b"world"
+    assert client.query(b"foo", decode=False) == b"bar"
 
+    # Another client cannot send a request
     client2: ZeroMQ = Connection(f"ZMQ::localhost::{server.port}", socket_type="PAIR", timeout=0.1).connect()
     with pytest.raises(MSLConnectionError, match=r"Again: Resource temporarily unavailable"):
         _ = client2.query(b"foo", decode=False)
@@ -373,19 +407,16 @@ def test_zmq_server_zmq_pair() -> None:
     thread.join()
 
 
-@pytest.mark.parametrize("allow", ["localhost", "127.0.0.1", ["localhost", "127.0.0.1"]])
+@pytest.mark.parametrize("allow", ["localhost", "127.0.0.1", ["10.20.30.40", "127.0.0.1"]])
 def test_zmq_server_allow(allow: str | list[str]) -> None:
 
     class Server(ZeroMQServer):
-        def __init__(self, allow: str | list[str]) -> None:
-            super().__init__(allow=allow)
-
-        def handle_request(self, msg_parts: list[bytes]) -> bytes | ZMQMultiPart:  # pyright: ignore[reportImplicitOverride]
+        def handle_request(self, msg_parts: list[bytes]) -> ZMQServerResponse:  # pyright: ignore[reportImplicitOverride]
             return msg_parts
 
-    server = Server(allow)
+    server = Server(allow=allow)
 
-    thread = threading.Thread(target=server.run_forever, daemon=True)
+    thread = threading.Thread(target=server.start, daemon=True)
     thread.start()
 
     while not server.port:
@@ -402,15 +433,12 @@ def test_zmq_server_allow(allow: str | list[str]) -> None:
 def test_zmq_server_deny() -> None:
 
     class Server(ZeroMQServer):
-        def __init__(self) -> None:
-            super().__init__(allow="14.13.12.11")
-
-        def handle_request(self, msg_parts: list[bytes]) -> bytes | ZMQMultiPart:  # pyright: ignore[reportImplicitOverride]
+        def handle_request(self, msg_parts: list[bytes]) -> ZMQServerResponse:  # pyright: ignore[reportImplicitOverride]
             return msg_parts
 
-    server = Server()
+    server = Server(allow="14.13.12.11")
 
-    thread = threading.Thread(target=server.run_forever, daemon=True)
+    thread = threading.Thread(target=server.start, daemon=True)
     thread.start()
 
     while not server.port:
@@ -429,5 +457,10 @@ def test_zmq_server_deny() -> None:
 def test_zmq_server_invalid_socket_type() -> None:
     # If ZeroMQServer.__del__ raises an error, this test hangs on Windows (maybe other OS'es)
     # If this test finishes that means there isn't an error when ZeroMQServer.__del__ is called
+
+    class Server(ZeroMQServer):
+        def handle_request(self, msg_parts: list[bytes]) -> ZMQServerResponse:  # pyright: ignore[reportImplicitOverride]
+            return msg_parts
+
     with pytest.raises(ValueError, match=r"Cannot create <enum 'SocketType'> from 'ABC'$"):
-        _ = ZeroMQServer(socket_type="ABC")
+        _ = Server(socket_type="ABC")

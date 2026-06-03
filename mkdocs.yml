@@ -224,6 +224,7 @@ plugins:
             docstring_options:
               ignore_init_summary: true
             merge_init_into_class: true
+            relative_crossrefs: true
 
             # Signatures
             separate_signature: true

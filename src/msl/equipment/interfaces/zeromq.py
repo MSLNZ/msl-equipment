@@ -330,7 +330,7 @@ class ZeroMQServer(ABC):
 
         self._poller: zmq.asyncio.Poller = zmq.asyncio.Poller()
         self._poller.register(self.socket, zmq.POLLIN)
-        self._poller.register(self._interrupt.aborter, zmq.POLLIN)
+        self._poller.register(self._interrupt.receiver, zmq.POLLIN)
 
     def __del__(self) -> None:
         """Calls `_shutdown`."""
@@ -343,9 +343,9 @@ class ZeroMQServer(ABC):
             self._auth = None
         if hasattr(self, "address") and self.address and not self.socket.closed:
             self._poller.unregister(self.socket)
-            self._poller.unregister(self._interrupt.aborter)
+            self._poller.unregister(self._interrupt.receiver)
             self.socket.unbind(self.address)
-        self._interrupt.shutdown()
+        self._interrupt.close()
         self.context.destroy()
 
     async def _start(self, *, info: bool) -> None:
@@ -448,24 +448,29 @@ class ZeroMQServer(ABC):
 
 
 class _Interrupter:
-    """Handle Ctrl+C on Windows."""
+    """Handle `Ctrl+C` on Windows by creating an interrupt event for the Poller.
+
+    Creates an exclusive `PAIR` of sockets to handle a `Ctrl+C` event.
+    """
 
     def __init__(self) -> None:
-        self.context: Context[SyncSocket] = zmq.Context()
-
-        self.publisher: SyncSocket = self.context.socket(zmq.PUB)
-        _ = self.publisher.bind("inproc://ctrl+c")
-
-        self.aborter: SyncSocket = self.context.socket(zmq.SUB)
-        self.aborter.setsockopt(zmq.SUBSCRIBE, b"")
-        _ = self.aborter.connect("inproc://ctrl+c")
+        """Handle `Ctrl+C` on Windows by creating an interrupt event for the Poller."""
+        self.name: str = f"Interrupter[{id(self)}]"
+        self.context: zmq.Context[zmq.SyncSocket] = zmq.Context()
+        self.sender: zmq.SyncSocket = self.context.socket(zmq.PAIR)
+        self.receiver: zmq.SyncSocket = self.context.socket(zmq.PAIR)
+        _ = self.sender.bind(f"inproc://{self.name}")
+        _ = self.receiver.connect(f"inproc://{self.name}")
 
     def __call__(self) -> None:
-        self.publisher.send(b"")
+        """Trigger `Ctrl+C` event."""
+        self.sender.send(b"")
+        time.sleep(0.01)  # avoids occasional asyncio.InvalidStateError from the Poller when shutting down on Windows
 
-    def shutdown(self) -> None:
-        self.publisher.close()
-        self.aborter.close()
+    def close(self) -> None:
+        """Close the sockets and destroy the context."""
+        self.sender.close(linger=0)
+        self.receiver.close(linger=0)
         self.context.destroy()
 
 

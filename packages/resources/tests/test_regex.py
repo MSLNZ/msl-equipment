@@ -33,6 +33,7 @@ from msl.equipment.resources import (
     PicoScope,
     PrincetonInstruments,
     RaicolTEC,
+    SpectraPro,
     SuperK,
     TCSeries,
 )
@@ -198,7 +199,7 @@ def test_picotech_pt104(manufacturer: str, model: str) -> None:
 
 
 @pytest.mark.parametrize("manufacturer", ["Princeton Instruments", "Teledyne Princeton Instruments"])
-@pytest.mark.parametrize("model", ["", "does not matter!"])
+@pytest.mark.parametrize("model", ["", "ABC", "Not HRS-300", "XSpectraPro"])
 def test_princeton_instruments(manufacturer: str, model: str) -> None:
     assert find(manufacturer, model) is PrincetonInstruments
 
@@ -209,6 +210,12 @@ def test_princeton_instruments(manufacturer: str, model: str) -> None:
 @pytest.mark.parametrize("model", ["TEC", "TEC20-60", "TEC 20 - 60"])
 def test_raicol_tec(manufacturer: str, model: str) -> None:
     assert find(manufacturer, model) is RaicolTEC
+
+
+@pytest.mark.parametrize("manufacturer", ["Princeton Instruments", "Teledyne Princeton Instruments"])
+@pytest.mark.parametrize("model", ["SpectraPro HRS300", "HRS-500-M", "SpectraPro", "HRS"])
+def test_spectra_pro(manufacturer: str, model: str) -> None:
+    assert find(manufacturer, model) is SpectraPro
 
 
 @pytest.mark.parametrize("manufacturer", ["Thorlabs", "Thorlabs Inc."])

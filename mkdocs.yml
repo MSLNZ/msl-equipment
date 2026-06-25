@@ -151,6 +151,7 @@ nav:
       - resources/picotech/types.md
     - Princeton Instruments:
       - resources/princeton_instruments/arc_instrument.md
+      - resources/princeton_instruments/spectra_pro.md
     - Raicol Crystals:
       - resources/raicol/tec.md
     - Thorlabs:

@@ -17,7 +17,7 @@ from .omega import ITHX
 from .optosigma import SHOT702
 from .optronic_labs import OL756, OLxxA
 from .picotech import PT104, PicoScope, picoscope
-from .princeton_instruments import PrincetonInstruments
+from .princeton_instruments import PrincetonInstruments, SpectraPro
 from .raicol import RaicolTEC
 from .thorlabs import BSC, K10CR, KDC, KSC, KST, LTS, MFF, FWxx2C
 from .vaisala import PTB330, PTU300
@@ -51,6 +51,7 @@ __all__: list[str] = [
     "PicoScope",
     "PrincetonInstruments",
     "RaicolTEC",
+    "SpectraPro",
     "SuperK",
     "TCSeries",
     "avantes",

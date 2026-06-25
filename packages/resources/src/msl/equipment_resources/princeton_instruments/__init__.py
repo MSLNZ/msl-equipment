@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from .arc_instrument import PrincetonInstruments
+from .spectra_pro import SpectraPro
 
 __all__: list[str] = [
     "PrincetonInstruments",
+    "SpectraPro",
 ]

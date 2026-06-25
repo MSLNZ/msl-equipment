@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from msl.equipment.typing import PathLike
 
 
-class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", model=r""):
+class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", model=r"^(?!SpectraPro|HRS).*$"):
     """Wrapper around the `ARC_Instrument.dll` SDK from [Princeton Instruments]{:target="_blank"}.
 
     [Princeton Instruments]: https://www.princetoninstruments.com/
@@ -44,7 +44,7 @@ class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", mod
         [connect()][msl.equipment.schema.Equipment.connect] is called.
         ```python
         manufacturer=r"Princeton Instruments"
-        model=r""
+        model=r"^(?!SpectraPro|HRS).*$"
         ```
 
         Args:

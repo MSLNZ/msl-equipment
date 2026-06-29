@@ -1489,7 +1489,7 @@ class Table(np.ndarray):
             element: A [table][type_table] XML element from an equipment register.
 
         Returns:
-            A [Table][msl.equipment.schema.Table] is an subclass of a numpy
+            A [Table][msl.equipment.schema.Table] is a subclass of a numpy
                 [structured array][structured_arrays], where the `header` is used as
                 the *field names*. This allows for accessing a column by the header value rather than by
                 the index of a column. If you prefer to work with unstructured data, call
@@ -2196,7 +2196,7 @@ class QualityManual:
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> QualityManual:
-        """Convert an XML element into an [QualityManual][msl.equipment.schema.QualityManual] instance.
+        """Convert an XML element into a [QualityManual][msl.equipment.schema.QualityManual] instance.
 
         Args:
             element: A [qualityManual][type_qualityManual] XML element from an equipment register.

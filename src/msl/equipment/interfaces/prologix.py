@@ -39,7 +39,7 @@ MAX_READ_TIMEOUT_MS = 3000
 
 
 def _char_to_int(char: bytes | str | int) -> int:
-    """Convert an char to an integer.
+    """Convert a char to an integer.
 
     Args:
         char: Must be an ASCII value in the range [0..255].
@@ -422,7 +422,7 @@ class Prologix(Interface, regex=REGEX):
 
         Returns:
             The message from the equipment. If `dtype` is specified, then the message is
-                returned as an [numpy.ndarray][], if `decode` is `True` then the message
+                returned as a [numpy.ndarray][], if `decode` is `True` then the message
                 is returned as a [str][], otherwise the message is returned as [bytes][].
         """  # noqa: D205
         if not isinstance(message, bytes):

@@ -114,7 +114,7 @@ Error: dict[int, str] = {
     0x00000031: "PICO_AUX_OUTPUT_CONFLICT: A set_trigger() call has found a conflict between the trigger source and the AUX output enable",
     0x00000032: "PICO_AUX_OUTPUT_ETS_CONFLICT: ETS mode is being used and AUX is set as an input",
     0x00000033: "PICO_WARNING_EXT_THRESHOLD_CONFLICT: Attempt to set different EXT input thresholds set for signal generator and oscilloscope trigger",
-    0x00000034: "PICO_WARNING_AUX_OUTPUT_CONFLICT: An set_trigger() function has set AUX as an output and the signal generator is using it as a trigger",
+    0x00000034: "PICO_WARNING_AUX_OUTPUT_CONFLICT: A set_trigger() function has set AUX as an output and the signal generator is using it as a trigger",
     0x00000035: "PICO_SIG_GEN_OUTPUT_OVER_VOLTAGE: The combined peak-to-peak voltage and the analogue offset voltage exceed the maximum voltage the signal generator can produce",
     0x00000036: "PICO_DELAY_NULL: NULL pointer passed as delay parameter",
     0x00000037: "PICO_INVALID_BUFFER: The buffers for overview data have not been set while streaming",

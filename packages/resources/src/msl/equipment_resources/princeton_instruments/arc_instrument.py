@@ -471,8 +471,8 @@ class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", mod
             port: Number in the enumeration list to open.
 
         Returns:
-            The first [int][] is the enum by which to address the first mono attached to an NCL on port 1.
-                The second [int][] is the enum by which to address the second mono attached to an NCL on port 2.
+            The first [int][] is the enum by which to address the first mono attached to a NCL on port 1.
+                The second [int][] is the enum by which to address the second mono attached to a NCL on port 2.
         """
         handle = c_long()
         mono1 = c_long()
@@ -489,8 +489,8 @@ class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", mod
             port: The COM port (e.g., `"COM5"`).
 
         Returns:
-            The first [int][] is the enum by which to address the first mono attached to an NCL on port 1.
-                The second [int][] is the enum by which to address the second mono attached to an NCL on port 2.
+            The first [int][] is the enum by which to address the first mono attached to a NCL on port 1.
+                The second [int][] is the enum by which to address the second mono attached to a NCL on port 2.
         """
         handle = c_long()
         mono1 = c_long()
@@ -1694,10 +1694,10 @@ class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", mod
         return bool(self._sdk.ARC_get_NCL_Mono_Setup(self._ncl_enum, mono_num, error_code))
 
     def get_ncl_shutter_open(self, shutter_num: int) -> bool:
-        """Return if an NCL Readout shutter is open.
+        """Return if a NCL Readout shutter is open.
 
         Args:
-            shutter_num: The shutter being addressed (1 or 2 on an NCL).
+            shutter_num: The shutter being addressed (1 or 2 on a NCL).
 
         Returns:
             Whether the shutter is in the open position.
@@ -1709,7 +1709,7 @@ class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", mod
         """Return if a NCL Readout shutter number is valid.
 
         Args:
-            shutter_num: The shutter being addressed (1 or 2 on an NCL).
+            shutter_num: The shutter being addressed (1 or 2 on a NCL).
 
         Returns:
             Whether the shutter number is valid.
@@ -2196,8 +2196,8 @@ class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", mod
         """Set the instrument filter wheel to active (NCL only).
 
         Args:
-            min_filter: Minimum filter position (on an NCL with the standard filter wheel 1).
-            max_filter: Maximum filter position (on an NCL with the standard filter wheel 6).
+            min_filter: Minimum filter position (on a NCL with the standard filter wheel 1).
+            max_filter: Maximum filter position (on a NCL with the standard filter wheel 6).
         """
         error_code = c_long()
         self._sdk.ARC_set_NCL_Filter_Present(self._ncl_enum, min_filter, max_filter, error_code)
@@ -2206,7 +2206,7 @@ class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", mod
         """Set a NCL Readout shutter to a closed state.
 
         Args:
-            shutter_num: The shutter being addressed (1 or 2 on an NCL).
+            shutter_num: The shutter being addressed (1 or 2 on a NCL).
         """
         error_code = c_long()
         self._sdk.ARC_set_NCL_Shutter_Closed(self._ncl_enum, shutter_num, error_code)
@@ -2215,7 +2215,7 @@ class PrincetonInstruments(Interface, manufacturer=r"Princeton Instruments", mod
         """Set a NCL Readout shutter to a closed state.
 
         Args:
-            shutter_num: The shutter being addressed (1 or 2 on an NCL).
+            shutter_num: The shutter being addressed (1 or 2 on a NCL).
         """
         error_code = c_long()
         self._sdk.ARC_set_NCL_Shutter_Open(self._ncl_enum, shutter_num, error_code)

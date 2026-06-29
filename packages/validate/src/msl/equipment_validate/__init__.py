@@ -133,7 +133,7 @@ def log_unchecked(
     no_colour: bool,
     name: str,
 ) -> None:
-    """Log an message as a WARNING for an element that has not been 'checkedBy' someone."""
+    """Log a message as a WARNING for an element that has not been 'checkedBy' someone."""
     if uri_scheme is None:
         msg = message
     else:

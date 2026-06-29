@@ -1,4 +1,4 @@
-"""Example showing how to communicate with an GMH3710 thermometer from Greisinger, GHM Group."""
+"""Example showing how to communicate with a GMH3710 thermometer from Greisinger, GHM Group."""
 
 from __future__ import annotations
 

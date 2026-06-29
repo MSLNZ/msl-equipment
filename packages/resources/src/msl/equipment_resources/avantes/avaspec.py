@@ -1437,7 +1437,7 @@ class AvaSpec(SDK, manufacturer=r"Avantes", model=r""):
                     * `0`: AO1 = pin 17 at 26-pin connector
                     * `1`: AO2 = pin 26 at 26-pin connector
 
-            value: DAC value to be set in Volts (internally an 8-bits DAC is used) with range 0 - 5V.
+            value: DAC value to be set in Volts (internally an 8-bit DAC is used) with range 0 - 5V.
         """
         self.sdk.AVS_SetAnalogOut(self._handle, port_id, value)
 

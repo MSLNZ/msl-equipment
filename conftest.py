@@ -650,7 +650,7 @@ class USBBackend(IBackend):  # type: ignore[misc, no-any-unimported] # pyright: 
         self._ctrl_queue.put(content)
 
     def add_intr_response(self, content: bytes) -> None:
-        """Add a interrupt response to the queue.
+        """Add an interrupt response to the queue.
 
         Args:
             content: The content of the interrupt message.

@@ -241,7 +241,7 @@ class OL756(Interface, manufacturer=r"Optronic", model=r"(OL)?\s*756", flags=re.
         self._send("enable_standard_file", meas_type, enable)
 
     def export_config_file(self, file_path: PathLike) -> None:
-        """Exports the config file into a OL756 compatible configuration file.
+        """Exports the config file into an OL756-compatible configuration file.
 
         Not all settings used will be applicable.
 
@@ -950,7 +950,7 @@ class OL756(Interface, manufacturer=r"Optronic", model=r"(OL)?\s*756", flags=re.
         self._send("reset_averaging", meas_type)
 
     def save_calibration_file(self, meas_type: Literal[3, 4, 5], path: PathLike) -> None:
-        """Create a OL756-compatible calibration file.
+        """Create an OL756-compatible calibration file.
 
         Args:
             meas_type: The calibration measurement type.
@@ -964,7 +964,7 @@ class OL756(Interface, manufacturer=r"Optronic", model=r"(OL)?\s*756", flags=re.
         self._send("save_calibration_file", meas_type, os.fsdecode(path))
 
     def save_measurement_data(self, meas_type: Literal[0, 1, 2], path: PathLike) -> None:
-        """Save the measurement data to a OL756-compatible data file.
+        """Save the measurement data to an OL756-compatible data file.
 
         Args:
             meas_type: The measurement type.

@@ -68,7 +68,7 @@ class Info:
 
 
 class Summary:
-    """Keeps tracks of the number of files validated, issues, and elements."""
+    """Keeps track of the number of files validated, issues, and elements."""
 
     num_connection: int = 0
     num_cvd: int = 0
@@ -90,7 +90,7 @@ class Summary:
     unchecked_reports: tuple[str, ...] = ()
 
     def __init__(self, *, exit_first: bool) -> None:
-        """Keeps tracks of the number of files validated, errors, and elements that were skipped."""
+        """Keeps track of the number of files validated, errors, and elements that were skipped."""
         self.exit_first: bool = exit_first
 
     def check_exit(self) -> bool:

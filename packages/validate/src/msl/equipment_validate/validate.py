@@ -246,7 +246,7 @@ def schema_validate(
     *, path: str, tree: ElementTree, schema: XMLSchema, exit_first: bool, uri_scheme: URIScheme, no_colour: bool
 ) -> bool:
     """Validate an XML file against a schema."""
-    log_info("Validating %s", path, no_colour=no_colour)
+    log_info("Validating %r", path, no_colour=no_colour)
 
     root = tree.getroot()
     if root.tag == "connections":

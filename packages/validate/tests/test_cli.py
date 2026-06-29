@@ -180,13 +180,13 @@ def test_main(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[st
     assert r[7].message == ""
 
     assert r[8].levelname == "INFO"
-    assert r[8].message.endswith("connections.xml")
+    assert r[8].message.endswith("connections.xml'")
 
     assert r[9].levelname == "INFO"
-    assert r[9].message.endswith("register.xml")
+    assert r[9].message.endswith("register.xml'")
 
     assert r[10].levelname == "INFO"
-    assert r[10].message.endswith("register.xml")
+    assert r[10].message.endswith("register.xml'")
 
     assert r[11].levelname == "ERROR"
     lines = r[11].message.splitlines()
@@ -196,7 +196,7 @@ def test_main(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[st
     assert lines[3] == "  <sha256>: 70d79d2eb24dc2515faaf4ab7fa3540e5a73ca6080181908a0ea87a309293609"
 
     assert r[12].levelname == "INFO"
-    assert r[12].message.endswith("register2.xml")
+    assert r[12].message.endswith("register2.xml'")
 
     assert r[13].levelname == "ERROR"
     lines = r[13].message.splitlines()

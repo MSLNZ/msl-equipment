@@ -313,7 +313,7 @@ class CapitalExpenditure:
         asset_number: The asset number in the financial system.
         depreciation_start_date: The date that depreciation started for the asset.
         price: The purchase price of the asset.
-        currency: The currency associated with the [price][..price].
+        currency: The currency associated with the [price][.price].
         useful_life: The number of years that the asset depreciates.
     """
 
@@ -744,7 +744,7 @@ class Evaluable:
         in_shape = np.broadcast_shapes(*tuple(v.shape for v in _locals.values()))
 
         _locals.update(equation_map)  # type: ignore[arg-type]  # pyright: ignore[reportCallIssue, reportArgumentType]
-        out: NDArray[np.float64] = np.asarray(eval(self.equation, None, _locals))  # noqa: S307
+        out = np.asarray(eval(self.equation, None, _locals))  # noqa: S307
         if out.shape != in_shape:
             return np.broadcast_to(out, in_shape)
         return out

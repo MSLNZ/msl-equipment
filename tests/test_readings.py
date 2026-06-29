@@ -68,7 +68,7 @@ def test_delimiter() -> None:
     assert len(r) == 3
     assert r.mean == 2.0
     assert r.std == 1.0
-    assert r.std_mean == pytest.approx(1.0 / math.sqrt(3))  # pyright: ignore[reportUnknownMemberType]
+    assert r.std_mean == pytest.approx(1.0 / math.sqrt(3))
 
 
 def test_kwargs() -> None:
@@ -128,9 +128,9 @@ def test_mean_std(recwarn: pytest.WarningsRecorder) -> None:  # noqa: PLR0915
     assert math.isnan(r.std_mean)
 
     r = Readings(range(10))
-    assert r.mean == pytest.approx(4.5)  # pyright: ignore[reportUnknownMemberType]
-    assert r.std == pytest.approx(3.02765035409749)  # pyright: ignore[reportUnknownMemberType]
-    assert r.std_mean == pytest.approx(0.9574271077563375)  # pyright: ignore[reportUnknownMemberType]
+    assert r.mean == pytest.approx(4.5)
+    assert r.std == pytest.approx(3.02765035409749)
+    assert r.std_mean == pytest.approx(0.9574271077563375)
 
     r = Readings(mean=9.9)
     assert r.data.size == 0
@@ -165,7 +165,7 @@ def test_mean_std(recwarn: pytest.WarningsRecorder) -> None:  # noqa: PLR0915
     assert len(r) == 10
     assert r.mean == 1.23
     assert r.std == 1.23
-    assert r.std_mean == pytest.approx(0.3889601522007106)  # pyright: ignore[reportUnknownMemberType]
+    assert r.std_mean == pytest.approx(0.3889601522007106)
 
     data2: list[int]
     for data2 in ([100, 101, 103, 104], [-100, -101, -103, -104]):

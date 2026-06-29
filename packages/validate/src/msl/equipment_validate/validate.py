@@ -507,6 +507,12 @@ def validate_equation(equation: Element, *, ns_map: dict[str, str], info: Info) 
 
 def _eval(*, text: str, names: list[str], info: Info, line: int) -> bool:
     """Calls the builtin eval() function."""
+    for op in ("**", "^", "%", "//"):
+        if op in text:
+            msg = f"Invalid {op!r} operator in the equation for {info.debug_name!r} [equation={text}]"
+            log_error(file=info.url, line=line, message=msg, uri_scheme=info.uri_scheme, no_colour=info.no_colour)
+            return False
+
     _locals: dict[str, object] = dict.fromkeys(names, 1.0)
     _locals.update(equation_map)
 

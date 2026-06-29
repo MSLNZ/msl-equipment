@@ -1328,6 +1328,29 @@ def test_equation_value_and_uncertainty_same_variables_range_invalid(
     assert len(r) == 1
 
 
+@pytest.mark.parametrize("op", ["**", "^", "%", "//"])
+def test_equation_operator_invalid(op: str, info: Info, caplog: pytest.LogCaptureFixture) -> None:
+    equation = f"""
+        <equation xmlns="eqn">
+          <value variables="x">+2.1 * x{op}2 - 9/4</value>
+          <uncertainty variables="">1</uncertainty>
+          <unit>m</unit>
+          <ranges>
+            <range variable="x">
+              <minimum>0</minimum>
+              <maximum>1</maximum>
+            </range>
+          </ranges>
+        </equation>
+    """
+    r = caplog.records
+    assert not validate_equation(etree.XML(equation), info=info, ns_map={"reg": "eqn"})
+    assert r[0].message == (
+        f"ERROR register.xml:3:0\n  Invalid '{op}' operator in the equation for 'Name' [equation=+2.1 * x{op}2 - 9/4]"
+    )
+    assert len(r) == 1
+
+
 @pytest.mark.parametrize("exit_first", [False, True])
 def test_recursive_with_serialised(
     tmp_path: Path,

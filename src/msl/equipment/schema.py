@@ -69,7 +69,7 @@ class _Indent:
 
 
 def _future_date(relative_to: _date, years: float) -> _date:
-    """Calculate a date in the future when a calibration is due.
+    """Calculate a date in the future.
 
     Args:
         relative_to: The relative-to date.
@@ -165,6 +165,8 @@ class Status(Enum):
         Lost (str): The equipment is lost, but if found may be put back into service.
         Retired (str): The equipment is still operable, but there are no intentions of using it again
             (e.g., the equipment depends on other equipment that is not available or is no longer manufactured).
+        Unassembled (str): The equipment is not assembled and is currently a work in progress
+            (e.g., the equipment has an asset number but the assembly and testing of the equipment is not complete).
     """
 
     Active = "Active"
@@ -173,6 +175,7 @@ class Status(Enum):
     Dormant = "Dormant"
     Lost = "Lost"
     Retired = "Retired"
+    Unassembled = "Unassembled"
 
 
 class DigitalFormat(Enum):
@@ -308,22 +311,31 @@ class CapitalExpenditure:
 
     Args:
         asset_number: The asset number in the financial system.
-        depreciation_end_year: The year (inclusive) that depreciation ends for the asset.
+        depreciation_start_date: The date that depreciation started for the asset.
         price: The purchase price of the asset.
-        currency: The currency associated with the `price`.
+        currency: The currency associated with the [price][..price].
+        useful_life: The number of years that the asset depreciates.
     """
 
     asset_number: str
     """The asset number in the financial system."""
 
-    depreciation_end_year: int
-    """The year (inclusive) that depreciation ends for the asset."""
+    depreciation_start_date: _date
+    """The date that depreciation started for the asset."""
 
     price: float
     """The price of the asset."""
 
     currency: str
-    """The currency associated with the `price`."""
+    """The currency associated with the [price][..price]."""
+
+    useful_life: float
+    """The number of years that the asset depreciates."""
+
+    @property
+    def depreciation_end_date(self) -> _date:
+        """The date that depreciation ends for the asset."""
+        return _future_date(self.depreciation_start_date, self.useful_life)
 
     @classmethod
     def from_xml(cls, element: Element[str]) -> CapitalExpenditure:
@@ -339,9 +351,10 @@ class CapitalExpenditure:
         # Schema forces order
         return cls(
             asset_number=element[0].text or "",
-            depreciation_end_year=int(element[1].text or 0),
+            depreciation_start_date=_date.fromisoformat(element[1].text or ""),
             price=float(element[2].text or 0),
             currency=element[2].attrib["currency"],
+            useful_life=float(element[3].text or 0),
         )
 
     def to_xml(self) -> Element[str]:
@@ -355,11 +368,14 @@ class CapitalExpenditure:
         an = SubElement(e, "assetNumber")
         an.text = self.asset_number
 
-        dey = SubElement(e, "depreciationEndYear")
-        dey.text = str(self.depreciation_end_year)
+        dsd = SubElement(e, "depreciationStartDate")
+        dsd.text = self.depreciation_start_date.isoformat()
 
         p = SubElement(e, "price", attrib={"currency": self.currency})
         p.text = f"{self.price:.14g}"
+
+        life = SubElement(e, "usefulLife")
+        life.text = f"{self.useful_life:.14g}"
 
         return e
 

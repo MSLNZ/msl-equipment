@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema version="0.2.1.dev33+g0d0bdf576"
+<xsd:schema version="0.2.1.dev37+ge0b802280"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
             xmlns:gtc="https://measurement.govt.nz/gtc/xml"
@@ -378,12 +378,14 @@
 
                 * **Damaged**: The equipment is damaged and is no longer usable
                 * **Disposed**: The equipment has been disposed of and is no longer at MSL
-                  (e.g. the equipment was sent to the landfill or to be recycled)
+                  (e.g., the equipment was sent to the landfill or to be recycled)
                 * **Dormant**: The equipment is still operable, it is no longer in use but may be used again
                   (e.g., the equipment was replaced with a newer model, and it is kept as a backup)
                 * **Lost**: The equipment is lost, but if found may be put back into service.
                 * **Retired**: The equipment is still operable, but there are no intentions of using it again
                   (e.g., the equipment depends on other equipment that is not available or is no longer manufactured)
+                * **Unassembled**: The equipment is not assembled and is currently a work in progress
+                  (e.g., the equipment has an asset number but the assembly and testing of the equipment is not complete)
 
                 **Examples**
 
@@ -403,6 +405,7 @@
             <xsd:enumeration value="Dormant"/>
             <xsd:enumeration value="Lost"/>
             <xsd:enumeration value="Retired"/>
+            <xsd:enumeration value="Unassembled"/>
         </xsd:restriction>
     </xsd:simpleType>
 
@@ -1383,8 +1386,9 @@
                   {warrantyExpirationDate}2026-07-31{/warrantyExpirationDate}
                   {capitalExpenditure}
                     {assetNumber}7265817{/assetNumber}
-                    {depreciationEndYear}2033{/depreciationEndYear}
+                    {depreciationStartDate}2025-04-20{/depreciationStartDate}
                     {price currency="NZD"}150e3{/price}
+                    {usefulLife}10{/usefulLife}
                   {/capitalExpenditure}
                 {/financial}
                 ```
@@ -1424,7 +1428,7 @@
             <xsd:documentation>
                 _Optional:_ The equipment is a capital expenditure (for the [financial](#type_financial) element).
 
-                The order of the elements must be `assetNumber`, `depreciationEndYear` then `price`.
+                The order of the elements must be `assetNumber`, `depreciationStartDate`, `price` then `usefulLife`.
 
                 **Examples**
 
@@ -1433,8 +1437,9 @@
                 ```xml
                 {capitalExpenditure}
                   {assetNumber/}
-                  {depreciationEndYear}2030{/depreciationEndYear}
+                  {depreciationStartDate}2024-03-15{/depreciationStartDate}
                   {price currency="NZD"}48000{/price}
+                  {usefulLife}8{/usefulLife}
                 {/capitalExpenditure}
                 ```
 
@@ -1442,8 +1447,9 @@
                 ```xml
                 {capitalExpenditure}
                   {assetNumber}0123456789{/assetNumber}
-                  {depreciationEndYear}2032{/depreciationEndYear}
+                  {depreciationStartDate}2025-08-26{/depreciationStartDate}
                   {price currency="NZD"}400e3{/price}
+                  {usefulLife}10{/usefulLife}
                 {/capitalExpenditure}
                 ```
             </xsd:documentation>
@@ -1454,24 +1460,26 @@
                     <xsd:documentation>
                         The asset number in the financial system.
 
+                        The asset number is not the same as the number on the sticker, provided by
+                        the Finance department, that is adhered to the equipment. If the asset number
+                        in a historical financial system is unknown and the sticker number is known,
+                        only then shall the sticker number be used as the asset number.
+
                         The `assetNumber` element must exist, but the value may be empty.
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
-            <xsd:element name="depreciationEndYear" type="xsd:gYear">
+            <xsd:element name="depreciationStartDate" type="xsd:date">
                 <xsd:annotation>
                     <xsd:documentation>
-                        The year (inclusive) that depreciation ends for the asset.
-
-                        If the asset was purchased in _2020_ and the lifetime of the asset
-                        is _8_ years, then depreciation will end in `2028`.
+                        The date that depreciation started for the asset.
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:element>
             <xsd:element name="price">
                 <xsd:annotation>
                     <xsd:documentation>
-                        The purchase price of the asset. Do _not_ include the currency symbol, e.g. `$`, in the value.
+                        The purchase price of the asset. Do _not_ include the currency symbol, e.g., `$`, in the value.
 
                         You may use scientific notation, so `150e3` is equivalent to `150000`.
                     </xsd:documentation>
@@ -1483,6 +1491,13 @@
                         </xsd:extension>
                     </xsd:simpleContent>
                 </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="usefulLife" type="msl:nonNegativeDecimal">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The number of years that the asset depreciates.
+                    </xsd:documentation>
+                </xsd:annotation>
             </xsd:element>
         </xsd:sequence>
     </xsd:complexType>

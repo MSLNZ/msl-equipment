@@ -163,8 +163,9 @@
             <financial>
                 <capitalExpenditure>
                     <assetNumber>Whatever</assetNumber>
-                    <depreciationEndYear>2030</depreciationEndYear>
+                    <depreciationStartDate>2020-10-15</depreciationStartDate>
                     <price currency="NZD">10000</price>
+                    <usefulLife>8</usefulLife>
                 </capitalExpenditure>
                 <purchaseYear>2023</purchaseYear>
                 <warrantyExpirationDate>2026-08-01</warrantyExpirationDate>

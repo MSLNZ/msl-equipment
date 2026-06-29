@@ -16357,7 +16357,7 @@ On SpectraPro's it is usually -10 nm, on linear AM/VM instruments this value wil
 
     <div class="doc doc-contents ">
 
-        <p>Return if an NCL Readout shutter is open.</p>
+        <p>Return if a NCL Readout shutter is open.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -16380,7 +16380,7 @@ On SpectraPro's it is usually -10 nm, on linear AM/VM instruments this value wil
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The shutter being addressed (1 or 2 on an NCL).</p>
+                <p>The shutter being addressed (1 or 2 on a NCL).</p>
               </div>
             </td>
             <td>
@@ -16427,10 +16427,10 @@ On SpectraPro's it is usually -10 nm, on linear AM/VM instruments this value wil
 <span class="normal">1704</span>
 <span class="normal">1705</span>
 <span class="normal">1706</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ncl_shutter_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shutter_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return if an NCL Readout shutter is open.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return if a NCL Readout shutter is open.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        shutter_num: The shutter being addressed (1 or 2 on an NCL).</span>
+<span class="sd">        shutter_num: The shutter being addressed (1 or 2 on a NCL).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the shutter is in the open position.</span>
@@ -16479,7 +16479,7 @@ On SpectraPro's it is usually -10 nm, on linear AM/VM instruments this value wil
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The shutter being addressed (1 or 2 on an NCL).</p>
+                <p>The shutter being addressed (1 or 2 on a NCL).</p>
               </div>
             </td>
             <td>
@@ -16529,7 +16529,7 @@ On SpectraPro's it is usually -10 nm, on linear AM/VM instruments this value wil
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return if a NCL Readout shutter number is valid.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        shutter_num: The shutter being addressed (1 or 2 on an NCL).</span>
+<span class="sd">        shutter_num: The shutter being addressed (1 or 2 on a NCL).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the shutter number is valid.</span>
@@ -19289,8 +19289,8 @@ current wavelength and should not exceed the current grating wavelength limit.</
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The first <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> is the enum by which to address the first mono attached to an NCL on port 1.
-The second <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> is the enum by which to address the second mono attached to an NCL on port 2.</p>
+                <p>The first <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> is the enum by which to address the first mono attached to a NCL on port 1.
+The second <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> is the enum by which to address the second mono attached to a NCL on port 2.</p>
               </div>
             </td>
           </tr>
@@ -19323,8 +19323,8 @@ The second <a class="autorefs autorefs-external" href="https://docs.python.org/3
 <span class="sd">        port: Number in the enumeration list to open.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        The first [int][] is the enum by which to address the first mono attached to an NCL on port 1.</span>
-<span class="sd">            The second [int][] is the enum by which to address the second mono attached to an NCL on port 2.</span>
+<span class="sd">        The first [int][] is the enum by which to address the first mono attached to a NCL on port 1.</span>
+<span class="sd">            The second [int][] is the enum by which to address the second mono attached to a NCL on port 2.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">handle</span> <span class="o">=</span> <span class="n">c_long</span><span class="p">()</span>
     <span class="n">mono1</span> <span class="o">=</span> <span class="n">c_long</span><span class="p">()</span>
@@ -19401,8 +19401,8 @@ The second <a class="autorefs autorefs-external" href="https://docs.python.org/3
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The first <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> is the enum by which to address the first mono attached to an NCL on port 1.
-The second <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> is the enum by which to address the second mono attached to an NCL on port 2.</p>
+                <p>The first <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> is the enum by which to address the first mono attached to a NCL on port 1.
+The second <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> is the enum by which to address the second mono attached to a NCL on port 2.</p>
               </div>
             </td>
           </tr>
@@ -19435,8 +19435,8 @@ The second <a class="autorefs autorefs-external" href="https://docs.python.org/3
 <span class="sd">        port: The COM port (e.g., `&quot;COM5&quot;`).</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        The first [int][] is the enum by which to address the first mono attached to an NCL on port 1.</span>
-<span class="sd">            The second [int][] is the enum by which to address the second mono attached to an NCL on port 2.</span>
+<span class="sd">        The first [int][] is the enum by which to address the first mono attached to a NCL on port 1.</span>
+<span class="sd">            The second [int][] is the enum by which to address the second mono attached to a NCL on port 2.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">handle</span> <span class="o">=</span> <span class="n">c_long</span><span class="p">()</span>
     <span class="n">mono1</span> <span class="o">=</span> <span class="n">c_long</span><span class="p">()</span>
@@ -22214,7 +22214,7 @@ turret into the instrument when using this function.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Minimum filter position (on an NCL with the standard filter wheel 1).</p>
+                <p>Minimum filter position (on a NCL with the standard filter wheel 1).</p>
               </div>
             </td>
             <td>
@@ -22230,7 +22230,7 @@ turret into the instrument when using this function.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Maximum filter position (on an NCL with the standard filter wheel 6).</p>
+                <p>Maximum filter position (on a NCL with the standard filter wheel 6).</p>
               </div>
             </td>
             <td>
@@ -22255,8 +22255,8 @@ turret into the instrument when using this function.</p>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the instrument filter wheel to active (NCL only).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        min_filter: Minimum filter position (on an NCL with the standard filter wheel 1).</span>
-<span class="sd">        max_filter: Maximum filter position (on an NCL with the standard filter wheel 6).</span>
+<span class="sd">        min_filter: Minimum filter position (on a NCL with the standard filter wheel 1).</span>
+<span class="sd">        max_filter: Maximum filter position (on a NCL with the standard filter wheel 6).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">error_code</span> <span class="o">=</span> <span class="n">c_long</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">ARC_set_NCL_Filter_Present</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ncl_enum</span><span class="p">,</span> <span class="n">min_filter</span><span class="p">,</span> <span class="n">max_filter</span><span class="p">,</span> <span class="n">error_code</span><span class="p">)</span>
@@ -22302,7 +22302,7 @@ turret into the instrument when using this function.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The shutter being addressed (1 or 2 on an NCL).</p>
+                <p>The shutter being addressed (1 or 2 on a NCL).</p>
               </div>
             </td>
             <td>
@@ -22326,7 +22326,7 @@ turret into the instrument when using this function.</p>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set a NCL Readout shutter to a closed state.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        shutter_num: The shutter being addressed (1 or 2 on an NCL).</span>
+<span class="sd">        shutter_num: The shutter being addressed (1 or 2 on a NCL).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">error_code</span> <span class="o">=</span> <span class="n">c_long</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">ARC_set_NCL_Shutter_Closed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ncl_enum</span><span class="p">,</span> <span class="n">shutter_num</span><span class="p">,</span> <span class="n">error_code</span><span class="p">)</span>
@@ -22372,7 +22372,7 @@ turret into the instrument when using this function.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The shutter being addressed (1 or 2 on an NCL).</p>
+                <p>The shutter being addressed (1 or 2 on a NCL).</p>
               </div>
             </td>
             <td>
@@ -22396,7 +22396,7 @@ turret into the instrument when using this function.</p>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set a NCL Readout shutter to a closed state.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        shutter_num: The shutter being addressed (1 or 2 on an NCL).</span>
+<span class="sd">        shutter_num: The shutter being addressed (1 or 2 on a NCL).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">error_code</span> <span class="o">=</span> <span class="n">c_long</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">ARC_set_NCL_Shutter_Open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ncl_enum</span><span class="p">,</span> <span class="n">shutter_num</span><span class="p">,</span> <span class="n">error_code</span><span class="p">)</span>

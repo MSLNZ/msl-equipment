@@ -6,6 +6,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import IntEnum
 from struct import pack, unpack
+from time import sleep
 from typing import TYPE_CHECKING
 
 from msl.equipment.schema import Interface
@@ -102,11 +103,7 @@ class KSC(Interface, manufacturer=r"Thorlabs", model=r"KSC"):
             self.set_trigger_parameters()
 
     def close_shutter(self) -> None:
-        """Close the shutter.
-
-        !!! note
-            It is not possible to query whether the shutter is open or closed.
-        """
+        """Close the shutter."""
         _ = self._motion.write(0x04CB, param1=1, param2=2, dest=0x50)
 
     def disconnect(self) -> None:  # pyright: ignore[reportImplicitOverride]
@@ -174,12 +171,25 @@ class KSC(Interface, manufacturer=r"Thorlabs", model=r"KSC"):
         """
         return bool(self.status() & (1 << 13))
 
-    def open_shutter(self) -> None:
-        """Open the shutter.
+    def is_open(self, delay: float = 0.0) -> bool:
+        """Get the state of the shutter (solenoid).
 
-        !!! note
-            It is not possible to query whether the shutter is open or closed.
+        Args:
+            delay: The number of seconds to wait before querying the state of the shutter (solenoid).
+                After calling [open_shutter][..open_shutter] or [close_shutter][..close_shutter]
+                it can take ~10's of milliseconds for the status of the solenoid to get updated in
+                firmware.
+
+        Returns:
+            Whether the shutter is closed (`False`) or open (`True`). When the shutter is open,
+                the solenoid is in the active state (energised).
         """
+        if delay > 0:
+            sleep(delay)
+        return bool(self.status() & 1)
+
+    def open_shutter(self) -> None:
+        """Open the shutter."""
         _ = self._motion.write(0x04CB, param1=1, param2=1, dest=0x50)
 
     @property

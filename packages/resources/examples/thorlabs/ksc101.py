@@ -43,10 +43,15 @@ controller.operating_mode = controller.OperatingMode.MANUAL
 # Open the shutter
 controller.open_shutter()
 
+# It takes time for the shutter to open, include an optional delay (in seconds) before querying the shutter state
+print("Shutter open?", controller.is_open(delay=0.05))
+
 time.sleep(2)
 
 # Close the shutter
 controller.close_shutter()
+
+print("Shutter open?", controller.is_open(delay=0.05))
 
 # Disconnect from the controller
 controller.disconnect()

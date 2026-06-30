@@ -97,12 +97,16 @@ def _future_date(relative_to: _date, years: float) -> _date:
 
 def _latest(*, items: list[L], quantity: str, name: str) -> L | None:
     """Returns the latest report or performance check."""
-    if len(items) == 1 and (quantity == "" or quantity == items[0].quantity) and (name == "" or name == items[0].name):
+    quantities = {item.quantity for item in items}
+    names = {item.name for item in items}
+    items = [
+        item
+        for item in items
+        if ((len(quantities) == 1 and not quantity) or quantity == item.quantity)
+        and ((len(names) == 1 and not name) or name == item.name)
+    ]
+    if len(items) == 1:
         return items[0]
-
-    for item in items:
-        if quantity == item.quantity and name == item.name:
-            return item
 
     return None
 
@@ -2674,11 +2678,20 @@ class Equipment:
         Returns:
             The [LatestPerformanceCheck][msl.equipment.schema.LatestPerformanceCheck] for the specified
                 `quantity` and `name`. If the equipment has only one _measurand_ and only one _component_
-                then you do not need to specify a value for the `quantity` and `name`. Returns `None` if
-                there are no performance checks that match the `quantity` and `name` criteria or if
-                the equipment does not have performance checks entered in the register.
+                then you do not need to specify a value for the `quantity` and `name`. Returns `None`
+                if the equipment does not have performance checks entered in the register.
+
+        Raises:
+            ValueError: If the latest performance check cannot be uniquely determined based on
+                the `quantity` and `name`.
         """
-        return _latest(items=list(self.latest_performance_checks()), quantity=quantity, name=name)
+        items = list(self.latest_performance_checks())
+        latest = _latest(items=items, quantity=quantity, name=name)
+        if latest is None and items:
+            msg = "Cannot determine the latest performance check, refine by specifying the `name` and/or `quantity`\n  "
+            msg += "\n  ".join(str(item) for item in items)
+            raise ValueError(msg)
+        return latest
 
     def latest_reports(self, date: Literal["issue", "start", "stop"] = "stop") -> Iterator[LatestReport]:
         """Yields the latest calibration report for every _measurand_ and _component_.
@@ -2759,11 +2772,20 @@ class Equipment:
         Returns:
             The [LatestReport][msl.equipment.schema.LatestReport] for the specified `quantity` and `name`.
                 If the equipment has only one _measurand_ and only one _component_ then you do not need
-                to specify a value for the `quantity` and `name`. Returns `None` if there are no calibration
-                reports that match the `quantity` and `name` criteria or if the equipment does not have
-                calibration reports entered in the register.
+                to specify a value for the `quantity` and `name`. Returns `None` if the equipment does
+                not have calibration reports entered in the register.
+
+        Raises:
+            ValueError: If the latest calibration report cannot be uniquely determined based on the
+                `quantity` and `name`.
         """
-        return _latest(items=list(self.latest_reports(date=date)), quantity=quantity, name=name)
+        reports = list(self.latest_reports(date=date))
+        latest = _latest(items=reports, quantity=quantity, name=name)
+        if latest is None and reports:
+            msg = "Cannot determine the latest report, refine by specifying the `name` and/or `quantity`\n  "
+            msg += "\n  ".join(str(r) for r in reports)
+            raise ValueError(msg)
+        return latest
 
 
 class Register:

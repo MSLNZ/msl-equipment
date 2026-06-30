@@ -51,6 +51,8 @@ from msl.equipment import (
 from msl.equipment.schema import Latest, _future_date, _Indent, connections  # pyright: ignore[reportPrivateUsage]
 
 if TYPE_CHECKING:
+    from typing import Literal
+
     from numpy.typing import ArrayLike
 
     from msl.equipment.schema import Any
@@ -2018,7 +2020,7 @@ def test_latest_performance_check_empty(calibrations: tuple[Measurand, ...]) -> 
 
 
 @pytest.mark.parametrize(("value", "expect"), [("stop", "B"), ("issue", "C"), ("start", "B")])
-def test_latest_report_single_measurand_and_component(value: str, expect: str) -> None:
+def test_latest_report_single_measurand_and_component(value: Literal["start", "stop", "issue"], expect: str) -> None:
     e = Equipment(
         calibrations=(
             Measurand(
@@ -2056,7 +2058,7 @@ def test_latest_report_single_measurand_and_component(value: str, expect: str) -
         )
     )
 
-    reports = list(e.latest_reports(date=value))  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    reports = list(e.latest_reports(date=value))
     assert len(reports) == 1
     assert reports[0].quantity == "1"
     assert reports[0].name == "2"
@@ -2064,30 +2066,32 @@ def test_latest_report_single_measurand_and_component(value: str, expect: str) -
     assert str(reports[0]) == f"LatestReport(name='2', quantity='1', id={expect!r})"
 
     # Don't specify `quantity` or `name` and the correct report is returned
-    latest = e.latest_report(date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    latest = e.latest_report(date=value)
     assert latest is not None
     assert latest.id == expect
 
     # Can specify `quantity` and/or `name` provided that the value matches a report
-    latest = e.latest_report(quantity="1", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    latest = e.latest_report(quantity="1", date=value)
     assert latest is not None
     assert latest.id == expect
 
-    latest = e.latest_report(name="2", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    latest = e.latest_report(name="2", date=value)
     assert latest is not None
     assert latest.id == expect
 
-    latest = e.latest_report(quantity="1", name="2", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+    latest = e.latest_report(quantity="1", name="2", date=value)
     assert latest is not None
     assert latest.id == expect
 
     # If `quantity` and/or `name` are specified then the Report must match accordingly
-    latest = e.latest_report(quantity="Anything", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
-    assert latest is None
-    latest = e.latest_report(name="Anything", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
-    assert latest is None
-    latest = e.latest_report(quantity="2", name="1", date=value)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
-    assert latest is None
+    with pytest.raises(ValueError, match=r"Cannot determine the latest report"):
+        _ = e.latest_report(quantity="Anything", date=value)
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest report"):
+        _ = e.latest_report(name="Anything", date=value)
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest report"):
+        _ = e.latest_report(quantity="2", name="1", date=value)
 
 
 def test_latest_performance_check_single_measurand_and_component() -> None:
@@ -2155,12 +2159,14 @@ def test_latest_performance_check_single_measurand_and_component() -> None:
     assert latest.entered_by == "C"
 
     # If `quantity` and/or `name` are specified then the Report must match accordingly
-    latest = e.latest_performance_check(quantity="Anything")
-    assert latest is None
-    latest = e.latest_performance_check(name="Anything")
-    assert latest is None
-    latest = e.latest_performance_check(quantity="2", name="1")
-    assert latest is None
+    with pytest.raises(ValueError, match=r"Cannot determine the latest performance check"):
+        _ = e.latest_performance_check(quantity="Anything")
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest performance check"):
+        _ = e.latest_performance_check(name="Anything")
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest performance check"):
+        _ = e.latest_performance_check(quantity="Probe", name="Temperature")
 
 
 def test_latest_report_multiple_measurand_and_components() -> None:
@@ -2307,14 +2313,14 @@ def test_latest_report_multiple_measurand_and_components() -> None:
     assert reports[3].name == "Probe 2"
     assert reports[3].id == "e"
 
-    report = e.latest_report()
-    assert report is None
+    with pytest.raises(ValueError, match=r"Cannot determine the latest report"):  # must specify `quantity` or `name`
+        _ = e.latest_report()
 
-    report = e.latest_report(quantity="Temperature")
-    assert report is None  # must match `name` also
+    with pytest.raises(ValueError, match=r"Cannot determine the latest report"):  # must match `name` also
+        _ = e.latest_report(quantity="Temperature")
 
-    report = e.latest_report(name="Probe 1")
-    assert report is None  # must match `quantity` also
+    with pytest.raises(ValueError, match=r"Cannot determine the latest report"):  # must match `quantity` also
+        _ = e.latest_report(name="Probe 1")
 
     report = e.latest_report(quantity="Temperature", name="Probe 1")
     assert report is not None
@@ -2451,14 +2457,14 @@ def test_latest_performance_check_multiple_measurand_and_components() -> None:
     assert checks[3].name == "Probe 2"
     assert checks[3].entered_by == "e"
 
-    check = e.latest_performance_check()
-    assert check is None
+    with pytest.raises(ValueError, match=r"Cannot determine the latest performance check"):
+        _ = e.latest_performance_check()  # must specify `quantity` or `name`
 
-    check = e.latest_performance_check(quantity="Temperature")
-    assert check is None  # must match `name` also
+    with pytest.raises(ValueError, match=r"Cannot determine the latest performance check"):
+        _ = e.latest_performance_check(quantity="Temperature")  # must match `name` also
 
-    check = e.latest_performance_check(name="Probe 1")
-    assert check is None  # must match `quantity` also
+    with pytest.raises(ValueError, match=r"Cannot determine the latest performance check"):
+        _ = e.latest_performance_check(name="Probe 1")  # must match `quantity` also
 
     check = e.latest_performance_check(quantity="Temperature", name="Probe 1")
     assert check is not None
@@ -2475,6 +2481,386 @@ def test_latest_performance_check_multiple_measurand_and_components() -> None:
     check = e.latest_performance_check(quantity="Humidity", name="Probe 2")
     assert check is not None
     assert check.entered_by == "e"
+
+
+def test_latest_report_multiple_quantities_and_no_names() -> None:
+    e = Equipment(
+        calibrations=(
+            Measurand(
+                quantity="Temperature",
+                calibration_interval=5,
+                components=(
+                    Component(
+                        name="",
+                        reports=(
+                            Report(
+                                id="A",
+                                entered_by="",
+                                report_issue_date=date(2020, 6, 3),
+                                measurement_start_date=date(2020, 5, 1),
+                                measurement_stop_date=date(2020, 5, 4),
+                            ),
+                            Report(
+                                id="B",
+                                entered_by="Me",
+                                report_issue_date=date(2024, 10, 23),
+                                measurement_start_date=date(2024, 2, 15),
+                                measurement_stop_date=date(2024, 2, 16),
+                            ),
+                            Report(
+                                id="C",
+                                entered_by="",
+                                report_issue_date=date(2025, 4, 10),  # issue date > Report(id=B) issue date
+                                measurement_start_date=date(2022, 3, 20),
+                                measurement_stop_date=date(2022, 3, 22),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            Measurand(
+                quantity="Humidity",
+                calibration_interval=5,
+                components=(
+                    Component(
+                        name="",
+                        reports=(
+                            Report(
+                                id="b",
+                                entered_by="",
+                                report_issue_date=date(2024, 10, 23),
+                                measurement_start_date=date(2024, 2, 15),
+                                measurement_stop_date=date(2024, 2, 16),
+                            ),
+                            Report(
+                                id="c",
+                                entered_by="",
+                                report_issue_date=date(2025, 4, 10),  # issue date > Report(id=B) issue date
+                                measurement_start_date=date(2022, 3, 20),
+                                measurement_stop_date=date(2022, 3, 22),
+                            ),
+                            Report(
+                                id="a",
+                                entered_by="",
+                                report_issue_date=date(2020, 6, 3),
+                                measurement_start_date=date(2020, 5, 1),
+                                measurement_stop_date=date(2020, 5, 4),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+    )
+
+    reports = list(e.latest_reports())
+    assert len(reports) == 2
+    assert reports[0].quantity == "Temperature"
+    assert reports[0].name == ""
+    assert reports[0].id == "B"
+    assert reports[0].entered_by == "Me"
+    assert reports[0].report_issue_date == date(2024, 10, 23)
+    assert reports[0].measurement_start_date == date(2024, 2, 15)
+    assert reports[0].measurement_stop_date == date(2024, 2, 16)
+    assert reports[1].quantity == "Humidity"
+    assert reports[1].name == ""
+    assert reports[1].id == "b"
+    assert reports[1].entered_by == ""
+    assert reports[1].report_issue_date == date(2024, 10, 23)
+    assert reports[1].measurement_start_date == date(2024, 2, 15)
+    assert reports[1].measurement_stop_date == date(2024, 2, 16)
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest report"):
+        _ = e.latest_report()  # must specify `quantity` or `name`
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest report"):
+        _ = e.latest_report(name="Probe 1")  # invalid `name`
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest report"):
+        _ = e.latest_report(quantity="Bad")  # invalid `quantity`
+
+    # don't need to specify `name`, since `quantity` is enough
+    latest = e.latest_report(quantity="Temperature")
+    assert latest is not None
+    assert latest.id == "B"
+
+    latest = e.latest_report(quantity="Humidity")
+    assert latest is not None
+    assert latest.id == "b"
+
+
+def test_latest_performance_check_multiple_quantities_and_no_names() -> None:
+    e = Equipment(
+        calibrations=(
+            Measurand(
+                quantity="Temperature",
+                calibration_interval=5,
+                components=(
+                    Component(
+                        name="",
+                        performance_checks=(
+                            PerformanceCheck(
+                                completed_date=date(2020, 5, 4),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="A",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2024, 2, 16),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="B",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2022, 3, 22),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="C",
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            Measurand(
+                quantity="Humidity",
+                calibration_interval=5,
+                components=(
+                    Component(
+                        name="",
+                        performance_checks=(
+                            PerformanceCheck(
+                                completed_date=date(2024, 2, 16),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="b",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2022, 3, 22),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="c",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2024, 2, 17),
+                                competency=Competency(worker="You", checker="Me", technical_procedure="X"),
+                                entered_by="a",
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+    )
+
+    checks = list(e.latest_performance_checks())
+    assert len(checks) == 2
+    assert checks[0].quantity == "Temperature"
+    assert checks[0].name == ""
+    assert checks[0].entered_by == "B"
+    assert checks[0].completed_date == date(2024, 2, 16)
+    assert checks[0].competency == Competency(worker="Me", checker="You", technical_procedure="A")
+    assert checks[1].quantity == "Humidity"
+    assert checks[1].name == ""
+    assert checks[1].entered_by == "a"
+    assert checks[1].completed_date == date(2024, 2, 17)
+    assert checks[1].competency == Competency(worker="You", checker="Me", technical_procedure="X")
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest performance check"):
+        _ = e.latest_performance_check()  # must specify `quantity` or `name`
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest performance check"):
+        _ = e.latest_performance_check(name="Probe 1")  # invalid `name`
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest performance check"):
+        _ = e.latest_performance_check(quantity="Bad")  # invalid `quantity`
+
+    # don't need to specify `name`, since `quantity` is enough
+    latest = e.latest_performance_check(quantity="Temperature")
+    assert latest is not None
+    assert latest.entered_by == "B"
+
+    latest = e.latest_performance_check(quantity="Humidity")
+    assert latest is not None
+    assert latest.entered_by == "a"
+
+
+def test_latest_report_single_quantity_multiple_names() -> None:
+    e = Equipment(
+        calibrations=(
+            Measurand(
+                quantity="Temperature",
+                calibration_interval=5,
+                components=(
+                    Component(
+                        name="Probe 1",
+                        reports=(
+                            Report(
+                                id="A",
+                                entered_by="",
+                                report_issue_date=date(2020, 6, 3),
+                                measurement_start_date=date(2020, 5, 1),
+                                measurement_stop_date=date(2020, 5, 4),
+                            ),
+                            Report(
+                                id="B",
+                                entered_by="Me",
+                                report_issue_date=date(2024, 10, 23),
+                                measurement_start_date=date(2024, 2, 15),
+                                measurement_stop_date=date(2024, 2, 16),
+                            ),
+                            Report(
+                                id="C",
+                                entered_by="",
+                                report_issue_date=date(2025, 4, 10),  # issue date > Report(id=B) issue date
+                                measurement_start_date=date(2022, 3, 20),
+                                measurement_stop_date=date(2022, 3, 22),
+                            ),
+                        ),
+                    ),
+                    Component(
+                        name="Probe 2",
+                        reports=(
+                            Report(
+                                id="E",
+                                entered_by="",
+                                report_issue_date=date(2024, 10, 23),
+                                measurement_start_date=date(2024, 2, 15),
+                                measurement_stop_date=date(2024, 2, 16),
+                            ),
+                            Report(
+                                id="D",
+                                entered_by="",
+                                report_issue_date=date(2020, 6, 3),
+                                measurement_start_date=date(2020, 5, 1),
+                                measurement_stop_date=date(2020, 5, 4),
+                            ),
+                            Report(
+                                id="F",
+                                entered_by="",
+                                report_issue_date=date(2025, 4, 10),  # issue date > Report(id=B) issue date
+                                measurement_start_date=date(2022, 3, 20),
+                                measurement_stop_date=date(2022, 3, 22),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+    )
+
+    reports = list(e.latest_reports())
+    assert len(reports) == 2
+    assert reports[0].quantity == "Temperature"
+    assert reports[0].name == "Probe 1"
+    assert reports[0].id == "B"
+    assert reports[0].entered_by == "Me"
+    assert reports[0].report_issue_date == date(2024, 10, 23)
+    assert reports[0].measurement_start_date == date(2024, 2, 15)
+    assert reports[0].measurement_stop_date == date(2024, 2, 16)
+    assert reports[1].quantity == "Temperature"
+    assert reports[1].name == "Probe 2"
+    assert reports[1].id == "E"
+    assert reports[1].entered_by == ""
+    assert reports[1].report_issue_date == date(2024, 10, 23)
+    assert reports[1].measurement_start_date == date(2024, 2, 15)
+    assert reports[1].measurement_stop_date == date(2024, 2, 16)
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest report"):
+        _ = e.latest_report()  # must specify `quantity` or `name`
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest report"):
+        _ = e.latest_report(name="Probe 3")  # invalid `name`
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest report"):
+        _ = e.latest_report(quantity="Humidity")  # invalid `quantity`
+
+    # don't need to specify `quantity`, since `name` is enough
+    latest = e.latest_report(name="Probe 1")
+    assert latest is not None
+    assert latest.id == "B"
+
+    latest = e.latest_report(name="Probe 2")
+    assert latest is not None
+    assert latest.id == "E"
+
+
+def test_latest_performance_check_single_quantity_multiple_names() -> None:
+    e = Equipment(
+        calibrations=(
+            Measurand(
+                quantity="Temperature",
+                calibration_interval=5,
+                components=(
+                    Component(
+                        name="Probe 1",
+                        performance_checks=(
+                            PerformanceCheck(
+                                completed_date=date(2020, 5, 4),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="A",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2024, 2, 16),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="B",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2022, 3, 22),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="C",
+                            ),
+                        ),
+                    ),
+                    Component(
+                        name="Probe 2",
+                        performance_checks=(
+                            PerformanceCheck(
+                                completed_date=date(2024, 2, 16),
+                                competency=Competency(worker="You", checker="Me", technical_procedure="X"),
+                                entered_by="E",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2020, 5, 4),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="D",
+                            ),
+                            PerformanceCheck(
+                                completed_date=date(2022, 3, 22),
+                                competency=Competency(worker="Me", checker="You", technical_procedure="A"),
+                                entered_by="F",
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+    )
+
+    checks = list(e.latest_performance_checks())
+    assert len(checks) == 2
+    assert checks[0].quantity == "Temperature"
+    assert checks[0].name == "Probe 1"
+    assert checks[0].entered_by == "B"
+    assert checks[0].completed_date == date(2024, 2, 16)
+    assert checks[0].competency == Competency(worker="Me", checker="You", technical_procedure="A")
+    assert checks[1].quantity == "Temperature"
+    assert checks[1].name == "Probe 2"
+    assert checks[1].entered_by == "E"
+    assert checks[1].completed_date == date(2024, 2, 16)
+    assert checks[1].competency == Competency(worker="You", checker="Me", technical_procedure="X")
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest performance check"):
+        _ = e.latest_performance_check()  # must specify `quantity` or `name`
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest performance check"):
+        _ = e.latest_performance_check(name="Probe 3")  # invalid `name`
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest performance check"):
+        _ = e.latest_performance_check(quantity="Humidity")  # invalid `quantity`
+
+    # don't need to specify `quantity`, since `name` is enough
+    latest = e.latest_performance_check(name="Probe 1")
+    assert latest is not None
+    assert latest.entered_by == "B"
+
+    latest = e.latest_performance_check(name="Probe 2")
+    assert latest is not None
+    assert latest.entered_by == "E"
 
 
 def test_latest_report_no_reports() -> None:

@@ -55,7 +55,7 @@ if TYPE_CHECKING:
     from ctypes import _CFunctionType  # pyright: ignore[reportPrivateUsage]
     from typing import Any, Callable, Never
 
-    from msl.loadlib._types import PathLike
+    from msl.loadlib.typing import PathLike
     from numpy.typing import NDArray
 
     from msl.equipment.schema import Equipment

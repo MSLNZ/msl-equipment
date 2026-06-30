@@ -15,8 +15,8 @@ if TYPE_CHECKING:
 
     from msl.equipment.schema import Equipment
     from msl.equipment.typing import PathLike
-    from msl.loadlib._types import LibType
     from msl.loadlib.activex import Application
+    from msl.loadlib.typing import LibType
 
 REGEX = re.compile(r"^SDK::(?P<path>.+)", flags=re.IGNORECASE)
 

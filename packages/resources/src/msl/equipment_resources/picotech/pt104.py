@@ -17,7 +17,7 @@ from .status import PICO_INFO, PICO_OK, PICO_STATUS, Error, PicoInfo
 if TYPE_CHECKING:
     from typing import Any, Literal
 
-    from msl.loadlib._types import PathLike
+    from msl.loadlib.typing import PathLike
 
     from msl.equipment.schema import Equipment
 

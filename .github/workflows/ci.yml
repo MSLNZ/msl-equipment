@@ -36,3 +36,27 @@ jobs:
           enable-cache: false
       - name: Run tests
         run: uv run --all-packages --with pytest-rerunfailures --python ${{ matrix.python-version }} --no-dev --group test -- pytest --reruns 5
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Setup uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          enable-cache: false
+          python-version: '3.14'
+      - name: Spelling
+        uses: streetsidesoftware/cspell-action@v8
+        with:
+          incremental_files_only: false
+      - name: Linting
+        run: uv run -- ruff check --force-exclude --no-fix .
+      - name: Formatting
+        run: uv run -- ruff format --force-exclude --check .
+      - name: Typing:BasedPyright
+        run: uv run -- basedpyright .
+      - name: Typing:MyPy
+        run: uv run -- mypy .

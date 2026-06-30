@@ -165,7 +165,7 @@ def test_cli_find_verbose(
     assert m[10] == "Searching for equipment that use the D2XX driver (d2xx_library='d2xx.ignore')"
     assert (
         m[11]
-        == f"OSError: Cannot find 'd2xx.ignore' for libtype={libtype!r}, download library from https://ftdichip.com/drivers/d2xx-drivers/"
+        == f"OSError: Cannot find 'd2xx.ignore' [libtype={libtype!r}], download library from https://ftdichip.com/drivers/d2xx-drivers/"
     )
     assert m[12] == "Waiting approximately 0.1 second(s) for network devices to respond..."
     assert re.match(r"Found \d+ device\(s\)", m[13])

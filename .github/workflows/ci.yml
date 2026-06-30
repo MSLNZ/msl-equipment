@@ -53,10 +53,10 @@ jobs:
         with:
           incremental_files_only: false
       - name: Linting
-        run: uv run -- ruff check --force-exclude --no-fix .
+        run: uv run --all-packages -- ruff check --force-exclude --no-fix .
       - name: Formatting
-        run: uv run -- ruff format --force-exclude --check .
+        run: uv run --all-packages -- ruff format --force-exclude --check .
       - name: Typing:BasedPyright
-        run: uv run -- basedpyright .
+        run: uv run --all-packages -- basedpyright .
       - name: Typing:MyPy
-        run: uv run -- mypy .
+        run: uv run --all-packages -- mypy .

@@ -3262,7 +3262,7 @@ def test_equipment_connection_none() -> None:
 
     connections.add(*("tests/data/connections.xml",))
 
-    with pytest.raises(OSError, match=r"Cannot find 'library.dll' for libtype='cdll'"):
+    with pytest.raises(OSError, match=r"Cannot find 'library.dll' \[libtype='cdll'\]"):
         _ = Equipment(id="MSLE.O.231").connect()
 
     connections.clear()

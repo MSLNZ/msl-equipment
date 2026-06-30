@@ -510,7 +510,7 @@ def test_find_ftd2xx_devices_library_missing(caplog: pytest.LogCaptureFixture) -
         assert len(find_ftd2xx_devices("missing")) == 0
         assert caplog.messages == [
             "Searching for equipment that use the D2XX driver (d2xx_library='missing')",
-            f"OSError: Cannot find 'missing' for libtype={libtype!r}, download library from https://ftdichip.com/drivers/d2xx-drivers/",
+            f"OSError: Cannot find 'missing' [libtype={libtype!r}], download library from https://ftdichip.com/drivers/d2xx-drivers/",
         ]
 
 

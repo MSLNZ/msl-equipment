@@ -1358,8 +1358,10 @@ class HiSLIP(Message, regex=REGEX):
         if not hasattr(self, "_async"):
             return
 
-        self._sync.set_timeout(self._timeout)
-        self._async.set_timeout(self._timeout)
+        if self._sync.socket is not None:
+            self._sync.set_timeout(self._timeout)
+        if self._async.socket is not None:
+            self._async.set_timeout(self._timeout)
 
     @property
     def asynchronous(self) -> AsyncClient:

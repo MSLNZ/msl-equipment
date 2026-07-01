@@ -28,6 +28,9 @@ if TYPE_CHECKING:
 
     A = TypeVar("A", bound="Any")
     L = TypeVar("L", bound="Latest")
+
+    # the Self type was added in Python 3.11 (PEP 673)
+    # using TypeVar is equivalent for < 3.11
     Self = TypeVar("Self", bound="Interface")
 
 

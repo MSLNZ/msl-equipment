@@ -3,7 +3,7 @@
 # cSpell: ignore ATOD
 from __future__ import annotations
 
-from ctypes import byref, c_double, c_float, c_int32, c_long, c_short
+from ctypes import byref, c_double, c_float, c_long, c_short
 from enum import Enum
 
 from msl.loadlib import Server32
@@ -164,12 +164,13 @@ class OL756x86(Server32):
         self._check(ret, (_Error.SYSTEM_BUSY, _Error.PARAM_ERR_MEAS_TYPE, _Error.PARAM_ERR_VAL_INDEX))
         return data.value
 
-    def _get_cal_array(self) -> list[int]:
+    def _get_cal_array(self) -> list[float]:
         num_points = c_long()
-        pointer = int(self.lib.GetCalArray(byref(num_points)))
-        c_array = c_int32 * num_points.value
-        array = c_array.from_address(pointer)
-        return list(array)
+        address = self.lib.GetCalArray(byref(num_points))
+        if address > 0:  # Not sure why, but the address can be 0 in which this would read corrupt memory
+            c_array = c_double * num_points.value
+            return list(c_array.from_address(address))
+        return []
 
     def _get_cal_file_enabled(self, meas_type: int) -> bool:
         return bool(self.lib.GetCalFileEnabled(meas_type))
@@ -268,9 +269,9 @@ class OL756x86(Server32):
     def _get_settling_time(self) -> float:
         return float(self.lib.GetSettlingTime())
 
-    def _get_signal_array(self) -> tuple[int, ...]:
+    def _get_signal_array(self) -> tuple[float, ...]:
         num_points = c_long()
-        array: tuple[int, ...] = self.lib.GetSignalVariantArray(byref(num_points))
+        array: tuple[float, ...] = self.lib.GetSignalVariantArray(byref(num_points))
         if len(array) != num_points.value:
             msg = "Length of the array does not equal the number of points"
             raise RuntimeError(msg)

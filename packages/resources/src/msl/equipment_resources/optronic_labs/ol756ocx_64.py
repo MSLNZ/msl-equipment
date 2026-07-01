@@ -80,7 +80,7 @@ class OL756(Interface, manufacturer=r"Optronic", model=r"(OL)?\s*756", flags=re.
             logger.debug("OL756.%s%s", attr, args)
             return self._request32(f"_{attr}", *args)
         except Server32Error as e:
-            raise MSLConnectionError(self, e.traceback) from None
+            raise MSLConnectionError(self, str(e).lstrip()) from None
 
     def accumulate_signals(self, meas_type: Literal[0, 1, 2, 3, 4, 5]) -> None:
         """Function needs to be called after a measurement was performed.
@@ -323,7 +323,7 @@ class OL756(Interface, manufacturer=r"Optronic", model=r"(OL)?\s*756", flags=re.
         """
         return float(self._send("get_cri", meas_type, index))
 
-    def get_cal_array(self) -> NDArray[np.int32]:
+    def get_cal_array(self) -> NDArray[np.float64]:
         """This method allows user to get the spectral data of a calibration after it is made.
 
         Returns:
@@ -656,7 +656,7 @@ class OL756(Interface, manufacturer=r"Optronic", model=r"(OL)?\s*756", flags=re.
         """
         return float(self._send("get_settling_time"))
 
-    def get_signal_array(self) -> NDArray[np.int32]:
+    def get_signal_array(self) -> NDArray[np.float64]:
         """Get the spectral data of a measurement after it is made.
 
         Returns:

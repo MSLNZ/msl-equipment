@@ -864,7 +864,7 @@ class VXI11(Message, regex=REGEX):
         except (socket.timeout, TimeoutError):
             raise MSLTimeoutError(self) from None
         except Exception as e:  # noqa: BLE001
-            msg = f"Cannot connect to {self._info.host}:{self._core_port}\n{e.__class__.__name__}: {e}"
+            msg = f"{e.__class__.__name__}: {e}"
             raise MSLConnectionError(self, msg) from None
 
     def _init_flag(self) -> int:

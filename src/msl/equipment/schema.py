@@ -97,14 +97,9 @@ def _future_date(relative_to: _date, years: float) -> _date:
 
 def _latest(*, items: list[L], quantity: str, name: str) -> L | None:
     """Returns the latest report or performance check."""
-    quantities = {item.quantity for item in items}
-    names = {item.name for item in items}
-    items = [
-        item
-        for item in items
-        if ((len(quantities) == 1 and not quantity) or quantity == item.quantity)
-        and ((len(names) == 1 and not name) or name == item.name)
-    ]
+    quantity_ok = (not quantity) and (len({item.quantity for item in items}) == 1)
+    name_ok = (not name) and (len({item.name for item in items}) == 1)
+    items = [i for i in items if (quantity_ok or quantity == i.quantity) and (name_ok or name == i.name)]
     if len(items) == 1:
         return items[0]
 

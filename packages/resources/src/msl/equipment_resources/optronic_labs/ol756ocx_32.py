@@ -167,7 +167,7 @@ class OL756x86(Server32):
     def _get_cal_array(self) -> list[float]:
         num_points = c_long()
         address = self.lib.GetCalArray(byref(num_points))
-        if address > 0:  # Not sure why, but the address can be 0 in which this would read corrupt memory
+        if address > 0:
             c_array = c_double * num_points.value
             return list(c_array.from_address(address))
         return []
@@ -269,13 +269,13 @@ class OL756x86(Server32):
     def _get_settling_time(self) -> float:
         return float(self.lib.GetSettlingTime())
 
-    def _get_signal_array(self) -> tuple[float, ...]:
+    def _get_signal_array(self) -> list[float]:
         num_points = c_long()
-        array: tuple[float, ...] = self.lib.GetSignalVariantArray(byref(num_points))
-        if len(array) != num_points.value:
-            msg = "Length of the array does not equal the number of points"
-            raise RuntimeError(msg)
-        return array
+        address = self.lib.GetSignalArray(byref(num_points))
+        if address > 0:
+            c_array = c_double * num_points.value
+            return list(c_array.from_address(address))
+        return []
 
     def _get_standard_file(self, meas_type: int) -> str:
         return str(self.lib.GetStandardFile(meas_type))

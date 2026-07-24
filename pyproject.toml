@@ -61,6 +61,9 @@ resources = [
 validate = [
     "msl-equipment-validate",
 ]
+webapp = [
+    "msl-equipment-webapp",
+]
 
 [dependency-groups]
 doc = [
@@ -104,6 +107,7 @@ members = ["packages/*"]
 [tool.uv.sources]
 msl-equipment-resources = { workspace = true }
 msl-equipment-validate = { workspace = true }
+msl-equipment-webapp = { workspace = true }
 
 [tool.hatch.version]
 source = "vcs"
@@ -162,7 +166,7 @@ cache_dir = ".cache/mypy"
 platform = "win32"
 strict = true
 strict_bytes = true
-mypy_path = "src,packages/resources/src,packages/validate/src"
+mypy_path = "src,packages/resources/src,packages/validate/src,packages/webapp/src"
 namespace_packages = true
 explicit_package_bases = true
 allow_redefinition = false

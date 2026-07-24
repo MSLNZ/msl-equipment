@@ -25,7 +25,6 @@ A register behaves like a sequence of [Equipment][] items. You can get the numbe
 2
 >>> for equipment in register:
 ...     print(equipment.id)
-...
 MSLE.M.001
 MSLE.M.092
 
@@ -57,7 +56,7 @@ The [find][msl.equipment.schema.Register.find] method searches the register to f
 
 ```pycon
 >>> for hygrometer in register.find("Hygrometer"):
-...    print(hygrometer)
+...     print(hygrometer)
 Equipment(id='MSLE.M.092', manufacturer='XYZ', model='A', serial='b' (4 reports))
 
 ```

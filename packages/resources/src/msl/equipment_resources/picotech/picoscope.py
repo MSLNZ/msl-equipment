@@ -1315,6 +1315,7 @@ class PicoScope(SDK, manufacturer=r"Pico\s*Tech", model=r"[23456]\d{3}[A-Z]"):
     def set_sig_gen_arbitrary(  # noqa: PLR0913
         self,
         waveform: NDArray[np.float64],
+        *,
         repetition_rate: float | None = None,
         offset_voltage: float = 0.0,
         peak_to_peak: float | None = None,
@@ -1435,6 +1436,7 @@ class PicoScope(SDK, manufacturer=r"Pico\s*Tech", model=r"[23456]\d{3}[A-Z]"):
 
     def set_sig_gen_builtin_v2(  # noqa: PLR0913
         self,
+        *,
         offset_voltage: float = 0.0,
         peak_to_peak: float = 1.0,
         wave_type: WaveType | str | int = "sine",

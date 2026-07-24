@@ -67,9 +67,9 @@ Unpacking the [Readings][msl.equipment.readings.Readings] instance returns the m
 When converting the [Readings][msl.equipment.readings.Readings] to a string, the custom [format specification][] is used and it displays the value (mean) with the uncertainty (standard deviation of the mean)
 
 ```pycon
->>> f"{r}" # use the default options
+>>> f"{r}"  # use the default options
 '8.00016518(80)'
->>> f"{r:.2B}" # equivalent to previous
+>>> f"{r:.2B}"  # equivalent to previous
 '8.00016518(80)'
 >>> f"{r:.3PU}"  # retain 3 digits, +/- mode, unicode style
 '8.000165175±0.000000798'
@@ -112,13 +112,13 @@ Here are some examples on how to use the custom format specification
 '0.000003456±0.000000013'
 >>> f"{r:e}"  # exponent form
 '3.456(13)e-06'
->>> f"{r:S}" # SI prefix
+>>> f"{r:S}"  # SI prefix
 '3.456(13) u'
->>> f"{r:US}" # unicode style, SI prefix
+>>> f"{r:US}"  # unicode style, SI prefix
 '3.456(13) µ'
->>> f"{r:.1eU}" # 1 digit, exponent form, unicode style
+>>> f"{r:.1eU}"  # 1 digit, exponent form, unicode style
 '3.46(1)×10⁻⁶'
->>> f"{r:eL}" # exponent form, LaTeX style
+>>> f"{r:eL}"  # exponent form, LaTeX style
 '3.456\\left(13\\right)\\times10^{-6}'
 >>> f"{r:=^+30.4e}"  # fill with '=', align center, include + sign, 30 characters in total, 4 digits, exponent form
 '======+3.45620(1334)e-06======'

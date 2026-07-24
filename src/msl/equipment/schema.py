@@ -1444,7 +1444,7 @@ class Table(np.ndarray):
         obj.comment = comment
         return obj
 
-    def __array_finalize__(self, obj: None | NDArray[_Any]) -> None:  # pyright: ignore[reportImplicitOverride]
+    def __array_finalize__(self, obj: NDArray[_Any] | None) -> None:  # pyright: ignore[reportImplicitOverride]
         """Finalise the creation of the [Table][msl.equipment.schema.Table] by adding the metadata."""
         if obj is None:
             return  # pragma: no cover

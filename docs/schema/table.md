@@ -65,7 +65,7 @@ Since `table` is a numpy array, you can index it
 ```pycon
 >>> print(table[0])
 (250, 0.01818, 0.02033)
->>> sliced=table[:3]
+>>> sliced = table[:3]
 >>> print(sliced)
 [(250, 0.01818, 0.02033) (300, 0.18478, 0.01755) (350, 0.80845, 0.01606)]
 
@@ -93,7 +93,7 @@ Table([ 0.52491592,  0.37650087, -0.2354229 , -0.99741219,  0.70160756,
 Suppose you wanted to get all *Irradiance* values in the table that are for UV light (i.e., wavelengths &lt; 400 nm)
 
 ```pycon
->>> table["Irradiance"][ table["Wavelength"] < 400 ]
+>>> table["Irradiance"][table["Wavelength"] < 400]
 Table([0.01818, 0.18478, 0.80845])
 
 ```

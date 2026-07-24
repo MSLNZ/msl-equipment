@@ -63,9 +63,7 @@ equipment = Equipment(
                             equations=(
                                 Equation(
                                     value=Evaluable(
-                                        equation="0.9999862*v + 1.024e-5",
-                                        variables=("v",),
-                                        ranges={"v": Range(1, 10)}
+                                        equation="0.9999862*v + 1.024e-5", variables=("v",), ranges={"v": Range(1, 10)}
                                     ),
                                     uncertainty=Evaluable(equation="3.2e-6"),
                                     unit="V",

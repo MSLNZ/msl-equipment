@@ -46,8 +46,8 @@ from __future__ import annotations
 
 from msl.equipment import Equipment, Serial
 
-class MyResource(Serial, manufacturer=r"Company Name", model=r"ABC"):
 
+class MyResource(Serial, manufacturer=r"Company Name", model=r"ABC"):
     def __init__(self, equipment: Equipment) -> None:
         """My custom resource.
 

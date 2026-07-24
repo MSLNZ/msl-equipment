@@ -452,7 +452,7 @@ All [interfaces][connections-interfaces] can be used as a [context manager][with
 from msl.equipment import Connection
 
 with Connection("COM3").connect() as device:
-  print(device.query("*IDN?"))
+    print(device.query("*IDN?"))
 ```
 
 If you have multiple equipment that you want to interface with and you also want to include some additional metadata so that you can keep track of which device is associated with the corresponding address, you could do something like the following. Also, for some interfaces, such as when using a manufacturer's [SDK][], the serial number must be passed to the [SDK][] when opening the connection and therefore the serial number must be specified as a keyword argument (or as an element in a connections [XML][connections-xml] file).
@@ -464,7 +464,6 @@ from msl.equipment import Connection
 connections = {
     "alice": Connection("GPIB::22", model="3458A"),
     "bob": Connection("COM3", manufacturer="HP", model="34401A"),
-
     # not used below but is available to use for another day
     "eve": Connection("SDK::company.dll", manufacturer="ABC", serial="4621"),
 }

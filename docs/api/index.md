@@ -66,6 +66,7 @@ By default, the server will process requests that are sent by *any* computer on 
     from msl.equipment import Connection, GPIB, ZeroMQServer
     from msl.equipment.typing import ZMQServerResponse
 
+
     class DMM(ZeroMQServer):
         """Allow for a digital multimeter to be available on the network."""
 
@@ -90,6 +91,7 @@ By default, the server will process requests that are sent by *any* computer on 
         def shutdown_handler(self) -> None:
             """Disconnect from the digital multimeter when the server shuts down."""
             self.dmm.disconnect()
+
 
     if __name__ == "__main__":
         server = DMM(port=5555)
@@ -126,6 +128,7 @@ By default, the server will process requests that are sent by *any* computer on 
     from msl.equipment import Connection, GPIB, ZeroMQServer
     from msl.equipment.typing import ZMQServerResponse
 
+
     class DMM(ZeroMQServer):
         """Allow for a digital multimeter to be available on the network."""
 
@@ -151,6 +154,7 @@ By default, the server will process requests that are sent by *any* computer on 
         def shutdown_handler(self) -> None:
             """Disconnect from the digital multimeter when the server shuts down."""
             self.dmm.disconnect()
+
 
     if __name__ == "__main__":
         # The client has an IP address of 192.168.1.58
@@ -190,6 +194,7 @@ By default, the server will process requests that are sent by *any* computer on 
     from msl.equipment import Connection, GPIB, ZeroMQServer
     from msl.equipment.typing import ZMQServerResponse
 
+
     class DMM(ZeroMQServer):
         """Allow for a digital multimeter to be available on the network."""
 
@@ -214,6 +219,7 @@ By default, the server will process requests that are sent by *any* computer on 
         def shutdown_handler(self) -> None:
             """Disconnect from the digital multimeter when the server shuts down."""
             self.dmm.disconnect()
+
 
     if __name__ == "__main__":
         server = DMM(port=5555, socket_type="PAIR")
@@ -257,6 +263,7 @@ By default, the server will process requests that are sent by *any* computer on 
     from msl.equipment import Connection, GPIB, ZeroMQServer
     from msl.equipment.typing import ZMQServerResponse
 
+
     class DMM(ZeroMQServer):
         """Allow for a digital multimeter to be available on the network."""
 
@@ -287,6 +294,7 @@ By default, the server will process requests that are sent by *any* computer on 
         def shutdown_handler(self) -> None:
             """Disconnect from the digital multimeter when the server shuts down."""
             self.dmm.disconnect()
+
 
     if __name__ == "__main__":
         server = DMM(port=5555)

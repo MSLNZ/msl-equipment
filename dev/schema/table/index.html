@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -5126,7 +5126,7 @@
 <p>Since <code>table</code> is a numpy array, you can index it</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="go">(250, 0.01818, 0.02033)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sliced</span><span class="o">=</span><span class="n">table</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sliced</span> <span class="o">=</span> <span class="n">table</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sliced</span><span class="p">)</span>
 <span class="go">[(250, 0.01818, 0.02033) (300, 0.18478, 0.01755) (350, 0.80845, 0.01606)]</span>
 </code></pre></div>
@@ -5143,7 +5143,7 @@
 <span class="go">       -0.56246854,  0.6903377 , -0.78390036,  0.65631968, -0.0205763 ])</span>
 </code></pre></div>
 <p>Suppose you wanted to get all <em>Irradiance</em> values in the table that are for UV light (i.e., wavelengths &lt; 400 nm)</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;Irradiance&quot;</span><span class="p">][</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;Wavelength&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">400</span> <span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;Irradiance&quot;</span><span class="p">][</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;Wavelength&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">400</span><span class="p">]</span>
 <span class="go">Table([0.01818, 0.18478, 0.80845])</span>
 </code></pre></div>
 <p>If you prefer to work with <em>unstructured</em> data, you can convert the <code>table</code> by calling the <a class="autorefs autorefs-internal" title="            unstructured" href="#msl.equipment.schema.Table.unstructured">unstructured</a> method</p>
@@ -5913,7 +5913,7 @@ numbers and strings and the appropriate <code>dtype</code> is not specified.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../javascripts/arithmatex.js"></script>
       

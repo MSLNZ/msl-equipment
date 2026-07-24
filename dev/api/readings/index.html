@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -5091,9 +5091,9 @@
 <span class="go">7.981426314008917e-07</span>
 </code></pre></div>
 <p>When converting the <a class="autorefs autorefs-internal" title="            Readings" href="#msl.equipment.readings.Readings">Readings</a> to a string, the custom <a class="autorefs autorefs-internal" title="Format Specification" href="#format-specification">format specification</a> is used and it displays the value (mean) with the uncertainty (standard deviation of the mean)</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># use the default options</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># use the default options</span>
 <span class="go">&#39;8.00016518(80)&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.2B</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># equivalent to previous</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.2B</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># equivalent to previous</span>
 <span class="go">&#39;8.00016518(80)&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.3PU</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># retain 3 digits, +/- mode, unicode style</span>
 <span class="go">&#39;8.000165175±0.000000798&#39;</span>
@@ -5122,13 +5122,13 @@
 <span class="go">&#39;0.000003456±0.000000013&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">e</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># exponent form</span>
 <span class="go">&#39;3.456(13)e-06&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">S</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># SI prefix</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">S</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># SI prefix</span>
 <span class="go">&#39;3.456(13) u&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">US</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># unicode style, SI prefix</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">US</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># unicode style, SI prefix</span>
 <span class="go">&#39;3.456(13) µ&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.1eU</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># 1 digit, exponent form, unicode style</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.1eU</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># 1 digit, exponent form, unicode style</span>
 <span class="go">&#39;3.46(1)×10⁻⁶&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">eL</span><span class="si">}</span><span class="s2">&quot;</span> <span class="c1"># exponent form, LaTeX style</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">eL</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># exponent form, LaTeX style</span>
 <span class="go">&#39;3.456\\left(13\\right)\\times10^{-6}&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">=^+30.4e</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># fill with &#39;=&#39;, align center, include + sign, 30 characters in total, 4 digits, exponent form</span>
 <span class="go">&#39;======+3.45620(1334)e-06======&#39;</span>
@@ -5673,7 +5673,7 @@ The value <code>None</code> corresponds to whitespace.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../javascripts/arithmatex.js"></script>
       

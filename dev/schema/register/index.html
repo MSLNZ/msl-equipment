@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -5068,7 +5068,6 @@
 <span class="go">2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">equipment</span> <span class="ow">in</span> <span class="n">register</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">equipment</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-<span class="gp">...</span>
 <span class="go">MSLE.M.001</span>
 <span class="go">MSLE.M.092</span>
 </code></pre></div>
@@ -5112,7 +5111,7 @@
 </code></pre></div>
 <p>The <a class="autorefs autorefs-internal" title="            find" href="#msl.equipment.schema.Register.find">find</a> method searches the register to find equipment that contain certain text. You may use a <a href="https://regexr.com/">regular-expression pattern</a> to find matching equipment items. Here we find all equipment that have the text <code>Hygrometer</code> in one of the <a class="autorefs autorefs-internal" href="../equipment/#equipment">Equipment</a> attribute values that are considered in the search.</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">hygrometer</span> <span class="ow">in</span> <span class="n">register</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Hygrometer&quot;</span><span class="p">):</span>
-<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">hygrometer</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">hygrometer</span><span class="p">)</span>
 <span class="go">Equipment(id=&#39;MSLE.M.092&#39;, manufacturer=&#39;XYZ&#39;, model=&#39;A&#39;, serial=&#39;b&#39; (4 reports))</span>
 </code></pre></div>
 <p>We see that one equipment was found and that there are four calibration reports associated with the equipment. From the <a class="autorefs autorefs-internal" href="../equipment/#equipment">Equipment</a> instance, we can get the latest calibration report for a certain <a class="autorefs autorefs-internal" title="            Component
@@ -6565,7 +6564,7 @@ This parameter is ignored if the version of Python is &lt; 3.9.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../javascripts/arithmatex.js"></script>
       

@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -5015,6 +5015,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">GPIB</span><span class="p">,</span> <span class="n">ZeroMQServer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZMQServerResponse</span>
 
+
 <span class="k">class</span><span class="w"> </span><span class="nc">DMM</span><span class="p">(</span><span class="n">ZeroMQServer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Allow for a digital multimeter to be available on the network.&quot;&quot;&quot;</span>
 
@@ -5039,6 +5040,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">shutdown_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Disconnect from the digital multimeter when the server shuts down.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">DMM</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">5555</span><span class="p">)</span>
@@ -5076,6 +5078,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">GPIB</span><span class="p">,</span> <span class="n">ZeroMQServer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZMQServerResponse</span>
 
+
 <span class="k">class</span><span class="w"> </span><span class="nc">DMM</span><span class="p">(</span><span class="n">ZeroMQServer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Allow for a digital multimeter to be available on the network.&quot;&quot;&quot;</span>
 
@@ -5101,6 +5104,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">shutdown_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Disconnect from the digital multimeter when the server shuts down.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="c1"># The client has an IP address of 192.168.1.58</span>
@@ -5141,6 +5145,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">GPIB</span><span class="p">,</span> <span class="n">ZeroMQServer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZMQServerResponse</span>
 
+
 <span class="k">class</span><span class="w"> </span><span class="nc">DMM</span><span class="p">(</span><span class="n">ZeroMQServer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Allow for a digital multimeter to be available on the network.&quot;&quot;&quot;</span>
 
@@ -5165,6 +5170,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">shutdown_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Disconnect from the digital multimeter when the server shuts down.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">DMM</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">5555</span><span class="p">,</span> <span class="n">socket_type</span><span class="o">=</span><span class="s2">&quot;PAIR&quot;</span><span class="p">)</span>
@@ -5209,6 +5215,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">GPIB</span><span class="p">,</span> <span class="n">ZeroMQServer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZMQServerResponse</span>
 
+
 <span class="k">class</span><span class="w"> </span><span class="nc">DMM</span><span class="p">(</span><span class="n">ZeroMQServer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Allow for a digital multimeter to be available on the network.&quot;&quot;&quot;</span>
 
@@ -5239,6 +5246,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">shutdown_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Disconnect from the digital multimeter when the server shuts down.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">DMM</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">5555</span><span class="p">)</span>
@@ -5427,7 +5435,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../javascripts/arithmatex.js"></script>
       

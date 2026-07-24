@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -5640,7 +5640,7 @@
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span>
 
 <span class="k">with</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;COM3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
-  <span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
 </code></pre></div>
 <p>If you have multiple equipment that you want to interface with and you also want to include some additional metadata so that you can keep track of which device is associated with the corresponding address, you could do something like the following. Also, for some interfaces, such as when using a manufacturer's <a class="autorefs autorefs-internal" href="../../api/interfaces/sdk/#sdk">SDK</a>, the serial number must be passed to the <a class="autorefs autorefs-internal" href="../../api/interfaces/sdk/#sdk">SDK</a> when opening the connection and therefore the serial number must be specified as a keyword argument (or as an element in a connections <a class="autorefs autorefs-internal" title="XML Schema" href="#connections-xml">XML</a> file).</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span>
@@ -5649,7 +5649,6 @@
 <span class="n">connections</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;alice&quot;</span><span class="p">:</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;GPIB::22&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;3458A&quot;</span><span class="p">),</span>
     <span class="s2">&quot;bob&quot;</span><span class="p">:</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;COM3&quot;</span><span class="p">,</span> <span class="n">manufacturer</span><span class="o">=</span><span class="s2">&quot;HP&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;34401A&quot;</span><span class="p">),</span>
-
     <span class="c1"># not used below but is available to use for another day</span>
     <span class="s2">&quot;eve&quot;</span><span class="p">:</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;SDK::company.dll&quot;</span><span class="p">,</span> <span class="n">manufacturer</span><span class="o">=</span><span class="s2">&quot;ABC&quot;</span><span class="p">,</span> <span class="n">serial</span><span class="o">=</span><span class="s2">&quot;4621&quot;</span><span class="p">),</span>
 <span class="p">}</span>
@@ -5924,7 +5923,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../javascripts/arithmatex.js"></script>
       

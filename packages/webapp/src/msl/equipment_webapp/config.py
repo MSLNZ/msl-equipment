@@ -2,48 +2,119 @@
 
 from __future__ import annotations
 
-import contextlib
-import logging
+import json
 from dataclasses import dataclass
+from pathlib import Path
 from subprocess import run
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from pathlib import Path
-
-logger = logging.getLogger("dash_logger")
-logger.setLevel(logging.INFO)
 
 
 @dataclass
-class Team:
-    """Information about a team."""
+class Logo:
+    """Information about the logo."""
+
+    src: str = ""
+    """Location of the image."""
+
+    height: int = 60
+    """Image height, in pixels."""
+
+    margin_left: int = 5
+    """Padding of left-side margin."""
+
+    margin_right: int = 25
+    """Padding of right-side margin."""
+
+    def __post_init__(self) -> None:
+        """Called automatically after the __init__ method finishes."""
+        if not self.src:
+            self.height = 0
+
+
+@dataclass
+class NavBar:
+    """Information about the NavBar."""
+
+    color: str = "dark"
+    """Sets the color of the NavBar.
+
+    Main options are `primary`, `light` and `dark`. You can also choose one of the other
+    contextual classes provided by Bootstrap (secondary, success, warning, danger, info, white)
+    or any valid CSS color of your choice (e.g., a hex code, a decimal code or a CSS color name).
+    """
+
+    dark: bool = True
+    """Whether to apply the navbar-dark class to the NavBar.
+
+    Causes text in the children of the NavBar to use light colors for contrast/visibility.
+    """
+
+
+@dataclass
+class EquipmentRegister:
+    """Information about an equipment register."""
 
     team: str
     """The team that is responsible for the equipment register, e.g., `Light`, `Length`."""
 
-    url: Path
-    """Path to the directory containing equipment register XML files for the `team`."""
+    dir: Path
+    """The directory that contains the equipment-register files for the `team`."""
 
-    def maybe_git_pull(self) -> None:
-        """Maybe perform a `git pull` if the equipment-register directory is a cloned repository."""
-        if not (self.url / ".git").exists():
-            return
+    def __post_init__(self) -> None:
+        """Called automatically after the __init__ method finishes."""
+        self.dir = self.dir.expanduser()
 
-        logger.info("Performing `git pull` for %s", self.url)
-        with contextlib.suppress(FileNotFoundError):
-            _ = run(["git", "pull"], cwd=self.url, check=False, capture_output=True)  # noqa: S607
+    def git_pull(self) -> str:
+        """Perform a `git pull` of the equipment-register directory.
 
-    def valid(self) -> bool:
-        """Check if the equipment register is valid against the schema."""
-        logger.info("Performing schema validation for %s", self.url)
-        result = run(
-            ["msl-equipment-validate", ".", "--skip-checksum", "--exit-first"],  # noqa: S607
-            cwd=self.url,
-            check=False,
-            capture_output=True,
-        )
-        return result.returncode == 0
+        Returns:
+            An error message, if an error occurred.
+        """
+        try:
+            out = run(["git", "pull"], cwd=self.dir, check=False, capture_output=True)  # noqa: S607
+        except FileNotFoundError:
+            return "ERROR! git is not installed, cannot sync"
+        else:
+            return "" if out.returncode == 0 else f"ERROR! {out.stderr.decode()}"
 
 
-teams: list[Team] = []
+class Config:
+    """Configuration for the web application."""
+
+    def __init__(self) -> None:
+        """Configuration for the web application."""
+        self.assets: Path = Path("assets")
+        """Path to the assets directory.
+
+        Store the favicon.ico and custom.css files here.
+        """
+
+        self.logo: Logo = Logo()
+        self.navbar: NavBar = NavBar()
+
+        self.nmi: str = "MSL"
+        """Name of the National Metrology Institute."""
+
+        self.registers: list[EquipmentRegister] = []
+
+        self.theme: str = "BOOTSTRAP"
+        """A theme name in https://bootswatch.com/."""
+
+    def load(self, path: str | Path) -> None:
+        """Load a configuration file."""
+        with Path(path).expanduser().open("rb") as fp:
+            cfg = json.load(fp)
+
+        self.assets = Path(cfg.get("assets", self.assets)).expanduser()
+        self.nmi = cfg.get("nmi", self.nmi)
+        self.theme = cfg.get("theme", self.theme)
+        self.logo = Logo(**cfg.get("logo", {}))
+        self.navbar = NavBar(**cfg.get("navbar", {}))
+        self.registers.extend(EquipmentRegister(team=k, dir=Path(v)) for k, v in cfg.get("registers", {}).items())
+
+    @property
+    def teams(self) -> list[str]:
+        """Returns the list of `team` names."""
+        return [t.team for t in self.registers]
+
+
+cfg = Config()

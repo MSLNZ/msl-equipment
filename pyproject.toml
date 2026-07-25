@@ -135,6 +135,7 @@ addopts = [
     "--ignore=src/msl/equipment/typing.py",
     "--ignore=packages/resources/src/msl/equipment_resources/typing.py",
     "--ignore=packages/resources/examples",
+    "--ignore=packages/webapp/src/msl/equipment_webapp/pages",
 ]
 doctest_optionflags = "ELLIPSIS"
 

@@ -1,17 +1,14 @@
-"""Web application to manage information about equipment."""
+"""Web application to help manage information about equipment."""
 
 from __future__ import annotations
 
 import contextlib
-import json
-import logging
 from argparse import SUPPRESS, ArgumentParser
-from pathlib import Path
 from typing import TYPE_CHECKING
 
-from . import config
 from ._version import __version__
 from .app import run
+from .config import cfg
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -21,7 +18,7 @@ def configure_parser() -> ArgumentParser:
     """Create and configure the argument parser."""
     parser = ArgumentParser(
         prog="msl-equipment-webapp",
-        description="Run the web application to manage information about equipment.",
+        description="Run the web application to help manage information about equipment.",
         add_help=False,
     )
     _ = parser.add_argument(
@@ -32,28 +29,20 @@ def configure_parser() -> ArgumentParser:
         "-H",
         "--host",
         default="0.0.0.0",  # noqa: S104
-        help="The network interface to run the web app on. If unspecified, listen on all network interfaces.",
+        help="The network interface to run the app on. If unspecified, listen on all network interfaces.",
     )
     _ = parser.add_argument(
         "-p",
         "--port",
         type=int,
         default=17025,
-        help="The port number to use for the web app. Default is 17025.",
+        help="The port number to use for the app. Default is 17025.",
     )
     _ = parser.add_argument(
-        "-v",
-        "--verbose",
-        action="count",
-        default=0,
-        help="Show more information.",
-    )
-    _ = parser.add_argument(
-        "-q",
-        "--quiet",
-        action="count",
-        default=0,
-        help="Show less information (option is additive and can be used up to 3 times).",
+        "-r",
+        "--reload",
+        action="store_true",
+        help="Whether to enable auto-reload. When enabled, the values in the configuration file are not used.",
     )
     _ = parser.add_argument(
         "-V",
@@ -72,28 +61,10 @@ def configure_parser() -> ArgumentParser:
     return parser
 
 
-def get_logging_level(*, quiet: int, verbose: int) -> int:
-    """Get the logging level from command-line flags.
-
-    Args:
-        quiet: The number of times the `--quiet` flag is specified.
-        verbose: The number of times the `--verbose` flag is specified.
-
-    Returns:
-        The logging level.
-    """
-    level = 10 * (quiet - verbose) + logging.INFO
-    return max(10, min(level, 50))
-
-
 def main(argv: Sequence[str] | None = None) -> None:
-    """Main CLI entry point."""
+    """Main CLI entry point for the web application."""
     parser = configure_parser()
     ns = parser.parse_args(argv)
-
-    with Path(ns.config).expanduser().open("rb") as fp:
-        config.teams.extend(config.Team(team=k, url=Path(v)) for k, v in json.load(fp).items())
-
-    level = get_logging_level(quiet=ns.quiet, verbose=ns.verbose)
+    cfg.load(ns.config)
     with contextlib.suppress(KeyboardInterrupt):
-        run(host=ns.host, port=ns.port, log_level=level)
+        run(host=ns.host, port=ns.port, reload=ns.reload)

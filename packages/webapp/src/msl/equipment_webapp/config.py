@@ -92,6 +92,12 @@ class Config:
     Store the favicon.ico and custom.css files here.
     """
 
+    host: str = "0.0.0.0"  # noqa: S104
+    """The network interface to run the app on.
+
+    Default is to listen on all network interfaces.
+    """
+
     logo: Logo = field(default_factory=Logo)
     """The logo to use in the navigation bar."""
 
@@ -101,19 +107,24 @@ class Config:
     nmi: str = "MSL"
     """Name of the National Metrology Institute."""
 
+    port: int = 17025
+    """The port number to use for the app."""
+
     registers: list[EquipmentRegister] = field(default_factory=list)
     """A list of `team -> path` mapping for each equipment register."""
 
     theme: str = "BOOTSTRAP"
     """A theme name in https://bootswatch.com/."""
 
-    def load(self, path: str | Path) -> None:
+    def load(self, path: str | Path, *, host: str | None = None, port: int | None = None) -> None:
         """Load a configuration file."""
         with Path(path).expanduser().open("rb") as fp:
             cfg = json.load(fp)
 
         self.assets = Path(cfg.get("assets", self.assets)).expanduser().as_posix()
+        self.host = host or cfg.get("host", self.host)
         self.nmi = cfg.get("nmi", self.nmi)
+        self.port = port or cfg.get("port", self.port)
         self.theme = cfg.get("theme", self.theme)
         self.logo = Logo(**cfg.get("logo", {}))
         self.navbar = NavBar(**cfg.get("navbar", {}))

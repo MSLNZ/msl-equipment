@@ -28,15 +28,21 @@ def configure_parser() -> ArgumentParser:
     _ = parser.add_argument(
         "-H",
         "--host",
-        default="0.0.0.0",  # noqa: S104
-        help="The network interface to run the app on. If unspecified, listen on all network interfaces.",
+        help=(
+            "The network interface to use. Specifying in the command line takes "
+            f"precedence if also defined in the configuration file (default {cfg.host})."
+        ),
     )
-    _ = parser.add_argument(
-        "-p",
-        "--port",
-        type=int,
-        default=17025,
-        help="The port number to use for the app. Default is 17025.",
+    _ = (
+        parser.add_argument(
+            "-p",
+            "--port",
+            type=int,
+            help=(
+                "The port number to use. Specifying in the command line takes "
+                f"precedence if also defined in the configuration file (default {cfg.port})."
+            ),
+        ),
     )
     _ = parser.add_argument(
         "-V",
@@ -59,6 +65,6 @@ def main(argv: Sequence[str] | None = None) -> None:
     """Main CLI entry point for the web application."""
     parser = configure_parser()
     ns = parser.parse_args(argv)
-    cfg.load(ns.config)
+    cfg.load(ns.config, host=ns.host, port=ns.port)
     with contextlib.suppress(KeyboardInterrupt):
-        run(host=ns.host, port=ns.port)
+        run(host=cfg.host, port=cfg.port)

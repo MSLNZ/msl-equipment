@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from subprocess import run
 
@@ -28,6 +28,11 @@ class Logo:
         """Called automatically after the __init__ method finishes."""
         if not self.src:
             self.height = 0
+
+    @property
+    def style(self) -> dict[str, int]:
+        """Returns the html style."""
+        return {"marginLeft": self.margin_left, "marginRight": self.margin_right}
 
 
 @dataclass
@@ -74,37 +79,40 @@ class EquipmentRegister:
         except FileNotFoundError:
             return "ERROR! git is not installed, cannot sync"
         else:
-            return "" if out.returncode == 0 else f"ERROR! {out.stderr.decode()}"
+            return "" if out.returncode == 0 else f"ERROR! {out.stderr.decode().rstrip()}"
 
 
+@dataclass
 class Config:
     """Configuration for the web application."""
 
-    def __init__(self) -> None:
-        """Configuration for the web application."""
-        self.assets: Path = Path("assets")
-        """Path to the assets directory.
+    assets: str = "assets"
+    """Path to the assets directory.
 
-        Store the favicon.ico and custom.css files here.
-        """
+    Store the favicon.ico and custom.css files here.
+    """
 
-        self.logo: Logo = Logo()
-        self.navbar: NavBar = NavBar()
+    logo: Logo = field(default_factory=Logo)
+    """The logo to use in the navigation bar."""
 
-        self.nmi: str = "MSL"
-        """Name of the National Metrology Institute."""
+    navbar: NavBar = field(default_factory=NavBar)
+    """Navigation bar at the top of each webpage in the application."""
 
-        self.registers: list[EquipmentRegister] = []
+    nmi: str = "MSL"
+    """Name of the National Metrology Institute."""
 
-        self.theme: str = "BOOTSTRAP"
-        """A theme name in https://bootswatch.com/."""
+    registers: list[EquipmentRegister] = field(default_factory=list)
+    """A list of `team -> path` mapping for each equipment register."""
+
+    theme: str = "BOOTSTRAP"
+    """A theme name in https://bootswatch.com/."""
 
     def load(self, path: str | Path) -> None:
         """Load a configuration file."""
         with Path(path).expanduser().open("rb") as fp:
             cfg = json.load(fp)
 
-        self.assets = Path(cfg.get("assets", self.assets)).expanduser()
+        self.assets = Path(cfg.get("assets", self.assets)).expanduser().as_posix()
         self.nmi = cfg.get("nmi", self.nmi)
         self.theme = cfg.get("theme", self.theme)
         self.logo = Logo(**cfg.get("logo", {}))

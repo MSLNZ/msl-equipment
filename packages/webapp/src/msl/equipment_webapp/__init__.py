@@ -39,12 +39,6 @@ def configure_parser() -> ArgumentParser:
         help="The port number to use for the app. Default is 17025.",
     )
     _ = parser.add_argument(
-        "-r",
-        "--reload",
-        action="store_true",
-        help="Whether to enable auto-reload. When enabled, the values in the configuration file are not used.",
-    )
-    _ = parser.add_argument(
         "-V",
         "--version",
         action="version",
@@ -67,4 +61,4 @@ def main(argv: Sequence[str] | None = None) -> None:
     ns = parser.parse_args(argv)
     cfg.load(ns.config)
     with contextlib.suppress(KeyboardInterrupt):
-        run(host=ns.host, port=ns.port, reload=ns.reload)
+        run(host=ns.host, port=ns.port)

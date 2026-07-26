@@ -169,6 +169,7 @@
         "LDLS",
         "Lennard",
         "levelname",
+        "levelprefix",
         "libftd",
         "libgpib",
         "libtype",

@@ -1,3 +1,20 @@
+.accordion-button:not(.collapsed) {
+    background-color: #F1592A;
+}
+
+code {
+    color: #578ac4;
+}
+
 .navbar-nav .nav-link:hover {
-    color: #F1592A !important;
+    color: #F1592A;
+}
+
+.webapp-log-display {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    padding: 15px;
+    overflow-y: auto;
+    font-family: monospace;
+    border-radius: 5px;
 }

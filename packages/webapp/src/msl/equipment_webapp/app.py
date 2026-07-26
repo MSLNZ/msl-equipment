@@ -17,8 +17,6 @@ from .config import cfg
 if TYPE_CHECKING:
     from fastapi import FastAPI
 
-app: Dash | None = None
-
 try:
     datefmt = "%d-%m-%Y %H:%M:%S"
     formatters = LOGGING_CONFIG["formatters"]
@@ -86,6 +84,7 @@ def create_app() -> Dash:
                 ),
                 dark=cfg.navbar.dark,
                 color=cfg.navbar.color,
+                sticky="top",
             ),
             dash.page_container,
         ]
@@ -107,7 +106,6 @@ def create_app() -> Dash:
 
 def get_server() -> FastAPI:
     """Create the Dash app and return the FastAPI server."""
-    global app  # noqa: PLW0603
     logging.getLogger("uvicorn").info("%s", cfg)
     app = create_app()
     server: FastAPI = app.server

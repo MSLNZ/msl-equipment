@@ -68,7 +68,7 @@ def create_app() -> Dash:
                                             dbc.NavItem(dbc.NavLink("Recalibrations", href="/recalibrations")),
                                             dbc.NavItem(dbc.NavLink("Search", href="/search")),
                                             dbc.NavItem(
-                                                dbc.NavLink("PDF-A/3"),
+                                                dbc.NavLink("PDF-A/3", href="/pdf"),
                                                 className="me-auto",  # forces any following links to the right
                                             ),
                                         ],

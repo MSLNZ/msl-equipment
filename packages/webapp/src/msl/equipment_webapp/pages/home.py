@@ -62,9 +62,12 @@ specify multiple `team`s by separating each value with the `+` sign.
 """
 
 pdf_help = """
-##### Create a PDF/A-3 document.
+##### Create a PDF/A-3 document
 
-Work in progress...
+Upload a LaTeX or Word file to convert it to PDF/A-3 with digital files embedded.
+
+See [here](https://apmp-dxfg.github.io/dxfg-pdfa-tut) for an overview on using
+the PDF/A-3 file format to distribute metrological documents.
 """
 
 layout = html.Div(

@@ -18,3 +18,13 @@ code {
     font-family: monospace;
     border-radius: 5px;
 }
+
+.webapp-upload {
+    width: 100%;
+    height: 80px;
+    line-height: 30px;
+    border-width: 2px;
+    border-style: dashed;
+    border-radius: 10px;
+    text-align: center;
+}

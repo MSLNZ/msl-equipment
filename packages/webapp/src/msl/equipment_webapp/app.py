@@ -38,7 +38,7 @@ def create_app() -> Dash:
         backend="fastapi",
         title=f"{cfg.nmi} | Home",
         update_title=f"{cfg.nmi} | Updating...",
-        external_stylesheets=[getattr(dbc.themes, cfg.theme.upper())],
+        external_stylesheets=[getattr(dbc.themes, cfg.theme.upper()), dbc.icons.BOOTSTRAP],
         websocket_callbacks=True,  # required for dash.set_props to work in callbacks
     )
 

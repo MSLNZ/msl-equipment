@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from subprocess import run
@@ -116,6 +117,9 @@ class Config:
     theme: str = "BOOTSTRAP"
     """A theme name in https://bootswatch.com/."""
 
+    vera_pdf: str = "verapdf.bat" if sys.platform == "win32" else "verapdf"
+    """Path to the `veraPDF` executable."""
+
     def load(self, path: str | Path, *, host: str | None = None, port: int | None = None) -> None:
         """Load a configuration file."""
         with Path(path).expanduser().open("rb") as fp:
@@ -126,6 +130,7 @@ class Config:
         self.nmi = cfg.get("nmi", self.nmi)
         self.port = port or cfg.get("port", self.port)
         self.theme = cfg.get("theme", self.theme)
+        self.vera_pdf = str(Path(cfg.get("vera_pdf", self.vera_pdf)).expanduser())
         self.logo = Logo(**cfg.get("logo", {}))
         self.navbar = NavBar(**cfg.get("navbar", {}))
         self.registers.extend(EquipmentRegister(team=k, dir=Path(v)) for k, v in cfg.get("registers", {}).items())

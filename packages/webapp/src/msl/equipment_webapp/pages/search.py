@@ -8,10 +8,9 @@ from collections import deque
 from typing import TYPE_CHECKING
 from urllib.parse import quote, unquote
 
-import dash
 import dash_ag_grid as dag  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
 import dash_bootstrap_components as dbc  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
-from dash import Input, Output, State, dcc, html, set_props
+from dash import Input, Output, State, callback, dcc, html, register_page, set_props
 from msl.equipment_webapp.config import cfg
 
 from msl import equipment_validate as ev
@@ -20,9 +19,7 @@ from msl.equipment import Register
 if TYPE_CHECKING:
     from typing import Literal
 
-dash.register_page(__name__, name="Search", title=f"{cfg.nmi} | Search")  # type: ignore[no-untyped-call]
-
-app: dash.Dash = dash.get_app()  # type: ignore[no-untyped-call]
+register_page(__name__, name="Search", title=f"{cfg.nmi} | Search")  # type: ignore[no-untyped-call]
 
 
 def layout(**params: str) -> html.Div:
@@ -119,16 +116,16 @@ def layout(**params: str) -> html.Div:
     )
 
 
-@app.callback(
+@callback(
     Output("table", "exportDataAsCsv"),
     Input("csv-button", "n_clicks"),
 )
-def export_data_as_csv(n_clicks: int) -> bool:  # type: ignore[misc]
+def export_data_as_csv(n_clicks: int) -> bool:
     """Export the data in the table as a CSV file."""
     return n_clicks > 0
 
 
-@app.callback(
+@callback(
     Output("clipboard", "content"),
     Input("clipboard", "n_clicks"),
     State("team-dropdown", "value"),
@@ -136,7 +133,7 @@ def export_data_as_csv(n_clicks: int) -> bool:  # type: ignore[misc]
     State("sync-checkbox", "value"),
     State("url", "href"),
 )
-def custom_copy(_: int, teams: list[str], text: str | None, sync: bool, url: str) -> str:  # type: ignore[misc]  # noqa: FBT001
+def custom_copy(_: int, teams: list[str], text: str | None, sync: bool, url: str) -> str:  # noqa: FBT001
     """Copy the URL and query parameters to the clipboard."""
     root = url.split("?", maxsplit=1)[0]
     params: list[str] = []
@@ -149,15 +146,15 @@ def custom_copy(_: int, teams: list[str], text: str | None, sync: bool, url: str
     return root + "?" + "&".join(params)
 
 
-@app.callback(
+@callback(
     Output("search-input", "debounce"),
     Input("team-dropdown", "value"),
     Input("search-input", "value"),
     Input("sync-checkbox", "value"),
     running=[
-        [Output("team-dropdown", "disabled"), True, False],
-        [Output("search-input", "disabled"), True, False],
-        [Output("sync-checkbox", "disabled"), True, False],
+        (Output("team-dropdown", "disabled"), True, False),
+        (Output("search-input", "disabled"), True, False),
+        (Output("sync-checkbox", "disabled"), True, False),
     ],
 )
 async def update_table(teams: list[str], text: str | None, sync: bool) -> Literal[True]:  # type: ignore[misc]  # noqa: FBT001
@@ -172,7 +169,7 @@ async def update_table(teams: list[str], text: str | None, sync: bool) -> Litera
     data: list[dict[str, str]] = []
 
     async def update(msg: str = "") -> None:
-        """Uses Dash(websocket_callbacks=True) to update properties in real time."""
+        """Requires the app to be created with Dash(websocket_callbacks=True, ...) for set_props to work."""
         if msg:
             log_buffer.append(msg)
         set_props("log-display", {"children": "\n".join(log_buffer)})

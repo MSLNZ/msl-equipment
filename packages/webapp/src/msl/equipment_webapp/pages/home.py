@@ -64,10 +64,12 @@ specify multiple `team`s by separating each value with the `+` sign.
 pdf_help = """
 ##### Create a PDF/A-3 document
 
-Upload a LaTeX or Word file to convert it to PDF/A-3 with digital files embedded.
+Upload a $\\LaTeX$ or Microsoft Word file to convert it to PDF/A-3 with digital files embedded.
+After conversion, the [veraPDF](https://verapdf.org/) tool validates the PDF file, the MD5
+checksum of the PDF file is displayed and you are prompted to download the PDF file.
 
-See [here](https://apmp-dxfg.github.io/dxfg-pdfa-tut) for an overview on using
-the PDF/A-3 file format to distribute metrological documents.
+See [here](https://github.com/MSLNZ-Publication) for examples to create a $\\LaTeX$ document
+that can be converted to the PDF/A-3 file format to distribute metrological documents.
 """
 
 layout = html.Div(
@@ -87,7 +89,7 @@ layout = html.Div(
                     title="Search",
                 ),
                 dbc.AccordionItem(
-                    dcc.Markdown(pdf_help, dangerously_allow_html=True),
+                    dcc.Markdown(pdf_help, dangerously_allow_html=True, mathjax=True),
                     title="PDF/A-3",
                 ),
             ],

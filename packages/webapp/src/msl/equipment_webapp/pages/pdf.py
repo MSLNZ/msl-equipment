@@ -3,35 +3,41 @@
 # pyright: reportUnknownArgumentType=false, reportUnknownMemberType=false, reportUnknownVariableType=false
 from __future__ import annotations
 
+import asyncio
 import base64
+from hashlib import md5
 from pathlib import Path
+from subprocess import run
+from tempfile import TemporaryDirectory
 from typing import Any
 
-import dash
 import dash_bootstrap_components as dbc  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
-from dash import Input, Output, State, dcc, html
+from dash import Input, Output, State, callback, dcc, html, no_update, register_page, set_props
 from msl.equipment_webapp.config import cfg
 
-dash.register_page(__name__, name="PDF/A-3", title=f"{cfg.nmi} | PDF/A-3")  # type: ignore[no-untyped-call]
-
-app: dash.Dash = dash.get_app()  # type: ignore[no-untyped-call]
+register_page(__name__, name="PDF/A-3", title=f"{cfg.nmi} | PDF/A-3")  # type: ignore[no-untyped-call]
 
 layout = dbc.Container(
     [
-        dcc.Store(id="latex-word-data", storage_type="memory"),
-        dcc.Store(id="attachments-data", storage_type="memory"),
+        dcc.Store(id="document", storage_type="memory"),
+        dcc.Store(id="additional", storage_type="memory"),
         dbc.Row(
             [
                 dbc.Col(
                     [
-                        html.H2("Upload LaTeX or Word document", className="text-center my-4"),
+                        dcc.Markdown(
+                            "## Upload a $\\LaTeX$ or Microsoft Word document",
+                            mathjax=True,
+                            className="text-center my-4",
+                        ),
                         dcc.Upload(
-                            id="upload-latex-word",
-                            children=html.Div(
+                            html.Div(
                                 [
-                                    html.I(className="bi bi-cloud-arrow-up fs-1 text-primary"),  # Optional Icon
                                     html.P(
                                         [
+                                            html.I(
+                                                className="bi bi-cloud-arrow-up fs-1 mx-3 text-primary align-middle"
+                                            ),
                                             "Drag & Drop or ",
                                             html.A("Select a File", href="#", className="alert-link"),
                                         ],
@@ -39,10 +45,11 @@ layout = dbc.Container(
                                     ),
                                 ]
                             ),
-                            className="webapp-upload border-primary bg-light p-4 shadow-sm",
+                            id="upload-document",
+                            className="border-primary bg-light p-2 shadow-sm text-center webapp-upload",
                             multiple=False,
                         ),
-                        html.Div(id="upload-latex-word-status", className="mt-3"),
+                        html.Div(id="upload-document-status", className="mt-3"),
                     ],
                     width={"size": 8, "offset": 2},
                 )
@@ -53,14 +60,15 @@ layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.H2("Upload attachment documents", className="text-center my-4"),
+                        html.H2("Upload additional documents", className="text-center my-4"),
                         dcc.Upload(
-                            id="upload-attachments",
-                            children=html.Div(
+                            html.Div(
                                 [
-                                    html.I(className="bi bi-cloud-arrow-up fs-1 text-primary"),  # Optional Icon
                                     html.P(
                                         [
+                                            html.I(
+                                                className="bi bi-cloud-arrow-up fs-1 mx-3 text-primary align-middle"
+                                            ),
                                             "Drag & Drop or ",
                                             html.A("Select Files", href="#", className="alert-link"),
                                         ],
@@ -68,92 +76,248 @@ layout = dbc.Container(
                                     ),
                                 ]
                             ),
-                            className="webapp-upload border-primary bg-light p-4 shadow-sm",
+                            id="upload-additional",
+                            className="border-primary bg-light p-2 shadow-sm text-center webapp-upload",
                             multiple=True,
                         ),
-                        html.Div(id="upload-attachments-status", className="mt-3"),
+                        html.Div(id="upload-additional-status", className="mt-3"),
                     ],
                     width={"size": 8, "offset": 2},
-                )
+                ),
+                dbc.Col(
+                    dbc.Button(
+                        [html.I(className="bi bi-trash3 me-2"), "Clear"],
+                        id="clear-button",
+                        color="secondary",
+                        className="mt-4",
+                    )
+                ),
+                dbc.Tooltip(
+                    "Remove all additional documents",
+                    target="clear-button",
+                ),
             ]
         ),
         html.Hr(),
-        dbc.Container(
-            html.Div(
+        dbc.Row(
+            dbc.Col(
                 [
-                    dbc.Button("Convert", id="convert-button", className="w-100"),
+                    dbc.Button(
+                        [html.I(className="bi bi-file-earmark-pdf me-2"), "Convert"],
+                        id="convert-button",
+                        className="w-100 fs-3",
+                    ),
                     dcc.Download(id="download"),
                     html.Div(id="convert-status", className="mt-3"),
                 ],
-                className="d-grid col-6 mx-auto mt-4",
+                width={"size": 8, "offset": 2},
             ),
-            style={"marginTop": 25, "marginBottom": 25},
+            style={"marginBottom": 100},
         ),
     ],
     fluid=True,
 )
 
 
-@app.callback(
-    Output("upload-latex-word-status", "children"),
-    Output("latex-word-data", "data"),
-    Input("upload-latex-word", "contents"),
-    State("upload-latex-word", "filename"),
+@callback(
+    Output("document", "data"),
+    Output("upload-document-status", "children"),
+    Input("upload-document", "contents"),
+    State("upload-document", "filename"),
 )
-def read_latex_word(content: str | None, filename: str | None) -> tuple[Any, Any]:  # type: ignore[misc]
-    """Read the contents of a MS Word or LaTeX file."""
+def upload_document(content: str | None, filename: str | None) -> tuple[list[str], Any]:  # type: ignore[misc]
+    """Get the content of a MS Word or LaTeX file.
+
+    Args:
+        content: The mime type and file data (base64 encoded) separated by a `,`.
+        filename: The name of the uploaded file.
+
+    Returns:
+        The `[original filename, file content as base64]` and `dbc.Alert | None`.
+    """
     if not (content and filename):
-        return None, None
+        return [], None
 
-    if not filename.endswith((".doc", ".docx", ".tex")):
-        return dbc.Alert("Unsupported file format", color="danger"), None
+    if not filename.endswith((".docx", ".tex")):
+        alert = dbc.Alert(
+            "Unsupported file extension. Must be docx or tex.",
+            color="danger",
+            className="text-center",
+        )
+        return [], alert
 
-    filename = Path(filename).stem + ".pdf"
     _, b64_string = content.split(",", maxsplit=1)
-    alert = dbc.Alert(["Successfully uploaded", html.Hr(), filename], color="success")
-    return alert, [filename, b64_string]
+    alert = dbc.Alert(filename, color="success", className="text-center")
+    return [filename, b64_string], alert
 
 
-@app.callback(
-    Output("upload-attachments-status", "children"),
-    Output("attachments-data", "data"),
-    Input("upload-attachments", "contents"),
-    State("upload-attachments", "filename"),
+@callback(
+    Output("additional", "data"),
+    Output("upload-additional-status", "children"),
+    Input("upload-additional", "contents"),
+    State("upload-additional", "filename"),
+    State("additional", "data"),
 )
-def read_attachments(contents: list[str] | None, filenames: list[str] | None) -> tuple[Any, dict[str, str]]:  # type: ignore[misc]
-    """Read the contents of the attachment files."""
-    if not (contents and filenames):
-        return None, {}
+def upload_additional(  # type: ignore[misc]
+    contents: list[str] | None, filenames: list[str] | None, additional: dict[str, str] | None
+) -> tuple[dict[str, str], Any]:
+    """Read the contents of the attachment files.
 
-    data: dict[str, str] = {}
-    message: list[str | html.Br | html.Hr] = ["Successfully uploaded", html.Hr()]
+    Args:
+        contents: The file content (base64 encoded) for each file.
+        filenames: The filenames of each file.
+        additional: The additional files that have already been uploaded.
+            A mapping between the uploaded filename and the file content (base64 encoded).
+
+    Returns:
+        The `additional` updated to include the newly uploaded files and `dbc.Alert | None`.
+    """
+    if additional is None:
+        additional = {}
+
+    if not (contents and filenames):
+        return additional, None
+
     for content, filename in zip(contents, filenames):
         _, b64_string = content.split(",", maxsplit=1)
-        data[filename] = b64_string
-        message.extend([filename, html.Br()])
+        additional[filename] = b64_string
 
-    return dbc.Alert(message[:-1], color="success"), data
+    message = [item for a in additional for item in (a, html.Br())]
+    return additional, dbc.Alert(message[:-1], color="success", className="text-center")
 
 
-@app.callback(
+@callback(
+    Output("additional", "data"),
+    Input("clear-button", "n_clicks"),
+)
+def clear_additional(_: int) -> dict[str, str]:
+    """Clear all additional files.
+
+    Args:
+        _: Ignored. The number of times the `clear-button` has been clicked.
+
+    Returns:
+        An empty `dict`.
+    """
+    # Dash raised exceptions when Output("upload-document-status", "children") was defined as a callback argument
+    # Using set_props is a workaround
+    set_props("upload-additional-status", {"children": None})
+    return {}
+
+
+@callback(
     Output("download", "data"),
     Output("convert-status", "children"),
+    State("document", "data"),
+    State("additional", "data"),
     Input("convert-button", "n_clicks"),
-    State("latex-word-data", "data"),
-    State("attachments-data", "data"),
+    running=[
+        (Output("convert-button", "disabled"), True, False),
+    ],
     prevent_initial_call=True,
 )
-def convert(_: int, doc: list[str] | None, attachments: dict[str, str]) -> tuple[Any, Any]:  # type: ignore[misc]  # pyright: ignore[reportUnusedParameter]  # noqa: ARG001
-    """Convert the documents."""
-    if doc is None:
-        alert = dbc.Alert("Must upload a LaTeX or Word document to convert", color="danger", duration=4000)
-        return dash.no_update, alert
+async def convert(document: list[str], additional: dict[str, str], _: int) -> tuple[Any, Any]:  # type: ignore[misc]
+    """Convert the uploaded files to PDF.
 
-    filename, b64_string = doc
-    data = base64.b64decode(b64_string)
-    content = base64.b64encode(data).decode()
+    Args:
+        document: The LaTeX or Word document to convert. The first item is the filename of the
+            original file and the second item is the file content (base64 encoded).
+        additional: The additional files required to convert the `document` to PDF.
+            A mapping between the uploaded filename and the file content (base64 encoded).
+        _: Ignored. The number of times the `convert-button` has been clicked.
 
-    # attachments is a filename -> b64_string mapping
+    Returns:
+        The information for the web browser to download the PDF file and a `dbc.Alert` component
+            describing the outcome of the conversion.
+    """
+    if not document:
+        alert = dbc.Alert(
+            dcc.Markdown("Must upload a $\\LaTeX$ or Microsoft Word document to convert.", mathjax=True),
+            color="danger",
+            duration=4000,
+            className="text-center",
+        )
+        return no_update, alert
 
-    out = {"content": content, "filename": filename, "type": "application/pdf", "base64": True}
-    return out, dbc.Alert("Success!", color="success")
+    async def clear_alert() -> None:
+        set_props("convert-status", {"children": None})
+        await asyncio.sleep(0.01)
+
+    await clear_alert()
+
+    filename, b64_string = document
+    with TemporaryDirectory() as tmp:
+        tmp_dir = Path(tmp)
+        src_filename = tmp_dir / filename
+        pdf_filename = src_filename.with_suffix(".pdf")
+        _ = src_filename.write_bytes(base64.b64decode(b64_string))
+        for k, v in additional.items():
+            _ = (tmp_dir / k).write_bytes(base64.b64decode(v))
+
+        error = latex_to_pdf(src_filename) if src_filename.suffix == ".tex" else word_to_pdf(src_filename)
+        if error:
+            alert = dbc.Alert(html.Pre(error), color="danger")
+            return no_update, alert
+
+        error = validate(pdf_filename)
+        if error:
+            alert = dbc.Alert(dcc.Markdown(error), color="danger")
+            return no_update, alert
+
+        pdf_data = pdf_filename.read_bytes()
+        checksum = md5(pdf_data).hexdigest()  # noqa: S324
+        content = base64.b64encode(pdf_data).decode()
+        out = {"content": content, "filename": pdf_filename.name, "type": "application/pdf", "base64": True}
+        return out, dbc.Alert(f"MD5: {checksum}", color="success", className="text-center")
+
+
+def latex_to_pdf(path: Path) -> str:
+    """Use `pdflatex` to convert the tex file.
+
+    Args:
+        path: The path to the temporary tex file.
+
+    Returns:
+        An error message, if one occurred.
+    """
+    try:
+        out = run(  # noqa: S603
+            ["pdflatex", "-halt-on-error", "--max-print-line=1000", path.resolve()],  # noqa: S607
+            cwd=path.parent,
+            check=False,
+            capture_output=True,
+        )
+    except FileNotFoundError:
+        return "ERROR! pdflatex is not installed. Cannot convert tex to pdf."
+    else:
+        log = path.with_suffix(".log").read_text()
+        return "" if out.returncode == 0 else f"ERROR! Cannot convert.\n{log}"
+
+
+def word_to_pdf(_: Path) -> str:
+    """Use ... to convert the docx file.
+
+    Args:
+        path: The path to the temporary docx file.
+
+    Returns:
+        An error message, if one occurred.
+    """
+    return "Converting docx files is not implemented yet."
+
+
+def validate(path: Path) -> str:
+    """Use `veraPDF` to validate the pdf file.
+
+    Args:
+        path: The path to the pdf file.
+
+    Returns:
+        An error message, if one occurred.
+    """
+    try:
+        out = run([cfg.vera_pdf, "--format", "xml", path.resolve()], check=False, capture_output=True)  # noqa: S603
+    except FileNotFoundError:
+        return "ERROR! veraPDF is not installed. Cannot validate the PDF file."
+    else:
+        return "" if out.returncode == 0 else f"ERROR! Invalid PDF file.\n```xml\n{out.stdout.decode()}\n```"

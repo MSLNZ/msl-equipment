@@ -1,19 +1,18 @@
 """Search page."""
 
-# pyright: reportUnknownArgumentType=false, reportUnknownMemberType=false, reportUnknownVariableType=false
+# pyright: reportUnknownArgumentType=false, reportUnknownMemberType=false, reportUnknownVariableType=false, reportMissingTypeStubs=false
 from __future__ import annotations
 
-import asyncio
 from collections import deque
 from typing import TYPE_CHECKING
 from urllib.parse import quote, unquote
 
-import dash_ag_grid as dag  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
-import dash_bootstrap_components as dbc  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
+import dash_ag_grid as dag  # type: ignore[import-untyped]
+import dash_bootstrap_components as dbc  # type: ignore[import-untyped]
 from dash import Input, Output, State, callback, dcc, html, register_page, set_props
+from msl.equipment_webapp import utils
 from msl.equipment_webapp.config import cfg
 
-from msl import equipment_validate as ev
 from msl.equipment import Register
 
 if TYPE_CHECKING:
@@ -37,7 +36,7 @@ def layout(**params: str) -> html.Div:
             dbc.Stack(
                 [
                     html.Div("Team(s): "),
-                    dcc.Dropdown(cfg.teams, multi=True, value=team, id="team-dropdown", style={"width": "50%"}),
+                    dcc.Dropdown(cfg.teams, multi=True, value=team, id="search-team-dropdown", style={"width": "60%"}),
                     dbc.Input(
                         id="search-input",
                         placeholder="Enter search text (can be regular-expression pattern)",
@@ -47,8 +46,8 @@ def layout(**params: str) -> html.Div:
                     ),
                     html.Div(
                         [
-                            dbc.Label("Sync: ", html_for="sync-checkbox", className="me-2 mt-1"),
-                            dbc.Checkbox(id="sync-checkbox", value=sync),
+                            dbc.Label("Sync: ", html_for="search-sync-checkbox", className="me-2 mt-1"),
+                            dbc.Checkbox(id="search-sync-checkbox", value=sync),
                         ],
                         className="d-flex justify-content-end align-items-center",
                     ),
@@ -57,7 +56,7 @@ def layout(**params: str) -> html.Div:
                         target="sync-checkbox",
                     ),
                     dcc.Clipboard(
-                        id="clipboard",
+                        id="search-clipboard",
                         style={
                             "fontSize": 20,
                             "verticalAlign": "top",
@@ -71,7 +70,7 @@ def layout(**params: str) -> html.Div:
                     ),
                     dbc.Button(
                         "Download CSV",
-                        id="csv-button",
+                        id="search-csv-button",
                         n_clicks=0,
                     ),
                 ],
@@ -80,7 +79,7 @@ def layout(**params: str) -> html.Div:
                 style={"margin": 25, "justifyContent": "center", "display": "flex"},
             ),
             dag.AgGrid(
-                id="table",
+                id="search-table",
                 columnDefs=[
                     {"field": "ID", "width": 150},
                     {"field": "Team", "width": 110},
@@ -110,15 +109,16 @@ def layout(**params: str) -> html.Div:
                     ]
                 },
             ),
-            html.Pre(id="log-display", className="webapp-log-display"),
-            dcc.Location(id="url", refresh=False),
+            html.Pre(id="search-log-display", className="webapp-log-display"),
+            dcc.Location(id="search-url", refresh=False),
         ],
     )
 
 
 @callback(
-    Output("table", "exportDataAsCsv"),
-    Input("csv-button", "n_clicks"),
+    Output("search-table", "exportDataAsCsv"),
+    Input("search-csv-button", "n_clicks"),
+    prevent_initial_call=True,
 )
 def export_data_as_csv(n_clicks: int) -> bool:
     """Export the data in the table as a CSV file."""
@@ -126,15 +126,16 @@ def export_data_as_csv(n_clicks: int) -> bool:
 
 
 @callback(
-    Output("clipboard", "content"),
-    Input("clipboard", "n_clicks"),
-    State("team-dropdown", "value"),
+    Output("search-clipboard", "content"),
+    Input("search-clipboard", "n_clicks"),
+    State("search-team-dropdown", "value"),
     State("search-input", "value"),
-    State("sync-checkbox", "value"),
-    State("url", "href"),
+    State("search-sync-checkbox", "value"),
+    State("search-url", "href"),
+    prevent_initial_call=True,
 )
-def custom_copy(_: int, teams: list[str], text: str | None, sync: bool, url: str) -> str:  # noqa: FBT001
-    """Copy the URL and query parameters to the clipboard."""
+def clipboard_copy(_: int, teams: list[str], text: str | None, sync: bool, url: str) -> str:  # noqa: FBT001
+    """Copy the URL with query parameters to the clipboard."""
     root = url.split("?", maxsplit=1)[0]
     params: list[str] = []
     if teams:
@@ -148,14 +149,15 @@ def custom_copy(_: int, teams: list[str], text: str | None, sync: bool, url: str
 
 @callback(
     Output("search-input", "debounce"),
-    Input("team-dropdown", "value"),
+    Input("search-team-dropdown", "value"),
     Input("search-input", "value"),
-    Input("sync-checkbox", "value"),
+    Input("search-sync-checkbox", "value"),
     running=[
-        (Output("team-dropdown", "disabled"), True, False),
+        (Output("search-team-dropdown", "disabled"), True, False),
         (Output("search-input", "disabled"), True, False),
-        (Output("sync-checkbox", "disabled"), True, False),
+        (Output("search-sync-checkbox", "disabled"), True, False),
     ],
+    persistent=True,
 )
 async def update_table(teams: list[str], text: str | None, sync: bool) -> Literal[True]:  # type: ignore[misc]  # noqa: FBT001
     """Update the table data.
@@ -165,49 +167,51 @@ async def update_table(teams: list[str], text: str | None, sync: bool) -> Litera
     specified as a URL query parameter. Afterwards we only want the callback to be
     triggered when ENTER is pressed or the Input component looses focus.
     """
-    log_buffer: deque[str] = deque()
-    data: list[dict[str, str]] = []
 
     async def update(msg: str = "") -> None:
         """Requires the app to be created with Dash(websocket_callbacks=True, ...) for set_props to work."""
         if msg:
             log_buffer.append(msg)
-        set_props("log-display", {"children": "\n".join(log_buffer)})
-        set_props("table", {"rowData": data})
-        await asyncio.sleep(0.01)
+        set_props("search-log-display", {"children": "\n".join(log_buffer)})
+        set_props("search-table", {"rowData": data})
+        await utils.process_events()
+
+    log_buffer: deque[str] = deque()
+    data: list[dict[str, str]] = []
 
     if (not teams) or (not text):
         await update()
         return True
 
-    registers = [t for t in cfg.registers if t.team in teams]
-    for register in registers:
-        if sync and (register.dir / ".git").exists():
-            await update(f"Syncing {register.team!r} repository")
-            error_msg = register.git_pull()
-            if error_msg:
-                await update(error_msg)
+    registers = cfg.equipment_registers(teams)
 
-        files = ev.recursive(register.dir)
-        await update(f"Validating {register.team!r} register")
-        num_issues = ev.cli([str(f) for f in files] + ["--skip-checksum", "--exit-first", "-qqq"])
-        if num_issues > 0:
-            await update(f"ERROR! There are {num_issues} issues, skipping {register.team!r} register")
+    if sync:
+        await update(f"Syncing register for {', '.join(teams)}")
+        error_msg = await utils.git_pull(registers)
+        if error_msg:
+            await update(error_msg)
+
+    for register in registers:
+        await update(f"Validating {register.team} register (skipping sha256 checksums)")
+        files = utils.find_xml_files(register.dir)
+        if not utils.is_register_valid(*files):
+            await update(f"  \u21b3 ERROR! {register.team} register invalid (skipping)")
             continue
 
         reg = Register(*files)
-        for equipment in reg.find(text):
-            data.append(
-                {
-                    "ID": equipment.id,
-                    "Team": reg.team,
-                    "Location": equipment.location,
-                    "Description": equipment.description,
-                    "Manufacturer": equipment.manufacturer,
-                    "Model": equipment.model,
-                    "Serial": equipment.serial,
-                }
-            )
-            await update()
+        await update(f"Searching {len(reg)} equipment entries from {register.team}")
+        data.extend(
+            {
+                "ID": equipment.id,
+                "Team": reg.team,
+                "Location": equipment.location,
+                "Description": equipment.description,
+                "Manufacturer": equipment.manufacturer,
+                "Model": equipment.model,
+                "Serial": equipment.serial,
+            }
+            for equipment in reg.find(text)
+        )
+        await update()
 
     return True

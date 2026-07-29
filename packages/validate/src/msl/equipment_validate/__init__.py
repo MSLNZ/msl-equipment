@@ -16,7 +16,7 @@ from lxml import etree
 
 from ._version import __version__
 from .osc8 import register_uri_scheme, schemes, unregister_uri_scheme
-from .validate import GREEN, RED, RESET, YELLOW, log, log_error, parse, recursive_validate
+from .validate import GREEN, RED, RESET, YELLOW, find_xml_files, log, log_error, parse, recursive_validate
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -24,38 +24,16 @@ if TYPE_CHECKING:
 
     from .validate import URIScheme
 
-IS_WINDOWS = sys.platform == "win32"
+__all__: list[str] = ["DEFAULT_SCHEMA_DIR", "configure_logging", "find_xml_files", "recursive_validate"]
 
-
-def recursive(directory: Path) -> list[Path]:
-    """Recursively find XML files starting from a directory."""
-    files: list[Path] = []
-    if not directory.is_dir():
-        return files
-
-    for file in directory.rglob("*.xml"):
-        # Ignore XML files in hidden directories (e.g., XML files in PyCharm's .idea directory)
-        if any(part.startswith(".") for part in file.parts):
-            continue
-        files.append(file)
-
-    return sorted(files)
+IS_WINDOWS: bool = sys.platform == "win32"
+DEFAULT_SCHEMA_DIR: Path = Path(__file__).parent / "schema"
 
 
 def configure_logging(*, quiet: int, verbose: int) -> logging.Logger:
     """Configure logging."""
-    n = verbose - quiet
-    if n > 0:
-        level = logging.DEBUG
-    elif n == 0:
-        level = logging.INFO
-    elif n == -1:
-        level = logging.WARNING
-    elif n == -2:  # noqa: PLR2004
-        level = logging.ERROR
-    else:
-        level = logging.CRITICAL
-
+    level = 10 * (quiet - verbose) + logging.INFO
+    level = max(10, min(level, 50))
     logging.basicConfig(level=level, format="%(message)s")
     logger = logging.getLogger(__package__)
     logger.setLevel(level)
@@ -316,14 +294,15 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: C901, PLR0912, PLR09
             return 1
         return modify_windows_registry(log=log, remove=args.remove_winreg_keys, add=args.add_winreg_keys)
 
-    schema_dir = Path(__file__).parent / "schema"
     er_tree = parse(
-        file=args.schema or schema_dir / "equipment-register.xsd", uri_scheme=args.link, no_colour=args.no_colour
+        file=args.schema or DEFAULT_SCHEMA_DIR / "equipment-register.xsd",
+        uri_scheme=args.link,
+        no_colour=args.no_colour,
     )
     if er_tree is None:
         return 1
 
-    c_tree = parse(file=schema_dir / "connections.xsd", uri_scheme=args.link, no_colour=args.no_colour)
+    c_tree = parse(file=DEFAULT_SCHEMA_DIR / "connections.xsd", uri_scheme=args.link, no_colour=args.no_colour)
     assert c_tree is not None  # noqa: S101
 
     log.info("%s Validation Starts %s", "=" * 30, "=" * 30)
@@ -341,14 +320,14 @@ def cli(argv: Sequence[str] | None = None) -> int:  # noqa: C901, PLR0912, PLR09
 
     paths = [Path(p).expanduser() for p in args.paths]
     if not paths:
-        files: list[Path] = recursive(Path())
+        files: list[Path] = find_xml_files(Path())
     else:
         files = []
         for path in paths:
             if path.suffix:
                 files.append(path)
             elif path.is_dir():
-                files.extend(recursive(path))
+                files.extend(find_xml_files(path))
             else:
                 log_error(
                     file=path,

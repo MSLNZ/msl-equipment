@@ -13,6 +13,7 @@ from msl.equipment_validate import log_warn
 from msl.equipment_validate.validate import (
     Info,
     Summary,
+    find_xml_files,
     log_debug,
     log_error,
     log_info,
@@ -81,10 +82,9 @@ def test_log_error_with_uri_scheme(caplog: pytest.LogCaptureFixture) -> None:
 def test_recursive_invalid_xml(
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
-    reset_summary: None,
     exit_first: bool,  # noqa: FBT001
 ) -> None:
-    assert reset_summary is None
+    Summary.reset()
     assert Summary.num_issues == 0
 
     register = tmp_path / "register.xml"
@@ -123,12 +123,8 @@ def test_recursive_invalid_xml(
     assert summary.num_register == 0
 
 
-def test_fails_schema(
-    tmp_path: Path,
-    caplog: pytest.LogCaptureFixture,
-    reset_summary: None,
-) -> None:
-    assert reset_summary is None
+def test_fails_schema(tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
 
     register = tmp_path / "register.xml"
@@ -186,12 +182,8 @@ def test_fails_schema(
     assert summary.num_register == 1
 
 
-def test_fails_schema_exit_first(
-    tmp_path: Path,
-    caplog: pytest.LogCaptureFixture,
-    reset_summary: None,
-) -> None:
-    assert reset_summary is None
+def test_fails_schema_exit_first(tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
 
     register = tmp_path / "register.xml"
@@ -1355,10 +1347,9 @@ def test_equation_operator_invalid(op: str, info: Info, caplog: pytest.LogCaptur
 def test_recursive_with_serialised(
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
-    reset_summary: None,
     exit_first: bool,  # noqa: FBT001
 ) -> None:
-    assert reset_summary is None
+    Summary.reset()
     assert Summary.num_issues == 0
 
     archive = pr.Archive()  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
@@ -1444,10 +1435,9 @@ def test_recursive_with_serialised(
 def test_recursive_with_digital_report(
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
-    reset_summary: None,
     exit_first: bool,  # noqa: FBT001
 ) -> None:
-    assert reset_summary is None
+    Summary.reset()
     assert Summary.num_issues == 0
 
     url = (Path(__file__).parent / "registers" / "do_not_modify_this_file.txt").resolve()
@@ -1521,10 +1511,9 @@ def test_recursive_with_digital_report(
 def test_recursive_with_equation(
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
-    reset_summary: None,
     exit_first: bool,  # noqa: FBT001
 ) -> None:
-    assert reset_summary is None
+    Summary.reset()
     assert Summary.num_issues == 0
     assert Summary.num_warnings == 0
 
@@ -1619,10 +1608,9 @@ def test_recursive_with_equation(
 def test_recursive_with_file(
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
-    reset_summary: None,
     exit_first: bool,  # noqa: FBT001
 ) -> None:
-    assert reset_summary is None
+    Summary.reset()
     assert Summary.num_issues == 0
 
     url = (Path(__file__).parent / "registers" / "do_not_modify_this_file.txt").resolve()
@@ -1705,10 +1693,9 @@ def test_recursive_with_file(
 def test_recursive_with_table(
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
-    reset_summary: None,
     exit_first: bool,  # noqa: FBT001
 ) -> None:
-    assert reset_summary is None
+    Summary.reset()
     assert Summary.num_issues == 0
 
     register = tmp_path / "register.xml"
@@ -1797,10 +1784,9 @@ def test_recursive_with_table(
 def test_recursive_with_cvd(
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
-    reset_summary: None,
     exit_first: bool,  # noqa: FBT001
 ) -> None:
-    assert reset_summary is None
+    Summary.reset()
     assert Summary.num_issues == 0
 
     register = tmp_path / "register.xml"
@@ -1897,10 +1883,9 @@ def test_recursive_with_cvd(
 def test_recursive_with_connections(
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
-    reset_summary: None,
     exit_first: bool,  # noqa: FBT001
 ) -> None:
-    assert reset_summary is None
+    Summary.reset()
     assert Summary.num_issues == 0
 
     register = tmp_path / "register.xml"
@@ -1966,10 +1951,9 @@ def test_checked_by_checked_date_by_missing(info: Info, caplog: pytest.LogCaptur
 def test_recursive_with_checked_by_checked_date_performance_check(
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
-    reset_summary: None,
     exit_first: bool,  # noqa: FBT001
 ) -> None:
-    assert reset_summary is None
+    Summary.reset()
     assert Summary.num_issues == 0
 
     register = tmp_path / "register.xml"
@@ -2061,10 +2045,9 @@ def test_recursive_with_checked_by_checked_date_performance_check(
 def test_recursive_with_checked_by_checked_date_report(
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
-    reset_summary: None,
     exit_first: bool,  # noqa: FBT001
 ) -> None:
-    assert reset_summary is None
+    Summary.reset()
     assert Summary.num_issues == 0
 
     register = tmp_path / "register.xml"
@@ -2170,10 +2153,9 @@ def test_recursive_with_checked_by_checked_date_report(
 def test_recursive_with_checked_by_checked_date_equipment(
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
-    reset_summary: None,
     exit_first: bool,  # noqa: FBT001
 ) -> None:
-    assert reset_summary is None
+    Summary.reset()
     assert Summary.num_issues == 0
 
     register = tmp_path / "register.xml"
@@ -2251,10 +2233,9 @@ def test_recursive_with_checked_by_checked_date_equipment(
 def test_recursive_with_recalibrate_reference(
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
-    reset_summary: None,
     exit_first: bool,  # noqa: FBT001
 ) -> None:
-    assert reset_summary is None
+    Summary.reset()
     assert Summary.num_issues == 0
 
     register = tmp_path / "register.xml"
@@ -2430,16 +2411,13 @@ def test_recursive_with_recalibrate_reference(
     assert summary.num_report == 4
 
 
-def test_validation_skipped_if_not_in_report_or_performance_check(
-    tmp_path: Path,
-    reset_summary: None,
-) -> None:
+def test_validation_skipped_if_not_in_report_or_performance_check(tmp_path: Path) -> None:
     # Some elements, such as <specifications>, contain the msl:any schema type
     # for the children and is therefore not validated. If these "Any" elements happen
     # to contain a child element with the tag named
     #     cvdCoefficients, digitalReport, equation, equipment, file, serialised, or table
     # then the child element should not be validated (since it can be anything).
-    assert reset_summary is None
+    Summary.reset()
     assert Summary.num_issues == 0
 
     register = tmp_path / "register.xml"
@@ -2495,3 +2473,21 @@ def test_validation_skipped_if_not_in_report_or_performance_check(
     assert summary.num_issues == 0
     assert summary.num_report == 0
     assert summary.num_equipment == 1
+
+
+def test_find_xml_files() -> None:
+    files = find_xml_files(Path("tests"))
+    assert files == [
+        Path("tests/data/config.xml"),
+        Path("tests/data/connections.xml"),
+        Path("tests/data/light/register.xml"),
+        # the 'tests/mass/.hidden' directory is not included
+        Path("tests/data/mass/not-a-register.xml"),
+        Path("tests/data/mass/register.xml"),
+        Path("tests/data/mass/register2.xml"),
+    ]
+
+
+def test_find_xml_files_empty() -> None:
+    files = find_xml_files(Path("README.md"))
+    assert len(files) == 0

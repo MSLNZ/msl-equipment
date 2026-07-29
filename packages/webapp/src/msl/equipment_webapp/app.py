@@ -10,6 +10,7 @@ import dash
 import dash_bootstrap_components as dbc  # type: ignore[import-untyped]
 import uvicorn
 from dash import Dash, Input, Output, State, html
+from msl.equipment_validate import configure_logging
 from uvicorn.config import LOGGING_CONFIG
 
 from .config import cfg
@@ -43,6 +44,7 @@ def create_app() -> Dash:
     )
 
     app.logger.setLevel(logging.WARNING)  # dash internal logger, not logger used in FastAPI
+    _ = configure_logging(quiet=4, verbose=0)  # suppress all logging messages from msl.equipment_validate
 
     app.layout = html.Div(
         [

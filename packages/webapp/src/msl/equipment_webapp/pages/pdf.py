@@ -3,16 +3,15 @@
 # pyright: reportUnknownArgumentType=false, reportUnknownMemberType=false, reportUnknownVariableType=false
 from __future__ import annotations
 
-import asyncio
 import base64
 from hashlib import md5
 from pathlib import Path
-from subprocess import run
 from tempfile import TemporaryDirectory
 from typing import Any
 
 import dash_bootstrap_components as dbc  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
 from dash import Input, Output, State, callback, dcc, html, no_update, register_page, set_props
+from msl.equipment_webapp import utils
 from msl.equipment_webapp.config import cfg
 
 register_page(__name__, name="PDF/A-3", title=f"{cfg.nmi} | PDF/A-3")  # type: ignore[no-untyped-call]
@@ -20,7 +19,7 @@ register_page(__name__, name="PDF/A-3", title=f"{cfg.nmi} | PDF/A-3")  # type: i
 layout = dbc.Container(
     [
         dcc.Store(id="document", storage_type="memory"),
-        dcc.Store(id="additional", storage_type="memory"),
+        dcc.Store(id="extra", storage_type="memory"),
         dbc.Row(
             [
                 dbc.Col(
@@ -60,7 +59,7 @@ layout = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.H2("Upload additional documents", className="text-center my-4"),
+                        html.H2("Upload extra documents", className="text-center my-4"),
                         dcc.Upload(
                             html.Div(
                                 [
@@ -76,11 +75,11 @@ layout = dbc.Container(
                                     ),
                                 ]
                             ),
-                            id="upload-additional",
+                            id="upload-extra",
                             className="border-primary bg-light p-2 shadow-sm text-center webapp-upload",
                             multiple=True,
                         ),
-                        html.Div(id="upload-additional-status", className="mt-3"),
+                        html.Div(id="upload-extra-status", className="mt-3"),
                     ],
                     width={"size": 8, "offset": 2},
                 ),
@@ -93,7 +92,7 @@ layout = dbc.Container(
                     )
                 ),
                 dbc.Tooltip(
-                    "Remove all additional documents",
+                    "Remove all extra documents",
                     target="clear-button",
                 ),
             ]
@@ -152,46 +151,46 @@ def upload_document(content: str | None, filename: str | None) -> tuple[list[str
 
 
 @callback(
-    Output("additional", "data"),
-    Output("upload-additional-status", "children"),
-    Input("upload-additional", "contents"),
-    State("upload-additional", "filename"),
-    State("additional", "data"),
+    Output("extra", "data"),
+    Output("upload-extra-status", "children"),
+    Input("upload-extra", "contents"),
+    State("upload-extra", "filename"),
+    State("extra", "data"),
 )
-def upload_additional(  # type: ignore[misc]
-    contents: list[str] | None, filenames: list[str] | None, additional: dict[str, str] | None
+def upload_extra(  # type: ignore[misc]
+    contents: list[str] | None, filenames: list[str] | None, extra: dict[str, str] | None
 ) -> tuple[dict[str, str], Any]:
     """Read the contents of the attachment files.
 
     Args:
         contents: The file content (base64 encoded) for each file.
         filenames: The filenames of each file.
-        additional: The additional files that have already been uploaded.
+        extra: The extra files that have already been uploaded.
             A mapping between the uploaded filename and the file content (base64 encoded).
 
     Returns:
-        The `additional` updated to include the newly uploaded files and `dbc.Alert | None`.
+        The `extra` updated to include the newly uploaded files and `dbc.Alert | None`.
     """
-    if additional is None:
-        additional = {}
+    if extra is None:
+        extra = {}
 
     if not (contents and filenames):
-        return additional, None
+        return extra, None
 
     for content, filename in zip(contents, filenames):
         _, b64_string = content.split(",", maxsplit=1)
-        additional[filename] = b64_string
+        extra[filename] = b64_string
 
-    message = [item for a in additional for item in (a, html.Br())]
-    return additional, dbc.Alert(message[:-1], color="success", className="text-center")
+    message = [item for a in extra for item in (a, html.Br())]
+    return extra, dbc.Alert(message[:-1], color="success", className="text-center")
 
 
 @callback(
-    Output("additional", "data"),
+    Output("extra", "data"),
     Input("clear-button", "n_clicks"),
 )
-def clear_additional(_: int) -> dict[str, str]:
-    """Clear all additional files.
+def clear_extra(_: int) -> dict[str, str]:
+    """Clear all extra files.
 
     Args:
         _: Ignored. The number of times the `clear-button` has been clicked.
@@ -201,7 +200,7 @@ def clear_additional(_: int) -> dict[str, str]:
     """
     # Dash raised exceptions when Output("upload-document-status", "children") was defined as a callback argument
     # Using set_props is a workaround
-    set_props("upload-additional-status", {"children": None})
+    set_props("upload-extra-status", {"children": None})
     return {}
 
 
@@ -209,20 +208,21 @@ def clear_additional(_: int) -> dict[str, str]:
     Output("download", "data"),
     Output("convert-status", "children"),
     State("document", "data"),
-    State("additional", "data"),
+    State("extra", "data"),
     Input("convert-button", "n_clicks"),
     running=[
         (Output("convert-button", "disabled"), True, False),
     ],
     prevent_initial_call=True,
+    persistent=True,
 )
-async def convert(document: list[str], additional: dict[str, str], _: int) -> tuple[Any, Any]:  # type: ignore[misc]
-    """Convert the uploaded files to PDF.
+async def convert(document: list[str], extra: dict[str, str], _: int) -> tuple[Any, Any]:  # type: ignore[misc]
+    """Convert the uploaded files to a PDF.
 
     Args:
         document: The LaTeX or Word document to convert. The first item is the filename of the
             original file and the second item is the file content (base64 encoded).
-        additional: The additional files required to convert the `document` to PDF.
+        extra: The extra files required to convert the `document` to PDF.
             A mapping between the uploaded filename and the file content (base64 encoded).
         _: Ignored. The number of times the `convert-button` has been clicked.
 
@@ -239,27 +239,21 @@ async def convert(document: list[str], additional: dict[str, str], _: int) -> tu
         )
         return no_update, alert
 
-    async def clear_alert() -> None:
-        set_props("convert-status", {"children": None})
-        await asyncio.sleep(0.01)
-
-    await clear_alert()
+    set_props("convert-status", {"children": None})
+    await utils.process_events()
 
     filename, b64_string = document
     with TemporaryDirectory() as tmp:
         tmp_dir = Path(tmp)
         src_filename = tmp_dir / filename
-        pdf_filename = src_filename.with_suffix(".pdf")
         _ = src_filename.write_bytes(base64.b64decode(b64_string))
-        for k, v in additional.items():
-            _ = (tmp_dir / k).write_bytes(base64.b64decode(v))
 
-        error = latex_to_pdf(src_filename) if src_filename.suffix == ".tex" else word_to_pdf(src_filename)
+        pdf_filename, error = await utils.to_pdf(src_filename, extra)
         if error:
             alert = dbc.Alert(html.Pre(error), color="danger")
             return no_update, alert
 
-        error = validate(pdf_filename)
+        error = await utils.vera_check(pdf_filename)
         if error:
             alert = dbc.Alert(dcc.Markdown(error), color="danger")
             return no_update, alert
@@ -269,55 +263,3 @@ async def convert(document: list[str], additional: dict[str, str], _: int) -> tu
         content = base64.b64encode(pdf_data).decode()
         out = {"content": content, "filename": pdf_filename.name, "type": "application/pdf", "base64": True}
         return out, dbc.Alert(f"MD5: {checksum}", color="success", className="text-center")
-
-
-def latex_to_pdf(path: Path) -> str:
-    """Use `pdflatex` to convert the tex file.
-
-    Args:
-        path: The path to the temporary tex file.
-
-    Returns:
-        An error message, if one occurred.
-    """
-    try:
-        out = run(  # noqa: S603
-            ["pdflatex", "-halt-on-error", "--max-print-line=1000", path.resolve()],  # noqa: S607
-            cwd=path.parent,
-            check=False,
-            capture_output=True,
-        )
-    except FileNotFoundError:
-        return "ERROR! pdflatex is not installed. Cannot convert tex to pdf."
-    else:
-        log = path.with_suffix(".log").read_text()
-        return "" if out.returncode == 0 else f"ERROR! Cannot convert.\n{log}"
-
-
-def word_to_pdf(_: Path) -> str:
-    """Use ... to convert the docx file.
-
-    Args:
-        path: The path to the temporary docx file.
-
-    Returns:
-        An error message, if one occurred.
-    """
-    return "Converting docx files is not implemented yet."
-
-
-def validate(path: Path) -> str:
-    """Use `veraPDF` to validate the pdf file.
-
-    Args:
-        path: The path to the pdf file.
-
-    Returns:
-        An error message, if one occurred.
-    """
-    try:
-        out = run([cfg.vera_pdf, "--format", "xml", path.resolve()], check=False, capture_output=True)  # noqa: S603
-    except FileNotFoundError:
-        return "ERROR! veraPDF is not installed. Cannot validate the PDF file."
-    else:
-        return "" if out.returncode == 0 else f"ERROR! Invalid PDF file.\n```xml\n{out.stdout.decode()}\n```"

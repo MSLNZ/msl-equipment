@@ -64,12 +64,18 @@ specify multiple `team`s by separating each value with the `+` sign.
 pdf_help = """
 ##### Create a PDF/A-3 document
 
-Upload a $\\LaTeX$ or Microsoft Word file to convert it to PDF/A-3 with digital files embedded.
+Upload a $\\LaTeX$ or Microsoft Word document to convert it to PDF/A-3 with digital files embedded.
 After conversion, the [veraPDF](https://verapdf.org/) tool validates the PDF file, the MD5
 checksum of the PDF file is displayed and you are prompted to download the PDF file.
 
-See [here](https://github.com/MSLNZ-Publication) for examples to create a $\\LaTeX$ document
-that can be converted to the PDF/A-3 file format to distribute metrological documents.
+When converting a Microsoft Word document, all extra files that are uploaded are embedded in the
+PDF file.
+
+When converting a $\\LaTeX$ document, all uploaded files are saved to the same temporary directory
+before running the conversion script. As such, when converting a $\\LaTeX$ document, all external
+file references must be set appropriately (i.e., references to files in subdirectories or different
+parent directories should not be used). The $\\LaTeX$ document must specify what files are to be
+embedded in the PDF file and what files are used only for the build process.
 """
 
 layout = html.Div(

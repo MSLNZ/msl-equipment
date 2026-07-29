@@ -127,6 +127,7 @@ consider_namespace_packages = true
 addopts = [
     "--cov=src",
     "--cov=packages/validate",
+    "--cov=packages/webapp",
     "--cov-report=html",
     "--cov-config=pyproject.toml",
     "--doctest-modules",

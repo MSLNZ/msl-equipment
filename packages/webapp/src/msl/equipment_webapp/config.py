@@ -6,7 +6,6 @@ import json
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from subprocess import run
 
 
 @dataclass
@@ -16,7 +15,7 @@ class Logo:
     src: str = ""
     """Location of the image."""
 
-    height: int = 60
+    height: int = 50
     """Image height, in pixels."""
 
     margin_left: int = 5
@@ -69,19 +68,6 @@ class EquipmentRegister:
         """Called automatically after the __init__ method finishes."""
         self.dir = self.dir.expanduser()
 
-    def git_pull(self) -> str:
-        """Perform a `git pull` of the equipment-register directory.
-
-        Returns:
-            An error message, if an error occurred.
-        """
-        try:
-            out = run(["git", "pull"], cwd=self.dir, check=False, capture_output=True)  # noqa: S607
-        except FileNotFoundError:
-            return "ERROR! git is not installed, cannot sync"
-        else:
-            return "" if out.returncode == 0 else f"ERROR! {out.stderr.decode().rstrip()}"
-
 
 @dataclass
 class Config:
@@ -108,6 +94,9 @@ class Config:
     nmi: str = "MSL"
     """Name of the National Metrology Institute."""
 
+    pdflatex: str = "pdflatex"
+    """Path to the `pdflatex` executable."""
+
     port: int = 17025
     """The port number to use for the app."""
 
@@ -117,8 +106,12 @@ class Config:
     theme: str = "BOOTSTRAP"
     """A theme name in https://bootswatch.com/."""
 
-    vera_pdf: str = "verapdf.bat" if sys.platform == "win32" else "verapdf"
-    """Path to the `veraPDF` executable."""
+    verapdf: str = "verapdf.bat" if sys.platform == "win32" else "verapdf"
+    """Path to the [veraPDF](https://verapdf.org/) executable."""
+
+    def equipment_registers(self, teams: list[str]) -> list[EquipmentRegister]:
+        """Returns the equipment registers for the specified `team` names."""
+        return [t for t in self.registers if t.team in teams]
 
     def load(self, path: str | Path, *, host: str | None = None, port: int | None = None) -> None:
         """Load a configuration file."""
@@ -130,7 +123,8 @@ class Config:
         self.nmi = cfg.get("nmi", self.nmi)
         self.port = port or cfg.get("port", self.port)
         self.theme = cfg.get("theme", self.theme)
-        self.vera_pdf = str(Path(cfg.get("vera_pdf", self.vera_pdf)).expanduser())
+        self.pdflatex = Path(cfg.get("pdflatex", self.pdflatex)).expanduser().as_posix()
+        self.verapdf = Path(cfg.get("verapdf", self.verapdf)).expanduser().as_posix()
         self.logo = Logo(**cfg.get("logo", {}))
         self.navbar = NavBar(**cfg.get("navbar", {}))
         self.registers.extend(EquipmentRegister(team=k, dir=Path(v)) for k, v in cfg.get("registers", {}).items())

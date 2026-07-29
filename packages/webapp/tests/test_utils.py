@@ -39,11 +39,11 @@ async def test_git_pull_not_git_dir() -> None:
 async def test_pdflatex_not_installed() -> None:
     pdflatex = cfg.pdflatex
     cfg.pdflatex = "missing"
-    error1 = await utils.latex_to_pdf(Path("not-used"))
-    pdf_path, error2 = await utils.to_pdf(Path("here.tex"), {})
+    error1 = await utils.latex_to_pdf(Path("not-used.tex"))
+    pdf_path, error2 = await utils.to_pdf(Path("not-used.tex"), {})
     cfg.pdflatex = pdflatex
 
-    assert pdf_path == Path("here.pdf")
+    assert pdf_path == Path("not-used.pdf")
     assert error1.startswith("ERROR! `pdflatex` cannot be found.")
     assert error2.startswith("ERROR! `pdflatex` cannot be found.")
 
@@ -66,16 +66,17 @@ async def test_pdflatex_fails() -> None:
 async def test_pdflatex_passes() -> None:
     # don't use the `tmp_path` fixture from pytest, want to mimic exactly with is done in pages/pdf.py
     with TemporaryDirectory() as tmp:
-        file = Path(tmp) / "example.tex"
+        file = Path(tmp) / "file with spaces.tex"
         _ = file.write_text("\\documentclass{article}\n\\begin{document}\nHello\n\\end{document}")
 
         extra = {"data.txt": base64.b64encode(b"hi").decode()}
         assert not (Path(tmp) / "data.txt").exists()
 
-        _, error = await utils.to_pdf(file, extra)
+        pdf, error = await utils.to_pdf(file, extra)
 
         assert error == ""
         assert (Path(tmp) / "data.txt").read_text() == "hi"
+        assert pdf == file.with_suffix(".pdf")
 
 
 def test_is_register_valid() -> None:

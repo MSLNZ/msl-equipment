@@ -6,6 +6,7 @@ import json
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 
 @dataclass
@@ -116,18 +117,23 @@ class Config:
     def load(self, path: str | Path, *, host: str | None = None, port: int | None = None) -> None:
         """Load a configuration file."""
         with Path(path).expanduser().open("rb") as fp:
-            cfg = json.load(fp)
+            data = json.load(fp)
 
-        self.assets = Path(cfg.get("assets", self.assets)).expanduser().as_posix()
-        self.host = host or cfg.get("host", self.host)
-        self.nmi = cfg.get("nmi", self.nmi)
-        self.port = port or cfg.get("port", self.port)
-        self.theme = cfg.get("theme", self.theme)
-        self.pdflatex = Path(cfg.get("pdflatex", self.pdflatex)).expanduser().as_posix()
-        self.verapdf = Path(cfg.get("verapdf", self.verapdf)).expanduser().as_posix()
-        self.logo = Logo(**cfg.get("logo", {}))
-        self.navbar = NavBar(**cfg.get("navbar", {}))
-        self.registers.extend(EquipmentRegister(team=k, dir=Path(v)) for k, v in cfg.get("registers", {}).items())
+        if not isinstance(data, dict):
+            msg = "The configuration data must be a JSON object (a Python dict)"
+            raise TypeError(msg)
+
+        d: dict[str, Any] = data  # pyright: ignore[reportUnknownVariableType]
+        self.assets = Path(d.get("assets", self.assets)).expanduser().as_posix()
+        self.host = host or d.get("host", self.host)
+        self.nmi = d.get("nmi", self.nmi)
+        self.port = port or int(d.get("port", self.port))
+        self.theme = d.get("theme", self.theme)
+        self.pdflatex = Path(d.get("pdflatex", self.pdflatex)).expanduser().as_posix()
+        self.verapdf = Path(d.get("verapdf", self.verapdf)).expanduser().as_posix()
+        self.logo = Logo(**d.get("logo", {}))
+        self.navbar = NavBar(**d.get("navbar", {}))
+        self.registers.extend(EquipmentRegister(team=k, dir=Path(v)) for k, v in d.get("registers", {}).items())
 
     @property
     def teams(self) -> list[str]:

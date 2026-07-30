@@ -1,5 +1,6 @@
 """Common utility functions."""
 
+# cSpell: ignore nonstopmode
 from __future__ import annotations
 
 import asyncio
@@ -95,7 +96,8 @@ async def latex_to_pdf(tex: Path) -> str:
         An error message, if an error occurred.
     """
     code, stdout, stderr = await subprocess_run(
-        [cfg.pdflatex, "-halt-on-error", "--max-print-line=1000", f'"{tex.name}"'], cwd=tex.parent
+        [cfg.pdflatex, "-halt-on-error", "-interaction=nonstopmode", "--max-print-line=1000", f'"{tex.name}"'],
+        cwd=tex.parent,
     )
     if code == 0:
         return ""

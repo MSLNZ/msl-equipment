@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import base64
 import mimetypes
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from lxml import etree
@@ -13,6 +13,7 @@ from msl.equipment_validate import DEFAULT_SCHEMA_DIR, find_xml_files, recursive
 from msl.equipment_webapp.config import cfg
 from msl.loadlib import LoadLibrary
 from pikepdf import Array, AttachedFileSpec, Pdf
+from pikepdf.models.metadata import encode_pdf_date
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -161,7 +162,7 @@ def word_to_pdf(docx: Path, extra: dict[str, str]) -> str:
     )
     doc.Close()
 
-    now = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    now = encode_pdf_date(datetime.now().astimezone())
     with Pdf.open(tmp_pdf) as pdf:
         af_entries = list(pdf.Root.get("/AF", Array()))
         for filename, b64 in extra.items():

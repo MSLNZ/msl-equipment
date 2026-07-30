@@ -33,85 +33,127 @@ def layout(**params: str) -> html.Div:
     sync = params.get("sync", "no").lower() in {"1", "yes", "true"}
     return html.Div(
         [
-            dbc.Stack(
+            dbc.Row(
                 [
-                    html.Div("Team(s): "),
-                    dcc.Dropdown(cfg.teams, multi=True, value=team, id="search-team-dropdown", style={"width": "60%"}),
-                    dbc.Input(
-                        id="search-input",
-                        placeholder="Search pattern",
-                        type="text",
-                        debounce=len(text) == 0,  # if `text` is a URL query parameter, trigger callback on page load
-                        value=text,
-                    ),
-                    html.Div(
+                    dbc.Col(
                         [
-                            dbc.Label("Sync: ", html_for="search-sync-checkbox", className="me-2 mt-1"),
-                            dbc.Checkbox(id="search-sync-checkbox", value=sync),
+                            dbc.Label("Team(s):", className="me-2 mb-0", style={"marginLeft": 25}),
+                            dcc.Dropdown(
+                                cfg.teams,
+                                multi=True,
+                                value=team,
+                                id="search-team-dropdown",
+                                className="flex-grow-1",
+                                style={
+                                    "minWidth": "150px",
+                                    "width": "auto",
+                                    "display": "inline-block",
+                                },
+                            ),
                         ],
-                        className="d-flex justify-content-end align-items-center",
+                        width="auto",
+                        className="d-flex align-items-center mb-2 mb-md-0",
+                    ),
+                    dbc.Col(
+                        dbc.Input(
+                            id="search-input",
+                            placeholder="Search pattern",
+                            type="text",
+                            debounce=len(text) == 0,
+                            value=text,
+                            className="flex-grow-1",
+                            style={
+                                "minWidth": "150px",
+                                "fieldSizing": "content",
+                            },
+                        ),
+                        width="auto",
+                        className="d-flex mb-2 mb-md-0",
+                    ),
+                    dbc.Col(
+                        html.Div(
+                            [
+                                dbc.Label(
+                                    "Sync:",
+                                    html_for="search-sync-checkbox",
+                                    className="me-2 mb-0",
+                                ),
+                                dbc.Checkbox(
+                                    id="search-sync-checkbox",
+                                    value=sync,
+                                ),
+                            ],
+                            className="d-flex align-items-center",
+                        ),
+                        width="auto",
+                    ),
+                    dbc.Col(
+                        dcc.Clipboard(
+                            id="search-clipboard",
+                            style={"fontSize": 20},
+                        ),
+                        width="auto",
+                        className="me-auto",  # Pushes the Download button to the far right
+                    ),
+                    dbc.Col(
+                        dbc.Button(
+                            "Download CSV",
+                            id="search-csv-button",
+                            n_clicks=0,
+                            style={"marginRight": 25},
+                        ),
+                        width="auto",
                     ),
                     dbc.Tooltip(
                         "Whether to sync a register with its repository before searching",
-                        target="sync-checkbox",
-                    ),
-                    dcc.Clipboard(
-                        id="search-clipboard",
-                        style={
-                            "fontSize": 20,
-                            "verticalAlign": "top",
-                            "marginLeft": 10,
-                        },
-                        className="me-auto",  # Push remaining components to the right
+                        target="search-sync-checkbox",
                     ),
                     dbc.Tooltip(
                         "Copy URL parameters to clipboard",
-                        target="clipboard",
-                    ),
-                    dbc.Button(
-                        "Download CSV",
-                        id="search-csv-button",
-                        n_clicks=0,
+                        target="search-clipboard",
                     ),
                 ],
-                gap=2,
-                direction="horizontal",
-                style={"margin": 25, "justifyContent": "center", "display": "flex"},
+                className="g-2 align-items-center my-4 mx-0",
             ),
-            dag.AgGrid(
-                id="search-table",
-                columnDefs=[
-                    {"field": "ID", "width": 150},
-                    {"field": "Team", "width": 110},
-                    {"field": "Location", "width": 110},
-                    {"field": "Description"},
-                    {"field": "Manufacturer"},
-                    {"field": "Model"},
-                    {"field": "Serial", "flex": 1},
-                ],
-                defaultColDef={"filter": True},
-                dashGridOptions={
-                    "pagination": True,
-                    "theme": "themeAlpine",
-                    "loading": False,
-                    "enableCellTextSelection": True,
-                    "ensureDomOrder": True,  # required for enableCellTextSelection=True
-                },
-                csvExportParams={
-                    "fileName": "equipment.csv",
-                },
-                getRowStyle={
-                    "styleConditions": [
-                        {
-                            "condition": "params.rowIndex % 2 === 0",
-                            "style": {"background-color": "#F3F2F1", "color": "black"},
-                        },
-                    ]
-                },
+            html.Div(
+                dag.AgGrid(
+                    id="search-table",
+                    columnDefs=[
+                        {"field": "ID", "width": 150},
+                        {"field": "Team", "flex": 1},
+                        {"field": "Location", "flex": 2},
+                        {"field": "Description", "flex": 3},
+                        {"field": "Manufacturer", "flex": 2},
+                        {"field": "Model", "flex": 1},
+                        {"field": "Serial", "flex": 1},
+                    ],
+                    defaultColDef={"filter": True, "resizable": True},
+                    dashGridOptions={
+                        "pagination": True,
+                        "theme": "themeAlpine",
+                        "loading": False,
+                        "enableCellTextSelection": True,
+                        "ensureDomOrder": True,  # required for enableCellTextSelection=True
+                    },
+                    csvExportParams={
+                        "fileName": "equipment.csv",
+                    },
+                    getRowStyle={
+                        "styleConditions": [
+                            {
+                                "condition": "params.rowIndex % 2 === 0",
+                                "style": {"background-color": "#F3F2F1", "color": "black"},
+                            },
+                        ]
+                    },
+                    style={"width": "100%"},
+                ),
+                style={"width": "100%", "overflowX": "auto"},
             ),
             html.Pre(id="search-log-display", className="webapp-log-display"),
             dcc.Location(id="search-url", refresh=False),
         ],
+        style={"maxWidth": "100vw", "overflowX": "hidden", "padding": "0 5px"},
     )
 
 

@@ -32,102 +32,133 @@ def layout(**params: str) -> html.Div:
     sync = params.get("sync", "no").lower() in {"1", "yes", "true"}
     return html.Div(
         [
-            dbc.Stack(
+            dbc.Row(
                 [
-                    html.Div("Team(s): "),
-                    dcc.Dropdown(
-                        cfg.teams,
-                        multi=True,
-                        value=team,
-                        id="rec-team-dropdown",
-                        style={"width": "50%"},
+                    dbc.Col(
+                        [
+                            dbc.Label("Team(s):", className="me-2 mb-0", style={"marginLeft": 25}),
+                            dcc.Dropdown(
+                                cfg.teams,
+                                multi=True,
+                                value=team,
+                                id="rec-team-dropdown",
+                                className="flex-grow-1",
+                                style={
+                                    "minWidth": "300px",
+                                    "width": "auto",
+                                    "display": "inline-block",
+                                },
+                            ),
+                        ],
+                        width="auto",
+                        className="d-flex align-items-center mb-2 mb-md-0",
                     ),
-                    html.Div("Months: "),
-                    html.Div(
-                        dbc.Input(
-                            id="rec-months-input",
-                            value=months,
-                            type="number",
-                            min=MONTHS_MIN,
-                            max=MONTHS_MAX,
-                            step=1,
-                            debounce=True,
-                        )
+                    dbc.Col(
+                        [
+                            dbc.Label("Months:", className="me-2 mb-0"),
+                            dbc.Input(
+                                id="rec-months-input",
+                                value=months,
+                                type="number",
+                                min=MONTHS_MIN,
+                                max=MONTHS_MAX,
+                                step=1,
+                                debounce=True,
+                            ),
+                        ],
+                        width="auto",
+                        className="d-flex align-items-center",
+                    ),
+                    dbc.Col(
+                        html.Div(
+                            [
+                                dbc.Label(
+                                    "Sync:",
+                                    html_for="rec-sync-checkbox",
+                                    className="me-2 mb-0",
+                                ),
+                                dbc.Checkbox(
+                                    id="rec-sync-checkbox",
+                                    value=sync,
+                                ),
+                            ],
+                            className="d-flex align-items-center",
+                        ),
+                        width="auto",
+                    ),
+                    dbc.Col(
+                        dcc.Clipboard(
+                            id="rec-clipboard",
+                            style={"fontSize": 20},
+                        ),
+                        width="auto",
+                        className="me-auto",  # Pushes the Download button to the far right
+                    ),
+                    dbc.Col(
+                        dbc.Button(
+                            "Download CSV",
+                            id="rec-csv-button",
+                            n_clicks=0,
+                            style={"marginRight": 25},
+                        ),
+                        width="auto",
                     ),
                     dbc.Tooltip(
                         "Number of months from today's date that a recalibration is due",
-                        target="months-input",
-                    ),
-                    html.Div(
-                        [
-                            dbc.Label("Sync: ", html_for="sync-checkbox", className="me-2 mt-1"),
-                            dbc.Checkbox(id="rec-sync-checkbox", value=sync),
-                        ],
-                        className="d-flex justify-content-end align-items-center",
+                        target="rec-months-input",
                     ),
                     dbc.Tooltip(
                         "Whether to sync a register with its repository before checking",
-                        target="sync-checkbox",
-                    ),
-                    dcc.Clipboard(
-                        id="rec-clipboard",
-                        style={
-                            "fontSize": 20,
-                            "verticalAlign": "top",
-                            "marginLeft": 10,
-                        },
-                        className="me-auto",  # Push remaining components to the right
+                        target="rec-sync-checkbox",
                     ),
                     dbc.Tooltip(
                         "Copy URL parameters to clipboard",
-                        target="clipboard",
-                    ),
-                    dbc.Button(
-                        "Download CSV",
-                        id="rec-csv-button",
-                        n_clicks=0,
+                        target="rec-clipboard",
                     ),
                 ],
-                gap=2,
-                direction="horizontal",
-                style={"margin": 25, "justifyContent": "center", "display": "flex"},
+                className="g-2 align-items-center my-4 mx-0",
             ),
-            dag.AgGrid(
-                id="rec-table",
-                columnDefs=[
-                    {"field": "Team", "width": 110},
-                    {"field": "Due Date", "width": 110},
-                    {"field": "Overdue?", "width": 110},
-                    {"field": "ID", "width": 150},
-                    {"field": "Description"},
-                    {"field": "Manufacturer"},
-                    {"field": "Model"},
-                    {"field": "Serial", "flex": 1},
-                ],
-                defaultColDef={"filter": True},
-                dashGridOptions={
-                    "pagination": True,
-                    "theme": "themeAlpine",
-                    "loading": False,
-                    "enableCellTextSelection": True,
-                    "ensureDomOrder": True,  # required for enableCellTextSelection=True
-                },
-                csvExportParams={
-                    "fileName": "recalibrations.csv",
-                },
-                getRowStyle={
-                    "styleConditions": [
-                        {
-                            "condition": "params.rowIndex % 2 === 0",
-                            "style": {"background-color": "#F3F2F1", "color": "black"},
-                        },
-                    ]
-                },
+            html.Div(
+                dag.AgGrid(
+                    id="rec-table",
+                    columnDefs=[
+                        {"field": "ID", "width": 150},
+                        {"field": "Team", "flex": 1},
+                        {"field": "Due Date", "flex": 1},
+                        {"field": "Overdue?", "flex": 1},
+                        {"field": "Description", "flex": 3},
+                        {"field": "Manufacturer", "flex": 2},
+                        {"field": "Model", "flex": 1},
+                        {"field": "Serial", "flex": 1},
+                    ],
+                    defaultColDef={"filter": True, "resizable": True},
+                    dashGridOptions={
+                        "pagination": True,
+                        "theme": "themeAlpine",
+                        "loading": False,
+                        "enableCellTextSelection": True,
+                        "ensureDomOrder": True,  # required for enableCellTextSelection=True
+                    },
+                    csvExportParams={
+                        "fileName": "recalibrations.csv",
+                    },
+                    getRowStyle={
+                        "styleConditions": [
+                            {
+                                "condition": "params.rowIndex % 2 === 0",
+                                "style": {"background-color": "#F3F2F1", "color": "black"},
+                            },
+                        ]
+                    },
+                    style={"width": "100%"},
+                ),
+                style={"width": "100%", "overflowX": "auto"},
             ),
             html.Pre(id="rec-log-display", className="webapp-log-display"),
             html.Div(id="rec-hidden-div"),  # forces calling update_table() on page loading
             dcc.Location(id="rec-url", refresh=False),
         ],
+        style={"maxWidth": "100vw", "overflowX": "hidden", "padding": "0 5px"},
     )
 
 
@@ -227,10 +258,10 @@ async def update_table(teams: list[str], months: int | None, sync: bool) -> None
                     if report.is_calibration_due(months):
                         data.append(
                             {
+                                "ID": equipment.id,
                                 "Team": reg.team,
                                 "Due Date": report.next_calibration_date.isoformat(),
                                 "Overdue?": "Yes" if report.next_calibration_date < today else "No",
-                                "ID": equipment.id,
                                 "Description": equipment.description,
                                 "Manufacturer": equipment.manufacturer,
                                 "Model": equipment.model,

@@ -18,8 +18,8 @@ register_page(__name__, name="PDF/A-3", title=f"{cfg.nmi} | PDF/A-3")  # type: i
 
 layout = dbc.Container(
     [
-        dcc.Store(id="document", storage_type="memory"),
-        dcc.Store(id="extra", storage_type="memory"),
+        dcc.Store(id="pdf-document", storage_type="memory"),
+        dcc.Store(id="pdf-extra", storage_type="memory"),
         dbc.Row(
             [
                 dbc.Col(
@@ -44,11 +44,11 @@ layout = dbc.Container(
                                     ),
                                 ]
                             ),
-                            id="upload-document",
+                            id="pdf-upload-document",
                             className="border-primary bg-light p-2 shadow-sm text-center webapp-upload",
                             multiple=False,
                         ),
-                        html.Div(id="upload-document-status", className="mt-3"),
+                        html.Div(id="pdf-upload-document-status", className="mt-3"),
                     ],
                     width={"size": 8, "offset": 2},
                 )
@@ -75,18 +75,18 @@ layout = dbc.Container(
                                     ),
                                 ]
                             ),
-                            id="upload-extra",
+                            id="pdf-upload-extra",
                             className="border-primary bg-light p-2 shadow-sm text-center webapp-upload",
                             multiple=True,
                         ),
-                        html.Div(id="upload-extra-status", className="mt-3"),
+                        html.Div(id="pdf-upload-extra-status", className="mt-3"),
                     ],
                     width={"size": 8, "offset": 2},
                 ),
                 dbc.Col(
                     dbc.Button(
                         [html.I(className="bi bi-trash3 me-2"), "Clear"],
-                        id="clear-button",
+                        id="pdf-clear-button",
                         color="secondary",
                         className="mt-4",
                     )
@@ -101,13 +101,27 @@ layout = dbc.Container(
         dbc.Row(
             dbc.Col(
                 [
-                    dbc.Button(
-                        [html.I(className="bi bi-file-earmark-pdf me-2"), "Convert"],
-                        id="convert-button",
-                        className="w-100 fs-3",
+                    html.Div(
+                        [
+                            dbc.Button(
+                                [html.I(className="bi bi-file-earmark-pdf me-2"), "Convert"],
+                                id="pdf-convert-button",
+                                className="w-100 fs-3",
+                            ),
+                            dbc.Spinner(
+                                html.Div(id="pdf-spinner"),
+                                color="secondary",
+                                spinner_style={
+                                    "width": "5rem",
+                                    "height": "5rem",
+                                    "position": "relative",
+                                    "top": "-27px",
+                                },
+                            ),
+                            dcc.Download(id="pdf-download"),
+                            html.Div(id="pdf-convert-status", className="mt-3"),
+                        ]
                     ),
-                    dcc.Download(id="download"),
-                    html.Div(id="convert-status", className="mt-3"),
                 ],
                 width={"size": 8, "offset": 2},
             ),
@@ -119,10 +133,10 @@ layout = dbc.Container(
 
 
 @callback(
-    Output("document", "data"),
-    Output("upload-document-status", "children"),
-    Input("upload-document", "contents"),
-    State("upload-document", "filename"),
+    Output("pdf-document", "data"),
+    Output("pdf-upload-document-status", "children"),
+    Input("pdf-upload-document", "contents"),
+    State("pdf-upload-document", "filename"),
 )
 def upload_document(content: str | None, filename: str | None) -> tuple[list[str], Any]:  # type: ignore[misc]
     """Get the content of a MS Word or LaTeX file.
@@ -151,11 +165,11 @@ def upload_document(content: str | None, filename: str | None) -> tuple[list[str
 
 
 @callback(
-    Output("extra", "data"),
-    Output("upload-extra-status", "children"),
-    Input("upload-extra", "contents"),
-    State("upload-extra", "filename"),
-    State("extra", "data"),
+    Output("pdf-extra", "data"),
+    Output("pdf-upload-extra-status", "children"),
+    Input("pdf-upload-extra", "contents"),
+    State("pdf-upload-extra", "filename"),
+    State("pdf-extra", "data"),
 )
 def upload_extra(  # type: ignore[misc]
     contents: list[str] | None, filenames: list[str] | None, extra: dict[str, str] | None
@@ -186,8 +200,8 @@ def upload_extra(  # type: ignore[misc]
 
 
 @callback(
-    Output("extra", "data"),
-    Input("clear-button", "n_clicks"),
+    Output("pdf-extra", "data"),
+    Input("pdf-clear-button", "n_clicks"),
 )
 def clear_extra(_: int) -> dict[str, str]:
     """Clear all extra files.
@@ -200,23 +214,24 @@ def clear_extra(_: int) -> dict[str, str]:
     """
     # Dash raised exceptions when Output("upload-document-status", "children") was defined as a callback argument
     # Using set_props is a workaround
-    set_props("upload-extra-status", {"children": None})
+    set_props("pdf-upload-extra-status", {"children": None})
     return {}
 
 
 @callback(
-    Output("download", "data"),
-    Output("convert-status", "children"),
-    State("document", "data"),
-    State("extra", "data"),
-    Input("convert-button", "n_clicks"),
+    Output("pdf-download", "data"),
+    Output("pdf-convert-status", "children"),
+    Output("pdf-spinner", "children"),
+    State("pdf-document", "data"),
+    State("pdf-extra", "data"),
+    Input("pdf-convert-button", "n_clicks"),
     running=[
-        (Output("convert-button", "disabled"), True, False),
+        (Output("pdf-convert-button", "disabled"), True, False),
     ],
     prevent_initial_call=True,
     persistent=True,
 )
-async def convert(document: list[str], extra: dict[str, str], _: int) -> tuple[Any, Any]:  # type: ignore[misc]
+async def convert(document: list[str], extra: dict[str, str], _: int) -> tuple[Any, Any, None]:  # type: ignore[misc]
     """Convert the uploaded files to a PDF.
 
     Args:
@@ -227,8 +242,9 @@ async def convert(document: list[str], extra: dict[str, str], _: int) -> tuple[A
         _: Ignored. The number of times the `convert-button` has been clicked.
 
     Returns:
-        The information for the web browser to download the PDF file and a `dbc.Alert` component
-            describing the outcome of the conversion.
+        The information for the web browser to download the PDF file, a `dbc.Alert` component
+            describing the outcome of the conversion and `None` to tell the `dcc.Loading`
+            animation to stop.
     """
     if not document:
         alert = dbc.Alert(
@@ -237,9 +253,9 @@ async def convert(document: list[str], extra: dict[str, str], _: int) -> tuple[A
             duration=4000,
             className="text-center",
         )
-        return no_update, alert
+        return no_update, alert, None
 
-    set_props("convert-status", {"children": None})
+    set_props("pdf-convert-status", {"children": None})
     await utils.process_events()
 
     filename, b64_string = document
@@ -251,15 +267,15 @@ async def convert(document: list[str], extra: dict[str, str], _: int) -> tuple[A
         pdf_filename, error = await utils.to_pdf(src_filename, extra)
         if error:
             alert = dbc.Alert(html.Pre(error), color="danger")
-            return no_update, alert
+            return no_update, alert, None
 
         error = await utils.vera_check(pdf_filename)
         if error:
             alert = dbc.Alert(dcc.Markdown(error), color="danger")
-            return no_update, alert
+            return no_update, alert, None
 
         pdf_data = pdf_filename.read_bytes()
         checksum = md5(pdf_data).hexdigest()  # noqa: S324
         content = base64.b64encode(pdf_data).decode()
         out = {"content": content, "filename": pdf_filename.name, "type": "application/pdf", "base64": True}
-        return out, dbc.Alert(f"MD5: {checksum}", color="success", className="text-center")
+        return out, dbc.Alert(f"MD5: {checksum}", color="success", className="text-center"), None

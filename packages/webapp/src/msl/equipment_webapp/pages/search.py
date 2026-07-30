@@ -146,7 +146,7 @@ def layout(**params: str) -> html.Div:
                             },
                         ]
                     },
-                    style={"width": "100%"},
+                    style={"width": "100%", "height": "65vh"},
                 ),
                 style={"width": "100%", "overflowX": "auto"},
             ),
@@ -237,7 +237,7 @@ async def update_table(teams: list[str], text: str | None, sync: bool) -> Litera
         await update(f"Validating {register.team} register (skipping sha256 checksums)")
         files = utils.find_xml_files(register.dir)
         if not utils.is_register_valid(*files):
-            await update(f"  \u21b3 ERROR! {register.team} register invalid (skipping)")
+            await update(f"  \u274c ERROR! {register.team} register invalid (skipping)")
             continue
 
         reg = Register(*files)

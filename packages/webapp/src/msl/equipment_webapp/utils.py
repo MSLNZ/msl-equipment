@@ -13,7 +13,7 @@ from lxml import etree
 from msl.equipment_validate import DEFAULT_SCHEMA_DIR, find_xml_files, recursive_validate
 from msl.equipment_webapp.config import cfg
 from msl.loadlib import LoadLibrary
-from pikepdf import Array, AttachedFileSpec, Pdf
+from pikepdf import Array, AttachedFileSpec, Name, Pdf
 from pikepdf.models.metadata import encode_pdf_date
 
 if TYPE_CHECKING:
@@ -82,7 +82,7 @@ async def git_pull(registers: list[EquipmentRegister]) -> str:
         if code != 0:
             # only expect a "git not installed" or a "no internet access" error, so if
             # an error does occur it will occur for every task so return the first error
-            return f"  \u21b3 ERROR! Cannot sync: {stderr.decode()}"
+            return f"  \u274c ERROR! Cannot sync: {' '.join(stderr.decode().splitlines())}"
     return ""
 
 
@@ -96,17 +96,20 @@ async def latex_to_pdf(tex: Path) -> str:
         An error message, if an error occurred.
     """
     code, stdout, stderr = await subprocess_run(
-        [cfg.pdflatex, "-halt-on-error", "-interaction=nonstopmode", "--max-print-line=1000", f'"{tex.name}"'],
+        [cfg.pdflatex, "-halt-on-error", "-interaction=nonstopmode", "-max-print-line=1000", f'"{tex.name}"'],
         cwd=tex.parent,
     )
+
     if code == 0:
         return ""
 
     if stderr:
         return (
-            "ERROR! `pdflatex` cannot be found.\n"
-            "If it is installed, specify the path to the executable in the configuration file.\n\n"
-            '  "pdflatex": "path/to/pdflatex"'
+            "ERROR! `pdflatex` cannot be found. "
+            "If it is installed, specify the path to the executable in the configuration file.\n"
+            "```json\n"
+            '  "pdflatex": "path/to/pdflatex"\n'
+            "```"
         )
 
     log_file = tex.with_suffix(".log")
@@ -144,12 +147,12 @@ def word_to_pdf(docx: Path, extra: dict[str, str]) -> str:
     if isinstance(word_app, str):
         return word_app
 
-    tmp_pdf = docx.with_name("tmp.pdf")  # without embedded files
+    tmp = docx.with_name("tmp.pdf")
 
     # https://learn.microsoft.com/en-us/office/vba/api/word.document.exportasfixedformat
     doc = word_app.lib.Documents.Open(docx.resolve().as_posix())
     doc.ExportAsFixedFormat(
-        OutputFileName=str(tmp_pdf),
+        OutputFileName=str(tmp),
         ExportFormat=17,  # wdExportFormatPDF
         OpenAfterExport=False,
         OptimizeFor=0,  # wdExportOptimizeForPrint
@@ -164,26 +167,44 @@ def word_to_pdf(docx: Path, extra: dict[str, str]) -> str:
     )
     doc.Close()
 
+    try:
+        add_attachments(docx, tmp, extra)
+    except Exception as e:  # noqa: BLE001
+        return f"ERROR! {e}"
+    else:
+        return ""
+
+
+def add_attachments(docx: Path, tmp: Path, extra: dict[str, str]) -> None:
+    """Add attachments to a PDF.
+
+    Args:
+        docx: The path to the `.docx` file.
+        tmp: The path to the PDF file that was exported by Word.
+        extra: Extra files that were uploaded to be embedded as attachments.
+            A mapping between the uploaded filename and the file content (base64 encoded).
+    """
     now = encode_pdf_date(datetime.now().astimezone())
-    with Pdf.open(tmp_pdf) as pdf:
+    with Pdf.open(tmp) as pdf:
         af_entries = list(pdf.Root.get("/AF", Array()))
         for filename, b64 in extra.items():
             afs = AttachedFileSpec(
                 pdf,
                 base64.b64decode(b64),
-                description=filename,
+                description="",  # this is what a pdflatex-generated report does
                 filename=filename,
                 mime_type=mimetypes.guess_type(filename)[0] or "text/plain",
                 creation_date=now,
                 mod_date=now,
             )
+            afs.relationship = Name.Data
             pdf.attachments[filename] = afs
             af_entries.append(afs.obj)
 
+        if extra:
+            pdf.Root.PageMode = Name.UseAttachments
         pdf.Root.AF = pdf.make_indirect(Array(af_entries))
         pdf.save(docx.with_suffix(".pdf"))
-
-    return ""
 
 
 async def to_pdf(document: Path, extra: dict[str, str]) -> tuple[Path, str]:
@@ -220,15 +241,21 @@ async def vera_check(path: Path) -> str:
     Returns:
         An error message, if an error occurred.
     """
-    code, stdout, stderr = await subprocess_run([cfg.verapdf, "--format", "xml", f'"{path.name}"'], cwd=path.parent)
+    code, stdout, stderr = await subprocess_run(
+        [cfg.verapdf, "--format", "xml", f'"{path.name}"'],
+        cwd=path.parent,
+    )
+
     if code == 0:
         return ""
 
     if stderr:
         return (
-            "ERROR! `veraPDF` cannot be found.\n"
-            "If it is installed, specify the path to the executable in the configuration file.\n\n"
-            '  "verapdf": "path/to/verapdf"'
+            "ERROR! `veraPDF` cannot be found. "
+            "If it is installed, specify the path to the executable in the configuration file.\n"
+            "```json\n"
+            '  "verapdf": "path/to/verapdf"\n'
+            "```"
         )
 
     return f"ERROR! Invalid PDF file.\n```xml\n{stdout.decode()}\n```"

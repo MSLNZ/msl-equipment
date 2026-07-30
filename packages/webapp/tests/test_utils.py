@@ -38,7 +38,7 @@ async def test_git_not_installed() -> None:
     cfg.git = "missing"
     error = await utils.git_pull([EquipmentRegister("Light", Path())])
     cfg.git = git
-    assert error.startswith("  \u21b3 ERROR! Cannot sync")
+    assert error.startswith("  \u274c ERROR! Cannot sync")
 
 
 @pytest.mark.anyio

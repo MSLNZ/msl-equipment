@@ -266,7 +266,8 @@ async def convert(document: list[str], extra: dict[str, str], _: int) -> tuple[A
 
         pdf_filename, error = await utils.to_pdf(src_filename, extra)
         if error:
-            alert = dbc.Alert(html.Pre(error), color="danger")
+            child = dcc.Markdown(error) if error.endswith("```") else html.Pre(error)
+            alert = dbc.Alert(child, color="danger")
             return no_update, alert, None
 
         error = await utils.vera_check(pdf_filename)

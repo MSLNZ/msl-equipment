@@ -54,6 +54,10 @@ specify `text` to search for equipment that is either a `Hygrometer` or a `Barom
 character `|`, which means *OR*),
   - <dccLink href="/search?team=Length&text=Hygrometer%7CBarometer" />
 
+specify `text` to return all equipment by specifying a `.` (which is a
+regular-expression pattern that matches any character &mdash; except for line terminators),
+  - <dccLink href="/search?team=Length&text=." />
+
 specify the `sync` parameter (a *checked* value can be one of `1`, `yes` or `true`),
   - <dccLink href="/search?sync=1" />
 

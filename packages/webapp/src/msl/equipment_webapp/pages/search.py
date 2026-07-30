@@ -3,6 +3,7 @@
 # pyright: reportUnknownArgumentType=false, reportUnknownMemberType=false, reportUnknownVariableType=false, reportMissingTypeStubs=false
 from __future__ import annotations
 
+import re
 from collections import deque
 from typing import TYPE_CHECKING
 from urllib.parse import quote, unquote
@@ -55,18 +56,28 @@ def layout(**params: str) -> html.Div:
                         className="d-flex align-items-center mb-2 mb-md-0",
                     ),
                     dbc.Col(
-                        dbc.Input(
-                            id="search-input",
-                            placeholder="Search pattern",
-                            type="text",
-                            debounce=len(text) == 0,
-                            value=text,
-                            className="flex-grow-1",
-                            style={
-                                "minWidth": "150px",
-                                "fieldSizing": "content",
-                            },
-                        ),
+                        [
+                            dbc.Input(
+                                id="search-input",
+                                placeholder="Search pattern",
+                                type="text",
+                                debounce=len(text) == 0,
+                                value=text,
+                                className="flex-grow-1",
+                                style={
+                                    "minWidth": "150px",
+                                    "fieldSizing": "content",
+                                },
+                            ),
+                            dbc.Modal(
+                                [
+                                    dbc.ModalHeader(dbc.ModalTitle("Invalid Syntax")),
+                                    dbc.ModalBody(id="search-modal-body"),
+                                ],
+                                id="search-modal",
+                                is_open=False,
+                            ),
+                        ],
                         width="auto",
                         className="d-flex mb-2 mb-md-0",
                     ),
@@ -191,6 +202,8 @@ def clipboard_copy(_: int, teams: list[str], text: str | None, sync: bool, url: 
 
 @callback(
     Output("search-input", "debounce"),
+    Output("search-modal", "is_open"),
+    Output("search-modal-body", "children"),
     Input("search-team-dropdown", "value"),
     Input("search-input", "value"),
     Input("search-sync-checkbox", "value"),
@@ -201,7 +214,7 @@ def clipboard_copy(_: int, teams: list[str], text: str | None, sync: bool, url: 
     ],
     persistent=True,
 )
-async def update_table(teams: list[str], text: str | None, sync: bool) -> Literal[True]:  # type: ignore[misc]  # noqa: FBT001
+async def update_table(teams: list[str], text: str | None, sync: bool) -> tuple[Literal[True], bool, str | None]:  # type: ignore[misc]  # noqa: FBT001
     """Update the table data.
 
     Always force `debounce=True` when returning. When initially loading the page,
@@ -221,9 +234,16 @@ async def update_table(teams: list[str], text: str | None, sync: bool) -> Litera
     log_buffer: deque[str] = deque()
     data: list[dict[str, str]] = []
 
+    pattern: str | re.Pattern[str] = "."
+    if text:
+        try:
+            pattern = re.compile(text)
+        except re.PatternError as e:
+            return True, True, f"{e.__class__.__name__}: {e}"
+
     if (not teams) or (not text):
         await update()
-        return True
+        return True, False, None
 
     registers = cfg.equipment_registers(teams)
 
@@ -252,8 +272,8 @@ async def update_table(teams: list[str], text: str | None, sync: bool) -> Litera
                 "Model": equipment.model,
                 "Serial": equipment.serial,
             }
-            for equipment in reg.find(text)
+            for equipment in reg.find(pattern)
         )
         await update()
 
-    return True
+    return True, False, None

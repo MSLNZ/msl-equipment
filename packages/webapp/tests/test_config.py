@@ -21,6 +21,7 @@ def test_default() -> None:
     assert cfg.navbar.color == "dark"
     assert cfg.registers == []
     assert cfg.pdflatex == "pdflatex"
+    assert cfg.git == "git"
     assert cfg.verapdf.startswith("verapdf")
     assert cfg.theme == "BOOTSTRAP"
 
@@ -50,6 +51,7 @@ def test_load_all_options(tmp_path: Path) -> None:
     _ = file.write_text("""
             {
             "assets": "~/my/assets",
+            "git": "~/the/git",
             "host": "1.2.3.4",
             "logo": {
                 "src": "logo.ico",
@@ -79,6 +81,7 @@ def test_load_all_options(tmp_path: Path) -> None:
     home = Path("~").expanduser()
 
     assert cfg.assets == (home / "my/assets").as_posix()
+    assert cfg.git == (home / "the/git").as_posix()
     assert cfg.host == "1.2.3.4"
     assert cfg.logo.src == "logo.ico"
     assert cfg.logo.height == 101

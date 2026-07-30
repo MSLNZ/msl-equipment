@@ -4,7 +4,7 @@ from __future__ import annotations
 import base64
 from pathlib import Path
 from subprocess import run
-from tempfile import TemporaryDirectory, gettempdir
+from tempfile import TemporaryDirectory
 
 import pytest
 from msl.equipment_webapp import utils
@@ -22,6 +22,10 @@ except FileNotFoundError:
     has_pdflatex = False
 
 
+def test_is_register_valid() -> None:
+    assert utils.is_register_valid(Path("tests/data/light/register.xml"))
+
+
 @pytest.mark.anyio
 async def test_process_events() -> None:
     out = await utils.process_events()  # type: ignore[func-returns-value]
@@ -29,8 +33,17 @@ async def test_process_events() -> None:
 
 
 @pytest.mark.anyio
-async def test_git_pull_not_git_dir() -> None:
-    registers = [EquipmentRegister("Light", Path(gettempdir()))]
+async def test_git_not_installed() -> None:
+    git = cfg.git
+    cfg.git = "missing"
+    error = await utils.git_pull([EquipmentRegister("Light", Path())])
+    cfg.git = git
+    assert error.startswith("  \u21b3 ERROR! Cannot sync")
+
+
+@pytest.mark.anyio
+async def test_git_pull_not_git_dir(tmp_path: Path) -> None:
+    registers = [EquipmentRegister("Light", tmp_path)]
     error = await utils.git_pull(registers)
     assert error == ""  # no error, directory is ignored
 
@@ -39,13 +52,11 @@ async def test_git_pull_not_git_dir() -> None:
 async def test_pdflatex_not_installed() -> None:
     pdflatex = cfg.pdflatex
     cfg.pdflatex = "missing"
-    error1 = await utils.latex_to_pdf(Path("not-used.tex"))
-    pdf_path, error2 = await utils.to_pdf(Path("not-used.tex"), {})
+    pdf_path, error = await utils.to_pdf(Path("not-used.tex"), {})
     cfg.pdflatex = pdflatex
 
     assert pdf_path == Path("not-used.pdf")
-    assert error1.startswith("ERROR! `pdflatex` cannot be found.")
-    assert error2.startswith("ERROR! `pdflatex` cannot be found.")
+    assert error.startswith("ERROR! `pdflatex` cannot be found.")
 
 
 @pytest.mark.anyio
@@ -76,11 +87,7 @@ async def test_pdflatex_passes() -> None:
 
         assert error == ""
         assert (Path(tmp) / "data.txt").read_text() == "hi"
-        assert pdf == file.with_suffix(".pdf")
-
-
-def test_is_register_valid() -> None:
-    assert utils.is_register_valid(Path("tests/data/light/register.xml"))
+        assert pdf == Path(tmp) / "file with spaces.pdf"
 
 
 @pytest.mark.anyio

@@ -74,8 +74,8 @@ PDF file.
 When converting a $\\LaTeX$ document, all uploaded files are saved to the same temporary directory
 before running the conversion script. As such, when converting a $\\LaTeX$ document, all external
 file references must be set appropriately (i.e., references to files in subdirectories or different
-parent directories should not be used). The $\\LaTeX$ document must specify what files are to be
-embedded in the PDF file and what files are used only for the build process.
+parent directories should not be used). The $\\LaTeX$ document must specify which files are to be
+embedded in the PDF file and which files are used only for the build process.
 """
 
 layout = html.Div(

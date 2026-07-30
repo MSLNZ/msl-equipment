@@ -6,11 +6,13 @@ description = "Web application to manage information about equipment"
 license = {file = "LICENSE.txt"}
 readme = "README.md"
 dependencies = [
+    "comtypes>=1.4.12 ; sys_platform == 'win32'",
     "dash-ag-grid>=35.3.0",
     "dash-bootstrap-components>=1.6.0",
     "dash[fastapi]>=4.3.0",
     "msl-equipment",
     "msl-equipment-validate",
+    "pikepdf>=9.2.1",
 ]
 keywords = [
     "MSL",

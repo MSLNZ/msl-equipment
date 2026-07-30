@@ -80,6 +80,9 @@ class Config:
     Store the favicon.ico and custom.css files here.
     """
 
+    git: str = "git"
+    """Path to the [git](https://git-scm.com/) executable."""
+
     host: str = "0.0.0.0"  # noqa: S104
     """The network interface to run the app on.
 
@@ -96,7 +99,7 @@ class Config:
     """Name of the National Metrology Institute."""
 
     pdflatex: str = "pdflatex"
-    """Path to the `pdflatex` executable."""
+    """Path to the `pdflatex` (e.g., [MiKTeX](https://miktex.org/), [TeX Live](https://www.tug.org/texlive/)) executable."""  # noqa: E501
 
     port: int = 17025
     """The port number to use for the app."""
@@ -124,11 +127,12 @@ class Config:
             raise TypeError(msg)
 
         d: dict[str, Any] = data  # pyright: ignore[reportUnknownVariableType]
-        self.assets = Path(d.get("assets", self.assets)).expanduser().as_posix()
-        self.host = host or d.get("host", self.host)
         self.nmi = d.get("nmi", self.nmi)
-        self.port = port or int(d.get("port", self.port))
         self.theme = d.get("theme", self.theme)
+        self.host = host or d.get("host", self.host)
+        self.port = port or int(d.get("port", self.port))
+        self.assets = Path(d.get("assets", self.assets)).expanduser().as_posix()
+        self.git = Path(d.get("git", self.git)).expanduser().as_posix()
         self.pdflatex = Path(d.get("pdflatex", self.pdflatex)).expanduser().as_posix()
         self.verapdf = Path(d.get("verapdf", self.verapdf)).expanduser().as_posix()
         self.logo = Logo(**d.get("logo", {}))

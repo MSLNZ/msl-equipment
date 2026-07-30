@@ -4,14 +4,19 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import mimetypes
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from lxml import etree
 from msl.equipment_validate import DEFAULT_SCHEMA_DIR, find_xml_files, recursive_validate
 from msl.equipment_webapp.config import cfg
+from msl.loadlib import LoadLibrary
+from pikepdf import Array, AttachedFileSpec, Pdf
+from zoneinfo import ZoneInfo
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterable
     from pathlib import Path
 
     from .config import EquipmentRegister
@@ -21,9 +26,27 @@ __all__: list[str] = ["find_xml_files"]
 
 er_schema = etree.XMLSchema(etree.parse(DEFAULT_SCHEMA_DIR / "equipment-register.xsd"))
 c_schema = etree.XMLSchema(etree.parse(DEFAULT_SCHEMA_DIR / "connections.xsd"))
+word_app: str | LoadLibrary | None = None
 
 
-async def subprocess_run(cmd: Sequence[str], cwd: Path | None = None) -> tuple[int, bytes, bytes]:
+def is_register_valid(*files: Path) -> bool:
+    """Check if the specified files are valid against the schema."""
+    summary = recursive_validate(
+        files=files,
+        er_schema=er_schema,
+        c_schema=c_schema,
+        roots=[],
+        exit_first=True,
+        uri_scheme=None,
+        skip_checksum=True,
+        no_colour=True,
+    )
+    ok = summary.num_issues == 0
+    summary.reset()
+    return ok
+
+
+async def subprocess_run(cmd: Iterable[str], cwd: Path | None = None) -> tuple[int, bytes, bytes]:
     """Asynchronously run a subprocess command.
 
     Args:
@@ -52,7 +75,7 @@ async def git_pull(registers: list[EquipmentRegister]) -> str:
         An error message, if an error occurred.
     """
     results = await asyncio.gather(
-        *(subprocess_run(["git", "pull"], cwd=r.dir) for r in registers if (r.dir / ".git").exists())
+        *(subprocess_run([cfg.git, "pull"], cwd=r.dir) for r in registers if (r.dir / ".git").exists())
     )
     for code, _, stderr in results:
         if code != 0:
@@ -60,23 +83,6 @@ async def git_pull(registers: list[EquipmentRegister]) -> str:
             # an error does occur it will occur for every task so return the first error
             return f"  \u21b3 ERROR! Cannot sync: {stderr.decode()}"
     return ""
-
-
-def is_register_valid(*files: Path) -> bool:
-    """Check if the specified files are valid against the schema."""
-    summary = recursive_validate(
-        files=files,
-        er_schema=er_schema,
-        c_schema=c_schema,
-        roots=[],
-        exit_first=True,
-        uri_scheme=None,
-        skip_checksum=True,
-        no_colour=True,
-    )
-    ok = summary.num_issues == 0
-    summary.reset()
-    return ok
 
 
 async def latex_to_pdf(tex: Path) -> str:
@@ -88,10 +94,8 @@ async def latex_to_pdf(tex: Path) -> str:
     Returns:
         An error message, if an error occurred.
     """
-    # resolve() is required on Windows
-    path = f'"{tex.resolve()}"'  # noqa: ASYNC240
     code, stdout, stderr = await subprocess_run(
-        [cfg.pdflatex, "-halt-on-error", "--max-print-line=1000", path], cwd=tex.parent
+        [cfg.pdflatex, "-halt-on-error", "--max-print-line=1000", f'"{tex.name}"'], cwd=tex.parent
     )
     if code == 0:
         return ""
@@ -108,23 +112,76 @@ async def latex_to_pdf(tex: Path) -> str:
     return f"ERROR! Cannot convert.\n\n{msg}"
 
 
-def word_to_pdf(docx: Path, extra: dict[str, str]) -> str:  # pyright: ignore[reportUnusedParameter]  # noqa: ARG001
+def word_to_pdf(docx: Path, extra: dict[str, str]) -> str:
     """Use the Microsoft Word API (COM object) to export the `.docx` file.
 
     Requires Word to be installed in the computer running the web application.
     Could consider using [Adobe's PDF Services API](https://developer.adobe.com/document-services/docs/overview/pdf-services-api/)
     if installing Microsoft Word is not possible. See [docx2pdf](https://github.com/softwareone-platform/docx2pdf)
-    for a workflow that uses the CLIENT_ID and CLIENT_SECRET provided by Adobe.
+    for a workflow that uses a CLIENT_ID and CLIENT_SECRET provided by Adobe.
 
     Args:
         docx: The path to a `.docx` file.
-        extra: Extra files that were uploaded for the conversion.
+        extra: Extra files that were uploaded to be embedded as attachments.
             A mapping between the uploaded filename and the file content (base64 encoded).
 
     Returns:
         An error message, if an error occurred.
     """
-    return "Converting docx files is not implemented yet."
+    global word_app  # noqa: PLW0603
+    if word_app is None:
+        try:
+            word_app = LoadLibrary("Word.Application", "com")
+        except ModuleNotFoundError:
+            word_app = "Converting a docx file is not supported by the server. The server is not running on Windows."
+        except OSError:
+            word_app = "Converting a docx file is not supported by the server. Microsoft Word is not installed."
+        else:
+            word_app.lib.Visible = False
+
+    if isinstance(word_app, str):
+        return word_app
+
+    tmp_pdf = docx.with_name("tmp.pdf")  # without embedded files
+
+    # https://learn.microsoft.com/en-us/office/vba/api/word.document.exportasfixedformat
+    doc = word_app.lib.Documents.Open(docx.resolve().as_posix())
+    doc.ExportAsFixedFormat(
+        OutputFileName=str(tmp_pdf),
+        ExportFormat=17,  # wdExportFormatPDF
+        OpenAfterExport=False,
+        OptimizeFor=0,  # wdExportOptimizeForPrint
+        Range=0,  # wdExportAllDocument
+        Item=0,  # wdExportDocumentContent
+        IncludeDocProps=True,
+        KeepIRM=True,
+        CreateBookmarks=1,  # wdExportCreateHeadingBookmarks
+        DocStructureTags=True,
+        BitmapMissingFonts=True,
+        UseISO19005_1=True,  # Required for PDF/A
+    )
+    doc.Close()
+
+    now = datetime.now(tz=ZoneInfo("Pacific/Auckland")).replace(microsecond=0)
+    with Pdf.open(tmp_pdf) as pdf:
+        af_entries = list(pdf.Root.get("/AF", Array()))
+        for filename, b64 in extra.items():
+            afs = AttachedFileSpec(
+                pdf,
+                base64.b64decode(b64),
+                description=filename,
+                filename=filename,
+                mime_type=mimetypes.guess_type(filename)[0] or "text/plain",
+                creation_date=now.isoformat(),
+                mod_date=now.isoformat(),
+            )
+            pdf.attachments[filename] = afs
+            af_entries.append(afs.obj)
+
+        pdf.Root.AF = pdf.make_indirect(Array(af_entries))
+        pdf.save(docx.with_suffix(".pdf"))
+
+    return ""
 
 
 async def to_pdf(document: Path, extra: dict[str, str]) -> tuple[Path, str]:
@@ -161,7 +218,7 @@ async def vera_check(path: Path) -> str:
     Returns:
         An error message, if an error occurred.
     """
-    code, stdout, stderr = await subprocess_run([cfg.verapdf, "--format", "xml", f'"{path}"'])
+    code, stdout, stderr = await subprocess_run([cfg.verapdf, "--format", "xml", f'"{path.name}"'], cwd=path.parent)
     if code == 0:
         return ""
 

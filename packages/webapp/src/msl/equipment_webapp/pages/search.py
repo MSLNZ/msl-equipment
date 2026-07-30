@@ -39,7 +39,7 @@ def layout(**params: str) -> html.Div:
                     dcc.Dropdown(cfg.teams, multi=True, value=team, id="search-team-dropdown", style={"width": "60%"}),
                     dbc.Input(
                         id="search-input",
-                        placeholder="Enter search text (can be regular-expression pattern)",
+                        placeholder="Search pattern",
                         type="text",
                         debounce=len(text) == 0,  # if `text` is a URL query parameter, trigger callback on page load
                         value=text,

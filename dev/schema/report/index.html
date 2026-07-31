@@ -6533,13 +6533,13 @@ or the <a class="autorefs autorefs-internal" title="            measurement_stop
 
   
       instance-attribute
-  " href="#msl.equipment.schema.Report.measurement_stop_date">measurement_stop_date</a>, along with
+  " href="#msl.equipment.schema.Report.measurement_stop_date">measurement_stop_date</a>, along with the
 <a class="autorefs autorefs-internal" title="            calibration_interval
 
 
   
       instance-attribute
-  " href="../measurand/#msl.equipment.schema.Measurand.calibration_interval">calibration_interval</a>, to determine when
+  " href="../measurand/#msl.equipment.schema.Measurand.calibration_interval">calibration_interval</a> to determine when
 a recalibration is due.</p>
 
     </div>
@@ -6752,8 +6752,7 @@ a recalibration is due.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1906</span>
-<span class="normal">1907</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1907</span>
 <span class="normal">1908</span>
 <span class="normal">1909</span>
 <span class="normal">1910</span>
@@ -6802,7 +6801,8 @@ a recalibration is due.</p>
 <span class="normal">1953</span>
 <span class="normal">1954</span>
 <span class="normal">1955</span>
-<span class="normal">1956</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1956</span>
+<span class="normal">1957</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Report</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Report][msl.equipment.schema.Report] instance.</span>
 
@@ -6910,8 +6910,7 @@ a recalibration is due.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/msl/equipment/schema.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1958</span>
-<span class="normal">1959</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1959</span>
 <span class="normal">1960</span>
 <span class="normal">1961</span>
 <span class="normal">1962</span>
@@ -6948,7 +6947,8 @@ a recalibration is due.</p>
 <span class="normal">1993</span>
 <span class="normal">1994</span>
 <span class="normal">1995</span>
-<span class="normal">1996</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">1996</span>
+<span class="normal">1997</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Report][msl.equipment.schema.Report] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>

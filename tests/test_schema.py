@@ -51,8 +51,6 @@ from msl.equipment import (
 from msl.equipment.schema import Latest, _future_date, _Indent, connections  # pyright: ignore[reportPrivateUsage]
 
 if TYPE_CHECKING:
-    from typing import Literal
-
     from numpy.typing import ArrayLike
 
     from msl.equipment.schema import Any
@@ -2019,8 +2017,7 @@ def test_latest_performance_check_empty(calibrations: tuple[Measurand, ...]) -> 
     assert list(e.latest_performance_checks()) == []
 
 
-@pytest.mark.parametrize(("value", "expect"), [("stop", "B"), ("issue", "C"), ("start", "B")])
-def test_latest_report_single_measurand_and_component(value: Literal["start", "stop", "issue"], expect: str) -> None:
+def test_latest_report_single_measurand_and_component_start_date() -> None:
     e = Equipment(
         calibrations=(
             Measurand(
@@ -2035,21 +2032,22 @@ def test_latest_report_single_measurand_and_component(value: Literal["start", "s
                                 entered_by="",
                                 report_issue_date=date(2020, 6, 3),
                                 measurement_start_date=date(2020, 5, 1),
-                                measurement_stop_date=date(2020, 5, 4),
+                                measurement_stop_date=date(2025, 5, 4),  # intentionally larger than all start dates
+                                recalibrate_reference="start",  # also the default value, so don't define below
                             ),
                             Report(
                                 id="B",
                                 entered_by="",
                                 report_issue_date=date(2024, 10, 23),
                                 measurement_start_date=date(2024, 2, 15),
-                                measurement_stop_date=date(2024, 2, 16),
+                                measurement_stop_date=date(2025, 5, 5),  # intentionally larger than all start dates
                             ),
                             Report(
                                 id="C",
                                 entered_by="",
-                                report_issue_date=date(2025, 4, 10),  # issue date > Report(id=B) issue date
+                                report_issue_date=date(2022, 4, 10),
                                 measurement_start_date=date(2022, 3, 20),
-                                measurement_stop_date=date(2022, 3, 22),
+                                measurement_stop_date=date(2025, 5, 6),  # intentionally larger than all start dates
                             ),
                         ),
                     ),
@@ -2058,40 +2056,119 @@ def test_latest_report_single_measurand_and_component(value: Literal["start", "s
         )
     )
 
-    reports = list(e.latest_reports(date=value))
+    reports = list(e.latest_reports())
     assert len(reports) == 1
     assert reports[0].quantity == "1"
     assert reports[0].name == "2"
-    assert reports[0].id == expect
-    assert str(reports[0]) == f"LatestReport(name='2', quantity='1', id={expect!r})"
+    assert reports[0].id == "B"
+    assert reports[0].next_calibration_date == date(2025, 2, 15)
+    assert str(reports[0]) == "LatestReport(name='2', quantity='1', id='B')"
 
     # Don't specify `quantity` or `name` and the correct report is returned
-    latest = e.latest_report(date=value)
+    latest = e.latest_report()
     assert latest is not None
-    assert latest.id == expect
+    assert latest.id == "B"
 
     # Can specify `quantity` and/or `name` provided that the value matches a report
-    latest = e.latest_report(quantity="1", date=value)
+    latest = e.latest_report(quantity="1")
     assert latest is not None
-    assert latest.id == expect
+    assert latest.id == "B"
 
-    latest = e.latest_report(name="2", date=value)
+    latest = e.latest_report(name="2")
     assert latest is not None
-    assert latest.id == expect
+    assert latest.id == "B"
 
-    latest = e.latest_report(quantity="1", name="2", date=value)
+    latest = e.latest_report(quantity="1", name="2")
     assert latest is not None
-    assert latest.id == expect
+    assert latest.id == "B"
 
     # If `quantity` and/or `name` are specified then the Report must match accordingly
     with pytest.raises(ValueError, match=r"Cannot determine the latest report"):
-        _ = e.latest_report(quantity="Anything", date=value)
+        _ = e.latest_report(quantity="Anything")
 
     with pytest.raises(ValueError, match=r"Cannot determine the latest report"):
-        _ = e.latest_report(name="Anything", date=value)
+        _ = e.latest_report(name="Anything")
 
     with pytest.raises(ValueError, match=r"Cannot determine the latest report"):
-        _ = e.latest_report(quantity="2", name="1", date=value)
+        _ = e.latest_report(quantity="2", name="1")
+
+
+def test_latest_report_single_measurand_and_component_stop_date() -> None:
+    e = Equipment(
+        calibrations=(
+            Measurand(
+                quantity="1",
+                calibration_interval=1,
+                components=(
+                    Component(
+                        name="2",
+                        reports=(
+                            Report(
+                                id="A",
+                                entered_by="",
+                                report_issue_date=date(2024, 10, 23),
+                                measurement_start_date=date(2025, 5, 2),  # intentionally larger than all stop dates
+                                measurement_stop_date=date(2024, 2, 16),
+                                recalibrate_reference="stop",
+                            ),
+                            Report(
+                                id="B",
+                                entered_by="",
+                                report_issue_date=date(2020, 6, 3),
+                                measurement_start_date=date(2025, 5, 1),  # intentionally larger than all stop dates
+                                measurement_stop_date=date(2020, 5, 4),
+                                recalibrate_reference="stop",
+                            ),
+                            Report(
+                                id="C",
+                                entered_by="",
+                                report_issue_date=date(2022, 4, 10),
+                                measurement_start_date=date(2025, 5, 3),  # intentionally larger than all stop dates
+                                measurement_stop_date=date(2022, 3, 22),
+                                recalibrate_reference="stop",
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+    )
+
+    reports = list(e.latest_reports())
+    assert len(reports) == 1
+    assert reports[0].quantity == "1"
+    assert reports[0].name == "2"
+    assert reports[0].id == "A"
+    assert reports[0].next_calibration_date == date(2025, 2, 16)
+    assert str(reports[0]) == "LatestReport(name='2', quantity='1', id='A')"
+
+    # Don't specify `quantity` or `name` and the correct report is returned
+    latest = e.latest_report()
+    assert latest is not None
+    assert latest.id == "A"
+
+    # Can specify `quantity` and/or `name` provided that the value matches a report
+    latest = e.latest_report(quantity="1")
+    assert latest is not None
+    assert latest.id == "A"
+
+    latest = e.latest_report(name="2")
+    assert latest is not None
+    assert latest.id == "A"
+
+    latest = e.latest_report(quantity="1", name="2")
+    assert latest is not None
+    assert latest.id == "A"
+
+    # If `quantity` and/or `name` are specified then the Report must match accordingly
+    with pytest.raises(ValueError, match=r"Cannot determine the latest report"):
+        _ = e.latest_report(quantity="Anything")
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest report"):
+        _ = e.latest_report(name="Anything")
+
+    with pytest.raises(ValueError, match=r"Cannot determine the latest report"):
+        _ = e.latest_report(quantity="2", name="1")
 
 
 def test_latest_performance_check_single_measurand_and_component() -> None:
@@ -2196,7 +2273,7 @@ def test_latest_report_multiple_measurand_and_components() -> None:
                             Report(
                                 id="C",
                                 entered_by="",
-                                report_issue_date=date(2025, 4, 10),  # issue date > Report(id=B) issue date
+                                report_issue_date=date(2022, 4, 10),
                                 measurement_start_date=date(2022, 3, 20),
                                 measurement_stop_date=date(2022, 3, 22),
                             ),
@@ -2211,6 +2288,7 @@ def test_latest_report_multiple_measurand_and_components() -> None:
                                 report_issue_date=date(2024, 10, 23),
                                 measurement_start_date=date(2024, 2, 15),
                                 measurement_stop_date=date(2024, 2, 16),
+                                recalibrate_reference="stop",
                             ),
                             Report(
                                 id="D",
@@ -2222,7 +2300,7 @@ def test_latest_report_multiple_measurand_and_components() -> None:
                             Report(
                                 id="F",
                                 entered_by="",
-                                report_issue_date=date(2025, 4, 10),  # issue date > Report(id=B) issue date
+                                report_issue_date=date(2023, 4, 10),
                                 measurement_start_date=date(2022, 3, 20),
                                 measurement_stop_date=date(2022, 3, 22),
                             ),
@@ -2247,7 +2325,7 @@ def test_latest_report_multiple_measurand_and_components() -> None:
                             Report(
                                 id="c",
                                 entered_by="",
-                                report_issue_date=date(2025, 4, 10),  # issue date > Report(id=B) issue date
+                                report_issue_date=date(2022, 4, 10),
                                 measurement_start_date=date(2022, 3, 20),
                                 measurement_stop_date=date(2022, 3, 22),
                             ),
@@ -2273,7 +2351,7 @@ def test_latest_report_multiple_measurand_and_components() -> None:
                             Report(
                                 id="f",
                                 entered_by="",
-                                report_issue_date=date(2025, 4, 10),  # issue date > Report(id=B) issue date
+                                report_issue_date=date(2023, 4, 10),
                                 measurement_start_date=date(2022, 3, 20),
                                 measurement_stop_date=date(2022, 3, 22),
                             ),
@@ -2281,8 +2359,9 @@ def test_latest_report_multiple_measurand_and_components() -> None:
                                 id="e",
                                 entered_by="",
                                 report_issue_date=date(2024, 10, 23),
-                                measurement_start_date=date(2024, 2, 15),
-                                measurement_stop_date=date(2024, 2, 16),
+                                measurement_start_date=date(2024, 6, 2),
+                                measurement_stop_date=date(2024, 7, 16),
+                                recalibrate_reference="stop",
                             ),
                         ),
                     ),
@@ -2300,18 +2379,26 @@ def test_latest_report_multiple_measurand_and_components() -> None:
     assert reports[0].report_issue_date == date(2024, 10, 23)
     assert reports[0].measurement_start_date == date(2024, 2, 15)
     assert reports[0].measurement_stop_date == date(2024, 2, 16)
+    assert reports[0].recalibrate_reference == "start"
+    assert reports[0].next_calibration_date == date(2029, 2, 15)
 
     assert reports[1].quantity == "Temperature"
     assert reports[1].name == "Probe 2"
     assert reports[1].id == "E"
+    assert reports[1].recalibrate_reference == "stop"
+    assert reports[1].next_calibration_date == date(2029, 2, 16)
 
     assert reports[2].quantity == "Humidity"
     assert reports[2].name == "Probe 1"
     assert reports[2].id == "b"
+    assert reports[2].recalibrate_reference == "start"
+    assert reports[2].next_calibration_date == date(2029, 2, 15)
 
     assert reports[3].quantity == "Humidity"
     assert reports[3].name == "Probe 2"
     assert reports[3].id == "e"
+    assert reports[3].recalibrate_reference == "stop"
+    assert reports[3].next_calibration_date == date(2029, 7, 16)
 
     with pytest.raises(ValueError, match=r"Cannot determine the latest report"):  # must specify `quantity` or `name`
         _ = e.latest_report()
@@ -2326,17 +2413,9 @@ def test_latest_report_multiple_measurand_and_components() -> None:
     assert report is not None
     assert report.id == "B"
 
-    report = e.latest_report(quantity="Temperature", name="Probe 1", date="start")
+    report = e.latest_report(quantity="Humidity", name="Probe 2")
     assert report is not None
-    assert report.id == "B"
-
-    report = e.latest_report(quantity="Temperature", name="Probe 1", date="issue")
-    assert report is not None
-    assert report.id == "C"
-
-    report = e.latest_report(quantity="Humidity", name="Probe 2", date="issue")
-    assert report is not None
-    assert report.id == "f"
+    assert report.id == "e"
 
 
 def test_latest_performance_check_multiple_measurand_and_components() -> None:

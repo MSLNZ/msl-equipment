@@ -1833,9 +1833,10 @@ class Report:
 
     recalibrate_reference: Literal["start", "stop"] = "start"
     """Whether to use the [measurement_start_date][msl.equipment.schema.Report.measurement_start_date]
-    or the [measurement_stop_date][msl.equipment.schema.Report.measurement_stop_date], along with
-    [calibration_interval][msl.equipment.schema.Measurand.calibration_interval], to determine when
-    a recalibration is due."""
+    or the [measurement_stop_date][msl.equipment.schema.Report.measurement_stop_date], along with the
+    [calibration_interval][msl.equipment.schema.Measurand.calibration_interval] to determine when
+    a recalibration is due.
+    """
 
     conditions: Conditions = field(default_factory=Conditions)
     """The conditions under which the report is valid."""
@@ -2691,15 +2692,8 @@ class Equipment:
             raise ValueError(msg)
         return latest
 
-    def latest_reports(self, date: Literal["issue", "start", "stop"] = "stop") -> Iterator[LatestReport]:
+    def latest_reports(self) -> Iterator[LatestReport]:
         """Yields the latest calibration report for every _measurand_ and _component_.
-
-        Args:
-            date: Which date in a report to use to determine what _latest_ refers to:
-
-                * `issue`: Report issue date
-                * `start`: Measurement start date
-                * `stop`: Measurement stop date
 
         Yields:
             The latest calibration report.
@@ -2710,17 +2704,13 @@ class Equipment:
                 latest = default
                 report: Report | None = None
                 for r in c.reports:
-                    if date == "stop":
+                    if r.recalibrate_reference == "stop":
                         if r.measurement_stop_date > latest:
                             report = r
                             latest = r.measurement_stop_date
-                    elif date == "start":
-                        if r.measurement_start_date > latest:
-                            report = r
-                            latest = r.measurement_start_date
-                    elif r.report_issue_date > latest:
+                    elif r.measurement_start_date > latest:
                         report = r
-                        latest = r.report_issue_date
+                        latest = r.measurement_start_date
 
                 if report is not None:
                     ref_date = (
@@ -2753,19 +2743,12 @@ class Equipment:
                         tables=report.tables,
                     )
 
-    def latest_report(
-        self, *, quantity: str = "", name: str = "", date: Literal["issue", "start", "stop"] = "stop"
-    ) -> LatestReport | None:
+    def latest_report(self, *, quantity: str = "", name: str = "") -> LatestReport | None:
         """Returns the latest calibration report.
 
         Args:
             quantity: The measurand [quantity][msl.equipment.schema.Measurand.quantity].
             name: The component [name][msl.equipment.schema.Component.name].
-            date: Which date in a report to use to determine what _latest_ refers to:
-
-                * `issue`: Report issue date
-                * `start`: Measurement start date
-                * `stop`: Measurement stop date
 
         Returns:
             The [LatestReport][msl.equipment.schema.LatestReport] for the specified `quantity` and `name`.
@@ -2777,7 +2760,7 @@ class Equipment:
             ValueError: If the latest calibration report cannot be uniquely determined based on the
                 `quantity` and `name`.
         """
-        reports = list(self.latest_reports(date=date))
+        reports = list(self.latest_reports())
         latest = _latest(items=reports, quantity=quantity, name=name)
         if latest is None and reports:
             msg = "Cannot determine the latest report, refine by specifying the `name` and/or `quantity`\n  "

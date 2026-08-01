@@ -31,7 +31,7 @@ jobs:
           Invoke-WebRequest -Uri https://github.com/libusb/libusb/releases/download/v1.0.30/libusb-1.0.30.7z -OutFile libusb.7z
           7z e libusb.7z -oC:\Windows\System32 VS2022\MS64\dll\libusb-1.0.dll
       - name: Install uv
-        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           enable-cache: false
       - name: Run tests
@@ -44,7 +44,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
       - name: Setup uv
-        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           enable-cache: false
           python-version: '3.14'

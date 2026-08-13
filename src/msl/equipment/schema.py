@@ -577,6 +577,18 @@ class PlannedTask:
             performed_by=element.get("performedBy", ""),
         )
 
+    def is_task_due(self, months: int) -> bool:
+        """Determine if the planned task is due to be completed within the specified number of months.
+
+        Args:
+            months: The number of months to add to today's date to determine if the task
+                is due to be completed.
+
+        Returns:
+            Whether the task is due to be completed within the specified number of `months`.
+        """
+        return self.due_date <= _future_date(_date.today(), max(0.0, months / 12.0))  # noqa: DTZ011
+
     def to_xml(self) -> Element[str]:
         """Convert the [PlannedTask][msl.equipment.schema.PlannedTask] class into an XML element.
 

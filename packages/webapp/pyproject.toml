@@ -13,6 +13,7 @@ dependencies = [
     "msl-equipment",
     "msl-equipment-validate",
     "pikepdf>=9.2.1",
+    "python-multipart>=0.0.20",
 ]
 keywords = [
     "MSL",

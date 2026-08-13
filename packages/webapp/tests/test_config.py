@@ -8,7 +8,7 @@ from msl.equipment_webapp.config import Config, EquipmentRegister
 
 def test_default() -> None:
     cfg = Config()
-    assert cfg.equipment_registers(["ignored"]) == []
+    assert cfg.equipment_registers("ignored") == []
     assert cfg.teams == []
     assert cfg.assets == "assets"
     assert cfg.host == "0.0.0.0"  # noqa: S104
@@ -24,9 +24,10 @@ def test_default() -> None:
     assert cfg.git == "git"
     assert cfg.verapdf.startswith("verapdf")
     assert cfg.theme == "BOOTSTRAP"
+    assert cfg.wordapp == "Word.Application"
 
 
-def test_load_not_found() -> None:
+def test_load_file_not_found() -> None:
     with pytest.raises(FileNotFoundError):
         Config().load("missing.json")
 
@@ -48,6 +49,8 @@ def test_load_not_a_dict(tmp_path: Path) -> None:
 
 def test_load_all_options(tmp_path: Path) -> None:
     file = tmp_path / "example.json"
+
+    # defining the port as a string is also ok
     _ = file.write_text("""
             {
             "assets": "~/my/assets",
@@ -65,14 +68,13 @@ def test_load_all_options(tmp_path: Path) -> None:
             },
             "nmi": "Any",
             "pdflatex": "~/pdflatex/pdflatex.exe",
-            "port": 8080,
-            "registers": {
-                "Length": "~/register/Length",
-                "Light": "~/register/Light",
-                "Temperature": "~/register/Temperature"
-            },
+            "port": "8080",
+            "registers": [
+                "tests/data/light"
+            ],
             "theme": "simplex",
-            "verapdf": "~/verapdf/verapdf.bat"
+            "verapdf": "~/verapdf/verapdf.bat",
+            "wordapp": "MS-Word-COM"
             }""")
 
     cfg = Config()
@@ -92,12 +94,14 @@ def test_load_all_options(tmp_path: Path) -> None:
     assert cfg.pdflatex == (home / "pdflatex/pdflatex.exe").as_posix()
     assert cfg.port == 8080
     assert cfg.registers == [
-        EquipmentRegister("Length", home / "register/Length"),
-        EquipmentRegister("Light", home / "register/Light"),
-        EquipmentRegister("Temperature", home / "register/Temperature"),
+        EquipmentRegister("Light", Path("tests/data/light")),
     ]
     assert cfg.theme == "simplex"
     assert cfg.verapdf == (home / "verapdf/verapdf.bat").as_posix()
+    assert cfg.wordapp == "MS-Word-COM"
 
-    assert cfg.equipment_registers(["Light"]) == [EquipmentRegister("Light", home / "register/Light")]
-    assert cfg.teams == ["Length", "Light", "Temperature"]
+    assert cfg.equipment_registers("Light") == [EquipmentRegister("Light", Path("tests/data/light"))]
+    assert cfg.equipment_registers("Mass") == []
+    assert cfg.teams == ["Light"]
+
+    assert cfg.registers[0].files() == [Path("tests/data/light/register.xml")]

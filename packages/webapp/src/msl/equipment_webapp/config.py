@@ -8,6 +8,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from msl.equipment_validate import find_xml_files
+
+from msl.equipment import Register
+
 
 @dataclass
 class Logo:
@@ -62,12 +66,15 @@ class EquipmentRegister:
     team: str
     """The team that is responsible for the equipment register, e.g., `Light`, `Length`."""
 
-    dir: Path
+    # Store the directory to the XML files (and not a list[Path] to the XML files) because
+    # a user can to request a `git pull` on the directory and new XML files may exist after
+    # the web app initially starts.
+    directory: Path
     """The directory that contains the equipment-register files for the `team`."""
 
-    def __post_init__(self) -> None:
-        """Called automatically after the __init__ method finishes."""
-        self.dir = self.dir.expanduser()
+    def files(self) -> list[Path]:
+        """Returns the XML files that compose the equipment register."""
+        return find_xml_files(self.directory)
 
 
 @dataclass
@@ -113,7 +120,10 @@ class Config:
     verapdf: str = "verapdf.bat" if sys.platform == "win32" else "verapdf"
     """Path to the [veraPDF](https://verapdf.org/) executable."""
 
-    def equipment_registers(self, teams: list[str]) -> list[EquipmentRegister]:
+    wordapp: str = "Word.Application"
+    """Name of the COM object for the [Microsoft Word Application](https://learn.microsoft.com/en-us/office/vba/api/word.application)."""
+
+    def equipment_registers(self, *teams: str) -> list[EquipmentRegister]:
         """Returns the equipment registers for the specified `team` names."""
         return [t for t in self.registers if t.team in teams]
 
@@ -129,6 +139,7 @@ class Config:
         d: dict[str, Any] = data  # pyright: ignore[reportUnknownVariableType]
         self.nmi = d.get("nmi", self.nmi)
         self.theme = d.get("theme", self.theme)
+        self.wordapp = d.get("wordapp", self.wordapp)
         self.host = host or d.get("host", self.host)
         self.port = port or int(d.get("port", self.port))
         self.assets = Path(d.get("assets", self.assets)).expanduser().as_posix()
@@ -137,7 +148,11 @@ class Config:
         self.verapdf = Path(d.get("verapdf", self.verapdf)).expanduser().as_posix()
         self.logo = Logo(**d.get("logo", {}))
         self.navbar = NavBar(**d.get("navbar", {}))
-        self.registers.extend(EquipmentRegister(team=k, dir=Path(v)) for k, v in d.get("registers", {}).items())
+
+        for reg in d.get("registers", []):
+            directory = Path(reg).expanduser()
+            files = find_xml_files(directory)
+            self.registers.append(EquipmentRegister(Register(*files).team, directory))
 
     @property
     def teams(self) -> list[str]:

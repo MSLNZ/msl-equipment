@@ -77,6 +77,8 @@ lint = [
     "ruff>=0.12.5",
 ]
 test = [
+    "httpx>=0.28.1 ; python_version <= '3.9'",
+    "httpx2>=2.0.0 ; python_version >= '3.10'",
     "msl-io>=0.1.0",
     "nidaqmx>=1.0.2",
     "pytest>=8.3.5",
@@ -146,7 +148,7 @@ data_file = ".cache/coverage/.coverage"
 omit = [
     "src/msl/equipment/typing.py",
     "**/_version.py",
-    "packages/validate/tests/*.py",
+    "packages/webapp/tests/conftest.py",
 ]
 
 [tool.coverage.report]

@@ -284,6 +284,7 @@
         "udevadm",
         "ulonglong",
         "UNAVAIL",
+        "uncalibrated",
         "ureal",
         "usbpt",
         "USBTMC",
@@ -295,6 +296,7 @@
         "wincamd",
         "WINFUNCTYPE",
         "winget",
+        "wordapp",
         "xoff",
         "xonxoff",
         "Zadig"

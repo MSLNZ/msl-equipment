@@ -1525,6 +1525,8 @@ class Table(np.ndarray):
         dtype = np.dtype([(h, schema_numpy_map[t]) for h, t in zip(_header, _type)])
         data = np.loadtxt(_file, dtype=dtype, delimiter=",", converters=conv)  # type: ignore[arg-type]  # pyright: ignore[reportCallIssue, reportArgumentType, reportUnknownVariableType]
         data.setflags(write=False)  # pyright: ignore[reportUnknownMemberType]
+        if data.ndim == 0:  # pyright: ignore[reportUnknownMemberType]
+            data = np.reshape(data, (1,))  # pyright: ignore[reportUnknownArgumentType, reportUnknownVariableType]
 
         header = np.asarray(_header)
         header.setflags(write=False)  # make it readonly by default

@@ -6,12 +6,14 @@ import contextlib
 from argparse import SUPPRESS, ArgumentParser
 from typing import TYPE_CHECKING
 
+import uvicorn
+
 from ._version import __version__
-from .app import run
+from .app import create_app
 from .config import cfg
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterable
 
 
 def configure_parser() -> ArgumentParser:
@@ -61,10 +63,11 @@ def configure_parser() -> ArgumentParser:
     return parser
 
 
-def main(argv: Sequence[str] | None = None) -> None:
+def main(argv: Iterable[str] | None = None) -> None:
     """Main CLI entry point for the web application."""
     parser = configure_parser()
     ns = parser.parse_args(argv)
     cfg.load(ns.config, host=ns.host, port=ns.port)
+    app = create_app(cfg)
     with contextlib.suppress(KeyboardInterrupt):
-        run(host=cfg.host, port=cfg.port)
+        uvicorn.run(app.server, host=cfg.host, port=cfg.port)

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 import sys
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from io import BytesIO, StringIO
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
@@ -38,6 +38,7 @@ from msl.equipment import (
     Maintenance,
     Measurand,
     PerformanceCheck,
+    PlannedTask,
     QualityManual,
     Range,
     ReferenceMaterials,
@@ -345,6 +346,8 @@ def test_maintenance_two_planned_none_completed() -> None:
     assert m.planned[1].task == "Service laser"
     assert len(m.completed) == 0
     assert tostring(m.to_xml()) == text
+    assert all(t.is_task_due(0) for t in m.planned)
+    assert all(t.is_task_due(-100) for t in m.planned)  # negative converted to 0
 
 
 def test_maintenance_one_planned_one_completed() -> None:
@@ -363,6 +366,7 @@ def test_maintenance_one_planned_one_completed() -> None:
     assert m.planned[0].due_date == date(2025, 5, 15)
     assert m.planned[0].performed_by == "Company X"
     assert m.planned[0].task == "Service laser"
+    assert m.planned[0].is_task_due(0)
     assert len(m.completed) == 1
     assert m.completed[0].due_date == date(2024, 12, 1)
     assert m.completed[0].completed_date == date(2024, 12, 2)
@@ -393,6 +397,23 @@ def test_maintenance_none_planned_two_completed() -> None:
     assert m.completed[1].performed_by == "Tom, MSL"
     assert m.completed[1].task == "Refill helium gas"
     assert tostring(m.to_xml()) == text
+
+
+def test_planned_task_due() -> None:
+    today = date.today()  # noqa: DTZ011
+    pt = PlannedTask(task="task", due_date=today)
+    assert pt.is_task_due(0)
+    assert pt.is_task_due(1)
+    assert pt.is_task_due(12)
+
+    pt = PlannedTask(task="task", due_date=today + timedelta(days=105))
+    assert not pt.is_task_due(0)
+    assert not pt.is_task_due(1)
+    assert not pt.is_task_due(2)
+    assert not pt.is_task_due(3)
+    assert pt.is_task_due(4)
+    assert pt.is_task_due(5)
+    assert pt.is_task_due(12)
 
 
 def test_quality_manual_empty() -> None:

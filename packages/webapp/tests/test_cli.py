@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import socket
 from typing import TYPE_CHECKING
 
 import pytest
@@ -33,8 +34,15 @@ def test_static_dir_not_found(tmp_path: Path) -> None:
         main([str(file)])
 
 
-def test_invalid_port(tmp_path: Path) -> None:
+def test_port_in_use(tmp_path: Path) -> None:
     file = tmp_path / "config.json"
-    _ = file.write_text(f'{{"assets": "{tmp_path.as_posix()}", "port": 100000}}')
-    with pytest.raises(OverflowError):
+
+    s = socket.socket()
+    s.bind(("127.0.0.1", 0))
+    _, port = s.getsockname()
+
+    _ = file.write_text(f'{{"assets": "{tmp_path.as_posix()}", "port": {port}, "host": "127.0.0.1"}}')
+    with pytest.raises(SystemExit):
         main([str(file)])
+
+    s.close()

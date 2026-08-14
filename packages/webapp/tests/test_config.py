@@ -24,6 +24,7 @@ def test_default() -> None:
     assert cfg.git == "git"
     assert cfg.verapdf.startswith("verapdf")
     assert cfg.theme == "BOOTSTRAP"
+    assert cfg.wait == 0.01
     assert cfg.wordapp == "Word.Application"
 
 
@@ -74,6 +75,7 @@ def test_load_all_options(tmp_path: Path) -> None:
             ],
             "theme": "simplex",
             "verapdf": "~/verapdf/verapdf.bat",
+            "wait": 0.025,
             "wordapp": "MS-Word-COM"
             }""")
 
@@ -98,6 +100,7 @@ def test_load_all_options(tmp_path: Path) -> None:
     ]
     assert cfg.theme == "simplex"
     assert cfg.verapdf == (home / "verapdf/verapdf.bat").as_posix()
+    assert cfg.wait == 0.025
     assert cfg.wordapp == "MS-Word-COM"
 
     assert cfg.equipment_registers("Light") == [EquipmentRegister("Light", Path("tests/data/light"))]

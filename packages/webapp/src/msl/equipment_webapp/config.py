@@ -120,6 +120,12 @@ class Config:
     verapdf: str = "verapdf.bat" if sys.platform == "win32" else "verapdf"
     """Path to the [veraPDF](https://verapdf.org/) executable."""
 
+    wait: float = 0.01
+    """The number of seconds to wait after setting a `dash` property.
+
+    If the value is too small, components might not update properly while the dash callback is running.
+    """
+
     wordapp: str = "Word.Application"
     """Name of the COM object for the [Microsoft Word Application](https://learn.microsoft.com/en-us/office/vba/api/word.application)."""
 
@@ -139,6 +145,7 @@ class Config:
         d: dict[str, Any] = data  # pyright: ignore[reportUnknownVariableType]
         self.nmi = d.get("nmi", self.nmi)
         self.theme = d.get("theme", self.theme)
+        self.wait = d.get("wait", self.wait)
         self.wordapp = d.get("wordapp", self.wordapp)
         self.host = host or d.get("host", self.host)
         self.port = port or int(d.get("port", self.port))

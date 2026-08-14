@@ -382,14 +382,15 @@ async def vera_check(path: Path) -> str:
     return f"ERROR! Invalid PDF file.\n```xml\n{stdout.decode()}\n```"
 
 
-async def process_events(sleep: float = 0.01) -> None:
+async def process_events() -> None:
     """Sleep, in seconds, the asyncio event loop.
 
+    This allows the property of a `dash` component to update properly while a callback is running.
+
     The duration should be as short as possible that the operating system supports
-    such that the properties of the web components are actually updated. On Windows,
-    this seems to be 10 ms.
+    such that the properties of the web components are actually updated.
     """
-    await asyncio.sleep(sleep)
+    await asyncio.sleep(cfg.wait)
 
 
 async def recalibrations(  # noqa: C901

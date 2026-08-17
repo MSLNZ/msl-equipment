@@ -38,6 +38,8 @@ def test_default() -> None:
         '"currency": ["", ""]}).format(",.2f")(params.value)'
     )
     assert cfg.wordapp == "Word.Application"
+    assert cfg.skip_checksum == {}
+    assert cfg.validation_roots == []
 
 
 def test_load_file_not_found() -> None:
@@ -96,8 +98,16 @@ def test_load_all_options(tmp_path: Path) -> None:
                 "tests/data/light"
             ],
             "set_props_delay": 0.025,
+            "skip_checksum": {
+                "Light": true,
+                "Mass": 0
+            },
             "static": "~/my/assets",
             "theme": "simplex",
+            "validation_roots": [
+                "L:/data/files",
+                "//msl-nas/extra/data/"
+            ],
             "verapdf": "~/verapdf/verapdf.bat",
             "wordapp": "MS-Word-COM"
             }""",
@@ -142,6 +152,9 @@ def test_load_all_options(tmp_path: Path) -> None:
     assert cfg.equipment_registers("Mass") == []
     assert cfg.teams == ["Light"]
 
+    assert cfg.skip_checksum == {"Light": True, "Mass": False}
+    assert cfg.validation_roots == ["L:/data/files", "//msl-nas/extra/data/"]
+
     assert cfg.registers[0].files() == [Path("tests/data/light/register.xml")]
 
 
@@ -181,6 +194,8 @@ def test_load_logo_src_local_path(tmp_path: Path) -> None:
     assert cfg.price.currency.prefix == ""
     assert cfg.price.currency.suffix == ""
     assert cfg.wordapp == "Word.Application"
+    assert cfg.skip_checksum == {}
+    assert cfg.validation_roots == []
 
 
 def test_load_logo_src_https(tmp_path: Path) -> None:
@@ -218,6 +233,8 @@ def test_load_logo_src_https(tmp_path: Path) -> None:
     assert cfg.price.currency.prefix == ""
     assert cfg.price.currency.suffix == ""
     assert cfg.wordapp == "Word.Application"
+    assert cfg.skip_checksum == {}
+    assert cfg.validation_roots == []
 
 
 def test_load_navbar_color_only(tmp_path: Path) -> None:
@@ -254,6 +271,8 @@ def test_load_navbar_color_only(tmp_path: Path) -> None:
     assert cfg.price.currency.prefix == ""
     assert cfg.price.currency.suffix == ""
     assert cfg.wordapp == "Word.Application"
+    assert cfg.skip_checksum == {}
+    assert cfg.validation_roots == []
 
 
 def test_load_price_keys_missing(tmp_path: Path) -> None:
@@ -290,3 +309,5 @@ def test_load_price_keys_missing(tmp_path: Path) -> None:
     assert cfg.theme == "BOOTSTRAP"
     assert cfg.set_props_delay == 0.01
     assert cfg.wordapp == "Word.Application"
+    assert cfg.skip_checksum == {}
+    assert cfg.validation_roots == []

@@ -619,17 +619,23 @@ async def validate_register(
     Returns:
         Whether the register is valid.
     """
+    skip_checksum = cfg.skip_checksum.get(team, True)
     if update is not None:
-        await update(data, f"Validating {team} register (skipping sha256 checksums)")
+        msg = (
+            f"Validating {team} register (skipping sha256 checksums)"
+            if skip_checksum
+            else f"Validating {team} register"
+        )
+        await update(data, msg)
 
     summary = recursive_validate(
         files=files,
         er_schema=er_schema,
         c_schema=c_schema,
-        roots=[],
+        roots=cfg.validation_roots,
         exit_first=True,
         uri_scheme=None,
-        skip_checksum=True,
+        skip_checksum=skip_checksum,
         no_colour=True,
     )
     ok = summary.num_issues == 0

@@ -171,6 +171,13 @@ class Config:
     If the value is too small, components might not update properly while the dash callback is running.
     """
 
+    skip_checksum: dict[str, bool] = field(default_factory=dict)
+    """Whether to skip validating `<file>` and `<digitalReport>` elements containing a sha256 checksum.
+
+    The key is the name of the Team that is responsible for the equipment register.
+    See also `validation_roots`.
+    """
+
     static: str = "static"
     """Path to the *static* directory.
 
@@ -179,6 +186,13 @@ class Config:
 
     theme: str = "BOOTSTRAP"
     """A theme name in https://bootswatch.com/."""
+
+    validation_roots: list[str] = field(default_factory=list)
+    """Additional root paths to use during validation.
+
+    These paths may be required when validating `<file>` or `<digitalReport>` elements.
+    See also `skip_checksum`.
+    """
 
     verapdf: str = "verapdf.bat" if sys.platform == "win32" else "verapdf"
     """Path to the [veraPDF](https://verapdf.org/) executable."""
@@ -213,6 +227,8 @@ class Config:
         self.logo = Logo(**d.get("logo", {}))
         self.navbar = NavBar(**d.get("navbar", {}))
         self.price = Price(**d.get("price", {}))
+        self.skip_checksum = {k: bool(v) for k, v in d.get("skip_checksum", {}).items()}
+        self.validation_roots = d.get("validation_roots", [])
 
         for reg in d.get("registers", []):
             directory = Path(reg).expanduser()

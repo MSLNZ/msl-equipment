@@ -135,12 +135,6 @@ class Price:
 class Config:
     """Configuration for the web application."""
 
-    assets: str = "assets"
-    """Path to the assets directory.
-
-    Store the favicon.ico and custom.css files here.
-    """
-
     git: str = "git"
     """Path to the [git](https://git-scm.com/) executable."""
 
@@ -177,6 +171,12 @@ class Config:
     If the value is too small, components might not update properly while the dash callback is running.
     """
 
+    static: str = "static"
+    """Path to the *static* directory.
+
+    Store the favicon.ico and webapp.css files here.
+    """
+
     theme: str = "BOOTSTRAP"
     """A theme name in https://bootswatch.com/."""
 
@@ -206,7 +206,7 @@ class Config:
         self.host = host or d.get("host", self.host)
         self.port = port or int(d.get("port", self.port))
         self.set_props_delay = float(d.get("set_props_delay", self.set_props_delay))
-        self.assets = Path(d.get("assets", self.assets)).expanduser().as_posix()
+        self.static = Path(d.get("static", self.static)).expanduser().as_posix()
         self.git = Path(d.get("git", self.git)).expanduser().as_posix()
         self.pdflatex = Path(d.get("pdflatex", self.pdflatex)).expanduser().as_posix()
         self.verapdf = Path(d.get("verapdf", self.verapdf)).expanduser().as_posix()

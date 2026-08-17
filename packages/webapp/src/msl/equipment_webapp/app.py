@@ -71,8 +71,8 @@ def create_app(cfg: Config) -> Dash:
     app = Dash(
         __name__,
         use_pages=True,
-        assets_folder=cfg.assets,
-        assets_url_path=cfg.assets,
+        assets_folder=cfg.static,
+        assets_url_path=cfg.static,
         server=server,  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
         title=f"{cfg.nmi} | Home",
         update_title=f"{cfg.nmi} | Updating...",
@@ -138,7 +138,7 @@ def create_app(cfg: Config) -> Dash:
         ]
     )
 
-    static = Path(__file__).parent / "assets" if cfg.assets == "assets" else cfg.assets
+    static = Path(__file__).parent / "static" if cfg.static == "static" else cfg.static
     server.mount("/static", StaticFiles(directory=static), name="static")
 
     @server.get("/api/docs", include_in_schema=False)

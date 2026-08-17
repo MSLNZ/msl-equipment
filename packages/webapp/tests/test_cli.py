@@ -27,7 +27,7 @@ def test_config_not_found() -> None:
 
 def test_static_dir_not_found(tmp_path: Path) -> None:
     file = tmp_path / "config.json"
-    _ = file.write_text('{"assets": "missing-directory"}')
+    _ = file.write_text('{"static": "missing-directory"}')
 
     # Comes from the `starlette` package
     with pytest.raises(RuntimeError, match=r"missing-directory"):
@@ -41,7 +41,7 @@ def test_port_in_use(tmp_path: Path) -> None:
     s.bind(("127.0.0.1", 0))
     _, port = s.getsockname()
 
-    _ = file.write_text(f'{{"assets": "{tmp_path.as_posix()}", "port": {port}, "host": "127.0.0.1"}}')
+    _ = file.write_text(f'{{"static": "{tmp_path.as_posix()}", "port": {port}, "host": "127.0.0.1"}}')
     with pytest.raises(SystemExit):
         main([str(file)])
 

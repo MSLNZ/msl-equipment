@@ -10,7 +10,7 @@ def test_default() -> None:
     cfg = Config()
     assert cfg.equipment_registers("ignored") == []
     assert cfg.teams == []
-    assert cfg.assets == "assets"
+    assert cfg.static == "static"
     assert cfg.host == "0.0.0.0"  # noqa: S104
     assert cfg.port == 17025
     assert cfg.nmi == "MSL"
@@ -67,7 +67,6 @@ def test_load_all_options(tmp_path: Path) -> None:
     _ = file.write_text(
         """
             {
-            "assets": "~/my/assets",
             "git": "~/the/git",
             "host": "1.2.3.4",
             "logo": {
@@ -97,6 +96,7 @@ def test_load_all_options(tmp_path: Path) -> None:
                 "tests/data/light"
             ],
             "set_props_delay": 0.025,
+            "static": "~/my/assets",
             "theme": "simplex",
             "verapdf": "~/verapdf/verapdf.bat",
             "wordapp": "MS-Word-COM"
@@ -109,7 +109,7 @@ def test_load_all_options(tmp_path: Path) -> None:
 
     home = Path("~").expanduser()
 
-    assert cfg.assets == (home / "my/assets").as_posix()
+    assert cfg.static == (home / "my/assets").as_posix()
     assert cfg.git == (home / "the/git").as_posix()
     assert cfg.host == "1.2.3.4"
     assert cfg.logo.src == "logo.ico"
@@ -151,7 +151,7 @@ def test_load_logo_src_local_path(tmp_path: Path) -> None:
     # defining the port as a string is also ok
     _ = file.write_text("""{
             "logo": {
-                "src": "~/assets/logo.png",
+                "src": "~/static/logo.png",
                 "margin_left": 33
             }
         }""")
@@ -160,7 +160,7 @@ def test_load_logo_src_local_path(tmp_path: Path) -> None:
     cfg.load(file)
 
     home = Path("~").expanduser()
-    assert cfg.logo.src == (home / "assets" / "logo.png").as_posix()
+    assert cfg.logo.src == (home / "static" / "logo.png").as_posix()
     assert cfg.logo.height == 50
     assert cfg.logo.margin_left == 33
     assert cfg.logo.margin_right == 25

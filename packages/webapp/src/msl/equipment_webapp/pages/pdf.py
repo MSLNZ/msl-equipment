@@ -244,6 +244,7 @@ async def clear_extra(_n_clicks: int) -> dict[str, str]:  # type: ignore[misc]
     State("pdf-scope", "data"),
     running=[
         (Output("pdf-convert-button", "disabled"), True, False),
+        (Output("pdf-convert-status", "children"), None, None),
     ],
     prevent_initial_call=True,
     persistent=True,
@@ -274,9 +275,6 @@ async def convert(  # type: ignore[misc]
             className="text-center",
         )
         return no_update, alert, None
-
-    set_props("pdf-convert-status", {"children": None})
-    await utils.process_events()
 
     filename, b64_string = document
     _ = utils.log_and_href(scope, href=f"/pdf/{filename}", method="POST")

@@ -1,4 +1,4 @@
-"""Recalibrations page."""
+"""Assets page."""
 
 # pyright: reportUnknownArgumentType=false, reportUnknownMemberType=false, reportUnknownVariableType=false
 from __future__ import annotations
@@ -17,18 +17,17 @@ if TYPE_CHECKING:
     from msl.equipment_webapp.typing import AgGridData, Scope
 
 
-MONTHS_MAX = 120
-PAGE = "recalibrations"
+PAGE = "assets"
 
 with contextlib.suppress(exceptions.PageError):  # required when running tests
-    register_page(__name__, name="Recalibrations", title=f"{cfg.nmi} | Recalibrations")  # type: ignore[no-untyped-call]
+    register_page(__name__, name="Assets", title=f"{cfg.nmi} | Assets")  # type: ignore[no-untyped-call]
 
 
 def layout(**kwargs: str) -> html.Div:
     """Dynamically serve the layout when the page is loaded.
 
     Args:
-        kwargs: URL query parameters, e.g., /recalibrations?team=Light&months=6&sync=1
+        kwargs: URL query parameters, e.g., /assets?team=Light&sync=1
     """
     scope = utils.get_scope()
     params = utils.DashQueryParams(**kwargs)
@@ -38,29 +37,18 @@ def layout(**kwargs: str) -> html.Div:
                 [
                     components.view_button(page=PAGE),
                     components.team_dropdown(page=PAGE, value=params.teams),
-                    components.months_input(page=PAGE, value=params.months, tip="recalibration", maximum=MONTHS_MAX),
                     components.sync_checkbox(page=PAGE, value=params.sync, tip="checking"),
                     components.download_button(page=PAGE),
                 ],
                 className="g-2 align-items-center my-4 mx-0",
             ),
-            components.table(page=PAGE, columns=utils.RECALIBRATIONS_COLUMNS),
+            components.table(page=PAGE, columns=utils.ASSETS_COLUMNS),
             html.Pre(id=f"{PAGE}-log-display", className="webapp-log-display"),
             dcc.Store(id=f"{PAGE}-scope", storage_type="memory", data=scope),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
             dcc.Location(id=f"{PAGE}-url", refresh=False),
         ],
         style={"maxWidth": "100vw", "overflowX": "hidden", "padding": "0 5px"},
     )
-
-
-@callback(
-    Output(f"{PAGE}-months-input", "invalid"),
-    Input(f"{PAGE}-months-input", "value"),
-    prevent_initial_call=True,
-)
-async def check_months_range(value: int | None) -> bool:  # type: ignore[misc]
-    """Check if the months value is out of range."""
-    return value is None
 
 
 @callback(
@@ -76,19 +64,17 @@ async def export_data_as_csv(n_clicks: int) -> bool:  # type: ignore[misc]
 @callback(
     Output(f"{PAGE}-url", "href"),
     Input(f"{PAGE}-team-dropdown", "value"),
-    Input(f"{PAGE}-months-input", "value"),
     Input(f"{PAGE}-sync-checkbox", "value"),
     State(f"{PAGE}-scope", "data"),
     State(f"{PAGE}-url", "href"),
     running=[
         (Output(f"{PAGE}-team-dropdown", "disabled"), True, False),
-        (Output(f"{PAGE}-months-input", "disabled"), True, False),
         (Output(f"{PAGE}-sync-checkbox", "disabled"), True, False),
     ],
     persistent=True,
     websocket=True,
 )
-async def update_table(teams: list[str], months: int | None, sync: bool, scope: Scope, href: str) -> str:  # type: ignore[misc]  # noqa: FBT001
+async def update_table(teams: list[str], sync: bool, scope: Scope, href: str) -> str:  # type: ignore[misc]  # noqa: FBT001
     """Update the table data."""
     log_buffer: deque[str] = deque()
 
@@ -100,12 +86,12 @@ async def update_table(teams: list[str], months: int | None, sync: bool, scope: 
         set_props(f"{PAGE}-table", {"rowData": data})
         await utils.process_events()
 
-    if (not teams) or (months is None):  # months is None if the value is not in the [0, MONTHS_MAX] range
+    if not teams:
         await update([])
         return href
 
-    _ = await utils.recalibrations(teams=teams, months=months, sync=sync, update=update)
-    return utils.log_and_href(scope, href, team=teams, months=months, sync=str(sync).lower())
+    _ = await utils.assets(teams=teams, sync=sync, update=update)
+    return utils.log_and_href(scope, href, team=teams, sync=str(sync).lower())
 
 
 @callback(

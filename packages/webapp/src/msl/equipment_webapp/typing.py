@@ -10,7 +10,30 @@ if TYPE_CHECKING:
     from pathlib import Path
 
     RegisterValidity = dict[str, bool]
-    AgGridData = list[dict[str, str]]
+    AgGridData = list["AgGridDataItem"]
+    AgGridColumns = list[dict[str, str | int | dict[str, str]]]
+
+
+AgGridDataItem = TypedDict(
+    "AgGridDataItem",
+    {
+        "Asset Number": NotRequired[str],
+        "Currency": NotRequired[str],
+        "Depreciated?": NotRequired[str],
+        "Depreciation End Date": NotRequired[str],
+        "Depreciation Start Date": NotRequired[str],
+        "Description": NotRequired[str],
+        "Due Date": NotRequired[str],
+        "ID": str,
+        "Location": NotRequired[str],
+        "Manufacturer": str,
+        "Model": str,
+        "Overdue?": NotRequired[str],
+        "Price": NotRequired[float],
+        "Serial": NotRequired[str],
+        "Team": str,
+    },
+)
 
 
 class QueryParams(TypedDict):

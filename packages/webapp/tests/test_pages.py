@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 import pytest
 from dash import dcc, html, no_update
 from msl.equipment_webapp.config import EquipmentRegister, cfg
-from msl.equipment_webapp.pages import home, pdf, recalibrations, search
+from msl.equipment_webapp.pages import assets, home, pdf, recalibrations, search
 from msl.equipment_webapp.typing import Scope
 
 from .conftest import has_pdflatex, has_vera_pdf
@@ -32,6 +32,30 @@ def test_page_layout() -> None:
     div = pdf.layout()
     assert len(div.children) == 8
     assert isinstance(div.children[0], dcc.Store)
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "teams", "sync"),
+    [
+        ({}, [], False),
+        ({"sync": "0"}, [], False),
+        ({"sync": "1"}, [], True),
+        ({"team": "Unknown", "sync": "True"}, [], True),
+        ({"team": "Light", "sync": "yes"}, ["Light"], True),
+    ],
+)
+def test_assets_layout(kwargs: dict[str, str], teams: list[str], sync: bool) -> None:  # noqa: FBT001
+    cfg.registers.clear()
+    cfg.registers.append(EquipmentRegister(team="Light", directory=Path("tests/data/light")))
+
+    div = assets.layout(**kwargs)
+    dropdown = div.children[0].children[1].children[1]
+    assert dropdown.id == "assets-team-dropdown"
+    assert dropdown.value == teams
+
+    checkbox = div.children[0].children[2].children.children[1]
+    assert checkbox.id == "assets-sync-checkbox"
+    assert checkbox.value is sync
 
 
 @pytest.mark.parametrize(
@@ -98,18 +122,18 @@ async def test_recalibrations_check_months_range(value: int | None, expected: bo
 
 
 @pytest.mark.anyio
-@pytest.mark.parametrize("mod", [recalibrations, search])
+@pytest.mark.parametrize("mod", [assets, recalibrations, search])
 @pytest.mark.parametrize(("n_clicks", "expected"), [(0, False), (1, True), (100, True)])
 async def test_export_data_as_csv(mod: ModuleType, n_clicks: int, expected: bool) -> None:  # noqa: FBT001
     assert await mod.export_data_as_csv(n_clicks) is expected
 
 
-@pytest.mark.parametrize("mod", [recalibrations, search])
+@pytest.mark.parametrize("mod", [assets, recalibrations, search])
 def test_view_selected_row_empty(mod: ModuleType) -> None:
     assert mod.view_selected_row(0, [], scope) == (False, None)
 
 
-@pytest.mark.parametrize("mod", [recalibrations, search])
+@pytest.mark.parametrize("mod", [assets, recalibrations, search])
 def test_view_selected_row(mod: ModuleType) -> None:
     cfg.registers.clear()
     cfg.registers.append(EquipmentRegister(team="Light", directory=Path("tests/data/light")))
@@ -221,6 +245,21 @@ async def test_search_update_table() -> None:
     assert href == "http://localhost/search?team=Light&text=foo%20bar&sync=false"
     assert not show
     assert child is None
+
+
+@pytest.mark.anyio
+async def test_assets_update_table_teams_empty() -> None:
+    href = await assets.update_table([], True, scope, "http://localhost/assets")  # noqa: FBT003
+    assert href == "http://localhost/assets"  # input returned unchanged
+
+
+@pytest.mark.anyio
+async def test_assets_update_table() -> None:
+    cfg.registers.clear()
+    cfg.registers.append(EquipmentRegister(team="Light", directory=Path("tests/data/light")))
+
+    href = await assets.update_table(["Light"], False, scope, "http://localhost/assets?team=Length&sync=yes")  # noqa: FBT003
+    assert href == "http://localhost/assets?team=Light&sync=false"
 
 
 def test_pdf_upload_document_invalid_extension() -> None:

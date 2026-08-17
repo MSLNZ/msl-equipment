@@ -13,6 +13,8 @@ from msl.equipment_webapp.config import cfg
 if TYPE_CHECKING:
     from dash.development.base_component import Component
 
+    from .typing import AgGridColumns
+
 
 def download_button(*, page: str) -> Component:
     """Create a button to download the table data in CSV format.
@@ -117,7 +119,7 @@ def sync_checkbox(*, page: str, value: bool, tip: str, class_name: str = "me-aut
     return c
 
 
-def table(*, page: str, columns: list[dict[str, str | int]], filename: str | None = None) -> html.Div:
+def table(*, page: str, columns: AgGridColumns, filename: str | None = None) -> html.Div:
     """Create an `AgGrid` table.
 
     Args:

@@ -46,8 +46,41 @@ class Table(BaseModel):
     header: List[str]  # pyright: ignore[reportDeprecated]  # noqa: UP006
     """The table header."""
 
-    data: List[List[str]]  # pyright: ignore[reportDeprecated]  # noqa: UP006
+    data: List[List[object]]  # pyright: ignore[reportDeprecated]  # noqa: UP006
     """The table data."""
+
+
+@server.get(
+    "/api/assets",
+    tags=["Equipment Registers"],
+    summary="Find equipment that are capital assets",
+    description=dedent(f"""
+    Get equipment that are capital assets.
+
+    Example Python script (requires the [requests](https://pypi.org/project/requests/) package):
+
+    ```python
+    import requests
+
+    response = requests.get("{base_url}/api/assets", params={{"team": "Light"}}, timeout=10)
+    response.raise_for_status()
+    print(response.json())
+    ```
+    """),
+)
+async def assets(
+    *,
+    team: Teams,
+    sync: Sync = False,
+) -> Table:
+    """Find equipment that are capital assets."""
+    data, is_valid, synced = await utils.assets(teams=[t.value for t in team], sync=sync)
+    return Table(
+        synced=synced,
+        is_valid=is_valid,
+        header=[str(item["field"]) for item in utils.ASSETS_COLUMNS],
+        data=[list(row.values()) for row in data],
+    )
 
 
 @server.get(

@@ -146,3 +146,24 @@ class TestAPI:
         assert response.headers["filename"] == "example.pdf"
         assert len(response.headers["md5-checksum"]) == 32
         assert response.content.startswith(b"%PDF-")
+
+    def test_assets(self) -> None:
+        """Test recalibrations."""
+        response = self.client.get("/api/assets", params={"team": "Light"})
+        assert response.status_code == 200
+        value = response.json()
+        assert value["synced"] is False
+        assert value["is_valid"] == {"Light": True}
+        assert value["header"] == [
+            "ID",
+            "Team",
+            "Asset Number",
+            "Depreciation Start Date",
+            "Depreciation End Date",
+            "Depreciated?",
+            "Price",
+            "Currency",
+            "Manufacturer",
+            "Model",
+        ]
+        assert value["data"] == []

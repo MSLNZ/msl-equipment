@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from typing_extensions import Unpack
 
     from .config import EquipmentRegister
-    from .typing import AgGridData, PDFFile, QueryParams, RegisterValidity, Scope
+    from .typing import AgGridColumns, AgGridData, PDFFile, QueryParams, RegisterValidity, Scope
 
 
 er_schema = etree.XMLSchema(etree.parse(DEFAULT_SCHEMA_DIR / "equipment-register.xsd"))
@@ -44,7 +44,20 @@ word_app: str | LoadLibrary | None = None
 logger = logging.getLogger("uvicorn.error")
 
 
-RECALIBRATIONS_COLUMNS: list[dict[str, str | int]] = [
+ASSETS_COLUMNS: AgGridColumns = [
+    {"field": "ID", "width": 140},
+    {"field": "Team", "flex": 1},
+    {"field": "Asset Number", "flex": 1, "wrapHeaderText": True, "autoHeaderHeight": True},
+    {"field": "Depreciation Start Date", "width": 130, "wrapHeaderText": True, "autoHeaderHeight": True},
+    {"field": "Depreciation End Date", "width": 130, "wrapHeaderText": True, "autoHeaderHeight": True},
+    {"field": "Depreciated?", "width": 130},
+    {"field": "Price", "flex": 1, "valueFormatter": {"function": cfg.price.format_locale}, "type": "numericColumn"},
+    {"field": "Currency", "width": 105},
+    {"field": "Manufacturer", "flex": 1},
+    {"field": "Model", "flex": 1},
+]
+
+RECALIBRATIONS_COLUMNS: AgGridColumns = [
     {"field": "ID", "width": 150},
     {"field": "Team", "flex": 1},
     {"field": "Due Date", "flex": 1},
@@ -55,7 +68,7 @@ RECALIBRATIONS_COLUMNS: list[dict[str, str | int]] = [
     {"field": "Serial", "flex": 1},
 ]
 
-SEARCH_COLUMNS: list[dict[str, str | int]] = [
+SEARCH_COLUMNS: AgGridColumns = [
     {"field": "ID", "width": 150},
     {"field": "Team", "flex": 1},
     {"field": "Location", "flex": 2},
@@ -390,7 +403,67 @@ async def process_events() -> None:
     The duration should be as short as possible that the operating system supports
     such that the properties of the web components are actually updated.
     """
-    await asyncio.sleep(cfg.wait)
+    await asyncio.sleep(cfg.set_props_delay)
+
+
+async def assets(
+    *,
+    teams: list[str],
+    sync: bool,
+    update: Callable[[AgGridData, str], Awaitable[None]] | None = None,
+) -> tuple[AgGridData, dict[str, bool], bool]:
+    """Search for equipment that are a capital asset.
+
+    Args:
+        teams: The teams to check the equipment register of.
+        sync: Whether to perform a `git pull` on the register's repository before checking.
+        update: A function to call if calling this method from within a `dash` callback.
+
+    Returns:
+        The table data, the validity of each register and whether syncing the repositories was performed.
+    """
+    synced: bool = sync
+    is_valid: RegisterValidity = {}
+    data: AgGridData = []
+
+    today = date.today()  # noqa: DTZ011
+    registers = cfg.equipment_registers(*teams)
+
+    if sync:
+        synced = await git_pull(registers, update)
+
+    for register in registers:
+        files = register.files()
+        is_valid[register.team] = await validate_register(files, register.team, data, update)
+        if not is_valid[register.team]:
+            continue
+
+        reg = Register(*files)
+        if update is not None:
+            await update(data, f"Searching {len(reg)} equipment entries from {register.team}")
+
+        for equipment in reg:
+            ce = equipment.quality_manual.financial.capital_expenditure
+            if ce is not None:
+                data.append(
+                    {
+                        "ID": equipment.id,
+                        "Team": reg.team,
+                        "Asset Number": ce.asset_number,
+                        "Depreciation Start Date": ce.depreciation_start_date.isoformat(),
+                        "Depreciation End Date": ce.depreciation_end_date.isoformat(),
+                        "Depreciated?": "No" if ce.depreciation_end_date > today else "Yes",
+                        "Price": ce.price,
+                        "Currency": ce.currency,
+                        "Manufacturer": equipment.manufacturer,
+                        "Model": equipment.model,
+                    }
+                )
+
+        if update is not None:
+            await update(data, "")
+
+    return data, is_valid, synced
 
 
 async def recalibrations(  # noqa: C901

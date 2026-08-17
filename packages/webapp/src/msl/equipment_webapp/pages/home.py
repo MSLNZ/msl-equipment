@@ -12,8 +12,26 @@ from msl.equipment_webapp.config import cfg
 with contextlib.suppress(exceptions.PageError):  # required when running tests
     register_page(__name__, path="/", name="Home", title=f"{cfg.nmi} | Home")  # type: ignore[no-untyped-call]
 
+assets_help = """
+##### Find equipment that is a capital asset
+
+Select the register(s) of the team(s) that you are interested in displaying assets for.
+
+You can also pre-populate the fields in the URL. This allows you to bookmark a
+URL with custom settings, for example,
+
+specify a `team`,
+  - <dccLink href="/assets?team=Light" />
+
+specify the `sync` parameter (a *checked* value can be one of `1`, `on`, `yes` or `true`),
+  - <dccLink href="/assets?sync=true" />
+
+specify multiple `team`s by repeating the `team=value` pair (each `team=value` pair is separated by the `&` character),
+  - <dccLink href="/assets?team=Light&team=Length" />
+"""
+
 recalibrations_help = """
-##### Check for equipment that needs to be recalibrated
+##### Find equipment that needs to be recalibrated
 
 Select the register(s) of the team(s) that you are interested in and specify the
 number of months in the future to check if a recalibration is due. Equipment that
@@ -108,6 +126,10 @@ def layout(**_: str) -> html.Div:
             ),
             dbc.Accordion(
                 [
+                    dbc.AccordionItem(
+                        dcc.Markdown(assets_help, dangerously_allow_html=True),
+                        title="Assets",
+                    ),
                     dbc.AccordionItem(
                         dcc.Markdown(recalibrations_help, dangerously_allow_html=True),
                         title="Recalibrations",

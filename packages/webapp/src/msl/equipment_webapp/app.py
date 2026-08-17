@@ -102,6 +102,7 @@ def create_app(cfg: Config) -> Dash:
                                 dbc.Collapse(
                                     dbc.Nav(
                                         [
+                                            dbc.NavItem(dbc.NavLink("Assets", href="/assets")),
                                             dbc.NavItem(dbc.NavLink("Recalibrations", href="/recalibrations")),
                                             dbc.NavItem(dbc.NavLink("Search", href="/search")),
                                             dbc.NavItem(

@@ -33,6 +33,8 @@ class Logo:
         """Called automatically after the __init__ method finishes."""
         if not self.src:
             self.height = 0
+        elif self.src.startswith("~"):
+            self.src = Path(self.src).expanduser().as_posix()
 
     @property
     def style(self) -> dict[str, int]:
@@ -78,6 +80,58 @@ class EquipmentRegister:
 
 
 @dataclass
+class Currency:
+    """Price currency prefix and suffix symbols."""
+
+    prefix: str = ""
+    """Price prefix."""
+
+    suffix: str = ""
+    """Price suffix."""
+
+
+@dataclass
+class Price:
+    """Display prices in a table using a locale-specific format."""
+
+    format: str = ",.2f"
+    """The format to use to display the value.
+
+    See [d3-format](https://d3js.org/d3-format) for examples.
+    """
+
+    decimal: str = "."
+    """The symbol to use for the decimal point."""
+
+    thousands: str = ","
+    """The symbol to use for the group separator."""
+
+    grouping: list[int] = field(default_factory=lambda: [3])
+    """The array of group sizes, cycled as needed."""
+
+    currency: Currency = field(default_factory=Currency)
+    """Price currency prefix and suffix symbols."""
+
+    def __post_init__(self) -> None:
+        """Called automatically after the __init__ method finishes."""
+        if isinstance(self.currency, dict):
+            self.currency = Currency(**self.currency)  # pyright: ignore[reportUnknownArgumentType]
+
+    @property
+    def format_locale(self) -> str:
+        """Returns a [d3-formatLocale](https://d3js.org/d3-format#formatLocale) string to display a price value."""
+        return (
+            "d3.formatLocale({"
+            f'"decimal": "{self.decimal}", '
+            f'"thousands": "{self.thousands}", '
+            f'"grouping": {self.grouping}, '
+            f'"currency": ["{self.currency.prefix}", "{self.currency.suffix}"]'
+            "})"
+            f'.format("{self.format}")(params.value)'
+        )
+
+
+@dataclass
 class Config:
     """Configuration for the web application."""
 
@@ -111,20 +165,23 @@ class Config:
     port: int = 17025
     """The port number to use for the app."""
 
+    price: Price = field(default_factory=Price)
+    """The format to use to display pricing information."""
+
     registers: list[EquipmentRegister] = field(default_factory=list)
     """A list of `team -> path` mapping for each equipment register."""
+
+    set_props_delay: float = 0.01
+    """The number of seconds to wait after calling `dash.set_props` in a callback.
+
+    If the value is too small, components might not update properly while the dash callback is running.
+    """
 
     theme: str = "BOOTSTRAP"
     """A theme name in https://bootswatch.com/."""
 
     verapdf: str = "verapdf.bat" if sys.platform == "win32" else "verapdf"
     """Path to the [veraPDF](https://verapdf.org/) executable."""
-
-    wait: float = 0.01
-    """The number of seconds to wait after setting a `dash` property.
-
-    If the value is too small, components might not update properly while the dash callback is running.
-    """
 
     wordapp: str = "Word.Application"
     """Name of the COM object for the [Microsoft Word Application](https://learn.microsoft.com/en-us/office/vba/api/word.application)."""
@@ -145,21 +202,22 @@ class Config:
         d: dict[str, Any] = data  # pyright: ignore[reportUnknownVariableType]
         self.nmi = d.get("nmi", self.nmi)
         self.theme = d.get("theme", self.theme)
-        self.wait = d.get("wait", self.wait)
         self.wordapp = d.get("wordapp", self.wordapp)
         self.host = host or d.get("host", self.host)
         self.port = port or int(d.get("port", self.port))
+        self.set_props_delay = float(d.get("set_props_delay", self.set_props_delay))
         self.assets = Path(d.get("assets", self.assets)).expanduser().as_posix()
         self.git = Path(d.get("git", self.git)).expanduser().as_posix()
         self.pdflatex = Path(d.get("pdflatex", self.pdflatex)).expanduser().as_posix()
         self.verapdf = Path(d.get("verapdf", self.verapdf)).expanduser().as_posix()
         self.logo = Logo(**d.get("logo", {}))
         self.navbar = NavBar(**d.get("navbar", {}))
+        self.price = Price(**d.get("price", {}))
 
         for reg in d.get("registers", []):
             directory = Path(reg).expanduser()
             files = find_xml_files(directory)
-            self.registers.append(EquipmentRegister(Register(*files).team, directory))
+            self.registers.append(EquipmentRegister(team=Register(*files).team, directory=directory))
 
     @property
     def teams(self) -> list[str]:

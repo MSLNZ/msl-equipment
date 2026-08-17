@@ -916,3 +916,144 @@ async def test_search(tmp_path: Path) -> None:
             "Serial": "M",
         },
     ]
+
+
+@pytest.mark.anyio
+async def test_assets(tmp_path: Path) -> None:
+    mass = tmp_path / "mass"
+    mass.mkdir()
+    _ = (mass / "m.xml").write_text("""<?xml version='1.0' encoding='utf-8'?>
+        <register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
+            <equipment />
+        </register>
+        """)
+
+    temperature = tmp_path / "temperature"
+    temperature.mkdir()
+    _ = (temperature / "t.xml").write_text("""<?xml version='1.0' encoding='utf-8'?>
+        <register team="Temperature" xmlns="https://measurement.govt.nz/equipment-register">
+            <equipment enteredBy="Joseph Borbely">
+                <id>MSLE.T.001</id>
+                <manufacturer>MSL</manufacturer>
+                <model>Model</model>
+                <serial>abc</serial>
+                <description>Temperature probe</description>
+                <specifications />
+                <location>Contact thermometry lab</location>
+                <status>Dormant</status>
+                <loggable />
+                <traceable>true</traceable>
+                <calibrations />
+                <maintenance />
+                <alterations />
+                <firmware />
+                <specifiedRequirements />
+                <referenceMaterials />
+                <qualityManual />
+            </equipment>
+            <equipment enteredBy="Joseph Borbely">
+                <id>MSLE.T.002</id>
+                <manufacturer>MSL</manufacturer>
+                <model>Model</model>
+                <serial>abc</serial>
+                <description>Temperature probe</description>
+                <specifications />
+                <location>Spectrophotometer</location>
+                <status>Active</status>
+                <loggable />
+                <traceable>false</traceable>
+                <calibrations />
+                <maintenance />
+                <alterations />
+                <firmware />
+                <specifiedRequirements />
+                <referenceMaterials />
+                <qualityManual>
+                    <financial>
+                        <purchaseYear>2025</purchaseYear>
+                        <warrantyExpirationDate>2026-07-31</warrantyExpirationDate>
+                        <capitalExpenditure>
+                            <assetNumber>12345678</assetNumber>
+                            <depreciationStartDate>2015-04-20</depreciationStartDate>
+                            <price currency="NZD">150e3</price>
+                            <usefulLife>10</usefulLife>
+                        </capitalExpenditure>
+                    </financial>
+                </qualityManual>
+            </equipment>
+        </register>
+        """)
+
+    today = date.today()  # noqa: DTZ011
+    five_years_ago = today.replace(year=today.year - 5)
+    three_years_in_future = today.replace(year=today.year + 3)
+
+    light = tmp_path / "light"
+    light.mkdir()
+    _ = (light / "l.xml").write_text(f"""<?xml version='1.0' encoding='utf-8'?>
+        <register team="Light" xmlns="https://measurement.govt.nz/equipment-register">
+            <equipment enteredBy="Joseph Borbely">
+                <id>MSLE.O.001</id>
+                <manufacturer>M</manufacturer>
+                <model>M</model>
+                <serial>M</serial>
+                <description>Alien</description>
+                <specifications />
+                <location>Spectrophotometer</location>
+                <status>Active</status>
+                <loggable />
+                <traceable>true</traceable>
+                <calibrations/>
+                <maintenance />
+                <alterations />
+                <firmware />
+                <specifiedRequirements />
+                <referenceMaterials />
+                <qualityManual>
+                    <financial>
+                        <capitalExpenditure>
+                            <assetNumber>987654321</assetNumber>
+                            <depreciationStartDate>{five_years_ago.isoformat()}</depreciationStartDate>
+                            <price currency="EUR">7654.32</price>
+                            <usefulLife>8</usefulLife>
+                        </capitalExpenditure>
+                    </financial>
+                </qualityManual>
+            </equipment>
+        </register>
+        """)
+
+    cfg.registers.clear()
+    cfg.registers.append(EquipmentRegister("Temperature", temperature))
+    cfg.registers.append(EquipmentRegister("Mass", mass))
+    cfg.registers.append(EquipmentRegister("Light", light))
+
+    table, is_valid, synced = await utils.assets(teams=["Temperature", "Mass", "Light"], sync=True)
+    assert synced
+    assert is_valid == {"Temperature": True, "Mass": False, "Light": True}
+    assert table == [
+        {
+            "ID": "MSLE.T.002",
+            "Team": "Temperature",
+            "Asset Number": "12345678",
+            "Depreciation Start Date": "2015-04-20",
+            "Depreciation End Date": "2025-04-20",
+            "Depreciated?": "Yes",
+            "Price": 150000.0,
+            "Currency": "NZD",
+            "Manufacturer": "MSL",
+            "Model": "Model",
+        },
+        {
+            "ID": "MSLE.O.001",
+            "Team": "Light",
+            "Asset Number": "987654321",
+            "Depreciation Start Date": five_years_ago.isoformat(),
+            "Depreciation End Date": three_years_in_future.isoformat(),
+            "Depreciated?": "No",
+            "Price": 7654.32,
+            "Currency": "EUR",
+            "Manufacturer": "M",
+            "Model": "M",
+        },
+    ]

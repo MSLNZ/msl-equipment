@@ -119,7 +119,7 @@ async def update_table(  # type: ignore[misc]
     log_buffer: deque[str] = deque()
 
     async def update(data: AgGridData, msg: str = "") -> None:
-        """Requires the app to be created with Dash(websocket_callbacks=True, ...) for set_props to work."""
+        """Requires `websocket=True` for set_props to work."""
         if msg:
             log_buffer.append(msg)
         set_props(f"{PAGE}-log-display", {"children": "\n".join(log_buffer)})
@@ -151,7 +151,7 @@ async def update_table(  # type: ignore[misc]
 )
 def view_selected_row(_n_clicks: int, selected: AgGridData | None, scope: Scope) -> tuple[bool, Component | None]:
     """View the XML source of the selected row."""
-    _ = utils.log_and_href(scope, "/search/view")
+    _ = utils.log_and_href(scope, f"/{PAGE}/view")
     if not selected:
         return False, None
 

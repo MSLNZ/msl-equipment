@@ -2,6 +2,12 @@
     background-color: #F1592A;
 }
 
+.ag-header-cell-text {
+    overflow: hidden;
+    overflow-wrap: normal;
+    text-overflow: ellipsis;
+}
+
 code {
     color: #552d78;
 }

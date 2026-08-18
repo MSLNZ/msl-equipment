@@ -57,6 +57,19 @@ ASSETS_COLUMNS: AgGridColumns = [
     {"field": "Model", "flex": 1},
 ]
 
+MAINTENANCE_COLUMNS: AgGridColumns = [
+    {"field": "ID", "width": 150},
+    {"field": "Team", "flex": 1},
+    {"field": "Due Date", "flex": 1},
+    {"field": "Overdue?", "flex": 1},
+    {"field": "Task", "flex": 3},
+    {"field": "Performed By", "flex": 2},
+    {"field": "Manufacturer", "flex": 2},
+    {"field": "Model", "flex": 1},
+    {"field": "Serial", "flex": 1},
+]
+
+
 RECALIBRATIONS_COLUMNS: AgGridColumns = [
     {"field": "ID", "width": 150},
     {"field": "Team", "flex": 1},
@@ -84,7 +97,7 @@ CONVERT_EXTENSIONS: tuple[str, ...] = (".docx", ".tex")
 class DashQueryParams:
     """Parse the URL query parameters to initialise dash components in the layout."""
 
-    def __init__(self, **params: Unpack[QueryParams]) -> None:
+    def __init__(self, default_months: str = "6", **params: Unpack[QueryParams]) -> None:
         """Parse the URL query parameters to initialise dash components in the layout."""
         teams: str | list[str] = params.get("team", [])
         if isinstance(teams, str):
@@ -95,12 +108,12 @@ class DashQueryParams:
         """Specified teams."""
 
         try:
-            months = int(params.get("months", 6))
+            months = int(params.get("months", default_months))
         except ValueError:
-            months = 6
+            months = int(default_months)
 
         self.months: int = months
-        """The number of months in the future to check if an action needs to be performed."""
+        """The number of months in the future to check if an action must be performed."""
 
         # Support same "truthy" values as pydantic
         # https://pydantic.dev/docs/validation/latest/concepts/conversion_table/
@@ -466,6 +479,67 @@ async def assets(
     return data, is_valid, synced
 
 
+async def maintenance(
+    *,
+    teams: list[str],
+    months: int,
+    sync: bool,
+    update: Callable[[AgGridData, str], Awaitable[None]] | None = None,
+) -> tuple[AgGridData, dict[str, bool], bool]:
+    """Find equipment that needs maintenance.
+
+    Args:
+        teams: The teams to check the equipment register of.
+        months: The number of months in the future to check if maintenance is due.
+        sync: Whether to perform a `git pull` on the register's repository before checking.
+        update: A function to call if calling this method from within a `dash` callback.
+
+    Returns:
+        The table data, the validity of each register and whether syncing the repositories was performed.
+    """
+    data: AgGridData = []
+    is_valid: RegisterValidity = {}
+    synced: bool = sync
+
+    today = date.today()  # noqa: DTZ011
+    registers = cfg.equipment_registers(*teams)
+
+    if sync:
+        synced = await git_pull(registers, update)
+
+    for register in registers:
+        files = register.files()
+        is_valid[register.team] = await validate_register(files, register.team, data, update)
+        if not is_valid[register.team]:
+            continue
+
+        reg = Register(*files)
+        if update is not None:
+            await update(data, f"Checking {len(reg)} equipment entries for {register.team}")
+
+        data.extend(
+            {
+                "ID": equipment.id,
+                "Team": reg.team,
+                "Due Date": planned.due_date.isoformat(),
+                "Overdue?": "Yes" if planned.due_date < today else "No",
+                "Task": planned.task,
+                "Performed By": planned.performed_by,
+                "Manufacturer": equipment.manufacturer,
+                "Model": equipment.model,
+                "Serial": equipment.serial,
+            }
+            for equipment in reg
+            for planned in equipment.maintenance.planned
+            if planned.is_task_due(months)
+        )
+
+        if update is not None:
+            await update(data, "")
+
+    return data, is_valid, synced
+
+
 async def recalibrations(  # noqa: C901
     *,
     teams: list[str],
@@ -473,7 +547,7 @@ async def recalibrations(  # noqa: C901
     sync: bool,
     update: Callable[[AgGridData, str], Awaitable[None]] | None = None,
 ) -> tuple[AgGridData, dict[str, bool], bool]:
-    """Find equipment that needs to be recalibrated.
+    """Find equipment that must be recalibrated.
 
     Args:
         teams: The teams to check the equipment register of.
@@ -512,7 +586,7 @@ async def recalibrations(  # noqa: C901
                     if item.is_calibration_due(months):
                         due = item.next_calibration_date.isoformat()
                         overdue = "Yes" if item.next_calibration_date < today else "No"
-                        break  # no need to check other items, since the equipment needs to be recalibrated
+                        break  # no need to check other items, since the equipment must be recalibrated
 
                 # If there are no reports and no performance checks, then check
                 # if every measurand is specified as being calibrated on demand

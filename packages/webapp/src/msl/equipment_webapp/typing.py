@@ -29,8 +29,10 @@ AgGridDataItem = TypedDict(
         "Manufacturer": str,
         "Model": str,
         "Overdue?": NotRequired[str],
+        "Performed By": NotRequired[str],
         "Price": NotRequired[float],
         "Serial": NotRequired[str],
+        "Task": NotRequired[str],
         "Team": str,
     },
 )

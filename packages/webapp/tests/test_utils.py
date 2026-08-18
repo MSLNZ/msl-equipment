@@ -1057,3 +1057,157 @@ async def test_assets(tmp_path: Path) -> None:
             "Model": "M",
         },
     ]
+
+
+@pytest.mark.anyio
+async def test_maintenance(tmp_path: Path) -> None:
+    mass = tmp_path / "mass"
+    mass.mkdir()
+    _ = (mass / "m.xml").write_text("""<?xml version='1.0' encoding='utf-8'?>
+        <register team="Mass" xmlns="https://measurement.govt.nz/equipment-register">
+            <equipment />
+        </register>
+        """)
+
+    temperature = tmp_path / "temperature"
+    temperature.mkdir()
+    _ = (temperature / "t.xml").write_text("""<?xml version='1.0' encoding='utf-8'?>
+        <register team="Temperature" xmlns="https://measurement.govt.nz/equipment-register">
+            <equipment enteredBy="Joseph Borbely">
+                <id>MSLE.T.001</id>
+                <manufacturer>MSL</manufacturer>
+                <model>Model</model>
+                <serial>abc</serial>
+                <description>Temperature probe</description>
+                <specifications />
+                <location>Spectrophotometer</location>
+                <status>Dormant</status>
+                <loggable />
+                <traceable>true</traceable>
+                <calibrations />
+                <maintenance />
+                <alterations />
+                <firmware />
+                <specifiedRequirements />
+                <referenceMaterials />
+                <qualityManual />
+            </equipment>
+            <equipment enteredBy="Joseph Borbely">
+                <id>MSLE.T.002</id>
+                <manufacturer>X</manufacturer>
+                <model>Y</model>
+                <serial>Z</serial>
+                <description>Temperature probe</description>
+                <specifications />
+                <location>Spectrophotometer</location>
+                <status>Active</status>
+                <loggable />
+                <traceable>false</traceable>
+                <calibrations />
+                <maintenance>
+                  <planned>
+                    <task dueDate="2024-12-01">Refill helium gas</task>
+                  </planned>
+                  <completed />
+                </maintenance>
+                <alterations />
+                <firmware />
+                <specifiedRequirements />
+                <referenceMaterials />
+                <qualityManual />
+            </equipment>
+            <equipment enteredBy="Joseph Borbely">
+                <id>MSLE.T.003</id>
+                <manufacturer>A</manufacturer>
+                <model>B</model>
+                <serial>C</serial>
+                <description>ABC</description>
+                <specifications />
+                <location>Single Photon</location>
+                <status>Active</status>
+                <loggable />
+                <traceable>true</traceable>
+                <calibrations />
+                <maintenance>
+                  <planned/>
+                  <completed>
+                    <task dueDate="2026-08-10" completedDate="2026-08-09" performedBy="Me">Change fan</task>
+                  </completed>
+                </maintenance>
+                <alterations />
+                <firmware />
+                <specifiedRequirements />
+                <referenceMaterials />
+                <qualityManual />
+            </equipment>
+        </register>
+        """)
+
+    today = date.today()  # noqa: DTZ011
+    plus_45_days = today + timedelta(days=45)
+    plus_90_days = today + timedelta(days=90)
+
+    light = tmp_path / "light"
+    light.mkdir()
+    _ = (light / "l.xml").write_text(f"""<?xml version='1.0' encoding='utf-8'?>
+        <register team="Light" xmlns="https://measurement.govt.nz/equipment-register">
+            <equipment enteredBy="Joseph Borbely">
+                <id>MSLE.O.001</id>
+                <manufacturer>MSL</manufacturer>
+                <model>Model</model>
+                <serial>abc</serial>
+                <description>Temperature probe</description>
+                <specifications />
+                <location>Spectrophotometer</location>
+                <status>Dormant</status>
+                <loggable />
+                <traceable>false</traceable>
+                <calibrations/>
+                <maintenance>
+                  <planned>
+                    <task dueDate="{plus_45_days.isoformat()}" performedBy="Company X">Service laser</task>
+                    <task dueDate="{plus_90_days.isoformat()}" performedBy="Joe">Clean filter</task>
+                  </planned>
+                  <completed/>
+                </maintenance>
+                <alterations />
+                <firmware />
+                <specifiedRequirements />
+                <referenceMaterials />
+                <qualityManual />
+            </equipment>
+        </register>
+        """)
+
+    cfg.registers.clear()
+    cfg.registers.append(EquipmentRegister("Temperature", temperature))
+    cfg.registers.append(EquipmentRegister("Mass", mass))
+    cfg.registers.append(EquipmentRegister("Light", light))
+
+    table, is_valid, synced = await utils.maintenance(teams=["Temperature", "Mass", "Light"], months=2, sync=True)
+    assert synced
+    assert is_valid == {"Temperature": True, "Mass": False, "Light": True}
+    assert table == [
+        {
+            "ID": "MSLE.T.002",
+            "Team": "Temperature",
+            "Due Date": "2024-12-01",
+            "Overdue?": "Yes",
+            "Task": "Refill helium gas",
+            "Performed By": "",
+            "Manufacturer": "X",
+            "Model": "Y",
+            "Serial": "Z",
+        },
+        {
+            "ID": "MSLE.O.001",
+            "Team": "Light",
+            "Due Date": plus_45_days.isoformat(),
+            "Overdue?": "No",
+            "Task": "Service laser",
+            "Performed By": "Company X",
+            "Manufacturer": "MSL",
+            "Model": "Model",
+            "Serial": "abc",
+        },
+    ]

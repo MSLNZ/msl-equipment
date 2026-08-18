@@ -103,6 +103,7 @@ def create_app(cfg: Config) -> Dash:
                                     dbc.Nav(
                                         [
                                             dbc.NavItem(dbc.NavLink("Assets", href="/assets")),
+                                            dbc.NavItem(dbc.NavLink("Maintenance", href="/maintenance")),
                                             dbc.NavItem(dbc.NavLink("Recalibrations", href="/recalibrations")),
                                             dbc.NavItem(dbc.NavLink("Search", href="/search")),
                                             dbc.NavItem(

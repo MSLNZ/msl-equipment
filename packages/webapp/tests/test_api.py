@@ -167,3 +167,23 @@ class TestAPI:
             "Model",
         ]
         assert value["data"] == []
+
+    def test_maintenance(self) -> None:
+        """Test maintenance."""
+        response = self.client.get("/api/maintenance", params={"team": "Light"})
+        assert response.status_code == 200
+        value = response.json()
+        assert value["synced"] is False
+        assert value["is_valid"] == {"Light": True}
+        assert value["header"] == [
+            "ID",
+            "Team",
+            "Due Date",
+            "Overdue?",
+            "Task",
+            "Performed By",
+            "Manufacturer",
+            "Model",
+            "Serial",
+        ]
+        assert value["data"] == []

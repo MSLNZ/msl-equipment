@@ -30,6 +30,28 @@ specify multiple `team`s by repeating the `team=value` pair (each `team=value` p
   - <dccLink href="/assets?team=Light&team=Length" />
 """
 
+maintenance_help = """
+##### Find equipment that has planned maintenance
+
+Select the register(s) of the team(s) that you are interested in and specify the
+number of months in the future to check if a maintenance task is due.
+
+You can also pre-populate the fields in the URL. This allows you to bookmark a
+URL with custom settings, for example,
+
+specify a `team`,
+  - <dccLink href="/maintenance?team=Light" />
+
+specify a `team` and the `months` parameter (each `name=value` pair is separated by the `&` character),
+  - <dccLink href="/maintenance?team=Light&months=1" />
+
+specify the `sync` parameter (a *checked* value can be one of `1`, `on`, `yes` or `true`),
+  - <dccLink href="/maintenance?sync=true" />
+
+specify multiple `team`s by repeating the `team=value` pair.
+  - <dccLink href="/maintenance?team=Light&team=Length" />
+"""
+
 recalibrations_help = """
 ##### Find equipment that needs to be recalibrated
 
@@ -129,6 +151,10 @@ def layout(**_: str) -> html.Div:
                     dbc.AccordionItem(
                         dcc.Markdown(assets_help, dangerously_allow_html=True),
                         title="Assets",
+                    ),
+                    dbc.AccordionItem(
+                        dcc.Markdown(maintenance_help, dangerously_allow_html=True),
+                        title="Maintenance",
                     ),
                     dbc.AccordionItem(
                         dcc.Markdown(recalibrations_help, dangerously_allow_html=True),

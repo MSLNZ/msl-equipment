@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 import pytest
 from dash import dcc, html, no_update
 from msl.equipment_webapp.config import EquipmentRegister, cfg
-from msl.equipment_webapp.pages import assets, home, pdf, recalibrations, search
+from msl.equipment_webapp.pages import assets, home, maintenance, pdf, recalibrations, search
 from msl.equipment_webapp.typing import Scope
 
 from .conftest import has_pdflatex, has_vera_pdf
@@ -55,6 +55,35 @@ def test_assets_layout(kwargs: dict[str, str], teams: list[str], sync: bool) -> 
 
     checkbox = div.children[0].children[2].children.children[1]
     assert checkbox.id == "assets-sync-checkbox"
+    assert checkbox.value is sync
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "teams", "months", "sync"),
+    [
+        ({}, [], 2, False),
+        ({"months": "12"}, [], 12, False),
+        ({"months": "-1", "sync": "False"}, [], 0, False),
+        ({"months": "Not-an-integer", "sync": "False"}, [], 2, False),  # months=2 on ValueError
+        ({"team": "Unknown", "months": "1000", "sync": "True"}, [], maintenance.MONTHS_MAX, True),
+        ({"team": "Light", "sync": "yes"}, ["Light"], 2, True),
+    ],
+)
+def test_maintenance_layout(kwargs: dict[str, str], teams: list[str], months: int, sync: bool) -> None:  # noqa: FBT001
+    cfg.registers.clear()
+    cfg.registers.append(EquipmentRegister(team="Light", directory=Path("tests/data/light")))
+
+    div = maintenance.layout(**kwargs)
+    dropdown = div.children[0].children[1].children[1]
+    assert dropdown.id == "maintenance-team-dropdown"
+    assert dropdown.value == teams
+
+    _input = div.children[0].children[2].children[1]
+    assert _input.id == "maintenance-months-input"
+    assert _input.value == months
+
+    checkbox = div.children[0].children[3].children.children[1]
+    assert checkbox.id == "maintenance-sync-checkbox"
     assert checkbox.value is sync
 
 
@@ -116,24 +145,25 @@ def test_search_layout(kwargs: dict[str, str], teams: list[str], text: str, sync
 
 
 @pytest.mark.anyio
+@pytest.mark.parametrize("mod", [maintenance, recalibrations])
 @pytest.mark.parametrize(("value", "expected"), [(0, False), (None, True), (6, False)])
-async def test_recalibrations_check_months_range(value: int | None, expected: bool) -> None:  # noqa: FBT001
-    assert await recalibrations.check_months_range(value) is expected
+async def test_check_months_range(mod: ModuleType, value: int | None, expected: bool) -> None:  # noqa: FBT001
+    assert await mod.check_months_range(value) is expected
 
 
 @pytest.mark.anyio
-@pytest.mark.parametrize("mod", [assets, recalibrations, search])
+@pytest.mark.parametrize("mod", [assets, maintenance, recalibrations, search])
 @pytest.mark.parametrize(("n_clicks", "expected"), [(0, False), (1, True), (100, True)])
 async def test_export_data_as_csv(mod: ModuleType, n_clicks: int, expected: bool) -> None:  # noqa: FBT001
     assert await mod.export_data_as_csv(n_clicks) is expected
 
 
-@pytest.mark.parametrize("mod", [assets, recalibrations, search])
+@pytest.mark.parametrize("mod", [assets, maintenance, recalibrations, search])
 def test_view_selected_row_empty(mod: ModuleType) -> None:
     assert mod.view_selected_row(0, [], scope) == (False, None)
 
 
-@pytest.mark.parametrize("mod", [assets, recalibrations, search])
+@pytest.mark.parametrize("mod", [assets, maintenance, recalibrations, search])
 def test_view_selected_row(mod: ModuleType) -> None:
     cfg.registers.clear()
     cfg.registers.append(EquipmentRegister(team="Light", directory=Path("tests/data/light")))
@@ -191,23 +221,26 @@ def test_view_selected_row(mod: ModuleType) -> None:
 
 
 @pytest.mark.anyio
-async def test_recalibrations_update_table_teams_empty() -> None:
-    href = await recalibrations.update_table([], 6, True, scope, "http://localhost/any")  # noqa: FBT003
+@pytest.mark.parametrize("mod", [maintenance, recalibrations])
+async def test_update_table_teams_empty(mod: ModuleType) -> None:
+    href = await mod.update_table([], 6, True, scope, "http://localhost/any")  # noqa: FBT003
     assert href == "http://localhost/any"
 
 
 @pytest.mark.anyio
-async def test_recalibrations_update_table_months_none() -> None:
-    href = await recalibrations.update_table(["Light"], None, True, scope, "http://localhost/any")  # noqa: FBT003
+@pytest.mark.parametrize("mod", [maintenance, recalibrations])
+async def test_update_table_months_none(mod: ModuleType) -> None:
+    href = await mod.update_table(["Light"], None, True, scope, "http://localhost/any")  # noqa: FBT003
     assert href == "http://localhost/any"
 
 
 @pytest.mark.anyio
-async def test_recalibrations_update_table() -> None:
+@pytest.mark.parametrize("mod", [maintenance, recalibrations])
+async def test_update_table(mod: ModuleType) -> None:
     cfg.registers.clear()
     cfg.registers.append(EquipmentRegister(team="Light", directory=Path("tests/data/light")))
 
-    href = await recalibrations.update_table(["Light"], 8, False, scope, "http://localhost/any")  # noqa: FBT003
+    href = await mod.update_table(["Light"], 8, False, scope, "http://localhost/any")  # noqa: FBT003
     assert href == "http://localhost/any?team=Light&months=8&sync=false"
 
 

@@ -84,11 +84,45 @@ async def assets(
 
 
 @server.get(
+    "/api/maintenance",
+    tags=["Equipment Registers"],
+    summary="Find equipment that has planned maintenance",
+    description=dedent(f"""
+    Find equipment that has planned maintenance.
+
+    Example Python script (requires the [requests](https://pypi.org/project/requests/) package):
+
+    ```python
+    import requests
+
+    response = requests.get("{base_url}/api/maintenance", params={{"team": ["Light", "Length"]}}, timeout=10)
+    response.raise_for_status()
+    print(response.json())
+    ```
+    """),
+)
+async def maintenance(
+    *,
+    team: Teams,
+    months: Annotated[int, Query(description="Number of months in the future to check if maintenance is due.")] = 2,
+    sync: Sync = False,
+) -> Table:
+    """Find equipment that has planned maintenance."""
+    data, is_valid, synced = await utils.maintenance(teams=[t.value for t in team], months=months, sync=sync)
+    return Table(
+        synced=synced,
+        is_valid=is_valid,
+        header=[str(item["field"]) for item in utils.MAINTENANCE_COLUMNS],
+        data=[list(row.values()) for row in data],
+    )
+
+
+@server.get(
     "/api/recalibrations",
     tags=["Equipment Registers"],
-    summary="Find equipment that needs to be recalibrated",
+    summary="Find equipment that must be recalibrated",
     description=dedent(f"""
-    Find equipment that needs to be recalibrated.
+    Find equipment that must be recalibrated.
 
     Example Python script (requires the [requests](https://pypi.org/project/requests/) package):
 
@@ -107,7 +141,7 @@ async def recalibrations(
     months: Annotated[int, Query(description="Number of months in the future to check if a recalibration is due.")] = 6,
     sync: Sync = False,
 ) -> Table:
-    """Find equipment that needs to be recalibrated."""
+    """Find equipment that must be recalibrated."""
     data, is_valid, synced = await utils.recalibrations(teams=[t.value for t in team], months=months, sync=sync)
     return Table(
         synced=synced,

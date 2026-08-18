@@ -38,7 +38,7 @@ def layout(**kwargs: str) -> html.Div:
                 [
                     components.view_button(page=PAGE),
                     components.team_dropdown(page=PAGE, value=params.teams),
-                    components.months_input(page=PAGE, value=params.months, tip="maintenance", maximum=MONTHS_MAX),
+                    components.months_input(page=PAGE, value=params.months, tip="maintenance task", maximum=MONTHS_MAX),
                     components.sync_checkbox(page=PAGE, value=params.sync, tip="checking"),
                     components.download_button(page=PAGE),
                 ],

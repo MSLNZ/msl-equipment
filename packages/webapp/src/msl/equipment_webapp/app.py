@@ -64,7 +64,7 @@ def create_app(cfg: Config) -> Dash:
     """Create the web application."""
     server = FastAPI(
         docs_url=None,
-        title="MSL Equipment API",
+        title=f"{cfg.nmi} Equipment API",
         version=__version__,
     )
 
@@ -150,7 +150,7 @@ def create_app(cfg: Config) -> Dash:
             swagger_ui_parameters={
                 "defaultModelsExpandDepth": -1,
             },
-            title="MSL | API",
+            title=f"{cfg.nmi} | API",
         )
 
     @server.middleware("http")

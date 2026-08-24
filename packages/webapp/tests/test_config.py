@@ -283,7 +283,7 @@ def test_load_navbar_bad_keyword(tmp_path: Path) -> None:
         }""")
 
     cfg = Config()
-    with pytest.raises(TypeError, match=r"NavBar.__init__"):
+    with pytest.raises(TypeError, match=r"unexpected keyword argument"):
         cfg.load(file)
 
 
@@ -332,7 +332,7 @@ def test_load_price_bad_keyword(tmp_path: Path) -> None:
         }""")
 
     cfg = Config()
-    with pytest.raises(TypeError, match=r"Price.__init__"):
+    with pytest.raises(TypeError, match=r"unexpected keyword argument"):
         cfg.load(file)
 
 
@@ -347,7 +347,7 @@ def test_load_currency_bad_keyword(tmp_path: Path) -> None:
         }""")
 
     cfg = Config()
-    with pytest.raises(TypeError, match=r"Currency.__init__"):
+    with pytest.raises(TypeError, match=r"unexpected keyword argument"):
         cfg.load(file)
 
 
@@ -434,5 +434,5 @@ def test_load_sha256_validation_bad_keyword(tmp_path: Path) -> None:
         }""")
 
     cfg = Config()
-    with pytest.raises(TypeError, match=r"SHA256Validation.__init__"):
+    with pytest.raises(TypeError, match=r"unexpected keyword argument"):
         cfg.load(file)

@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 
 
 REGEX = re.compile(
-    r"^USB(?P<board>\d*)::(?P<vid>[^:]+)::(?P<pid>[^:]+)::(?P<serial>(?:[^:]*|:(?!:))*)(::(?P<interface>\d+))?::((?<!INSTR)|(RAW))$",
+    r"^USB(?P<board>\d*)::(?P<vid>[^:]+)::(?P<pid>[^:]+)::(?P<serial>.+?)(?=::)(::(?P<interface>\d+))?::((?<!INSTR)|(RAW))$",
     flags=re.IGNORECASE,
 )
 

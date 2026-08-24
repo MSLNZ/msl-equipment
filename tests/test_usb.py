@@ -63,6 +63,10 @@ def test_get_usb_backend_success() -> None:
         ("USB10::0X1::0X2::3:4::5::Whatever", ParsedUSBAddress(1, 2, "3:4", 5)),
         ("FTDI::123::456::abc", ParsedUSBAddress(123, 456, "abc", 0)),
         ("fTdi0::123::456::abc", ParsedUSBAddress(123, 456, "abc", 0)),
+        (
+            "USB0::0x03eb::0x2065::GPIB_5_5342303138363514041C1::INSTR",
+            ParsedUSBAddress(0x03EB, 0x2065, "GPIB_5_5342303138363514041C1", 0),
+        ),
     ],
 )
 def test_parse_usb_address(address: str, expected: ParsedUSBAddress | None) -> None:

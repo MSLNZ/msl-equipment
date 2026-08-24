@@ -14,18 +14,19 @@ if TYPE_CHECKING:
 
 
 @pytest.mark.parametrize(
-    "address",
+    ("address", "vid", "pid", "serial"),
     [
-        "USB::0x2a2b::0x1122::ABC123",
-        "USB6::0x2a2b::0x1122::ABC123",
-        "USB::10795::4386::ABC123",
-        "USB::0x2a2b::0x1122::ABC123::1",
-        "USB::0x2a2b::0x1122::ABC123::INSTR",
-        "USB::0x2a2b::0x1122::ABC123::2::INSTR",
+        ("USB::0x2a2b::0x1122::ABC123", 0x2A2B, 0x1122, "ABC123"),
+        ("USB6::0x1234::9876::ABC:123", 0x1234, 9876, "ABC:123"),
+        ("USB::10795::438::GPIB_5_123", 10795, 438, "GPIB_5_123"),
+        ("USB::0x2a2b::0x1122::ABC123::1", 0x2A2B, 0x1122, "ABC123"),
+        ("USB::6::9::ABC:123::INSTR", 6, 9, "ABC:123"),
+        ("USB::0x222::0x111::A:BC_12:3::2::INSTR", 0x222, 0x111, "A:BC_12:3"),
+        ("USB0::9715::5182::GPIB_5_123::INSTR", 9715, 5182, "GPIB_5_123"),
     ],
 )
-def test_usbtmc_address(address: str, usb_backend: USBBackend) -> None:
-    usb_backend.add_device(0x2A2B, 0x1122, "ABC123")
+def test_usbtmc_address(address: str, vid: int, pid: int, serial: str, usb_backend: USBBackend) -> None:
+    usb_backend.add_device(vid, pid, serial)
     c = Connection(address, usb_backend=usb_backend)
     with c.connect() as device:
         assert isinstance(device, USBTMC)

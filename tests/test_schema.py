@@ -562,7 +562,33 @@ def test_status_valid() -> None:
         restriction = element.find("./{http://www.w3.org/2001/XMLSchema}restriction")
         assert restriction is not None
         options = [e.get("value", "") for e in restriction]
-        assert options == Status._member_names_
+        assert options == [s.value for s in Status]
+
+
+def test_status_sent_for_calibration() -> None:
+    text = (
+        b'<equipment enteredBy="">'
+        b"<id/>"
+        b"<manufacturer/>"
+        b"<model/>"
+        b"<serial/>"
+        b"<description/>"
+        b"<specifications/>"
+        b"<location/>"
+        b"<status>Sent for calibration</status>"
+        b"<loggable/>"
+        b"<traceable>false</traceable>"
+        b"<calibrations/>"
+        b"<maintenance/>"
+        b"<alterations/>"
+        b"<firmware/>"
+        b"<specifiedRequirements/>"
+        b"<referenceMaterials/>"
+        b"<qualityManual/>"
+        b"</equipment>"
+    )
+    equipment = Equipment.from_xml(XML(text))
+    assert equipment.status == Status.SentForCalibration
 
 
 def test_status_invalid() -> None:
@@ -3243,7 +3269,8 @@ def test_register_add() -> None:
         b"<qualityManual />"
         b"</equipment>"
         b'<equipment enteredBy="" alias="Bob">'
-        b"<id>B</id><manufacturer />"
+        b"<id>B</id>"
+        b"<manufacturer />"
         b"<model />"
         b"<serial />"
         b"<description />"

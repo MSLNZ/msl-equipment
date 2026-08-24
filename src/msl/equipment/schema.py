@@ -165,8 +165,10 @@ class Status(Enum):
         Dormant (str): The equipment is still operable, it is no longer in use but may be used again
             (e.g., the equipment was replaced with a newer model, and it is kept as a backup).
         Lost (str): The equipment is lost, but if found may be put back into service.
+        Ordered (str): The equipment has been ordered.
         Retired (str): The equipment is still operable, but there are no intentions of using it again
             (e.g., the equipment depends on other equipment that is not available or is no longer manufactured).
+        SentForCalibration (str): The equipment is being calibrated at an external institute.
         Unassembled (str): The equipment is not assembled and is currently a work in progress
             (e.g., the equipment has an asset number but the assembly and testing of the equipment is not complete).
     """
@@ -176,7 +178,9 @@ class Status(Enum):
     Disposed = "Disposed"
     Dormant = "Dormant"
     Lost = "Lost"
+    Ordered = "Ordered"
     Retired = "Retired"
+    SentForCalibration = "Sent for calibration"
     Unassembled = "Unassembled"
 
 

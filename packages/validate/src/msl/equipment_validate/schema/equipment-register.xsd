@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema version="0.2.1.dev37+ge0b802280"
+<xsd:schema version="0.2.1.dev40+gd3f76db10"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
             xmlns:gtc="https://measurement.govt.nz/gtc/xml"
@@ -371,21 +371,23 @@
 
                 A single value indicates that the equipment is _active_:
 
-                * **Active**: The equipment is operable and may be used
+                * **Active**: The equipment is operable and may be used.
 
                 The following values indicate that the equipment is _inactive_, but
                 provide more context as to the reason why it is _inactive_:
 
-                * **Damaged**: The equipment is damaged and is no longer usable
+                * **Damaged**: The equipment is damaged and is no longer usable.
                 * **Disposed**: The equipment has been disposed of and is no longer at MSL
-                  (e.g., the equipment was sent to the landfill or to be recycled)
+                  (e.g., the equipment was sent to the landfill or to be recycled).
                 * **Dormant**: The equipment is still operable, it is no longer in use but may be used again
-                  (e.g., the equipment was replaced with a newer model, and it is kept as a backup)
+                  (e.g., the equipment was replaced with a newer model, and it is kept as a backup).
                 * **Lost**: The equipment is lost, but if found may be put back into service.
+                * **Ordered**: The equipment has been ordered.
                 * **Retired**: The equipment is still operable, but there are no intentions of using it again
-                  (e.g., the equipment depends on other equipment that is not available or is no longer manufactured)
+                  (e.g., the equipment depends on other equipment that is not available or is no longer manufactured).
+                * **Sent for calibration**: The equipment is being calibrated at an external institute.
                 * **Unassembled**: The equipment is not assembled and is currently a work in progress
-                  (e.g., the equipment has an asset number but the assembly and testing of the equipment is not complete)
+                  (e.g., the equipment has an asset number but the assembly and testing of the equipment is not complete).
 
                 **Examples**
 
@@ -404,7 +406,9 @@
             <xsd:enumeration value="Disposed"/>
             <xsd:enumeration value="Dormant"/>
             <xsd:enumeration value="Lost"/>
+            <xsd:enumeration value="Ordered"/>
             <xsd:enumeration value="Retired"/>
+            <xsd:enumeration value="Sent for calibration"/>
             <xsd:enumeration value="Unassembled"/>
         </xsd:restriction>
     </xsd:simpleType>

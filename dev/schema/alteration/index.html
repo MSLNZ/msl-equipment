@@ -5317,18 +5317,18 @@
 <span class="normal">272</span>
 <span class="normal">273</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Alteration</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into an [Alteration][msl.equipment.schema.Alteration] instance.</span>
+<span class="w">    </span><span class="sd">"""Convert an XML element into an [Alteration][msl.equipment.schema.Alteration] instance.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        element: An [alteration][type_alteration] XML element from an equipment register.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Alteration][msl.equipment.schema.Alteration] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-        <span class="n">date</span><span class="o">=</span><span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]),</span>
-        <span class="n">details</span><span class="o">=</span><span class="n">element</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="n">performed_by</span><span class="o">=</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;performedBy&quot;</span><span class="p">],</span>
+        <span class="n">date</span><span class="o">=</span><span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">"date"</span><span class="p">]),</span>
+        <span class="n">details</span><span class="o">=</span><span class="n">element</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">,</span>
+        <span class="n">performed_by</span><span class="o">=</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">"performedBy"</span><span class="p">],</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5396,12 +5396,12 @@
 <span class="normal">281</span>
 <span class="normal">282</span>
 <span class="normal">283</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Alteration][msl.equipment.schema.Alteration] class into an XML element.</span>
+<span class="w">    </span><span class="sd">"""Convert the [Alteration][msl.equipment.schema.Alteration] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Alteration][msl.equipment.schema.Alteration] as an XML element.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;alteration&quot;</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span> <span class="s2">&quot;performedBy&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">performed_by</span><span class="p">})</span>
+<span class="sd">    """</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">"alteration"</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">"date"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span> <span class="s2">"performedBy"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">performed_by</span><span class="p">})</span>
     <span class="n">e</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">details</span>
     <span class="k">return</span> <span class="n">e</span>
 </code></pre></div></td></tr></table></div>

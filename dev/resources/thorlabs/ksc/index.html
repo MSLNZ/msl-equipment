@@ -5478,8 +5478,8 @@
 
         <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Thorlabs&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;KSC&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Thorlabs"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">"KSC"</span>
 </code></pre></div></p>
 
 
@@ -5555,13 +5555,13 @@ that are defined in <a class="autorefs autorefs-internal" title="            Tho
 <span class="normal">101</span>
 <span class="normal">102</span>
 <span class="normal">103</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Communicate with a K-Cube Solenoid Controller from Thorlabs.</span>
+<span class="w">    </span><span class="sd">"""Communicate with a K-Cube Solenoid Controller from Thorlabs.</span>
 
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;Thorlabs&quot;</span>
-<span class="sd">    model=r&quot;KSC&quot;</span>
+<span class="sd">    manufacturer=r"Thorlabs"</span>
+<span class="sd">    model=r"KSC"</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
@@ -5569,7 +5569,7 @@ that are defined in <a class="autorefs autorefs-internal" title="            Tho
 
 <span class="sd">    A [Connection][msl.equipment.schema.Connection] instance supports the _properties_</span>
 <span class="sd">    that are defined in [ThorlabsMotion][msl.equipment_resources.thorlabs.motion.ThorlabsMotion].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="p">:</span> <span class="n">ThorlabsMotion</span> <span class="o">=</span> <span class="n">ThorlabsMotion</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
@@ -6013,7 +6013,7 @@ see <a class="autorefs autorefs-internal" title="            set_trigger_paramet
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">105</span>
 <span class="normal">106</span>
 <span class="normal">107</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">close_shutter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Close the shutter.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Close the shutter."""</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mh">0x04CB</span><span class="p">,</span> <span class="n">param1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">param2</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mh">0x50</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6043,8 +6043,8 @@ see <a class="autorefs autorefs-internal" title="            set_trigger_paramet
 <span class="normal">110</span>
 <span class="normal">111</span>
 <span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the Solenoid Controller.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_motion&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Disconnect from the Solenoid Controller."""</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_motion"</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6111,12 +6111,12 @@ see <a class="autorefs autorefs-internal" title="            set_trigger_paramet
 <span class="normal">119</span>
 <span class="normal">120</span>
 <span class="normal">121</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_cycle_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KSCCycleParameters</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the cycle parameters of the Solenoid Controller.</span>
+<span class="w">    </span><span class="sd">"""Get the cycle parameters of the Solenoid Controller.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The cycle parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">on</span><span class="p">,</span> <span class="n">off</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;Hiii&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="mh">0x04C4</span><span class="p">,</span> <span class="n">param1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mh">0x50</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">on</span><span class="p">,</span> <span class="n">off</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">"&lt;Hiii"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="mh">0x04C4</span><span class="p">,</span> <span class="n">param1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mh">0x50</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">KSCCycleParameters</span><span class="p">(</span><span class="n">on_duration</span><span class="o">=</span><span class="n">on</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="n">off_duration</span><span class="o">=</span><span class="n">off</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="n">cycle_count</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6183,12 +6183,12 @@ see <a class="autorefs autorefs-internal" title="            set_trigger_paramet
 <span class="normal">128</span>
 <span class="normal">129</span>
 <span class="normal">130</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_display_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KSCDisplayParameters</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the LED display parameters of the Solenoid Controller.</span>
+<span class="w">    </span><span class="sd">"""Get the LED display parameters of the Solenoid Controller.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The LED display parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;H20x3H8x&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="mh">0x0521</span><span class="p">,</span> <span class="n">param1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mh">0x50</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">"&lt;H20x3H8x"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="mh">0x0521</span><span class="p">,</span> <span class="n">param1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mh">0x50</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">KSCDisplayParameters</span><span class="p">(</span><span class="n">intensity</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">dimmed</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6255,12 +6255,12 @@ see <a class="autorefs autorefs-internal" title="            set_trigger_paramet
 <span class="normal">137</span>
 <span class="normal">138</span>
 <span class="normal">139</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_trigger_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">TriggerMode</span><span class="p">,</span> <span class="n">TriggerPolarity</span><span class="p">,</span> <span class="n">TriggerMode</span><span class="p">,</span> <span class="n">TriggerPolarity</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the trigger parameters for the `TRIG1` and `TRIG2` ports.</span>
+<span class="w">    </span><span class="sd">"""Get the trigger parameters for the `TRIG1` and `TRIG2` ports.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The `(TRIG1 mode, TRIG1 polarity, TRIG2 mode, TRIG2 polarity)` parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;5H12x&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="mh">0x0524</span><span class="p">,</span> <span class="n">param1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mh">0x50</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">"&lt;5H12x"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="mh">0x0524</span><span class="p">,</span> <span class="n">param1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mh">0x50</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">KSC</span><span class="o">.</span><span class="n">TriggerMode</span><span class="p">(</span><span class="n">m1</span><span class="p">),</span> <span class="n">KSC</span><span class="o">.</span><span class="n">TriggerPolarity</span><span class="p">(</span><span class="n">p1</span><span class="p">),</span> <span class="n">KSC</span><span class="o">.</span><span class="n">TriggerMode</span><span class="p">(</span><span class="n">m2</span><span class="p">),</span> <span class="n">KSC</span><span class="o">.</span><span class="n">TriggerPolarity</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6318,11 +6318,11 @@ see <a class="autorefs autorefs-internal" title="            set_trigger_paramet
 <span class="normal">145</span>
 <span class="normal">146</span>
 <span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">hardware_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ThorlabsHardwareInfo</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the hardware information about the Solenoid controller.</span>
+<span class="w">    </span><span class="sd">"""Get the hardware information about the Solenoid controller.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The hardware information.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">hardware_info</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6351,7 +6351,7 @@ see <a class="autorefs autorefs-internal" title="            set_trigger_paramet
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">149</span>
 <span class="normal">150</span>
 <span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">identify</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Instruct the Solenoid Controller to identify itself by flashing its LED display.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Instruct the Solenoid Controller to identify itself by flashing its LED display."""</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">identify</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6407,11 +6407,11 @@ see <a class="autorefs autorefs-internal" title="            set_trigger_paramet
 <span class="normal">170</span>
 <span class="normal">171</span>
 <span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_key_unlocked</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the state of the safety key.</span>
+<span class="w">    </span><span class="sd">"""Get the state of the safety key.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the safety key is in the locked (`False`) or unlocked (`True`) position.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">()</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">13</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6511,18 +6511,18 @@ the solenoid is in the active state (energised).</p>
 <span class="normal">187</span>
 <span class="normal">188</span>
 <span class="normal">189</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the state of the shutter (solenoid).</span>
+<span class="w">    </span><span class="sd">"""Get the state of the shutter (solenoid).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        delay: The number of seconds to wait before querying the state of the shutter (solenoid).</span>
 <span class="sd">            After calling [open_shutter][..open_shutter] or [close_shutter][..close_shutter]</span>
-<span class="sd">            it can take ~10&#39;s of milliseconds for the status of the solenoid to get updated in</span>
+<span class="sd">            it can take ~10's of milliseconds for the status of the solenoid to get updated in</span>
 <span class="sd">            firmware.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the shutter is closed (`False`) or open (`True`). When the shutter is open,</span>
 <span class="sd">            the solenoid is in the active state (energised).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">delay</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">()</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span>
@@ -6553,7 +6553,7 @@ the solenoid is in the active state (energised).</p>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">191</span>
 <span class="normal">192</span>
 <span class="normal">193</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">open_shutter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Open the shutter.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Open the shutter."""</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mh">0x04CB</span><span class="p">,</span> <span class="n">param1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">param2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mh">0x50</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6686,7 +6686,7 @@ The value can be any integer from 0 to 1 million. If set to 0, the controller cy
 <span class="normal">232</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_cycle_parameters</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">on_duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">off_duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">cycle_count</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10_000</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the cycle parameters of the Solenoid Controller.</span>
+<span class="w">    </span><span class="sd">"""Set the cycle parameters of the Solenoid Controller.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        on_duration (float): The time, in seconds, that the shutter is open. The value must</span>
@@ -6699,17 +6699,17 @@ The value can be any integer from 0 to 1 million. If set to 0, the controller cy
 <span class="sd">        cycle_count (float): The number of open/close cycles to perform, only if the</span>
 <span class="sd">            [OperatingMode][msl.equipment_resources.thorlabs.ksc.KSC.OperatingMode] is `AUTO`.</span>
 <span class="sd">            The value can be any integer from 0 to 1 million. If set to 0, the controller cycles indefinitely.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">duration</span> <span class="ow">in</span> <span class="p">(</span><span class="n">on_duration</span><span class="p">,</span> <span class="n">off_duration</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">duration</span> <span class="o">&lt;</span> <span class="mf">0.01</span> <span class="ow">or</span> <span class="n">duration</span> <span class="o">&gt;</span> <span class="mf">10e3</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid solenoid on/off duration, </span><span class="si">{</span><span class="n">duration</span><span class="si">}</span><span class="s2">, must be between 0.01 and 10k seconds&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid solenoid on/off duration, </span><span class="si">{</span><span class="n">duration</span><span class="si">}</span><span class="s2">, must be between 0.01 and 10k seconds"</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">cycle_count</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">cycle_count</span> <span class="o">&gt;</span> <span class="mf">1e6</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid solenoid cycle count, </span><span class="si">{</span><span class="n">cycle_count</span><span class="si">}</span><span class="s2">, must be between 0 and 1M&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid solenoid cycle count, </span><span class="si">{</span><span class="n">cycle_count</span><span class="si">}</span><span class="s2">, must be between 0 and 1M"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">data</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&lt;Hiii&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">on_duration</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">off_duration</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">cycle_count</span><span class="p">))</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="s2">"&lt;Hiii"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">on_duration</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">off_duration</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">cycle_count</span><span class="p">))</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mh">0x04C3</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mh">0x50</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6826,7 +6826,7 @@ The value must be in the range [0, 480]. Set to 0 to disable dimming.</p>
 <span class="normal">255</span>
 <span class="normal">256</span>
 <span class="normal">257</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_display_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intensity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">dimmed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the LED display parameters of the Solenoid Controller.</span>
+<span class="w">    </span><span class="sd">"""Set the LED display parameters of the Solenoid Controller.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        intensity (int): LED display intensity, as a percentage [0, 100].</span>
@@ -6834,20 +6834,20 @@ The value must be in the range [0, 480]. Set to 0 to disable dimming.</p>
 <span class="sd">            The value must be between 0 (off) to 10 (brightest).</span>
 <span class="sd">        timeout (int): The number of minutes of inactivity after which the intensity is dimmed.</span>
 <span class="sd">            The value must be in the range [0, 480]. Set to 0 to disable dimming.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">intensity</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">intensity</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid solenoid display intensity, </span><span class="si">{</span><span class="n">intensity</span><span class="si">}</span><span class="s2">, must be between 0 and 100&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid solenoid display intensity, </span><span class="si">{</span><span class="n">intensity</span><span class="si">}</span><span class="s2">, must be between 0 and 100"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">dimmed</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">dimmed</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid solenoid display dimmed intensity, </span><span class="si">{</span><span class="n">dimmed</span><span class="si">}</span><span class="s2">, must be between 0 and 10&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid solenoid display dimmed intensity, </span><span class="si">{</span><span class="n">dimmed</span><span class="si">}</span><span class="s2">, must be between 0 and 10"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">timeout</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">timeout</span> <span class="o">&gt;</span> <span class="mi">480</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid solenoid display timeout, </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2">, must be between 0 and 480&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid solenoid display timeout, </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2">, must be between 0 and 480"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">data</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&lt;H20x3H8x&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">intensity</span><span class="p">,</span> <span class="n">dimmed</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="s2">"&lt;H20x3H8x"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">intensity</span><span class="p">,</span> <span class="n">dimmed</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mh">0x0520</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mh">0x50</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6865,13 +6865,13 @@ The value must be in the range [0, 480]. Set to 0 to disable dimming.</p>
 <a href="#msl.equipment_resources.thorlabs.ksc.KSC.set_trigger_parameters" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_trigger_parameters</span><span class="p">(</span>
     <span class="n">mode1</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            TriggerMode
-(IntEnum) (msl.equipment_resources.thorlabs.ksc.KSC.TriggerMode)" href="#msl.equipment_resources.thorlabs.ksc.KSC.TriggerMode">TriggerMode</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;INPUT&quot;</span><span class="p">,</span>
+(IntEnum) (msl.equipment_resources.thorlabs.ksc.KSC.TriggerMode)" href="#msl.equipment_resources.thorlabs.ksc.KSC.TriggerMode">TriggerMode</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">"INPUT"</span><span class="p">,</span>
     <span class="n">polarity1</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            TriggerPolarity
-(IntEnum) (msl.equipment_resources.thorlabs.ksc.KSC.TriggerPolarity)" href="#msl.equipment_resources.thorlabs.ksc.KSC.TriggerPolarity">TriggerPolarity</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;HIGH&quot;</span><span class="p">,</span>
+(IntEnum) (msl.equipment_resources.thorlabs.ksc.KSC.TriggerPolarity)" href="#msl.equipment_resources.thorlabs.ksc.KSC.TriggerPolarity">TriggerPolarity</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">"HIGH"</span><span class="p">,</span>
     <span class="n">mode2</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            TriggerMode
-(IntEnum) (msl.equipment_resources.thorlabs.ksc.KSC.TriggerMode)" href="#msl.equipment_resources.thorlabs.ksc.KSC.TriggerMode">TriggerMode</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;OUTPUT&quot;</span><span class="p">,</span>
+(IntEnum) (msl.equipment_resources.thorlabs.ksc.KSC.TriggerMode)" href="#msl.equipment_resources.thorlabs.ksc.KSC.TriggerMode">TriggerMode</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">"OUTPUT"</span><span class="p">,</span>
     <span class="n">polarity2</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            TriggerPolarity
-(IntEnum) (msl.equipment_resources.thorlabs.ksc.KSC.TriggerPolarity)" href="#msl.equipment_resources.thorlabs.ksc.KSC.TriggerPolarity">TriggerPolarity</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;HIGH&quot;</span><span class="p">,</span>
+(IntEnum) (msl.equipment_resources.thorlabs.ksc.KSC.TriggerPolarity)" href="#msl.equipment_resources.thorlabs.ksc.KSC.TriggerPolarity">TriggerPolarity</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">"HIGH"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
@@ -6987,24 +6987,24 @@ The value must be in the range [0, 480]. Set to 0 to disable dimming.</p>
 <span class="normal">278</span>
 <span class="normal">279</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_parameters</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">mode1</span><span class="p">:</span> <span class="n">TriggerMode</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INPUT&quot;</span><span class="p">,</span>
-    <span class="n">polarity1</span><span class="p">:</span> <span class="n">TriggerPolarity</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;HIGH&quot;</span><span class="p">,</span>
-    <span class="n">mode2</span><span class="p">:</span> <span class="n">TriggerMode</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;OUTPUT&quot;</span><span class="p">,</span>
-    <span class="n">polarity2</span><span class="p">:</span> <span class="n">TriggerPolarity</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;HIGH&quot;</span><span class="p">,</span>
+    <span class="n">mode1</span><span class="p">:</span> <span class="n">TriggerMode</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"INPUT"</span><span class="p">,</span>
+    <span class="n">polarity1</span><span class="p">:</span> <span class="n">TriggerPolarity</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"HIGH"</span><span class="p">,</span>
+    <span class="n">mode2</span><span class="p">:</span> <span class="n">TriggerMode</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"OUTPUT"</span><span class="p">,</span>
+    <span class="n">polarity2</span><span class="p">:</span> <span class="n">TriggerPolarity</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"HIGH"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the trigger parameters for the `TRIG1` and `TRIG2` ports.</span>
+<span class="w">    </span><span class="sd">"""Set the trigger parameters for the `TRIG1` and `TRIG2` ports.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        mode1: `TRIG1` mode. Can be an enum member name (case insensitive) or value.</span>
 <span class="sd">        polarity1: `TRIG1` polarity. Can be an enum member name (case insensitive) or value.</span>
 <span class="sd">        mode2: `TRIG2` mode. Can be an enum member name (case insensitive) or value.</span>
 <span class="sd">        polarity2: `TRIG2` polarity. Can be an enum member name (case insensitive) or value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">m1</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">mode1</span><span class="p">,</span> <span class="n">KSC</span><span class="o">.</span><span class="n">TriggerMode</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">p1</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">polarity1</span><span class="p">,</span> <span class="n">KSC</span><span class="o">.</span><span class="n">TriggerPolarity</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">m2</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">mode2</span><span class="p">,</span> <span class="n">KSC</span><span class="o">.</span><span class="n">TriggerMode</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">p2</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">polarity2</span><span class="p">,</span> <span class="n">KSC</span><span class="o">.</span><span class="n">TriggerPolarity</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&lt;5H12x&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="s2">"&lt;5H12x"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">p1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mh">0x0523</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mh">0x50</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7064,13 +7064,13 @@ operating conditions of the Solenoid controller.</p>
 <span class="normal">287</span>
 <span class="normal">288</span>
 <span class="normal">289</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the status of the Solenoid Controller.</span>
+<span class="w">    </span><span class="sd">"""Get the status of the Solenoid Controller.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status. A 32-bit value that represents the current status of the Solenoid controller.</span>
 <span class="sd">            Each of the 32 bits acts as a flag (0 or 1), simultaneously indicating 32 distinct</span>
 <span class="sd">            operating conditions of the Solenoid controller.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">status</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>

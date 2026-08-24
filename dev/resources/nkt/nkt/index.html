@@ -5211,7 +5211,7 @@ for the <code>NKT</code> class.</p>
 <span class="normal">201</span>
 <span class="normal">202</span>
 <span class="normal">203</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Communicate with equipment from NKT Photonics.</span>
+<span class="w">    </span><span class="sd">"""Communicate with equipment from NKT Photonics.</span>
 
 <span class="sd">    Both ethernet and serial interfaces are supported.</span>
 
@@ -5226,7 +5226,7 @@ for the <code>NKT</code> class.</p>
 <span class="sd">            [read_register][msl.equipment_resources.nkt.nkt.NKT.read_register] and</span>
 <span class="sd">            [write_register][msl.equipment_resources.nkt.nkt.NKT.write_register] operations.</span>
 <span class="sd">            _Default: `None`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_connected</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
@@ -5235,8 +5235,8 @@ for the <code>NKT</code> class.</p>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_interface</span><span class="p">:</span> <span class="n">Serial</span> <span class="o">|</span> <span class="n">Socket</span>
     <span class="k">if</span> <span class="n">parse_serial_address</span><span class="p">(</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">props</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;baud_rate&quot;</span><span class="p">,</span> <span class="mi">115200</span><span class="p">)</span>
-        <span class="n">props</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;rts_cts&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">props</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"baud_rate"</span><span class="p">,</span> <span class="mi">115200</span><span class="p">)</span>
+        <span class="n">props</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"rts_cts"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_interface</span> <span class="o">=</span> <span class="n">Serial</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_interface</span> <span class="o">=</span> <span class="n">Socket</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
@@ -5247,7 +5247,7 @@ for the <code>NKT</code> class.</p>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span> <span class="n">Lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"timeout"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -5344,7 +5344,7 @@ and <a class="autorefs autorefs-internal" title="            write_register" hre
 <span class="normal">243</span>
 <span class="normal">244</span>
 <span class="normal">245</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the NKT equipment.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Disconnect from the NKT equipment."""</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connected</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_interface</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
@@ -5365,14 +5365,14 @@ and <a class="autorefs autorefs-internal" title="            write_register" hre
 <a href="#msl.equipment_resources.nkt.nkt.NKT.read_register" class="headerlink" title="Permanent link">¤</a></h3>
           <div class="doc-overloads">
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">read_register</span><span class="p">(</span><span class="n">module</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">register</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span>
-</code></pre></div><div class="doc-signature highlight"><pre><span></span><code><span class="nf">read_register</span><span class="p">(</span><span class="n">module</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">register</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">&#39;string&#39;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
+</code></pre></div><div class="doc-signature highlight"><pre><span></span><code><span class="nf">read_register</span><span class="p">(</span><span class="n">module</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">register</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'string'</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
 </code></pre></div><div class="doc-signature highlight"><pre><span></span><code><span class="nf">read_register</span><span class="p">(</span>
     <span class="n">module</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span>
     <span class="n">register</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;i8&quot;</span><span class="p">,</span> <span class="s2">&quot;u8&quot;</span><span class="p">,</span> <span class="s2">&quot;h8&quot;</span><span class="p">,</span> <span class="s2">&quot;i16&quot;</span><span class="p">,</span> <span class="s2">&quot;u16&quot;</span><span class="p">,</span> <span class="s2">&quot;h16&quot;</span><span class="p">,</span> <span class="s2">&quot;i32&quot;</span><span class="p">,</span> <span class="s2">&quot;u32&quot;</span><span class="p">,</span> <span class="s2">&quot;h32&quot;</span><span class="p">],</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">"i8"</span><span class="p">,</span> <span class="s2">"u8"</span><span class="p">,</span> <span class="s2">"h8"</span><span class="p">,</span> <span class="s2">"i16"</span><span class="p">,</span> <span class="s2">"u16"</span><span class="p">,</span> <span class="s2">"h16"</span><span class="p">,</span> <span class="s2">"i32"</span><span class="p">,</span> <span class="s2">"u32"</span><span class="p">,</span> <span class="s2">"h32"</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div><div class="doc-signature highlight"><pre><span></span><code><span class="nf">read_register</span><span class="p">(</span>
-    <span class="n">module</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">register</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;f32&quot;</span><span class="p">,</span> <span class="s2">&quot;f64&quot;</span><span class="p">]</span>
+    <span class="n">module</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">register</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">"f32"</span><span class="p">,</span> <span class="s2">"f64"</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
 </code></pre></div>          </div>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">read_register</span><span class="p">(</span>
@@ -5380,18 +5380,18 @@ and <a class="autorefs autorefs-internal" title="            write_register" hre
     <span class="n">register</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="p">(</span>
         <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span>
-            <span class="s2">&quot;i8&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;u8&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;h8&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;i16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;u16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;h16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;i32&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;u32&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;h32&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;f32&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;f64&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="s2">"i8"</span><span class="p">,</span>
+            <span class="s2">"u8"</span><span class="p">,</span>
+            <span class="s2">"h8"</span><span class="p">,</span>
+            <span class="s2">"i16"</span><span class="p">,</span>
+            <span class="s2">"u16"</span><span class="p">,</span>
+            <span class="s2">"h16"</span><span class="p">,</span>
+            <span class="s2">"i32"</span><span class="p">,</span>
+            <span class="s2">"u32"</span><span class="p">,</span>
+            <span class="s2">"h32"</span><span class="p">,</span>
+            <span class="s2">"f32"</span><span class="p">,</span>
+            <span class="s2">"f64"</span><span class="p">,</span>
+            <span class="s2">"string"</span><span class="p">,</span>
         <span class="p">]</span>
         <span class="o">|</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -5530,10 +5530,10 @@ and <a class="autorefs autorefs-internal" title="            write_register" hre
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">module</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">register</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;i8&quot;</span><span class="p">,</span> <span class="s2">&quot;u8&quot;</span><span class="p">,</span> <span class="s2">&quot;h8&quot;</span><span class="p">,</span> <span class="s2">&quot;i16&quot;</span><span class="p">,</span> <span class="s2">&quot;u16&quot;</span><span class="p">,</span> <span class="s2">&quot;h16&quot;</span><span class="p">,</span> <span class="s2">&quot;i32&quot;</span><span class="p">,</span> <span class="s2">&quot;u32&quot;</span><span class="p">,</span> <span class="s2">&quot;h32&quot;</span><span class="p">,</span> <span class="s2">&quot;f32&quot;</span><span class="p">,</span> <span class="s2">&quot;f64&quot;</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">]</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"i8"</span><span class="p">,</span> <span class="s2">"u8"</span><span class="p">,</span> <span class="s2">"h8"</span><span class="p">,</span> <span class="s2">"i16"</span><span class="p">,</span> <span class="s2">"u16"</span><span class="p">,</span> <span class="s2">"h16"</span><span class="p">,</span> <span class="s2">"i32"</span><span class="p">,</span> <span class="s2">"u32"</span><span class="p">,</span> <span class="s2">"h32"</span><span class="p">,</span> <span class="s2">"f32"</span><span class="p">,</span> <span class="s2">"f64"</span><span class="p">,</span> <span class="s2">"string"</span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the register value of the device.</span>
+<span class="w">    </span><span class="sd">"""Read the register value of the device.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        module: Module address (device ID).</span>
@@ -5542,10 +5542,10 @@ and <a class="autorefs autorefs-internal" title="            write_register" hre
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The register value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_telegram</span><span class="p">(</span><span class="n">_build_read_telegram</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">register</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">_MessageType</span><span class="o">.</span><span class="n">DATAGRAM</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;NKT device did not respond with a DATAGRAM message type, got </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">type</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"NKT device did not respond with a DATAGRAM message type, got </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">type</span><span class="si">!r}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -5553,11 +5553,11 @@ and <a class="autorefs autorefs-internal" title="            write_register" hre
 
     <span class="n">fmt</span> <span class="o">=</span> <span class="n">_data_types</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dtype</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
     <span class="k">if</span> <span class="n">fmt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">dt</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_data_types</span><span class="p">)</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid register data type </span><span class="si">{</span><span class="n">dtype</span><span class="si">!r}</span><span class="s2">, must be one of: </span><span class="si">{</span><span class="n">dt</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_data_types</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid register data type </span><span class="si">{</span><span class="n">dtype</span><span class="si">!r}</span><span class="s2">, must be one of: </span><span class="si">{</span><span class="n">dt</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">"string"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
 
     <span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -5726,7 +5726,7 @@ and <a class="autorefs autorefs-internal" title="            write_register" hre
 <span class="normal">345</span>
 <span class="normal">346</span>
 <span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">scan_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">stop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">160</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Module</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scan for available modules that can be communicated with.</span>
+<span class="w">    </span><span class="sd">"""Scan for available modules that can be communicated with.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        start: The address to start the scan at.</span>
@@ -5735,7 +5735,7 @@ and <a class="autorefs autorefs-internal" title="            write_register" hre
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The modules that are available.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">original_timeout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interface</span><span class="o">.</span><span class="n">timeout</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_interface</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
 
@@ -5746,11 +5746,11 @@ and <a class="autorefs autorefs-internal" title="            write_register" hre
             <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">_MessageType</span><span class="o">.</span><span class="n">DATAGRAM</span><span class="p">:</span>
                 <span class="c1"># Section 6.2: Module type could either be 1 or 2 bytes</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">mod_type</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;&quot;</span>
+                    <span class="n">mod_type</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">""</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># Don&#39;t use second byte for K81-1, K82-1 and K83-1 (module type 20h) or K80-1 (module type 21h)</span>
-                    <span class="n">mod_type</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x21</span><span class="p">}</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;H&quot;</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">[:</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>
-                    <span class="n">description</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x00</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+                    <span class="c1"># Don't use second byte for K81-1, K82-1 and K83-1 (module type 20h) or K80-1 (module type 21h)</span>
+                    <span class="n">mod_type</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x21</span><span class="p">}</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">"&lt;H"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">[:</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">description</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\x00</span><span class="s2">"</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
 
                 <span class="c1"># Serial number (65h)</span>
                 <span class="n">sn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_telegram</span><span class="p">(</span><span class="n">_build_read_telegram</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">))</span>
@@ -5761,13 +5761,13 @@ and <a class="autorefs autorefs-internal" title="            write_register" hre
                 <span class="c1">#  2) Version ASCII text string, of up to 64 bytes length, zero terminated.</span>
                 <span class="n">fw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_telegram</span><span class="p">(</span><span class="n">_build_read_telegram</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="mh">0x64</span><span class="p">),</span> <span class="n">check_nack</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
                 <span class="c1"># only use ASCII text</span>
-                <span class="n">firmware</span> <span class="o">=</span> <span class="n">fw</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x00</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span> <span class="k">if</span> <span class="n">fw</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">_MessageType</span><span class="o">.</span><span class="n">DATAGRAM</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">firmware</span> <span class="o">=</span> <span class="n">fw</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\x00</span><span class="s2">"</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span> <span class="k">if</span> <span class="n">fw</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">_MessageType</span><span class="o">.</span><span class="n">DATAGRAM</span> <span class="k">else</span> <span class="s2">""</span>
 
                 <span class="n">modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">Module</span><span class="p">(</span>
                         <span class="n">address</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">address</span><span class="p">,</span>
                         <span class="nb">type</span><span class="o">=</span><span class="n">mod_type</span><span class="p">,</span>
-                        <span class="n">description</span><span class="o">=</span><span class="n">description</span> <span class="ow">or</span> <span class="n">_module_types</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mod_type</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                        <span class="n">description</span><span class="o">=</span><span class="n">description</span> <span class="ow">or</span> <span class="n">_module_types</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mod_type</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
                         <span class="n">firmware</span><span class="o">=</span><span class="n">firmware</span><span class="p">,</span>
                         <span class="n">serial</span><span class="o">=</span><span class="n">sn</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span>
                     <span class="p">)</span>
@@ -5795,17 +5795,17 @@ and <a class="autorefs autorefs-internal" title="            write_register" hre
     <span class="n">value</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#bytes">bytes</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="p">(</span>
         <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span>
-            <span class="s2">&quot;i8&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;u8&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;h8&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;i16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;u16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;h16&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;i32&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;u32&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;h32&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;f32&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;f64&quot;</span><span class="p">,</span>
+            <span class="s2">"i8"</span><span class="p">,</span>
+            <span class="s2">"u8"</span><span class="p">,</span>
+            <span class="s2">"h8"</span><span class="p">,</span>
+            <span class="s2">"i16"</span><span class="p">,</span>
+            <span class="s2">"u16"</span><span class="p">,</span>
+            <span class="s2">"h16"</span><span class="p">,</span>
+            <span class="s2">"i32"</span><span class="p">,</span>
+            <span class="s2">"u32"</span><span class="p">,</span>
+            <span class="s2">"h32"</span><span class="p">,</span>
+            <span class="s2">"f32"</span><span class="p">,</span>
+            <span class="s2">"f64"</span><span class="p">,</span>
         <span class="p">]</span>
         <span class="o">|</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -5935,29 +5935,29 @@ and <a class="autorefs autorefs-internal" title="            write_register" hre
     <span class="n">module</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">register</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;i8&quot;</span><span class="p">,</span> <span class="s2">&quot;u8&quot;</span><span class="p">,</span> <span class="s2">&quot;h8&quot;</span><span class="p">,</span> <span class="s2">&quot;i16&quot;</span><span class="p">,</span> <span class="s2">&quot;u16&quot;</span><span class="p">,</span> <span class="s2">&quot;h16&quot;</span><span class="p">,</span> <span class="s2">&quot;i32&quot;</span><span class="p">,</span> <span class="s2">&quot;u32&quot;</span><span class="p">,</span> <span class="s2">&quot;h32&quot;</span><span class="p">,</span> <span class="s2">&quot;f32&quot;</span><span class="p">,</span> <span class="s2">&quot;f64&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"i8"</span><span class="p">,</span> <span class="s2">"u8"</span><span class="p">,</span> <span class="s2">"h8"</span><span class="p">,</span> <span class="s2">"i16"</span><span class="p">,</span> <span class="s2">"u16"</span><span class="p">,</span> <span class="s2">"h16"</span><span class="p">,</span> <span class="s2">"i32"</span><span class="p">,</span> <span class="s2">"u32"</span><span class="p">,</span> <span class="s2">"h32"</span><span class="p">,</span> <span class="s2">"f32"</span><span class="p">,</span> <span class="s2">"f64"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a value to a register of the device.</span>
+<span class="w">    </span><span class="sd">"""Write a value to a register of the device.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        module: Module address (device ID).</span>
 <span class="sd">        register: Register address.</span>
 <span class="sd">        value: The value to write.</span>
 <span class="sd">        dtype: The data type to convert `value` to. Only required if `value` is not already in bytes or a string.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">value</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Must specify the data type of the register value since the value is not already in bytes&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Must specify the data type of the register value since the value is not already in bytes"</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="n">fmt</span> <span class="o">=</span> <span class="n">_data_types</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dtype</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
         <span class="k">if</span> <span class="n">fmt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">dt</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_data_types</span><span class="p">)</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid register data type </span><span class="si">{</span><span class="n">dtype</span><span class="si">!r}</span><span class="s2">, must be one of: </span><span class="si">{</span><span class="n">dt</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_data_types</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid register data type </span><span class="si">{</span><span class="n">dtype</span><span class="si">!r}</span><span class="s2">, must be one of: </span><span class="si">{</span><span class="n">dt</span><span class="si">}</span><span class="s2">"</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>

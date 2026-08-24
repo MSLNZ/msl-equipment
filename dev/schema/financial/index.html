@@ -5346,22 +5346,22 @@ A value of <code>0</code> represents that the year is unknown.</p>
 <span class="normal">424</span>
 <span class="normal">425</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Financial</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Financial][msl.equipment.schema.Financial] instance.</span>
+<span class="w">    </span><span class="sd">"""Convert an XML element into a [Financial][msl.equipment.schema.Financial] instance.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        element: A [financial][type_financial] XML element from an equipment register.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Financial][msl.equipment.schema.Financial] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Schema defines &lt;financial&gt; using xsd:all, which allows sub-elements to appear (or not appear) in any order</span>
     <span class="c1"># Using str.endswith() allows for ignoring XML namespaces that may be associated with each tag</span>
     <span class="n">cap_ex</span><span class="p">,</span> <span class="n">warranty</span><span class="p">,</span> <span class="n">year</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">element</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;capitalExpenditure&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"capitalExpenditure"</span><span class="p">):</span>
             <span class="n">cap_ex</span> <span class="o">=</span> <span class="n">CapitalExpenditure</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;warrantyExpirationDate&quot;</span><span class="p">):</span>
-            <span class="n">warranty</span> <span class="o">=</span> <span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"warrantyExpirationDate"</span><span class="p">):</span>
+            <span class="n">warranty</span> <span class="o">=</span> <span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">capital_expenditure</span><span class="o">=</span><span class="n">cap_ex</span><span class="p">,</span> <span class="n">purchase_year</span><span class="o">=</span><span class="n">year</span><span class="p">,</span> <span class="n">warranty_expiration_date</span><span class="o">=</span><span class="n">warranty</span><span class="p">)</span>
@@ -5442,22 +5442,22 @@ A value of <code>0</code> represents that the year is unknown.</p>
 <span class="normal">444</span>
 <span class="normal">445</span>
 <span class="normal">446</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Financial][msl.equipment.schema.Financial] class into an XML element.</span>
+<span class="w">    </span><span class="sd">"""Convert the [Financial][msl.equipment.schema.Financial] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Financial][msl.equipment.schema.Financial] as an XML element.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;financial&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">"financial"</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">capital_expenditure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">capital_expenditure</span><span class="o">.</span><span class="n">to_xml</span><span class="p">())</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">purchase_year</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">py</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;purchaseYear&quot;</span><span class="p">)</span>
+        <span class="n">py</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">"purchaseYear"</span><span class="p">)</span>
         <span class="n">py</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">purchase_year</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">warranty_expiration_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">wed</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;warrantyExpirationDate&quot;</span><span class="p">)</span>
+        <span class="n">wed</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">"warrantyExpirationDate"</span><span class="p">)</span>
         <span class="n">wed</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">warranty_expiration_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">e</span>

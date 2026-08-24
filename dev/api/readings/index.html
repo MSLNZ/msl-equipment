@@ -5057,9 +5057,9 @@
 -->
 
 <p>Suppose we have a <a class="autorefs autorefs-internal" title="Connections" href="../../getting-started/connections/#connections">Connection</a> to a digital multimeter, <code>dmm</code>, and we fetch some readings</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">dmm</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;FETCH?&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">dmm</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"FETCH?"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">data</span>
-<span class="go">&#39; 8.000167847E+00, 8.000164032E+00, 8.000163241E+00, 8.000165864E+00, 8.000164893E+00\r\n&#39;</span>
+<span class="go">' 8.000167847E+00, 8.000164032E+00, 8.000163241E+00, 8.000165864E+00, 8.000164893E+00\r\n'</span>
 </code></pre></div>
 <p>We can create a <a class="autorefs autorefs-internal" title="            Readings" href="#msl.equipment.readings.Readings">Readings</a> instance from the fetched data and then get statistical information about the data</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Readings</span>
@@ -5091,12 +5091,12 @@
 <span class="go">7.981426314008917e-07</span>
 </code></pre></div>
 <p>When converting the <a class="autorefs autorefs-internal" title="            Readings" href="#msl.equipment.readings.Readings">Readings</a> to a string, the custom <a class="autorefs autorefs-internal" title="Format Specification" href="#format-specification">format specification</a> is used and it displays the value (mean) with the uncertainty (standard deviation of the mean)</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># use the default options</span>
-<span class="go">&#39;8.00016518(80)&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.2B</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># equivalent to previous</span>
-<span class="go">&#39;8.00016518(80)&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.3PU</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># retain 3 digits, +/- mode, unicode style</span>
-<span class="go">&#39;8.000165175±0.000000798&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># use the default options</span>
+<span class="go">'8.00016518(80)'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.2B</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># equivalent to previous</span>
+<span class="go">'8.00016518(80)'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.3PU</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># retain 3 digits, +/- mode, unicode style</span>
+<span class="go">'8.000165175±0.000000798'</span>
 </code></pre></div>
 <h2 id="format-specification">Format Specification<a class="headerlink" href="#format-specification" title="Permanent link">¤</a></h2>
 <p>The format specification is similar to the built-in Python <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/string.html#formatspec">specification</a>, but with additional options (<em>mode</em>, <em>style</em> and <em>si</em>). The number of significant digits for the value (mean) and the uncertainty (standard deviation of the mean) can be controlled, based on the uncertainty.</p>
@@ -5114,35 +5114,35 @@
 <span class="go">1.3338487170590222e-08</span>
 </code></pre></div>
 <p>Here are some examples on how to use the custom format specification</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># default is to retain 2 digits with bracket mode</span>
-<span class="go">&#39;0.000003456(13)&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">P</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># +/- mode</span>
-<span class="go">&#39;0.000003456+/-0.000000013&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">PU</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># +/- mode, unicode style</span>
-<span class="go">&#39;0.000003456±0.000000013&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">e</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># exponent form</span>
-<span class="go">&#39;3.456(13)e-06&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">S</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># SI prefix</span>
-<span class="go">&#39;3.456(13) u&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">US</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># unicode style, SI prefix</span>
-<span class="go">&#39;3.456(13) µ&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.1eU</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># 1 digit, exponent form, unicode style</span>
-<span class="go">&#39;3.46(1)×10⁻⁶&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">eL</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># exponent form, LaTeX style</span>
-<span class="go">&#39;3.456\\left(13\\right)\\times10^{-6}&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">=^+30.4e</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># fill with &#39;=&#39;, align center, include + sign, 30 characters in total, 4 digits, exponent form</span>
-<span class="go">&#39;======+3.45620(1334)e-06======&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># default is to retain 2 digits with bracket mode</span>
+<span class="go">'0.000003456(13)'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">P</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># +/- mode</span>
+<span class="go">'0.000003456+/-0.000000013'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">PU</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># +/- mode, unicode style</span>
+<span class="go">'0.000003456±0.000000013'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">e</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># exponent form</span>
+<span class="go">'3.456(13)e-06'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">S</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># SI prefix</span>
+<span class="go">'3.456(13) u'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">US</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># unicode style, SI prefix</span>
+<span class="go">'3.456(13) µ'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.1eU</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># 1 digit, exponent form, unicode style</span>
+<span class="go">'3.46(1)×10⁻⁶'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">eL</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># exponent form, LaTeX style</span>
+<span class="go">'3.456\\left(13\\right)\\times10^{-6}'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">=^+30.4e</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># fill with '=', align center, include + sign, 30 characters in total, 4 digits, exponent form</span>
+<span class="go">'======+3.45620(1334)e-06======'</span>
 </code></pre></div>
 <p>If the standard deviation of the mean is zero, the uncertainty component is not included in the output and the format applies only to the mean</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">Readings</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="mf">3.4562e-6</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># default is 2 decimal places in floating-point, f, notation</span>
-<span class="go">&#39;0.00&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">e</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="go">&#39;3.46e-06&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># 4 decimals (uses built-in specification since no custom options are used)</span>
-<span class="go">&#39;3.4562e-06&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.4eUS</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># 4 digits (uses custom specification since custom options are included)</span>
-<span class="go">&#39;3.456 µ&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># default is 2 decimal places in floating-point, f, notation</span>
+<span class="go">'0.00'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">e</span><span class="si">}</span><span class="s2">"</span>
+<span class="go">'3.46e-06'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># 4 decimals (uses built-in specification since no custom options are used)</span>
+<span class="go">'3.4562e-06'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">.4eUS</span><span class="si">}</span><span class="s2">"</span>  <span class="c1"># 4 digits (uses custom specification since custom options are included)</span>
+<span class="go">'3.456 µ'</span>
 </code></pre></div>
 
 
@@ -5162,7 +5162,7 @@
     <span class="n">std</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">overload</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mf">1e30</span><span class="p">,</span>
-    <span class="n">delimiter</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
+    <span class="n">delimiter</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">","</span>
 <span class="p">)</span>
 </code></pre></div>
 
@@ -5357,9 +5357,9 @@ The value <code>None</code> corresponds to whitespace.</p>
     <span class="n">std</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">overload</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mf">1e30</span><span class="p">,</span>
-    <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">,</span>
+    <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">","</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A formatting-friendly convenience class for measurement data.</span>
+<span class="w">    </span><span class="sd">"""A formatting-friendly convenience class for measurement data.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data: The measurement data.</span>
@@ -5373,9 +5373,9 @@ The value <code>None</code> corresponds to whitespace.</p>
 <span class="sd">            `NaN`. Setting `overload` to `None` disables this check.</span>
 <span class="sd">        delimiter: The character used to separate values (only used if `data` is of type [str][]).</span>
 <span class="sd">            The value `None` corresponds to whitespace.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">a</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">,</span> <span class="n">size</span><span class="p">)):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot specify data and the mean, std or size&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Cannot specify data and the mean, std or size"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span>

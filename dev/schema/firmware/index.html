@@ -5253,7 +5253,7 @@ from an equipment register.</p>
 <span class="normal">474</span>
 <span class="normal">475</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Firmware</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [Firmware][msl.equipment.schema.Firmware] instance.</span>
+<span class="w">    </span><span class="sd">"""Convert an XML element into a [Firmware][msl.equipment.schema.Firmware] instance.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        element: A [firmware][type_firmware] `&lt;version&gt;` XML sub-element</span>
@@ -5261,8 +5261,8 @@ from an equipment register.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Firmware][msl.equipment.schema.Firmware] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">element</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">element</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">"date"</span><span class="p">]))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5329,12 +5329,12 @@ from an equipment register.</p>
 <span class="normal">483</span>
 <span class="normal">484</span>
 <span class="normal">485</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [Firmware][msl.equipment.schema.Firmware] class into a `&lt;version&gt;` XML element.</span>
+<span class="w">    </span><span class="sd">"""Convert the [Firmware][msl.equipment.schema.Firmware] class into a `&lt;version&gt;` XML element.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [Firmware][msl.equipment.schema.Firmware] as a `&lt;version&gt;` XML element.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()})</span>
+<span class="sd">    """</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">"version"</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">"date"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()})</span>
     <span class="n">e</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span>
     <span class="k">return</span> <span class="n">e</span>
 </code></pre></div></td></tr></table></div>

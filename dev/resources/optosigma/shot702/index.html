@@ -5536,8 +5536,8 @@
         <p>The default baud rate is set to 38400 and the read/write termination characters are <code>\r\n</code>.</p>
 <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Opto\s*Sigma|Sigma\s*Koki&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;SHOT-702&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Opto\s*Sigma|Sigma\s*Koki"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">"SHOT-702"</span>
 </code></pre></div></p>
 
 
@@ -5609,29 +5609,29 @@
 <span class="normal">104</span>
 <span class="normal">105</span>
 <span class="normal">106</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Two-axis stage controller (SHOT-702) from OptoSigma.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Two-axis stage controller (SHOT-702) from OptoSigma.</span>
 
 <span class="sd">    The default baud rate is set to 38400 and the read/write termination characters are `\r\n`.</span>
 
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;Opto\s*Sigma|Sigma\s*Koki&quot;</span>
-<span class="sd">    model=r&quot;SHOT-702&quot;</span>
+<span class="sd">    manufacturer=r"Opto\s*Sigma|Sigma\s*Koki"</span>
+<span class="sd">    model=r"SHOT-702"</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
-    <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;baud_rate&quot;</span><span class="p">,</span> <span class="mi">38400</span><span class="p">)</span>
+    <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"baud_rate"</span><span class="p">,</span> <span class="mi">38400</span><span class="p">)</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">_read_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_read_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\r\n</span><span class="s2">"</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\r\n</span><span class="s2">"</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">_status_regex</span><span class="p">:</span> <span class="n">Pattern</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(-*)\s*(\d+),(-*)\s*(\d+),([XK]),([LMWK]),([BR])&quot;</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_speed_regex</span><span class="p">:</span> <span class="n">Pattern</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;S(\d+)F(\d+)R(\d+)S(\d+)F(\d+)R(\d+)&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_status_regex</span><span class="p">:</span> <span class="n">Pattern</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(-*)\s*(\d+),(-*)\s*(\d+),([XK]),([LMWK]),([BR])"</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_speed_regex</span><span class="p">:</span> <span class="n">Pattern</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"S(\d+)F(\d+)R(\d+)S(\d+)F(\d+)R(\d+)"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -5696,12 +5696,12 @@
 <span class="normal">147</span>
 <span class="normal">148</span>
 <span class="normal">149</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_input_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the I/O input connector status.</span>
+<span class="w">    </span><span class="sd">"""Get the I/O input connector status.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Can either be 0 or 1 (see manual).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;I:&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"I:"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5783,15 +5783,15 @@
 <span class="normal">162</span>
 <span class="normal">163</span>
 <span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Speed</span><span class="p">,</span> <span class="n">Speed</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the speed that each stage moves to a position.</span>
+<span class="w">    </span><span class="sd">"""Get the speed that each stage moves to a position.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The speed of each stage, `(stage1, stage2)`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;?:DW&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"?:DW"</span><span class="p">)</span>
     <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_speed_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid speed regex expression for the reply </span><span class="si">{</span><span class="n">reply</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid speed regex expression for the reply </span><span class="si">{</span><span class="n">reply</span><span class="si">!r}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">())</span>
@@ -5877,15 +5877,15 @@
 <span class="normal">177</span>
 <span class="normal">178</span>
 <span class="normal">179</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_speed_origin</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Speed</span><span class="p">,</span> <span class="n">Speed</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the speed that each stage moves to the origin.</span>
+<span class="w">    </span><span class="sd">"""Get the speed that each stage moves to the origin.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The speed of each stage, `(stage1, stage2)`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;?:BW&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"?:BW"</span><span class="p">)</span>
     <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_speed_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid speed regex expression for the reply </span><span class="si">{</span><span class="n">reply</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid speed regex expression for the reply </span><span class="si">{</span><span class="n">reply</span><span class="si">!r}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">())</span>
@@ -5945,12 +5945,12 @@
 <span class="normal">186</span>
 <span class="normal">187</span>
 <span class="normal">188</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of steps for each stage.</span>
+<span class="w">    </span><span class="sd">"""Get the number of steps for each stage.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of steps for `(stage1, stage2)`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;?:SW&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"?:SW"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6007,12 +6007,12 @@
 <span class="normal">195</span>
 <span class="normal">196</span>
 <span class="normal">197</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_travel_per_pulse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the travel per pulse for each stage.</span>
+<span class="w">    </span><span class="sd">"""Get the travel per pulse for each stage.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The travel per pulse for `(stage1, stage2)`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;?:PW&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"?:PW"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6068,12 +6068,12 @@
 <span class="normal">203</span>
 <span class="normal">204</span>
 <span class="normal">205</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the firmware version number.</span>
+<span class="w">    </span><span class="sd">"""Get the firmware version number.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The version number.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;?:V&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"?:V"</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6088,7 +6088,7 @@
 
 
 <a href="#msl.equipment_resources.optosigma.shot702.SHOT702.home" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">home</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">home</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6147,19 +6147,19 @@
 <span class="normal">217</span>
 <span class="normal">218</span>
 <span class="normal">219</span>
-<span class="normal">220</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Move the stage(s) to the home position.</span>
+<span class="normal">220</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"W"</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Move the stage(s) to the home position.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        stage: The stage(s) to home.</span>
 
 <span class="sd">            * `1` &amp;mdash; home stage 1</span>
 <span class="sd">            * `2` &amp;mdash; home stage 2</span>
-<span class="sd">            * `&quot;W&quot;` &amp;mdash; home stages 1 and 2</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;H:</span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Cannot home stage </span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="sd">            * `"W"` &amp;mdash; home stages 1 and 2</span>
+<span class="sd">    """</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">"H:</span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"OK"</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Cannot home stage </span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6215,12 +6215,12 @@
 <span class="normal">226</span>
 <span class="normal">227</span>
 <span class="normal">228</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_moving</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a stage is busy moving.</span>
+<span class="w">    </span><span class="sd">"""Check if a stage is busy moving.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether a stage is busy moving.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;!:&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"!:"</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"B"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6236,8 +6236,8 @@
 
 <a href="#msl.equipment_resources.optosigma.shot702.SHOT702.move" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">move</span><span class="p">(</span>
-    <span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">],</span>
-    <span class="n">direction</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;++&quot;</span><span class="p">,</span> <span class="s2">&quot;+-&quot;</span><span class="p">,</span> <span class="s2">&quot;-+&quot;</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">],</span>
+    <span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"W"</span><span class="p">],</span>
+    <span class="n">direction</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">"+"</span><span class="p">,</span> <span class="s2">"-"</span><span class="p">,</span> <span class="s2">"++"</span><span class="p">,</span> <span class="s2">"+-"</span><span class="p">,</span> <span class="s2">"-+"</span><span class="p">,</span> <span class="s2">"--"</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
@@ -6330,28 +6330,28 @@
 <span class="normal">249</span>
 <span class="normal">250</span>
 <span class="normal">251</span>
-<span class="normal">252</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">],</span> <span class="n">direction</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;++&quot;</span><span class="p">,</span> <span class="s2">&quot;+-&quot;</span><span class="p">,</span> <span class="s2">&quot;-+&quot;</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Start moving the stage(s), at the minimum speed, in the specified direction.</span>
+<span class="normal">252</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"W"</span><span class="p">],</span> <span class="n">direction</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"+"</span><span class="p">,</span> <span class="s2">"-"</span><span class="p">,</span> <span class="s2">"++"</span><span class="p">,</span> <span class="s2">"+-"</span><span class="p">,</span> <span class="s2">"-+"</span><span class="p">,</span> <span class="s2">"--"</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Start moving the stage(s), at the minimum speed, in the specified direction.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        stage: The stage(s) to move.</span>
 
 <span class="sd">            * `1` &amp;mdash; move stage 1</span>
 <span class="sd">            * `2` &amp;mdash; move stage 2</span>
-<span class="sd">            * `&quot;W&quot;` &amp;mdash; move stages 1 and 2</span>
+<span class="sd">            * `"W"` &amp;mdash; move stages 1 and 2</span>
 
 <span class="sd">        direction: The direction that the stage(s) should move.</span>
 
-<span class="sd">            * `&quot;+&quot;` &amp;mdash; move a single stage in the `+` direction</span>
-<span class="sd">            * `&quot;-&quot;` &amp;mdash; move a single stage in the `-` direction</span>
-<span class="sd">            * `&quot;++&quot;` &amp;mdash; move stage 1 in the `+` direction, stage 2 in the `+` direction</span>
-<span class="sd">            * `&quot;+-&quot;` &amp;mdash; move stage 1 in the `+` direction, stage 2 in the `-` direction</span>
-<span class="sd">            * `&quot;-+&quot;` &amp;mdash; move stage 1 in the `-` direction, stage 2 in the `+` direction</span>
-<span class="sd">            * `&quot;--&quot;` &amp;mdash; move stage 1 in the `-` direction, stage 2 in the `-` direction</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;J:</span><span class="si">{</span><span class="n">stage</span><span class="si">}{</span><span class="n">direction</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;G:&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Cannot move stage </span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2"> in direction=</span><span class="si">{</span><span class="n">direction</span><span class="si">!r}</span><span class="s2">&quot;</span>
+<span class="sd">            * `"+"` &amp;mdash; move a single stage in the `+` direction</span>
+<span class="sd">            * `"-"` &amp;mdash; move a single stage in the `-` direction</span>
+<span class="sd">            * `"++"` &amp;mdash; move stage 1 in the `+` direction, stage 2 in the `+` direction</span>
+<span class="sd">            * `"+-"` &amp;mdash; move stage 1 in the `+` direction, stage 2 in the `-` direction</span>
+<span class="sd">            * `"-+"` &amp;mdash; move stage 1 in the `-` direction, stage 2 in the `+` direction</span>
+<span class="sd">            * `"--"` &amp;mdash; move stage 1 in the `-` direction, stage 2 in the `-` direction</span>
+<span class="sd">    """</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">"J:</span><span class="si">{</span><span class="n">stage</span><span class="si">}{</span><span class="n">direction</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"OK"</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"G:"</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"OK"</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Cannot move stage </span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2"> in direction=</span><span class="si">{</span><span class="n">direction</span><span class="si">!r}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6367,7 +6367,7 @@
 
 
 <a href="#msl.equipment_resources.optosigma.shot702.SHOT702.move_absolute" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">move_absolute</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">],</span> <span class="o">*</span><span class="n">position</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">move_absolute</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">],</span> <span class="o">*</span><span class="n">position</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6456,25 +6456,25 @@
 <span class="normal">269</span>
 <span class="normal">270</span>
 <span class="normal">271</span>
-<span class="normal">272</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">move_absolute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">],</span> <span class="o">*</span><span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Move the stage(s) to the specified position.</span>
+<span class="normal">272</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">move_absolute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"W"</span><span class="p">],</span> <span class="o">*</span><span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Move the stage(s) to the specified position.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        stage: The stage(s) to move.</span>
 
 <span class="sd">            * `1` &amp;mdash; move stage 1</span>
 <span class="sd">            * `2` &amp;mdash; move stage 2</span>
-<span class="sd">            * `&quot;W&quot;` &amp;mdash; move stages 1 and 2</span>
+<span class="sd">            * `"W"` &amp;mdash; move stages 1 and 2</span>
 
 <span class="sd">        position: The position the stage(s) should move to.</span>
 
 <span class="sd">    !!! example</span>
 <span class="sd">        * `move_absolute(1, 1000)` &amp;mdash; move stage 1 to position 1000 in the `+` direction</span>
 <span class="sd">        * `move_absolute(2, -5000)` &amp;mdash; move stage 2 to position 5000 in the `-` direction</span>
-<span class="sd">        * `move_absolute(&#39;W&#39;, 1000, -5000)` &amp;mdash; move stage 1 to position 1000 in the `+` direction, and</span>
+<span class="sd">        * `move_absolute('W', 1000, -5000)` &amp;mdash; move stage 1 to position 1000 in the `+` direction, and</span>
 <span class="sd">            move stage 2 to position 5000 in the `-` direction</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_move</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">stage</span><span class="p">,</span> <span class="o">*</span><span class="n">position</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_move</span><span class="p">(</span><span class="s2">"A"</span><span class="p">,</span> <span class="n">stage</span><span class="p">,</span> <span class="o">*</span><span class="n">position</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6489,7 +6489,7 @@
 
 
 <a href="#msl.equipment_resources.optosigma.shot702.SHOT702.move_relative" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">move_relative</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">],</span> <span class="o">*</span><span class="n">num_pulses</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">move_relative</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">],</span> <span class="o">*</span><span class="n">num_pulses</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6578,25 +6578,25 @@
 <span class="normal">289</span>
 <span class="normal">290</span>
 <span class="normal">291</span>
-<span class="normal">292</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">move_relative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">],</span> <span class="o">*</span><span class="n">num_pulses</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Move the stage(s) by a relative amount.</span>
+<span class="normal">292</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">move_relative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"W"</span><span class="p">],</span> <span class="o">*</span><span class="n">num_pulses</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Move the stage(s) by a relative amount.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        stage: The stage(s) to move.</span>
 
 <span class="sd">            * `1` &amp;mdash; move stage 1</span>
 <span class="sd">            * `2` &amp;mdash; move stage 2</span>
-<span class="sd">            * `&quot;W&quot;` &amp;mdash; move stages 1 and 2</span>
+<span class="sd">            * `"W"` &amp;mdash; move stages 1 and 2</span>
 
 <span class="sd">        num_pulses: The number of pulses the stage(s) should move.</span>
 
 <span class="sd">    !!! example</span>
 <span class="sd">        * `move_relative(1, 1000)` &amp;mdash; move stage 1 by 1000 pulses in the `+` direction</span>
 <span class="sd">        * `move_relative(2, -5000)` &amp;mdash; move stage 2 by 5000 pulses in the `-` direction</span>
-<span class="sd">        * `move_relative(&#39;W&#39;, 1000, -5000)` &amp;mdash; move stage 1 by 1000 pulses in the `+` direction, and</span>
+<span class="sd">        * `move_relative('W', 1000, -5000)` &amp;mdash; move stage 1 by 1000 pulses in the `+` direction, and</span>
 <span class="sd">            move stage 2 by 5000 pulses in the `-` direction</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_move</span><span class="p">(</span><span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="n">stage</span><span class="p">,</span> <span class="o">*</span><span class="n">num_pulses</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_move</span><span class="p">(</span><span class="s2">"M"</span><span class="p">,</span> <span class="n">stage</span><span class="p">,</span> <span class="o">*</span><span class="n">num_pulses</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6611,7 +6611,7 @@
 
 
 <a href="#msl.equipment_resources.optosigma.shot702.SHOT702.set_mode" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_mode</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">],</span> <span class="n">mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            Mode
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_mode</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">],</span> <span class="n">mode</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            Mode
 (IntEnum) (msl.equipment_resources.optosigma.shot702.Mode)" href="#msl.equipment_resources.optosigma.shot702.Mode">Mode</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
@@ -6690,21 +6690,21 @@
 <span class="normal">306</span>
 <span class="normal">307</span>
 <span class="normal">308</span>
-<span class="normal">309</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">],</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">|</span> <span class="n">Mode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set whether the stage(s) can be moved by hand or by the motor.</span>
+<span class="normal">309</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"W"</span><span class="p">],</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">|</span> <span class="n">Mode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Set whether the stage(s) can be moved by hand or by the motor.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        stage: The stage(s) to set the mode of.</span>
 
 <span class="sd">            * `1` &amp;mdash; set the mode for stage 1</span>
 <span class="sd">            * `2` &amp;mdash; set the mode for stage 2</span>
-<span class="sd">            * `&quot;W&quot;` &amp;mdash; set the mode for stages 1 and 2</span>
+<span class="sd">            * `"W"` &amp;mdash; set the mode for stages 1 and 2</span>
 
 <span class="sd">        mode: Whether the stage(s) can be moved by hand (0) or by motor (1).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;C:</span><span class="si">{</span><span class="n">stage</span><span class="si">}{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Cannot set stage </span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2"> to mode=</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">"C:</span><span class="si">{</span><span class="n">stage</span><span class="si">}{</span><span class="n">mode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"OK"</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Cannot set stage </span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2"> to mode=</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6720,7 +6720,7 @@
 
 
 <a href="#msl.equipment_resources.optosigma.shot702.SHOT702.set_origin" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_origin</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_origin</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6779,19 +6779,19 @@
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
-<span class="normal">324</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_origin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the origin of the stage(s) to its current position.</span>
+<span class="normal">324</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_origin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"W"</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Set the origin of the stage(s) to its current position.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        stage: The stage(s) to set the home of.</span>
 
 <span class="sd">            * `1` &amp;mdash; set the home for stage 1</span>
 <span class="sd">            * `2` &amp;mdash; set the home for stage 2</span>
-<span class="sd">            * `&quot;W&quot;` &amp;mdash; set the home for stages 1 and 2</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;R:</span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Cannot set the origin for stage </span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="sd">            * `"W"` &amp;mdash; set the home for stages 1 and 2</span>
+<span class="sd">    """</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">"R:</span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"OK"</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Cannot set the origin for stage </span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6858,14 +6858,14 @@
 <span class="normal">333</span>
 <span class="normal">334</span>
 <span class="normal">335</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_output_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the I/O output status.</span>
+<span class="w">    </span><span class="sd">"""Set the I/O output status.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        status: Can either be 0 or 1 (see manual).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;O:</span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Cannot set the output status to </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">"O:</span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"OK"</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Cannot set the output status to </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6881,7 +6881,7 @@
 
 
 <a href="#msl.equipment_resources.optosigma.shot702.SHOT702.set_speed" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_speed</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">],</span> <span class="o">*</span><span class="n">speeds</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Speed
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_speed</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">],</span> <span class="o">*</span><span class="n">speeds</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Speed
 
 
   
@@ -6986,15 +6986,15 @@
 <span class="normal">355</span>
 <span class="normal">356</span>
 <span class="normal">357</span>
-<span class="normal">358</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">],</span> <span class="o">*</span><span class="n">speeds</span><span class="p">:</span> <span class="n">Speed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the speed when moving to a position.</span>
+<span class="normal">358</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"W"</span><span class="p">],</span> <span class="o">*</span><span class="n">speeds</span><span class="p">:</span> <span class="n">Speed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Set the speed when moving to a position.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        stage: The stage(s) to set the speed settings for.</span>
 
 <span class="sd">            * `1` &amp;mdash; set the speed for stage 1</span>
 <span class="sd">            * `2` &amp;mdash; set the speed for stage 2</span>
-<span class="sd">            * `&quot;W&quot;` &amp;mdash; set the speed for stages 1 and 2</span>
+<span class="sd">            * `"W"` &amp;mdash; set the speed for stages 1 and 2</span>
 <span class="sd">                (`speeds` is then the speed settings for stage 1, stage 2)</span>
 
 <span class="sd">        speeds: The speed settings.</span>
@@ -7002,12 +7002,12 @@
 <span class="sd">    !!! example</span>
 <span class="sd">        * `set_speed(1, Speed(100, 1000, 50))` &amp;mdash; stage 1 moves at a minimum speed of 100 PPS,</span>
 <span class="sd">            maximum speed of 1000 PPS and a 50 ms acceleration/deceleration time.</span>
-<span class="sd">        * `set_speed(&quot;W&quot;, Speed(100, 1000, 50), Speed(200, 2000, 100))` &amp;mdash; stage 1 moves at a</span>
+<span class="sd">        * `set_speed("W", Speed(100, 1000, 50), Speed(200, 2000, 100))` &amp;mdash; stage 1 moves at a</span>
 <span class="sd">            minimum speed of 100 PPS, maximum speed of 1000 PPS and a 50 ms acceleration/deceleration time, and,</span>
 <span class="sd">            stage 2 moves at a minimum speed of 200 PPS, maximum speed of 2000 PPS and a 100 ms</span>
 <span class="sd">            acceleration/deceleration time.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_speed</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">stage</span><span class="p">,</span> <span class="o">*</span><span class="n">speeds</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_speed</span><span class="p">(</span><span class="s2">"D"</span><span class="p">,</span> <span class="n">stage</span><span class="p">,</span> <span class="o">*</span><span class="n">speeds</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7022,7 +7022,7 @@
 
 
 <a href="#msl.equipment_resources.optosigma.shot702.SHOT702.set_speed_origin" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_speed_origin</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">],</span> <span class="o">*</span><span class="n">speeds</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Speed
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_speed_origin</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">],</span> <span class="o">*</span><span class="n">speeds</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Speed
 
 
   
@@ -7127,15 +7127,15 @@
 <span class="normal">378</span>
 <span class="normal">379</span>
 <span class="normal">380</span>
-<span class="normal">381</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_speed_origin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">],</span> <span class="o">*</span><span class="n">speeds</span><span class="p">:</span> <span class="n">Speed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the speed when moving to the origin.</span>
+<span class="normal">381</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_speed_origin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"W"</span><span class="p">],</span> <span class="o">*</span><span class="n">speeds</span><span class="p">:</span> <span class="n">Speed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Set the speed when moving to the origin.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        stage: The stage(s) to set the speed settings for.</span>
 
 <span class="sd">            * `1` &amp;mdash; set the speed for stage 1</span>
 <span class="sd">            * `2` &amp;mdash; set the speed for stage 2</span>
-<span class="sd">            * `&quot;W&quot;` &amp;mdash; set the speed for stages 1 and 2</span>
+<span class="sd">            * `"W"` &amp;mdash; set the speed for stages 1 and 2</span>
 <span class="sd">                (`speeds` is then the speed settings for stage 1, stage 2)</span>
 
 <span class="sd">        speeds: The speed settings.</span>
@@ -7143,12 +7143,12 @@
 <span class="sd">    !!! example</span>
 <span class="sd">        * `set_speed_origin(2, Speed(100, 1000, 50))` &amp;mdash; stage 2 moves at a minimum speed of 100 PPS,</span>
 <span class="sd">            maximum speed of 1000 PPS and a 50 ms acceleration/deceleration time.</span>
-<span class="sd">        * `set_speed_origin(&quot;W&quot;, Speed(100, 1000, 50), Speed(200, 2000, 100))` &amp;mdash; stage 1 moves at a</span>
+<span class="sd">        * `set_speed_origin("W", Speed(100, 1000, 50), Speed(200, 2000, 100))` &amp;mdash; stage 1 moves at a</span>
 <span class="sd">            minimum speed of 100 PPS, maximum speed of 1000 PPS and a 50 ms acceleration/deceleration time, and,</span>
 <span class="sd">            stage 2 moves at a minimum speed of 200 PPS, maximum speed of 2000 PPS and a 100 ms</span>
 <span class="sd">            acceleration/deceleration time.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_speed</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="n">stage</span><span class="p">,</span> <span class="o">*</span><span class="n">speeds</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_speed</span><span class="p">(</span><span class="s2">"V"</span><span class="p">,</span> <span class="n">stage</span><span class="p">,</span> <span class="o">*</span><span class="n">speeds</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7236,7 +7236,7 @@
 <span class="normal">394</span>
 <span class="normal">395</span>
 <span class="normal">396</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the number of steps that the stage motor will use.</span>
+<span class="w">    </span><span class="sd">"""Set the number of steps that the stage motor will use.</span>
 
 <span class="sd">    See the manual for more details (the `S` command).</span>
 
@@ -7244,10 +7244,10 @@
 <span class="sd">        stage: The stage to set the steps of.</span>
 <span class="sd">        steps: The number of steps that the motor should use (must be one of</span>
 <span class="sd">            `1`, `2`, `4`, `5`, `8`, `10`, `20`, `25`, `40`, `50`, `80`, `100`, `125`, `200`, `250`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;S:</span><span class="si">{</span><span class="n">stage</span><span class="si">}{</span><span class="n">steps</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Cannot set stage </span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2"> to #steps=</span><span class="si">{</span><span class="n">steps</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">"S:</span><span class="si">{</span><span class="n">stage</span><span class="si">}{</span><span class="n">steps</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"OK"</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Cannot set stage </span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2"> to #steps=</span><span class="si">{</span><span class="n">steps</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7323,30 +7323,30 @@
 <span class="normal">420</span>
 <span class="normal">421</span>
 <span class="normal">422</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Status</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the current position and state of each stage.</span>
+<span class="w">    </span><span class="sd">"""Get the current position and state of each stage.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The current position and state of each stage.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Q:&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="s2">&quot;NG&quot;</span><span class="p">:</span>  <span class="c1"># then try again</span>
+<span class="sd">    """</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"Q:"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="s2">"NG"</span><span class="p">:</span>  <span class="c1"># then try again</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">serial</span><span class="o">.</span><span class="n">reset_input_buffer</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">serial</span><span class="o">.</span><span class="n">reset_output_buffer</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">()</span>
 
     <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid regex expression for the reply </span><span class="si">{</span><span class="n">reply</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid regex expression for the reply </span><span class="si">{</span><span class="n">reply</span><span class="si">!r}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="n">negative1</span><span class="p">,</span> <span class="n">position1</span><span class="p">,</span> <span class="n">negative2</span><span class="p">,</span> <span class="n">position2</span><span class="p">,</span> <span class="n">ok</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">moving</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">ok</span> <span class="o">!=</span> <span class="s2">&quot;K&quot;</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Controller indicates a command or parameter error, reply=</span><span class="si">{</span><span class="n">reply</span><span class="si">!r}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">ok</span> <span class="o">!=</span> <span class="s2">"K"</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Controller indicates a command or parameter error, reply=</span><span class="si">{</span><span class="n">reply</span><span class="si">!r}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="n">pos1</span> <span class="o">=</span> <span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">position1</span><span class="p">)</span> <span class="k">if</span> <span class="n">negative1</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">position1</span><span class="p">)</span>
     <span class="n">pos2</span> <span class="o">=</span> <span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">position2</span><span class="p">)</span> <span class="k">if</span> <span class="n">negative2</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">position2</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">Status</span><span class="p">(</span><span class="n">pos1</span><span class="p">,</span> <span class="n">pos2</span><span class="p">,</span> <span class="n">State</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="n">moving</span> <span class="o">==</span> <span class="s2">&quot;B&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Status</span><span class="p">(</span><span class="n">pos1</span><span class="p">,</span> <span class="n">pos2</span><span class="p">,</span> <span class="n">State</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="n">moving</span> <span class="o">==</span> <span class="s2">"B"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7377,10 +7377,10 @@
 <span class="normal">427</span>
 <span class="normal">428</span>
 <span class="normal">429</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Immediately stop both stages from moving.&quot;&quot;&quot;</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;L:E&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot stop the stages&quot;</span>
+<span class="w">    </span><span class="sd">"""Immediately stop both stages from moving."""</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"L:E"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"OK"</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Cannot stop the stages"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7396,7 +7396,7 @@
 
 
 <a href="#msl.equipment_resources.optosigma.shot702.SHOT702.stop_slowly" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">stop_slowly</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">stop_slowly</span><span class="p">(</span><span class="n">stage</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'W'</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7455,19 +7455,19 @@
 <span class="normal">441</span>
 <span class="normal">442</span>
 <span class="normal">443</span>
-<span class="normal">444</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">stop_slowly</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;W&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Slowly bring the stage(s) to a stop.</span>
+<span class="normal">444</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">stop_slowly</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"W"</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Slowly bring the stage(s) to a stop.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        stage: The stage(s) to slowly stop.</span>
 
 <span class="sd">            * `1` &amp;mdash; slowly stop stage 1</span>
 <span class="sd">            * `2` &amp;mdash; slowly stop stage 2</span>
-<span class="sd">            * `&quot;W&quot;` &amp;mdash; slowly stop stages 1 and 2</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;L:</span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;cannot slowly stop stage </span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="sd">            * `"W"` &amp;mdash; slowly stop stages 1 and 2</span>
+<span class="sd">    """</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">"L:</span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"OK"</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"cannot slowly stop stage </span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7564,7 +7564,7 @@ the <a class="autorefs autorefs-internal" title="            Status
 <span class="normal">460</span>
 <span class="normal">461</span>
 <span class="normal">462</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Status</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sleep</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wait for all stages to finish moving.</span>
+<span class="w">    </span><span class="sd">"""Wait for all stages to finish moving.</span>
 
 <span class="sd">    This is a blocking call because it uses [sleep][time.sleep].</span>
 
@@ -7572,7 +7572,7 @@ the <a class="autorefs autorefs-internal" title="            Status
 <span class="sd">        callback: A callable function. The function will receive 1 argument,</span>
 <span class="sd">            the [Status][msl.equipment_resources.optosigma.shot702.Status]</span>
 <span class="sd">        sleep: The number of seconds to wait between calls to the `callback`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

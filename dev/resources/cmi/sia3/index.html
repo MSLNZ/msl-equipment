@@ -5073,8 +5073,8 @@
 
         <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;C.*M.*I&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;SIA3&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"C.*M.*I"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">"SIA3"</span>
 </code></pre></div></p>
 
 
@@ -5144,25 +5144,25 @@
 <span class="normal">95</span>
 <span class="normal">96</span>
 <span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Switched Integrator Amplifier (SIA) designed by the Czech Metrology Institute.</span>
+<span class="w">    </span><span class="sd">"""A Switched Integrator Amplifier (SIA) designed by the Czech Metrology Institute.</span>
 
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;C.*M.*I&quot;</span>
-<span class="sd">    model=r&quot;SIA3&quot;</span>
+<span class="sd">    manufacturer=r"C.*M.*I"</span>
+<span class="sd">    model=r"SIA3"</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span><span class="p">:</span>
         <span class="c1"># then use the default connection properties</span>
         <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;baud_rate&quot;</span><span class="p">:</span> <span class="mi">14400</span><span class="p">,</span>
-            <span class="s2">&quot;termination&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
+            <span class="s2">"baud_rate"</span><span class="p">:</span> <span class="mi">14400</span><span class="p">,</span>
+            <span class="s2">"termination"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"timeout"</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -5252,17 +5252,17 @@ integration time to 10 milliseconds:</p>
 <span class="normal">110</span>
 <span class="normal">111</span>
 <span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_integration_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">IntegrationTime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the integration time (i.e., the gain).</span>
+<span class="w">    </span><span class="sd">"""Set the integration time (i.e., the gain).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        time: The integration time. The following are equivalent to set the</span>
 <span class="sd">            integration time to 10 milliseconds:</span>
 
-<span class="sd">            * `set_integration_time(&quot;10ms&quot;)`</span>
+<span class="sd">            * `set_integration_time("10ms")`</span>
 <span class="sd">            * `set_integration_time(8)`</span>
 <span class="sd">            * `set_integration_time(cmi.IntegrationTime.TIME_10ms)`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">IntegrationTime</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;TIME_&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">IntegrationTime</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">"TIME_"</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_send_byte</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_send_byte</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -5349,7 +5349,7 @@ pre-scale value to 7</p>
 <span class="normal">130</span>
 <span class="normal">131</span>
 <span class="normal">132</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_ps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">PreScale</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the timer pre-scale value.</span>
+<span class="w">    </span><span class="sd">"""Set the timer pre-scale value.</span>
 
 <span class="sd">    The timer pre-scale value divides the microprocessor internal frequency</span>
 <span class="sd">    by something similar to $2^{PS}$. Therefore, to reach a 2-second integration time</span>
@@ -5361,8 +5361,8 @@ pre-scale value to 7</p>
 
 <span class="sd">            * `set_ps(7)`</span>
 <span class="sd">            * `set_ps(cmi.PreScale.PS_7)`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span> <span class="n">PreScale</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;PS_&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span> <span class="n">PreScale</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">"PS_"</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_send_byte</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_send_byte</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_send_byte</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>

@@ -5866,7 +5866,7 @@ If <code>None</code>, the latency timer is not set and the chip default is used,
 <span class="normal">833</span>
 <span class="normal">834</span>
 <span class="normal">835</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for equipment that use a Future Technology Devices International (FTDI) chip for communication.</span>
+<span class="w">    </span><span class="sd">"""Base class for equipment that use a Future Technology Devices International (FTDI) chip for communication.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
@@ -5899,18 +5899,18 @@ If <code>None</code>, the latency timer is not set and the chip default is used,
 <span class="sd">            _Default: `1`_</span>
 <span class="sd">        xon_xoff (bool): Whether to enable software flow control (_alias:_ xonxoff).</span>
 <span class="sd">            _Default: `False`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span><span class="p">:</span> <span class="n">_D2XX</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_libusb</span><span class="p">:</span> <span class="n">USB</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">check_packet_for_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether to check the bit mask of the `line` byte in a read packet for errors.</span>
+<span class="w">    </span><span class="sd">"""Whether to check the bit mask of the `line` byte in a read packet for errors.</span>
 
 <span class="sd">    This attribute is only used if *libusb* is used as the communication library.</span>
 <span class="sd">    See [poll_status][msl.equipment.interfaces.ftdi.FTDI.poll_status] for more details</span>
 <span class="sd">    about the `line` bit mask.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_read_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -5918,7 +5918,7 @@ If <code>None</code>, the latency timer is not set and the chip default is used,
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
     <span class="n">parsed</span> <span class="o">=</span> <span class="n">parse_ftdi_address</span><span class="p">(</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">parsed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid FTDI address </span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid FTDI address </span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="si">!r}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_out_req_type</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
@@ -5951,35 +5951,35 @@ If <code>None</code>, the latency timer is not set and the chip default is used,
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">parsed</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid FTDI driver number </span><span class="si">{</span><span class="n">parsed</span><span class="o">.</span><span class="n">driver</span><span class="si">}</span><span class="s2">, must be either 0 or 2&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid FTDI driver number </span><span class="si">{</span><span class="n">parsed</span><span class="o">.</span><span class="n">driver</span><span class="si">}</span><span class="s2">, must be either 0 or 2"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_set_interface_timeout</span><span class="p">()</span>
 
     <span class="n">p</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">set_baud_rate</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;baud_rate&quot;</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;baudrate&quot;</span><span class="p">,</span> <span class="mi">9600</span><span class="p">)))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">set_baud_rate</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"baud_rate"</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"baudrate"</span><span class="p">,</span> <span class="mi">9600</span><span class="p">)))</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">set_data_characteristics</span><span class="p">(</span>
-        <span class="n">data_bits</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data_bits&quot;</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bytesize&quot;</span><span class="p">,</span> <span class="n">DataBits</span><span class="o">.</span><span class="n">EIGHT</span><span class="p">)),</span>
-        <span class="n">parity</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parity&quot;</span><span class="p">,</span> <span class="n">Parity</span><span class="o">.</span><span class="n">NONE</span><span class="p">),</span>
-        <span class="n">stop_bits</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stop_bits&quot;</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stopbits&quot;</span><span class="p">,</span> <span class="n">StopBits</span><span class="o">.</span><span class="n">ONE</span><span class="p">)),</span>
+        <span class="n">data_bits</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"data_bits"</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"bytesize"</span><span class="p">,</span> <span class="n">DataBits</span><span class="o">.</span><span class="n">EIGHT</span><span class="p">)),</span>
+        <span class="n">parity</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"parity"</span><span class="p">,</span> <span class="n">Parity</span><span class="o">.</span><span class="n">NONE</span><span class="p">),</span>
+        <span class="n">stop_bits</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"stop_bits"</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"stopbits"</span><span class="p">,</span> <span class="n">StopBits</span><span class="o">.</span><span class="n">ONE</span><span class="p">)),</span>
     <span class="p">)</span>
 
-    <span class="n">latency</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;latency&quot;</span><span class="p">)</span>
+    <span class="n">latency</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"latency"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">latency</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_latency_timer</span><span class="p">(</span><span class="n">latency</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">set_flow_control</span><span class="p">()</span>  <span class="c1"># set to None as default, the following may overwrite</span>
 
-    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;xon_xoff&quot;</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;xonxoff&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_flow_control</span><span class="p">(</span><span class="s2">&quot;XON_XOFF&quot;</span><span class="p">,</span> <span class="n">xon</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">xoff</span><span class="o">=</span><span class="mi">19</span><span class="p">)</span>  <span class="c1"># pySerial uses 17 and 19</span>
+    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"xon_xoff"</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"xonxoff"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_flow_control</span><span class="p">(</span><span class="s2">"XON_XOFF"</span><span class="p">,</span> <span class="n">xon</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">xoff</span><span class="o">=</span><span class="mi">19</span><span class="p">)</span>  <span class="c1"># pySerial uses 17 and 19</span>
 
-    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dsr_dtr&quot;</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dsrdtr&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_flow_control</span><span class="p">(</span><span class="s2">&quot;DTR_DSR&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"dsr_dtr"</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"dsrdtr"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_flow_control</span><span class="p">(</span><span class="s2">"DTR_DSR"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rts_cts&quot;</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rtscts&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_flow_control</span><span class="p">(</span><span class="s2">&quot;RTS_CTS&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rts_cts"</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rtscts"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_flow_control</span><span class="p">(</span><span class="s2">"RTS_CTS"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -6240,7 +6240,7 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 <span class="normal">928</span>
 <span class="normal">929</span>
 <span class="normal">930</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the equipment.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Disconnect from the equipment."""</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span> <span class="o">=</span> <span class="kc">None</span>
@@ -6322,11 +6322,11 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 <span class="normal">955</span>
 <span class="normal">956</span>
 <span class="normal">957</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_latency_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the latency-timer value from the FTDI chip.</span>
+<span class="w">    </span><span class="sd">"""Get the latency-timer value from the FTDI chip.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The latency-timer value, in milliseconds.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span><span class="o">.</span><span class="n">get_latency_timer</span><span class="p">()</span>
 
@@ -6335,8 +6335,8 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
     <span class="c1"># https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L1408</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libusb</span><span class="o">.</span><span class="n">device_version</span> <span class="o">&lt;=</span> <span class="n">FT232A</span><span class="p">:</span>
         <span class="c1"># The linux code returns an error, but FT_GetLatencyTimer in the D2xx programming manual states:</span>
-        <span class="c1">#  &quot;In the FT8U232AM and FT8U245AM devices, the receive buffer timeout that is used</span>
-        <span class="c1">#   to flush remaining data from the receive buffer was fixed at 16 ms.&quot;</span>
+        <span class="c1">#  "In the FT8U232AM and FT8U245AM devices, the receive buffer timeout that is used</span>
+        <span class="c1">#   to flush remaining data from the receive buffer was fixed at 16 ms."</span>
         <span class="k">return</span> <span class="mi">16</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libusb</span><span class="o">.</span><span class="n">ctrl_transfer</span><span class="p">(</span>
@@ -6459,7 +6459,7 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 <span class="normal">1002</span>
 <span class="normal">1003</span>
 <span class="normal">1004</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">poll_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Polls the modem and line status bytes from the FTDI chip.</span>
+<span class="w">    </span><span class="sd">"""Polls the modem and line status bytes from the FTDI chip.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The `(modem, line)` status bytes.</span>
@@ -6483,7 +6483,7 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 <span class="sd">            - B6: Transmitter Empty (TEMT) = 0x40</span>
 <span class="sd">            - B7: Receiver FIFO Error (RCVE) = 0x80</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">status</span><span class="p">:</span> <span class="nb">int</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span><span class="o">.</span><span class="n">get_line_modem_status</span><span class="p">()</span>
@@ -6491,7 +6491,7 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libusb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
 
         <span class="c1"># https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L2744</span>
-        <span class="n">length</span><span class="p">,</span> <span class="n">fmt</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libusb</span><span class="o">.</span><span class="n">device_version</span> <span class="o">&lt;</span> <span class="n">FT232A</span> <span class="k">else</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;&lt;H&quot;</span><span class="p">)</span>
+        <span class="n">length</span><span class="p">,</span> <span class="n">fmt</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"B"</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libusb</span><span class="o">.</span><span class="n">device_version</span> <span class="o">&lt;</span> <span class="n">FT232A</span> <span class="k">else</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"&lt;H"</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libusb</span><span class="o">.</span><span class="n">ctrl_transfer</span><span class="p">(</span>
             <span class="n">request_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_in_req_type</span><span class="p">,</span>
             <span class="n">request</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>  <span class="c1"># FTDI_SIO_GET_MODEM_STATUS</span>
@@ -6540,7 +6540,7 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 <span class="normal">1015</span>
 <span class="normal">1016</span>
 <span class="normal">1017</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">purge_buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Purge the receive (Rx) and transmit (Tx) buffers of the FTDI chip.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Purge the receive (Rx) and transmit (Tx) buffers of the FTDI chip."""</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span><span class="o">.</span><span class="n">purge_buffers</span><span class="p">()</span>
 
@@ -6867,7 +6867,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">NumpyArray1D</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convenience method for performing a [write][msl.equipment.interfaces.message.Message.write]</span>
+<span class="w">    </span><span class="sd">"""Convenience method for performing a [write][msl.equipment.interfaces.message.Message.write]</span>
 <span class="sd">    followed by a [read][msl.equipment.interfaces.message.Message.read].</span>
 
 <span class="sd">    Args:</span>
@@ -6888,7 +6888,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 <span class="sd">        The message from the equipment. If `dtype` is specified, then the message is</span>
 <span class="sd">            returned as a numpy [ndarray][numpy.ndarray], if `decode` is `True` then the message</span>
 <span class="sd">            is returned as a [str][], otherwise the message is returned as [bytes][].</span>
-<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: D205</span>
+<span class="sd">    """</span>  <span class="c1"># noqa: D205</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">delay</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
@@ -7259,7 +7259,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">NumpyArray1D</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a message from the equipment.</span>
+<span class="w">    </span><span class="sd">"""Read a message from the equipment.</span>
 
 <span class="sd">    This method will block until one of the following conditions is fulfilled:</span>
 
@@ -7295,9 +7295,9 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 <span class="sd">        The message from the equipment. If `dtype` is specified, then the message is returned</span>
 <span class="sd">            as a numpy [ndarray][numpy.ndarray], if `decode` is `True` then the message</span>
 <span class="sd">            is returned as a [str][], otherwise the message is returned as [bytes][].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_read_size</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;max_read_size is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_read_size</span><span class="si">}</span><span class="s2"> bytes, requesting </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"max_read_size is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_read_size</span><span class="si">}</span><span class="s2"> bytes, requesting </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -7305,19 +7305,19 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="k">except</span> <span class="p">(</span><span class="n">serial</span><span class="o">.</span><span class="n">SerialTimeoutException</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="ne">TimeoutError</span><span class="p">,</span> <span class="n">USBTimeoutError</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">MSLTimeoutError</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">dtype</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.read(dtype=</span><span class="si">%r</span><span class="s2">, fmt=</span><span class="si">%r</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.read(dtype=</span><span class="si">%r</span><span class="s2">, fmt=</span><span class="si">%r</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.read() -&gt; </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.read() -&gt; </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">!=</span> <span class="n">size</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes, requested </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes, requested </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes"</span>
             <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.read(size=</span><span class="si">%s</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.read(size=</span><span class="si">%s</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rstrip</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
@@ -7363,7 +7363,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 <span class="normal">1026</span>
 <span class="normal">1027</span>
 <span class="normal">1028</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset_device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sends a reset command to the FTDI chip.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Sends a reset command to the FTDI chip."""</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span><span class="o">.</span><span class="n">reset_device</span><span class="p">()</span>
 
@@ -7453,11 +7453,11 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 <span class="normal">1053</span>
 <span class="normal">1054</span>
 <span class="normal">1055</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_baud_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the baud rate for the FTDI chip.</span>
+<span class="w">    </span><span class="sd">"""Set the baud rate for the FTDI chip.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        rate: The baud rate.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span><span class="o">.</span><span class="n">set_baud_rate</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
 
@@ -7555,13 +7555,13 @@ BREAK condition returning the transmit line to its normal operating state.</p>
 <span class="normal">1074</span>
 <span class="normal">1075</span>
 <span class="normal">1076</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_break</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the BREAK condition for the FTDI chip.</span>
+<span class="w">    </span><span class="sd">"""Set the BREAK condition for the FTDI chip.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        state: The state of the BREAK condition. If `True`, the transmit (Tx) line is driven</span>
 <span class="sd">            low until this method is called with `False`, which resets or de-asserts the</span>
 <span class="sd">            BREAK condition returning the transmit line to its normal operating state.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span><span class="o">.</span><span class="n">set_break_on</span><span class="p">()</span> <span class="k">if</span> <span class="n">state</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span><span class="o">.</span><span class="n">set_break_off</span><span class="p">()</span>
 
@@ -7717,19 +7717,19 @@ BREAK condition returning the transmit line to its normal operating state.</p>
     <span class="n">parity</span><span class="p">:</span> <span class="n">Parity</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Parity</span><span class="o">.</span><span class="n">NONE</span><span class="p">,</span>
     <span class="n">stop_bits</span><span class="p">:</span> <span class="n">StopBits</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">StopBits</span><span class="o">.</span><span class="n">ONE</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the RS-232 data characteristics for the FTDI chip.</span>
+<span class="w">    </span><span class="sd">"""Set the RS-232 data characteristics for the FTDI chip.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data_bits: The number of data bits (7 or 8). Can be an enum member name (case insensitive) or value.</span>
 <span class="sd">        parity: The parity. Can be an enum member name (case insensitive) or value.</span>
 <span class="sd">        stop_bits: The number of stop bits. Can be an enum member name (case insensitive) or value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">data_bits</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">data_bits</span><span class="p">,</span> <span class="n">DataBits</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">parity</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">parity</span><span class="p">,</span> <span class="n">Parity</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">stop_bits</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">stop_bits</span><span class="p">,</span> <span class="n">StopBits</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">data_bits</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">}:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unsupported data_bits value </span><span class="si">{</span><span class="n">data_bits</span><span class="si">!r}</span><span class="s2">, must be either 7 or 8&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Unsupported data_bits value </span><span class="si">{</span><span class="n">data_bits</span><span class="si">!r}</span><span class="s2">, must be either 7 or 8"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -7823,11 +7823,11 @@ BREAK condition returning the transmit line to its normal operating state.</p>
 <span class="normal">1134</span>
 <span class="normal">1135</span>
 <span class="normal">1136</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_dtr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the Data Terminal Ready (DTR) control signal.</span>
+<span class="w">    </span><span class="sd">"""Set the Data Terminal Ready (DTR) control signal.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        state: New state of the DTR logical level: HIGH (`True`) or LOW (`False`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span><span class="o">.</span><span class="n">set_dtr</span><span class="p">()</span> <span class="k">if</span> <span class="n">state</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span><span class="o">.</span><span class="n">clr_dtr</span><span class="p">()</span>
 
@@ -7856,7 +7856,7 @@ BREAK condition returning the transmit line to its normal operating state.</p>
 
 <a href="#msl.equipment.interfaces.ftdi.FTDI.set_flow_control" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_flow_control</span><span class="p">(</span>
-    <span class="n">flow</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;RTS_CTS&quot;</span><span class="p">,</span> <span class="s2">&quot;DTR_DSR&quot;</span><span class="p">,</span> <span class="s2">&quot;XON_XOFF&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">flow</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">"RTS_CTS"</span><span class="p">,</span> <span class="s2">"DTR_DSR"</span><span class="p">,</span> <span class="s2">"XON_XOFF"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">xon</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">xoff</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">0</span>
@@ -7964,26 +7964,26 @@ BREAK condition returning the transmit line to its normal operating state.</p>
 <span class="normal">1166</span>
 <span class="normal">1167</span>
 <span class="normal">1168</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_flow_control</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">flow</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;RTS_CTS&quot;</span><span class="p">,</span> <span class="s2">&quot;DTR_DSR&quot;</span><span class="p">,</span> <span class="s2">&quot;XON_XOFF&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">xon</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">xoff</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">flow</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"RTS_CTS"</span><span class="p">,</span> <span class="s2">"DTR_DSR"</span><span class="p">,</span> <span class="s2">"XON_XOFF"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">xon</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">xoff</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the flow control for the FTDI chip.</span>
+<span class="w">    </span><span class="sd">"""Sets the flow control for the FTDI chip.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        flow: The type of flow control to use, `None` disables flow control.</span>
 <span class="sd">        xon: The character (between 0 and 255) to signal Xon. Only used if `flow` is `XON_XOFF`.</span>
 <span class="sd">        xoff: The character (between 0 and 255) to signal Xoff. Only used if `flow` is `XON_XOFF`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span><span class="o">.</span><span class="n">set_flow_control</span><span class="p">(</span><span class="n">flow</span><span class="p">,</span> <span class="n">xon</span><span class="o">=</span><span class="n">xon</span><span class="p">,</span> <span class="n">xoff</span><span class="o">=</span><span class="n">xoff</span><span class="p">)</span>
 
     <span class="c1"># https://github.com/torvalds/linux/blob/5572ad8fddecd4a0db19801262072ff5916b7589/drivers/usb/serial/ftdi_sio.c#L2716</span>
     <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libusb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
     <span class="n">value</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-    <span class="k">if</span> <span class="n">flow</span> <span class="o">==</span> <span class="s2">&quot;RTS_CTS&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">flow</span> <span class="o">==</span> <span class="s2">"RTS_CTS"</span><span class="p">:</span>
         <span class="n">index</span> <span class="o">=</span> <span class="mh">0x1</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span>  <span class="c1"># FTDI_SIO_RTS_CTS_HS</span>
-    <span class="k">elif</span> <span class="n">flow</span> <span class="o">==</span> <span class="s2">&quot;DTR_DSR&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">flow</span> <span class="o">==</span> <span class="s2">"DTR_DSR"</span><span class="p">:</span>
         <span class="n">index</span> <span class="o">=</span> <span class="mh">0x2</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span>  <span class="c1"># FTDI_SIO_DTR_DSR_HS</span>
-    <span class="k">elif</span> <span class="n">flow</span> <span class="o">==</span> <span class="s2">&quot;XON_XOFF&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">flow</span> <span class="o">==</span> <span class="s2">"XON_XOFF"</span><span class="p">:</span>
         <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">xoff</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">|</span> <span class="n">xon</span>
         <span class="n">index</span> <span class="o">=</span> <span class="mh">0x4</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span>  <span class="c1"># FTDI_SIO_XON_XOFF_HS</span>
 
@@ -8098,7 +8098,7 @@ response times from shorter data packets.</p>
 <span class="normal">1209</span>
 <span class="normal">1210</span>
 <span class="normal">1211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_latency_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the latency-timer value for the FTDI chip.</span>
+<span class="w">    </span><span class="sd">"""Set the latency-timer value for the FTDI chip.</span>
 
 <span class="sd">    The latency timer is a form of timeout mechanism for the read buffer of FTDI chip.</span>
 
@@ -8112,10 +8112,10 @@ response times from shorter data packets.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        value: Required value, in milliseconds, of the latency timer. Valid range is [1, 255].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">v</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid latency timer value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">, must be an integer in the range [1, 255]&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid latency timer value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">, must be an integer in the range [1, 255]"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -8125,11 +8125,11 @@ response times from shorter data packets.</p>
     <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libusb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libusb</span><span class="o">.</span><span class="n">device_version</span> <span class="o">&lt;=</span> <span class="n">FT232A</span><span class="p">:</span>
         <span class="c1"># The linux code returns an error, but FT_SetLatencyTimer in the D2xx programming manual states:</span>
-        <span class="c1">#  &quot;In the FT8U232AM and FT8U245AM devices, the receive buffer timeout that is used</span>
-        <span class="c1">#   to flush remaining data from the receive buffer was fixed at 16 ms.&quot;</span>
+        <span class="c1">#  "In the FT8U232AM and FT8U245AM devices, the receive buffer timeout that is used</span>
+        <span class="c1">#   to flush remaining data from the receive buffer was fixed at 16 ms."</span>
         <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="mi">16</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot set the latency timer for the FTDI chip. The value is fixed at 16 ms.&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Cannot set the latency timer for the FTDI chip. The value is fixed at 16 ms."</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_libusb</span><span class="o">.</span><span class="n">ctrl_transfer</span><span class="p">(</span>
@@ -8213,11 +8213,11 @@ response times from shorter data packets.</p>
 <span class="normal">1229</span>
 <span class="normal">1230</span>
 <span class="normal">1231</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_rts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the Request To Send (RTS) control signal.</span>
+<span class="w">    </span><span class="sd">"""Set the Request To Send (RTS) control signal.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        state: New state of the RTS logical level: HIGH (`True`) or LOW (`False`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span><span class="o">.</span><span class="n">set_rts</span><span class="p">()</span> <span class="k">if</span> <span class="n">state</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d2xx</span><span class="o">.</span><span class="n">clr_rts</span><span class="p">()</span>
 
@@ -8259,13 +8259,13 @@ response times from shorter data packets.</p>
 
   
       module-attribute
-   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="s2">&quot;&lt;f&quot;</span><span class="p">,</span>
+   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="s2">"&lt;f"</span><span class="p">,</span>
     <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="s2">&quot;ieee&quot;</span>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="s2">"ieee"</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
@@ -8459,10 +8459,10 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
     <span class="n">message</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Sequence1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">MessageDataType</span> <span class="o">=</span> <span class="s2">&quot;&lt;f&quot;</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="s2">&quot;ieee&quot;</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">MessageDataType</span> <span class="o">=</span> <span class="s2">"&lt;f"</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="s2">"ieee"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a message to the equipment.</span>
+<span class="w">    </span><span class="sd">"""Write a message to the equipment.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        message: The message to write to the equipment.</span>
@@ -8470,9 +8470,9 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
 <span class="sd">        dtype: The data type to use to convert each element in `data` to bytes. Ignored if `data`</span>
 <span class="sd">            is `None`. If the `fmt` value is `ascii` then the `dtype` value must be a [str][] and</span>
 <span class="sd">            it is used as the `format_spec` argument in [format][] to convert each element in `data`</span>
-<span class="sd">            to a string (e.g., `dtype=&#39;.2e&#39;` converts each element to scientific notation with two</span>
+<span class="sd">            to a string (e.g., `dtype='.2e'` converts each element to scientific notation with two</span>
 <span class="sd">            digits after the decimal point). For all other values of `fmt` the data type can be any</span>
-<span class="sd">            object that numpy [dtype][numpy.dtype] supports, e.g., `&#39;H&#39;`, `&#39;uint16&#39;` and</span>
+<span class="sd">            object that numpy [dtype][numpy.dtype] supports, e.g., `'H'`, `'uint16'` and</span>
 <span class="sd">            [ushort][numpy.ushort] are equivalent values to convert each element to an *unsigned short*.</span>
 <span class="sd">            See [MessageDataType][msl.equipment.typing.MessageDataType] for more details.</span>
 <span class="sd">        fmt: The format to use to convert `data` to bytes. Ignored if `data` is `None`.</span>
@@ -8480,7 +8480,7 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of bytes written.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_encoding</span><span class="p">)</span>
 
@@ -8490,7 +8490,7 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">message</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">):</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.write(</span><span class="si">%r</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.write(</span><span class="si">%r</span><span class="s2">)"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>

@@ -4908,17 +4908,17 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Equipment</span><span class="p">,</span> <span class="n">Serial</span>
 
 
-<span class="k">class</span><span class="w"> </span><span class="nc">MyResource</span><span class="p">(</span><span class="n">Serial</span><span class="p">,</span> <span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Company Name&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;ABC&quot;</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyResource</span><span class="p">(</span><span class="n">Serial</span><span class="p">,</span> <span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Company Name"</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">"ABC"</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;My custom resource.</span>
+<span class="w">        </span><span class="sd">"""My custom resource.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            equipment: An `Equipment` instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">do_something</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;The command to write to the equipment&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"The command to write to the equipment"</span><span class="p">)</span>
 </code></pre></div>
 <p>When <code>my_resource</code> is imported, the <code>MyResource</code> class is automatically registered as a resource that will be used when <a class="autorefs autorefs-internal" title="            connect" href="../schema/equipment/#msl.equipment.schema.Equipment.connect">connect</a>ing to the equipment if the values of <a class="autorefs autorefs-internal" title="            manufacturer
 

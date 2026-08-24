@@ -5387,8 +5387,8 @@
 
         <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Greisinger&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;GMH\s*3\d</span><span class="si">{3}</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Greisinger"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">"GMH\s*3\d</span><span class="si">{3}</span><span class="s2">"</span>
 </code></pre></div></p>
 
 
@@ -5492,13 +5492,13 @@ for a GMH thermometer.</p>
 <span class="normal">58</span>
 <span class="normal">59</span>
 <span class="normal">60</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Communicate with a Greisinger GMH 3000 Series thermometer.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Communicate with a Greisinger GMH 3000 Series thermometer.</span>
 
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;Greisinger&quot;</span>
-<span class="sd">    model=r&quot;GMH\s*3\d{3}&quot;</span>
+<span class="sd">    manufacturer=r"Greisinger"</span>
+<span class="sd">    model=r"GMH\s*3\d{3}"</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
@@ -5509,17 +5509,17 @@ for a GMH thermometer.</p>
 
 <span class="sd">    Attributes: Connection Properties:</span>
 <span class="sd">        gmh_address (int): The GMH address of the device. _Default: `1`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
     <span class="n">props</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span>
-    <span class="n">props</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;baud_rate&quot;</span><span class="p">,</span> <span class="mi">4800</span><span class="p">)</span>
+    <span class="n">props</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"baud_rate"</span><span class="p">,</span> <span class="mi">4800</span><span class="p">)</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 
     <span class="c1"># termination characters are not used</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_read_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">_address</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_invert</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gmh_address&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_address</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_invert</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"gmh_address"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -5585,11 +5585,11 @@ for a GMH thermometer.</p>
 <span class="normal">162</span>
 <span class="normal">163</span>
 <span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">channel_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of channels.</span>
+<span class="w">    </span><span class="sd">"""Get the number of channels.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The channel count.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">208</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_uint16</span><span class="p">(</span><span class="o">*</span><span class="n">reply</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
 </code></pre></div></td></tr></table></div>
@@ -5670,11 +5670,11 @@ for a GMH thermometer.</p>
 <span class="normal">194</span>
 <span class="normal">195</span>
 <span class="normal">196</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">clear_max_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear the maximum value stored in the device memory.</span>
+<span class="w">    </span><span class="sd">"""Clear the maximum value stored in the device memory.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The current value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># used Wireshark with the USBPcap plugin to eavesdrop on the</span>
     <span class="c1"># GMH_Transmit(1, 175, 0, 0.0, 1) call of the DLL to get the</span>
     <span class="c1"># hex values and message lengths</span>
@@ -5778,11 +5778,11 @@ for a GMH thermometer.</p>
 <span class="normal">226</span>
 <span class="normal">227</span>
 <span class="normal">228</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">clear_min_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear the minimum value stored in the device memory.</span>
+<span class="w">    </span><span class="sd">"""Clear the minimum value stored in the device memory.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The current value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># used Wireshark with the USBPcap plugin to eavesdrop on the</span>
     <span class="c1"># GMH_Transmit(1, 174, 0, 0.0, 1) call of the DLL to get the</span>
     <span class="c1"># hex values and message lengths</span>
@@ -5866,11 +5866,11 @@ for a GMH thermometer.</p>
 <span class="normal">238</span>
 <span class="normal">239</span>
 <span class="normal">240</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">display_range</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the range of the display.</span>
+<span class="w">    </span><span class="sd">"""Get the range of the display.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The `(minimum, maximum)` value that the device can display.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
     <span class="n">minimum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode32</span><span class="p">(</span><span class="o">*</span><span class="n">reply</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span> <span class="o">*</span><span class="n">reply</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">])</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">201</span><span class="p">)</span>
@@ -5931,11 +5931,11 @@ for a GMH thermometer.</p>
 <span class="normal">247</span>
 <span class="normal">248</span>
 <span class="normal">249</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">firmware_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the version information of the firmware.</span>
+<span class="w">    </span><span class="sd">"""Get the version information of the firmware.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The version number, version identifier.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">254</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">reply</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_invert</span><span class="p">(</span><span class="n">reply</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
 </code></pre></div></td></tr></table></div>
@@ -5995,15 +5995,15 @@ for a GMH thermometer.</p>
 <span class="normal">258</span>
 <span class="normal">259</span>
 <span class="normal">260</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">id_number</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the device ID (serial) number.</span>
+<span class="w">    </span><span class="sd">"""Get the device ID (serial) number.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The ID (serial) number of the device.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
     <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_uint16</span><span class="p">(</span><span class="o">*</span><span class="n">reply</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
     <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_uint16</span><span class="p">(</span><span class="o">*</span><span class="n">reply</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_to_uint32</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="si">:</span><span class="s2">x</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_to_uint32</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="si">:</span><span class="s2">x</span><span class="si">}</span><span class="s2">"</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6062,13 +6062,13 @@ was called.</p>
 <span class="normal">268</span>
 <span class="normal">269</span>
 <span class="normal">270</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">max_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the maximum value that has been read.</span>
+<span class="w">    </span><span class="sd">"""Get the maximum value that has been read.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The maximum value that has been read since the device was turned on or since</span>
 <span class="sd">            [clear_max_value][msl.equipment_resources.greisinger.gmh3000.GMH3000.clear_max_value]</span>
 <span class="sd">            was called.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">7</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6128,11 +6128,11 @@ was called.</p>
 <span class="normal">280</span>
 <span class="normal">281</span>
 <span class="normal">282</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">measurement_range</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the measurement range.</span>
+<span class="w">    </span><span class="sd">"""Get the measurement range.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The `(minimum, maximum)` value that the device can measure.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">176</span><span class="p">)</span>
     <span class="n">minimum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode16</span><span class="p">(</span><span class="o">*</span><span class="n">reply</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">177</span><span class="p">)</span>
@@ -6196,13 +6196,13 @@ was called.</p>
 <span class="normal">290</span>
 <span class="normal">291</span>
 <span class="normal">292</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">min_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the minimum value that has been read.</span>
+<span class="w">    </span><span class="sd">"""Get the minimum value that has been read.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The minimum value that has been read since the device was turned on or since</span>
 <span class="sd">            [clear_min_value][msl.equipment_resources.greisinger.gmh3000.GMH3000.clear_min_value]</span>
 <span class="sd">            was called.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6266,7 +6266,7 @@ deviations in the temperature probe or in the measuring device.</p>
 <span class="normal">303</span>
 <span class="normal">304</span>
 <span class="normal">305</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">offset_correction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the offset-correction value.</span>
+<span class="w">    </span><span class="sd">"""Get the offset-correction value.</span>
 
 <span class="sd">    The zero point (intercept in a linear calibration equation) of the</span>
 <span class="sd">    measurement will be displaced by this value to compensate for</span>
@@ -6274,7 +6274,7 @@ deviations in the temperature probe or in the measuring device.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The offset-correction value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">216</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode16</span><span class="p">(</span><span class="o">*</span><span class="n">reply</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
 </code></pre></div></td></tr></table></div>
@@ -6336,13 +6336,13 @@ takes place. A value of 0 means that power off is disabled.</p>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">power_off_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the power-off time.</span>
+<span class="w">    </span><span class="sd">"""Get the power-off time.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of minutes that the device will automatically power off as soon as</span>
 <span class="sd">            this time has elapsed if no key is pressed or if no interface communication</span>
 <span class="sd">            takes place. A value of 0 means that power off is disabled.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">222</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_uint16</span><span class="p">(</span><span class="o">*</span><span class="n">reply</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
 </code></pre></div></td></tr></table></div>
@@ -6403,11 +6403,11 @@ takes place. A value of 0 means that power off is disabled.</p>
 <span class="normal">326</span>
 <span class="normal">327</span>
 <span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">resolution</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the measurement resolution.</span>
+<span class="w">    </span><span class="sd">"""Get the measurement resolution.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of digits after the decimal point that is acquired for the measured value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># The manual says to use code=204, however, using Wireshark to eavesdrop</span>
     <span class="c1"># on the GMH_Transmit(address, 204, ...) DLL call the actual code sent</span>
     <span class="c1"># is 0, which is the code to read the nominal value</span>
@@ -6475,7 +6475,7 @@ temperature probe or in the measuring device.</p>
 <span class="normal">339</span>
 <span class="normal">340</span>
 <span class="normal">341</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">scale_correction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the scale-correction factor.</span>
+<span class="w">    </span><span class="sd">"""Get the scale-correction factor.</span>
 
 <span class="sd">    The scale (slope in a linear calibration equation) of the measurement</span>
 <span class="sd">    will be changed by this factor to compensate for deviations in the</span>
@@ -6483,7 +6483,7 @@ temperature probe or in the measuring device.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The scale-correction factor.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">214</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode16</span><span class="p">(</span><span class="o">*</span><span class="n">reply</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
 </code></pre></div></td></tr></table></div>
@@ -6610,7 +6610,7 @@ the device automatically coerces the value to be the maximum time.</p>
 <span class="normal">382</span>
 <span class="normal">383</span>
 <span class="normal">384</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_power_off_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minutes</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the power-off time.</span>
+<span class="w">    </span><span class="sd">"""Set the power-off time.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        minutes: The number of minutes that the device will automatically power off</span>
@@ -6621,7 +6621,7 @@ the device automatically coerces the value to be the maximum time.</p>
 <span class="sd">        The actual power-off time that the device was set to. If you set</span>
 <span class="sd">            the power-off time to a value greater than the maximum time allowed,</span>
 <span class="sd">            the device automatically coerces the value to be the maximum time.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># used Wireshark with the USBPcap plugin to eavesdrop on the</span>
     <span class="c1"># GMH_Transmit(1, 223, 0, 0.0, minutes) call of the DLL to get the</span>
     <span class="c1"># hex values and message lengths</span>
@@ -6647,7 +6647,7 @@ the device automatically coerces the value to be the maximum time.</p>
     <span class="c1"># because if, for example, minutes=121 the device will automatically</span>
     <span class="c1"># set the power-off time to the maximum value that it supports (120) and</span>
     <span class="c1"># raising an exception would be very confusing to the end user because</span>
-    <span class="c1"># the power-off value has changed, but not to the expected value. It&#39;s</span>
+    <span class="c1"># the power-off value has changed, but not to the expected value. It's</span>
     <span class="c1"># better to mention in the docstring that the returned value is what</span>
     <span class="c1"># actually happened so the end user can do their own checks.</span>
     <span class="k">return</span> <span class="n">reply</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
@@ -6819,7 +6819,7 @@ the device automatically coerces the value to be the maximum time.</p>
 <span class="normal">412</span>
 <span class="normal">413</span>
 <span class="normal">414</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the system status.</span>
+<span class="w">    </span><span class="sd">"""Get the system status.</span>
 
 <span class="sd">    The status value represents a bit mask:</span>
 
@@ -6844,7 +6844,7 @@ the device automatically coerces the value to be the maximum time.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The system status.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_uint16</span><span class="p">(</span><span class="o">*</span><span class="n">reply</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
 </code></pre></div></td></tr></table></div>
@@ -6908,19 +6908,19 @@ the device automatically coerces the value to be the maximum time.</p>
 <span class="normal">427</span>
 <span class="normal">428</span>
 <span class="normal">429</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the measurement unit.</span>
+<span class="w">    </span><span class="sd">"""Get the measurement unit.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The measurement unit.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">202</span><span class="p">)</span>
     <span class="n">unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_uint16</span><span class="p">(</span><span class="o">*</span><span class="n">reply</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\u00b0</span><span class="s2">C&quot;</span>
+        <span class="k">return</span> <span class="s2">"</span><span class="se">\u00b0</span><span class="s2">C"</span>
     <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\u00b0</span><span class="s2">F&quot;</span>
+        <span class="k">return</span> <span class="s2">"</span><span class="se">\u00b0</span><span class="s2">F"</span>
 
-    <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Unimplemented unit ID </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Unimplemented unit ID </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6975,11 +6975,11 @@ the device automatically coerces the value to be the maximum time.</p>
 <span class="normal">435</span>
 <span class="normal">436</span>
 <span class="normal">437</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the current measurement value.</span>
+<span class="w">    </span><span class="sd">"""Get the current measurement value.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The current value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>

@@ -5845,7 +5845,7 @@ for more details.</p>
 <span class="normal">161</span>
 <span class="normal">162</span>
 <span class="normal">163</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">array</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;USBTMC device capabilities.</span>
+<span class="w">    </span><span class="sd">"""USBTMC device capabilities.</span>
 
 <span class="sd">    !!! note</span>
 <span class="sd">        Do not instantiate this class. The device capabilities are automatically determined</span>
@@ -5874,15 +5874,15 @@ for more details.</p>
 <span class="sd">        accepts_trigger (bool): Whether the device accepts the `TRIGGER` request.</span>
 <span class="sd">        is_488_interface (bool): Whether the device understands all mandatory SCPI commands, accepts a service</span>
 <span class="sd">            request and is a 488.2 interface. See *Appendix 2: IEEE 488.2 compatibility* in</span>
-<span class="sd">            [USBTMC_usb488_subclass_1_00.pdf](https://www.usb.org/document-library/test-measurement-class-specification){:target=&quot;_blank&quot;}</span>
+<span class="sd">            [USBTMC_usb488_subclass_1_00.pdf](https://www.usb.org/document-library/test-measurement-class-specification){:target="_blank"}</span>
 <span class="sd">            for more details.</span>
 <span class="sd">        is_listen_only (bool): Whether the interface is listen-only.</span>
 <span class="sd">        is_talk_only (bool): Whether the interface is talk-only.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># USBTMC_1_00.pdf: Section 4.2.1.8, Table 37</span>
     <span class="c1"># USBTMC_usb488_subclass_1_00.pdf: Section 4.2.2, Table 8</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="n">array</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
-    <span class="n">status</span><span class="p">,</span> <span class="n">iface</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">iface_488</span><span class="p">,</span> <span class="n">device_488</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;B3x2B8x2B8x&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+    <span class="n">status</span><span class="p">,</span> <span class="n">iface</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">iface_488</span><span class="p">,</span> <span class="n">device_488</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">"B3x2B8x2B8x"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">status</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># unsuccessful response, silently ignore the data that came back</span>
         <span class="n">iface</span> <span class="o">=</span> <span class="n">device</span> <span class="o">=</span> <span class="n">iface_488</span> <span class="o">=</span> <span class="n">device_488</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -5906,7 +5906,7 @@ for more details.</p>
     <span class="n">is_dt_capable</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">device_488</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span><span class="p">))</span>
 
     <span class="c1"># Underneath Table 8 (USBTMC_usb488_subclass_1_00.pdf: Section 4.2.2)</span>
-    <span class="c1"># there are additional rules, however, not all manufacturer&#39;s obey these rules.</span>
+    <span class="c1"># there are additional rules, however, not all manufacturer's obey these rules.</span>
     <span class="c1"># If either of the bitmap values is True then the instance attribute is considered True.</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">accepts_trigger</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">is_dt_capable</span> <span class="ow">or</span> <span class="n">accepts_interface_trigger</span>  <span class="c1"># rule 1</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">accepts_remote_local</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">is_rl_capable</span> <span class="ow">or</span> <span class="n">accepts_remote_local</span>  <span class="c1"># rule 2</span>
@@ -6032,14 +6032,14 @@ as those specified in <a class="autorefs autorefs-internal" title="            U
 <span class="normal">205</span>
 <span class="normal">206</span>
 <span class="normal">207</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for the USBTMC communication protocol.</span>
+<span class="w">    </span><span class="sd">"""Base class for the USBTMC communication protocol.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
 
 <span class="sd">    A [Connection][msl.equipment.schema.Connection] instance supports the same _properties_</span>
 <span class="sd">    as those specified in [USB][msl.equipment.interfaces.usb.USB].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_tag_status</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># bTag for READ_STATUS_BYTE control transfer</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_msg</span><span class="p">:</span> <span class="n">_Message</span> <span class="o">=</span> <span class="n">_Message</span><span class="p">()</span>
@@ -6823,7 +6823,7 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 <span class="normal">483</span>
 <span class="normal">484</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_request_type</span><span class="p">(</span><span class="n">direction</span><span class="p">:</span> <span class="n">USB</span><span class="o">.</span><span class="n">CtrlDirection</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="n">USB</span><span class="o">.</span><span class="n">CtrlType</span><span class="p">,</span> <span class="n">recipient</span><span class="p">:</span> <span class="n">USB</span><span class="o">.</span><span class="n">CtrlRecipient</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>  <span class="c1"># noqa: A002</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a `bmRequestType` field for a control request.</span>
+<span class="w">    </span><span class="sd">"""Build a `bmRequestType` field for a control request.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        direction: Transfer direction.</span>
@@ -6832,7 +6832,7 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The `request_type` argument for a [ctrl_transfer][msl.equipment.interfaces.usb.USB.ctrl_transfer].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">request</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">usb</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">build_request_type</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">recipient</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">request</span>
 </code></pre></div></td></tr></table></div>
@@ -6899,8 +6899,8 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 <span class="normal">396</span>
 <span class="normal">397</span>
 <span class="normal">398</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">clear_device_buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear all input and output buffers associated with the USBTMC device.&quot;&quot;&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> clearing USBTMC device buffers ...&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">"""Clear all input and output buffers associated with the USBTMC device."""</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> clearing USBTMC device buffers ..."</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_byte_buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
     <span class="c1"># USBTMC_1_00.pdf, Section 4.2.1.6</span>
@@ -6927,7 +6927,7 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 
         <span class="c1"># Table 35 describes Host behaviour</span>
         <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="mh">0x02</span><span class="p">:</span>  <span class="c1"># USBTMC_1_00.pdf, Table 16, STATUS_PENDING  # noqa: PLR2004</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> clearing USBTMC device buffers PENDING [iteration=</span><span class="si">%d</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> clearing USBTMC device buffers PENDING [iteration=</span><span class="si">%d</span><span class="s2">]"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
             <span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">clear</span><span class="p">:</span>  <span class="c1"># Table 34, bmClear.D0 = 1</span>
                 <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">OSError</span><span class="p">):</span>
@@ -6936,7 +6936,7 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 
         <span class="c1"># Section 4.1.1 and Table 35, send CLEAR_FEATURE then done</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clear_halt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bulk_out_endpoint</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> clearing USBTMC device buffers done&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> clearing USBTMC device buffers done"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7014,12 +7014,12 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 <span class="normal">504</span>
 <span class="normal">505</span>
 <span class="normal">506</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">clear_halt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">:</span> <span class="n">Endpoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear the halt/stall condition for an endpoint.</span>
+<span class="w">    </span><span class="sd">"""Clear the halt/stall condition for an endpoint.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        endpoint: The endpoint to clear.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.clear_halt(0x</span><span class="si">%02X</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.clear_halt(0x</span><span class="si">%02X</span><span class="s2">)"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">clear_halt</span><span class="p">(</span><span class="n">endpoint</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">usb</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">USBError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -7146,16 +7146,16 @@ Can be an enum member name (case insensitive) or value.</p>
 <span class="normal">460</span>
 <span class="normal">461</span>
 <span class="normal">462</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">control_ren</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">RENMode</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Controls the state of the GPIB Remote Enable (REN) line.</span>
+<span class="w">    </span><span class="sd">"""Controls the state of the GPIB Remote Enable (REN) line.</span>
 
 <span class="sd">    Optionally the remote/local state of the device is also controlled.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        mode: The mode of the REN line and optionally the device remote/local state.</span>
 <span class="sd">            Can be an enum member name (case insensitive) or value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capabilities</span><span class="o">.</span><span class="n">accepts_remote_local</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The USBTMC device does not accept a remote-local request&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"The USBTMC device does not accept a remote-local request"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="n">mode</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">RENMode</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -7445,7 +7445,7 @@ value is the data that was read (as an <a class="autorefs autorefs-external" hre
     <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">data_or_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">array</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">bytearray</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">array</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform a control transfer on Endpoint 0.</span>
+<span class="w">    </span><span class="sd">"""Perform a control transfer on Endpoint 0.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        request_type: The *bmRequestType* field of the request. The bitmap value defines the</span>
@@ -7462,10 +7462,10 @@ value is the data that was read (as an <a class="autorefs autorefs-external" hre
 <span class="sd">        For an OUT request or if `data_or_length` is an [array][array.array], the returned</span>
 <span class="sd">            value is the number of bytes transferred. For an IN request, the returned</span>
 <span class="sd">            value is the data that was read (as an [array][array.array]).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># fmt: off</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.ctrl_transfer(0x</span><span class="si">%02X</span><span class="s2">, 0x</span><span class="si">%02X</span><span class="s2">, 0x</span><span class="si">%04X</span><span class="s2">, 0x</span><span class="si">%04X</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%d</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="s2">"</span><span class="si">%s</span><span class="s2">.ctrl_transfer(0x</span><span class="si">%02X</span><span class="s2">, 0x</span><span class="si">%02X</span><span class="s2">, 0x</span><span class="si">%04X</span><span class="s2">, 0x</span><span class="si">%04X</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%d</span><span class="s2">)"</span><span class="p">,</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">request_type</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">data_or_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeout_ms</span>
     <span class="p">)</span>
     <span class="c1"># fmt: on</span>
@@ -7523,8 +7523,8 @@ value is the data that was read (as an <a class="autorefs autorefs-external" hre
 <span class="normal">611</span>
 <span class="normal">612</span>
 <span class="normal">613</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the USB device.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_device&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Disconnect from the USB device."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_device"</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detached</span><span class="p">:</span>
@@ -7584,14 +7584,14 @@ then automatically turns off.</p>
 <span class="normal">487</span>
 <span class="normal">488</span>
 <span class="normal">489</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">indicator_pulse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Request to turn on an activity indicator for identification purposes.</span>
+<span class="w">    </span><span class="sd">"""Request to turn on an activity indicator for identification purposes.</span>
 
 <span class="sd">    If the device supports the request, the device turns on an implementation-dependent</span>
 <span class="sd">    activity indicator for a duration between 0.5 and 1 second. The activity indicator</span>
 <span class="sd">    then automatically turns off.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capabilities</span><span class="o">.</span><span class="n">accepts_indicator_pulse</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The USBTMC device does not accept an indicator-pulse request&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"The USBTMC device does not accept an indicator-pulse request"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="c1"># USBTMC_1_00.pdf: Section 4.2.1.9, Table 38</span>
@@ -7920,7 +7920,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">NumpyArray1D</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convenience method for performing a [write][msl.equipment.interfaces.message.Message.write]</span>
+<span class="w">    </span><span class="sd">"""Convenience method for performing a [write][msl.equipment.interfaces.message.Message.write]</span>
 <span class="sd">    followed by a [read][msl.equipment.interfaces.message.Message.read].</span>
 
 <span class="sd">    Args:</span>
@@ -7941,7 +7941,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 <span class="sd">        The message from the equipment. If `dtype` is specified, then the message is</span>
 <span class="sd">            returned as a numpy [ndarray][numpy.ndarray], if `decode` is `True` then the message</span>
 <span class="sd">            is returned as a [str][], otherwise the message is returned as [bytes][].</span>
-<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: D205</span>
+<span class="sd">    """</span>  <span class="c1"># noqa: D205</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">delay</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
@@ -8312,7 +8312,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">NumpyArray1D</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a message from the equipment.</span>
+<span class="w">    </span><span class="sd">"""Read a message from the equipment.</span>
 
 <span class="sd">    This method will block until one of the following conditions is fulfilled:</span>
 
@@ -8348,9 +8348,9 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 <span class="sd">        The message from the equipment. If `dtype` is specified, then the message is returned</span>
 <span class="sd">            as a numpy [ndarray][numpy.ndarray], if `decode` is `True` then the message</span>
 <span class="sd">            is returned as a [str][], otherwise the message is returned as [bytes][].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_read_size</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;max_read_size is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_read_size</span><span class="si">}</span><span class="s2"> bytes, requesting </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"max_read_size is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_read_size</span><span class="si">}</span><span class="s2"> bytes, requesting </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -8358,19 +8358,19 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="k">except</span> <span class="p">(</span><span class="n">serial</span><span class="o">.</span><span class="n">SerialTimeoutException</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="ne">TimeoutError</span><span class="p">,</span> <span class="n">USBTimeoutError</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">MSLTimeoutError</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">dtype</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.read(dtype=</span><span class="si">%r</span><span class="s2">, fmt=</span><span class="si">%r</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.read(dtype=</span><span class="si">%r</span><span class="s2">, fmt=</span><span class="si">%r</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.read() -&gt; </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.read() -&gt; </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">!=</span> <span class="n">size</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes, requested </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes, requested </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes"</span>
             <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.read(size=</span><span class="si">%s</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.read(size=</span><span class="si">%s</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rstrip</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
@@ -8416,12 +8416,12 @@ device state to change (e.g., register values may be reset).</p>
 <span class="normal">630</span>
 <span class="normal">631</span>
 <span class="normal">632</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset_device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform a USB port reset for the device.</span>
+<span class="w">    </span><span class="sd">"""Perform a USB port reset for the device.</span>
 
 <span class="sd">    If your program has to call this method, the reset will cause the</span>
 <span class="sd">    device state to change (e.g., register values may be reset).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.reset_device()&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.reset_device()"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -8521,15 +8521,15 @@ for the meaning of each bit in the status byte.</p>
 <span class="normal">537</span>
 <span class="normal">538</span>
 <span class="normal">539</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">serial_poll</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read status byte / serial poll.</span>
+<span class="w">    </span><span class="sd">"""Read status byte / serial poll.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status byte. See the table from</span>
-<span class="sd">            [here](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibrsp.html){:target=&quot;_blank&quot;}</span>
+<span class="sd">            [here](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibrsp.html){:target="_blank"}</span>
 <span class="sd">            for the meaning of each bit in the status byte.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capabilities</span><span class="o">.</span><span class="n">is_488_interface</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The USBTMC device does not accept a serial-poll request&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"The USBTMC device does not accept a serial-poll request"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_tag_status</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -8548,7 +8548,7 @@ for the meaning of each bit in the status byte.</p>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag_status</span> <span class="o">!=</span> <span class="n">tag</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sent bTag [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag_status</span><span class="si">}</span><span class="s2">] != received bTag [</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">]&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"sent bTag [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag_status</span><span class="si">}</span><span class="s2">] != received bTag [</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">]"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="c1"># USBTMC_usb488_subclass_1_00.pdf: Section 4.3.1.1, Table 12</span>
@@ -8561,11 +8561,11 @@ for the meaning of each bit in the status byte.</p>
     <span class="n">d7_not_1</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">notify1</span> <span class="o">&amp;</span> <span class="mh">0x80</span><span class="p">)</span>
     <span class="n">tag_mismatch</span> <span class="o">=</span> <span class="p">(</span><span class="n">notify1</span> <span class="o">&amp;</span> <span class="mh">0x7F</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag_status</span>
     <span class="k">if</span> <span class="n">d7_not_1</span> <span class="ow">or</span> <span class="n">tag_mismatch</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Invalid Interrupt-IN response packet&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Invalid Interrupt-IN response packet"</span>
         <span class="k">if</span> <span class="n">d7_not_1</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;, bit 7 is not 1&quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">", bit 7 is not 1"</span>
         <span class="k">if</span> <span class="n">tag_mismatch</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;, sent bTag [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag_status</span><span class="si">}</span><span class="s2">] != received bTag [</span><span class="si">{</span><span class="n">notify1</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x7F</span><span class="si">}</span><span class="s2">]&quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">", sent bTag [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag_status</span><span class="si">}</span><span class="s2">] != received bTag [</span><span class="si">{</span><span class="n">notify1</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x7F</span><span class="si">}</span><span class="s2">]"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">status</span>
@@ -8600,9 +8600,9 @@ for the meaning of each bit in the status byte.</p>
 <span class="normal">545</span>
 <span class="normal">546</span>
 <span class="normal">547</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger device.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Trigger device."""</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capabilities</span><span class="o">.</span><span class="n">accepts_trigger</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The USBTMC device does not accept a trigger request&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"The USBTMC device does not accept a trigger request"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="n">_</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_msg</span><span class="o">.</span><span class="n">trigger</span><span class="p">())</span>
@@ -8634,13 +8634,13 @@ for the meaning of each bit in the status byte.</p>
 
   
       module-attribute
-   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="s2">&quot;&lt;f&quot;</span><span class="p">,</span>
+   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="s2">"&lt;f"</span><span class="p">,</span>
     <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="s2">&quot;ieee&quot;</span>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="s2">"ieee"</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
@@ -8834,10 +8834,10 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
     <span class="n">message</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Sequence1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">MessageDataType</span> <span class="o">=</span> <span class="s2">&quot;&lt;f&quot;</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="s2">&quot;ieee&quot;</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">MessageDataType</span> <span class="o">=</span> <span class="s2">"&lt;f"</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="s2">"ieee"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a message to the equipment.</span>
+<span class="w">    </span><span class="sd">"""Write a message to the equipment.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        message: The message to write to the equipment.</span>
@@ -8845,9 +8845,9 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
 <span class="sd">        dtype: The data type to use to convert each element in `data` to bytes. Ignored if `data`</span>
 <span class="sd">            is `None`. If the `fmt` value is `ascii` then the `dtype` value must be a [str][] and</span>
 <span class="sd">            it is used as the `format_spec` argument in [format][] to convert each element in `data`</span>
-<span class="sd">            to a string (e.g., `dtype=&#39;.2e&#39;` converts each element to scientific notation with two</span>
+<span class="sd">            to a string (e.g., `dtype='.2e'` converts each element to scientific notation with two</span>
 <span class="sd">            digits after the decimal point). For all other values of `fmt` the data type can be any</span>
-<span class="sd">            object that numpy [dtype][numpy.dtype] supports, e.g., `&#39;H&#39;`, `&#39;uint16&#39;` and</span>
+<span class="sd">            object that numpy [dtype][numpy.dtype] supports, e.g., `'H'`, `'uint16'` and</span>
 <span class="sd">            [ushort][numpy.ushort] are equivalent values to convert each element to an *unsigned short*.</span>
 <span class="sd">            See [MessageDataType][msl.equipment.typing.MessageDataType] for more details.</span>
 <span class="sd">        fmt: The format to use to convert `data` to bytes. Ignored if `data` is `None`.</span>
@@ -8855,7 +8855,7 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of bytes written.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_encoding</span><span class="p">)</span>
 
@@ -8865,7 +8865,7 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">message</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">):</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.write(</span><span class="si">%r</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.write(</span><span class="si">%r</span><span class="s2">)"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>

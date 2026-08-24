@@ -7018,8 +7018,8 @@
 
         <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;^NKT&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;^NKTDLL$&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"^NKT"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">"^NKTDLL$"</span>
 </code></pre></div></p>
 
 
@@ -7162,13 +7162,13 @@ for the NKT wrapper.</p>
 <span class="normal">474</span>
 <span class="normal">475</span>
 <span class="normal">476</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper around the `NKTPDLL.dll` SDK from [NKT Photonics](https://www.nktphotonics.com/).</span>
+<span class="w">    </span><span class="sd">"""Wrapper around the `NKTPDLL.dll` SDK from [NKT Photonics](https://www.nktphotonics.com/).</span>
 
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;^NKT&quot;</span>
-<span class="sd">    model=r&quot;^NKTDLL$&quot;</span>
+<span class="sd">    manufacturer=r"^NKT"</span>
+<span class="sd">    model=r"^NKTDLL$"</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
@@ -7178,11 +7178,11 @@ for the NKT wrapper.</p>
 <span class="sd">    for the NKT wrapper.</span>
 
 <span class="sd">    Attributes: Connection Properties:</span>
-<span class="sd">        sdk_path (str): The path to the SDK library. _Default: `&quot;NKTPDLL.dll&quot;`_</span>
+<span class="sd">        sdk_path (str): The path to the SDK library. _Default: `"NKTPDLL.dll"`_</span>
 <span class="sd">        open_port (bool): Whether to automatically open the port. _Default: `True`_</span>
 <span class="sd">        auto (bool): Whether to open the port with bus scanning. _Default: `True`_</span>
 <span class="sd">        live (bool): Whether to open the port in live mode. _Default: `True`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
@@ -7190,12 +7190,12 @@ for the NKT wrapper.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">address</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
 
     <span class="n">p</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span>
-    <span class="n">_load_sdk</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sdk_path&quot;</span><span class="p">,</span> <span class="n">_path</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
+    <span class="n">_load_sdk</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sdk_path"</span><span class="p">,</span> <span class="n">_path</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="p">:</span> <span class="n">CDLL</span> <span class="o">=</span> <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span>
-    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;open_port&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="n">NKTDLL</span><span class="o">.</span><span class="n">open_ports</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">auto</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="n">live</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;live&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"open_port"</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="n">NKTDLL</span><span class="o">.</span><span class="n">open_ports</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">auto</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"auto"</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="n">live</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"live"</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -7280,16 +7280,16 @@ Port names are case sensitive.</p>
 <span class="normal">517</span>
 <span class="normal">518</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">close_ports</span><span class="p">(</span><span class="o">*</span><span class="n">ports</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Close the specified port(s).</span>
+<span class="w">    </span><span class="sd">"""Close the specified port(s).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        ports: The name(s) of the port(s) to close. If not specified, close all opened ports.</span>
 <span class="sd">            Port names are case sensitive.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
 
-    <span class="n">_names</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">port</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">ports</span><span class="p">)</span>
+    <span class="n">_names</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">port</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">ports</span><span class="p">)</span>
     <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">closePorts</span><span class="p">(</span><span class="n">_names</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7384,17 +7384,17 @@ wait up to 2 seconds for the device to complete its analyse cycle.
 <span class="normal">575</span>
 <span class="normal">576</span>
 <span class="normal">577</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">wait_ready</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a device in the internal device list.</span>
+<span class="w">    </span><span class="sd">"""Creates a device in the internal device list.</span>
 
 <span class="sd">    If the [open_ports][msl.equipment_resources.nkt.nktpdll.NKTDLL.open_ports] function has</span>
 <span class="sd">    been called with `live=True` then the kernel immediately starts to monitor the device.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        device_id: The device id (module address).</span>
-<span class="sd">        wait_ready: `False` means don&#39;t wait for the device to be ready. `True` means to</span>
+<span class="sd">        wait_ready: `False` means don't wait for the device to be ready. `True` means to</span>
 <span class="sd">            wait up to 2 seconds for the device to complete its analyse cycle.</span>
 <span class="sd">            (All standard registers being successfully read)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceCreate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">wait_ready</span><span class="p">)))</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7486,14 +7486,14 @@ wait up to 2 seconds for the device to complete its analyse cycle.
 <span class="normal">588</span>
 <span class="normal">589</span>
 <span class="normal">590</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if a specific device already exists in the internal device list.</span>
+<span class="w">    </span><span class="sd">"""Checks if a specific device already exists in the internal device list.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        device_id: The device id (module address).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the device exists.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">exists</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceExists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">exists</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">exists</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
@@ -7638,7 +7638,7 @@ module type as the keys and its corresponding device ID as the value.</p>
 <span class="normal">562</span>
 <span class="normal">563</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">device_get_all_types</span><span class="p">(</span><span class="o">*</span><span class="n">ports</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">255</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns all device types (module types) from the internal device list.</span>
+<span class="w">    </span><span class="sd">"""Returns all device types (module types) from the internal device list.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        ports: A port or multiple ports. If not specified then the</span>
@@ -7649,9 +7649,9 @@ module type as the keys and its corresponding device ID as the value.</p>
 <span class="sd">    Returns:</span>
 <span class="sd">        The port names are the keys and each value is [dict][] with the</span>
 <span class="sd">            module type as the keys and its corresponding device ID as the value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"NKTError: You must first call NKT.load_sdk()"</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">ports</span><span class="p">:</span>
@@ -7668,7 +7668,7 @@ module type as the keys and its corresponding device ID as the value.</p>
         <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">dev_id</span><span class="p">,</span> <span class="n">typ</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">raw</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">typ</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="sa">f</span><span class="s2">&quot;0x</span><span class="si">{</span><span class="n">typ</span><span class="si">:</span><span class="s2">02X</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dev_id</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="sa">f</span><span class="s2">"0x</span><span class="si">{</span><span class="n">typ</span><span class="si">:</span><span class="s2">02X</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">dev_id</span>
     <span class="k">return</span> <span class="n">out</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7765,7 +7765,7 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">604</span>
 <span class="normal">605</span>
 <span class="normal">606</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_get_boot_loader_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the boot-loader version (int) for a given device id.</span>
+<span class="w">    </span><span class="sd">"""Returns the boot-loader version (int) for a given device id.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -7775,7 +7775,7 @@ using this function, since it will do a dedicated read.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The boot-loader version.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">version</span> <span class="o">=</span> <span class="n">c_ushort</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceGetBootloaderVersion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">version</span><span class="o">.</span><span class="n">value</span>
@@ -7875,7 +7875,7 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">621</span>
 <span class="normal">622</span>
 <span class="normal">623</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_get_boot_loader_version_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the boot-loader version (string) for a given device id.</span>
+<span class="w">    </span><span class="sd">"""Returns the boot-loader version (string) for a given device id.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -7885,7 +7885,7 @@ using this function, since it will do a dedicated read.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The boot-loader version.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
     <span class="n">version</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceGetBootloaderVersionStr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
@@ -7985,7 +7985,7 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">637</span>
 <span class="normal">638</span>
 <span class="normal">639</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_get_error_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the error code for a given device id.</span>
+<span class="w">    </span><span class="sd">"""Returns the error code for a given device id.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -7995,7 +7995,7 @@ using this function, since it will do a dedicated read.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The error code.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">error_code</span> <span class="o">=</span> <span class="n">c_ushort</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceGetErrorCode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">error_code</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">error_code</span><span class="o">.</span><span class="n">value</span>
@@ -8094,7 +8094,7 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">653</span>
 <span class="normal">654</span>
 <span class="normal">655</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_get_firmware_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the firmware version (int) for a given device id.</span>
+<span class="w">    </span><span class="sd">"""Returns the firmware version (int) for a given device id.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -8104,7 +8104,7 @@ using this function, since it will do a dedicated read.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The firmware version.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">version</span> <span class="o">=</span> <span class="n">c_ushort</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceGetFirmwareVersion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">version</span><span class="o">.</span><span class="n">value</span>
@@ -8204,7 +8204,7 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">670</span>
 <span class="normal">671</span>
 <span class="normal">672</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_get_firmware_version_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the firmware version (string) for a given device id.</span>
+<span class="w">    </span><span class="sd">"""Returns the firmware version (string) for a given device id.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -8214,7 +8214,7 @@ using this function, since it will do a dedicated read.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The firmware version.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
     <span class="n">version</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceGetFirmwareVersionStr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
@@ -8323,7 +8323,7 @@ function and the device being already created, either automatically or with the
 <span class="normal">688</span>
 <span class="normal">689</span>
 <span class="normal">690</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_get_live</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the internal device live status for a specific device id.</span>
+<span class="w">    </span><span class="sd">"""Returns the internal device live status for a specific device id.</span>
 
 <span class="sd">    Requires the port being already opened with the</span>
 <span class="sd">    [open_ports][msl.equipment_resources.nkt.nktpdll.NKTDLL.open_ports]</span>
@@ -8335,7 +8335,7 @@ function and the device being already created, either automatically or with the
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether live mode is enabled.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">live_mode</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceGetLive</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">live_mode</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">live_mode</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
@@ -8445,7 +8445,7 @@ function and the device being already created, either automatically or with the
 <span class="normal">706</span>
 <span class="normal">707</span>
 <span class="normal">708</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_get_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DeviceMode</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the internal device mode for a specific device id.</span>
+<span class="w">    </span><span class="sd">"""Returns the internal device mode for a specific device id.</span>
 
 <span class="sd">    Requires the port being already opened with the</span>
 <span class="sd">    [open_ports][msl.equipment_resources.nkt.nktpdll.NKTDLL.open_ports]</span>
@@ -8457,7 +8457,7 @@ function and the device being already created, either automatically or with the
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The device mode type.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">dev_mode</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceGetMode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">dev_mode</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">DeviceMode</span><span class="p">(</span><span class="n">dev_mode</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
@@ -8557,7 +8557,7 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">723</span>
 <span class="normal">724</span>
 <span class="normal">725</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_get_module_serial_number_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the module serial number (string) for a given device id.</span>
+<span class="w">    </span><span class="sd">"""Returns the module serial number (string) for a given device id.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -8567,7 +8567,7 @@ using this function, since it will do a dedicated read.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The serial number.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
     <span class="n">serial</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceGetModuleSerialNumberStr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">serial</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
@@ -8668,7 +8668,7 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">740</span>
 <span class="normal">741</span>
 <span class="normal">742</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_get_part_number_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the part number for a given device id.</span>
+<span class="w">    </span><span class="sd">"""Returns the part number for a given device id.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -8678,7 +8678,7 @@ using this function, since it will do a dedicated read.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The part number.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
     <span class="n">part</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceGetPartNumberStr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
@@ -8779,7 +8779,7 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">757</span>
 <span class="normal">758</span>
 <span class="normal">759</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_get_pcb_serial_number_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the PCB serial number (string) for a given device id.</span>
+<span class="w">    </span><span class="sd">"""Returns the PCB serial number (string) for a given device id.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -8789,7 +8789,7 @@ using this function, since it will do a dedicated read.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The part number.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
     <span class="n">serial</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceGetPCBSerialNumberStr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">serial</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
@@ -8889,7 +8889,7 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">773</span>
 <span class="normal">774</span>
 <span class="normal">775</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_get_pcb_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the PCB version for a given device id.</span>
+<span class="w">    </span><span class="sd">"""Returns the PCB version for a given device id.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -8899,7 +8899,7 @@ using this function, since it will do a dedicated read.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The PCB version number.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">version</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceGetPCBVersion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">version</span><span class="o">.</span><span class="n">value</span>
@@ -8998,7 +8998,7 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">789</span>
 <span class="normal">790</span>
 <span class="normal">791</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_get_status_bits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the status bits for a given device id.</span>
+<span class="w">    </span><span class="sd">"""Returns the status bits for a given device id.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -9008,7 +9008,7 @@ using this function, since it will do a dedicated read.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status bits.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">c_ushort</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceGetStatusBits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">status</span><span class="o">.</span><span class="n">value</span>
@@ -9107,7 +9107,7 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">805</span>
 <span class="normal">806</span>
 <span class="normal">807</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_get_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the module type for a specific device id.</span>
+<span class="w">    </span><span class="sd">"""Returns the module type for a specific device id.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -9117,7 +9117,7 @@ using this function, since it will do a dedicated read.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The module type.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">dev_type</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceGetType</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">dev_type</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">dev_type</span><span class="o">.</span><span class="n">value</span>
@@ -9183,11 +9183,11 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">813</span>
 <span class="normal">814</span>
 <span class="normal">815</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove a specific device from the internal device list.</span>
+<span class="w">    </span><span class="sd">"""Remove a specific device from the internal device list.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        device_id: The device id (module address).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceRemove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9220,10 +9220,10 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">820</span>
 <span class="normal">821</span>
 <span class="normal">822</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_remove_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove all devices from the internal device list.</span>
+<span class="w">    </span><span class="sd">"""Remove all devices from the internal device list.</span>
 
 <span class="sd">    No confirmation is given, the list is simply cleared.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceRemoveAll</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9304,12 +9304,12 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">829</span>
 <span class="normal">830</span>
 <span class="normal">831</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_set_live</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">enabled</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the internal device live status for a specific device id (module address).</span>
+<span class="w">    </span><span class="sd">"""Sets the internal device live status for a specific device id (module address).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        device_id: The device id (module address).</span>
 <span class="sd">        enabled: Whether to enable (`True`) or disable (`False`) live status.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">deviceSetLive</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">enabled</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9340,10 +9340,10 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">835</span>
 <span class="normal">836</span>
 <span class="normal">837</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the port.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_address&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Disconnect from the port."""</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_address"</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close_ports</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_portname</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_portname</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">""</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9445,22 +9445,22 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">855</span>
 <span class="normal">856</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_all_ports</span><span class="p">(</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">255</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a list of all ports.</span>
+<span class="w">    </span><span class="sd">"""Returns a list of all ports.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        size: The maximum size of the string buffer to fetch the results.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of port names.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"NKTError: You must first call NKT.load_sdk()"</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">length</span> <span class="o">=</span> <span class="n">c_ushort</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
     <span class="n">names</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
     <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">getAllPorts</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">names</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">name</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">names</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span> <span class="k">if</span> <span class="n">name</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9525,13 +9525,13 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">880</span>
 <span class="normal">881</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_legacy_bus_scanning</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the bus-scanning mode.</span>
+<span class="w">    </span><span class="sd">"""Get the bus-scanning mode.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        `True` if in legacy mode, `False` if in normal mode.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"NKTError: You must first call NKT.load_sdk()"</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">getLegacyBusScanning</span><span class="p">())</span>
@@ -9624,14 +9624,14 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">866</span>
 <span class="normal">867</span>
 <span class="normal">868</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">255</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns all device types (module types) from the device.</span>
+<span class="w">    </span><span class="sd">"""Returns all device types (module types) from the device.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        size: The maximum number of bytes that the device list can be.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The module type as the keys and its corresponding device ID as the value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">NKTDLL</span><span class="o">.</span><span class="n">device_get_all_types</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)[</span><span class="n">a</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
@@ -9735,22 +9735,22 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">899</span>
 <span class="normal">900</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_open_ports</span><span class="p">(</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">255</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a list of already-opened ports.</span>
+<span class="w">    </span><span class="sd">"""Returns a list of already-opened ports.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        size: The maximum size of the string buffer to fetch the results.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of port names that are already open.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"NKTError: You must first call NKT.load_sdk()"</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">length</span> <span class="o">=</span> <span class="n">c_ushort</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
     <span class="n">names</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
     <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">getOpenPorts</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">names</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">name</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">names</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span> <span class="k">if</span> <span class="n">name</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9808,11 +9808,11 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">909</span>
 <span class="normal">910</span>
 <span class="normal">911</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_port_error_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve error message for the port.</span>
+<span class="w">    </span><span class="sd">"""Retrieve error message for the port.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The error message. An empty string indicates no error.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">length</span> <span class="o">=</span> <span class="n">c_ushort</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
     <span class="n">msg</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">length</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">getPortErrorMsg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
@@ -9875,11 +9875,11 @@ using this function, since it will do a dedicated read.</p>
 <span class="normal">919</span>
 <span class="normal">920</span>
 <span class="normal">921</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_port_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PortStatus</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the status of the port.</span>
+<span class="w">    </span><span class="sd">"""Get the status of the port.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The port status.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">getPortStatus</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">PortStatus</span><span class="p">(</span><span class="n">status</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
@@ -9963,12 +9963,12 @@ variable if not specified.</p>
 <span class="normal">527</span>
 <span class="normal">528</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_sdk</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the SDK.</span>
+<span class="w">    </span><span class="sd">"""Load the SDK.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        path: The path to `NKTPDLL.dll`. Reads from the `NKTP_SDK_PATH` environment</span>
 <span class="sd">            variable if not specified.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">_load_sdk</span><span class="p">(</span><span class="n">_path</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10104,13 +10104,13 @@ methods.</p>
 <span class="normal">950</span>
 <span class="normal">951</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">open_ports</span><span class="p">(</span><span class="o">*</span><span class="n">names</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">auto</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">live</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Open the specified port(s).</span>
+<span class="w">    </span><span class="sd">"""Open the specified port(s).</span>
 
 <span class="sd">    Repeated calls to this function is allowed to reopen and/or rescan for devices.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        names: If not specified then open all available ports are opened. Port</span>
-<span class="sd">            names are case sensitive. Example port names are `&quot;AcoustikPort1&quot;`, `&quot;COM6&quot;`.</span>
+<span class="sd">            names are case sensitive. Example port names are `"AcoustikPort1"`, `"COM6"`.</span>
 <span class="sd">        auto: If `True` then automatically start bus scanning and add the</span>
 <span class="sd">            found devices in the internal device list. If `False` then</span>
 <span class="sd">            bus scanning and device creation is not automatically handled. The</span>
@@ -10124,12 +10124,12 @@ methods.</p>
 <span class="sd">            [register_write][msl.equipment_resources.nkt.nktpdll.NKTDLL.register_write] and</span>
 <span class="sd">            [register_write_read][msl.equipment_resources.nkt.nktpdll.NKTDLL.register_write_read]</span>
 <span class="sd">            methods.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"NKTError: You must first call NKT.load_sdk()"</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">_names</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">)</span>
+    <span class="n">_names</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">)</span>
     <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">openPorts</span><span class="p">(</span><span class="n">_names</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">auto</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">live</span><span class="p">)))</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10211,11 +10211,11 @@ methods.</p>
 <span class="normal">965</span>
 <span class="normal">966</span>
 <span class="normal">967</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">point_to_point_port_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="n">PointToPoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates or modifies a point-to-point port.</span>
+<span class="w">    </span><span class="sd">"""Creates or modifies a point-to-point port.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        port: A point-to-point port.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">pointToPointPortAdd</span><span class="p">(</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span>
         <span class="n">port</span><span class="o">.</span><span class="n">host_address</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span>
@@ -10252,7 +10252,7 @@ methods.</p>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">969</span>
 <span class="normal">970</span>
 <span class="normal">971</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">point_to_point_port_del</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete the point-to-point port.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Delete the point-to-point port."""</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">pointToPointPortDel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10344,11 +10344,11 @@ methods.</p>
 <span class="normal">1003</span>
 <span class="normal">1004</span>
 <span class="normal">1005</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">point_to_point_port_get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PointToPoint</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the information about the point-to-point port setting.</span>
+<span class="w">    </span><span class="sd">"""Retrieve the information about the point-to-point port setting.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The information about the point-to-point port setting.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">host_length</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
     <span class="n">host_address</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">host_length</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="n">host_port</span> <span class="o">=</span> <span class="n">c_ushort</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -10514,7 +10514,7 @@ common callback function to determine the data type.</p>
 <span class="normal">1042</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_create</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">priority</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">RegisterPriority</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">RegisterData</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a register in the internal register list.</span>
+<span class="w">    </span><span class="sd">"""Creates a register in the internal register list.</span>
 
 <span class="sd">    If the [open_ports][msl.equipment_resources.nkt.nktpdll.NKTDLL.open_ports] function has</span>
 <span class="sd">    been called with `live=True` then the kernel immediately starts to monitor the register.</span>
@@ -10525,7 +10525,7 @@ common callback function to determine the data type.</p>
 <span class="sd">        priority: The monitoring priority.</span>
 <span class="sd">        data: The register data type. Not used internally but could be used in a</span>
 <span class="sd">            common callback function to determine the data type.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerCreate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">RegisterPriority</span><span class="p">(</span><span class="n">priority</span><span class="p">),</span> <span class="n">RegisterData</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10634,7 +10634,7 @@ common callback function to determine the data type.</p>
 <span class="normal">1054</span>
 <span class="normal">1055</span>
 <span class="normal">1056</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if a specific register already exists in the internal register list.</span>
+<span class="w">    </span><span class="sd">"""Checks if a specific register already exists in the internal register list.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        device_id: The device id (module address).</span>
@@ -10642,7 +10642,7 @@ common callback function to determine the data type.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the register exists.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">exists</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerExists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">exists</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">exists</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
@@ -10738,14 +10738,14 @@ common callback function to determine the data type.</p>
 <span class="normal">1069</span>
 <span class="normal">1070</span>
 <span class="normal">1071</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the register ids (register addresses) from the internal register list.</span>
+<span class="w">    </span><span class="sd">"""Returns the register ids (register addresses) from the internal register list.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        device_id: The device id (module address).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The register ids.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
     <span class="n">regs</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerGetAll</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">regs</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
@@ -10883,7 +10883,7 @@ a specific position in the register. Index is byte counted.</p>
 <span class="normal">1023</span>
 <span class="normal">1024</span>
 <span class="normal">1025</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads a register value and returns the result.</span>
+<span class="w">    </span><span class="sd">"""Reads a register value and returns the result.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -10896,7 +10896,7 @@ a specific position in the register. Index is byte counted.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The register value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerRead</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
@@ -11033,7 +11033,7 @@ a specific position in the register. Index is byte counted.</p>
 <span class="normal">1089</span>
 <span class="normal">1090</span>
 <span class="normal">1091</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_read_ascii</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads an ascii string from the register.</span>
+<span class="w">    </span><span class="sd">"""Reads an ascii string from the register.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -11046,7 +11046,7 @@ a specific position in the register. Index is byte counted.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The ascii value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerReadAscii</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
@@ -11182,7 +11182,7 @@ a specific position in the register. Index is byte counted.</p>
 <span class="normal">1108</span>
 <span class="normal">1109</span>
 <span class="normal">1110</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_read_f32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads 32-bit float value from the register.</span>
+<span class="w">    </span><span class="sd">"""Reads 32-bit float value from the register.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -11195,7 +11195,7 @@ a specific position in the register. Index is byte counted.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 32-bit float value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">c_float</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerReadF32</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">value</span>
@@ -11330,7 +11330,7 @@ a specific position in the register. Index is byte counted.</p>
 <span class="normal">1127</span>
 <span class="normal">1128</span>
 <span class="normal">1129</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_read_f64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads 64-bit double value from the register.</span>
+<span class="w">    </span><span class="sd">"""Reads 64-bit double value from the register.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -11343,7 +11343,7 @@ a specific position in the register. Index is byte counted.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 64-bit double value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">c_double</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerReadF64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">value</span>
@@ -11478,7 +11478,7 @@ a specific position in the register. Index is byte counted.</p>
 <span class="normal">1146</span>
 <span class="normal">1147</span>
 <span class="normal">1148</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_read_s16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads 16-bit signed short value from the register.</span>
+<span class="w">    </span><span class="sd">"""Reads 16-bit signed short value from the register.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -11491,7 +11491,7 @@ a specific position in the register. Index is byte counted.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 16-bit signed short value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">c_short</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerReadS16</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">value</span>
@@ -11626,7 +11626,7 @@ a specific position in the register. Index is byte counted.</p>
 <span class="normal">1165</span>
 <span class="normal">1166</span>
 <span class="normal">1167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_read_s32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads 32-bit signed long value from the register.</span>
+<span class="w">    </span><span class="sd">"""Reads 32-bit signed long value from the register.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -11639,7 +11639,7 @@ a specific position in the register. Index is byte counted.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 32-bit signed long value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">c_long</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerReadS32</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">value</span>
@@ -11774,7 +11774,7 @@ a specific position in the register. Index is byte counted.</p>
 <span class="normal">1184</span>
 <span class="normal">1185</span>
 <span class="normal">1186</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_read_s64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads 64-bit signed long long value from the register.</span>
+<span class="w">    </span><span class="sd">"""Reads 64-bit signed long long value from the register.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -11787,7 +11787,7 @@ a specific position in the register. Index is byte counted.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 64-bit signed long long value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">c_longlong</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerReadS64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">value</span>
@@ -11922,7 +11922,7 @@ a specific position in the register. Index is byte counted.</p>
 <span class="normal">1203</span>
 <span class="normal">1204</span>
 <span class="normal">1205</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_read_s8</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads 8-bit signed char value from the register.</span>
+<span class="w">    </span><span class="sd">"""Reads 8-bit signed char value from the register.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -11935,7 +11935,7 @@ a specific position in the register. Index is byte counted.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 8-bit signed char value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">c_byte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerReadS8</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">value</span>
@@ -12070,7 +12070,7 @@ a specific position in the register. Index is byte counted.</p>
 <span class="normal">1222</span>
 <span class="normal">1223</span>
 <span class="normal">1224</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_read_u16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads 16-bit unsigned short value from the register.</span>
+<span class="w">    </span><span class="sd">"""Reads 16-bit unsigned short value from the register.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -12083,7 +12083,7 @@ a specific position in the register. Index is byte counted.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 16-bit unsigned short value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">c_ushort</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerReadU16</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">value</span>
@@ -12218,7 +12218,7 @@ a specific position in the register. Index is byte counted.</p>
 <span class="normal">1241</span>
 <span class="normal">1242</span>
 <span class="normal">1243</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_read_u32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads 32-bit unsigned long value from the register.</span>
+<span class="w">    </span><span class="sd">"""Reads 32-bit unsigned long value from the register.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -12231,7 +12231,7 @@ a specific position in the register. Index is byte counted.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 32-bit unsigned long value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">c_ulong</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerReadU32</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">value</span>
@@ -12366,7 +12366,7 @@ a specific position in the register. Index is byte counted.</p>
 <span class="normal">1260</span>
 <span class="normal">1261</span>
 <span class="normal">1262</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_read_u64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads 64-bit unsigned long long value from the register.</span>
+<span class="w">    </span><span class="sd">"""Reads 64-bit unsigned long long value from the register.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -12379,7 +12379,7 @@ a specific position in the register. Index is byte counted.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 64-bit unsigned long long value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">c_ulonglong</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerReadU64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">value</span>
@@ -12514,7 +12514,7 @@ a specific position in the register. Index is byte counted.</p>
 <span class="normal">1279</span>
 <span class="normal">1280</span>
 <span class="normal">1281</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_read_u8</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads 8-bit unsigned char value from the register.</span>
+<span class="w">    </span><span class="sd">"""Reads 8-bit unsigned char value from the register.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated read.</span>
@@ -12527,7 +12527,7 @@ a specific position in the register. Index is byte counted.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 8-bit unsigned char value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerReadU8</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">value</span>
@@ -12610,12 +12610,12 @@ a specific position in the register. Index is byte counted.</p>
 <span class="normal">1288</span>
 <span class="normal">1289</span>
 <span class="normal">1290</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove a specific register from the internal register list.</span>
+<span class="w">    </span><span class="sd">"""Remove a specific register from the internal register list.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        device_id: The device id (module address).</span>
 <span class="sd">        reg_id: The register id (register address).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerRemove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -12682,13 +12682,13 @@ a specific position in the register. Index is byte counted.</p>
 <span class="normal">1298</span>
 <span class="normal">1299</span>
 <span class="normal">1300</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_remove_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove all registers from the internal register list.</span>
+<span class="w">    </span><span class="sd">"""Remove all registers from the internal register list.</span>
 
 <span class="sd">    No confirmation given, the list is simply cleared.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        device_id: The device id (module address).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerRemoveAll</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -12810,7 +12810,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="normal">1312</span>
 <span class="normal">1313</span>
 <span class="normal">1314</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a register value.</span>
+<span class="w">    </span><span class="sd">"""Writes a register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated write.</span>
@@ -12820,7 +12820,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="sd">        reg_id: The register id (register address).</span>
 <span class="sd">        data: The data to write to the register.</span>
 <span class="sd">        index: Value index. Typically -1, but could be used to write a value in a multi-value register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWrite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">index</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -12969,7 +12969,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="normal">1332</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_ascii</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">write_eol</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a string to the register value.</span>
+<span class="w">    </span><span class="sd">"""Writes a string to the register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated write.</span>
@@ -12980,8 +12980,8 @@ using this function, since it will do a dedicated write.</p>
 <span class="sd">        string: The string to write to the register.</span>
 <span class="sd">        write_eol: Whether to append the End Of Line character (a null character) to the string.</span>
 <span class="sd">        index: Value index. Typically -1, but could be used to write a value in a mixed-type register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">buffer</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="n">buffer</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"ascii"</span><span class="p">))</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteAscii</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">write_eol</span><span class="p">),</span> <span class="n">index</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -13103,7 +13103,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="normal">1344</span>
 <span class="normal">1345</span>
 <span class="normal">1346</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_f32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a 32-bit float register value.</span>
+<span class="w">    </span><span class="sd">"""Writes a 32-bit float register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated write.</span>
@@ -13113,7 +13113,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="sd">        reg_id: The register id (register address).</span>
 <span class="sd">        value: The 32-bit float to write to the register.</span>
 <span class="sd">        index: Value index. Typically -1, but could be used to write a value in a multi-value register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteF32</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -13235,7 +13235,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="normal">1358</span>
 <span class="normal">1359</span>
 <span class="normal">1360</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_f64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a 64-bit double register value.</span>
+<span class="w">    </span><span class="sd">"""Writes a 64-bit double register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated write.</span>
@@ -13245,7 +13245,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="sd">        reg_id: The register id (register address).</span>
 <span class="sd">        value: The 64-bit double to write to the register.</span>
 <span class="sd">        index: Value index. Typically -1, but could be used to write a value in a multi-value register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteF64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -13396,7 +13396,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 <span class="normal">1378</span>
 <span class="normal">1379</span>
 <span class="normal">1380</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes then reads a register value.</span>
+<span class="w">    </span><span class="sd">"""Writes then reads a register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before using</span>
 <span class="sd">    this function, since it will do a dedicated write followed by a dedicated read.</span>
@@ -13409,7 +13409,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The data that was written to the register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
     <span class="n">read</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteRead</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">index</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
@@ -13592,7 +13592,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 <span class="normal">1406</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_read_ascii</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">write_eol</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes then reads a string register value.</span>
+<span class="w">    </span><span class="sd">"""Writes then reads a string register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before using</span>
 <span class="sd">    this function, since it will do a dedicated write followed by a dedicated read.</span>
@@ -13606,14 +13606,14 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The string that was written to the register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ascii_value</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="n">ascii_value</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"ascii"</span><span class="p">))</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
     <span class="n">read</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteReadAscii</span><span class="p">(</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">ascii_value</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">write_eol</span><span class="p">),</span> <span class="n">read</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">index</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">read</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">read</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"ascii"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -13762,7 +13762,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 <span class="normal">1423</span>
 <span class="normal">1424</span>
 <span class="normal">1425</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_read_f32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes then reads a 32-bit float register value.</span>
+<span class="w">    </span><span class="sd">"""Writes then reads a 32-bit float register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before using</span>
 <span class="sd">    this function, since it will do a dedicated write followed by a dedicated read.</span>
@@ -13775,7 +13775,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 32-bit float value that was written to the register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">read</span> <span class="o">=</span> <span class="n">c_float</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteReadF32</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">read</span><span class="o">.</span><span class="n">value</span>
@@ -13927,7 +13927,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 <span class="normal">1442</span>
 <span class="normal">1443</span>
 <span class="normal">1444</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_read_f64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes then reads a 64-bit double register value.</span>
+<span class="w">    </span><span class="sd">"""Writes then reads a 64-bit double register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before using</span>
 <span class="sd">    this function, since it will do a dedicated write followed by a dedicated read.</span>
@@ -13940,7 +13940,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 64-bit double value that was written to the register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">read</span> <span class="o">=</span> <span class="n">c_double</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteReadF64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">read</span><span class="o">.</span><span class="n">value</span>
@@ -14092,7 +14092,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 <span class="normal">1461</span>
 <span class="normal">1462</span>
 <span class="normal">1463</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_read_s16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes then reads a 16-bit signed short register value.</span>
+<span class="w">    </span><span class="sd">"""Writes then reads a 16-bit signed short register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before using</span>
 <span class="sd">    this function, since it will do a dedicated write followed by a dedicated read.</span>
@@ -14105,7 +14105,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 16-bit signed short value that was written to the register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">read</span> <span class="o">=</span> <span class="n">c_short</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteReadS16</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">read</span><span class="o">.</span><span class="n">value</span>
@@ -14257,7 +14257,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 <span class="normal">1480</span>
 <span class="normal">1481</span>
 <span class="normal">1482</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_read_s32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes then reads a 32-bit signed long register value.</span>
+<span class="w">    </span><span class="sd">"""Writes then reads a 32-bit signed long register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before using</span>
 <span class="sd">    this function, since it will do a dedicated write followed by a dedicated read.</span>
@@ -14270,7 +14270,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 32-bit signed long value that was written to the register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">read</span> <span class="o">=</span> <span class="n">c_long</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteReadS32</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">read</span><span class="o">.</span><span class="n">value</span>
@@ -14422,7 +14422,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 <span class="normal">1499</span>
 <span class="normal">1500</span>
 <span class="normal">1501</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_read_s64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes then reads a 64-bit signed long long register value.</span>
+<span class="w">    </span><span class="sd">"""Writes then reads a 64-bit signed long long register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before using</span>
 <span class="sd">    this function, since it will do a dedicated write followed by a dedicated read.</span>
@@ -14435,7 +14435,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 64-bit signed long long value that was written to the register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">read</span> <span class="o">=</span> <span class="n">c_longlong</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteReadS64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">read</span><span class="o">.</span><span class="n">value</span>
@@ -14587,7 +14587,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 <span class="normal">1518</span>
 <span class="normal">1519</span>
 <span class="normal">1520</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_read_s8</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes then reads a 8-bit signed char register value.</span>
+<span class="w">    </span><span class="sd">"""Writes then reads a 8-bit signed char register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before using</span>
 <span class="sd">    this function, since it will do a dedicated write followed by a dedicated read.</span>
@@ -14600,7 +14600,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 8-bit signed char value that was written to the register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">read</span> <span class="o">=</span> <span class="n">c_byte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteReadS8</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">read</span><span class="o">.</span><span class="n">value</span>
@@ -14752,7 +14752,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 <span class="normal">1537</span>
 <span class="normal">1538</span>
 <span class="normal">1539</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_read_u16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes then reads a 16-bit unsigned short register value.</span>
+<span class="w">    </span><span class="sd">"""Writes then reads a 16-bit unsigned short register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before using</span>
 <span class="sd">    this function, since it will do a dedicated write followed by a dedicated read.</span>
@@ -14765,7 +14765,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 16-bit unsigned short value that was written to the register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">read</span> <span class="o">=</span> <span class="n">c_ushort</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteReadU16</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">read</span><span class="o">.</span><span class="n">value</span>
@@ -14917,7 +14917,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 <span class="normal">1556</span>
 <span class="normal">1557</span>
 <span class="normal">1558</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_read_u32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes then reads a 32-bit unsigned long register value.</span>
+<span class="w">    </span><span class="sd">"""Writes then reads a 32-bit unsigned long register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before using</span>
 <span class="sd">    this function, since it will do a dedicated write followed by a dedicated read.</span>
@@ -14930,7 +14930,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 32-bit unsigned long value that was written to the register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">read</span> <span class="o">=</span> <span class="n">c_ulong</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteReadU32</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">read</span><span class="o">.</span><span class="n">value</span>
@@ -15082,7 +15082,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 <span class="normal">1575</span>
 <span class="normal">1576</span>
 <span class="normal">1577</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_read_u64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes then reads a 64-bit unsigned long long register value.</span>
+<span class="w">    </span><span class="sd">"""Writes then reads a 64-bit unsigned long long register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before using</span>
 <span class="sd">    this function, since it will do a dedicated write followed by a dedicated read.</span>
@@ -15095,7 +15095,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 64-bit unsigned long long value that was written to the register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">read</span> <span class="o">=</span> <span class="n">c_ulonglong</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteReadU64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">read</span><span class="o">.</span><span class="n">value</span>
@@ -15247,7 +15247,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 <span class="normal">1594</span>
 <span class="normal">1595</span>
 <span class="normal">1596</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_read_u8</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes then reads a 8-bit unsigned char register value.</span>
+<span class="w">    </span><span class="sd">"""Writes then reads a 8-bit unsigned char register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before using</span>
 <span class="sd">    this function, since it will do a dedicated write followed by a dedicated read.</span>
@@ -15260,7 +15260,7 @@ this function, since it will do a dedicated write followed by a dedicated read.<
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The 8-bit unsigned char value that was written to the register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">read</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteReadU8</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">read</span><span class="o">.</span><span class="n">value</span>
@@ -15384,7 +15384,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="normal">1608</span>
 <span class="normal">1609</span>
 <span class="normal">1610</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_s16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a 16-bit signed short register value.</span>
+<span class="w">    </span><span class="sd">"""Writes a 16-bit signed short register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated write.</span>
@@ -15394,7 +15394,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="sd">        reg_id: The register id (register address).</span>
 <span class="sd">        value: The 16-bit signed short to write to the register.</span>
 <span class="sd">        index: Value index. Typically -1, but could be used to write a value in a multi-value register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteS16</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -15516,7 +15516,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="normal">1622</span>
 <span class="normal">1623</span>
 <span class="normal">1624</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_s32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a 32-bit signed long register value.</span>
+<span class="w">    </span><span class="sd">"""Writes a 32-bit signed long register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated write.</span>
@@ -15526,7 +15526,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="sd">        reg_id: The register id (register address).</span>
 <span class="sd">        value: The 32-bit signed long to write to the register.</span>
 <span class="sd">        index: Value index. Typically -1, but could be used to write a value in a multi-value register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteS32</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -15648,7 +15648,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="normal">1636</span>
 <span class="normal">1637</span>
 <span class="normal">1638</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_s64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a 64-bit signed long long register value.</span>
+<span class="w">    </span><span class="sd">"""Writes a 64-bit signed long long register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated write.</span>
@@ -15658,7 +15658,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="sd">        reg_id: The register id (register address).</span>
 <span class="sd">        value: The 64-bit signed long long to write to the register.</span>
 <span class="sd">        index: Value index. Typically -1, but could be used to write a value in a multi-value register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteS64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -15780,7 +15780,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="normal">1650</span>
 <span class="normal">1651</span>
 <span class="normal">1652</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_s8</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a 8-bit signed char register value.</span>
+<span class="w">    </span><span class="sd">"""Writes a 8-bit signed char register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated write.</span>
@@ -15790,7 +15790,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="sd">        reg_id: The register id (register address).</span>
 <span class="sd">        value: The 8-bit signed char to write to the register.</span>
 <span class="sd">        index: Value index. Typically -1, but could be used to write a value in a multi-value register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteS8</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -15912,7 +15912,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="normal">1664</span>
 <span class="normal">1665</span>
 <span class="normal">1666</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_u16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a 16-bit unsigned short register value.</span>
+<span class="w">    </span><span class="sd">"""Writes a 16-bit unsigned short register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated write.</span>
@@ -15922,7 +15922,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="sd">        reg_id: The register id (register address).</span>
 <span class="sd">        value: The 16-bit unsigned short to write to the register.</span>
 <span class="sd">        index: Value index. Typically -1, but could be used to write a value in a multi-value register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteU16</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -16044,7 +16044,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="normal">1678</span>
 <span class="normal">1679</span>
 <span class="normal">1680</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_u32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a 32-bit unsigned long register value.</span>
+<span class="w">    </span><span class="sd">"""Writes a 32-bit unsigned long register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated write.</span>
@@ -16054,7 +16054,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="sd">        reg_id: The register id (register address).</span>
 <span class="sd">        value: The 32-bit unsigned long to write to the register.</span>
 <span class="sd">        index: Value index. Typically -1, but could be used to write a value in a multi-value register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteU32</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -16176,7 +16176,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="normal">1692</span>
 <span class="normal">1693</span>
 <span class="normal">1694</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_u64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a 64-bit unsigned long long register value.</span>
+<span class="w">    </span><span class="sd">"""Writes a 64-bit unsigned long long register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated write.</span>
@@ -16186,7 +16186,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="sd">        reg_id: The register id (register address).</span>
 <span class="sd">        value: The 64-bit unsigned long long to write to the register.</span>
 <span class="sd">        index: Value index. Typically -1, but could be used to write a value in a multi-value register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteU64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -16308,7 +16308,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="normal">1706</span>
 <span class="normal">1707</span>
 <span class="normal">1708</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_write_u8</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a 8-bit unsigned char register value.</span>
+<span class="w">    </span><span class="sd">"""Writes a 8-bit unsigned char register value.</span>
 
 <span class="sd">    It is not necessary to open the port, create the device or register before</span>
 <span class="sd">    using this function, since it will do a dedicated write.</span>
@@ -16318,7 +16318,7 @@ using this function, since it will do a dedicated write.</p>
 <span class="sd">        reg_id: The register id (register address).</span>
 <span class="sd">        value: The 8-bit unsigned char to write to the register.</span>
 <span class="sd">        index: Value index. Typically -1, but could be used to write a value in a multi-value register.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span><span class="o">.</span><span class="n">registerWriteU8</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_portname</span><span class="p">,</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">reg_id</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -16422,7 +16422,7 @@ made to a function in the DLL the function will raise an exception.</p>
 <span class="normal">1749</span>
 <span class="normal">1750</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_callback_device_status</span><span class="p">(</span><span class="n">callback</span><span class="p">:</span> <span class="n">NKTDeviceStatusCallback</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enables/Disables a callback for device status changes.</span>
+<span class="w">    </span><span class="sd">"""Enables/Disables a callback for device status changes.</span>
 
 <span class="sd">    See [superk_callback.py](https://github.com/MSLNZ/msl-equipment/blob/main/packages/resources/examples/nkt/superk_callback.py)</span>
 <span class="sd">    for an example usage.</span>
@@ -16434,13 +16434,13 @@ made to a function in the DLL the function will raise an exception.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        callback: A callback function. Pass in `None` to disable the device-status callback.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"NKTError: You must first call NKT.load_sdk()"</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">DeviceStatusCallback</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: Must pass in a DeviceStatusCallback object&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"NKTError: Must pass in a DeviceStatusCallback object"</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">setCallbackPtrDeviceInfo</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
@@ -16561,7 +16561,7 @@ made to a function in the DLL the function will raise an exception.</p>
 <span class="normal">1777</span>
 <span class="normal">1778</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_callback_port_status</span><span class="p">(</span><span class="n">callback</span><span class="p">:</span> <span class="n">NKTPortStatusCallback</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enables/Disables a callback for port status changes.</span>
+<span class="w">    </span><span class="sd">"""Enables/Disables a callback for port status changes.</span>
 
 <span class="sd">    Used by the [open_ports][msl.equipment_resources.nkt.nktpdll.NKTDLL.open_ports] and</span>
 <span class="sd">    [close_ports][msl.equipment_resources.nkt.nktpdll.NKTDLL.close_ports] functions.</span>
@@ -16576,13 +16576,13 @@ made to a function in the DLL the function will raise an exception.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        callback: A callback function. Pass in `None` to disable the port-status callback.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"NKTError: You must first call NKT.load_sdk()"</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">PortStatusCallback</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: Must pass in a PortStatusCallback object&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"NKTError: Must pass in a PortStatusCallback object"</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">setCallbackPtrPortInfo</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
@@ -16690,7 +16690,7 @@ made to a function in the DLL the function will raise an exception.</p>
 <span class="normal">1802</span>
 <span class="normal">1803</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_callback_register_status</span><span class="p">(</span><span class="n">callback</span><span class="p">:</span> <span class="n">NKTRegisterStatusCallback</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enables/Disables a callback for register status changes.</span>
+<span class="w">    </span><span class="sd">"""Enables/Disables a callback for register status changes.</span>
 
 <span class="sd">    See [superk_callback.py](https://github.com/MSLNZ/msl-equipment/blob/main/packages/resources/examples/nkt/superk_callback.py)</span>
 <span class="sd">    for an example usage.</span>
@@ -16702,13 +16702,13 @@ made to a function in the DLL the function will raise an exception.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        callback: A callback function. Pass in `None` to disable the register-status callback.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"NKTError: You must first call NKT.load_sdk()"</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">RegisterStatusCallback</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: Must pass in a RegisterStatusCallback object&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"NKTError: Must pass in a RegisterStatusCallback object"</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">setCallbackPtrRegisterInfo</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
@@ -16792,7 +16792,7 @@ Some older modules do not accept <em>masterIds</em> other than 66 (0x42).</p>
 <span class="normal">1724</span>
 <span class="normal">1725</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_legacy_bus_scanning</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the bus-scanning mode to normal or legacy.</span>
+<span class="w">    </span><span class="sd">"""Set the bus-scanning mode to normal or legacy.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        mode: If `False`, bus scanning is set to normal mode and allows for a</span>
@@ -16800,9 +16800,9 @@ Some older modules do not accept <em>masterIds</em> other than 66 (0x42).</p>
 <span class="sd">            message to allow for out-of-sync detection. If `True`, bus scanning</span>
 <span class="sd">            is set to legacy mode and fixes the _masterId_ at address 66 (0x42).</span>
 <span class="sd">            Some older modules do not accept _masterIds_ other than 66 (0x42).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;NKTError: You must first call NKT.load_sdk()&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"NKTError: You must first call NKT.load_sdk()"</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">NKTDLL</span><span class="o">.</span><span class="n">_SDK</span><span class="o">.</span><span class="n">setLegacyBusScanning</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">mode</span><span class="p">)))</span>
@@ -18911,11 +18911,11 @@ for an example usage.</p>
 <span class="normal">80</span>
 <span class="normal">81</span>
 <span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">device_status_callback</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">NKTDeviceStatusCallback</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CFunctionType</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use as a decorator for a callback function when the status of a device changes.</span>
+<span class="w">    </span><span class="sd">"""Use as a decorator for a callback function when the status of a device changes.</span>
 
 <span class="sd">    See [superk_callback.py](https://github.com/MSLNZ/msl-equipment/blob/main/packages/resources/examples/nkt/superk_callback.py)</span>
 <span class="sd">    for an example usage.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">DeviceStatusCallback</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -18955,11 +18955,11 @@ for an example usage.</p>
 <span class="normal">67</span>
 <span class="normal">68</span>
 <span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">port_status_callback</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">NKTPortStatusCallback</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CFunctionType</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use as a decorator for a callback function when the status of a port changes.</span>
+<span class="w">    </span><span class="sd">"""Use as a decorator for a callback function when the status of a port changes.</span>
 
 <span class="sd">    See [superk_callback.py](https://github.com/MSLNZ/msl-equipment/blob/main/packages/resources/examples/nkt/superk_callback.py)</span>
 <span class="sd">    for an example usage.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">PortStatusCallback</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -18999,11 +18999,11 @@ for an example usage.</p>
 <span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_status_callback</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">NKTRegisterStatusCallback</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CFunctionType</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use as a decorator for a callback function when the status of a register changes.</span>
+<span class="w">    </span><span class="sd">"""Use as a decorator for a callback function when the status of a register changes.</span>
 
 <span class="sd">    See [superk_callback.py](https://github.com/MSLNZ/msl-equipment/blob/main/packages/resources/examples/nkt/superk_callback.py)</span>
 <span class="sd">    for an example usage.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">RegisterStatusCallback</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>

@@ -5111,8 +5111,8 @@
         <p>The default termination character for read and write operations is <code>\r</code>.</p>
 <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;OMEGA&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;iTHX-[2DMSW][3D]?&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"OMEGA"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">"iTHX-[2DMSW][3D]?"</span>
 <span class="n">flags</span><span class="o">=</span><span class="n">IGNORECASE</span>
 </code></pre></div></p>
 
@@ -5180,24 +5180,24 @@
 <span class="normal">47</span>
 <span class="normal">48</span>
 <span class="normal">49</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;OMEGA iTHX Series Temperature and Humidity Chart Recorder.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""OMEGA iTHX Series Temperature and Humidity Chart Recorder.</span>
 
 <span class="sd">    The default termination character for read and write operations is `\r`.</span>
 
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;OMEGA&quot;</span>
-<span class="sd">    model=r&quot;iTHX-[2DMSW][3D]?&quot;</span>
+<span class="sd">    manufacturer=r"OMEGA"</span>
+<span class="sd">    model=r"iTHX-[2DMSW][3D]?"</span>
 <span class="sd">    flags=IGNORECASE</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_read_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_read_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\r</span><span class="s2">"</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\r</span><span class="s2">"</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -5313,16 +5313,16 @@
 <span class="normal">59</span>
 <span class="normal">60</span>
 <span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dewpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probe</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">celsius</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the dewpoint.</span>
+<span class="w">    </span><span class="sd">"""Read the dewpoint.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        probe: The probe number to read the dewpoint of (for iTHX&#39;s that contain multiple probes).</span>
+<span class="sd">        probe: The probe number to read the dewpoint of (for iTHX's that contain multiple probes).</span>
 <span class="sd">        celsius: `True` to return the dewpoint in celsius, `False` for fahrenheit.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The dewpoint for the specified probe.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="s2">&quot;DC&quot;</span> <span class="k">if</span> <span class="n">celsius</span> <span class="k">else</span> <span class="s2">&quot;DF&quot;</span><span class="p">,</span> <span class="n">probe</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="s2">"DC"</span> <span class="k">if</span> <span class="n">celsius</span> <span class="k">else</span> <span class="s2">"DF"</span><span class="p">,</span> <span class="n">probe</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5411,15 +5411,15 @@
 <span class="normal">70</span>
 <span class="normal">71</span>
 <span class="normal">72</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">humidity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probe</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the percent humidity.</span>
+<span class="w">    </span><span class="sd">"""Read the percent humidity.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        probe: The probe number to read the humidity of (for iTHX&#39;s that contain multiple probes).</span>
+<span class="sd">        probe: The probe number to read the humidity of (for iTHX's that contain multiple probes).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The percent humidity for the specified probe.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="n">probe</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="s2">"H"</span><span class="p">,</span> <span class="n">probe</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5572,19 +5572,19 @@ A value &le; 0 means to not wait and to not reconnect.</p>
 <span class="normal">129</span>
 <span class="normal">130</span>
 <span class="normal">131</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2002</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Power reset (reboot) the iServer.</span>
+<span class="w">    </span><span class="sd">"""Power reset (reboot) the iServer.</span>
 
-<span class="sd">    Some iServer&#39;s accept the reset command to be sent via the TCP/UDP protocol and</span>
+<span class="sd">    Some iServer's accept the reset command to be sent via the TCP/UDP protocol and</span>
 <span class="sd">    some require the reset command to be sent via the Telnet protocol.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        password: The administrator&#39;s password to use for the Telnet session with the iServer.</span>
-<span class="sd">            If not specified then uses the default manufacturer&#39;s password. Only used if the</span>
+<span class="sd">        password: The administrator's password to use for the Telnet session with the iServer.</span>
+<span class="sd">            If not specified then uses the default manufacturer's password. Only used if the</span>
 <span class="sd">            iServer must be reset via the Telnet protocol.</span>
 <span class="sd">        port: The Telnet port number.</span>
 <span class="sd">        wait: The number of seconds to wait before trying to reconnect with the iServer.</span>
 <span class="sd">            A value &amp;le; 0 means to not wait and to not reconnect.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">use_telnet</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>  <span class="c1"># noqa: PLC0415</span>
@@ -5594,36 +5594,36 @@ A value &le; 0 means to not wait and to not reconnect.</p>
             <span class="n">sock</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
 
             <span class="c1"># wait until a password request is received</span>
-            <span class="n">reply</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>
-            <span class="k">while</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="sa">b</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;?&quot;</span><span class="p">)):</span>
+            <span class="n">reply</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">""</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">reply</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="sa">b</span><span class="s2">":"</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"?"</span><span class="p">)):</span>
                 <span class="n">reply</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
 
-            <span class="n">pw</span> <span class="o">=</span> <span class="n">password</span> <span class="ow">or</span> <span class="s2">&quot;00000000&quot;</span>
-            <span class="n">_</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pw</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="o">+</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">pw</span> <span class="o">=</span> <span class="n">password</span> <span class="ow">or</span> <span class="s2">"00000000"</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">pw</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="o">+</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\r</span><span class="s2">"</span><span class="p">)</span>
             <span class="n">reply</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
-            <span class="k">if</span> <span class="sa">b</span><span class="s2">&quot;failure&quot;</span> <span class="ow">in</span> <span class="n">reply</span> <span class="ow">or</span> <span class="sa">b</span><span class="s2">&quot;Invalid&quot;</span> <span class="ow">in</span> <span class="n">reply</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Invalid iTHX telnet password&quot;</span>
+            <span class="k">if</span> <span class="sa">b</span><span class="s2">"failure"</span> <span class="ow">in</span> <span class="n">reply</span> <span class="ow">or</span> <span class="sa">b</span><span class="s2">"Invalid"</span> <span class="ow">in</span> <span class="n">reply</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Invalid iTHX telnet password"</span>
                 <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
-            <span class="n">_</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;reset</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s2">"reset</span><span class="se">\r</span><span class="s2">"</span><span class="p">)</span>
             <span class="n">reply</span> <span class="o">=</span> <span class="n">sock</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;WRONG_CMD&quot;</span><span class="p">):</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;iTHX device does not support the RESET command&quot;</span>
+            <span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s2">"WRONG_CMD"</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">"iTHX device does not support the RESET command"</span>
                 <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="c1"># The manual indicates that iTHX-W3, iTHX-D3, iTHX-SD and iTHX-M accept the *SRYRST command</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*SRYRST&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="s2">&quot;Reset&quot;</span><span class="p">:</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"*SRYRST"</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="s2">"Reset"</span><span class="p">:</span>
         <span class="c1"># this was the reply that was received with an iTHX-W3</span>
         <span class="c1"># which accepts the reset command via TCP/UDP</span>
         <span class="k">pass</span>
-    <span class="k">elif</span> <span class="n">reply</span> <span class="o">==</span> <span class="s2">&quot;Serial Time Out&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">reply</span> <span class="o">==</span> <span class="s2">"Serial Time Out"</span><span class="p">:</span>
         <span class="c1"># this was the reply that was received with an iTHX-W</span>
         <span class="c1"># which does not recognize the *SRYRST command</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># there is another b&#39;\r&#39; in the buffer</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># there is another b'\r' in the buffer</span>
         <span class="n">use_telnet</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Received an unexpected reply, </span><span class="si">{</span><span class="n">reply</span><span class="si">!r}</span><span class="s2">, for the *SRYRST command&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Received an unexpected reply, </span><span class="si">{</span><span class="n">reply</span><span class="si">!r}</span><span class="s2">, for the *SRYRST command"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">wait</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -5734,16 +5734,16 @@ A value &le; 0 means to not wait and to not reconnect.</p>
 <span class="normal">159</span>
 <span class="normal">160</span>
 <span class="normal">161</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probe</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">celsius</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the temperature.</span>
+<span class="w">    </span><span class="sd">"""Read the temperature.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        probe: The probe number to read the temperature of (for iTHX&#39;s that contain multiple probes).</span>
+<span class="sd">        probe: The probe number to read the temperature of (for iTHX's that contain multiple probes).</span>
 <span class="sd">        celsius: `True` to return the temperature in celsius, `False` for fahrenheit.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The temperature for the specified probe.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="s2">&quot;TC&quot;</span> <span class="k">if</span> <span class="n">celsius</span> <span class="k">else</span> <span class="s2">&quot;TF&quot;</span><span class="p">,</span> <span class="n">probe</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="s2">"TC"</span> <span class="k">if</span> <span class="n">celsius</span> <span class="k">else</span> <span class="s2">"TF"</span><span class="p">,</span> <span class="n">probe</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

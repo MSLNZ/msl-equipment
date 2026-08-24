@@ -5167,8 +5167,8 @@
 
         <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Thorlabs&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;FW(10|21)2C&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Thorlabs"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">"FW(10|21)2C"</span>
 </code></pre></div></p>
 
 
@@ -5240,28 +5240,28 @@
 <span class="normal">38</span>
 <span class="normal">39</span>
 <span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Communicate with a FW102C/FW212C Motorized Filter Wheel from Thorlabs.</span>
+<span class="w">    </span><span class="sd">"""Communicate with a FW102C/FW212C Motorized Filter Wheel from Thorlabs.</span>
 
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;Thorlabs&quot;</span>
-<span class="sd">    model=r&quot;FW(10|21)2C&quot;</span>
+<span class="sd">    manufacturer=r"Thorlabs"</span>
+<span class="sd">    model=r"FW(10|21)2C"</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
-    <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;baud_rate&quot;</span><span class="p">,</span> <span class="mi">115200</span><span class="p">)</span>
-    <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;termination&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"baud_rate"</span><span class="p">,</span> <span class="mi">115200</span><span class="p">)</span>
+    <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"termination"</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\r</span><span class="s2">"</span><span class="p">)</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 
     <span class="c1"># The communication protocol is designed for a terminal interface</span>
     <span class="c1"># (the command that was written is echoed back). We always need to</span>
     <span class="c1"># do an extra read(), so we use query() where a write() would seem</span>
     <span class="c1"># appropriate and do another read() to get the requested value.</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;pcount?&quot;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"pcount?"</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_pcount</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 </code></pre></div></td></tr></table></div>
                   </details>
@@ -5453,8 +5453,8 @@ filter wheel is idle to eliminate stray light.</p>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">91</span>
 <span class="normal">92</span>
 <span class="normal">93</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save the current settings as default on power up.&quot;&quot;&quot;</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;save&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">"""Save the current settings as default on power up."""</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"save"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

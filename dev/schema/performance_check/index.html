@@ -5334,8 +5334,8 @@
   
       dataclass
    (msl.equipment.schema.Competency)" href="../competency/#msl.equipment.schema.Competency">Competency</a></span><span class="p">,</span>
-    <span class="n">entered_by</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">checked_by</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">entered_by</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="n">checked_by</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="n">checked_date</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="datetime.date" href="https://docs.python.org/3/library/datetime.html#datetime.date">date</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">conditions</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Conditions
 (Any) (msl.equipment.schema.Conditions)" href="../conditions/#msl.equipment.schema.Conditions">Conditions</a></span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="            Conditions
@@ -5627,7 +5627,7 @@ that was executed.</p>
   </span>
 
 <a href="#msl.equipment.schema.PerformanceCheck.checked_by" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">checked_by</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">checked_by</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">''</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5889,7 +5889,7 @@ that was executed.</p>
   </span>
 
 <a href="#msl.equipment.schema.PerformanceCheck.entered_by" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">entered_by</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">entered_by</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">''</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6237,7 +6237,7 @@ equipment register.</p>
 <span class="normal">1722</span>
 <span class="normal">1723</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">PerformanceCheck</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [PerformanceCheck][msl.equipment.schema.PerformanceCheck] instance.</span>
+<span class="w">    </span><span class="sd">"""Convert an XML element into a [PerformanceCheck][msl.equipment.schema.PerformanceCheck] instance.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        element: A [performanceCheck][type_performanceCheck] XML element from an</span>
@@ -6245,7 +6245,7 @@ equipment register.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [PerformanceCheck][msl.equipment.schema.PerformanceCheck] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Schema forces order for `competency` and `conditions` but uses xsd:choice,</span>
     <span class="c1"># which allows sub-elements to appear (or not appear) in any order, for the data elements.</span>
     <span class="c1"># Using str.endswith() allows for ignoring XML namespaces that may be associated with each tag</span>
@@ -6256,23 +6256,23 @@ equipment register.</p>
     <span class="n">tables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Table</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">element</span><span class="p">[</span><span class="mi">2</span><span class="p">:]:</span>
         <span class="n">tag</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span>
-        <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;equation&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"equation"</span><span class="p">):</span>
             <span class="n">equations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Equation</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;table&quot;</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"table"</span><span class="p">):</span>
             <span class="n">tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Table</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;cvdCoefficients&quot;</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"cvdCoefficients"</span><span class="p">):</span>
             <span class="n">cvd_equations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CVDEquation</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;file&quot;</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">tag</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"file"</span><span class="p">):</span>
             <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">File</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">deserialisers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Deserialised</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
 
     <span class="n">a</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">attrib</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-        <span class="n">completed_date</span><span class="o">=</span><span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;completedDate&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-        <span class="n">entered_by</span><span class="o">=</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;enteredBy&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="n">checked_by</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;checkedBy&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-        <span class="n">checked_date</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;checkedDate&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;checkedDate&quot;</span><span class="p">]),</span>
+        <span class="n">completed_date</span><span class="o">=</span><span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s2">"completedDate"</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">),</span>
+        <span class="n">entered_by</span><span class="o">=</span><span class="n">a</span><span class="p">[</span><span class="s2">"enteredBy"</span><span class="p">]</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">,</span>
+        <span class="n">checked_by</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"checkedBy"</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
+        <span class="n">checked_date</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"checkedDate"</span><span class="p">)</span> <span class="k">else</span> <span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="s2">"checkedDate"</span><span class="p">]),</span>
         <span class="n">competency</span><span class="o">=</span><span class="n">Competency</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
         <span class="n">conditions</span><span class="o">=</span><span class="n">Conditions</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
         <span class="n">cvd_equations</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">cvd_equations</span><span class="p">),</span>
@@ -6359,18 +6359,18 @@ equipment register.</p>
 <span class="normal">1743</span>
 <span class="normal">1744</span>
 <span class="normal">1745</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [PerformanceCheck][msl.equipment.schema.PerformanceCheck] class into an XML element.</span>
+<span class="w">    </span><span class="sd">"""Convert the [PerformanceCheck][msl.equipment.schema.PerformanceCheck] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [PerformanceCheck][msl.equipment.schema.PerformanceCheck] as an XML element.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;completedDate&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">completed_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span> <span class="s2">&quot;enteredBy&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">entered_by</span><span class="p">}</span>
+<span class="sd">    """</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"completedDate"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">completed_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span> <span class="s2">"enteredBy"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">entered_by</span><span class="p">}</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checked_by</span><span class="p">:</span>
-        <span class="n">a</span><span class="p">[</span><span class="s2">&quot;checkedBy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checked_by</span>
+        <span class="n">a</span><span class="p">[</span><span class="s2">"checkedBy"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checked_by</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checked_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">a</span><span class="p">[</span><span class="s2">&quot;checkedDate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checked_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+        <span class="n">a</span><span class="p">[</span><span class="s2">"checkedDate"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checked_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
 
-    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;performanceCheck&quot;</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">"performanceCheck"</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
     <span class="n">e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">competency</span><span class="o">.</span><span class="n">to_xml</span><span class="p">())</span>
     <span class="n">e</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conditions</span><span class="p">)</span>
     <span class="n">e</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">equation</span><span class="o">.</span><span class="n">to_xml</span><span class="p">()</span> <span class="k">for</span> <span class="n">equation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">equations</span><span class="p">)</span>

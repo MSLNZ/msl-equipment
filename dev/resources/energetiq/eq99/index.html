@@ -5739,8 +5739,8 @@
 
         <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Energetiq&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;EQ-99(-MGR)?&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Energetiq"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">"EQ-99(-MGR)?"</span>
 <span class="n">flags</span><span class="o">=</span><span class="n">IGNORECASE</span>
 </code></pre></div></p>
 
@@ -5807,21 +5807,21 @@
 <span class="normal">37</span>
 <span class="normal">38</span>
 <span class="normal">39</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Communicate with the EQ-99 Manager from Energetiq.</span>
+<span class="w">    </span><span class="sd">"""Communicate with the EQ-99 Manager from Energetiq.</span>
 
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;Energetiq&quot;</span>
-<span class="sd">    model=r&quot;EQ-99(-MGR)?&quot;</span>
+<span class="sd">    manufacturer=r"Energetiq"</span>
+<span class="sd">    model=r"EQ-99(-MGR)?"</span>
 <span class="sd">    flags=IGNORECASE</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
-    <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;baud_rate&quot;</span><span class="p">,</span> <span class="mi">38400</span><span class="p">)</span>
+    <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"baud_rate"</span><span class="p">,</span> <span class="mi">38400</span><span class="p">)</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">rstrip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre></div></td></tr></table></div>
@@ -5964,7 +5964,7 @@ at the time the condition register is read.</p>
 <span class="normal">134</span>
 <span class="normal">135</span>
 <span class="normal">136</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">condition_register</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the LDLS condition register.</span>
+<span class="w">    </span><span class="sd">"""Query the LDLS condition register.</span>
 
 <span class="sd">    The condition register reflects the state of the instrument</span>
 <span class="sd">    at the time the condition register is read.</span>
@@ -5985,8 +5985,8 @@ at the time the condition register is read.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The condition register value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;LDLS:COND?&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"LDLS:COND?"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6054,16 +6054,16 @@ of milliseconds. Valid range is from 1 to 30000 milliseconds.</p>
 <span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">milliseconds</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specify a delay to use in command processing.</span>
+<span class="w">    </span><span class="sd">"""Specify a delay to use in command processing.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        milliseconds: Causes command processing to be delayed for the specified number</span>
 <span class="sd">            of milliseconds. Valid range is from 1 to 30000 milliseconds.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">milliseconds</span> <span class="o">&lt;=</span> <span class="n">MAX_TIME</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid delay of </span><span class="si">{</span><span class="n">milliseconds</span><span class="si">}</span><span class="s2"> milliseconds, must be in the range [1, </span><span class="si">{</span><span class="n">MAX_TIME</span><span class="si">}</span><span class="s2">]&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid delay of </span><span class="si">{</span><span class="n">milliseconds</span><span class="si">}</span><span class="s2"> milliseconds, must be in the range [1, </span><span class="si">{</span><span class="n">MAX_TIME</span><span class="si">}</span><span class="s2">]"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DELAY </span><span class="si">{</span><span class="n">milliseconds</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">"DELAY </span><span class="si">{</span><span class="n">milliseconds</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6200,7 +6200,7 @@ same bit in the event register will be one.</p>
 <span class="normal">162</span>
 <span class="normal">163</span>
 <span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">event_register</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the LDLS event register.</span>
+<span class="w">    </span><span class="sd">"""Query the LDLS event register.</span>
 
 <span class="sd">    Returns the LDLS event register. The event register reflects the</span>
 <span class="sd">    occurrence of any condition since the last time the event register</span>
@@ -6224,8 +6224,8 @@ same bit in the event register will be one.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The event register value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;LDLS:EVENT?&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"LDLS:EVENT?"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6280,12 +6280,12 @@ same bit in the event register will be one.</p>
 <span class="normal">61</span>
 <span class="normal">62</span>
 <span class="normal">63</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_beep</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query whether beeps are enabled.</span>
+<span class="w">    </span><span class="sd">"""Query whether beeps are enabled.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether beeps are enabled.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;BEEP?&quot;</span><span class="p">)))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"BEEP?"</span><span class="p">)))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6340,12 +6340,12 @@ same bit in the event register will be one.</p>
 <span class="normal">86</span>
 <span class="normal">87</span>
 <span class="normal">88</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_brightness</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the display brightness.</span>
+<span class="w">    </span><span class="sd">"""Query the display brightness.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Returns the value of the display brightness (between 0 and 100).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;BRIGHT?&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"BRIGHT?"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6407,15 +6407,15 @@ same bit in the event register will be one.</p>
 <span class="normal">199</span>
 <span class="normal">200</span>
 <span class="normal">201</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_exposure_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the exposure mode.</span>
+<span class="w">    </span><span class="sd">"""Query the exposure mode.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The exposure mode.</span>
 
 <span class="sd">            * 0 &amp;mdash; Manual mode</span>
 <span class="sd">            * 1 &amp;mdash; Exposure mode</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;LDLS:EXPMODE?&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"LDLS:EXPMODE?"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6470,12 +6470,12 @@ same bit in the event register will be one.</p>
 <span class="normal">170</span>
 <span class="normal">171</span>
 <span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_exposure_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the exposure time.</span>
+<span class="w">    </span><span class="sd">"""Query the exposure time.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The exposure time, in milliseconds.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;LDLS:EXPOSURE?&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"LDLS:EXPOSURE?"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6530,12 +6530,12 @@ same bit in the event register will be one.</p>
 <span class="normal">236</span>
 <span class="normal">237</span>
 <span class="normal">238</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_lamp_runtime</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the lamp runtime.</span>
+<span class="w">    </span><span class="sd">"""Query the lamp runtime.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of hours accumulated while the lamp was on.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;LDLS:LAMPTIME?&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"LDLS:LAMPTIME?"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6590,12 +6590,12 @@ same bit in the event register will be one.</p>
 <span class="normal">336</span>
 <span class="normal">337</span>
 <span class="normal">338</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_message_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the internal message buffer.</span>
+<span class="w">    </span><span class="sd">"""Query the internal message buffer.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The value of the internal message buffer.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;MESSAGE?&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"MESSAGE?"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6650,12 +6650,12 @@ same bit in the event register will be one.</p>
 <span class="normal">220</span>
 <span class="normal">221</span>
 <span class="normal">222</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the output state.</span>
+<span class="w">    </span><span class="sd">"""Query the output state.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the output is enabled or disabled.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;LDLS:OUTPUT?&quot;</span><span class="p">)))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"LDLS:OUTPUT?"</span><span class="p">)))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6710,12 +6710,12 @@ same bit in the event register will be one.</p>
 <span class="normal">353</span>
 <span class="normal">354</span>
 <span class="normal">355</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_remote_mode_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query whether errors are displayed while in remote mode.</span>
+<span class="w">    </span><span class="sd">"""Query whether errors are displayed while in remote mode.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether errors are displayed while in remote mode.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;REMERR?&quot;</span><span class="p">)))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"REMERR?"</span><span class="p">)))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6777,15 +6777,15 @@ same bit in the event register will be one.</p>
 <span class="normal">262</span>
 <span class="normal">263</span>
 <span class="normal">264</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_shutter_power_up_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the power-up shutter state.</span>
+<span class="w">    </span><span class="sd">"""Query the power-up shutter state.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The power-up shutter state.</span>
 
 <span class="sd">            * `False` &amp;mdash; Shutter is closed on power-up</span>
 <span class="sd">            * `True` &amp;mdash; Shutter is open on power-up</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;LDLS:SHUTINIT?&quot;</span><span class="p">)))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"LDLS:SHUTINIT?"</span><span class="p">)))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6847,15 +6847,15 @@ same bit in the event register will be one.</p>
 <span class="normal">284</span>
 <span class="normal">285</span>
 <span class="normal">286</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_shutter_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the shutter state.</span>
+<span class="w">    </span><span class="sd">"""Query the shutter state.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The state of the shutter.</span>
 
 <span class="sd">            * `False` &amp;mdash; Shutter is closed</span>
 <span class="sd">            * `True` &amp;mdash; Shutter is open</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;LDLS:SHUTTER?&quot;</span><span class="p">)))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"LDLS:SHUTTER?"</span><span class="p">)))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6917,7 +6917,7 @@ for possible return values.</p>
 <span class="normal">389</span>
 <span class="normal">390</span>
 <span class="normal">391</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_termination</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query response terminator.</span>
+<span class="w">    </span><span class="sd">"""Query response terminator.</span>
 
 <span class="sd">    Returns the current response terminator setting. See</span>
 <span class="sd">    [set_termination][msl.equipment_resources.energetiq.eq99.EQ99.set_termination]</span>
@@ -6925,8 +6925,8 @@ for possible return values.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The response terminator.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;TERM?&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"TERM?"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6983,13 +6983,13 @@ for more details.</p>
 <span class="normal">309</span>
 <span class="normal">310</span>
 <span class="normal">311</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_trigger_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the trigger mode.</span>
+<span class="w">    </span><span class="sd">"""Query the trigger mode.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The trigger mode. See [set_trigger_mode][msl.equipment_resources.energetiq.eq99.EQ99.set_trigger_mode]</span>
 <span class="sd">            for more details.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;LDLS:TRIGMODE?&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"LDLS:TRIGMODE?"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7046,13 +7046,13 @@ for more details.</p>
 <span class="normal">46</span>
 <span class="normal">47</span>
 <span class="normal">48</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">identity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the instrument identification.</span>
+<span class="w">    </span><span class="sd">"""Query the instrument identification.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Returns the identification string for the instrument in the following format:</span>
 <span class="sd">            *Energetiq Model SN Ver Build*</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"*IDN?"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7084,11 +7084,11 @@ for more details.</p>
 <span class="normal">53</span>
 <span class="normal">54</span>
 <span class="normal">55</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resets the instrument to factory defaults and the output is shut off.</span>
+<span class="w">    </span><span class="sd">"""Resets the instrument to factory defaults and the output is shut off.</span>
 
 <span class="sd">    The unit remains in remote mode.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="s2">&quot;*RST&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="s2">"*RST"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7143,12 +7143,12 @@ for more details.</p>
 <span class="normal">377</span>
 <span class="normal">378</span>
 <span class="normal">379</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">serial_number</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the serial number of the instrument.</span>
+<span class="w">    </span><span class="sd">"""Query the serial number of the instrument.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The serial number of the instrument. This is the same information that is part of the `*IDN?` query.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;SN?&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"SN?"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7227,7 +7227,7 @@ audible response.</p>
 <span class="normal">78</span>
 <span class="normal">79</span>
 <span class="normal">80</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_beep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beep</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the beep value.</span>
+<span class="w">    </span><span class="sd">"""Set the beep value.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        beep: Causes the instrument to beep, or enables or disabled the beep</span>
@@ -7237,11 +7237,11 @@ audible response.</p>
 <span class="sd">            * 0 or `False` &amp;mdash; Disable the beep sound</span>
 <span class="sd">            * 1 or `True` &amp;mdash; Enable the beep sound</span>
 <span class="sd">            * 2 &amp;mdash; Generate one beep</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">beep</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid beep value &#39;</span><span class="si">{</span><span class="n">beep</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid beep value '</span><span class="si">{</span><span class="n">beep</span><span class="si">}</span><span class="s2">'"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BEEP </span><span class="si">{</span><span class="n">beep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">"BEEP </span><span class="si">{</span><span class="n">beep</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7310,15 +7310,15 @@ appropriate level.</p>
 <span class="normal">97</span>
 <span class="normal">98</span>
 <span class="normal">99</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_brightness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">brightness</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the display brightness.</span>
+<span class="w">    </span><span class="sd">"""Set the display brightness.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        brightness: Sets the display brightness level from 0 to 100 percent.</span>
 <span class="sd">            There are only 8 brightness levels (each separated by about</span>
 <span class="sd">            12.5 percent) and the brightness value is used to select an</span>
 <span class="sd">            appropriate level.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BRIGHT </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">brightness</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">"BRIGHT </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">brightness</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7391,7 +7391,7 @@ appropriate level.</p>
 <span class="normal">212</span>
 <span class="normal">213</span>
 <span class="normal">214</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_exposure_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the exposure mode.</span>
+<span class="w">    </span><span class="sd">"""Set the exposure mode.</span>
 
 <span class="sd">    Same as the *Shutter* setting in the menu.</span>
 
@@ -7400,8 +7400,8 @@ appropriate level.</p>
 
 <span class="sd">            * 0 &amp;mdash; Manual mode</span>
 <span class="sd">            * 1 &amp;mdash; Exposure mode</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LDLS:EXPMODE </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">"LDLS:EXPMODE </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7477,7 +7477,7 @@ An exposure is triggered by a shutter button press or the shutter trigger input.
 <span class="normal">188</span>
 <span class="normal">189</span>
 <span class="normal">190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_exposure_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">milliseconds</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the exposure time.</span>
+<span class="w">    </span><span class="sd">"""Set the exposure time.</span>
 
 <span class="sd">    Exposure time is used when the shutter exposure mode is set to `Exposure mode`</span>
 <span class="sd">    (see [set_exposure_mode][msl.equipment_resources.energetiq.eq99.EQ99.set_exposure_mode]).</span>
@@ -7485,14 +7485,14 @@ An exposure is triggered by a shutter button press or the shutter trigger input.
 
 <span class="sd">    Args:</span>
 <span class="sd">        milliseconds: The exposure time, in milliseconds, from 100 to 30000 ms.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">MIN_EXPOSURE_TIME</span> <span class="o">&lt;=</span> <span class="n">milliseconds</span> <span class="o">&lt;=</span> <span class="n">MAX_TIME</span><span class="p">):</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Invalid exposure time of </span><span class="si">{</span><span class="n">milliseconds</span><span class="si">}</span><span class="s2"> milliseconds, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;must be in the range [</span><span class="si">{</span><span class="n">MIN_EXPOSURE_TIME</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">MAX_TIME</span><span class="si">}</span><span class="s2">]&quot;</span>
+            <span class="sa">f</span><span class="s2">"Invalid exposure time of </span><span class="si">{</span><span class="n">milliseconds</span><span class="si">}</span><span class="s2"> milliseconds, "</span>
+            <span class="sa">f</span><span class="s2">"must be in the range [</span><span class="si">{</span><span class="n">MIN_EXPOSURE_TIME</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">MAX_TIME</span><span class="si">}</span><span class="s2">]"</span>
         <span class="p">)</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LDLS:EXPOSURE </span><span class="si">{</span><span class="n">milliseconds</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">"LDLS:EXPOSURE </span><span class="si">{</span><span class="n">milliseconds</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7565,7 +7565,7 @@ the manager to a new LDLS system.</p>
 <span class="normal">251</span>
 <span class="normal">252</span>
 <span class="normal">253</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_lamp_runtime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hours</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the lamp runtime.</span>
+<span class="w">    </span><span class="sd">"""Set the lamp runtime.</span>
 
 <span class="sd">    Resets the runtime to the new value. Useful for resetting the runtime</span>
 <span class="sd">    to zero when the lamp has been serviced or replaced, or when moving</span>
@@ -7573,11 +7573,11 @@ the manager to a new LDLS system.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        hours: The lamp runtime, in hours, between 0 and 9999.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">hours</span> <span class="o">&lt;=</span> <span class="n">MAX_RUNTIME</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid lamp runtime of </span><span class="si">{</span><span class="n">hours</span><span class="si">}</span><span class="s2"> hours, must be in the range [0, </span><span class="si">{</span><span class="n">MAX_RUNTIME</span><span class="si">}</span><span class="s2">]&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid lamp runtime of </span><span class="si">{</span><span class="n">hours</span><span class="si">}</span><span class="s2"> hours, must be in the range [0, </span><span class="si">{</span><span class="n">MAX_RUNTIME</span><span class="si">}</span><span class="s2">]"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LDLS:LAMPTIME </span><span class="si">{</span><span class="n">hours</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">"LDLS:LAMPTIME </span><span class="si">{</span><span class="n">hours</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7642,13 +7642,13 @@ the manager to a new LDLS system.</p>
 <span class="normal">345</span>
 <span class="normal">346</span>
 <span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_message_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the message buffer.</span>
+<span class="w">    </span><span class="sd">"""Set the message buffer.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        message: Sets the internal message buffer, up to a maximum of 16 characters. If more than</span>
 <span class="sd">            16 characters are specified then the additional characters are silently ignored.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MESSAGE </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">"MESSAGE </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7711,12 +7711,12 @@ the manager to a new LDLS system.</p>
 <span class="normal">228</span>
 <span class="normal">229</span>
 <span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_output_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn the output on or off.</span>
+<span class="w">    </span><span class="sd">"""Turn the output on or off.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        enable: Whether to enable or disable the output.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LDLS:OUTPUT </span><span class="si">{</span><span class="n">enable</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">"LDLS:OUTPUT </span><span class="si">{</span><span class="n">enable</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7795,7 +7795,7 @@ in the error queue.</p>
 <span class="normal">369</span>
 <span class="normal">370</span>
 <span class="normal">371</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_remote_mode_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set whether to display errors while in remote mode.</span>
+<span class="w">    </span><span class="sd">"""Set whether to display errors while in remote mode.</span>
 
 <span class="sd">    This command controls if the instrument will display errors while in</span>
 <span class="sd">    remote mode. If set to `0`/`False`, then errors will not be displayed. If</span>
@@ -7807,8 +7807,8 @@ in the error queue.</p>
 
 <span class="sd">            * 0 or `False` &amp;mdash; Do not display errors in remote mode</span>
 <span class="sd">            * 1 or `True` &amp;mdash; Display errors in remote mode</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;REMERR </span><span class="si">{</span><span class="n">enable</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">"REMERR </span><span class="si">{</span><span class="n">enable</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7878,15 +7878,15 @@ in the error queue.</p>
 <span class="normal">273</span>
 <span class="normal">274</span>
 <span class="normal">275</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_shutter_power_up_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the power-up shutter state.</span>
+<span class="w">    </span><span class="sd">"""Set the power-up shutter state.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        state: Sets the initial state of the shutter on power-up of the manager.</span>
 
 <span class="sd">            * `False` &amp;mdash; Shutter is closed on power-up</span>
 <span class="sd">            * `True` &amp;mdash; Shutter is open on power-up</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LDLS:SHUTINIT </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">"LDLS:SHUTINIT </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7965,7 +7965,7 @@ trigger a shutter if exposure mode is set to <em>Exposure</em>.</p>
 <span class="normal">300</span>
 <span class="normal">301</span>
 <span class="normal">302</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_shutter_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Open, close, or trigger the shutter.</span>
+<span class="w">    </span><span class="sd">"""Open, close, or trigger the shutter.</span>
 
 <span class="sd">    A close command (state is `False`) will always close the shutter,</span>
 <span class="sd">    regardless of exposure mode. An open command (state is `True`)</span>
@@ -7977,8 +7977,8 @@ trigger a shutter if exposure mode is set to <em>Exposure</em>.</p>
 
 <span class="sd">            * `False` &amp;mdash; Close the shutter</span>
 <span class="sd">            * `True` &amp;mdash; Open or trigger the shutter</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LDLS:SHUTTER </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">"LDLS:SHUTTER </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8057,7 +8057,7 @@ responses to queries.</p>
 <span class="normal">405</span>
 <span class="normal">406</span>
 <span class="normal">407</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_termination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the response terminator character(s).</span>
+<span class="w">    </span><span class="sd">"""Set the response terminator character(s).</span>
 
 <span class="sd">    This command controls the termination characters used for</span>
 <span class="sd">    responses to queries.</span>
@@ -8069,8 +8069,8 @@ responses to queries.</p>
 <span class="sd">            * 2 or 3 &amp;mdash; `&lt;CR&gt;`</span>
 <span class="sd">            * 4 or 5 &amp;mdash; `&lt;LF&gt;`</span>
 <span class="sd">            * 6 or 7 &amp;mdash; no terminator</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TERM </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">"TERM </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8155,7 +8155,7 @@ manual for more details.</p>
 <span class="normal">328</span>
 <span class="normal">329</span>
 <span class="normal">330</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_trigger_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the trigger mode.</span>
+<span class="w">    </span><span class="sd">"""Set the trigger mode.</span>
 
 <span class="sd">    The trigger mode controls how the shutter trigger input controls the</span>
 <span class="sd">    operation of the shutter. For more information on trigger modes, see</span>
@@ -8170,8 +8170,8 @@ manual for more details.</p>
 <span class="sd">            * 2 &amp;mdash; Positive level trigger</span>
 <span class="sd">            * 3 &amp;mdash; Negative level trigger</span>
 <span class="sd">            * 4 &amp;mdash; Off (trigger disabled)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LDLS:TRIGMODE </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_check</span><span class="p">(</span><span class="sa">f</span><span class="s2">"LDLS:TRIGMODE </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8234,7 +8234,7 @@ and ss is hundredths of a second.</p>
 <span class="normal">427</span>
 <span class="normal">428</span>
 <span class="normal">429</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">timer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the elapsed time since the last time this method was called.</span>
+<span class="w">    </span><span class="sd">"""Query the elapsed time since the last time this method was called.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Returns the elapsed time since the last time this method was</span>
@@ -8242,8 +8242,8 @@ and ss is hundredths of a second.</p>
 <span class="sd">            then the time since unit has been turned on. Format is in</span>
 <span class="sd">            HH:MM:SS.ss, where HH is hours, MM is minutes, SS is seconds,</span>
 <span class="sd">            and ss is hundredths of a second.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;TIMER?&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"TIMER?"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8302,14 +8302,14 @@ SS is seconds, and ss is hundredths of a second.</p>
 <span class="normal">415</span>
 <span class="normal">416</span>
 <span class="normal">417</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unit_runtime</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query unit run time.</span>
+<span class="w">    </span><span class="sd">"""Query unit run time.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Returns the elapsed time since the unit has been turned on.</span>
 <span class="sd">            Format is in HH:MM:SS.ss, where HH is hours, MM is minutes,</span>
 <span class="sd">            SS is seconds, and ss is hundredths of a second.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;TIME?&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"TIME?"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8364,12 +8364,12 @@ SS is seconds, and ss is hundredths of a second.</p>
 <span class="normal">435</span>
 <span class="normal">436</span>
 <span class="normal">437</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the firmware version.</span>
+<span class="w">    </span><span class="sd">"""Query the firmware version.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Returns the firmware version. This is the same information that is part of the `*IDN?` query.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;VER?&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"VER?"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

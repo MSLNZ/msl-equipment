@@ -5369,8 +5369,8 @@
 
         <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Thorlabs&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;MFF&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Thorlabs"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">"MFF"</span>
 </code></pre></div></p>
 
 
@@ -5449,13 +5449,13 @@ that are defined in <a class="autorefs autorefs-internal" title="            Tho
 <span class="normal">53</span>
 <span class="normal">54</span>
 <span class="normal">55</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Communicate with a Motorised Filter Flip mount from Thorlabs.</span>
+<span class="w">    </span><span class="sd">"""Communicate with a Motorised Filter Flip mount from Thorlabs.</span>
 
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;Thorlabs&quot;</span>
-<span class="sd">    model=r&quot;MFF&quot;</span>
+<span class="sd">    manufacturer=r"Thorlabs"</span>
+<span class="sd">    model=r"MFF"</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
@@ -5463,7 +5463,7 @@ that are defined in <a class="autorefs autorefs-internal" title="            Tho
 
 <span class="sd">    A [Connection][msl.equipment.schema.Connection] instance supports the _properties_</span>
 <span class="sd">    that are defined in [ThorlabsMotion][msl.equipment_resources.thorlabs.motion.ThorlabsMotion].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="p">:</span> <span class="n">ThorlabsMotion</span> <span class="o">=</span> <span class="n">ThorlabsMotion</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
@@ -5597,7 +5597,7 @@ and <a class="autorefs autorefs-internal" title="            write" href="../mot
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">57</span>
 <span class="normal">58</span>
 <span class="normal">59</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disable the motor so the Filter Flipper can be freely moved by hand.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Disable the motor so the Filter Flipper can be freely moved by hand."""</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">disable</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5627,8 +5627,8 @@ and <a class="autorefs autorefs-internal" title="            write" href="../mot
 <span class="normal">62</span>
 <span class="normal">63</span>
 <span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the Filter Flipper.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_motion&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Disconnect from the Filter Flipper."""</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_motion"</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5657,7 +5657,7 @@ and <a class="autorefs autorefs-internal" title="            write" href="../mot
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">enable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enable the motor so the Filter Flipper is fixed in position.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Enable the motor so the Filter Flipper is fixed in position."""</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5725,12 +5725,12 @@ and <a class="autorefs autorefs-internal" title="            write" href="../mot
 <span class="normal">76</span>
 <span class="normal">77</span>
 <span class="normal">78</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlipperParameters</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the operating parameters.</span>
+<span class="w">    </span><span class="sd">"""Get the operating parameters.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The transit time, digital I/O parameters for pin 1, digital I/O parameters for pin 2.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">params</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;HiiHHiHHiiI&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="mh">0x0511</span><span class="p">,</span> <span class="n">param1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mh">0x50</span><span class="p">))</span>  <span class="c1"># MGMSG_MOT_REQ_MFF_OPERPARAMS</span>
+<span class="sd">    """</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="s2">"&lt;HiiHHiHHiiI"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="mh">0x0511</span><span class="p">,</span> <span class="n">param1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mh">0x50</span><span class="p">))</span>  <span class="c1"># MGMSG_MOT_REQ_MFF_OPERPARAMS</span>
     <span class="n">o1</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">pw1</span><span class="p">,</span> <span class="n">o2</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">pw2</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">9</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">FlipperParameters</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="n">FlipperIO</span><span class="p">(</span><span class="n">o1</span><span class="p">,</span> <span class="n">s1</span><span class="p">,</span> <span class="n">pw1</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">),</span> <span class="n">FlipperIO</span><span class="p">(</span><span class="n">o2</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">pw2</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
@@ -5789,11 +5789,11 @@ and <a class="autorefs autorefs-internal" title="            write" href="../mot
 <span class="normal">84</span>
 <span class="normal">85</span>
 <span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">hardware_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ThorlabsHardwareInfo</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the hardware information about the Filter Flipper.</span>
+<span class="w">    </span><span class="sd">"""Get the hardware information about the Filter Flipper.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The hardware information.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">hardware_info</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5822,7 +5822,7 @@ and <a class="autorefs autorefs-internal" title="            write" href="../mot
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">88</span>
 <span class="normal">89</span>
 <span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">identify</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Instruct the Filter Flipper to identify itself by flashing its LED.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Instruct the Filter Flipper to identify itself by flashing its LED."""</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">identify</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5881,13 +5881,13 @@ and <a class="autorefs autorefs-internal" title="            write" href="../mot
 <span class="normal"> 98</span>
 <span class="normal"> 99</span>
 <span class="normal">100</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the motor is enabled.</span>
+<span class="w">    </span><span class="sd">"""Check if the motor is enabled.</span>
 
 <span class="sd">    If enabled, power is applied to the motor so the Filter Flipper is fixed in position.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the motor is enabled or disabled.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">is_enabled</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5943,11 +5943,11 @@ and <a class="autorefs autorefs-internal" title="            write" href="../mot
 <span class="normal">106</span>
 <span class="normal">107</span>
 <span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_moving</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the Filter Flipper is moving.</span>
+<span class="w">    </span><span class="sd">"""Check if the Filter Flipper is moving.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the Filter Flipper is moving.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">()</span> <span class="o">&amp;</span> <span class="mh">0x10</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6034,14 +6034,14 @@ and <a class="autorefs autorefs-internal" title="            write" href="../mot
 <span class="normal">121</span>
 <span class="normal">122</span>
 <span class="normal">123</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">move_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Move the Filter Flipper to a position.</span>
+<span class="w">    </span><span class="sd">"""Move the Filter Flipper to a position.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        position: The position to move to (either `1` or `2`).</span>
 <span class="sd">        wait: Whether to wait for the move to complete before returning to the calling program.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">position</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">}:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid Filter Flipper position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">, must be 1 or 2&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid Filter Flipper position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">, must be 1 or 2"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mh">0x046A</span><span class="p">,</span> <span class="n">param1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">param2</span><span class="o">=</span><span class="n">position</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="mh">0x50</span><span class="p">)</span>  <span class="c1"># MGMSG_MOT_MOVE_JOG</span>
@@ -6139,17 +6139,17 @@ first and then update the appropriate attributes.</p>
 <span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">FlipperParameters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the operating parameters.</span>
+<span class="w">    </span><span class="sd">"""Set the operating parameters.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        parameters: The operating parameters. It is recommended to call</span>
 <span class="sd">            [get_parameters][msl.equipment_resources.thorlabs.mff.MFF.get_parameters]</span>
 <span class="sd">            first and then update the appropriate attributes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">tt</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">transit_time</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">)</span>
     <span class="n">tt_adc</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="mi">10000000</span> <span class="o">*</span> <span class="p">(</span><span class="n">tt</span><span class="o">**-</span><span class="mf">1.591</span><span class="p">))</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span>
-        <span class="s2">&quot;&lt;HiiHHiHHiiI&quot;</span><span class="p">,</span>
+        <span class="s2">"&lt;HiiHHiHHiiI"</span><span class="p">,</span>
         <span class="mi">1</span><span class="p">,</span>  <span class="c1"># channel</span>
         <span class="n">tt</span><span class="p">,</span>
         <span class="n">tt_adc</span><span class="p">,</span>
@@ -6221,13 +6221,13 @@ operating conditions of the Filter Flipper.</p>
 <span class="normal">179</span>
 <span class="normal">180</span>
 <span class="normal">181</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the status of the Filter Flipper.</span>
+<span class="w">    </span><span class="sd">"""Get the status of the Filter Flipper.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status. A 32-bit value that represents the current status of the Filter Flipper.</span>
 <span class="sd">            Each of the 32 bits acts as a flag (0 or 1), simultaneously indicating 32 distinct</span>
 <span class="sd">            operating conditions of the Filter Flipper.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_motion</span><span class="o">.</span><span class="n">status</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6295,13 +6295,13 @@ operating conditions of the Filter Flipper.</p>
 <span class="normal">203</span>
 <span class="normal">204</span>
 <span class="normal">205</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Toggle the position.</span>
+<span class="w">    </span><span class="sd">"""Toggle the position.</span>
 
 <span class="sd">    If at position 1 then move to position 2 (and vice versa).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        wait: Whether to wait for the move to complete before returning to the calling program.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">position</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">1</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">move_to</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="n">wait</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -6333,8 +6333,8 @@ operating conditions of the Filter Flipper.</p>
 <span class="normal">209</span>
 <span class="normal">210</span>
 <span class="normal">211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">wait_until_moved</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wait until a move is complete.&quot;&quot;&quot;</span>
-    <span class="n">sleep</span><span class="p">(</span><span class="mf">0.02</span><span class="p">)</span>  <span class="c1"># Doesn&#39;t appear to be required, but allow time for the motor to update its status</span>
+<span class="w">    </span><span class="sd">"""Wait until a move is complete."""</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="mf">0.02</span><span class="p">)</span>  <span class="c1"># Doesn't appear to be required, but allow time for the motor to update its status</span>
     <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_moving</span><span class="p">():</span>
         <span class="k">pass</span>
 </code></pre></div></td></tr></table></div>

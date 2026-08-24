@@ -6175,7 +6175,7 @@ depending on which underlying interface is used for the connection.</p>
 <span class="normal">60</span>
 <span class="normal">61</span>
 <span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for the Modbus protocol (specification v1.1b3).</span>
+<span class="w">    </span><span class="sd">"""Base class for the Modbus protocol (specification v1.1b3).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
@@ -6183,17 +6183,17 @@ depending on which underlying interface is used for the connection.</p>
 <span class="sd">    A [Connection][msl.equipment.schema.Connection] instance supports the same _properties_</span>
 <span class="sd">    as either [Serial][msl.equipment.interfaces.serial.Serial] or [Socket][msl.equipment.interfaces.socket.Socket],</span>
 <span class="sd">    depending on which underlying interface is used for the connection.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
     <span class="n">parsed</span> <span class="o">=</span> <span class="n">parse_modbus_address</span><span class="p">(</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">parsed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid Modbus address </span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid Modbus address </span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="si">!r}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span> <span class="n">Lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_repr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_str</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; at </span><span class="si">{</span><span class="n">parsed</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_repr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_str</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">" at </span><span class="si">{</span><span class="n">parsed</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">&gt;"</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_parsed</span><span class="p">:</span> <span class="n">ParsedModbusAddress</span> <span class="o">=</span> <span class="n">parsed</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_connect</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -6317,8 +6317,8 @@ and <a class="autorefs autorefs-internal" title="            write" href="#msl.e
 <span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the Modbus equipment.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_framer&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Disconnect from the Modbus equipment."""</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_framer"</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_framer</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -6479,10 +6479,10 @@ bits in the holding register.</p>
 <span class="normal">126</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mask_write_register</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">and_mask</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">65535</span><span class="p">,</span> <span class="n">or_mask</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModbusResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mask Write Register (function code `0x016`).</span>
+<span class="w">    </span><span class="sd">"""Mask Write Register (function code `0x016`).</span>
 
 <span class="sd">    Modifies the contents of the specified holding-register address using a combination of an AND mask,</span>
-<span class="sd">    an OR mask and the register&#39;s current contents. This method can be used to set or clear individual</span>
+<span class="sd">    an OR mask and the register's current contents. This method can be used to set or clear individual</span>
 <span class="sd">    bits in the holding register.</span>
 
 <span class="sd">    Args:</span>
@@ -6493,10 +6493,10 @@ bits in the holding register.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Modbus response. The response data is the result after the masks have been written.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
         <span class="n">function_code</span> <span class="o">=</span> <span class="mh">0x16</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;HHH&quot;</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">and_mask</span><span class="p">,</span> <span class="n">or_mask</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">"&gt;HHH"</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">and_mask</span><span class="p">,</span> <span class="n">or_mask</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
         <span class="n">device_id</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
         <span class="n">mr</span> <span class="o">=</span> <span class="n">ModbusResponse</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">response</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_function_code</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">mr</span><span class="p">)</span>
@@ -6603,7 +6603,7 @@ ignored for ASCII frames or if using the TCP/UDP interface.</p>
 <span class="normal">145</span>
 <span class="normal">146</span>
 <span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a Modbus message.</span>
+<span class="w">    </span><span class="sd">"""Read a Modbus message.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        size: The number of bytes to read, i.e., the size of the Application Data Unit (ADU).</span>
@@ -6614,13 +6614,13 @@ ignored for ASCII frames or if using the TCP/UDP interface.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The Modbus device ID and the Protocol Data Unit of the response, i.e., `(ID, PDU)`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">device_id</span><span class="p">,</span> <span class="n">pdu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_framer</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">pdu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mh">0x80</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
         <span class="k">return</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">pdu</span>
 
-    <span class="c1"># Consider handling exception code 5 and 6 differently (i.e., don&#39;t raise an error)</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="n">EXCEPTIONS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pdu</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;Unknown Modbus exception code 0x</span><span class="si">{</span><span class="n">pdu</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">02X</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Consider handling exception code 5 and 6 differently (i.e., don't raise an error)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">EXCEPTIONS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pdu</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="sa">f</span><span class="s2">"Unknown Modbus exception code 0x</span><span class="si">{</span><span class="n">pdu</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">02X</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6758,7 +6758,7 @@ method to get the ON/OFF state of each coil.</p>
 <span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_coils</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModbusResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read coils (function code `0x01`).</span>
+<span class="w">    </span><span class="sd">"""Read coils (function code `0x01`).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        address: Starting register address to read from. Must be in the range [0, 65535].</span>
@@ -6768,14 +6768,14 @@ method to get the ON/OFF state of each coil.</p>
 <span class="sd">    Returns:</span>
 <span class="sd">        Modbus response. Call the [bits][msl.equipment.interfaces.modbus.ModbusResponse.bits]</span>
 <span class="sd">            method to get the ON/OFF state of each coil.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">2000</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Requesting to read </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> coils, maximum allowed is 2000&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Requesting to read </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> coils, maximum allowed is 2000"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
         <span class="n">function_code</span> <span class="o">=</span> <span class="mh">0x01</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;HH&quot;</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">count</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">"&gt;HH"</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">count</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
         <span class="n">device_id</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="n">mr</span> <span class="o">=</span> <span class="n">ModbusResponse</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">response</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_function_code</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">mr</span><span class="p">)</span>
@@ -6954,7 +6954,7 @@ object ID identifies them.</p>
 <span class="normal">212</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_device_identification</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">code_id</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">object_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModbusIdentification</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read device Identification (function code `0x2B`, Modbus Encapsulated Interface type `0x0E`).</span>
+<span class="w">    </span><span class="sd">"""Read device Identification (function code `0x2B`, Modbus Encapsulated Interface type `0x0E`).</span>
 
 <span class="sd">    The read device identification interface is modelled as an address space composed</span>
 <span class="sd">    of a set of addressable data elements. The data elements are called objects and an</span>
@@ -6984,10 +6984,10 @@ object ID identifies them.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Modbus device identification.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
         <span class="n">function_code</span> <span class="o">=</span> <span class="mh">0x2B</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;BBB&quot;</span><span class="p">,</span> <span class="mh">0x0E</span><span class="p">,</span> <span class="n">code_id</span><span class="p">,</span> <span class="n">object_id</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">"&gt;BBB"</span><span class="p">,</span> <span class="mh">0x0E</span><span class="p">,</span> <span class="n">code_id</span><span class="p">,</span> <span class="n">object_id</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
         <span class="n">identification</span> <span class="o">=</span> <span class="n">ModbusIdentification</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_function_code</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">identification</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">identification</span>
@@ -7127,7 +7127,7 @@ method to get the ON/OFF state of each discrete input.</p>
 <span class="normal">234</span>
 <span class="normal">235</span>
 <span class="normal">236</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_discrete_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModbusResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read discrete inputs (function code `0x02`).</span>
+<span class="w">    </span><span class="sd">"""Read discrete inputs (function code `0x02`).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        address: Starting register address to read from. Must be in the range [0, 65535].</span>
@@ -7137,14 +7137,14 @@ method to get the ON/OFF state of each discrete input.</p>
 <span class="sd">    Returns:</span>
 <span class="sd">        Modbus response. Call the [bits][msl.equipment.interfaces.modbus.ModbusResponse.bits]</span>
 <span class="sd">            method to get the ON/OFF state of each discrete input.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">2000</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Requesting to read </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> discrete inputs, maximum allowed is 2000&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Requesting to read </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> discrete inputs, maximum allowed is 2000"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
         <span class="n">function_code</span> <span class="o">=</span> <span class="mh">0x02</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;HH&quot;</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">count</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">"&gt;HH"</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">count</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
         <span class="n">device_id</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="n">mr</span> <span class="o">=</span> <span class="n">ModbusResponse</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">response</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_function_code</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">mr</span><span class="p">)</span>
@@ -7245,7 +7245,7 @@ method to get the state of each exception-status bit.</p>
 <span class="normal">252</span>
 <span class="normal">253</span>
 <span class="normal">254</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_exception_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModbusResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read exception status (function code `0x07`).</span>
+<span class="w">    </span><span class="sd">"""Read exception status (function code `0x07`).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        device_id: Modbus device ID.</span>
@@ -7253,7 +7253,7 @@ method to get the state of each exception-status bit.</p>
 <span class="sd">    Returns:</span>
 <span class="sd">        Modbus response. Call the [bits][msl.equipment.interfaces.modbus.ModbusResponse.bits]</span>
 <span class="sd">            method to get the state of each exception-status bit.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
         <span class="n">function_code</span> <span class="o">=</span> <span class="mh">0x07</span>
         <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
@@ -7395,7 +7395,7 @@ method to get the state of each exception-status bit.</p>
 <span class="normal">275</span>
 <span class="normal">276</span>
 <span class="normal">277</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_holding_registers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModbusResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read holding registers (function code `0x03`).</span>
+<span class="w">    </span><span class="sd">"""Read holding registers (function code `0x03`).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        address: Starting register address to read from. Must be in the range [0, 65535].</span>
@@ -7404,14 +7404,14 @@ method to get the state of each exception-status bit.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Modbus response.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">125</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Requesting to read </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> holding registers, maximum allowed is 125&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Requesting to read </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> holding registers, maximum allowed is 125"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
         <span class="n">function_code</span> <span class="o">=</span> <span class="mh">0x03</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;HH&quot;</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">count</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">"&gt;HH"</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">count</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
         <span class="n">device_id</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="n">mr</span> <span class="o">=</span> <span class="n">ModbusResponse</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">response</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_function_code</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">mr</span><span class="p">)</span>
@@ -7550,7 +7550,7 @@ method to get the state of each exception-status bit.</p>
 <span class="normal">298</span>
 <span class="normal">299</span>
 <span class="normal">300</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_input_registers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModbusResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read input registers (function code `0x04`).</span>
+<span class="w">    </span><span class="sd">"""Read input registers (function code `0x04`).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        address: Starting register address to read from. Must be in the range [0, 65535].</span>
@@ -7559,14 +7559,14 @@ method to get the state of each exception-status bit.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Modbus response.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">125</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Requesting to read </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> input registers, maximum allowed is 125&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Requesting to read </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> input registers, maximum allowed is 125"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
         <span class="n">function_code</span> <span class="o">=</span> <span class="mh">0x04</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;HH&quot;</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">count</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">"&gt;HH"</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">count</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
         <span class="n">device_id</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="n">mr</span> <span class="o">=</span> <span class="n">ModbusResponse</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">response</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_function_code</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">mr</span><span class="p">)</span>
@@ -7822,7 +7822,7 @@ length is 121. Each value must be in the range [0, 65535]. See also
     <span class="n">values</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModbusResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read/Write registers (function code `0x17`).</span>
+<span class="w">    </span><span class="sd">"""Read/Write registers (function code `0x17`).</span>
 
 <span class="sd">    Performs a combination of one read operation and one write operation in a single Modbus transaction.</span>
 <span class="sd">    The write operation is performed before the read operation.</span>
@@ -7839,9 +7839,9 @@ length is 121. Each value must be in the range [0, 65535]. See also
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Modbus response.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">read_count</span> <span class="o">&gt;</span> <span class="mi">125</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Requesting to read </span><span class="si">{</span><span class="n">read_count</span><span class="si">}</span><span class="s2"> holding registers, maximum allowed is 125&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Requesting to read </span><span class="si">{</span><span class="n">read_count</span><span class="si">}</span><span class="s2"> holding registers, maximum allowed is 125"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -7851,18 +7851,18 @@ length is 121. Each value must be in the range [0, 65535]. See also
 
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">121</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Too many values, </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">, to write to the Modbus registers, must be &lt;= 121&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Too many values, </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">, to write to the Modbus registers, must be &lt;= 121"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">str</span> <span class="o">!=</span> <span class="s2">&quot;&gt;u2&quot;</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;numpy array must have a dtype of &#39;&gt;u2&#39;, got </span><span class="si">{</span><span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">str</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">str</span> <span class="o">!=</span> <span class="s2">"&gt;u2"</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"numpy array must have a dtype of '&gt;u2', got </span><span class="si">{</span><span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">str</span><span class="si">!r}</span><span class="s2">"</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
     <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">""</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&gt;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">H&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">"&gt;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">H"</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">address</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">read_address</span> <span class="o">=</span> <span class="n">address</span>
@@ -7872,7 +7872,7 @@ length is 121. Each value must be in the range [0, 65535]. See also
         <span class="n">function_code</span> <span class="o">=</span> <span class="mh">0x17</span>
         <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
             <span class="n">function_code</span><span class="p">,</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;HHHHB&quot;</span><span class="p">,</span> <span class="n">read_address</span><span class="p">,</span> <span class="n">read_count</span><span class="p">,</span> <span class="n">write_address</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="n">data</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">"&gt;HHHHB"</span><span class="p">,</span> <span class="n">read_address</span><span class="p">,</span> <span class="n">read_count</span><span class="p">,</span> <span class="n">write_address</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="n">data</span><span class="p">,</span>
             <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">device_id</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -7954,13 +7954,13 @@ of attempts has been reached then an exception is raised.</p>
 <span class="normal">385</span>
 <span class="normal">386</span>
 <span class="normal">387</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_attempts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reconnect to the Modbus equipment.</span>
+<span class="w">    </span><span class="sd">"""Reconnect to the Modbus equipment.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        max_attempts: The maximum number of attempts to try to reconnect with the equipment.</span>
 <span class="sd">            If &amp;le; 0, keep trying until a connection is successful. If the maximum number</span>
 <span class="sd">            of attempts has been reached then an exception is raised.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_framer</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 
     <span class="n">attempt</span> <span class="o">=</span> <span class="mi">0</span>
@@ -8100,7 +8100,7 @@ or <a class="autorefs autorefs-internal" title="            read_write_registers
 <span class="k">def</span><span class="w"> </span><span class="nf">to_register_values</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">],</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint16</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a value or a sequence of values to an unsigned, big-endian, 16-bit integer array.</span>
+<span class="w">    </span><span class="sd">"""Convert a value or a sequence of values to an unsigned, big-endian, 16-bit integer array.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data: The value(s) to convert. If a numpy array, the data type must be the same that the</span>
@@ -8112,12 +8112,12 @@ or <a class="autorefs autorefs-internal" title="            read_write_registers
 <span class="sd">    Returns:</span>
 <span class="sd">        An array that can be passed to [write_registers][msl.equipment.interfaces.modbus.Modbus.write_registers]</span>
 <span class="sd">            or [read_write_registers][msl.equipment.interfaces.modbus.Modbus.read_write_registers].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">]</span>
 
     <span class="n">dtype</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="o">.</span><span class="n">newbyteorder</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="s2">&quot;&gt;u2&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="o">.</span><span class="n">newbyteorder</span><span class="p">(</span><span class="s2">"&gt;"</span><span class="p">))</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="s2">"&gt;u2"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8242,7 +8242,7 @@ or <a class="autorefs autorefs-internal" title="            read_write_registers
 <span class="normal">421</span>
 <span class="normal">422</span>
 <span class="normal">423</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function_code</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a Modbus message.</span>
+<span class="w">    </span><span class="sd">"""Write a Modbus message.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        function_code: Modbus function code.</span>
@@ -8251,8 +8251,8 @@ or <a class="autorefs autorefs-internal" title="            read_write_registers
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of bytes written.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_framer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">function_code</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;big&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">data</span> <span class="ow">or</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_framer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">function_code</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">data</span> <span class="ow">or</span> <span class="sa">b</span><span class="s2">""</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8381,7 +8381,7 @@ or <a class="autorefs autorefs-internal" title="            read_write_registers
 <span class="normal">440</span>
 <span class="normal">441</span>
 <span class="normal">442</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write_coil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModbusResponse</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write single coil (function code `0x05`).</span>
+<span class="w">    </span><span class="sd">"""Write single coil (function code `0x05`).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        address: Register address to write to. Must be in the range [0, 65535].</span>
@@ -8390,10 +8390,10 @@ or <a class="autorefs autorefs-internal" title="            read_write_registers
 
 <span class="sd">    Returns:</span>
 <span class="sd">        An echo of the request, after the register contents have been written.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
         <span class="n">function_code</span> <span class="o">=</span> <span class="mh">0x05</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;HH&quot;</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="mh">0xFF00</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="mh">0x0000</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">"&gt;HH"</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="mh">0xFF00</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="mh">0x0000</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
         <span class="n">device_id</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
         <span class="n">mr</span> <span class="o">=</span> <span class="n">ModbusResponse</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">response</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_function_code</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">mr</span><span class="p">)</span>
@@ -8549,7 +8549,7 @@ composed of the starting register address and the number of registers that were 
 <span class="normal">473</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write_coils</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModbusResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write multiple coils (function code `0x0F`).</span>
+<span class="w">    </span><span class="sd">"""Write multiple coils (function code `0x0F`).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        address: Starting register address to write to. Must be in the range [0, 65535].</span>
@@ -8560,14 +8560,14 @@ composed of the starting register address and the number of registers that were 
 <span class="sd">    Returns:</span>
 <span class="sd">        The response. The [data][msl.equipment.interfaces.modbus.ModbusResponse.data] attribute is</span>
 <span class="sd">            composed of the starting register address and the number of registers that were written to.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1968</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Too many values, </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">, to write to the Modbus coils, must be &lt;= 1968&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Too many values, </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">, to write to the Modbus coils, must be &lt;= 1968"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">packbits</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span> <span class="n">bitorder</span><span class="o">=</span><span class="s2">&quot;little&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;HHB&quot;</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">+</span> <span class="n">data</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">packbits</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span> <span class="n">bitorder</span><span class="o">=</span><span class="s2">"little"</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="s2">"&gt;HHB"</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">+</span> <span class="n">data</span>
 
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
         <span class="n">function_code</span> <span class="o">=</span> <span class="mh">0x0F</span>
@@ -8706,7 +8706,7 @@ composed of the starting register address and the number of registers that were 
 <span class="normal">490</span>
 <span class="normal">491</span>
 <span class="normal">492</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write_register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModbusResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a single holding-register value (function code `0x06`).</span>
+<span class="w">    </span><span class="sd">"""Write a single holding-register value (function code `0x06`).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        address: Register address to write to. Must be in the range [0, 65535].</span>
@@ -8715,10 +8715,10 @@ composed of the starting register address and the number of registers that were 
 
 <span class="sd">    Returns:</span>
 <span class="sd">        An echo of the request, after the register contents have been written.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
         <span class="n">function_code</span> <span class="o">=</span> <span class="mh">0x06</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;HH&quot;</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pack</span><span class="p">(</span><span class="s2">"&gt;HH"</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
         <span class="n">device_id</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
         <span class="n">mr</span> <span class="o">=</span> <span class="n">ModbusResponse</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">response</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_function_code</span><span class="p">(</span><span class="n">function_code</span><span class="p">,</span> <span class="n">mr</span><span class="p">)</span>
@@ -8886,7 +8886,7 @@ composed of the starting register address and the number of registers that were 
 <span class="normal">529</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write_registers</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModbusResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write to a contiguous block of holding registers (function code `0x10`).</span>
+<span class="w">    </span><span class="sd">"""Write to a contiguous block of holding registers (function code `0x10`).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        address: Starting register address to write to. Must be in the range [0, 65535].</span>
@@ -8898,19 +8898,19 @@ composed of the starting register address and the number of registers that were 
 <span class="sd">    Returns:</span>
 <span class="sd">        The response. The [data][msl.equipment.interfaces.modbus.ModbusResponse.data] attribute is</span>
 <span class="sd">            composed of the starting register address and the number of registers that were written to.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">123</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Too many values, </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">, to write to the Modbus registers, must be &lt;= 123&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Too many values, </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">, to write to the Modbus registers, must be &lt;= 123"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">str</span> <span class="o">!=</span> <span class="s2">&quot;&gt;u2&quot;</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;numpy array must have a dtype of &#39;&gt;u2&#39;, got </span><span class="si">{</span><span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">str</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">str</span> <span class="o">!=</span> <span class="s2">"&gt;u2"</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"numpy array must have a dtype of '&gt;u2', got </span><span class="si">{</span><span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">str</span><span class="si">!r}</span><span class="s2">"</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&gt;HHB&quot;</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="n">values</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="s2">"&gt;HHB"</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="n">values</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&gt;HHB</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">H&quot;</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">"&gt;HHB</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">H"</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
         <span class="n">function_code</span> <span class="o">=</span> <span class="mh">0x010</span>
@@ -8964,27 +8964,27 @@ composed of the starting register address and the number of registers that were 
 <span class="go">ModbusIdentification(code_id=1, conformity=0x83, more_follows=False, next_object_id=0, ids=[0, 1, 2])</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">identification</span><span class="o">.</span><span class="n">objects</span>
-<span class="go">[ModbusObject(id=0, value=b&#39;MSL&#39;), ModbusObject(id=1, value=b&#39;NZ&#39;), ModbusObject(id=2, value=b&#39;5.16&#39;)]</span>
+<span class="go">[ModbusObject(id=0, value=b'MSL'), ModbusObject(id=1, value=b'NZ'), ModbusObject(id=2, value=b'5.16')]</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">identification</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">obj</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="go">0: b&#39;MSL&#39;</span>
-<span class="go">1: b&#39;NZ&#39;</span>
-<span class="go">2: b&#39;5.16&#39;</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">obj</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="go">0: b'MSL'</span>
+<span class="go">1: b'NZ'</span>
+<span class="go">2: b'5.16'</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">identification</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># object ID = 0, Manufacturer</span>
-<span class="go">b&#39;MSL&#39;</span>
+<span class="go">b'MSL'</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">identification</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># object ID = 1, Product code</span>
-<span class="go">b&#39;NZ&#39;</span>
+<span class="go">b'NZ'</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">identification</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># object ID = 2, Revision</span>
-<span class="go">b&#39;5.16&#39;</span>
+<span class="go">b'5.16'</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">identification</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="c">...</span>
-<span class="gr">KeyError</span>: <span class="n">&#39;A device-identification object with id 3 is not in the Modbus response&#39;</span>
+<span class="gr">KeyError</span>: <span class="n">'A device-identification object with id 3 is not in the Modbus response'</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">identification</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>  <span class="c1"># returns None instead of raising an error</span>
 </code></pre></div>
@@ -9077,7 +9077,7 @@ composed of the starting register address and the number of registers that were 
 <span class="normal">764</span>
 <span class="normal">765</span>
 <span class="normal">766</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Modbus device identification.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Modbus device identification.</span>
 
 <span class="sd">    Do not instantiate directly. This class is returned by the</span>
 <span class="sd">    [read_device_identification][msl.equipment.interfaces.modbus.Modbus.read_device_identification] method.</span>
@@ -9086,7 +9086,7 @@ composed of the starting register address and the number of registers that were 
 
 <span class="sd">    &lt;!--</span>
 <span class="sd">    &gt;&gt;&gt; from msl.equipment.interfaces.modbus import ModbusIdentification</span>
-<span class="sd">    &gt;&gt;&gt; identification = ModbusIdentification(1, b&quot;\x2b\x0e\x01\x83\x00\x00\x03\x00\x03MSL\x01\x02NZ\x02\x045.16&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; identification = ModbusIdentification(1, b"\x2b\x0e\x01\x83\x00\x00\x03\x00\x03MSL\x01\x02NZ\x02\x045.16")</span>
 
 <span class="sd">    --&gt;</span>
 
@@ -9095,59 +9095,59 @@ composed of the starting register address and the number of registers that were 
 <span class="sd">    ModbusIdentification(code_id=1, conformity=0x83, more_follows=False, next_object_id=0, ids=[0, 1, 2])</span>
 
 <span class="sd">    &gt;&gt;&gt; identification.objects</span>
-<span class="sd">    [ModbusObject(id=0, value=b&#39;MSL&#39;), ModbusObject(id=1, value=b&#39;NZ&#39;), ModbusObject(id=2, value=b&#39;5.16&#39;)]</span>
+<span class="sd">    [ModbusObject(id=0, value=b'MSL'), ModbusObject(id=1, value=b'NZ'), ModbusObject(id=2, value=b'5.16')]</span>
 
 <span class="sd">    &gt;&gt;&gt; for obj in identification:</span>
-<span class="sd">    ...     print(f&quot;{obj.id}: {obj.value}&quot;)</span>
-<span class="sd">    0: b&#39;MSL&#39;</span>
-<span class="sd">    1: b&#39;NZ&#39;</span>
-<span class="sd">    2: b&#39;5.16&#39;</span>
+<span class="sd">    ...     print(f"{obj.id}: {obj.value}")</span>
+<span class="sd">    0: b'MSL'</span>
+<span class="sd">    1: b'NZ'</span>
+<span class="sd">    2: b'5.16'</span>
 
 <span class="sd">    &gt;&gt;&gt; identification[0]  # object ID = 0, Manufacturer</span>
-<span class="sd">    b&#39;MSL&#39;</span>
+<span class="sd">    b'MSL'</span>
 
 <span class="sd">    &gt;&gt;&gt; identification[1]  # object ID = 1, Product code</span>
-<span class="sd">    b&#39;NZ&#39;</span>
+<span class="sd">    b'NZ'</span>
 
 <span class="sd">    &gt;&gt;&gt; identification[2]  # object ID = 2, Revision</span>
-<span class="sd">    b&#39;5.16&#39;</span>
+<span class="sd">    b'5.16'</span>
 
 <span class="sd">    &gt;&gt;&gt; identification[3]</span>
 <span class="sd">    Traceback (most recent call last):</span>
 <span class="sd">    ...</span>
-<span class="sd">    KeyError: &#39;A device-identification object with id 3 is not in the Modbus response&#39;</span>
+<span class="sd">    KeyError: 'A device-identification object with id 3 is not in the Modbus response'</span>
 
 <span class="sd">    &gt;&gt;&gt; assert identification.get(3) is None  # returns None instead of raising an error</span>
 
 <span class="sd">    ```</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">function_code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; Modbus function code.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Modbus function code."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">mei_type</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; Modbus Encapsulated Interface (MEI) type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Modbus Encapsulated Interface (MEI) type."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">code_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; Read device ID code of the request.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Read device ID code of the request."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">conformity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; Identification conformity level of the device and type of supported access.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Identification conformity level of the device and type of supported access."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">device_id</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; Modbus device ID.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Modbus device ID."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">more_follows</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[bool][] &amp;mdash; Whether the identification data does not fit into a single response and several</span>
-<span class="sd">    request/response transactions are required.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[bool][] &amp;mdash; Whether the identification data does not fit into a single response and several</span>
+<span class="sd">    request/response transactions are required."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">next_object_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; If [more_follows][msl.equipment.interfaces.modbus.ModbusIdentification.more_follows]</span>
-<span class="sd">    is `True`, the identification of the next object to be asked.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; If [more_follows][msl.equipment.interfaces.modbus.ModbusIdentification.more_follows]</span>
+<span class="sd">    is `True`, the identification of the next object to be asked."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ModbusObject</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[list][][[ModbusObject][msl.equipment.interfaces.modbus.ModbusObject]] &amp;mdash; The</span>
-<span class="sd">    device-identification objects.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[list][][[ModbusObject][msl.equipment.interfaces.modbus.ModbusObject]] &amp;mdash; The</span>
+<span class="sd">    device-identification objects."""</span>
 
     <span class="n">offset</span> <span class="o">=</span> <span class="mi">7</span>
     <span class="k">while</span> <span class="n">offset</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="p">):</span>
@@ -9460,7 +9460,7 @@ is not in the Modbus response.</p>
 <span class="normal">804</span>
 <span class="normal">805</span>
 <span class="normal">806</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the value of an object ID.</span>
+<span class="w">    </span><span class="sd">"""Get the value of an object ID.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        object_id: The ID of a device-identification object.</span>
@@ -9468,7 +9468,7 @@ is not in the Modbus response.</p>
 <span class="sd">    Returns:</span>
 <span class="sd">        The corresponding value or `None` if a device-identification object with id `object_id`</span>
 <span class="sd">            is not in the Modbus response.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">o</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">object_id</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">o</span><span class="o">.</span><span class="n">value</span>
@@ -9618,8 +9618,8 @@ methods.</p>
 -->
 
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">mr</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">read_holding_registers</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mr</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="s2">&quot;uint16&quot;</span><span class="p">)</span>
-<span class="go">array([ 1000,    16, 52100,  4325], dtype=&#39;&gt;u2&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mr</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="s2">"uint16"</span><span class="p">)</span>
+<span class="go">array([ 1000,    16, 52100,  4325], dtype='&gt;u2')</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mr</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">read_input_registers</span><span class="p">(</span><span class="mi">780</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mr</span><span class="o">.</span><span class="n">float32</span><span class="p">()</span>
@@ -9686,7 +9686,7 @@ methods.</p>
 <span class="normal">592</span>
 <span class="normal">593</span>
 <span class="normal">594</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">function_code</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Modbus response.</span>
+<span class="w">    </span><span class="sd">"""Modbus response.</span>
 
 <span class="sd">    Do not instantiate directly. This class is returned by most [Modbus][msl.equipment.interfaces.modbus.Modbus]</span>
 <span class="sd">    methods.</span>
@@ -9695,10 +9695,10 @@ methods.</p>
 
 <span class="sd">    &lt;!--</span>
 <span class="sd">    &gt;&gt;&gt; import numpy</span>
-<span class="sd">    &gt;&gt;&gt; if tuple(map(int, numpy.__version__.split(&quot;.&quot;)))[0] &lt; 2:</span>
+<span class="sd">    &gt;&gt;&gt; if tuple(map(int, numpy.__version__.split(".")))[0] &lt; 2:</span>
 <span class="sd">    ...     import pytest</span>
-<span class="sd">    ...     pytest.skip(&quot;numpy too old, prints dtype=&#39;uint16&#39;&quot;)</span>
-<span class="sd">    &gt;&gt;&gt; device = Connection(&quot;Modbus::/mock://&quot;).connect()</span>
+<span class="sd">    ...     pytest.skip("numpy too old, prints dtype='uint16'")</span>
+<span class="sd">    &gt;&gt;&gt; device = Connection("Modbus::/mock://").connect()</span>
 <span class="sd">    &gt;&gt;&gt; device._framer.interface.serial.add_response(bytes([1, 3, 8, 3, 232, 0, 16, 203, 132, 16, 229, 206, 73]))</span>
 <span class="sd">    &gt;&gt;&gt; device._framer.interface.serial.add_response(bytes([1, 4, 4, 65, 172, 0, 0, 47, 153]))</span>
 <span class="sd">    &gt;&gt;&gt; device._framer.interface.serial.add_response(bytes([1, 1, 1, 98, 208, 97]))</span>
@@ -9707,8 +9707,8 @@ methods.</p>
 
 <span class="sd">    ```pycon</span>
 <span class="sd">    &gt;&gt;&gt; mr = device.read_holding_registers(1, count=4)</span>
-<span class="sd">    &gt;&gt;&gt; mr.array(&quot;uint16&quot;)</span>
-<span class="sd">    array([ 1000,    16, 52100,  4325], dtype=&#39;&gt;u2&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; mr.array("uint16")</span>
+<span class="sd">    array([ 1000,    16, 52100,  4325], dtype='&gt;u2')</span>
 
 <span class="sd">    &gt;&gt;&gt; mr = device.read_input_registers(780, count=2)</span>
 <span class="sd">    &gt;&gt;&gt; mr.float32()</span>
@@ -9720,18 +9720,18 @@ methods.</p>
 
 <span class="sd">    ```</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">count</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; The number of registers/coils that were requested to read.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; The number of registers/coils that were requested to read."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">device_id</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; Modbus device ID.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Modbus device ID."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">function_code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">function_code</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; Modbus function code.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Modbus function code."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">data</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[bytes][] &amp;mdash; Modbus data.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[bytes][] &amp;mdash; Modbus data."""</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -9867,10 +9867,10 @@ methods.</p>
 <span class="normal">605</span>
 <span class="normal">606</span>
 <span class="normal">607</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[numpy.ndarray][] &amp;mdash; Returns the register data as a [numpy.ndarray][] of the specified `dtype`.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dtype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s2">&quot;&lt;&gt;=|&quot;</span><span class="p">):</span>
-        <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">newbyteorder</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">)</span>  <span class="c1"># force big endian</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;&gt;u2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">"""[numpy.ndarray][] &amp;mdash; Returns the register data as a [numpy.ndarray][] of the specified `dtype`."""</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dtype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s2">"&lt;&gt;=|"</span><span class="p">):</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">newbyteorder</span><span class="p">(</span><span class="s2">"&gt;"</span><span class="p">)</span>  <span class="c1"># force big endian</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&gt;u2"</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9885,7 +9885,7 @@ methods.</p>
 
 
 <a href="#msl.equipment.interfaces.modbus.ModbusResponse.bits" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">bits</span><span class="p">(</span><span class="n">bit_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">&#39;big&#39;</span><span class="p">,</span> <span class="s1">&#39;little&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;little&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.NDArray" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.NDArray">NDArray</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="numpy.bool" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.bool">bool</a></span><span class="p">]</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">bits</span><span class="p">(</span><span class="n">bit_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'big'</span><span class="p">,</span> <span class="s1">'little'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'little'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.NDArray" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.NDArray">NDArray</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="numpy.bool" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.bool">bool</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -9898,8 +9898,8 @@ methods.</p>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">609</span>
 <span class="normal">610</span>
 <span class="normal">611</span>
-<span class="normal">612</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">bits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bit_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;big&quot;</span><span class="p">,</span> <span class="s2">&quot;little&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;little&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[numpy.ndarray][] &amp;mdash; Returns the states of the register bits for the specified `bit_order`.&quot;&quot;&quot;</span>
+<span class="normal">612</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">bits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bit_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"little"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""[numpy.ndarray][] &amp;mdash; Returns the states of the register bits for the specified `bit_order`."""</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unpackbits</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="n">bitorder</span><span class="o">=</span><span class="n">bit_order</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -9916,7 +9916,7 @@ methods.</p>
 
 
 <a href="#msl.equipment.interfaces.modbus.ModbusResponse.decode" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">'utf-8'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -9928,8 +9928,8 @@ methods.</p>
               <summary>Source code in <code>src/msl/equipment/interfaces/modbus.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">614</span>
 <span class="normal">615</span>
-<span class="normal">616</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[str][] &amp;mdash; Returns the decoded response data using the `encoding` codec.&quot;&quot;&quot;</span>
+<span class="normal">616</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"utf-8"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""[str][] &amp;mdash; Returns the decoded response data using the `encoding` codec."""</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9945,7 +9945,7 @@ methods.</p>
 
 
 <a href="#msl.equipment.interfaces.modbus.ModbusResponse.float32" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">float32</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">&#39;big&#39;</span><span class="p">,</span> <span class="s1">&#39;little&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">float32</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'big'</span><span class="p">,</span> <span class="s1">'little'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'big'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -9959,10 +9959,10 @@ methods.</p>
 <span class="normal">619</span>
 <span class="normal">620</span>
 <span class="normal">621</span>
-<span class="normal">622</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">float32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;big&quot;</span><span class="p">,</span> <span class="s2">&quot;little&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;big&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[float][] &amp;mdash; Returns the register data as a 32-bit, floating-point number for the specified `byte_order`.&quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">&quot;big&quot;</span> <span class="k">else</span> <span class="s2">&quot;&lt;&quot;</span>
-    <span class="n">f32</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="normal">622</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">float32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""[float][] &amp;mdash; Returns the register data as a 32-bit, floating-point number for the specified `byte_order`."""</span>  <span class="c1"># noqa: E501</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
+    <span class="n">f32</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"f"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">f32</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9978,7 +9978,7 @@ methods.</p>
 
 
 <a href="#msl.equipment.interfaces.modbus.ModbusResponse.float64" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">float64</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">&#39;big&#39;</span><span class="p">,</span> <span class="s1">&#39;little&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">float64</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'big'</span><span class="p">,</span> <span class="s1">'little'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'big'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -9992,10 +9992,10 @@ methods.</p>
 <span class="normal">625</span>
 <span class="normal">626</span>
 <span class="normal">627</span>
-<span class="normal">628</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">float64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;big&quot;</span><span class="p">,</span> <span class="s2">&quot;little&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;big&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[float][] &amp;mdash; Returns the register data as a 64-bit, floating-point number for the specified `byte_order`.&quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">&quot;big&quot;</span> <span class="k">else</span> <span class="s2">&quot;&lt;&quot;</span>
-    <span class="n">f64</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="normal">628</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">float64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""[float][] &amp;mdash; Returns the register data as a 64-bit, floating-point number for the specified `byte_order`."""</span>  <span class="c1"># noqa: E501</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
+    <span class="n">f64</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"d"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">f64</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10011,7 +10011,7 @@ methods.</p>
 
 
 <a href="#msl.equipment.interfaces.modbus.ModbusResponse.int16" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">int16</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">&#39;big&#39;</span><span class="p">,</span> <span class="s1">&#39;little&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">int16</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'big'</span><span class="p">,</span> <span class="s1">'little'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'big'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -10025,10 +10025,10 @@ methods.</p>
 <span class="normal">631</span>
 <span class="normal">632</span>
 <span class="normal">633</span>
-<span class="normal">634</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">int16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;big&quot;</span><span class="p">,</span> <span class="s2">&quot;little&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;big&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; Returns the register data as a signed, 16-bit integer for the specified `byte_order`.&quot;&quot;&quot;</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">&quot;big&quot;</span> <span class="k">else</span> <span class="s2">&quot;&lt;&quot;</span>
-    <span class="n">i16</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="normal">634</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">int16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Returns the register data as a signed, 16-bit integer for the specified `byte_order`."""</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
+    <span class="n">i16</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"h"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">i16</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10044,7 +10044,7 @@ methods.</p>
 
 
 <a href="#msl.equipment.interfaces.modbus.ModbusResponse.int32" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">int32</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">&#39;big&#39;</span><span class="p">,</span> <span class="s1">&#39;little&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">int32</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'big'</span><span class="p">,</span> <span class="s1">'little'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'big'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -10058,10 +10058,10 @@ methods.</p>
 <span class="normal">637</span>
 <span class="normal">638</span>
 <span class="normal">639</span>
-<span class="normal">640</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">int32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;big&quot;</span><span class="p">,</span> <span class="s2">&quot;little&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;big&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; Returns the register data as a signed, 32-bit integer for the specified `byte_order`.&quot;&quot;&quot;</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">&quot;big&quot;</span> <span class="k">else</span> <span class="s2">&quot;&lt;&quot;</span>
-    <span class="n">i32</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="normal">640</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">int32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Returns the register data as a signed, 32-bit integer for the specified `byte_order`."""</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
+    <span class="n">i32</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"i"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">i32</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10077,7 +10077,7 @@ methods.</p>
 
 
 <a href="#msl.equipment.interfaces.modbus.ModbusResponse.int64" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">int64</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">&#39;big&#39;</span><span class="p">,</span> <span class="s1">&#39;little&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">int64</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'big'</span><span class="p">,</span> <span class="s1">'little'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'big'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -10091,10 +10091,10 @@ methods.</p>
 <span class="normal">643</span>
 <span class="normal">644</span>
 <span class="normal">645</span>
-<span class="normal">646</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">int64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;big&quot;</span><span class="p">,</span> <span class="s2">&quot;little&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;big&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; Returns the register data as a signed, 64-bit integer for the specified `byte_order`.&quot;&quot;&quot;</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">&quot;big&quot;</span> <span class="k">else</span> <span class="s2">&quot;&lt;&quot;</span>
-    <span class="n">i64</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="normal">646</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">int64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Returns the register data as a signed, 64-bit integer for the specified `byte_order`."""</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
+    <span class="n">i64</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"q"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">i64</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10110,7 +10110,7 @@ methods.</p>
 
 
 <a href="#msl.equipment.interfaces.modbus.ModbusResponse.uint16" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">uint16</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">&#39;big&#39;</span><span class="p">,</span> <span class="s1">&#39;little&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">uint16</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'big'</span><span class="p">,</span> <span class="s1">'little'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'big'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -10124,10 +10124,10 @@ methods.</p>
 <span class="normal">649</span>
 <span class="normal">650</span>
 <span class="normal">651</span>
-<span class="normal">652</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">uint16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;big&quot;</span><span class="p">,</span> <span class="s2">&quot;little&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;big&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; Returns the register data as an unsigned, 16-bit integer for the specified `byte_order`.&quot;&quot;&quot;</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">&quot;big&quot;</span> <span class="k">else</span> <span class="s2">&quot;&lt;&quot;</span>
-    <span class="n">u16</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="normal">652</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">uint16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Returns the register data as an unsigned, 16-bit integer for the specified `byte_order`."""</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
+    <span class="n">u16</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"H"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">u16</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10143,7 +10143,7 @@ methods.</p>
 
 
 <a href="#msl.equipment.interfaces.modbus.ModbusResponse.uint32" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">uint32</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">&#39;big&#39;</span><span class="p">,</span> <span class="s1">&#39;little&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">uint32</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'big'</span><span class="p">,</span> <span class="s1">'little'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'big'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -10157,10 +10157,10 @@ methods.</p>
 <span class="normal">655</span>
 <span class="normal">656</span>
 <span class="normal">657</span>
-<span class="normal">658</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">uint32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;big&quot;</span><span class="p">,</span> <span class="s2">&quot;little&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;big&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; Returns the register data as an unsigned, 32-bit integer for the specified `byte_order`.&quot;&quot;&quot;</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">&quot;big&quot;</span> <span class="k">else</span> <span class="s2">&quot;&lt;&quot;</span>
-    <span class="n">u32</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="normal">658</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">uint32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Returns the register data as an unsigned, 32-bit integer for the specified `byte_order`."""</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
+    <span class="n">u32</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"I"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">u32</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10176,7 +10176,7 @@ methods.</p>
 
 
 <a href="#msl.equipment.interfaces.modbus.ModbusResponse.uint64" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">uint64</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">&#39;big&#39;</span><span class="p">,</span> <span class="s1">&#39;little&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">uint64</span><span class="p">(</span><span class="n">byte_order</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'big'</span><span class="p">,</span> <span class="s1">'little'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'big'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -10190,10 +10190,10 @@ methods.</p>
 <span class="normal">661</span>
 <span class="normal">662</span>
 <span class="normal">663</span>
-<span class="normal">664</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">uint64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;big&quot;</span><span class="p">,</span> <span class="s2">&quot;little&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;big&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; Returns the register data as an unsigned, 64-bit integer for the specified `byte_order`.&quot;&quot;&quot;</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">&quot;big&quot;</span> <span class="k">else</span> <span class="s2">&quot;&lt;&quot;</span>
-    <span class="n">u64</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">&quot;Q&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="normal">664</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">uint64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"big"</span><span class="p">,</span> <span class="s2">"little"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"big"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; Returns the register data as an unsigned, 64-bit integer for the specified `byte_order`."""</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="s2">"&gt;"</span> <span class="k">if</span> <span class="n">byte_order</span> <span class="o">==</span> <span class="s2">"big"</span> <span class="k">else</span> <span class="s2">"&lt;"</span>
+    <span class="n">u64</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">"Q"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">u64</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10228,11 +10228,11 @@ for more details about the <code>format</code> parameter. Modbus data is typical
 <span class="normal">670</span>
 <span class="normal">671</span>
 <span class="normal">672</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unpack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>  <span class="c1"># noqa: A002</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[tuple][] &amp;mdash; Returns a tuple containing the register data unpacked according to the `format` string.</span>
+<span class="w">    </span><span class="sd">"""[tuple][] &amp;mdash; Returns a tuple containing the register data unpacked according to the `format` string.</span>
 
 <span class="sd">    See [Byte Order, Size, and Alignment][struct-alignment] and [Format Characters][format-characters]</span>
 <span class="sd">    for more details about the `format` parameter. Modbus data is typically in big-endian byte order.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">unpack</span><span class="p">(</span><span class="nb">format</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>

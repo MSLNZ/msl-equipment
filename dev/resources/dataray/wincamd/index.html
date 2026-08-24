@@ -5737,8 +5737,8 @@ is installed must match the bitness of the Python interpreter that is used
 to load the <code>DATARAYOCX</code> library.</p>
 <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Data\s*Ray&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Data\s*Ray"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">""</span>
 </code></pre></div></p>
 
 
@@ -5977,7 +5977,7 @@ If <code>None</code>, use the value saved in the device firmware. <em>Default: <
 <span class="normal">102</span>
 <span class="normal">103</span>
 <span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Connect to a beam-profiling camera from DataRay.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Connect to a beam-profiling camera from DataRay.</span>
 
 <span class="sd">    The bitness (32 or 64 bit) of the DataRay Beam Profiling Software that</span>
 <span class="sd">    is installed must match the bitness of the Python interpreter that is used</span>
@@ -5986,8 +5986,8 @@ If <code>None</code>, use the value saved in the device firmware. <em>Default: <
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;Data\s*Ray&quot;</span>
-<span class="sd">    model=r&quot;&quot;</span>
+<span class="sd">    manufacturer=r"Data\s*Ray"</span>
+<span class="sd">    model=r""</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
@@ -6018,13 +6018,13 @@ If <code>None</code>, use the value saved in the device firmware. <em>Default: <
 <span class="sd">        wavelength (float | None): The wavelength, in nm, of the incident light.</span>
 <span class="sd">            If `None`, use the value saved in the device firmware. _Default: `None`_</span>
 <span class="sd">        ui_size (int): The height, in pixels, of a button for the user interface. _Default: `25`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">msl.loadlib.activex</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindowClassStyle</span>  <span class="c1"># noqa: PLC0415</span>
 
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
-    <span class="n">prefix</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;SDK::&quot;</span><span class="p">)</span> <span class="p">:]</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s2">"SDK::"</span><span class="p">)</span> <span class="p">:]</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="n">equipment</span><span class="p">,</span> <span class="n">libtype</span><span class="o">=</span><span class="s2">&quot;activex&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">.GetDataCtrl.1&quot;</span><span class="p">,</span> <span class="n">class_style</span><span class="o">=</span><span class="n">WindowClassStyle</span><span class="o">.</span><span class="n">NOCLOSE</span>
+        <span class="n">equipment</span><span class="p">,</span> <span class="n">libtype</span><span class="o">=</span><span class="s2">"activex"</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">.GetDataCtrl.1"</span><span class="p">,</span> <span class="n">class_style</span><span class="o">=</span><span class="n">WindowClassStyle</span><span class="o">.</span><span class="n">NOCLOSE</span>
     <span class="p">)</span>
 
     <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">application</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
@@ -6034,21 +6034,21 @@ If <code>None</code>, use the value saved in the device firmware. <em>Default: <
         <span class="n">app</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">application</span><span class="p">,</span>
         <span class="n">sdk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="p">,</span>
         <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
-        <span class="n">camera_index</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;camera_index&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-        <span class="n">major_minor_method</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;major_minor_method&quot;</span><span class="p">),</span>
-        <span class="n">centroid_method</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;centroid_method&quot;</span><span class="p">),</span>
-        <span class="n">area_filter</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;area_filter&quot;</span><span class="p">),</span>
-        <span class="n">full_scale_filter</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;full_scale_filter&quot;</span><span class="p">),</span>
-        <span class="n">ui_size</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ui_size&quot;</span><span class="p">,</span> <span class="mi">25</span><span class="p">),</span>
-        <span class="n">plateau_uniformity</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;plateau_uniformity&quot;</span><span class="p">),</span>
+        <span class="n">camera_index</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"camera_index"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">major_minor_method</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"major_minor_method"</span><span class="p">),</span>
+        <span class="n">centroid_method</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"centroid_method"</span><span class="p">),</span>
+        <span class="n">area_filter</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"area_filter"</span><span class="p">),</span>
+        <span class="n">full_scale_filter</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"full_scale_filter"</span><span class="p">),</span>
+        <span class="n">ui_size</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ui_size"</span><span class="p">,</span> <span class="mi">25</span><span class="p">),</span>
+        <span class="n">plateau_uniformity</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"plateau_uniformity"</span><span class="p">),</span>
     <span class="p">)</span>
 
-    <span class="n">wavelength</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;wavelength&quot;</span><span class="p">)</span>
+    <span class="n">wavelength</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"wavelength"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">wavelength</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">=</span> <span class="n">wavelength</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">StartDriver</span><span class="p">():</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot start the DataRay driver&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Cannot start the DataRay driver"</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
                   </details>
@@ -6850,11 +6850,11 @@ If <code>None</code>, use the value saved in the device firmware. <em>Default: <
 <span class="normal">118</span>
 <span class="normal">119</span>
 <span class="normal">120</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">capture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Capture image.</span>
+<span class="w">    </span><span class="sd">"""Capture image.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        timeout: The maximum number of seconds to wait to capture the image.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ocx</span><span class="o">.</span><span class="n">capture</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">TimeoutError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -6889,8 +6889,8 @@ If <code>None</code>, use the value saved in the device firmware. <em>Default: <
 <span class="normal">125</span>
 <span class="normal">126</span>
 <span class="normal">127</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the `DATARAYOCX` library.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_ocx&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">application</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Disconnect from the `DATARAYOCX` library."""</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_ocx"</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">application</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ocx</span><span class="o">.</span><span class="n">stop_device</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">application</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
@@ -6925,10 +6925,10 @@ If <code>None</code>, use the value saved in the device firmware. <em>Default: <
 <span class="normal">261</span>
 <span class="normal">262</span>
 <span class="normal">263</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">wait_to_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wait until the camera has been configured.</span>
+<span class="w">    </span><span class="sd">"""Wait until the camera has been configured.</span>
 
 <span class="sd">    This is a blocking call and waits until the popup window is closed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_ocx</span><span class="o">.</span><span class="n">wait_to_configure</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>

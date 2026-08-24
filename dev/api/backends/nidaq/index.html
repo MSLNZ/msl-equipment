@@ -5019,18 +5019,18 @@ to <code>NIDAQ</code> to use this class for the communication backend.</p>
 method is equivalent to importing the <a href="https://nidaqmx-python.readthedocs.io/en/stable/index.html">NI-DAQmx</a> package, e.g.,</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Backend</span><span class="p">,</span> <span class="n">Connection</span>
 
-<span class="n">connection</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="s2">&quot;Dev1&quot;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">Backend</span><span class="o">.</span><span class="n">NIDAQ</span><span class="p">)</span>
+<span class="n">connection</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="s2">"Dev1"</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">Backend</span><span class="o">.</span><span class="n">NIDAQ</span><span class="p">)</span>
 <span class="n">nidaqmx</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 
 <span class="k">with</span> <span class="n">nidaqmx</span><span class="o">.</span><span class="n">Task</span><span class="p">()</span> <span class="k">as</span> <span class="n">task</span><span class="p">:</span>
-    <span class="n">task</span><span class="o">.</span><span class="n">ai_channels</span><span class="o">.</span><span class="n">add_ai_voltage_chan</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nidaqmx</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">/ai0&quot;</span><span class="p">)</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">ai_channels</span><span class="o">.</span><span class="n">add_ai_voltage_chan</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nidaqmx</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">/ai0"</span><span class="p">)</span>
     <span class="n">voltage</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 </code></pre></div>
 <p>is equivalent to</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">nidaqmx</span>
 
 <span class="k">with</span> <span class="n">nidaqmx</span><span class="o">.</span><span class="n">Task</span><span class="p">()</span> <span class="k">as</span> <span class="n">task</span><span class="p">:</span>
-    <span class="n">task</span><span class="o">.</span><span class="n">ai_channels</span><span class="o">.</span><span class="n">add_ai_voltage_chan</span><span class="p">(</span><span class="s2">&quot;Dev1/ai0&quot;</span><span class="p">)</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">ai_channels</span><span class="o">.</span><span class="n">add_ai_voltage_chan</span><span class="p">(</span><span class="s2">"Dev1/ai0"</span><span class="p">)</span>
     <span class="n">voltage</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 </code></pre></div>
 <p>You can also combine the packages, use <code>msl-equipment</code> for managing information
@@ -5040,14 +5040,14 @@ features like code completion and type checking.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">nidaqmx</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
 
-<span class="c1"># config.xml contains &lt;equipment eid=&quot;MSLE.0.142&quot; name=&quot;daq&quot; manufacturer=&quot;NI&quot;/&gt;</span>
+<span class="c1"># config.xml contains &lt;equipment eid="MSLE.0.142" name="daq" manufacturer="NI"/&gt;</span>
 <span class="c1"># and specifies where the equipment registers are and the connections file.</span>
-<span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">&quot;config.xml&quot;</span><span class="p">)</span>
-<span class="n">equipment</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;daq&quot;</span><span class="p">]</span>
+<span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">"config.xml"</span><span class="p">)</span>
+<span class="n">equipment</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">"daq"</span><span class="p">]</span>
 <span class="n">address</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span>
 
 <span class="k">with</span> <span class="n">nidaqmx</span><span class="o">.</span><span class="n">Task</span><span class="p">()</span> <span class="k">as</span> <span class="n">task</span><span class="p">:</span>
-    <span class="n">task</span><span class="o">.</span><span class="n">ai_channels</span><span class="o">.</span><span class="n">add_ai_voltage_chan</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">/ai0&quot;</span><span class="p">)</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">ai_channels</span><span class="o">.</span><span class="n">add_ai_voltage_chan</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">/ai0"</span><span class="p">)</span>
     <span class="n">voltage</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
     <span class="c1"># You could now use the `equipment` instance to apply a correction to the `voltage`</span>
@@ -5167,7 +5167,7 @@ how to use the <code>nidaqmx</code> package.</p>
 <span class="normal">92</span>
 <span class="normal">93</span>
 <span class="normal">94</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use [NI-DAQmx] as the backend to communicate with the equipment.</span>
+<span class="w">    </span><span class="sd">"""Use [NI-DAQmx] as the backend to communicate with the equipment.</span>
 
 <span class="sd">    The [backend][msl.equipment.schema.Connection.backend] value must be equal</span>
 <span class="sd">    to `NIDAQ` to use this class for the communication backend.</span>
@@ -5178,11 +5178,11 @@ how to use the <code>nidaqmx</code> package.</p>
 <span class="sd">    ```python</span>
 <span class="sd">    from msl.equipment import Backend, Connection</span>
 
-<span class="sd">    connection = Connection(address=&quot;Dev1&quot;, backend=Backend.NIDAQ)</span>
+<span class="sd">    connection = Connection(address="Dev1", backend=Backend.NIDAQ)</span>
 <span class="sd">    nidaqmx = connection.connect()</span>
 
 <span class="sd">    with nidaqmx.Task() as task:</span>
-<span class="sd">        task.ai_channels.add_ai_voltage_chan(f&quot;{nidaqmx.address}/ai0&quot;)</span>
+<span class="sd">        task.ai_channels.add_ai_voltage_chan(f"{nidaqmx.address}/ai0")</span>
 <span class="sd">        voltage = task.read()</span>
 <span class="sd">    ```</span>
 
@@ -5192,7 +5192,7 @@ how to use the <code>nidaqmx</code> package.</p>
 <span class="sd">    import nidaqmx</span>
 
 <span class="sd">    with nidaqmx.Task() as task:</span>
-<span class="sd">        task.ai_channels.add_ai_voltage_chan(&quot;Dev1/ai0&quot;)</span>
+<span class="sd">        task.ai_channels.add_ai_voltage_chan("Dev1/ai0")</span>
 <span class="sd">        voltage = task.read()</span>
 <span class="sd">    ```</span>
 
@@ -5205,14 +5205,14 @@ how to use the <code>nidaqmx</code> package.</p>
 <span class="sd">    import nidaqmx</span>
 <span class="sd">    from msl.equipment import Config</span>
 
-<span class="sd">    # config.xml contains &lt;equipment eid=&quot;MSLE.0.142&quot; name=&quot;daq&quot; manufacturer=&quot;NI&quot;/&gt;</span>
+<span class="sd">    # config.xml contains &lt;equipment eid="MSLE.0.142" name="daq" manufacturer="NI"/&gt;</span>
 <span class="sd">    # and specifies where the equipment registers are and the connections file.</span>
-<span class="sd">    cfg = Config(&quot;config.xml&quot;)</span>
-<span class="sd">    equipment = cfg.equipment[&quot;daq&quot;]</span>
+<span class="sd">    cfg = Config("config.xml")</span>
+<span class="sd">    equipment = cfg.equipment["daq"]</span>
 <span class="sd">    address = equipment.connection.address</span>
 
 <span class="sd">    with nidaqmx.Task() as task:</span>
-<span class="sd">        task.ai_channels.add_ai_voltage_chan(f&quot;{address}/ai0&quot;)</span>
+<span class="sd">        task.ai_channels.add_ai_voltage_chan(f"{address}/ai0")</span>
 <span class="sd">        voltage = task.read()</span>
 
 <span class="sd">        # You could now use the `equipment` instance to apply a correction to the `voltage`</span>
@@ -5226,11 +5226,11 @@ how to use the <code>nidaqmx</code> package.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">nidaqmx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no branch</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;nidaqmx is not installed, run: pip install nidaqmx&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"nidaqmx is not installed, run: pip install nidaqmx"</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
                   </details>
@@ -5354,22 +5354,22 @@ instance gets garbage collected, which happens when the reference count is 0.</p
 <span class="normal">3364</span>
 <span class="normal">3365</span>
 <span class="normal">3366</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the equipment.</span>
+<span class="w">    </span><span class="sd">"""Disconnect from the equipment.</span>
 
 <span class="sd">    This method can be overridden in the subclass if the subclass must implement</span>
 <span class="sd">    tasks that need to be performed in order to safely disconnect from the equipment.</span>
 
 <span class="sd">    For example,</span>
 
-<span class="sd">    * to clean up system resources from memory (e.g., if using a manufacturer&#39;s SDK)</span>
+<span class="sd">    * to clean up system resources from memory (e.g., if using a manufacturer's SDK)</span>
 <span class="sd">    * to configure the equipment to be in a state that is safe for people</span>
 <span class="sd">      working in the lab when the equipment is not in use</span>
 
 <span class="sd">    !!! tip</span>
 <span class="sd">        This method gets called automatically when the [Interface][msl.equipment.schema.Interface]</span>
 <span class="sd">        instance gets garbage collected, which happens when the reference count is 0.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Disconnected from </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Disconnected from </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

@@ -5293,8 +5293,8 @@
 
         <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Iso.*Tech.*&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;milli.*K.*&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Iso.*Tech.*"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">"milli.*K.*"</span>
 <span class="n">flags</span><span class="o">=</span><span class="n">IGNORECASE</span>
 </code></pre></div></p>
 
@@ -5375,37 +5375,37 @@
 <span class="normal">136</span>
 <span class="normal">137</span>
 <span class="normal">138</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[IsoTech](https://isotech.co.uk/) milliK Precision Thermometer.</span>
+<span class="w">    </span><span class="sd">"""[IsoTech](https://isotech.co.uk/) milliK Precision Thermometer.</span>
 
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;Iso.*Tech.*&quot;</span>
-<span class="sd">    model=r&quot;milli.*K.*&quot;</span>
+<span class="sd">    manufacturer=r"Iso.*Tech.*"</span>
+<span class="sd">    model=r"milli.*K.*"</span>
 <span class="sd">    flags=IGNORECASE</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_rstrip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_read_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_read_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\r</span><span class="s2">"</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\r</span><span class="s2">"</span>
 
     <span class="c1"># REMOTE mode speeds up communication and is required for voltage measurements</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;MILLIK:REMOTE&quot;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"MILLIK:REMOTE"</span><span class="p">)</span>
 
     <span class="n">devices</span><span class="p">,</span> <span class="n">channels</span> <span class="o">=</span> <span class="n">_find_channel_numbers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="c1"># These are the strings that would be returned from each device by the *IDN? command</span>
-    <span class="c1"># e.g. [&#39;Isothermal Technology,millisKanner,21-P2593,2.01&#39;, &#39;Isothermal Technology,milliK,21-P2460,4.0.0&#39;]</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MilliKDevice</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">MilliKDevice</span><span class="p">(</span><span class="o">*</span><span class="n">d</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">]</span>
+    <span class="c1"># e.g. ['Isothermal Technology,millisKanner,21-P2593,2.01', 'Isothermal Technology,milliK,21-P2460,4.0.0']</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MilliKDevice</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">MilliKDevice</span><span class="p">(</span><span class="o">*</span><span class="n">d</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">))</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">]</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_channels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">channels</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">channel_configuration</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Current</span> <span class="o">|</span> <span class="n">Resistance</span> <span class="o">|</span> <span class="n">Voltage</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The channels that have been configured.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""The channels that have been configured."""</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -5555,10 +5555,10 @@ connected to a single millisKanner.</p>
 <span class="normal">162</span>
 <span class="normal">163</span>
 <span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">configure_current_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configure the milliK to measure current on channel 3.</span>
+<span class="w">    </span><span class="sd">"""Configure the milliK to measure current on channel 3.</span>
 
 <span class="sd">    The current is from a 4-20 mA transmitter on the rear of the milliK.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">channel_configuration</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">Current</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5691,7 +5691,7 @@ Thermistors (resistance measurements in the 500 k&Omega; range) always use 2 μA
 <span class="normal">186</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">configure_resistance_measurement</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">resistance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">root2</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">wire3</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Configure the milliK to measure resistance for the specified channel.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Configure the milliK to measure resistance for the specified channel.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        channel: The channel to configure for resistance measurements.</span>
@@ -5701,13 +5701,13 @@ Thermistors (resistance measurements in the 500 k&Omega; range) always use 2 μA
 <span class="sd">        root2: Use $\sqrt{2}$ mA sense current instead of the normal 1 mA sense current.</span>
 <span class="sd">            Thermistors (resistance measurements in the 500 k&amp;Omega; range) always use 2 μA.</span>
 <span class="sd">        wire3: Whether the wiring arrangement is for 3 wires instead of the typical 4 wires.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">channel</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channels</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Channel </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2"> is not available in the connected milliK devices&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Channel </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2"> is not available in the connected milliK devices"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">channel_configuration</span><span class="p">[</span><span class="n">channel</span><span class="p">]</span> <span class="o">=</span> <span class="n">Resistance</span><span class="p">(</span>
-        <span class="nb">range</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">resistance</span><span class="p">),</span> <span class="n">current</span><span class="o">=</span><span class="s2">&quot;ROOT2&quot;</span> <span class="k">if</span> <span class="n">root2</span> <span class="k">else</span> <span class="s2">&quot;NORMAL&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">3</span> <span class="k">if</span> <span class="n">wire3</span> <span class="k">else</span> <span class="mi">4</span>
+        <span class="nb">range</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">resistance</span><span class="p">),</span> <span class="n">current</span><span class="o">=</span><span class="s2">"ROOT2"</span> <span class="k">if</span> <span class="n">root2</span> <span class="k">else</span> <span class="s2">"NORMAL"</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">3</span> <span class="k">if</span> <span class="n">wire3</span> <span class="k">else</span> <span class="mi">4</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5825,7 +5825,7 @@ enumeration, e.g., <code>K</code>, <code>J</code>, <code>AU_PT</code>.</p>
 <span class="normal">207</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">configure_voltage_measurement</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rjc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">thermocouple</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configure the milliK to measure voltage for the specified channel.</span>
+<span class="w">    </span><span class="sd">"""Configure the milliK to measure voltage for the specified channel.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        channel: The channel to configure for voltage measurements.</span>
@@ -5833,14 +5833,14 @@ enumeration, e.g., <code>K</code>, <code>J</code>, <code>AU_PT</code>.</p>
 <span class="sd">        thermocouple: The type of thermocouple that is used. If the `thermocouple` value is</span>
 <span class="sd">            of type [str][], it must be a member name of the [Type][msl.equipment_resources.isotech.millik.Type]</span>
 <span class="sd">            enumeration, e.g., `K`, `J`, `AU_PT`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">channel</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channels</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Channel </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2"> is not available in the connected milliK devices&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Channel </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2"> is not available in the connected milliK devices"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">channel_configuration</span><span class="p">[</span><span class="n">channel</span><span class="p">]</span> <span class="o">=</span> <span class="n">Voltage</span><span class="p">(</span>
-        <span class="n">rjc</span><span class="o">=</span><span class="s2">&quot;INTERNAL&quot;</span> <span class="k">if</span> <span class="n">rjc</span> <span class="k">else</span> <span class="s2">&quot;NONE&quot;</span><span class="p">,</span>
-        <span class="n">thermocouple</span><span class="o">=</span><span class="s2">&quot;NONE&quot;</span> <span class="k">if</span> <span class="n">thermocouple</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">thermocouple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">rjc</span><span class="o">=</span><span class="s2">"INTERNAL"</span> <span class="k">if</span> <span class="n">rjc</span> <span class="k">else</span> <span class="s2">"NONE"</span><span class="p">,</span>
+        <span class="n">thermocouple</span><span class="o">=</span><span class="s2">"NONE"</span> <span class="k">if</span> <span class="n">thermocouple</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">thermocouple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5873,11 +5873,11 @@ enumeration, e.g., <code>K</code>, <code>J</code>, <code>AU_PT</code>.</p>
 <span class="normal">213</span>
 <span class="normal">214</span>
 <span class="normal">215</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the milliK device to LOCAL mode then disconnect from the device.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Return the milliK device to LOCAL mode then disconnect from the device."""</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connected</span><span class="p">:</span>
         <span class="k">return</span>
 
-    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;MILLIK:LOCAL&quot;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"MILLIK:LOCAL"</span><span class="p">)</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5972,14 +5972,14 @@ enumeration, e.g., <code>K</code>, <code>J</code>, <code>AU_PT</code>.</p>
 <span class="normal">229</span>
 <span class="normal">230</span>
 <span class="normal">231</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_all_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read from all configured channels.</span>
+<span class="w">    </span><span class="sd">"""Read from all configured channels.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        n: The number of readings to average for each channel.</span>
 
 <span class="sd">    Yields:</span>
 <span class="sd">        The channel number and the average measurement value for that channel.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel_configuration</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># already a single float value</span>
             <span class="k">yield</span> <span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_channel</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
@@ -6128,7 +6128,7 @@ enumeration, e.g., <code>K</code>, <code>J</code>, <code>AU_PT</code>.</p>
 <span class="normal">280</span>
 <span class="normal">281</span>
 <span class="normal">282</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a configured channel.</span>
+<span class="w">    </span><span class="sd">"""Read a configured channel.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        channel: The channel to read.</span>
@@ -6136,37 +6136,37 @@ enumeration, e.g., <code>K</code>, <code>J</code>, <code>AU_PT</code>.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of `n` readings or a single value if only one reading is requested.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">cfg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_configuration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">cfg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Please first configure channel </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2"> before attempting to read values&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Please first configure channel </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2"> before attempting to read values"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">Resistance</span><span class="p">):</span>
         <span class="n">commands</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;SENSE:CHANNEL </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;SENSE:FUNCTION RESISTANCE&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;SENSE:RESISTANCE:RANGE </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">range</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;SENSE:RESISTANCE:WIRES </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">wires</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;SENSE:CURRENT </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">current</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"SENSE:CHANNEL </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"SENSE:FUNCTION RESISTANCE"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"SENSE:RESISTANCE:RANGE </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">range</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"SENSE:RESISTANCE:WIRES </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">wires</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"SENSE:CURRENT </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">current</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="p">]</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">Voltage</span><span class="p">):</span>
         <span class="n">commands</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;SENSE:CHANNEL </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;SENSE:FUNCTION VOLTAGE&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;SENSE:PROBE </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">thermocouple</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;SENSE:RJC </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">rjc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"SENSE:CHANNEL </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"SENSE:FUNCTION VOLTAGE"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"SENSE:PROBE </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">thermocouple</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"SENSE:RJC </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">rjc</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">commands</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SENSE:CHANNEL 3&quot;</span><span class="p">,</span> <span class="s2">&quot;SENSE:FUNCTION CURRENT&quot;</span><span class="p">]</span>
+        <span class="n">commands</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"SENSE:CHANNEL 3"</span><span class="p">,</span> <span class="s2">"SENSE:FUNCTION CURRENT"</span><span class="p">]</span>
 
-    <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;READ? </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;READ?&quot;</span><span class="p">)</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">commands</span><span class="p">))</span>
+    <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"READ? </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">"READ?"</span><span class="p">)</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">";"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">commands</span><span class="p">))</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">readings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">reply</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)))</span>
+        <span class="n">readings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">reply</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)))</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Cannot map reply to float, </span><span class="si">{</span><span class="n">reply</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Cannot map reply to float, </span><span class="si">{</span><span class="n">reply</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">readings</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">readings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -6257,7 +6257,7 @@ enumeration, e.g., <code>K</code>, <code>J</code>, <code>AU_PT</code>.</p>
 
 <a href="#msl.equipment_resources.isotech.millik.Resistance" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">Resistance</span><span class="p">(</span>
-    <span class="nb">range</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;NORMAL&quot;</span><span class="p">,</span> <span class="s2">&quot;ROOT2&quot;</span><span class="p">],</span> <span class="n">wires</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+    <span class="nb">range</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">"NORMAL"</span><span class="p">,</span> <span class="s2">"ROOT2"</span><span class="p">],</span> <span class="n">wires</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div>
 
@@ -6553,8 +6553,8 @@ enumeration, e.g., <code>K</code>, <code>J</code>, <code>AU_PT</code>.</p>
   </span>
 
 <a href="#msl.equipment_resources.isotech.millik.Voltage" class="headerlink" title="Permanent link">¤</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">Voltage</span><span class="p">(</span><span class="n">rjc</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">&#39;NONE&#39;</span><span class="p">,</span> <span class="s1">&#39;INTERNAL&#39;</span><span class="p">],</span> <span class="n">thermocouple</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Type
-(Enum) (msl.equipment_resources.isotech.millik.Type)" href="#msl.equipment_resources.isotech.millik.Type">Type</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">&#39;NONE&#39;</span><span class="p">])</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">Voltage</span><span class="p">(</span><span class="n">rjc</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'NONE'</span><span class="p">,</span> <span class="s1">'INTERNAL'</span><span class="p">],</span> <span class="n">thermocouple</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Type
+(Enum) (msl.equipment_resources.isotech.millik.Type)" href="#msl.equipment_resources.isotech.millik.Type">Type</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'NONE'</span><span class="p">])</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">

@@ -5508,7 +5508,7 @@ from an equipment register.</p>
 <span class="normal">359</span>
 <span class="normal">360</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">CapitalExpenditure</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [CapitalExpenditure][msl.equipment.schema.CapitalExpenditure] instance.</span>
+<span class="w">    </span><span class="sd">"""Convert an XML element into a [CapitalExpenditure][msl.equipment.schema.CapitalExpenditure] instance.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        element: A [capitalExpenditure][type_capitalExpenditure] XML element</span>
@@ -5516,13 +5516,13 @@ from an equipment register.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [CapitalExpenditure][msl.equipment.schema.CapitalExpenditure] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Schema forces order</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-        <span class="n">asset_number</span><span class="o">=</span><span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="n">depreciation_start_date</span><span class="o">=</span><span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+        <span class="n">asset_number</span><span class="o">=</span><span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">,</span>
+        <span class="n">depreciation_start_date</span><span class="o">=</span><span class="n">_date</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">),</span>
         <span class="n">price</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">),</span>
-        <span class="n">currency</span><span class="o">=</span><span class="n">element</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;currency&quot;</span><span class="p">],</span>
+        <span class="n">currency</span><span class="o">=</span><span class="n">element</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">"currency"</span><span class="p">],</span>
         <span class="n">useful_life</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">),</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -5603,24 +5603,24 @@ from an equipment register.</p>
 <span class="normal">380</span>
 <span class="normal">381</span>
 <span class="normal">382</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [CapitalExpenditure][msl.equipment.schema.CapitalExpenditure] class into an XML element.</span>
+<span class="w">    </span><span class="sd">"""Convert the [CapitalExpenditure][msl.equipment.schema.CapitalExpenditure] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [CapitalExpenditure][msl.equipment.schema.CapitalExpenditure] as an XML element.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;capitalExpenditure&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">"capitalExpenditure"</span><span class="p">)</span>
 
-    <span class="n">an</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;assetNumber&quot;</span><span class="p">)</span>
+    <span class="n">an</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">"assetNumber"</span><span class="p">)</span>
     <span class="n">an</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asset_number</span>
 
-    <span class="n">dsd</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;depreciationStartDate&quot;</span><span class="p">)</span>
+    <span class="n">dsd</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">"depreciationStartDate"</span><span class="p">)</span>
     <span class="n">dsd</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depreciation_start_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
 
-    <span class="n">p</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;price&quot;</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;currency&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">currency</span><span class="p">})</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">price</span><span class="si">:</span><span class="s2">.14g</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">"price"</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="p">{</span><span class="s2">"currency"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">currency</span><span class="p">})</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">price</span><span class="si">:</span><span class="s2">.14g</span><span class="si">}</span><span class="s2">"</span>
 
-    <span class="n">life</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;usefulLife&quot;</span><span class="p">)</span>
-    <span class="n">life</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">useful_life</span><span class="si">:</span><span class="s2">.14g</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">life</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">"usefulLife"</span><span class="p">)</span>
+    <span class="n">life</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">useful_life</span><span class="si">:</span><span class="s2">.14g</span><span class="si">}</span><span class="s2">"</span>
 
     <span class="k">return</span> <span class="n">e</span>
 </code></pre></div></td></tr></table></div>

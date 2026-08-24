@@ -5181,8 +5181,8 @@
 </ul>
 <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Vaisala&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;PTB330&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Vaisala"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">"PTB330"</span>
 <span class="n">flags</span><span class="o">=</span><span class="n">IGNORECASE</span>
 </code></pre></div></p>
 <div class="admonition warning">
@@ -5261,9 +5261,9 @@
 <span class="normal">45</span>
 <span class="normal">46</span>
 <span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Vaisala PTB330 Barometer.</span>
+<span class="w">    </span><span class="sd">"""Vaisala PTB330 Barometer.</span>
 
-<span class="sd">    The device manual is available [here](https://docs.vaisala.com/r/M210855EN-E/en-US){:target=&quot;_blank&quot;}.</span>
+<span class="sd">    The device manual is available [here](https://docs.vaisala.com/r/M210855EN-E/en-US){:target="_blank"}.</span>
 
 <span class="sd">    The default settings for the RS232 connection are:</span>
 
@@ -5274,8 +5274,8 @@
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;Vaisala&quot;</span>
-<span class="sd">    model=r&quot;PTB330&quot;</span>
+<span class="sd">    manufacturer=r"Vaisala"</span>
+<span class="sd">    model=r"PTB330"</span>
 <span class="sd">    flags=IGNORECASE</span>
 <span class="sd">    ```</span>
 
@@ -5284,7 +5284,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
                   </details>
@@ -5377,12 +5377,12 @@
 <span class="normal">97</span>
 <span class="normal">98</span>
 <span class="normal">99</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_for_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise an error, if present.&quot;&quot;&quot;</span>
-    <span class="n">err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;ERRS&quot;</span><span class="p">)</span>  <span class="c1"># List present transmitter errors</span>
+<span class="w">    </span><span class="sd">"""Raise an error, if present."""</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"ERRS"</span><span class="p">)</span>  <span class="c1"># List present transmitter errors</span>
     <span class="c1"># a PASS or FAIL line is returned from PTB330 modules first</span>
-    <span class="k">if</span> <span class="n">err</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;PASS&quot;</span><span class="p">,</span> <span class="s2">&quot;FAIL&quot;</span><span class="p">}:</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"PASS"</span><span class="p">,</span> <span class="s2">"FAIL"</span><span class="p">}:</span>
         <span class="n">err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">err</span> <span class="ow">and</span> <span class="n">err</span> <span class="o">!=</span> <span class="s2">&quot;No errors&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="ow">and</span> <span class="n">err</span> <span class="o">!=</span> <span class="s2">"No errors"</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5439,13 +5439,13 @@
 <span class="normal">111</span>
 <span class="normal">112</span>
 <span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the currently active formatter string.</span>
+<span class="w">    </span><span class="sd">"""Get the currently active formatter string.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The formatter string.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># The hash symbol &quot;#&quot; is used to set the format, but then appears as a backslash &quot;\\&quot; on the device.</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;FORM ?&quot;</span><span class="p">)[</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;Output format  :&quot;</span><span class="p">)</span> <span class="p">:]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="c1"># The hash symbol "#" is used to set the format, but then appears as a backslash "\\" on the device.</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"FORM ?"</span><span class="p">)[</span><span class="nb">len</span><span class="p">(</span><span class="s2">"Output format  :"</span><span class="p">)</span> <span class="p">:]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"#"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5502,13 +5502,13 @@
 <span class="normal">120</span>
 <span class="normal">121</span>
 <span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reading_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Output the reading once.</span>
+<span class="w">    </span><span class="sd">"""Output the reading once.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A string that follows the format set by</span>
 <span class="sd">            [set_format][msl.equipment_resources.vaisala.ptu300.PTU300.set_format].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;SEND&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"SEND"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5599,34 +5599,34 @@ date as [yyyy-mm-dd]. For more options, refer to the manual.</p>
 <span class="normal">150</span>
 <span class="normal">151</span>
 <span class="normal">152</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the format of data output to follow the pattern in the format string.</span>
+<span class="w">    </span><span class="sd">"""Set the format of data output to follow the pattern in the format string.</span>
 
-<span class="sd">    For example, in the format string `4.3 P &quot; &quot; 3.3 T &quot; &quot; 3.3 RH &quot; &quot; SN &quot; &quot; #r #n`, `x.y` is the number</span>
+<span class="sd">    For example, in the format string `4.3 P " " 3.3 T " " 3.3 RH " " SN " " #r #n`, `x.y` is the number</span>
 <span class="sd">    of digits and decimal places of the values; `P`, `T`, `RH`, and `SN` are placeholders for pressure,</span>
-<span class="sd">    temperature, relative humidity, and serial number values; and `&quot; &quot;`, `#r`, and `#n` represent a string</span>
+<span class="sd">    temperature, relative humidity, and serial number values; and `" "`, `#r`, and `#n` represent a string</span>
 <span class="sd">    constant, carriage-return, and line-feed respectively. Additional allowed modifiers include `ERR` for</span>
 <span class="sd">    error flags, `U5` for unit field and (optional) length, `TIME` for time as [hh:mm:ss], and `DATE` for</span>
 <span class="sd">    date as [yyyy-mm-dd]. For more options, refer to the manual.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        fmt: String representing desired output format.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FORM </span><span class="si">{</span><span class="n">fmt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Output format  :&quot;</span><span class="p">):</span>  <span class="c1"># format is returned by some devices when set</span>
-        <span class="n">form</span> <span class="o">=</span> <span class="n">reply</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;Output format  :&quot;</span><span class="p">)</span> <span class="p">:]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="s2">&quot;ok&quot;</span> <span class="ow">in</span> <span class="n">reply</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>  <span class="c1"># if OK is returned then we need to ask for the format</span>
+<span class="sd">    """</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">"FORM </span><span class="si">{</span><span class="n">fmt</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"Output format  :"</span><span class="p">):</span>  <span class="c1"># format is returned by some devices when set</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">reply</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s2">"Output format  :"</span><span class="p">)</span> <span class="p">:]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"#"</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="s2">"ok"</span> <span class="ow">in</span> <span class="n">reply</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>  <span class="c1"># if OK is returned then we need to ask for the format</span>
         <span class="n">form</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_format</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># this is not expected so raise an error</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unexpected reply=</span><span class="si">{</span><span class="n">reply</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Unexpected reply=</span><span class="si">{</span><span class="n">reply</span><span class="si">!r}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="o">!=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="s2">""</span><span class="p">):</span>
         <span class="c1"># the format was not set as specified</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_for_errors</span><span class="p">()</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not set format of output. </span><span class="se">\n</span><span class="s2">Expected: </span><span class="si">{</span><span class="n">fmt</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">Received: </span><span class="si">{</span><span class="n">form</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Could not set format of output. </span><span class="se">\n</span><span class="s2">Expected: </span><span class="si">{</span><span class="n">fmt</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">Received: </span><span class="si">{</span><span class="n">form</span><span class="si">}</span><span class="s2">."</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="p">[</span><span class="s2">&quot;Output format&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">form</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="p">[</span><span class="s2">"Output format"</span><span class="p">]</span> <span class="o">=</span> <span class="n">form</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -5742,7 +5742,7 @@ as specified in the instrument manual on pages 12 and 68.</p>
 <span class="normal"> 98</span>
 <span class="normal"> 99</span>
 <span class="normal">100</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desired_units</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set units of specified quantities.</span>
+<span class="w">    </span><span class="sd">"""Set units of specified quantities.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        desired_units: Dictionary of *quantity* (as keys) and their *unit* (as values)</span>
@@ -5753,44 +5753,44 @@ as specified in the instrument manual on pages 12 and 68.</p>
 <span class="sd">            * Pressure *quantity*: P, P3h, P1, P2, QNH, QFE, HCP, ...</span>
 <span class="sd">            * Pressure *unit*: hPa, psi, inHg, torr, bar, mbar, mmHg, kPa, Pa, mmH2O, inH2O</span>
 <span class="sd">            * Temperature *quantity*: T, TP1, TP2, TP3, ...</span>
-<span class="sd">            * Temperature *unit*: &#39;C, &#39;F, or K (C and F are also supported but are returned as &#39;C or &#39;F)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">            * Temperature *unit*: 'C, 'F, or K (C and F are also supported but are returned as 'C or 'F)</span>
+<span class="sd">    """</span>
     <span class="n">allowed_quantities_units</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;UNIT ??&quot;</span><span class="p">)</span>  <span class="c1"># list the available measurement units for the quantities</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"UNIT ??"</span><span class="p">)</span>  <span class="c1"># list the available measurement units for the quantities</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pressure_modules</span><span class="p">)):</span>
         <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="n">_q</span><span class="p">,</span> <span class="n">_u</span> <span class="o">=</span> <span class="p">[</span><span class="n">qu</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">qu</span> <span class="ow">in</span> <span class="n">reply</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)]</span>
+        <span class="n">_q</span><span class="p">,</span> <span class="n">_u</span> <span class="o">=</span> <span class="p">[</span><span class="n">qu</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">qu</span> <span class="ow">in</span> <span class="n">reply</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">)]</span>
         <span class="n">allowed_quantities_units</span><span class="p">[</span><span class="n">_q</span><span class="p">]</span> <span class="o">=</span> <span class="n">_u</span>
 
     <span class="k">for</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">desired_units</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">quantity</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_quantities_units</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">quantity</span><span class="si">}</span><span class="s2"> is not a known quantity on this </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="p">[</span><span class="s1">&#39;Model&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> device.</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Please select from: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allowed_quantities_units</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">quantity</span><span class="si">}</span><span class="s2"> is not a known quantity on this </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="p">[</span><span class="s1">'Model'</span><span class="p">]</span><span class="si">}</span><span class="s2"> device.</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"Please select from: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allowed_quantities_units</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">allowed_quantities_units</span><span class="p">[</span><span class="n">quantity</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">unit</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">]:</span>
-                <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">unit</span>  <span class="c1"># noqa: PLW2901</span>
+            <span class="k">if</span> <span class="n">unit</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"C"</span><span class="p">,</span> <span class="s2">"F"</span><span class="p">]:</span>
+                <span class="n">unit</span> <span class="o">=</span> <span class="s2">"'"</span> <span class="o">+</span> <span class="n">unit</span>  <span class="c1"># noqa: PLW2901</span>
 
-            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;UNIT </span><span class="si">{</span><span class="n">quantity</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"UNIT </span><span class="si">{</span><span class="n">quantity</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pressure_modules</span><span class="p">)):</span>
                 <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-                <span class="n">_q</span><span class="p">,</span> <span class="n">_u</span> <span class="o">=</span> <span class="p">[</span><span class="n">qu</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">qu</span> <span class="ow">in</span> <span class="n">reply</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)]</span>
+                <span class="n">_q</span><span class="p">,</span> <span class="n">_u</span> <span class="o">=</span> <span class="p">[</span><span class="n">qu</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">qu</span> <span class="ow">in</span> <span class="n">reply</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">)]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">[</span><span class="n">_q</span><span class="p">]</span> <span class="o">=</span> <span class="n">_u</span>
 
             <span class="k">if</span> <span class="n">quantity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">[</span><span class="n">quantity</span><span class="p">]</span> <span class="o">!=</span> <span class="n">unit</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">quantity</span><span class="si">}</span><span class="s2"> unit &#39;</span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&#39; not set correctly. Current units are </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">quantity</span><span class="si">}</span><span class="s2"> unit '</span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">' not set correctly. Current units are </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="si">}</span><span class="s2">"</span>
                     <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">quantity</span><span class="si">}</span><span class="s2"> unit &#39;</span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&#39; not set correctly. Current units are </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">quantity</span><span class="si">}</span><span class="s2"> unit '</span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">' not set correctly. Current units are </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="si">}</span><span class="s2">"</span>
                 <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2"> is not an allowed unit. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Please select from: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allowed_quantities_units</span><span class="p">[</span><span class="n">quantity</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2"> is not an allowed unit. "</span>
+                <span class="sa">f</span><span class="s2">"Please select from: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allowed_quantities_units</span><span class="p">[</span><span class="n">quantity</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>

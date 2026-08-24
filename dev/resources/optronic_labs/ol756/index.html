@@ -6718,8 +6718,8 @@
 to call the 32-bit functions in the <code>OL756SDKActiveXCtrl</code> library.</p>
 <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Optronic&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;(OL)?\s*756&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Optronic"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">"(OL)?\s*756"</span>
 <span class="n">flags</span><span class="o">=</span><span class="n">IGNORECASE</span>
 </code></pre></div></p>
 
@@ -6852,7 +6852,7 @@ to call the 32-bit functions in the <code>OL756SDKActiveXCtrl</code> library.</p
 <span class="normal">73</span>
 <span class="normal">74</span>
 <span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Communicate with an OL 756 spectroradiometer from Optronic Laboratories.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Communicate with an OL 756 spectroradiometer from Optronic Laboratories.</span>
 
 <span class="sd">    This class can be used with either a 32- or 64-bit Python interpreter</span>
 <span class="sd">    to call the 32-bit functions in the `OL756SDKActiveXCtrl` library.</span>
@@ -6860,8 +6860,8 @@ to call the 32-bit functions in the <code>OL756SDKActiveXCtrl</code> library.</p
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;Optronic&quot;</span>
-<span class="sd">    model=r&quot;(OL)?\s*756&quot;</span>
+<span class="sd">    manufacturer=r"Optronic"</span>
+<span class="sd">    model=r"(OL)?\s*756"</span>
 <span class="sd">    flags=IGNORECASE</span>
 <span class="sd">    ```</span>
 
@@ -6874,7 +6874,7 @@ to call the 32-bit functions in the <code>OL756SDKActiveXCtrl</code> library.</p
 <span class="sd">    Attributes: Connection Properties:</span>
 <span class="sd">        mode (int): Connection mode (`0`: RS-232, `1`: USB). _Default: `1` (USB)_</span>
 <span class="sd">        com_port (int): The COM port number (RS-232 mode only). _Default: `1`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="p">:</span> <span class="n">Client64</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 
@@ -6882,20 +6882,20 @@ to call the 32-bit functions in the <code>OL756SDKActiveXCtrl</code> library.</p
 
     <span class="k">try</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">Client64</span><span class="p">(</span>
-            <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;ol756ocx_32.py&quot;</span><span class="p">,</span>
+            <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"ol756ocx_32.py"</span><span class="p">,</span>
             <span class="n">prog_id</span><span class="o">=</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="p">[</span><span class="mi">5</span><span class="p">:],</span>
-            <span class="n">mode</span><span class="o">=</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-            <span class="n">com_port</span><span class="o">=</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;com_port&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"mode"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">com_port</span><span class="o">=</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"com_port"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="n">ConnectionTimeoutError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Cannot initialize the OL756 SDK.</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Cannot initialize the OL756 SDK.</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_request32</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">request32</span>
 
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request32</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request32</span><span class="p">(</span><span class="s2">"mode"</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot connect to the OL756 spectroradiometer. Is it turned on and connected to the computer?&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Cannot connect to the OL756 spectroradiometer. Is it turned on and connected to the computer?"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
                   </details>
@@ -6994,7 +6994,7 @@ and <a class="autorefs autorefs-internal" title="            do_averaging" href=
 <span class="normal">102</span>
 <span class="normal">103</span>
 <span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">accumulate_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function needs to be called after a measurement was performed.</span>
+<span class="w">    </span><span class="sd">"""Function needs to be called after a measurement was performed.</span>
 
 <span class="sd">    This essentially accumulates the data together until the user is</span>
 <span class="sd">    ready to average out the data. This function is used in combination with</span>
@@ -7011,8 +7011,8 @@ and <a class="autorefs autorefs-internal" title="            do_averaging" href=
 <span class="sd">            * `4` &amp;mdash; Radiance Calibration</span>
 <span class="sd">            * `5` &amp;mdash; Transmittance Calibration</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;accumulate_signals&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"accumulate_signals"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7055,12 +7055,12 @@ and <a class="autorefs autorefs-internal" title="            do_averaging" href=
 <span class="normal">121</span>
 <span class="normal">122</span>
 <span class="normal">123</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the OL756 spectroradiometer.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Disconnect from the OL756 spectroradiometer."""</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
 
     <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="n">Server32Error</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;connect_to_ol756&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"connect_to_ol756"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">shutdown_server32</span><span class="p">()</span>
@@ -7174,7 +7174,7 @@ and <a class="autorefs autorefs-internal" title="            accumulate_signals"
 <span class="normal">142</span>
 <span class="normal">143</span>
 <span class="normal">144</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">do_averaging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">n_scans</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function divides the accumulated signal by the number of scans performed.</span>
+<span class="w">    </span><span class="sd">"""Function divides the accumulated signal by the number of scans performed.</span>
 
 <span class="sd">    It then sets the array containing the data with the averaged data. This function is used in combination with</span>
 <span class="sd">    [reset_averaging][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.reset_averaging]</span>
@@ -7191,8 +7191,8 @@ and <a class="autorefs autorefs-internal" title="            accumulate_signals"
 <span class="sd">            * `5` &amp;mdash; Transmittance Calibration</span>
 
 <span class="sd">        n_scans: The number of scans to average.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;do_averaging&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">n_scans</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"do_averaging"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">n_scans</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7271,7 +7271,7 @@ and <a class="autorefs autorefs-internal" title="            accumulate_signals"
 <span class="normal">158</span>
 <span class="normal">159</span>
 <span class="normal">160</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">do_calculations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function needs to be called after each measurement to update the calculations.</span>
+<span class="w">    </span><span class="sd">"""Function needs to be called after each measurement to update the calculations.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        meas_type: The measurement type.</span>
@@ -7283,8 +7283,8 @@ and <a class="autorefs autorefs-internal" title="            accumulate_signals"
 <span class="sd">            * `4` &amp;mdash; Radiance Calibration</span>
 <span class="sd">            * `5` &amp;mdash; Transmittance Calibration</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;do_calculations&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"do_calculations"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7390,7 +7390,7 @@ first to load the calibration file before enabling it.</p>
 <span class="normal">181</span>
 <span class="normal">182</span>
 <span class="normal">183</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">enable_calibration_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enables or disables the use of a calibration file.</span>
+<span class="w">    </span><span class="sd">"""Enables or disables the use of a calibration file.</span>
 
 <span class="sd">    Use this option to generate calibrated results. To open a standard file</span>
 <span class="sd">    used to create a calibration, use</span>
@@ -7409,8 +7409,8 @@ first to load the calibration file before enabling it.</p>
 <span class="sd">            * `5` &amp;mdash; Transmittance Calibration</span>
 
 <span class="sd">        enable: Whether to enable or disable the use of a calibration file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;enable_calibration_file&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">enable</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"enable_calibration_file"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">enable</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7489,7 +7489,7 @@ function.</p>
 <span class="normal">202</span>
 <span class="normal">203</span>
 <span class="normal">204</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">enable_dark_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn the dark current on or off.</span>
+<span class="w">    </span><span class="sd">"""Turn the dark current on or off.</span>
 
 <span class="sd">    Enable this feature if you want the dark current automatically</span>
 <span class="sd">    acquired and subtracted before each measurement. If you wish to</span>
@@ -7502,8 +7502,8 @@ function.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        enable: Whether to turn the dark current on or off.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;enable_dark_current&quot;</span><span class="p">,</span> <span class="n">enable</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"enable_dark_current"</span><span class="p">,</span> <span class="n">enable</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7578,7 +7578,7 @@ exposure of the PMT while travelling.</p>
 <span class="normal">217</span>
 <span class="normal">218</span>
 <span class="normal">219</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">enable_pmt_protection_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn the PMT protection routines on or off.</span>
+<span class="w">    </span><span class="sd">"""Turn the PMT protection routines on or off.</span>
 
 <span class="sd">    Enable this feature if you want the PMT to be shielded while travelling</span>
 <span class="sd">    through high intensity spikes. This feature will make the scan slower</span>
@@ -7589,8 +7589,8 @@ exposure of the PMT while travelling.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        enable: Whether to turn the PMT protection routines on or off.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;enable_pmt_protection_mode&quot;</span><span class="p">,</span> <span class="n">enable</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"enable_pmt_protection_mode"</span><span class="p">,</span> <span class="n">enable</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7694,7 +7694,7 @@ first to load the standard file before enabling it.</p>
 <span class="normal">239</span>
 <span class="normal">240</span>
 <span class="normal">241</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">enable_standard_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function enables standard files to be used.</span>
+<span class="w">    </span><span class="sd">"""Function enables standard files to be used.</span>
 
 <span class="sd">    To open a calibration file used to create a measurement, use</span>
 <span class="sd">    [enable_calibration_file][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.enable_calibration_file]</span>
@@ -7712,8 +7712,8 @@ first to load the standard file before enabling it.</p>
 <span class="sd">            * `2` &amp;mdash; Transmittance</span>
 
 <span class="sd">        enable: Whether to turn the application of the standard file on or off.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;enable_standard_file&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">enable</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"enable_standard_file"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">enable</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7789,14 +7789,14 @@ first to load the standard file before enabling it.</p>
 <span class="normal">249</span>
 <span class="normal">250</span>
 <span class="normal">251</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">export_config_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exports the config file into an OL756-compatible configuration file.</span>
+<span class="w">    </span><span class="sd">"""Exports the config file into an OL756-compatible configuration file.</span>
 
 <span class="sd">    Not all settings used will be applicable.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file_path: A valid path to save the file at.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;export_config_file&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file_path</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"export_config_file"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">file_path</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7834,14 +7834,14 @@ call <a class="autorefs autorefs-internal" title="            export_config_file
 <span class="normal">259</span>
 <span class="normal">260</span>
 <span class="normal">261</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">export_registry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save data out to the Windows registry.</span>
+<span class="w">    </span><span class="sd">"""Save data out to the Windows registry.</span>
 
 <span class="sd">    Make sure that a read was done at some point using</span>
 <span class="sd">    [import_registry][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.import_registry].</span>
 <span class="sd">    Does not create a configuration file that can be loaded into another computer. For that particular function,</span>
 <span class="sd">    call [export_config_file][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.export_config_file].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;export_registry&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"export_registry"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7951,7 +7951,7 @@ call <a class="autorefs autorefs-internal" title="            export_config_file
 <span class="normal">282</span>
 <span class="normal">283</span>
 <span class="normal">284</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_adaptive_int_time_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gain_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the adaptive integration time index.</span>
+<span class="w">    </span><span class="sd">"""Get the adaptive integration time index.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        gain_index: The index of the gain to use to get the integration time.</span>
@@ -7966,10 +7966,10 @@ call <a class="autorefs autorefs-internal" title="            export_config_file
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The adaptive integration time index.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_adaptive_int_time_index&quot;</span><span class="p">,</span> <span class="n">gain_index</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_adaptive_int_time_index"</span><span class="p">,</span> <span class="n">gain_index</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid gain index, </span><span class="si">{</span><span class="n">gain_index</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid gain index, </span><span class="si">{</span><span class="n">gain_index</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">index</span>
 </code></pre></div></td></tr></table></div>
@@ -8026,12 +8026,12 @@ call <a class="autorefs autorefs-internal" title="            export_config_file
 <span class="normal">330</span>
 <span class="normal">331</span>
 <span class="normal">332</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_cal_array</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This method allows user to get the spectral data of a calibration after it is made.</span>
+<span class="w">    </span><span class="sd">"""This method allows user to get the spectral data of a calibration after it is made.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The calibrated spectral data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_cal_array&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_cal_array"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8136,7 +8136,7 @@ first to load the calibration file before enabling it.</p>
 <span class="normal">349</span>
 <span class="normal">350</span>
 <span class="normal">351</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_cal_file_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks to see if the calibration file is enabled.</span>
+<span class="w">    </span><span class="sd">"""Checks to see if the calibration file is enabled.</span>
 
 <span class="sd">    The user should call</span>
 <span class="sd">    [load_calibration_file][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.load_calibration_file]</span>
@@ -8151,8 +8151,8 @@ first to load the calibration file before enabling it.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the calibration file is enabled.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_cal_file_enabled&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_cal_file_enabled"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8306,7 +8306,7 @@ at least once before calling this function.</p>
 <span class="normal">385</span>
 <span class="normal">386</span>
 <span class="normal">387</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_calculated_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get data calculated from the intensities.</span>
+<span class="w">    </span><span class="sd">"""Get data calculated from the intensities.</span>
 
 <span class="sd">    The user should call</span>
 <span class="sd">    [do_calculations][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.do_calculations]</span>
@@ -8338,8 +8338,8 @@ at least once before calling this function.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The calculated data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_calculated_data&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">index</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_calculated_data"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">index</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8439,7 +8439,7 @@ that is loaded for a particular measurement type.</p>
 <span class="normal">401</span>
 <span class="normal">402</span>
 <span class="normal">403</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_calibration_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a calibration file that is loaded.</span>
+<span class="w">    </span><span class="sd">"""Get a calibration file that is loaded.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        meas_type: The measurement type.</span>
@@ -8451,8 +8451,8 @@ that is loaded for a particular measurement type.</p>
 <span class="sd">    Returns:</span>
 <span class="sd">        String containing the name and path of the calibration file</span>
 <span class="sd">            that is loaded for a particular measurement type.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_calibration_file&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_calibration_file"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8581,7 +8581,7 @@ at least once.</p>
 <span class="normal">424</span>
 <span class="normal">425</span>
 <span class="normal">426</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_chromaticity_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the calculated chromaticity values requested.</span>
+<span class="w">    </span><span class="sd">"""Get the calculated chromaticity values requested.</span>
 
 <span class="sd">    Must have called [do_calculations][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.do_calculations]</span>
 <span class="sd">    at least once.</span>
@@ -8600,8 +8600,8 @@ at least once.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The chromaticity data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_chromaticity_data&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">index</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_chromaticity_data"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">index</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8763,7 +8763,7 @@ at least once before calling this function.</p>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_cri</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the color-rendering information.</span>
+<span class="w">    </span><span class="sd">"""Get the color-rendering information.</span>
 
 <span class="sd">    The user should call</span>
 <span class="sd">    [do_calculations][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.do_calculations]</span>
@@ -8799,8 +8799,8 @@ at least once before calling this function.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The color-rendering information.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_cri&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">index</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_cri"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">index</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8911,7 +8911,7 @@ was enabled, then this function need should not be called.</p>
 <span class="normal">459</span>
 <span class="normal">460</span>
 <span class="normal">461</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_dark_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_compensation</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes a manual dark current.</span>
+<span class="w">    </span><span class="sd">"""Takes a manual dark current.</span>
 
 <span class="sd">    User will have to subtract from data array by retrieving this array via</span>
 <span class="sd">    a [get_cal_array][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.get_cal_array] or</span>
@@ -8930,8 +8930,8 @@ was enabled, then this function need should not be called.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The dark current.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_dark_current&quot;</span><span class="p">,</span> <span class="n">use_compensation</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_dark_current"</span><span class="p">,</span> <span class="n">use_compensation</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8986,12 +8986,12 @@ was enabled, then this function need should not be called.</p>
 <span class="normal">467</span>
 <span class="normal">468</span>
 <span class="normal">469</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_dark_current_enable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns whether the dark-current mode is enabled.</span>
+<span class="w">    </span><span class="sd">"""Returns whether the dark-current mode is enabled.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether the dark-current mode is enabled or disabled.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_dark_current_enable&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_dark_current_enable"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9054,7 +9054,7 @@ was enabled, then this function need should not be called.</p>
 <span class="normal">479</span>
 <span class="normal">480</span>
 <span class="normal">481</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_dark_current_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns whether the dark current is taken at a wavelength or in shutter mode.</span>
+<span class="w">    </span><span class="sd">"""Returns whether the dark current is taken at a wavelength or in shutter mode.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The dark-current mode.</span>
@@ -9062,8 +9062,8 @@ was enabled, then this function need should not be called.</p>
 <span class="sd">            * `0` &amp;mdash; Dark current in wavelength mode (taken at a particular wavelength designated by the user).</span>
 <span class="sd">            * `1` &amp;mdash; Dark current in shutter mode</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_dark_current_mode&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_dark_current_mode"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9118,12 +9118,12 @@ was enabled, then this function need should not be called.</p>
 <span class="normal">487</span>
 <span class="normal">488</span>
 <span class="normal">489</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_dark_current_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the dark current wavelength.</span>
+<span class="w">    </span><span class="sd">"""Get the dark current wavelength.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Wavelength that the dark current will be taken at.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_dark_current_wavelength&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_dark_current_wavelength"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9178,12 +9178,12 @@ was enabled, then this function need should not be called.</p>
 <span class="normal">495</span>
 <span class="normal">496</span>
 <span class="normal">497</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ending_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the ending wavelength of the scan range.</span>
+<span class="w">    </span><span class="sd">"""Get the ending wavelength of the scan range.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The ending wavelength, in nm, of the scan range.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_ending_wavelength&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_ending_wavelength"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9261,7 +9261,7 @@ was enabled, then this function need should not be called.</p>
 <span class="normal">515</span>
 <span class="normal">516</span>
 <span class="normal">517</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_gain_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the index of the gain that will be applied when the parameters are to be sent down.</span>
+<span class="w">    </span><span class="sd">"""Get the index of the gain that will be applied when the parameters are to be sent down.</span>
 
 <span class="sd">    Applies to both quick scan and point to point scans.</span>
 
@@ -9277,8 +9277,8 @@ was enabled, then this function need should not be called.</p>
 <span class="sd">            * `6` &amp;mdash; 1.0E-11 (Point to Point mode only)</span>
 <span class="sd">            * `7` &amp;mdash; Auto Gain Ranging (Point to Point mode only)</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_gain_index&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_gain_index"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9333,12 +9333,12 @@ was enabled, then this function need should not be called.</p>
 <span class="normal">523</span>
 <span class="normal">524</span>
 <span class="normal">525</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_increment</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the wavelength increment that is used for a scan.</span>
+<span class="w">    </span><span class="sd">"""Get the wavelength increment that is used for a scan.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The wavelength increment, in nm.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_increment&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_increment"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9418,7 +9418,7 @@ was enabled, then this function need should not be called.</p>
 <span class="normal">544</span>
 <span class="normal">545</span>
 <span class="normal">546</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_increment_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the index of the wavelength increment that is used for a scan.</span>
+<span class="w">    </span><span class="sd">"""Get the index of the wavelength increment that is used for a scan.</span>
 
 <span class="sd">    Applies to both quick scan and point to point scans.</span>
 
@@ -9435,8 +9435,8 @@ was enabled, then this function need should not be called.</p>
 <span class="sd">            * `7` &amp;mdash; 5.0 nm</span>
 <span class="sd">            * `8` &amp;mdash; 10.0 nm</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_increment_index&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_increment_index"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9567,7 +9567,7 @@ Point to Point mode (0) or Quick Scan mode (1).</p>
 <span class="normal">577</span>
 <span class="normal">578</span>
 <span class="normal">579</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_integration_time_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan_mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the index into the integration time array.</span>
+<span class="w">    </span><span class="sd">"""Get the index into the integration time array.</span>
 
 <span class="sd">    Applies to both quick scan and point to point scans. In quick scan,</span>
 <span class="sd">    the speed will vary based on the scan range and increments.</span>
@@ -9596,8 +9596,8 @@ Point to Point mode (0) or Quick Scan mode (1).</p>
 <span class="sd">                * `0` &amp;mdash; slowest</span>
 <span class="sd">                * `10` &amp;mdash; fastest</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_integration_time_index&quot;</span><span class="p">,</span> <span class="n">scan_mode</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_integration_time_index"</span><span class="p">,</span> <span class="n">scan_mode</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9652,12 +9652,12 @@ Point to Point mode (0) or Quick Scan mode (1).</p>
 <span class="normal">585</span>
 <span class="normal">586</span>
 <span class="normal">587</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ocx_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the version of the OL756 SDK ActiveX control.</span>
+<span class="w">    </span><span class="sd">"""Get the version of the OL756 SDK ActiveX control.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The software version.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_ocx_version&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_ocx_version"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9712,12 +9712,12 @@ Point to Point mode (0) or Quick Scan mode (1).</p>
 <span class="normal">593</span>
 <span class="normal">594</span>
 <span class="normal">595</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_pmt_flux_overload</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the voltage of the photomultiplier tube flux overload.</span>
+<span class="w">    </span><span class="sd">"""Get the voltage of the photomultiplier tube flux overload.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Voltage that the PMT will determine to be at the overload point.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_pmt_flux_overload&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_pmt_flux_overload"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9772,12 +9772,12 @@ Point to Point mode (0) or Quick Scan mode (1).</p>
 <span class="normal">609</span>
 <span class="normal">610</span>
 <span class="normal">611</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_pmt_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the voltage that will sent or has been sent down to the PMT.</span>
+<span class="w">    </span><span class="sd">"""Returns the voltage that will sent or has been sent down to the PMT.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Voltage value, in volts, of the photomultiplier tube.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_pmt_voltage&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_pmt_voltage"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9832,12 +9832,12 @@ Point to Point mode (0) or Quick Scan mode (1).</p>
 <span class="normal">617</span>
 <span class="normal">618</span>
 <span class="normal">619</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_quick_scan_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the rate at the quick scan index.</span>
+<span class="w">    </span><span class="sd">"""Returns the rate at the quick scan index.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Rate of the quick scan at the current index in nm/s.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_quick_scan_rate&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_quick_scan_rate"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9892,12 +9892,12 @@ Point to Point mode (0) or Quick Scan mode (1).</p>
 <span class="normal">625</span>
 <span class="normal">626</span>
 <span class="normal">627</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_quick_scan_rate_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the index of the quick scan rate.</span>
+<span class="w">    </span><span class="sd">"""Returns the index of the quick scan rate.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Index of the quick scan rate.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_quick_scan_rate_index&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_quick_scan_rate_index"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9960,7 +9960,7 @@ Point to Point mode (0) or Quick Scan mode (1).</p>
 <span class="normal">645</span>
 <span class="normal">646</span>
 <span class="normal">647</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_scan_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the mode the scan will be done in.</span>
+<span class="w">    </span><span class="sd">"""Get the mode the scan will be done in.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The scan mode.</span>
@@ -9968,8 +9968,8 @@ Point to Point mode (0) or Quick Scan mode (1).</p>
 <span class="sd">            * `0` &amp;mdash; Point to Point mode</span>
 <span class="sd">            * `1` &amp;mdash; Quick Scan mode</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_scan_mode&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_scan_mode"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -10027,14 +10027,14 @@ Point to Point mode (0) or Quick Scan mode (1).</p>
 <span class="normal">655</span>
 <span class="normal">656</span>
 <span class="normal">657</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_settling_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the settling time.</span>
+<span class="w">    </span><span class="sd">"""Get the settling time.</span>
 
 <span class="sd">    Settling time is time where the wavelength drive pauses once it reaches its target wavelength.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Settling time, in seconds, to be sent down or has already been sent to the system.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_settling_time&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_settling_time"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -10089,12 +10089,12 @@ Point to Point mode (0) or Quick Scan mode (1).</p>
 <span class="normal">663</span>
 <span class="normal">664</span>
 <span class="normal">665</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_signal_array</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the spectral data of a measurement after it is made.</span>
+<span class="w">    </span><span class="sd">"""Get the spectral data of a measurement after it is made.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The spectral data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_signal_array&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_signal_array"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -10194,7 +10194,7 @@ loaded for a particular calibration type.</p>
 <span class="normal">679</span>
 <span class="normal">680</span>
 <span class="normal">681</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_standard_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieves the name of standard file.</span>
+<span class="w">    </span><span class="sd">"""Retrieves the name of standard file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        meas_type: The calibration measurement type.</span>
@@ -10206,8 +10206,8 @@ loaded for a particular calibration type.</p>
 <span class="sd">    Returns:</span>
 <span class="sd">        String containing the name and path of the standard file that is</span>
 <span class="sd">            loaded for a particular calibration type.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_standard_file&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_standard_file"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -10265,14 +10265,14 @@ loaded for a particular calibration type.</p>
 <span class="normal">689</span>
 <span class="normal">690</span>
 <span class="normal">691</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_start_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the starting wavelength of a scan.</span>
+<span class="w">    </span><span class="sd">"""Get the starting wavelength of a scan.</span>
 
 <span class="sd">    Applies to both quick scan and point to point scans.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The wavelength, in nm, that the scan will start from.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_start_wavelength&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_start_wavelength"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -10377,7 +10377,7 @@ first to load the standard file before enabling it.</p>
 <span class="normal">708</span>
 <span class="normal">709</span>
 <span class="normal">710</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_std_file_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks to see if the standard file is enabled.</span>
+<span class="w">    </span><span class="sd">"""Checks to see if the standard file is enabled.</span>
 
 <span class="sd">    The user should call</span>
 <span class="sd">    [load_standard_file][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.load_standard_file]</span>
@@ -10392,8 +10392,8 @@ first to load the standard file before enabling it.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether a standard file is enabled.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;get_std_file_enabled&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"get_std_file_enabled"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -10477,7 +10477,7 @@ the type and not have it based on the configuration file.</p>
 <span class="normal">722</span>
 <span class="normal">723</span>
 <span class="normal">724</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">import_config_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The file is a standard OL756 configuration file.</span>
+<span class="w">    </span><span class="sd">"""The file is a standard OL756 configuration file.</span>
 
 <span class="sd">    Not all settings used will be applicable. Measurement type is not used</span>
 <span class="sd">    because in the SDK, the</span>
@@ -10487,8 +10487,8 @@ the type and not have it based on the configuration file.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        path: A valid path to load the file at.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;import_config_file&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"import_config_file"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -10537,7 +10537,7 @@ select the type and not have it based on the configuration file.</p>
 <span class="normal">738</span>
 <span class="normal">739</span>
 <span class="normal">740</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">import_registry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads data from the registry.</span>
+<span class="w">    </span><span class="sd">"""Loads data from the registry.</span>
 
 <span class="sd">    Loads default if no registry exists. To import the configuration</span>
 <span class="sd">    from another computer, use</span>
@@ -10549,8 +10549,8 @@ select the type and not have it based on the configuration file.</p>
 <span class="sd">    [take_point_to_point_measurement][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.take_point_to_point_measurement]</span>
 <span class="sd">    function has as an input the measurement type. The user should</span>
 <span class="sd">    select the type and not have it based on the configuration file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;import_registry&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"import_registry"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -10650,7 +10650,7 @@ select the type and not have it based on the configuration file.</p>
 <span class="normal">756</span>
 <span class="normal">757</span>
 <span class="normal">758</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_calibration_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a calibration file.</span>
+<span class="w">    </span><span class="sd">"""Load a calibration file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        path: The path of a calibration file.</span>
@@ -10660,8 +10660,8 @@ select the type and not have it based on the configuration file.</p>
 <span class="sd">            * `4` &amp;mdash; Radiance calibration</span>
 <span class="sd">            * `5` &amp;mdash; Transmittance calibration</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;load_calibration_file&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">meas_type</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"load_calibration_file"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">meas_type</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -10761,7 +10761,7 @@ select the type and not have it based on the configuration file.</p>
 <span class="normal">770</span>
 <span class="normal">771</span>
 <span class="normal">772</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_standard_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a standard file.</span>
+<span class="w">    </span><span class="sd">"""Load a standard file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        path: The path of a standard file.</span>
@@ -10771,8 +10771,8 @@ select the type and not have it based on the configuration file.</p>
 <span class="sd">            * `1` &amp;mdash; Radiance</span>
 <span class="sd">            * `2` &amp;mdash; Transmittance</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;load_standard_file&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">meas_type</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"load_standard_file"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">meas_type</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -10840,15 +10840,15 @@ home the wavelength and filter drive.</p>
 <span class="normal">781</span>
 <span class="normal">782</span>
 <span class="normal">783</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">manual_filter_drive_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">connect</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Used to connect or disconnect the filter drive.</span>
+<span class="w">    </span><span class="sd">"""Used to connect or disconnect the filter drive.</span>
 
 <span class="sd">    Disconnecting essentially acquires scans without the filter.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        connect: Connect or disconnect the filter drive. Reconnecting will</span>
 <span class="sd">            home the wavelength and filter drive.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;manual_filter_drive_connect&quot;</span><span class="p">,</span> <span class="n">connect</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"manual_filter_drive_connect"</span><span class="p">,</span> <span class="n">connect</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -10923,7 +10923,7 @@ home the wavelength and filter drive.</p>
 <span class="normal">799</span>
 <span class="normal">800</span>
 <span class="normal">801</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">manual_get_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The index of the gain that will be applied when the parameters are to be sent down.</span>
+<span class="w">    </span><span class="sd">"""The index of the gain that will be applied when the parameters are to be sent down.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The gain index.</span>
@@ -10937,8 +10937,8 @@ home the wavelength and filter drive.</p>
 <span class="sd">            * `6` &amp;mdash; 1.0E-11 (Point to Point mode only)</span>
 <span class="sd">            * `7` &amp;mdash; Auto Gain Ranging (Point to Point mode only)</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;manual_get_gain&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"manual_get_gain"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -10996,14 +10996,14 @@ home the wavelength and filter drive.</p>
 <span class="normal">809</span>
 <span class="normal">810</span>
 <span class="normal">811</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">manual_get_integration_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the integration time set in the system.</span>
+<span class="w">    </span><span class="sd">"""Returns the integration time set in the system.</span>
 
 <span class="sd">    Only applies to the integration time used for Point to Point scans.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The integration time in seconds.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;manual_get_integration_time&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"manual_get_integration_time"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -11058,12 +11058,12 @@ home the wavelength and filter drive.</p>
 <span class="normal">817</span>
 <span class="normal">818</span>
 <span class="normal">819</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">manual_get_pmt_overload</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the PMT overload voltage set in the system.</span>
+<span class="w">    </span><span class="sd">"""Returns the PMT overload voltage set in the system.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Overload voltage, in volts, of the photomultiplier tube.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;manual_get_pmt_overload&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"manual_get_pmt_overload"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -11118,12 +11118,12 @@ home the wavelength and filter drive.</p>
 <span class="normal">825</span>
 <span class="normal">826</span>
 <span class="normal">827</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">manual_get_pmt_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the PMT high voltage set in the system.</span>
+<span class="w">    </span><span class="sd">"""Returns the PMT high voltage set in the system.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Voltage, in volts, of the photomultiplier tube.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;manual_get_pmt_voltage&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"manual_get_pmt_voltage"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -11178,12 +11178,12 @@ home the wavelength and filter drive.</p>
 <span class="normal">833</span>
 <span class="normal">834</span>
 <span class="normal">835</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">manual_get_settling_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the settling time of the instrument.</span>
+<span class="w">    </span><span class="sd">"""Returns the settling time of the instrument.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Settling time of the system in seconds.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;manual_get_settling_time&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"manual_get_settling_time"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -11238,12 +11238,12 @@ home the wavelength and filter drive.</p>
 <span class="normal">841</span>
 <span class="normal">842</span>
 <span class="normal">843</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">manual_get_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the signal at the current position of the wavelength drive.</span>
+<span class="w">    </span><span class="sd">"""Returns the signal at the current position of the wavelength drive.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The signal, in amperes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;manual_get_signal&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"manual_get_signal"</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -11275,11 +11275,11 @@ home the wavelength and filter drive.</p>
 <span class="normal">848</span>
 <span class="normal">849</span>
 <span class="normal">850</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">manual_home_ol756</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Homes the wavelength and filter drive.</span>
+<span class="w">    </span><span class="sd">"""Homes the wavelength and filter drive.</span>
 
 <span class="sd">    Will reconnect the filter drive if it was disconnected</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;manual_home_ol756&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"manual_home_ol756"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -11342,12 +11342,12 @@ home the wavelength and filter drive.</p>
 <span class="normal">856</span>
 <span class="normal">857</span>
 <span class="normal">858</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">manual_move_to_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Moves the wavelength drive to a particular location.</span>
+<span class="w">    </span><span class="sd">"""Moves the wavelength drive to a particular location.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        wavelength: The wavelength to move the wavelength drive to.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;manual_move_to_wavelength&quot;</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"manual_move_to_wavelength"</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -11454,7 +11454,7 @@ home the wavelength and filter drive.</p>
 <span class="normal">878</span>
 <span class="normal">879</span>
 <span class="normal">880</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">manual_set_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gain_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the gain.</span>
+<span class="w">    </span><span class="sd">"""Set the gain.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        gain_index: The gain index.</span>
@@ -11472,8 +11472,8 @@ home the wavelength and filter drive.</p>
 
 <span class="sd">            * `0` &amp;mdash; Point to point</span>
 <span class="sd">            * `1` &amp;mdash; Quick scan</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;manual_set_gain&quot;</span><span class="p">,</span> <span class="n">gain_index</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"manual_set_gain"</span><span class="p">,</span> <span class="n">gain_index</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -11539,14 +11539,14 @@ home the wavelength and filter drive.</p>
 <span class="normal">888</span>
 <span class="normal">889</span>
 <span class="normal">890</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">manual_set_integration_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the integration time set in the system.</span>
+<span class="w">    </span><span class="sd">"""Sets the integration time set in the system.</span>
 
 <span class="sd">    Only applies to the integration time used for Point to Point scans.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        time: The integration time in seconds.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;manual_set_integration_time&quot;</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"manual_set_integration_time"</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -11609,12 +11609,12 @@ home the wavelength and filter drive.</p>
 <span class="normal">896</span>
 <span class="normal">897</span>
 <span class="normal">898</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">manual_set_pmt_overload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overload</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the PMT overload voltage set in the system.</span>
+<span class="w">    </span><span class="sd">"""Sets the PMT overload voltage set in the system.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        overload: Overload voltage, in volts, of the photomultiplier tube in Volts.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;manual_set_pmt_overload&quot;</span><span class="p">,</span> <span class="n">overload</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"manual_set_pmt_overload"</span><span class="p">,</span> <span class="n">overload</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -11677,12 +11677,12 @@ home the wavelength and filter drive.</p>
 <span class="normal">904</span>
 <span class="normal">905</span>
 <span class="normal">906</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">manual_set_pmt_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">voltage</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the PMT high voltage set in the system.</span>
+<span class="w">    </span><span class="sd">"""Sets the PMT high voltage set in the system.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        voltage: Voltage, in volts, of the photomultiplier tube.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;manual_set_pmt_voltage&quot;</span><span class="p">,</span> <span class="n">voltage</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"manual_set_pmt_voltage"</span><span class="p">,</span> <span class="n">voltage</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -11745,12 +11745,12 @@ home the wavelength and filter drive.</p>
 <span class="normal">912</span>
 <span class="normal">913</span>
 <span class="normal">914</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">manual_set_settling_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the settling time of the instrument.</span>
+<span class="w">    </span><span class="sd">"""Sets the settling time of the instrument.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        time: Settling time of the system.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;manual_set_settling_time&quot;</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"manual_set_settling_time"</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -11813,12 +11813,12 @@ home the wavelength and filter drive.</p>
 <span class="normal">920</span>
 <span class="normal">921</span>
 <span class="normal">922</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">move_to_wavelength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Moves the wavelength drive to a particular location.</span>
+<span class="w">    </span><span class="sd">"""Moves the wavelength drive to a particular location.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        wavelength: The wavelength, in nm, to move the wavelength drive to.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;move_to_wavelength&quot;</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"move_to_wavelength"</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -11852,12 +11852,12 @@ and wavelength skew. Loads these values into the ActiveX control memory.</p>
 <span class="normal">928</span>
 <span class="normal">929</span>
 <span class="normal">930</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_ol756_flash_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads the saved settings from the flash memory.</span>
+<span class="w">    </span><span class="sd">"""Reads the saved settings from the flash memory.</span>
 
 <span class="sd">    Reads the settings such as the grating alignment factor, filter skew</span>
 <span class="sd">    and wavelength skew. Loads these values into the ActiveX control memory.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;read_ol756_flash_settings&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"read_ol756_flash_settings"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -11943,7 +11943,7 @@ and <a class="autorefs autorefs-internal" title="            accumulate_signals"
 <span class="normal">948</span>
 <span class="normal">949</span>
 <span class="normal">950</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset_averaging</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resets the accumulated signal array for the specified measurement type.</span>
+<span class="w">    </span><span class="sd">"""Resets the accumulated signal array for the specified measurement type.</span>
 
 <span class="sd">    This function is used in combination with</span>
 <span class="sd">    [do_averaging][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.do_averaging]</span>
@@ -11959,8 +11959,8 @@ and <a class="autorefs autorefs-internal" title="            accumulate_signals"
 <span class="sd">            * `4` &amp;mdash; Radiance Calibration</span>
 <span class="sd">            * `5` &amp;mdash; Transmittance Calibration</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;reset_averaging&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"reset_averaging"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -12060,7 +12060,7 @@ and <a class="autorefs autorefs-internal" title="            accumulate_signals"
 <span class="normal">962</span>
 <span class="normal">963</span>
 <span class="normal">964</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_calibration_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an OL756-compatible calibration file.</span>
+<span class="w">    </span><span class="sd">"""Create an OL756-compatible calibration file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        meas_type: The calibration measurement type.</span>
@@ -12070,8 +12070,8 @@ and <a class="autorefs autorefs-internal" title="            accumulate_signals"
 <span class="sd">            * `5` &amp;mdash; Transmittance Calibration</span>
 
 <span class="sd">        path: The path to save the calibration file to.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;save_calibration_file&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"save_calibration_file"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -12171,7 +12171,7 @@ and <a class="autorefs autorefs-internal" title="            accumulate_signals"
 <span class="normal">976</span>
 <span class="normal">977</span>
 <span class="normal">978</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_measurement_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save the measurement data to an OL756-compatible data file.</span>
+<span class="w">    </span><span class="sd">"""Save the measurement data to an OL756-compatible data file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        meas_type: The measurement type.</span>
@@ -12181,8 +12181,8 @@ and <a class="autorefs autorefs-internal" title="            accumulate_signals"
 <span class="sd">            * `2` &amp;mdash; Transmittance</span>
 
 <span class="sd">        path: The path to save the data to.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;save_measurement_data&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"save_measurement_data"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fsdecode</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -12282,7 +12282,7 @@ current.</p>
 <span class="normal">1003</span>
 <span class="normal">1004</span>
 <span class="normal">1005</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">send_down_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan_mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sends down the parameters to the system.</span>
+<span class="w">    </span><span class="sd">"""Sends down the parameters to the system.</span>
 
 <span class="sd">    This needs to be called whenever parameters dealing with the PMT or</span>
 <span class="sd">    integration time and gain has changed. Needs to be called once before</span>
@@ -12305,8 +12305,8 @@ current.</p>
 <span class="sd">            * `0` &amp;mdash; Point to point</span>
 <span class="sd">            * `1` &amp;mdash; Quick scan</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;send_down_parameters&quot;</span><span class="p">,</span> <span class="n">scan_mode</span><span class="p">)</span>
+<span class="sd">    """</span>  <span class="c1"># noqa: E501</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"send_down_parameters"</span><span class="p">,</span> <span class="n">scan_mode</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -12409,7 +12409,7 @@ scans in auto-gain ranging.</p>
 <span class="normal">1024</span>
 <span class="normal">1025</span>
 <span class="normal">1026</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_adaptive_integration_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gain_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">speed_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the scan speed of the scan at a particular gain range.</span>
+<span class="w">    </span><span class="sd">"""Sets the scan speed of the scan at a particular gain range.</span>
 
 <span class="sd">    Adaptive integration time is used solely for point to point</span>
 <span class="sd">    scans in auto-gain ranging.</span>
@@ -12426,8 +12426,8 @@ scans in auto-gain ranging.</p>
 <span class="sd">            * `6` &amp;mdash; 1.0E-11</span>
 
 <span class="sd">        speed_index: The scan speed index [0..12] &amp;mdash; `0` (Slowest), `12` (Fastest).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;set_adaptive_integration_time&quot;</span><span class="p">,</span> <span class="n">gain_index</span><span class="p">,</span> <span class="n">speed_index</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"set_adaptive_integration_time"</span><span class="p">,</span> <span class="n">gain_index</span><span class="p">,</span> <span class="n">speed_index</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -12490,12 +12490,12 @@ scans in auto-gain ranging.</p>
 <span class="normal">1032</span>
 <span class="normal">1033</span>
 <span class="normal">1034</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_averaging_number_of_scan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_scans</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the number of scans to average.</span>
+<span class="w">    </span><span class="sd">"""Set the number of scans to average.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        n_scans: The number of scans to average.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;set_averaging_number_of_scan&quot;</span><span class="p">,</span> <span class="n">n_scans</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"set_averaging_number_of_scan"</span><span class="p">,</span> <span class="n">n_scans</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -12583,7 +12583,7 @@ scans in auto-gain ranging.</p>
 <span class="normal">1045</span>
 <span class="normal">1046</span>
 <span class="normal">1047</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_dark_current_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the mode and the wavelength to use for a dark-current measurement.</span>
+<span class="w">    </span><span class="sd">"""Sets the mode and the wavelength to use for a dark-current measurement.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        mode: The mode to use to acquire a dark-current measurement.</span>
@@ -12592,8 +12592,8 @@ scans in auto-gain ranging.</p>
 <span class="sd">            * `1` &amp;mdash; shutter</span>
 
 <span class="sd">        wavelength: The wavelength, in nm, to use for a dark-current measurement.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;set_dark_current_params&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"set_dark_current_params"</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -12704,7 +12704,7 @@ scans in auto-gain ranging.</p>
 <span class="normal">1070</span>
 <span class="normal">1071</span>
 <span class="normal">1072</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan_mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">gain_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the index of the gain that will be applied when the parameters are to be sent down.</span>
+<span class="w">    </span><span class="sd">"""Sets the index of the gain that will be applied when the parameters are to be sent down.</span>
 
 <span class="sd">    Applies to both quick scan and point to point scans.</span>
 
@@ -12725,8 +12725,8 @@ scans in auto-gain ranging.</p>
 <span class="sd">            * `6` &amp;mdash; 1.0E-11 (available only in Point to Point mode)</span>
 <span class="sd">            * `7` &amp;mdash; Auto Gain Ranging (available only in Point to Point mode)</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;set_gain&quot;</span><span class="p">,</span> <span class="n">scan_mode</span><span class="p">,</span> <span class="n">gain_index</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"set_gain"</span><span class="p">,</span> <span class="n">scan_mode</span><span class="p">,</span> <span class="n">gain_index</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -12860,7 +12860,7 @@ In quick scan, the speed will vary based on the scan range and increments.</p>
 <span class="normal">1107</span>
 <span class="normal">1108</span>
 <span class="normal">1109</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_integration_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scan_mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">scan_speed</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the index of the scan speed used.</span>
+<span class="w">    </span><span class="sd">"""Sets the index of the scan speed used.</span>
 
 <span class="sd">    Applies to both quick scan and point to point scans.</span>
 <span class="sd">    In quick scan, the speed will vary based on the scan range and increments.</span>
@@ -12893,8 +12893,8 @@ In quick scan, the speed will vary based on the scan range and increments.</p>
 <span class="sd">            * `0` &amp;mdash; slowest</span>
 <span class="sd">            * `10` &amp;mdash; fastest</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;set_integration_time&quot;</span><span class="p">,</span> <span class="n">scan_mode</span><span class="p">,</span> <span class="n">scan_speed</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"set_integration_time"</span><span class="p">,</span> <span class="n">scan_mode</span><span class="p">,</span> <span class="n">scan_speed</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -12959,13 +12959,13 @@ Software only, because PMT has built-in protection also.</p>
 <span class="normal">1116</span>
 <span class="normal">1117</span>
 <span class="normal">1118</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_pmt_flux_overload_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">voltage</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the value to use for the photomultiplier tube flux overload.</span>
+<span class="w">    </span><span class="sd">"""Sets the value to use for the photomultiplier tube flux overload.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        voltage: Voltage that the PMT will determine to be at the overload point.</span>
 <span class="sd">            Software only, because PMT has built-in protection also.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;set_pmt_flux_overload_voltage&quot;</span><span class="p">,</span> <span class="n">voltage</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"set_pmt_flux_overload_voltage"</span><span class="p">,</span> <span class="n">voltage</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -13028,12 +13028,12 @@ Software only, because PMT has built-in protection also.</p>
 <span class="normal">1124</span>
 <span class="normal">1125</span>
 <span class="normal">1126</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_pmt_high_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">voltage</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the value to be determined to be a flux overload by the software.</span>
+<span class="w">    </span><span class="sd">"""Sets the value to be determined to be a flux overload by the software.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        voltage: Voltage, in volts, that the PMT will determine to be overload point.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;set_pmt_high_voltage&quot;</span><span class="p">,</span> <span class="n">voltage</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"set_pmt_high_voltage"</span><span class="p">,</span> <span class="n">voltage</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -13148,7 +13148,7 @@ Software only, because PMT has built-in protection also.</p>
 <span class="normal">1155</span>
 <span class="normal">1156</span>
 <span class="normal">1157</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_reference_white_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">white</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the value of the reference illuminant.</span>
+<span class="w">    </span><span class="sd">"""Sets the value of the reference illuminant.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        white: The reference white point.</span>
@@ -13162,8 +13162,8 @@ Software only, because PMT has built-in protection also.</p>
 
 <span class="sd">        x: User defined x value on CIE chart.</span>
 <span class="sd">        y: User defined y value on CIE chart.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;set_reference_white_point&quot;</span><span class="p">,</span> <span class="n">white</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"set_reference_white_point"</span><span class="p">,</span> <span class="n">white</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -13262,15 +13262,15 @@ Software only, because PMT has built-in protection also.</p>
 <span class="normal">1166</span>
 <span class="normal">1167</span>
 <span class="normal">1168</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_scan_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">increment_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the wavelength scan range.</span>
+<span class="w">    </span><span class="sd">"""Sets the wavelength scan range.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        start: Starting wavelength, in nm.</span>
 <span class="sd">        end: Ending wavelength, in nm.</span>
 <span class="sd">        increment_index: Increment index, see</span>
 <span class="sd">            [get_increment_index][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.get_increment_index].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;set_scan_range&quot;</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">increment_index</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"set_scan_range"</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">increment_index</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -13338,15 +13338,15 @@ it reaches its target wavelength.</p>
 <span class="normal">1177</span>
 <span class="normal">1178</span>
 <span class="normal">1179</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_settling_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the settling time.</span>
+<span class="w">    </span><span class="sd">"""Set the settling time.</span>
 
 <span class="sd">    Settling time is the time that the wavelength drive pauses once</span>
 <span class="sd">    it reaches its target wavelength.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        time: Settling Time in seconds to be sent down or has already been sent to the system.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;set_settling_time&quot;</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"set_settling_time"</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -13422,7 +13422,7 @@ the old file format compatible with v1.32 and below.</p>
 <span class="normal">1192</span>
 <span class="normal">1193</span>
 <span class="normal">1194</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_tab_delimited_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Purpose of function is to set what mode to write the data files as.</span>
+<span class="w">    </span><span class="sd">"""Purpose of function is to set what mode to write the data files as.</span>
 
 <span class="sd">    Setting the tab delimited to true will write the data in a tab</span>
 <span class="sd">    delimited format, else a false will write in a comma delimited format.</span>
@@ -13433,8 +13433,8 @@ the old file format compatible with v1.32 and below.</p>
 <span class="sd">    Args:</span>
 <span class="sd">        enable: Whether to use the new file format using TABs as a delimited or</span>
 <span class="sd">            the old file format compatible with v1.32 and below.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;set_tab_delimited_mode&quot;</span><span class="p">,</span> <span class="n">enable</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"set_tab_delimited_mode"</span><span class="p">,</span> <span class="n">enable</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -13500,14 +13500,14 @@ the old file format compatible with v1.32 and below.</p>
 <span class="normal">1202</span>
 <span class="normal">1203</span>
 <span class="normal">1204</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_user_defined_integration_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the user defined integration time.</span>
+<span class="w">    </span><span class="sd">"""Sets the user defined integration time.</span>
 
 <span class="sd">    Used only in point to point scans and only if the user sets the integration time mode.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        time: Integration time in seconds.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;set_user_defined_integration_time&quot;</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"set_user_defined_integration_time"</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -13541,12 +13541,12 @@ so quickly that there is no need to stop a measurement once it starts.</p>
 <span class="normal">1210</span>
 <span class="normal">1211</span>
 <span class="normal">1212</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">stop_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stops a measurement.</span>
+<span class="w">    </span><span class="sd">"""Stops a measurement.</span>
 
 <span class="sd">    Applies only to Point to Point measurements. Quick scans are done</span>
 <span class="sd">    so quickly that there is no need to stop a measurement once it starts.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;stop_measurement&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"stop_measurement"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -13626,7 +13626,7 @@ at least once before calling any of the measurement functions or data acquisitio
 <span class="normal">1227</span>
 <span class="normal">1228</span>
 <span class="normal">1229</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">take_point_to_point_calibration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes a calibration in point to point mode.</span>
+<span class="w">    </span><span class="sd">"""Takes a calibration in point to point mode.</span>
 
 <span class="sd">    Need to have called</span>
 <span class="sd">    [send_down_parameters][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.send_down_parameters]</span>
@@ -13639,8 +13639,8 @@ at least once before calling any of the measurement functions or data acquisitio
 <span class="sd">            * `4` &amp;mdash; Radiance Calibration</span>
 <span class="sd">            * `5` &amp;mdash; Transmittance Calibration</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;take_point_to_point_calibration&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"take_point_to_point_calibration"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -13720,7 +13720,7 @@ at least once before calling any of the measurement functions or data acquisitio
 <span class="normal">1244</span>
 <span class="normal">1245</span>
 <span class="normal">1246</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">take_point_to_point_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes a measurement in point to point mode.</span>
+<span class="w">    </span><span class="sd">"""Takes a measurement in point to point mode.</span>
 
 <span class="sd">    Need to have called</span>
 <span class="sd">    [send_down_parameters][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.send_down_parameters]</span>
@@ -13733,8 +13733,8 @@ at least once before calling any of the measurement functions or data acquisitio
 <span class="sd">            * `1` &amp;mdash; Radiance</span>
 <span class="sd">            * `2` &amp;mdash; Transmittance</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;take_point_to_point_measurement&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"take_point_to_point_measurement"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -13814,7 +13814,7 @@ at least once before calling any of the measurement functions or data acquisitio
 <span class="normal">1261</span>
 <span class="normal">1262</span>
 <span class="normal">1263</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">take_quick_scan_calibration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes a calibration in quick scan mode.</span>
+<span class="w">    </span><span class="sd">"""Takes a calibration in quick scan mode.</span>
 
 <span class="sd">    Need to have called</span>
 <span class="sd">    [send_down_parameters][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.send_down_parameters]</span>
@@ -13827,8 +13827,8 @@ at least once before calling any of the measurement functions or data acquisitio
 <span class="sd">            * `4` &amp;mdash; Radiance Calibration</span>
 <span class="sd">            * `5` &amp;mdash; Transmittance Calibration</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;take_quick_scan_calibration&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"take_quick_scan_calibration"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -13908,7 +13908,7 @@ at least once before calling any of the measurement functions or data acquisitio
 <span class="normal">1278</span>
 <span class="normal">1279</span>
 <span class="normal">1280</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">take_quick_scan_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes a measurement in quick scan mode.</span>
+<span class="w">    </span><span class="sd">"""Takes a measurement in quick scan mode.</span>
 
 <span class="sd">    Need to have called</span>
 <span class="sd">    [send_down_parameters][msl.equipment_resources.optronic_labs.ol756ocx_64.OL756.send_down_parameters]</span>
@@ -13921,8 +13921,8 @@ at least once before calling any of the measurement functions or data acquisitio
 <span class="sd">            * `1` &amp;mdash; Radiance</span>
 <span class="sd">            * `2` &amp;mdash; Transmittance</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;take_quick_scan_measurement&quot;</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"take_quick_scan_measurement"</span><span class="p">,</span> <span class="n">meas_type</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

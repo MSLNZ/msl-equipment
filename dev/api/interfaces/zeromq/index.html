@@ -5625,7 +5625,7 @@ termination characters are specified the value is ignored and is set to <code>No
 <span class="normal">85</span>
 <span class="normal">86</span>
 <span class="normal">87</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for equipment that use the [ZeroMQ](https://zeromq.org/) communication protocol.</span>
+<span class="w">    </span><span class="sd">"""Base class for equipment that use the [ZeroMQ](https://zeromq.org/) communication protocol.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
@@ -5641,19 +5641,19 @@ termination characters are specified the value is ignored and is set to <code>No
 <span class="sd">        socket_type (int | str | zmq.SocketType): ZeroMQ socket type. Can also be a</span>
 <span class="sd">            [SocketType][zmq.SocketType] enum member name (case insensitive) or value.</span>
 <span class="sd">            _Default: `REQ`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
 
     <span class="n">address</span> <span class="o">=</span> <span class="n">parse_zmq_address</span><span class="p">(</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">address</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid ZeroMQ address </span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid ZeroMQ address </span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="si">!r}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">p</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span>
-    <span class="n">socket_type</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;socket_type&quot;</span><span class="p">,</span> <span class="s2">&quot;REQ&quot;</span><span class="p">),</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SocketType</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">protocol</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;protocol&quot;</span><span class="p">,</span> <span class="s2">&quot;tcp&quot;</span><span class="p">)</span>
+    <span class="n">socket_type</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"socket_type"</span><span class="p">,</span> <span class="s2">"REQ"</span><span class="p">),</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SocketType</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">protocol</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"protocol"</span><span class="p">,</span> <span class="s2">"tcp"</span><span class="p">)</span>
 
     <span class="c1"># ZeroMQ does not use termination characters</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_read_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -5672,9 +5672,9 @@ termination characters are specified the value is ignored and is set to <code>No
     <span class="c1"># to it does not matter. A zmq.ZMQError raised here would only be if the `protocol`</span>
     <span class="c1"># is not supported for the operating system</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">protocol</span><span class="si">}</span><span class="s2">://</span><span class="si">{</span><span class="n">address</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">address</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">protocol</span><span class="si">}</span><span class="s2">://</span><span class="si">{</span><span class="n">address</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">address</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">zmq</span><span class="o">.</span><span class="n">ZMQError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
                   </details>
@@ -5931,8 +5931,8 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 <span class="normal">119</span>
 <span class="normal">120</span>
 <span class="normal">121</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Close the socket connection and terminate the context.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_socket&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Close the socket connection and terminate the context."""</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_socket"</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">BLOCKY</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">LINGER</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -6254,7 +6254,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">NumpyArray1D</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convenience method for performing a [write][msl.equipment.interfaces.message.Message.write]</span>
+<span class="w">    </span><span class="sd">"""Convenience method for performing a [write][msl.equipment.interfaces.message.Message.write]</span>
 <span class="sd">    followed by a [read][msl.equipment.interfaces.message.Message.read].</span>
 
 <span class="sd">    Args:</span>
@@ -6275,7 +6275,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 <span class="sd">        The message from the equipment. If `dtype` is specified, then the message is</span>
 <span class="sd">            returned as a numpy [ndarray][numpy.ndarray], if `decode` is `True` then the message</span>
 <span class="sd">            is returned as a [str][], otherwise the message is returned as [bytes][].</span>
-<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: D205</span>
+<span class="sd">    """</span>  <span class="c1"># noqa: D205</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">delay</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
@@ -6522,7 +6522,7 @@ finished with it? Ignored if <code>copy=True</code>. Only passed to <a class="au
     <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">track</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">zmq</span><span class="o">.</span><span class="n">Frame</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convenience method for performing a [write_multipart][..write_multipart] followed by a [read_multipart][..read_multipart].</span>
+<span class="w">    </span><span class="sd">"""Convenience method for performing a [write_multipart][..write_multipart] followed by a [read_multipart][..read_multipart].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        msg_parts: A sequence of objects to send as a multipart message.</span>
@@ -6537,8 +6537,8 @@ finished with it? Ignored if <code>copy=True</code>. Only passed to <a class="au
 
 <span class="sd">    Returns:</span>
 <span class="sd">        If `copy=True` returns a [list][][[bytes][]], otherwise a [list][][[Frame][zmq.Frame]].</span>
-<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">(</span><span class="n">msg_parts</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]</span>
+<span class="sd">    """</span>  <span class="c1"># noqa: E501</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">(</span><span class="n">msg_parts</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">delay</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">recv_multipart</span><span class="p">(</span><span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="n">track</span><span class="o">=</span><span class="n">track</span><span class="p">)</span>
@@ -6906,7 +6906,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">NumpyArray1D</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a message from the equipment.</span>
+<span class="w">    </span><span class="sd">"""Read a message from the equipment.</span>
 
 <span class="sd">    This method will block until one of the following conditions is fulfilled:</span>
 
@@ -6942,9 +6942,9 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 <span class="sd">        The message from the equipment. If `dtype` is specified, then the message is returned</span>
 <span class="sd">            as a numpy [ndarray][numpy.ndarray], if `decode` is `True` then the message</span>
 <span class="sd">            is returned as a [str][], otherwise the message is returned as [bytes][].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_read_size</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;max_read_size is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_read_size</span><span class="si">}</span><span class="s2"> bytes, requesting </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"max_read_size is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_read_size</span><span class="si">}</span><span class="s2"> bytes, requesting </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -6952,19 +6952,19 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="k">except</span> <span class="p">(</span><span class="n">serial</span><span class="o">.</span><span class="n">SerialTimeoutException</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="ne">TimeoutError</span><span class="p">,</span> <span class="n">USBTimeoutError</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">MSLTimeoutError</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">dtype</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.read(dtype=</span><span class="si">%r</span><span class="s2">, fmt=</span><span class="si">%r</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.read(dtype=</span><span class="si">%r</span><span class="s2">, fmt=</span><span class="si">%r</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.read() -&gt; </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.read() -&gt; </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">!=</span> <span class="n">size</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes, requested </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes, requested </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes"</span>
             <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.read(size=</span><span class="si">%s</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.read(size=</span><span class="si">%s</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rstrip</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
@@ -7121,7 +7121,7 @@ finished with it? Ignored if <code>copy=True</code>.</p>
 <span class="normal">206</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_multipart</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">flags</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">track</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">zmq</span><span class="o">.</span><span class="n">Frame</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a multipart message.</span>
+<span class="w">    </span><span class="sd">"""Read a multipart message.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        flags: The only supported flag is [DONTWAIT][zmq.Flag.DONTWAIT]</span>
@@ -7134,7 +7134,7 @@ finished with it? Ignored if <code>copy=True</code>.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        If `copy=True` returns a [list][][[bytes][]], otherwise a [list][][[Frame][zmq.Frame]].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">recv_multipart</span><span class="p">(</span><span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="n">track</span><span class="o">=</span><span class="n">track</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7164,13 +7164,13 @@ finished with it? Ignored if <code>copy=True</code>.</p>
 
   
       module-attribute
-   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="s2">&quot;&lt;f&quot;</span><span class="p">,</span>
+   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="s2">"&lt;f"</span><span class="p">,</span>
     <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="s2">&quot;ieee&quot;</span>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="s2">"ieee"</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
@@ -7364,10 +7364,10 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
     <span class="n">message</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Sequence1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">MessageDataType</span> <span class="o">=</span> <span class="s2">&quot;&lt;f&quot;</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="s2">&quot;ieee&quot;</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">MessageDataType</span> <span class="o">=</span> <span class="s2">"&lt;f"</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="s2">"ieee"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a message to the equipment.</span>
+<span class="w">    </span><span class="sd">"""Write a message to the equipment.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        message: The message to write to the equipment.</span>
@@ -7375,9 +7375,9 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
 <span class="sd">        dtype: The data type to use to convert each element in `data` to bytes. Ignored if `data`</span>
 <span class="sd">            is `None`. If the `fmt` value is `ascii` then the `dtype` value must be a [str][] and</span>
 <span class="sd">            it is used as the `format_spec` argument in [format][] to convert each element in `data`</span>
-<span class="sd">            to a string (e.g., `dtype=&#39;.2e&#39;` converts each element to scientific notation with two</span>
+<span class="sd">            to a string (e.g., `dtype='.2e'` converts each element to scientific notation with two</span>
 <span class="sd">            digits after the decimal point). For all other values of `fmt` the data type can be any</span>
-<span class="sd">            object that numpy [dtype][numpy.dtype] supports, e.g., `&#39;H&#39;`, `&#39;uint16&#39;` and</span>
+<span class="sd">            object that numpy [dtype][numpy.dtype] supports, e.g., `'H'`, `'uint16'` and</span>
 <span class="sd">            [ushort][numpy.ushort] are equivalent values to convert each element to an *unsigned short*.</span>
 <span class="sd">            See [MessageDataType][msl.equipment.typing.MessageDataType] for more details.</span>
 <span class="sd">        fmt: The format to use to convert `data` to bytes. Ignored if `data` is `None`.</span>
@@ -7385,7 +7385,7 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of bytes written.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_encoding</span><span class="p">)</span>
 
@@ -7395,7 +7395,7 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">message</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">):</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.write(</span><span class="si">%r</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.write(</span><span class="si">%r</span><span class="s2">)"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
@@ -7631,7 +7631,7 @@ the last write has completed.</p>
     <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">track</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MessageTracker</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a multipart message.</span>
+<span class="w">    </span><span class="sd">"""Write a multipart message.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        msg_parts: A sequence of objects to send as a multipart message.</span>
@@ -7653,8 +7653,8 @@ the last write has completed.</p>
 <span class="sd">        If `copy=True` returns `None`, otherwise a [MessageTracker][zmq.MessageTracker] object</span>
 <span class="sd">            that will have its [done][zmq.MessageTracker.done] property be `False` until</span>
 <span class="sd">            the last write has completed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">out</span><span class="p">:</span> <span class="n">MessageTracker</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">(</span><span class="n">msg_parts</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="n">track</span><span class="o">=</span><span class="n">track</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]</span>
+<span class="sd">    """</span>
+    <span class="n">out</span><span class="p">:</span> <span class="n">MessageTracker</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_socket</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">(</span><span class="n">msg_parts</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="n">track</span><span class="o">=</span><span class="n">track</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">out</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7682,10 +7682,10 @@ the last write has completed.</p>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">ZeroMQServer</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">allow</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="collections.abc.Iterable" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable">Iterable</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">host</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
+    <span class="n">host</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">"*"</span><span class="p">,</span>
     <span class="n">port</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="n">protocol</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;tcp&quot;</span><span class="p">,</span>
-    <span class="n">socket_type</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="zmq.SocketType" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.SocketType">SocketType</a></span> <span class="o">=</span> <span class="s2">&quot;REP&quot;</span>
+    <span class="n">protocol</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">"tcp"</span><span class="p">,</span>
+    <span class="n">socket_type</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="zmq.SocketType" href="https://pyzmq.readthedocs.io/en/stable/api/zmq.html#zmq.SocketType">SocketType</a></span> <span class="o">=</span> <span class="s2">"REP"</span>
 <span class="p">)</span>
 </code></pre></div>
 
@@ -7875,12 +7875,12 @@ member name (case insensitive) or value.</p>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">allow</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
+    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"*"</span><span class="p">,</span>
     <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="n">protocol</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;tcp&quot;</span><span class="p">,</span>
-    <span class="n">socket_type</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SocketType</span> <span class="o">=</span> <span class="s2">&quot;REP&quot;</span><span class="p">,</span>
+    <span class="n">protocol</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"tcp"</span><span class="p">,</span>
+    <span class="n">socket_type</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SocketType</span> <span class="o">=</span> <span class="s2">"REP"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Start a server to handle requests for the [ZeroMQ](https://zeromq.org/) protocol.</span>
+<span class="w">    </span><span class="sd">"""Start a server to handle requests for the [ZeroMQ](https://zeromq.org/) protocol.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        allow: The IPv4 address(es), or hostname(s), that are allowed to connect to the server.</span>
@@ -7893,17 +7893,17 @@ member name (case insensitive) or value.</p>
 <span class="sd">        protocol: The ZeroMQ protocol to use (`tcp`, `udp`, `pgm`, `inproc`, `ipc`).</span>
 <span class="sd">        socket_type: The ZeroMQ socket type. Can also be a [SocketType][zmq.SocketType] enum</span>
 <span class="sd">            member name (case insensitive) or value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_auth</span><span class="p">:</span> <span class="n">AsyncioAuthenticator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt</span><span class="p">:</span> <span class="n">_Interrupter</span> <span class="o">=</span> <span class="n">_Interrupter</span><span class="p">()</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">:</span> <span class="n">zmq</span><span class="o">.</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Context</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Context</span><span class="p">()</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[Context][zmq.asyncio.Context] &amp;mdash; The asynchronous ZeroMQ context.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[Context][zmq.asyncio.Context] &amp;mdash; The asynchronous ZeroMQ context."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_socket_type</span><span class="p">:</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SocketType</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">socket_type</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SocketType</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="p">:</span> <span class="n">zmq</span><span class="o">.</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Socket</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_socket_type</span><span class="p">)</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[Socket][zmq.asyncio.Socket] &amp;mdash; The asynchronous ZeroMQ socket.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""[Socket][zmq.asyncio.Socket] &amp;mdash; The asynchronous ZeroMQ socket."""</span>
 
     <span class="k">if</span> <span class="n">allow</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">socket</span><span class="w"> </span><span class="kn">import</span> <span class="n">gethostbyname</span>  <span class="c1"># noqa: PLC0415</span>
@@ -7917,20 +7917,20 @@ member name (case insensitive) or value.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_auth</span><span class="o">.</span><span class="n">allow</span><span class="p">(</span><span class="o">*</span><span class="p">{</span><span class="n">gethostbyname</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">allow</span><span class="p">})</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">port</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[int][] &amp;mdash; The port number that the server is running on.</span>
+<span class="w">    </span><span class="sd">"""[int][] &amp;mdash; The port number that the server is running on.</span>
 
 <span class="sd">    If a value of `0` is used to instantiate the class, the port value will become</span>
 <span class="sd">    non-zero once [start][msl.equipment.interfaces.zeromq.ZeroMQServer.start]</span>
 <span class="sd">    is called.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">address</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">protocol</span><span class="si">}</span><span class="s2">://</span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">&#39;*&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">address</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">protocol</span><span class="si">}</span><span class="s2">://</span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">'*'</span><span class="si">}</span><span class="s2">"</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">address</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;[str][] &amp;mdash; The ZeroMQ address that the server is using, i.e., `protocol://host:port`.</span>
+<span class="w">    </span><span class="sd">"""[str][] &amp;mdash; The ZeroMQ address that the server is using, i.e., `protocol://host:port`.</span>
 
 <span class="sd">    The value is updated once [start][msl.equipment.interfaces.zeromq.ZeroMQServer.start] is called.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_poller</span><span class="p">:</span> <span class="n">zmq</span><span class="o">.</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Poller</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Poller</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_poller</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">socket</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">POLLIN</span><span class="p">)</span>
@@ -8171,9 +8171,9 @@ a request. Return empty bytes (<code>b""</code>) instead of <code>None</code> in
 <span class="normal">408</span>
 <span class="normal">409</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">handle_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ZMQServerResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle a *single* request.</span>
+<span class="w">    </span><span class="sd">"""Handle a *single* request.</span>
 
-<span class="sd">    !!! warning &quot;Attention&quot;</span>
+<span class="sd">    !!! warning "Attention"</span>
 <span class="sd">        You must override this method.</span>
 
 <span class="sd">    Args:</span>
@@ -8188,8 +8188,8 @@ a request. Return empty bytes (<code>b""</code>) instead of <code>None</code> in
 <span class="sd">            `None` (do not send a response). A server cannot return `None` when using the</span>
 <span class="sd">            [REQ][zmq.SocketType.REQ] (client) and [REP][zmq.SocketType.REP] (server)</span>
 <span class="sd">            socket types since a client must always read the response after sending</span>
-<span class="sd">            a request. Return empty bytes (`b&quot;&quot;`) instead of `None` in this case.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">            a request. Return empty bytes (`b""`) instead of `None` in this case.</span>
+<span class="sd">    """</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -8235,12 +8235,12 @@ unbound and the <a class="autorefs autorefs-internal" title="            context
 <span class="normal">438</span>
 <span class="normal">439</span>
 <span class="normal">440</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">shutdown_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;You can override this method in the subclass to perform any necessary clean up.</span>
+<span class="w">    </span><span class="sd">"""You can override this method in the subclass to perform any necessary clean up.</span>
 
 <span class="sd">    This method is called after [start][msl.equipment.interfaces.zeromq.ZeroMQServer.start]</span>
 <span class="sd">    finishes but before the [socket][msl.equipment.interfaces.zeromq.ZeroMQServer.socket] is</span>
 <span class="sd">    unbound and the [context][msl.equipment.interfaces.zeromq.ZeroMQServer.context] is terminated.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -8273,10 +8273,10 @@ unbound and the <a class="autorefs autorefs-internal" title="            context
 <span class="normal">445</span>
 <span class="normal">446</span>
 <span class="normal">447</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">shutdown_server</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Shut down the server.</span>
+<span class="w">    </span><span class="sd">"""Shut down the server.</span>
 
 <span class="sd">    Pressing `Ctrl+C` in the terminal that the server is running in will also shut down the server.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -8354,17 +8354,17 @@ unbound and the <a class="autorefs autorefs-internal" title="            context
 <span class="normal">429</span>
 <span class="normal">430</span>
 <span class="normal">431</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Start the server.</span>
+<span class="w">    </span><span class="sd">"""Start the server.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        info: Whether to print information about the running server.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>  <span class="c1"># noqa: PLC0415</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>  <span class="c1"># noqa: PLC0415</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportUnreachable]</span>
+            <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">"win32"</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportUnreachable]</span>
                 <span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop_policy</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">WindowsSelectorEventLoopPolicy</span><span class="p">())</span>
             <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">(</span><span class="n">info</span><span class="o">=</span><span class="n">info</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>

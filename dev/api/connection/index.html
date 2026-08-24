@@ -5105,12 +5105,12 @@
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">Connection</span><span class="p">(</span>
     <span class="n">address</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">backend</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;MSL&quot;</span><span class="p">,</span> <span class="s2">&quot;PyVISA&quot;</span><span class="p">,</span> <span class="s2">&quot;NIDAQ&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            Backend
+    <span class="n">backend</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">"MSL"</span><span class="p">,</span> <span class="s2">"PyVISA"</span><span class="p">,</span> <span class="s2">"NIDAQ"</span><span class="p">]</span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            Backend
 (Enum) (msl.equipment.enumerations.Backend)" href="../enumerations/#msl.equipment.enumerations.Backend">Backend</a></span> <span class="o">=</span> <span class="n"><span title="msl.equipment.enumerations.Backend.MSL">MSL</span></span><span class="p">,</span>
-    <span class="n">eid</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">manufacturer</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">serial</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">eid</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="n">manufacturer</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="n">serial</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="o">**</span><span class="n">properties</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span>
 <span class="p">)</span>
 </code></pre></div>
@@ -5323,14 +5323,14 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;MSL&quot;</span><span class="p">,</span> <span class="s2">&quot;PyVISA&quot;</span><span class="p">,</span> <span class="s2">&quot;NIDAQ&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="n">Backend</span> <span class="o">=</span> <span class="n">Backend</span><span class="o">.</span><span class="n">MSL</span><span class="p">,</span>
-    <span class="n">eid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">manufacturer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">serial</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"MSL"</span><span class="p">,</span> <span class="s2">"PyVISA"</span><span class="p">,</span> <span class="s2">"NIDAQ"</span><span class="p">]</span> <span class="o">|</span> <span class="n">Backend</span> <span class="o">=</span> <span class="n">Backend</span><span class="o">.</span><span class="n">MSL</span><span class="p">,</span>
+    <span class="n">eid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="n">manufacturer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="n">serial</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="o">**</span><span class="n">properties</span><span class="p">:</span> <span class="n">_Any</span><span class="p">,</span>  <span class="c1"># noqa: ANN401</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Information about how to interface with equipment.</span>
+<span class="w">    </span><span class="sd">"""Information about how to interface with equipment.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        address: The VISA-style address of the connection (see [here][address-syntax] for examples).</span>
@@ -5341,37 +5341,37 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 <span class="sd">        serial: The serial number (or unique identifier) of the equipment.</span>
 <span class="sd">        properties: Additional key-value pairs to use when communicating with the equipment.</span>
 <span class="sd">            For example, the _baud_rate_ and _parity_ values for an _RS-232_ connection.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">address</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The VISA-style address of the connection (see [here][address-syntax] for examples).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""The VISA-style address of the connection (see [here][address-syntax] for examples)."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="p">:</span> <span class="n">Backend</span> <span class="o">=</span> <span class="n">Backend</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The [backend][msl.equipment.enumerations.Backend] that is used to communicate with the equipment.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""The [backend][msl.equipment.enumerations.Backend] that is used to communicate with the equipment."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">eid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">eid</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The [equipment id][msl.equipment.schema.Equipment.id] associated with the [Connection][] instance.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""The [equipment id][msl.equipment.schema.Equipment.id] associated with the [Connection][] instance."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">manufacturer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">manufacturer</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The name of the manufacturer of the equipment.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""The name of the manufacturer of the equipment."""</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">model</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model number of the equipment.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""The model number of the equipment."""</span>
 
     <span class="c1"># check for a properties key being explicitly defined and the value is a dict</span>
     <span class="n">properties</span> <span class="o">=</span> <span class="p">(</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
-        <span class="n">properties</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;properties&quot;</span> <span class="ow">in</span> <span class="n">properties</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">properties</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">],</span> <span class="nb">dict</span><span class="p">))</span>
+        <span class="n">properties</span><span class="p">[</span><span class="s2">"properties"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s2">"properties"</span> <span class="ow">in</span> <span class="n">properties</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">properties</span><span class="p">[</span><span class="s2">"properties"</span><span class="p">],</span> <span class="nb">dict</span><span class="p">))</span>
         <span class="k">else</span> <span class="n">properties</span>
     <span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">properties</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Additional key-value pairs to use when communicating with the equipment.</span>
+<span class="w">    </span><span class="sd">"""Additional key-value pairs to use when communicating with the equipment.</span>
 
 <span class="sd">    For example, the *baud_rate* and *parity* values for an *RS-232* connection.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">serial</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">serial</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The serial number (or unique identifier) of the equipment.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""The serial number (or unique identifier) of the equipment."""</span>
 </code></pre></div></td></tr></table></div>
                   </details>
 
@@ -5635,7 +5635,7 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 <span class="normal">3183</span>
 <span class="normal">3184</span>
 <span class="normal">3185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Any</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Connect to the equipment for computer control.</span>
+<span class="w">    </span><span class="sd">"""Connect to the equipment for computer control.</span>
 
 <span class="sd">    The following sequence is used to decide how the connection is established.</span>
 
@@ -5646,7 +5646,7 @@ For example, the <em>baud_rate</em> and <em>parity</em> values for an <em>RS-232
 <span class="sd">       that Resource is used.</span>
 <span class="sd">    3. If the [Connection][] has an [address][msl.equipment.schema.Connection.address]</span>
 <span class="sd">       that is supported by one of the [Interfaces][connections-interfaces], that Interface is used.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">equipment</span> <span class="o">=</span> <span class="n">Equipment</span><span class="p">(</span>
         <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eid</span><span class="p">,</span>
         <span class="n">manufacturer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">manufacturer</span><span class="p">,</span>

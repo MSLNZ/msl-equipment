@@ -5764,13 +5764,13 @@
 <div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
 
 <span class="c1"># The linux-gpib version to install (optional: update to be the latest release version)</span>
-<span class="nv">VERSION</span><span class="o">=</span><span class="s2">&quot;4.3.7&quot;</span>
+<span class="nv">VERSION</span><span class="o">=</span><span class="s2">"4.3.7"</span>
 
 <span class="c1"># Prerequisites to build linux-gpib</span>
 sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>--yes<span class="w"> </span>linux-headers-<span class="k">$(</span>uname<span class="w"> </span>-r<span class="k">)</span><span class="w"> </span>wget<span class="w"> </span>automake<span class="w"> </span>libtool<span class="w"> </span>flex<span class="w"> </span>bison
 
 <span class="c1"># Download and extract the specified linux-gpib version</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Downloading linux-gpib-</span><span class="nv">$VERSION</span><span class="s2">.tar.gz source from https://sourceforge.net ...&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"Downloading linux-gpib-</span><span class="nv">$VERSION</span><span class="s2">.tar.gz source from https://sourceforge.net ..."</span>
 wget<span class="w"> </span>-q<span class="w"> </span>-O<span class="w"> </span>linux-gpib-<span class="nv">$VERSION</span>.tar.gz<span class="w"> </span>https://sourceforge.net/projects/linux-gpib/files/linux-gpib%20for%203.x.x%20and%202.6.x%20kernels/<span class="nv">$VERSION</span>/linux-gpib-<span class="nv">$VERSION</span>.tar.gz/download
 tar<span class="w"> </span>-xf<span class="w"> </span>linux-gpib-<span class="nv">$VERSION</span>.tar.gz
 <span class="nb">cd</span><span class="w"> </span>linux-gpib-<span class="nv">$VERSION</span>
@@ -5795,26 +5795,26 @@ sudo<span class="w"> </span>ldconfig
 sudo<span class="w"> </span>addgroup<span class="w"> </span>gpib
 sudo<span class="w"> </span>usermod<span class="w"> </span>-a<span class="w"> </span>-G<span class="w"> </span>gpib<span class="w"> </span><span class="k">$(</span>whoami<span class="k">)</span>
 
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Installed, next steps:&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;1. Edit the value of &#39;board_type&#39; in the &#39;interface&#39; section of /etc/gpib.conf&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   For the list of supported board types, see https://linux-gpib.sourceforge.io/doc_html/supported-hardware.html&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   For example, for a NI GPIB-USB-HS+ controller set board_type = \&quot;ni_usb_b\&quot;&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   </span>$<span class="s2"> sudo nano /etc/gpib.conf&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;2. Plug in the GPIB-USB controller and make sure that it is listed as a USB device&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   </span>$<span class="s2"> lsusb&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;3. Check the GPIB configuration, the following command should run without displaying an error&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   </span>$<span class="s2"> sudo gpib_config&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   If you get an error similar to:&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;     failed to configure boardtype: ni_pci&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;     failed to configure board&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;     main: Invalid argument&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;   that means you specified the wrong board_type in Step 1&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;4. You may delete the linux-gpib-</span><span class="nv">$VERSION</span><span class="s2"> directory and the linux-gpib-</span><span class="nv">$VERSION</span><span class="s2">.tar.gz file&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"Installed, next steps:"</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"1. Edit the value of 'board_type' in the 'interface' section of /etc/gpib.conf"</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"   For the list of supported board types, see https://linux-gpib.sourceforge.io/doc_html/supported-hardware.html"</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"   For example, for a NI GPIB-USB-HS+ controller set board_type = \"ni_usb_b\""</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">""</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"   </span>$<span class="s2"> sudo nano /etc/gpib.conf"</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">""</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"2. Plug in the GPIB-USB controller and make sure that it is listed as a USB device"</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"   </span>$<span class="s2"> lsusb"</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">""</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"3. Check the GPIB configuration, the following command should run without displaying an error"</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"   </span>$<span class="s2"> sudo gpib_config"</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">""</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"   If you get an error similar to:"</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"     failed to configure boardtype: ni_pci"</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"     failed to configure board"</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"     main: Invalid argument"</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"   that means you specified the wrong board_type in Step 1"</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">""</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"4. You may delete the linux-gpib-</span><span class="nv">$VERSION</span><span class="s2"> directory and the linux-gpib-</span><span class="nv">$VERSION</span><span class="s2">.tar.gz file"</span>
 </code></pre></div>
 </details>
 <p>Make the script executable,</p>
@@ -6008,7 +6008,7 @@ for the GPIB communication protocol, as well as the <em>properties</em> defined 
 <span class="normal">395</span>
 <span class="normal">396</span>
 <span class="normal">397</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for GPIB communication.</span>
+<span class="w">    </span><span class="sd">"""Base class for GPIB communication.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
@@ -6023,7 +6023,7 @@ for the GPIB communication protocol, as well as the <em>properties</em> defined 
 <span class="sd">            _Default: `0`_</span>
 <span class="sd">        send_eoi (bool): Whether to enable (`True`) or disable (`False`) the assertion of the EOI signal.</span>
 <span class="sd">            _Default: `True`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_own</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
@@ -6031,11 +6031,11 @@ for the GPIB communication protocol, as well as the <em>properties</em> defined 
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
     <span class="n">info</span> <span class="o">=</span> <span class="n">parse_gpib_address</span><span class="p">(</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">info</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid GPIB address </span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid GPIB address </span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="si">!r}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">props</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;read_termination&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"read_termination"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="n">_load_library</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_error_check</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">GPIB</span><span class="o">.</span><span class="n">gpib_library</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
@@ -6050,13 +6050,13 @@ for the GPIB communication protocol, as well as the <em>properties</em> defined 
         <span class="bp">self</span><span class="o">.</span><span class="n">_own</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># a device object</span>
-        <span class="n">send_eoi</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;send_eoi&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="n">eos_mode</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eos_mode&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">send_eoi</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"send_eoi"</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">eos_mode</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"eos_mode"</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
         <span class="n">sad</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">sad</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">info</span><span class="o">.</span><span class="n">sad</span>
         <span class="k">if</span> <span class="n">sad</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">sad</span> <span class="o">&lt;</span> <span class="mh">0x60</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
             <span class="n">sad</span> <span class="o">+=</span> <span class="mh">0x60</span>
         <span class="n">info</span><span class="o">.</span><span class="n">sad</span> <span class="o">=</span> <span class="n">sad</span>
-        <span class="n">timeout</span> <span class="o">=</span> <span class="n">_convert_timeout</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="n">timeout</span> <span class="o">=</span> <span class="n">_convert_timeout</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"timeout"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ibdev_handle</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">board</span><span class="p">,</span> <span class="n">info</span><span class="o">.</span><span class="n">pad</span><span class="p">,</span> <span class="n">sad</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">send_eoi</span><span class="p">,</span> <span class="n">eos_mode</span><span class="p">)</span>
 
     <span class="c1"># keep this reference assignment after the if/else condition since the</span>
@@ -6433,7 +6433,7 @@ method.</p>
 <span class="normal">512</span>
 <span class="normal">513</span>
 <span class="normal">514</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a GPIB configuration setting (board or device).</span>
+<span class="w">    </span><span class="sd">"""Get a GPIB configuration setting (board or device).</span>
 
 <span class="sd">    This method is the [ibask](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibask.html)</span>
 <span class="sd">    function, it should not be confused with the [query][msl.equipment.interfaces.message.Message.query]</span>
@@ -6445,7 +6445,7 @@ method.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The value of the configuration setting.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span>
     <span class="n">setting</span> <span class="o">=</span> <span class="n">c_int</span><span class="p">()</span>
@@ -6545,7 +6545,7 @@ method.</p>
 <span class="normal">533</span>
 <span class="normal">534</span>
 <span class="normal">535</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send the clear command (device).</span>
+<span class="w">    </span><span class="sd">"""Send the clear command (device).</span>
 
 <span class="sd">    This method is the [ibclr](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibclr.html) function.</span>
 
@@ -6554,7 +6554,7 @@ method.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status value (`ibsta`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span>
     <span class="n">ibsta</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lib</span><span class="o">.</span><span class="n">ibclr</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
@@ -6674,7 +6674,7 @@ The board must be the controller-in-charge.</p>
 <span class="normal">552</span>
 <span class="normal">553</span>
 <span class="normal">554</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write command bytes (board).</span>
+<span class="w">    </span><span class="sd">"""Write command bytes (board).</span>
 
 <span class="sd">    This method is the [ibcmd](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibcmd.html) function.</span>
 
@@ -6686,7 +6686,7 @@ The board must be the controller-in-charge.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status value (`ibsta`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_address_info</span><span class="o">.</span><span class="n">board</span>
     <span class="n">ibsta</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lib</span><span class="o">.</span><span class="n">ibcmd</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
@@ -6821,7 +6821,7 @@ function.</p>
 <span class="normal">571</span>
 <span class="normal">572</span>
 <span class="normal">573</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Change configuration settings (board or device).</span>
+<span class="w">    </span><span class="sd">"""Change configuration settings (board or device).</span>
 
 <span class="sd">    This method is the [ibconfig](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibconfig.html)</span>
 <span class="sd">    function.</span>
@@ -6833,7 +6833,7 @@ function.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status value (`ibsta`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span>
     <span class="n">ibsta</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lib</span><span class="o">.</span><span class="n">ibconfig</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
@@ -6941,7 +6941,7 @@ an enum member name (case insensitive) or value.</p>
 <span class="normal">593</span>
 <span class="normal">594</span>
 <span class="normal">595</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">control_atn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">ATNState</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the state of the GPIB Attention (ATN) line.</span>
+<span class="w">    </span><span class="sd">"""Set the state of the GPIB Attention (ATN) line.</span>
 
 <span class="sd">    This method mimics the PyVISA-py implementation.</span>
 
@@ -6951,7 +6951,7 @@ an enum member name (case insensitive) or value.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status value (`ibsta`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_address_info</span><span class="o">.</span><span class="n">board</span>
     <span class="n">atn</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">ATNState</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">atn</span> <span class="o">==</span> <span class="n">ATNState</span><span class="o">.</span><span class="n">ASSERT</span><span class="p">:</span>
@@ -7086,7 +7086,7 @@ Allowed values are:</p>
 <span class="normal">635</span>
 <span class="normal">636</span>
 <span class="normal">637</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">control_ren</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">RENMode</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Controls the state of the GPIB Remote Enable (REN) line.</span>
+<span class="w">    </span><span class="sd">"""Controls the state of the GPIB Remote Enable (REN) line.</span>
 
 <span class="sd">    Optionally the remote/local state of the device is also controlled.</span>
 
@@ -7099,24 +7099,24 @@ Allowed values are:</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status value (`ibsta`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ibsta</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">ren</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">RENMode</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_board</span> <span class="ow">and</span> <span class="n">ren</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">RENMode</span><span class="o">.</span><span class="n">ASSERT</span><span class="p">,</span> <span class="n">RENMode</span><span class="o">.</span><span class="n">DEASSERT</span><span class="p">,</span> <span class="n">RENMode</span><span class="o">.</span><span class="n">ASSERT_LLO</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid mode </span><span class="si">{</span><span class="n">ren</span><span class="si">!r}</span><span class="s2"> for INTFC&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid mode </span><span class="si">{</span><span class="n">ren</span><span class="si">!r}</span><span class="s2"> for INTFC"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">ren</span> <span class="o">==</span> <span class="n">RENMode</span><span class="o">.</span><span class="n">DEASSERT_GTL</span><span class="p">:</span>
-        <span class="n">ibsta</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x01</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># GTL = 0x1</span>
+        <span class="n">ibsta</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\x01</span><span class="s2">"</span><span class="p">)</span>  <span class="c1"># GTL = 0x1</span>
 
     <span class="k">if</span> <span class="n">ren</span> <span class="ow">in</span> <span class="p">{</span><span class="n">RENMode</span><span class="o">.</span><span class="n">DEASSERT</span><span class="p">,</span> <span class="n">RENMode</span><span class="o">.</span><span class="n">DEASSERT_GTL</span><span class="p">}:</span>
         <span class="n">ibsta</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_enable</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">ren</span> <span class="o">==</span> <span class="n">RENMode</span><span class="o">.</span><span class="n">ASSERT_LLO</span><span class="p">:</span>
-        <span class="n">ibsta</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x11</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># LLO = 0x11</span>
+        <span class="n">ibsta</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\x11</span><span class="s2">"</span><span class="p">)</span>  <span class="c1"># LLO = 0x11</span>
     <span class="k">elif</span> <span class="n">ren</span> <span class="o">==</span> <span class="n">RENMode</span><span class="o">.</span><span class="n">ADDRESS_GTL</span><span class="p">:</span>
-        <span class="n">ibsta</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x01</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># GTL = 0x1</span>
+        <span class="n">ibsta</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\x01</span><span class="s2">"</span><span class="p">)</span>  <span class="c1"># GTL = 0x1</span>
     <span class="k">elif</span> <span class="n">ren</span> <span class="o">==</span> <span class="n">RENMode</span><span class="o">.</span><span class="n">ASSERT_ADDRESS_LLO</span><span class="p">:</span>
         <span class="k">pass</span>
     <span class="k">elif</span> <span class="n">ren</span> <span class="ow">in</span> <span class="p">{</span><span class="n">RENMode</span><span class="o">.</span><span class="n">ASSERT</span><span class="p">,</span> <span class="n">RENMode</span><span class="o">.</span><span class="n">ASSERT_ADDRESS</span><span class="p">}:</span>
@@ -7184,13 +7184,13 @@ Allowed values are:</p>
 <span class="normal">646</span>
 <span class="normal">647</span>
 <span class="normal">648</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the number of bytes sent or received.</span>
+<span class="w">    </span><span class="sd">"""Get the number of bytes sent or received.</span>
 
 <span class="sd">    This method is the [ibcntl](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibcnt.html) function.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of bytes sent or received.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lib</span><span class="o">.</span><span class="n">ibcntl</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">count</span>
 </code></pre></div></td></tr></table></div>
@@ -7224,7 +7224,7 @@ Allowed values are:</p>
 <span class="normal">654</span>
 <span class="normal">655</span>
 <span class="normal">656</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Close the GPIB connection.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Close the GPIB connection."""</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_own</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="n">MSLConnectionError</span><span class="p">):</span>
             <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">online</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">handle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">)</span>
@@ -7331,7 +7331,7 @@ function.</p>
 <span class="normal">679</span>
 <span class="normal">680</span>
 <span class="normal">681</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">interface_clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform interface clear (board).</span>
+<span class="w">    </span><span class="sd">"""Perform interface clear (board).</span>
 
 <span class="sd">    Resets the GPIB bus by asserting the *interface clear* (IFC) bus line for a duration of at</span>
 <span class="sd">    least 100 microseconds.</span>
@@ -7344,7 +7344,7 @@ function.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status value (`ibsta`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_address_info</span><span class="o">.</span><span class="n">board</span>
     <span class="n">ibsta</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lib</span><span class="o">.</span><span class="n">ibsic</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
@@ -7446,7 +7446,7 @@ function.</p>
 <span class="normal">697</span>
 <span class="normal">698</span>
 <span class="normal">699</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the status of the control and handshaking bus lines (board).</span>
+<span class="w">    </span><span class="sd">"""Returns the status of the control and handshaking bus lines (board).</span>
 
 <span class="sd">    This method is the [iblines](https://linux-gpib.sourceforge.io/doc_html/reference-function-iblines.html)</span>
 <span class="sd">    function.</span>
@@ -7456,7 +7456,7 @@ function.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status of the control and handshaking bus lines.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_address_info</span><span class="o">.</span><span class="n">board</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">c_short</span><span class="p">()</span>
@@ -7593,7 +7593,7 @@ function.</p>
 <span class="normal">717</span>
 <span class="normal">718</span>
 <span class="normal">719</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">listener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pad</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sad</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a listener is present (board or device).</span>
+<span class="w">    </span><span class="sd">"""Check if a listener is present (board or device).</span>
 
 <span class="sd">    This method is the [ibln](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibln.html)</span>
 <span class="sd">    function.</span>
@@ -7605,7 +7605,7 @@ function.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether a listener is present.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span>
     <span class="n">listener</span> <span class="o">=</span> <span class="n">c_short</span><span class="p">()</span>
@@ -7707,7 +7707,7 @@ function.</p>
 <span class="normal">734</span>
 <span class="normal">735</span>
 <span class="normal">736</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Go to local mode (board or device).</span>
+<span class="w">    </span><span class="sd">"""Go to local mode (board or device).</span>
 
 <span class="sd">    This method is the [ibloc](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibloc.html)</span>
 <span class="sd">    function.</span>
@@ -7717,7 +7717,7 @@ function.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status value (`ibsta`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span>
     <span class="n">ibsta</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lib</span><span class="o">.</span><span class="n">ibloc</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
@@ -7844,7 +7844,7 @@ values. The <em>default</em> values are the settings the descriptor had when it 
 <span class="normal">757</span>
 <span class="normal">758</span>
 <span class="normal">759</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">online</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Close or reinitialize descriptor (board or device).</span>
+<span class="w">    </span><span class="sd">"""Close or reinitialize descriptor (board or device).</span>
 
 <span class="sd">    This method is the [ibonl](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibonl.html)</span>
 <span class="sd">    function.</span>
@@ -7860,7 +7860,7 @@ values. The <em>default</em> values are the settings the descriptor had when it 
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status value (`ibsta`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span>
     <span class="n">ibsta</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lib</span><span class="o">.</span><span class="n">ibonl</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
@@ -8064,7 +8064,7 @@ function.</p>
     <span class="n">pad</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">sad</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set a GPIB board or device to become the controller-in-charge (CIC).</span>
+<span class="w">    </span><span class="sd">"""Set a GPIB board or device to become the controller-in-charge (CIC).</span>
 
 <span class="sd">    This method is the [ibpct](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibpct.html)</span>
 <span class="sd">    function.</span>
@@ -8080,7 +8080,7 @@ function.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The handle of the board or device that became CIC.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">pass</span>
     <span class="k">elif</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -8410,7 +8410,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">NumpyArray1D</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convenience method for performing a [write][msl.equipment.interfaces.message.Message.write]</span>
+<span class="w">    </span><span class="sd">"""Convenience method for performing a [write][msl.equipment.interfaces.message.Message.write]</span>
 <span class="sd">    followed by a [read][msl.equipment.interfaces.message.Message.read].</span>
 
 <span class="sd">    Args:</span>
@@ -8431,7 +8431,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 <span class="sd">        The message from the equipment. If `dtype` is specified, then the message is</span>
 <span class="sd">            returned as a numpy [ndarray][numpy.ndarray], if `decode` is `True` then the message</span>
 <span class="sd">            is returned as a [str][], otherwise the message is returned as [bytes][].</span>
-<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: D205</span>
+<span class="sd">    """</span>  <span class="c1"># noqa: D205</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">delay</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
@@ -8802,7 +8802,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">NumpyArray1D</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a message from the equipment.</span>
+<span class="w">    </span><span class="sd">"""Read a message from the equipment.</span>
 
 <span class="sd">    This method will block until one of the following conditions is fulfilled:</span>
 
@@ -8838,9 +8838,9 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 <span class="sd">        The message from the equipment. If `dtype` is specified, then the message is returned</span>
 <span class="sd">            as a numpy [ndarray][numpy.ndarray], if `decode` is `True` then the message</span>
 <span class="sd">            is returned as a [str][], otherwise the message is returned as [bytes][].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_read_size</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;max_read_size is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_read_size</span><span class="si">}</span><span class="s2"> bytes, requesting </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"max_read_size is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_read_size</span><span class="si">}</span><span class="s2"> bytes, requesting </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -8848,19 +8848,19 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="k">except</span> <span class="p">(</span><span class="n">serial</span><span class="o">.</span><span class="n">SerialTimeoutException</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="ne">TimeoutError</span><span class="p">,</span> <span class="n">USBTimeoutError</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">MSLTimeoutError</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">dtype</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.read(dtype=</span><span class="si">%r</span><span class="s2">, fmt=</span><span class="si">%r</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.read(dtype=</span><span class="si">%r</span><span class="s2">, fmt=</span><span class="si">%r</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.read() -&gt; </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.read() -&gt; </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">!=</span> <span class="n">size</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes, requested </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes, requested </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes"</span>
             <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.read(size=</span><span class="si">%s</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.read(size=</span><span class="si">%s</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rstrip</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
@@ -8987,7 +8987,7 @@ The board must be the system controller.</p>
 <span class="normal">840</span>
 <span class="normal">841</span>
 <span class="normal">842</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">remote_enable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set remote enable (board).</span>
+<span class="w">    </span><span class="sd">"""Set remote enable (board).</span>
 
 <span class="sd">    This method is the [ibsre](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibsre.html)</span>
 <span class="sd">    function.</span>
@@ -8999,7 +8999,7 @@ The board must be the system controller.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status value (`ibsta`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># ibsre was removed from ni4882.dll, use ibconfig instead (IbcSRE = 0xb)</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_address_info</span><span class="o">.</span><span class="n">board</span>
@@ -9101,7 +9101,7 @@ function.</p>
 <span class="normal">858</span>
 <span class="normal">859</span>
 <span class="normal">860</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">serial_poll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read status byte / serial poll (device).</span>
+<span class="w">    </span><span class="sd">"""Read status byte / serial poll (device).</span>
 
 <span class="sd">    This method is the [ibrsp](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibrsp.html)</span>
 <span class="sd">    function.</span>
@@ -9111,7 +9111,7 @@ function.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status byte.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">()</span>
@@ -9214,7 +9214,7 @@ function.</p>
 <span class="normal">876</span>
 <span class="normal">877</span>
 <span class="normal">878</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">spoll_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the length of the serial poll bytes queue (device).</span>
+<span class="w">    </span><span class="sd">"""Get the length of the serial poll bytes queue (device).</span>
 
 <span class="sd">    This method is the [ibspb](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibspb.html)</span>
 <span class="sd">    function.</span>
@@ -9224,7 +9224,7 @@ function.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of serial poll bytes queued for the device.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span>
     <span class="n">length</span> <span class="o">=</span> <span class="n">c_short</span><span class="p">()</span>
@@ -9285,11 +9285,11 @@ function.</p>
 <span class="normal">885</span>
 <span class="normal">886</span>
 <span class="normal">887</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the status value [ibsta](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html).</span>
+<span class="w">    </span><span class="sd">"""Get the status value [ibsta](https://linux-gpib.sourceforge.io/doc_html/reference-globals-ibsta.html).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">status</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lib</span><span class="o">.</span><span class="n">ThreadIbsta</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">status</span>
 </code></pre></div></td></tr></table></div>
@@ -9388,7 +9388,7 @@ function.</p>
 <span class="normal">902</span>
 <span class="normal">903</span>
 <span class="normal">904</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger a device (device).</span>
+<span class="w">    </span><span class="sd">"""Trigger a device (device).</span>
 
 <span class="sd">    This method is the [ibtrg](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibtrg.html)</span>
 <span class="sd">    function.</span>
@@ -9398,7 +9398,7 @@ function.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status value (`ibsta`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span>
     <span class="n">ibsta</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lib</span><span class="o">.</span><span class="n">ibtrg</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
@@ -9463,18 +9463,18 @@ function.</p>
 <span class="normal">916</span>
 <span class="normal">917</span>
 <span class="normal">918</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the version of the GPIB library.</span>
+<span class="w">    </span><span class="sd">"""Get the version of the GPIB library.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The version number (if using the `linux-gpib` library), otherwise an empty string.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">version</span> <span class="o">=</span> <span class="n">c_char_p</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lib</span><span class="o">.</span><span class="n">ibvers</span><span class="p">(</span><span class="n">byref</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
         <span class="k">assert</span> <span class="n">version</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
         <span class="k">return</span> <span class="n">version</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">""</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -9588,7 +9588,7 @@ function.</p>
 <span class="normal">934</span>
 <span class="normal">935</span>
 <span class="normal">936</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wait for an event (board or device).</span>
+<span class="w">    </span><span class="sd">"""Wait for an event (board or device).</span>
 
 <span class="sd">    This method is the [ibwait](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibwait.html)</span>
 <span class="sd">    function.</span>
@@ -9599,7 +9599,7 @@ function.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status value (`ibsta`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span>
     <span class="n">ibsta</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lib</span><span class="o">.</span><span class="n">ibwait</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
@@ -9701,7 +9701,7 @@ device asserted the service request.</p>
 <span class="normal">951</span>
 <span class="normal">952</span>
 <span class="normal">953</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">wait_for_srq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wait for the SRQ interrupt (SRQI, 0x1000) line to be asserted (board).</span>
+<span class="w">    </span><span class="sd">"""Wait for the SRQ interrupt (SRQI, 0x1000) line to be asserted (board).</span>
 
 <span class="sd">    This method will return when the board receives a service request from *any* device.</span>
 <span class="sd">    If there are multiple devices connected to the board, you must determine which</span>
@@ -9712,7 +9712,7 @@ device asserted the service request.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status value (`ibsta`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_address_info</span><span class="o">.</span><span class="n">board</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mh">0x1000</span><span class="p">,</span> <span class="n">handle</span><span class="o">=</span><span class="n">handle</span><span class="p">)</span>  <span class="c1"># SRQI = 0x1000</span>
@@ -9744,13 +9744,13 @@ device asserted the service request.</p>
 
   
       module-attribute
-   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="s2">&quot;&lt;f&quot;</span><span class="p">,</span>
+   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="s2">"&lt;f"</span><span class="p">,</span>
     <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="s2">&quot;ieee&quot;</span>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="s2">"ieee"</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
@@ -9944,10 +9944,10 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
     <span class="n">message</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Sequence1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">MessageDataType</span> <span class="o">=</span> <span class="s2">&quot;&lt;f&quot;</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="s2">&quot;ieee&quot;</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">MessageDataType</span> <span class="o">=</span> <span class="s2">"&lt;f"</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="s2">"ieee"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a message to the equipment.</span>
+<span class="w">    </span><span class="sd">"""Write a message to the equipment.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        message: The message to write to the equipment.</span>
@@ -9955,9 +9955,9 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
 <span class="sd">        dtype: The data type to use to convert each element in `data` to bytes. Ignored if `data`</span>
 <span class="sd">            is `None`. If the `fmt` value is `ascii` then the `dtype` value must be a [str][] and</span>
 <span class="sd">            it is used as the `format_spec` argument in [format][] to convert each element in `data`</span>
-<span class="sd">            to a string (e.g., `dtype=&#39;.2e&#39;` converts each element to scientific notation with two</span>
+<span class="sd">            to a string (e.g., `dtype='.2e'` converts each element to scientific notation with two</span>
 <span class="sd">            digits after the decimal point). For all other values of `fmt` the data type can be any</span>
-<span class="sd">            object that numpy [dtype][numpy.dtype] supports, e.g., `&#39;H&#39;`, `&#39;uint16&#39;` and</span>
+<span class="sd">            object that numpy [dtype][numpy.dtype] supports, e.g., `'H'`, `'uint16'` and</span>
 <span class="sd">            [ushort][numpy.ushort] are equivalent values to convert each element to an *unsigned short*.</span>
 <span class="sd">            See [MessageDataType][msl.equipment.typing.MessageDataType] for more details.</span>
 <span class="sd">        fmt: The format to use to convert `data` to bytes. Ignored if `data` is `None`.</span>
@@ -9965,7 +9965,7 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of bytes written.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_encoding</span><span class="p">)</span>
 
@@ -9975,7 +9975,7 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">message</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">):</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.write(</span><span class="si">%r</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.write(</span><span class="si">%r</span><span class="s2">)"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
@@ -10094,7 +10094,7 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
 <span class="normal">968</span>
 <span class="normal">969</span>
 <span class="normal">970</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a message asynchronously (board or device).</span>
+<span class="w">    </span><span class="sd">"""Write a message asynchronously (board or device).</span>
 
 <span class="sd">    This method is the [ibwrta](https://linux-gpib.sourceforge.io/doc_html/reference-function-ibwrta.html) function.</span>
 
@@ -10104,7 +10104,7 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status value (`ibsta`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span>
     <span class="n">ibsta</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lib</span><span class="o">.</span><span class="n">ibwrta</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>

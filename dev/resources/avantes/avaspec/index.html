@@ -6529,8 +6529,8 @@
 
         <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Avantes&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Avantes"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">""</span>
 </code></pre></div></p>
 
 
@@ -6829,13 +6829,13 @@ for the AvaSpec wrapper.</p>
 <span class="normal">964</span>
 <span class="normal">965</span>
 <span class="normal">966</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper around the `avaspec` SDK from Avantes.</span>
+<span class="w">    </span><span class="sd">"""Wrapper around the `avaspec` SDK from Avantes.</span>
 
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;Avantes&quot;</span>
-<span class="sd">    model=r&quot;&quot;</span>
+<span class="sd">    manufacturer=r"Avantes"</span>
+<span class="sd">    model=r""</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
@@ -6847,183 +6847,183 @@ for the AvaSpec wrapper.</p>
 <span class="sd">    Attributes: Connection Properties:</span>
 <span class="sd">        port_id (int): One of `-1` (Ethernet+USB), `0` (USB) or `256` (Ethernet). _Default: `-1`_</span>
 <span class="sd">        activate (bool): Whether to automatically activate the connection. _Default: `True`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">,</span> <span class="n">libtype</span><span class="o">=</span><span class="s2">&quot;windll&quot;</span> <span class="k">if</span> <span class="n">IS_WINDOWS</span> <span class="k">else</span> <span class="s2">&quot;cdll&quot;</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">,</span> <span class="n">libtype</span><span class="o">=</span><span class="s2">"windll"</span> <span class="k">if</span> <span class="n">IS_WINDOWS</span> <span class="k">else</span> <span class="s2">"cdll"</span><span class="p">)</span>
 
     <span class="n">functions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>
         <span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">c_int32</span> <span class="o">|</span> <span class="n">c_bool</span><span class="p">],</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">[</span><span class="n">_CDataType</span><span class="p">]]]]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;AVS_Init&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;a_Port&quot;</span><span class="p">,</span> <span class="n">c_int16</span><span class="p">)]),</span>
-        <span class="s2">&quot;AVS_Done&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[]),</span>
-        <span class="s2">&quot;AVS_GetNrOfDevices&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_errcheck</span><span class="p">,</span> <span class="p">[]),</span>
-        <span class="s2">&quot;AVS_UpdateUSBDevices&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_errcheck</span><span class="p">,</span> <span class="p">[]),</span>
-        <span class="s2">&quot;AVS_UpdateETHDevices&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_Init"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"a_Port"</span><span class="p">,</span> <span class="n">c_int16</span><span class="p">)]),</span>
+        <span class="s2">"AVS_Done"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[]),</span>
+        <span class="s2">"AVS_GetNrOfDevices"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_errcheck</span><span class="p">,</span> <span class="p">[]),</span>
+        <span class="s2">"AVS_UpdateUSBDevices"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_errcheck</span><span class="p">,</span> <span class="p">[]),</span>
+        <span class="s2">"AVS_UpdateETHDevices"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
             <span class="p">[</span>
-                <span class="p">(</span><span class="s2">&quot;a_ListSize&quot;</span><span class="p">,</span> <span class="n">c_uint32</span><span class="p">),</span>
-                <span class="p">(</span><span class="s2">&quot;a_pRequiredSize&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_uint32</span><span class="p">)),</span>
-                <span class="p">(</span><span class="s2">&quot;a_pList&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">BroadcastAnswerType</span><span class="p">)),</span>
+                <span class="p">(</span><span class="s2">"a_ListSize"</span><span class="p">,</span> <span class="n">c_uint32</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"a_pRequiredSize"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_uint32</span><span class="p">)),</span>
+                <span class="p">(</span><span class="s2">"a_pList"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">BroadcastAnswerType</span><span class="p">)),</span>
             <span class="p">],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_GetList&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_GetList"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
             <span class="p">[</span>
-                <span class="p">(</span><span class="s2">&quot;a_ListSize&quot;</span><span class="p">,</span> <span class="n">c_uint32</span><span class="p">),</span>
-                <span class="p">(</span><span class="s2">&quot;a_pRequiredSize&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_uint32</span><span class="p">)),</span>
-                <span class="p">(</span><span class="s2">&quot;a_pList&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">AvsIdentityType</span><span class="p">)),</span>
+                <span class="p">(</span><span class="s2">"a_ListSize"</span><span class="p">,</span> <span class="n">c_uint32</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"a_pRequiredSize"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_uint32</span><span class="p">)),</span>
+                <span class="p">(</span><span class="s2">"a_pList"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">AvsIdentityType</span><span class="p">)),</span>
             <span class="p">],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_Activate&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;a_pDeviceId&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">AvsIdentityType</span><span class="p">))]),</span>
-        <span class="s2">&quot;AVS_ActivateConn&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;a_pDeviceId&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">AvsIdentityType</span><span class="p">))]),</span>
-        <span class="s2">&quot;AVS_ActivateConnCb&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;a_pDeviceId&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">AvsIdentityType</span><span class="p">))]),</span>
-        <span class="s2">&quot;AVS_Deactivate&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_bool</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_bool</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">)]),</span>
-        <span class="s2">&quot;AVS_GetHandleFromSerial&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;a_pSerial&quot;</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">)]),</span>
-        <span class="s2">&quot;AVS_GetStatusBySerial&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_Activate"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"a_pDeviceId"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">AvsIdentityType</span><span class="p">))]),</span>
+        <span class="s2">"AVS_ActivateConn"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"a_pDeviceId"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">AvsIdentityType</span><span class="p">))]),</span>
+        <span class="s2">"AVS_ActivateConnCb"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"a_pDeviceId"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">AvsIdentityType</span><span class="p">))]),</span>
+        <span class="s2">"AVS_Deactivate"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_bool</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_bool</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">)]),</span>
+        <span class="s2">"AVS_GetHandleFromSerial"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"a_pSerial"</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">)]),</span>
+        <span class="s2">"AVS_GetStatusBySerial"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_pSerial&quot;</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_status&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_int32</span><span class="p">))],</span>
+            <span class="p">[(</span><span class="s2">"a_pSerial"</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_status"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_int32</span><span class="p">))],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_Register&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_bool</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_bool</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;a_Hwnd&quot;</span><span class="p">,</span> <span class="n">c_void_p</span><span class="p">)]),</span>
-        <span class="s2">&quot;AVS_Measure&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_Register"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_bool</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_bool</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"a_Hwnd"</span><span class="p">,</span> <span class="n">c_void_p</span><span class="p">)]),</span>
+        <span class="s2">"AVS_Measure"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_hWnd&quot;</span><span class="p">,</span> <span class="n">c_void_p</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_Nmsr&quot;</span><span class="p">,</span> <span class="n">c_int16</span><span class="p">)],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_hWnd"</span><span class="p">,</span> <span class="n">c_void_p</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_Nmsr"</span><span class="p">,</span> <span class="n">c_int16</span><span class="p">)],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_MeasureCallback&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_MeasureCallback"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;__Done&quot;</span><span class="p">,</span> <span class="n">MeasureCallback</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_Nmsr&quot;</span><span class="p">,</span> <span class="n">c_int16</span><span class="p">)],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"__Done"</span><span class="p">,</span> <span class="n">MeasureCallback</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_Nmsr"</span><span class="p">,</span> <span class="n">c_int16</span><span class="p">)],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_PrepareMeasure&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_PrepareMeasure"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_pMeasConfig&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">MeasConfigType</span><span class="p">))],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_pMeasConfig"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">MeasConfigType</span><span class="p">))],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_StopMeasure&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">)]),</span>
-        <span class="s2">&quot;AVS_PollScan&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">)]),</span>
-        <span class="s2">&quot;AVS_GetScopeData&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_StopMeasure"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">)]),</span>
+        <span class="s2">"AVS_PollScan"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">)]),</span>
+        <span class="s2">"AVS_GetScopeData"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_pTimeLabel&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_uint32</span><span class="p">)),</span> <span class="p">(</span><span class="s2">&quot;a_pSpectrum&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_double</span><span class="p">))],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_pTimeLabel"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_uint32</span><span class="p">)),</span> <span class="p">(</span><span class="s2">"a_pSpectrum"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_double</span><span class="p">))],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_GetSaturatedPixels&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_GetSaturatedPixels"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_pSaturated&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_ubyte</span><span class="p">))],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_pSaturated"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_ubyte</span><span class="p">))],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_GetLambda&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_pWaveLength&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_double</span><span class="p">))]),</span>
-        <span class="s2">&quot;AVS_GetNumPixels&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_GetLambda"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_pWaveLength"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_double</span><span class="p">))]),</span>
+        <span class="s2">"AVS_GetNumPixels"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_pNumPixels&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_uint16</span><span class="p">))],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_pNumPixels"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_uint16</span><span class="p">))],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_GetParameter&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_GetParameter"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
             <span class="p">[</span>
-                <span class="p">(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span>
-                <span class="p">(</span><span class="s2">&quot;a_Size&quot;</span><span class="p">,</span> <span class="n">c_uint32</span><span class="p">),</span>
-                <span class="p">(</span><span class="s2">&quot;a_pRequiredSize&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_uint32</span><span class="p">)),</span>
-                <span class="p">(</span><span class="s2">&quot;a_pDeviceParm&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">DeviceConfigType</span><span class="p">)),</span>
+                <span class="p">(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"a_Size"</span><span class="p">,</span> <span class="n">c_uint32</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"a_pRequiredSize"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_uint32</span><span class="p">)),</span>
+                <span class="p">(</span><span class="s2">"a_pDeviceParm"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">DeviceConfigType</span><span class="p">)),</span>
             <span class="p">],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_SetParameter&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_SetParameter"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_pDeviceParm&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">DeviceConfigType</span><span class="p">))],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_pDeviceParm"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">DeviceConfigType</span><span class="p">))],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_GetVersionInfo&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_GetVersionInfo"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
             <span class="p">[</span>
-                <span class="p">(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span>
-                <span class="p">(</span><span class="s2">&quot;a_pFPGAVersion&quot;</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">),</span>
-                <span class="p">(</span><span class="s2">&quot;a_pFirmwareVersion&quot;</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">),</span>
-                <span class="p">(</span><span class="s2">&quot;a_pDLLVersion&quot;</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"a_pFPGAVersion"</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"a_pFirmwareVersion"</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"a_pDLLVersion"</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">),</span>
             <span class="p">],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_GetDLLVersion&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;a_pVersionString&quot;</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">)]),</span>
-        <span class="s2">&quot;AVS_SetSyncMode&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_Enable&quot;</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">)]),</span>
-        <span class="s2">&quot;AVS_SetPrescanMode&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_Prescan&quot;</span><span class="p">,</span> <span class="n">c_bool</span><span class="p">)]),</span>
-        <span class="s2">&quot;AVS_UseHighResAdc&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_Enable&quot;</span><span class="p">,</span> <span class="n">c_bool</span><span class="p">)]),</span>
-        <span class="s2">&quot;AVS_GetAnalogIn&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_GetDLLVersion"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"a_pVersionString"</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">)]),</span>
+        <span class="s2">"AVS_SetSyncMode"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_Enable"</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">)]),</span>
+        <span class="s2">"AVS_SetPrescanMode"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_Prescan"</span><span class="p">,</span> <span class="n">c_bool</span><span class="p">)]),</span>
+        <span class="s2">"AVS_UseHighResAdc"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_Enable"</span><span class="p">,</span> <span class="n">c_bool</span><span class="p">)]),</span>
+        <span class="s2">"AVS_GetAnalogIn"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_AnalogInId&quot;</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_pAnalogIn&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_float</span><span class="p">))],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_AnalogInId"</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_pAnalogIn"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_float</span><span class="p">))],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_GetDigIn&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_GetDigIn"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_DigInId&quot;</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_pDigIn&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_ubyte</span><span class="p">))],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_DigInId"</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_pDigIn"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_ubyte</span><span class="p">))],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_SetAnalogOut&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_SetAnalogOut"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_PortId&quot;</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_Value&quot;</span><span class="p">,</span> <span class="n">c_float</span><span class="p">)],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_PortId"</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_Value"</span><span class="p">,</span> <span class="n">c_float</span><span class="p">)],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_SetDigOut&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_SetDigOut"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_PortId&quot;</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_Status&quot;</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">)],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_PortId"</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_Status"</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">)],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_SetPwmOut&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_SetPwmOut"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_PortId&quot;</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_Freq&quot;</span><span class="p">,</span> <span class="n">c_ulong</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_Duty&quot;</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">)],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_PortId"</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_Freq"</span><span class="p">,</span> <span class="n">c_ulong</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_Duty"</span><span class="p">,</span> <span class="n">c_ubyte</span><span class="p">)],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_GetDarkPixelData&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_GetDarkPixelData"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_check_bool</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_pDarkData&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_double</span><span class="p">))],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_pDarkData"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_double</span><span class="p">))],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_GetComPortName&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_GetComPortName"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_check_bool</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_pDeviceId&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">AvsIdentityType</span><span class="p">)),</span> <span class="p">(</span><span class="s2">&quot;a_pIp&quot;</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_size&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_int32</span><span class="p">))],</span>
+            <span class="p">[(</span><span class="s2">"a_pDeviceId"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">AvsIdentityType</span><span class="p">)),</span> <span class="p">(</span><span class="s2">"a_pIp"</span><span class="p">,</span> <span class="n">c_char_p</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_size"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_int32</span><span class="p">))],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_GetComType&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_GetComType"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_pDeviceId&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">AvsIdentityType</span><span class="p">)),</span> <span class="p">(</span><span class="s2">&quot;a_type&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_int32</span><span class="p">))],</span>
+            <span class="p">[(</span><span class="s2">"a_pDeviceId"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">AvsIdentityType</span><span class="p">)),</span> <span class="p">(</span><span class="s2">"a_type"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_int32</span><span class="p">))],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_SetSensitivityMode&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_SetSensitivityMode"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_SensitivityMode&quot;</span><span class="p">,</span> <span class="n">c_uint32</span><span class="p">)],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_SensitivityMode"</span><span class="p">,</span> <span class="n">c_uint32</span><span class="p">)],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_GetIpConfig&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_GetIpConfig"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_check_bool</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_Data&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">EthernetSettingsType</span><span class="p">))],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_Data"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">EthernetSettingsType</span><span class="p">))],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_SuppressStrayLight&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_SuppressStrayLight"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
             <span class="p">[</span>
-                <span class="p">(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span>
-                <span class="p">(</span><span class="s2">&quot;a_Multifactor&quot;</span><span class="p">,</span> <span class="n">c_float</span><span class="p">),</span>
-                <span class="p">(</span><span class="s2">&quot;a_pSrcSpectrum&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_double</span><span class="p">)),</span>
-                <span class="p">(</span><span class="s2">&quot;a_pDestSpectrum&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_double</span><span class="p">)),</span>
+                <span class="p">(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"a_Multifactor"</span><span class="p">,</span> <span class="n">c_float</span><span class="p">),</span>
+                <span class="p">(</span><span class="s2">"a_pSrcSpectrum"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_double</span><span class="p">)),</span>
+                <span class="p">(</span><span class="s2">"a_pDestSpectrum"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_double</span><span class="p">)),</span>
             <span class="p">],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_Heartbeat&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_Heartbeat"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_pHbReq&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_uint32</span><span class="p">)),</span> <span class="p">(</span><span class="s2">&quot;a_pHbResp&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">HeartbeatRespType</span><span class="p">))],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_pHbReq"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_uint32</span><span class="p">)),</span> <span class="p">(</span><span class="s2">"a_pHbResp"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">HeartbeatRespType</span><span class="p">))],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_ResetDevice&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">)]),</span>
-        <span class="s2">&quot;AVS_GetOemParameter&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_ResetDevice"</span><span class="p">:</span> <span class="p">(</span><span class="n">c_int32</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span> <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">)]),</span>
+        <span class="s2">"AVS_GetOemParameter"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_pOemData&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">OemDataType</span><span class="p">))],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_pOemData"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">OemDataType</span><span class="p">))],</span>
         <span class="p">),</span>
-        <span class="s2">&quot;AVS_SetOemParameter&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"AVS_SetOemParameter"</span><span class="p">:</span> <span class="p">(</span>
             <span class="n">c_int32</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_err_check</span><span class="p">,</span>
-            <span class="p">[(</span><span class="s2">&quot;a_hDevice&quot;</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;a_pOemData&quot;</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">OemDataType</span><span class="p">))],</span>
+            <span class="p">[(</span><span class="s2">"a_hDevice"</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">),</span> <span class="p">(</span><span class="s2">"a_pOemData"</span><span class="p">,</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">OemDataType</span><span class="p">))],</span>
         <span class="p">),</span>
     <span class="p">}</span>
 
@@ -7031,15 +7031,15 @@ for the AvaSpec wrapper.</p>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># noqa: PERF203</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">attr</span><span class="o">.</span><span class="n">restype</span><span class="p">,</span> <span class="n">attr</span><span class="o">.</span><span class="n">errcheck</span> <span class="o">=</span> <span class="n">value</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
             <span class="n">attr</span><span class="o">.</span><span class="n">argtypes</span> <span class="o">=</span> <span class="p">[</span><span class="n">typ</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">typ</span> <span class="ow">in</span> <span class="n">value</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
 
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span>  <span class="c1"># noqa: S101</span>
     <span class="n">props</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;port_id&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;activate&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"port_id"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"activate"</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
                   </details>
@@ -7091,20 +7091,20 @@ for the AvaSpec wrapper.</p>
 <span class="normal">993</span>
 <span class="normal">994</span>
 <span class="normal">995</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">activate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Activates the spectrometer for communication.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Activates the spectrometer for communication."""</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">AvaSpec</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">out</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Cannot activate. No devices found.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"Cannot activate. No devices found."</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">out</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">SerialNumber</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">serial</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_Activate</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">==</span> <span class="n">INVALID_AVS_HANDLE_VALUE</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Invalid handle&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"Invalid handle"</span><span class="p">)</span>
             <span class="n">_handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">)</span>
             <span class="k">return</span>
 
-    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Did not find the Avantes serial number </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">serial</span><span class="si">!r}</span><span class="s2"> in the list of devices.&quot;</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Did not find the Avantes serial number </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">serial</span><span class="si">!r}</span><span class="s2"> in the list of devices."</span>
     <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7137,7 +7137,7 @@ for the AvaSpec wrapper.</p>
 <span class="normal">1001</span>
 <span class="normal">1002</span>
 <span class="normal">1003</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">deactivate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Closes communication with the spectrometer.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Closes communication with the spectrometer."""</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="ow">in</span> <span class="n">_handles</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_Deactivate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">)</span>
         <span class="n">_handles</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">)</span>
@@ -7178,11 +7178,11 @@ are no additional connections open to other spectrometers).</p>
 <span class="normal">1011</span>
 <span class="normal">1012</span>
 <span class="normal">1013</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calls [deactivate][msl.equipment_resources.avantes.avaspec.AvaSpec.deactivate].</span>
+<span class="w">    </span><span class="sd">"""Calls [deactivate][msl.equipment_resources.avantes.avaspec.AvaSpec.deactivate].</span>
 
 <span class="sd">    Also calls [done][msl.equipment_resources.avantes.avaspec.AvaSpec.done] (if there</span>
 <span class="sd">    are no additional connections open to other spectrometers).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">deactivate</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_handles</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
@@ -7214,8 +7214,8 @@ are no additional connections open to other spectrometers).</p>
 <span class="normal">1016</span>
 <span class="normal">1017</span>
 <span class="normal">1018</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">done</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Closes communication with all spectrometers and releases internal storage.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_sdk&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Closes communication with all spectrometers and releases internal storage."""</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_sdk"</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sdk</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_Done</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7236,7 +7236,7 @@ are no additional connections open to other spectrometers).</p>
 
 <a href="#msl.equipment_resources.avantes.avaspec.AvaSpec.find" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">find</span><span class="p">(</span>
-    <span class="n">path</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;avaspecx64&quot;</span><span class="p">,</span> <span class="n">port_id</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nmax</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">16</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">"avaspecx64"</span><span class="p">,</span> <span class="n">port_id</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nmax</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">16</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list">list</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="            AvsIdentityType
 (Structure) (msl.equipment_resources.avantes.avaspec.AvsIdentityType)" href="#msl.equipment_resources.avantes.avaspec.AvsIdentityType">AvsIdentityType</a></span><span class="p">]</span>
 </code></pre></div>
@@ -7377,8 +7377,8 @@ are no additional connections open to other spectrometers).</p>
 <span class="normal">1053</span>
 <span class="normal">1054</span>
 <span class="normal">1055</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;avaspecx64&quot;</span><span class="p">,</span> <span class="n">port_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nmax</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AvsIdentityType</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns device information for each spectrometer that is connected.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"avaspecx64"</span><span class="p">,</span> <span class="n">port_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nmax</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AvsIdentityType</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Returns device information for each spectrometer that is connected.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        path: The path to the AvaSpec SDK.</span>
@@ -7393,8 +7393,8 @@ are no additional connections open to other spectrometers).</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The information about the devices.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">lib</span> <span class="o">=</span> <span class="n">LoadLibrary</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">libtype</span><span class="o">=</span><span class="s2">&quot;windll&quot;</span> <span class="k">if</span> <span class="n">IS_WINDOWS</span> <span class="k">else</span> <span class="s2">&quot;cdll&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lib</span>
+<span class="sd">    """</span>
+    <span class="n">lib</span> <span class="o">=</span> <span class="n">LoadLibrary</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">libtype</span><span class="o">=</span><span class="s2">"windll"</span> <span class="k">if</span> <span class="n">IS_WINDOWS</span> <span class="k">else</span> <span class="s2">"cdll"</span><span class="p">)</span><span class="o">.</span><span class="n">lib</span>
 
     <span class="n">ret</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">AVS_Init</span><span class="p">(</span><span class="n">port_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -7409,8 +7409,8 @@ are no additional connections open to other spectrometers).</p>
     <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">types</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
 
-    <span class="n">error_name</span><span class="p">,</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">ERROR_CODES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;UNKNOWN_ERROR&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Unknown error [code=</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">))</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">error_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">error_name</span><span class="p">,</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">ERROR_CODES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="p">(</span><span class="s2">"UNKNOWN_ERROR"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Unknown error [code=</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">]"</span><span class="p">))</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">error_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">"</span>
     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7576,7 +7576,7 @@ are no additional connections open to other spectrometers).</p>
 <span class="normal">1099</span>
 <span class="normal">1100</span>
 <span class="normal">1101</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_analog_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analog_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the status of the specified analog input.</span>
+<span class="w">    </span><span class="sd">"""Get the status of the specified analog input.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        analog_id: The identifier of the analog input to get.</span>
@@ -7616,7 +7616,7 @@ are no additional connections open to other spectrometers).</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The analog input value [Volts or degrees Celsius].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ain</span> <span class="o">=</span> <span class="n">c_float</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_GetAnalogIn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">analog_id</span><span class="p">,</span> <span class="n">ain</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ain</span><span class="o">.</span><span class="n">value</span>
@@ -7678,11 +7678,11 @@ are no additional connections open to other spectrometers).</p>
 <span class="normal">1111</span>
 <span class="normal">1112</span>
 <span class="normal">1113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_com_port_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the IP address of the device.</span>
+<span class="w">    </span><span class="sd">"""Get the IP address of the device.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The IP address of the device.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">device_id</span> <span class="o">=</span> <span class="n">AvsIdentityType</span><span class="p">()</span>
     <span class="n">device_id</span><span class="o">.</span><span class="n">SerialNumber</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">serial</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
@@ -7758,7 +7758,7 @@ are no additional connections open to other spectrometers).</p>
 <span class="normal">1129</span>
 <span class="normal">1130</span>
 <span class="normal">1131</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_com_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the communication protocol.</span>
+<span class="w">    </span><span class="sd">"""Get the communication protocol.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The communication type as defined below:</span>
@@ -7768,7 +7768,7 @@ are no additional connections open to other spectrometers).</p>
 <span class="sd">            * 3 = USB7010</span>
 <span class="sd">            * 4 = ETH7010</span>
 <span class="sd">            * -1 = UNKNOWN</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">device_id</span> <span class="o">=</span> <span class="n">AvsIdentityType</span><span class="p">()</span>
     <span class="n">device_id</span><span class="o">.</span><span class="n">SerialNumber</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">serial</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
     <span class="n">typ</span> <span class="o">=</span> <span class="n">c_int32</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -7834,13 +7834,13 @@ are no additional connections open to other spectrometers).</p>
 <span class="normal">1142</span>
 <span class="normal">1143</span>
 <span class="normal">1144</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_dark_pixel_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the optically black pixel values of the last performed measurement.</span>
+<span class="w">    </span><span class="sd">"""Get the optically black pixel values of the last performed measurement.</span>
 
 <span class="sd">    You must call [get_data][msl.equipment_resources.avantes.avaspec.AvaSpec.get_data] before you call this method.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The dark pixels.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># from the docs the maximum size is size=18 for the AvaSpec-2048-USB2 and AvaSpec-2048L-USB2</span>
     <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>  <span class="c1"># make it bigger than 18</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_GetDarkPixelData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">values</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">POINTER</span><span class="p">(</span><span class="n">c_double</span><span class="p">)))</span>
@@ -7902,11 +7902,11 @@ are no additional connections open to other spectrometers).</p>
 <span class="normal">1153</span>
 <span class="normal">1154</span>
 <span class="normal">1155</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the timestamp and the spectral data of the last measurement.</span>
+<span class="w">    </span><span class="sd">"""Returns the timestamp and the spectral data of the last measurement.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The timestamp and the spectral data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ticks</span> <span class="o">=</span> <span class="n">c_uint32</span><span class="p">()</span>
     <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">MAX_NR_PIXELS</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mf">1.0</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_GetScopeData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">ticks</span><span class="p">,</span> <span class="n">values</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">POINTER</span><span class="p">(</span><span class="n">c_double</span><span class="p">)))</span>
@@ -8051,7 +8051,7 @@ are no additional connections open to other spectrometers).</p>
 <span class="normal">1187</span>
 <span class="normal">1188</span>
 <span class="normal">1189</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_digital_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">digital_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the status of the specified digital input.</span>
+<span class="w">    </span><span class="sd">"""Get the status of the specified digital input.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        digital_id: The identifier of the digital input to get.</span>
@@ -8079,7 +8079,7 @@ are no additional connections open to other spectrometers).</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The digital input value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">din</span> <span class="o">=</span> <span class="n">c_ubyte</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_GetDigIn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">digital_id</span><span class="p">,</span> <span class="n">din</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">din</span><span class="o">.</span><span class="n">value</span>
@@ -8139,11 +8139,11 @@ are no additional connections open to other spectrometers).</p>
 <span class="normal">1197</span>
 <span class="normal">1198</span>
 <span class="normal">1199</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_dll_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the DLL version number.</span>
+<span class="w">    </span><span class="sd">"""Get the DLL version number.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The DLL version number</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">version</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_GetDLLVersion</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">version</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
@@ -8236,14 +8236,14 @@ are no additional connections open to other spectrometers).</p>
 <span class="normal">1209</span>
 <span class="normal">1210</span>
 <span class="normal">1211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_handle_from_serial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serial</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the handle ID for the specified serial number.</span>
+<span class="w">    </span><span class="sd">"""Get the handle ID for the specified serial number.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        serial: The serial number. Default is to get the handle for this class instance.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The handle.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">serial</span> <span class="o">=</span> <span class="n">serial</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">serial</span>
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_GetHandleFromSerial</span><span class="p">(</span><span class="n">serial</span><span class="o">.</span><span class="n">encode</span><span class="p">()))</span>
 </code></pre></div></td></tr></table></div>
@@ -8309,14 +8309,14 @@ having to read the complete device configuration structure.</p>
 <span class="normal">1222</span>
 <span class="normal">1223</span>
 <span class="normal">1224</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ip_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EthernetSettingsType</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve IP settings from the spectrometer.</span>
+<span class="w">    </span><span class="sd">"""Retrieve IP settings from the spectrometer.</span>
 
 <span class="sd">    Use this function to read the Ethernet settings of the spectrometer, without</span>
 <span class="sd">    having to read the complete device configuration structure.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The Ethernet settings of the spectrometer.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">eth</span> <span class="o">=</span> <span class="n">EthernetSettingsType</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_GetIpConfig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">eth</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">eth</span>
@@ -8376,11 +8376,11 @@ having to read the complete device configuration structure.</p>
 <span class="normal">1232</span>
 <span class="normal">1233</span>
 <span class="normal">1234</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_lambda</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the wavelength values corresponding to the pixels if available.</span>
+<span class="w">    </span><span class="sd">"""Returns the wavelength values corresponding to the pixels if available.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The wavelength value of each pixel.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">MAX_NR_PIXELS</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_GetLambda</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">values</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">POINTER</span><span class="p">(</span><span class="n">c_double</span><span class="p">)))</span>
     <span class="k">return</span> <span class="n">values</span><span class="p">[</span><span class="n">values</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
@@ -8444,14 +8444,14 @@ functionality is identical.</p>
 <span class="normal">1244</span>
 <span class="normal">1245</span>
 <span class="normal">1246</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_num_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scans for attached devices and returns the number of devices detected.</span>
+<span class="w">    </span><span class="sd">"""Scans for attached devices and returns the number of devices detected.</span>
 
 <span class="sd">    Deprecated function, replaced by :meth:`.update_usb_devices`. The</span>
 <span class="sd">    functionality is identical.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of devices found.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_GetNrOfDevices</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">num</span>
 </code></pre></div></td></tr></table></div>
@@ -8483,7 +8483,7 @@ functionality is identical.</p>
 <span class="normal">1250</span>
 <span class="normal">1251</span>
 <span class="normal">1252</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_num_pixels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the number of pixels of a spectrometer.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Returns the number of pixels of a spectrometer."""</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">c_uint16</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_GetNumPixels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">n</span><span class="o">.</span><span class="n">value</span>
@@ -8545,11 +8545,11 @@ functionality is identical.</p>
 <span class="normal">1260</span>
 <span class="normal">1261</span>
 <span class="normal">1262</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_oem_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OemDataType</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the OEM data structure available on the spectrometer.</span>
+<span class="w">    </span><span class="sd">"""Returns the OEM data structure available on the spectrometer.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The OEM parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">odt</span> <span class="o">=</span> <span class="n">OemDataType</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_GetOemParameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">odt</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">odt</span>
@@ -8612,11 +8612,11 @@ functionality is identical.</p>
 <span class="normal">1271</span>
 <span class="normal">1272</span>
 <span class="normal">1273</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DeviceConfigType</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the device information of the spectrometer.</span>
+<span class="w">    </span><span class="sd">"""Returns the device information of the spectrometer.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The device parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">dct</span> <span class="o">=</span> <span class="n">DeviceConfigType</span><span class="p">()</span>
     <span class="n">required_size</span> <span class="o">=</span> <span class="n">c_uint32</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_GetParameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">sizeof</span><span class="p">(</span><span class="n">dct</span><span class="p">),</span> <span class="n">required_size</span><span class="p">,</span> <span class="n">dct</span><span class="p">)</span>
@@ -8678,11 +8678,11 @@ functionality is identical.</p>
 <span class="normal">1282</span>
 <span class="normal">1283</span>
 <span class="normal">1284</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_saturated_pixels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns, for each pixel, if a pixel was saturated (1) or not (0).</span>
+<span class="w">    </span><span class="sd">"""Returns, for each pixel, if a pixel was saturated (1) or not (0).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The saturation state of each pixel.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">n</span> <span class="o">=</span> <span class="mi">9</span>
     <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">MAX_NR_PIXELS</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_GetSaturatedPixels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">values</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">POINTER</span><span class="p">(</span><span class="n">c_ubyte</span><span class="p">)))</span>
@@ -8778,14 +8778,14 @@ functionality is identical.</p>
 <span class="normal">1296</span>
 <span class="normal">1297</span>
 <span class="normal">1298</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_status_by_serial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serial</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the handle ID for the specified serial number.</span>
+<span class="w">    </span><span class="sd">"""Get the handle ID for the specified serial number.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        serial: The serial number. Default is to get the status for this class instance.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">serial</span> <span class="o">=</span> <span class="n">serial</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">equipment</span><span class="o">.</span><span class="n">serial</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">c_int32</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_GetStatusBySerial</span><span class="p">(</span><span class="n">serial</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">status</span><span class="p">)</span>
@@ -8848,11 +8848,11 @@ functionality is identical.</p>
 <span class="normal">1308</span>
 <span class="normal">1309</span>
 <span class="normal">1310</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_version_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns software version information.</span>
+<span class="w">    </span><span class="sd">"""Returns software version information.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        FPGA software version, firmware version, DLL version.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">fpga</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
     <span class="n">fm</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
     <span class="n">dll</span> <span class="o">=</span> <span class="n">create_string_buffer</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
@@ -8953,7 +8953,7 @@ functionality is identical.</p>
 <span class="normal">1323</span>
 <span class="normal">1324</span>
 <span class="normal">1325</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">heartbeat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req_type</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HeartbeatRespType</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Monitor the (heartbeat) functions of the spectrometer.</span>
+<span class="w">    </span><span class="sd">"""Monitor the (heartbeat) functions of the spectrometer.</span>
 
 <span class="sd">    This function applies only to the AS7010 platform. See the DLL manual for more details.</span>
 
@@ -8962,7 +8962,7 @@ functionality is identical.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The heartbeat response structure received from the spectrometer.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">resp</span> <span class="o">=</span> <span class="n">HeartbeatRespType</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_Heartbeat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">req_type</span><span class="p">,</span> <span class="n">resp</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">resp</span>
@@ -9073,7 +9073,7 @@ within all the network interfaces of the host.</p>
 <span class="normal">1345</span>
 <span class="normal">1346</span>
 <span class="normal">1347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initializes the communication interface with the spectrometers and the internal data structures.</span>
+<span class="w">    </span><span class="sd">"""Initializes the communication interface with the spectrometers and the internal data structures.</span>
 
 <span class="sd">    For Ethernet devices this function will create a list of available Ethernet spectrometers</span>
 <span class="sd">    within all the network interfaces of the host.</span>
@@ -9088,10 +9088,10 @@ within all the network interfaces of the host.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        On success, the number of connected or found devices.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ret</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_Init</span><span class="p">(</span><span class="n">port_id</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;No Avantes devices were found&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"No Avantes devices were found"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ret</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9185,7 +9185,7 @@ value to <code>None</code> if a callback is not needed.</p>
 <span class="normal">1360</span>
 <span class="normal">1361</span>
 <span class="normal">1362</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">measure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_measurements</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">window_handle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Starts measurement on the spectrometer.</span>
+<span class="w">    </span><span class="sd">"""Starts measurement on the spectrometer.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        num_measurements: Number of measurements to acquire. Use -1 to measure continuously until</span>
@@ -9196,7 +9196,7 @@ value to <code>None</code> if a callback is not needed.</p>
 <span class="sd">            [ControlSettingsType][msl.equipment_resources.avantes.avaspec.ControlSettingsType]),</span>
 <span class="sd">            or `INVALID_MEAS_DATA` as `WPARM` value and `a_hDevice` as `LPARM` value. Set this</span>
 <span class="sd">            value to `None` if a callback is not needed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_Measure</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">window_handle</span><span class="p">,</span> <span class="n">num_measurements</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9313,7 +9313,7 @@ or <code>INVALID_MEAS_DATA</code> (<code>-8</code>). Set this value to <code>Non
 <span class="normal">1380</span>
 <span class="normal">1381</span>
 <span class="normal">1382</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">measure_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_measurements</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">AvaSpecCallback</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a measurement-available callback function for the spectrometer.</span>
+<span class="w">    </span><span class="sd">"""Register a measurement-available callback function for the spectrometer.</span>
 
 <span class="sd">    !!! example</span>
 <span class="sd">        See [avaspec_callback.py](https://github.com/MSLNZ/msl-equipment/blob/main/packages/resources/examples/avantes/avaspec_callback.py)</span>
@@ -9329,7 +9329,7 @@ or <code>INVALID_MEAS_DATA</code> (<code>-8</code>). Set this value to <code>Non
 <span class="sd">            saved in RAM (if `m_StoreToRAM` parameter &gt; 0, see</span>
 <span class="sd">            [ControlSettingsType][msl.equipment_resources.avantes.avaspec.ControlSettingsType]),</span>
 <span class="sd">            or `INVALID_MEAS_DATA` (`-8`). Set this value to `None` if a callback is not needed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_MeasureCallback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">num_measurements</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9385,11 +9385,11 @@ or <code>INVALID_MEAS_DATA</code> (<code>-8</code>). Set this value to <code>Non
 <span class="normal">1388</span>
 <span class="normal">1389</span>
 <span class="normal">1390</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">poll_scan</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determines if new measurement results are available.</span>
+<span class="w">    </span><span class="sd">"""Determines if new measurement results are available.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Whether there is a scan available.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_PollScan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9455,11 +9455,11 @@ or <code>INVALID_MEAS_DATA</code> (<code>-8</code>). Set this value to <code>Non
 <span class="normal">1396</span>
 <span class="normal">1397</span>
 <span class="normal">1398</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">prepare_measure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">MeasConfigType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prepares measurement on the spectrometer using the specified measurement configuration.</span>
+<span class="w">    </span><span class="sd">"""Prepares measurement on the spectrometer using the specified measurement configuration.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        config: The measurement configuration.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_PrepareMeasure</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9523,11 +9523,11 @@ or <code>INVALID_MEAS_DATA</code> (<code>-8</code>). Set this value to <code>Non
 <span class="normal">1404</span>
 <span class="normal">1405</span>
 <span class="normal">1406</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Installs an application windows handle to which device attachment/removal messages have to be sent.</span>
+<span class="w">    </span><span class="sd">"""Installs an application windows handle to which device attachment/removal messages have to be sent.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        handle: Application window handle.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_Register</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9567,14 +9567,14 @@ command response back to the host.</p>
 <span class="normal">1415</span>
 <span class="normal">1416</span>
 <span class="normal">1417</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset_device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Performs a hard reset on the given spectrometer.</span>
+<span class="w">    </span><span class="sd">"""Performs a hard reset on the given spectrometer.</span>
 
 <span class="sd">    This function only works with the AS7010 platform.</span>
 
 <span class="sd">    During reset of the spectrometer, all spectrometer HW modules (microprocessor and USB controller)</span>
 <span class="sd">    will be reset at once. The spectrometer will start its reset procedure right after sending the</span>
 <span class="sd">    command response back to the host.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_ResetDevice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9694,7 +9694,7 @@ command response back to the host.</p>
 <span class="normal">1440</span>
 <span class="normal">1441</span>
 <span class="normal">1442</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_analog_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the analog output value for the specified analog identifier.</span>
+<span class="w">    </span><span class="sd">"""Sets the analog output value for the specified analog identifier.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        port_id: Identifier for one of the two output signals:</span>
@@ -9715,7 +9715,7 @@ command response back to the host.</p>
 <span class="sd">                * `1`: AO2 = pin 26 at 26-pin connector</span>
 
 <span class="sd">        value: DAC value to be set in Volts (internally an 8-bit DAC is used) with range 0 - 5V.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_SetAnalogOut</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">port_id</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9883,7 +9883,7 @@ command response back to the host.</p>
 <span class="normal">1489</span>
 <span class="normal">1490</span>
 <span class="normal">1491</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_digital_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the digital output value for the specified digital identifier.</span>
+<span class="w">    </span><span class="sd">"""Sets the digital output value for the specified digital identifier.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        port_id: Identifier for one of the 10 output signals:</span>
@@ -9928,7 +9928,7 @@ command response back to the host.</p>
 <span class="sd">                * `9`: DO10 = pin 25 at 26-pin connector</span>
 
 <span class="sd">        value: The digital value to be set (0 or 1).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_SetDigOut</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">port_id</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9994,11 +9994,11 @@ command response back to the host.</p>
 <span class="normal">1497</span>
 <span class="normal">1498</span>
 <span class="normal">1499</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_oem_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="n">OemDataType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sends the OEM data structure to the spectrometer.</span>
+<span class="w">    </span><span class="sd">"""Sends the OEM data structure to the spectrometer.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        parameter: The OEM data structure.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_SetOemParameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10077,7 +10077,7 @@ when using this method together with
 <span class="normal">1511</span>
 <span class="normal">1512</span>
 <span class="normal">1513</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="n">DeviceConfigType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Overwrites the device configuration.</span>
+<span class="w">    </span><span class="sd">"""Overwrites the device configuration.</span>
 
 <span class="sd">    Please note that [OemDataType][msl.equipment_resources.avantes.avaspec.OemDataType] is part</span>
 <span class="sd">    of the [DeviceConfigType][msl.equipment_resources.avantes.avaspec.DeviceConfigType] in EEPROM</span>
@@ -10087,7 +10087,7 @@ when using this method together with
 
 <span class="sd">    Args:</span>
 <span class="sd">        parameter: The device parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_SetParameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10158,7 +10158,7 @@ else the detector will be cleared before each new scan (clear-buffer mode).</p>
 <span class="normal">1523</span>
 <span class="normal">1524</span>
 <span class="normal">1525</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_prescan_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;If a prescan is set, the first measurement result will be skipped.</span>
+<span class="w">    </span><span class="sd">"""If a prescan is set, the first measurement result will be skipped.</span>
 
 <span class="sd">    This function is only useful for the AvaSpec-3648 because this detector</span>
 <span class="sd">    can be operated in prescan mode, or clear-buffer mode (see DLL manual).</span>
@@ -10166,7 +10166,7 @@ else the detector will be cleared before each new scan (clear-buffer mode).</p>
 <span class="sd">    Args:</span>
 <span class="sd">        mode: If `True`, the first measurement result will be skipped (prescan mode),</span>
 <span class="sd">            else the detector will be cleared before each new scan (clear-buffer mode).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_SetPrescanMode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10293,7 +10293,7 @@ and 6. For the AS7010, rising edges are unsynchronized.</p>
 <span class="normal">1548</span>
 <span class="normal">1549</span>
 <span class="normal">1550</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_pwm_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">frequency</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">duty_cycle</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Selects the PWM functionality for the specified digital output.</span>
+<span class="w">    </span><span class="sd">"""Selects the PWM functionality for the specified digital output.</span>
 
 <span class="sd">    The PWM functionality is not supported on the Mini.</span>
 
@@ -10314,7 +10314,7 @@ and 6. For the AS7010, rising edges are unsynchronized.</p>
 <span class="sd">        duty_cycle: Percentage high time in one cycle (0 - 100). For the AS5216, channels 0,</span>
 <span class="sd">            1 and 2 have a synchronized rising edge, the same holds for channels 4, 5</span>
 <span class="sd">            and 6. For the AS7010, rising edges are unsynchronized.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_SetPwmOut</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">port_id</span><span class="p">,</span> <span class="n">frequency</span><span class="p">,</span> <span class="n">duty_cycle</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10383,14 +10383,14 @@ HAMG9208_512, SU256LSB and SU512LDB with the appropriate firmware version.</p>
 <span class="normal">1559</span>
 <span class="normal">1560</span>
 <span class="normal">1561</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_sensitivity_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the sensitivity mode.</span>
+<span class="w">    </span><span class="sd">"""Set the sensitivity mode.</span>
 
 <span class="sd">    This method is supported by the following detector types: HAMS9201,</span>
 <span class="sd">    HAMG9208_512, SU256LSB and SU512LDB with the appropriate firmware version.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        mode: 0 for low noise, &gt;0 for high sensitivity</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_SetSensitivityMode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10454,11 +10454,11 @@ HAMG9208_512, SU256LSB and SU512LDB with the appropriate firmware version.</p>
 <span class="normal">1567</span>
 <span class="normal">1568</span>
 <span class="normal">1569</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_sync_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disables/enables support for synchronous measurement.</span>
+<span class="w">    </span><span class="sd">"""Disables/enables support for synchronous measurement.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        enable: `False` to disable sync mode, `True` to enable sync mode.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_SetSyncMode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">enable</span><span class="p">)))</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10487,7 +10487,7 @@ HAMG9208_512, SU256LSB and SU512LDB with the appropriate firmware version.</p>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1571</span>
 <span class="normal">1572</span>
 <span class="normal">1573</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">stop_measure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stops the measurement.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Stops the measurement."""</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_StopMeasure</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10583,14 +10583,14 @@ HAMG9208_512, SU256LSB and SU512LDB with the appropriate firmware version.</p>
 <span class="normal">1588</span>
 <span class="normal">1589</span>
 <span class="normal">1590</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">suppress_stray_light</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the stray light corrected pixel values of a dark corrected measurement.</span>
+<span class="w">    </span><span class="sd">"""Returns the stray light corrected pixel values of a dark corrected measurement.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        factor: Multiplication factor for the stray light algorithm.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Scope minus dark array, stray light suppressed array.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="mf">9e99</span>
     <span class="n">src</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">MAX_NR_PIXELS</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
     <span class="n">dest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">MAX_NR_PIXELS</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
@@ -10695,7 +10695,7 @@ HAMG9208_512, SU256LSB and SU512LDB with the appropriate firmware version.</p>
 <span class="normal">1605</span>
 <span class="normal">1606</span>
 <span class="normal">1607</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_eth_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nmax</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">BroadcastAnswerType</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the number of Ethernet devices that are connected to the computer.</span>
+<span class="w">    </span><span class="sd">"""Return the number of Ethernet devices that are connected to the computer.</span>
 
 <span class="sd">    Internally checks the list of connected Ethernet devices and returns the number of devices attached.</span>
 
@@ -10704,7 +10704,7 @@ HAMG9208_512, SU256LSB and SU512LDB with the appropriate firmware version.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The information about the devices.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">nmax</span> <span class="o">*</span> <span class="n">sizeof</span><span class="p">(</span><span class="n">BroadcastAnswerType</span><span class="p">)</span>
     <span class="n">required_size</span> <span class="o">=</span> <span class="n">c_uint32</span><span class="p">()</span>
     <span class="n">types</span> <span class="o">=</span> <span class="p">(</span><span class="n">BroadcastAnswerType</span> <span class="o">*</span> <span class="n">nmax</span><span class="p">)()</span>
@@ -10767,13 +10767,13 @@ HAMG9208_512, SU256LSB and SU512LDB with the appropriate firmware version.</p>
 <span class="normal">1615</span>
 <span class="normal">1616</span>
 <span class="normal">1617</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_usb_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the number of USB devices that are connected to the computer.</span>
+<span class="w">    </span><span class="sd">"""Return the number of USB devices that are connected to the computer.</span>
 
 <span class="sd">    Internally checks the list of connected USB devices and returns the number of devices attached.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of devices found.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_UpdateUSBDevices</span><span class="p">())</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10848,7 +10848,7 @@ with ADCFactor (= 4.0), as explained in detail in section 4.6.1 and 4.6.3 of the
 <span class="normal">1629</span>
 <span class="normal">1630</span>
 <span class="normal">1631</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">use_high_res_adc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enable the 16-bit AD converter.</span>
+<span class="w">    </span><span class="sd">"""Enable the 16-bit AD converter.</span>
 
 <span class="sd">    When using the 16 bit ADC in full High Resolution mode (0..65535), please note that the</span>
 <span class="sd">    irradiance intensity calibration, as well as the nonlinearity calibration are based on the 14bit</span>
@@ -10858,7 +10858,7 @@ with ADCFactor (= 4.0), as explained in detail in section 4.6.1 and 4.6.3 of the
 
 <span class="sd">    Args:</span>
 <span class="sd">        enable: If `True` use a 16-bit AD converter, otherwise use a 14-bit ADC.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sdk</span><span class="o">.</span><span class="n">AVS_UseHighResAdc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">enable</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -13816,11 +13816,11 @@ for an example usage.</p>
 <span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">avaspec_callback</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">AvaSpecCallback</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CFunctionType</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use as a decorator for a callback function when a measurement scan is available.</span>
+<span class="w">    </span><span class="sd">"""Use as a decorator for a callback function when a measurement scan is available.</span>
 
 <span class="sd">    See [avaspec_callback.py](https://github.com/MSLNZ/msl-equipment/blob/main/packages/resources/examples/avantes/avaspec_callback.py)</span>
 <span class="sd">    for an example usage.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">MeasureCallback</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>

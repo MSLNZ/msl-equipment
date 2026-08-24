@@ -5557,8 +5557,8 @@
 
         <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Electron Dynamics&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;TC\s*[M|L]&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Electron Dynamics"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">"TC\s*[M|L]"</span>
 <span class="n">flags</span><span class="o">=</span><span class="n">IGNORECASE</span>
 </code></pre></div></p>
 
@@ -5631,27 +5631,27 @@
 <span class="normal">344</span>
 <span class="normal">345</span>
 <span class="normal">346</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Establishes a connection to a TC Series Temperature Controller from Electron Dynamics Ltd.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Establishes a connection to a TC Series Temperature Controller from Electron Dynamics Ltd.</span>
 
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;Electron Dynamics&quot;</span>
-<span class="sd">    model=r&quot;TC\s*[M|L]&quot;</span>
+<span class="sd">    manufacturer=r"Electron Dynamics"</span>
+<span class="sd">    model=r"TC\s*[M|L]"</span>
 <span class="sd">    flags=IGNORECASE</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span><span class="p">:</span>
         <span class="c1"># then use the default connection properties</span>
         <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;baud_rate&quot;</span><span class="p">:</span> <span class="mi">19200</span><span class="p">,</span>
-            <span class="s2">&quot;write_termination&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;read_termination&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
+            <span class="s2">"baud_rate"</span><span class="p">:</span> <span class="mi">19200</span><span class="p">,</span>
+            <span class="s2">"write_termination"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"read_termination"</span><span class="p">:</span> <span class="s2">"</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"timeout"</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -5737,12 +5737,12 @@
 <span class="normal">378</span>
 <span class="normal">379</span>
 <span class="normal">380</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_alarm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Alarm</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the alarm parameters.</span>
+<span class="w">    </span><span class="sd">"""Get the alarm parameters.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The alarm parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reply</span><span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reply</span><span class="p">(</span><span class="s2">"d"</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">Alarm</span><span class="p">(</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">AlarmType</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">)),</span>
         <span class="n">alarm_min</span><span class="o">=</span><span class="n">b</span><span class="p">,</span>
@@ -5825,12 +5825,12 @@
 <span class="normal">395</span>
 <span class="normal">396</span>
 <span class="normal">397</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_control</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Control</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the PID control parameters.</span>
+<span class="w">    </span><span class="sd">"""Get the PID control parameters.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The control parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reply</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reply</span><span class="p">(</span><span class="s2">"b"</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">Control</span><span class="p">(</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">ControlType</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">)),</span>
         <span class="n">p</span><span class="o">=</span><span class="n">b</span><span class="p">,</span>
@@ -5910,12 +5910,12 @@
 <span class="normal">409</span>
 <span class="normal">410</span>
 <span class="normal">411</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Output</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the output parameters.</span>
+<span class="w">    </span><span class="sd">"""Get the output parameters.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The output parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reply</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reply</span><span class="p">(</span><span class="s2">"h"</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">Output</span><span class="p">(</span>
         <span class="n">polarity</span><span class="o">=</span><span class="n">Polarity</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">)),</span>
         <span class="n">minimum</span><span class="o">=</span><span class="n">b</span><span class="p">,</span>
@@ -5995,12 +5995,12 @@
 <span class="normal">426</span>
 <span class="normal">427</span>
 <span class="normal">428</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_sensor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the sensor parameters.</span>
+<span class="w">    </span><span class="sd">"""Get the sensor parameters.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The sensor parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reply</span><span class="p">(</span><span class="s2">&quot;f&quot;</span><span class="p">)))</span>
+<span class="sd">    """</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reply</span><span class="p">(</span><span class="s2">"f"</span><span class="p">)))</span>
     <span class="k">return</span> <span class="n">Sensor</span><span class="p">(</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">SensorType</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
         <span class="n">x2</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
@@ -6080,12 +6080,12 @@
 <span class="normal">440</span>
 <span class="normal">441</span>
 <span class="normal">442</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_setpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Setpoint</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the setpoint parameters.</span>
+<span class="w">    </span><span class="sd">"""Get the setpoint parameters.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The setpoint parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reply</span><span class="p">(</span><span class="s2">&quot;q&quot;</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reply</span><span class="p">(</span><span class="s2">"q"</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">Setpoint</span><span class="p">(</span>
         <span class="n">method</span><span class="o">=</span><span class="n">Method</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">)),</span>
         <span class="n">value</span><span class="o">=</span><span class="n">b</span><span class="p">,</span>
@@ -6169,24 +6169,24 @@
 <span class="normal">461</span>
 <span class="normal">462</span>
 <span class="normal">463</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Status</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the status.</span>
+<span class="w">    </span><span class="sd">"""Get the status.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The status parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reply</span><span class="p">(</span><span class="s2">&quot;j&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reply</span><span class="p">(</span><span class="s2">"j"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Status</span><span class="p">(</span>
         <span class="n">setpoint</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
         <span class="n">temperature</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-        <span class="n">controlled</span><span class="o">=</span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+        <span class="n">controlled</span><span class="o">=</span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"1"</span><span class="p">,</span>
         <span class="n">output</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
         <span class="n">alarm_type</span><span class="o">=</span><span class="n">AlarmType</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">4</span><span class="p">])),</span>
         <span class="n">faults</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span>
-        <span class="n">temp_ok</span><span class="o">=</span><span class="n">r</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+        <span class="n">temp_ok</span><span class="o">=</span><span class="n">r</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"1"</span><span class="p">,</span>
         <span class="n">supply_v</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">7</span><span class="p">]),</span>
         <span class="n">version</span><span class="o">=</span><span class="n">r</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>
         <span class="n">test_cycles</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">9</span><span class="p">]),</span>
-        <span class="n">test_mode_completed</span><span class="o">=</span><span class="n">r</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+        <span class="n">test_mode_completed</span><span class="o">=</span><span class="n">r</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"1"</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6264,16 +6264,16 @@
 <span class="normal">473</span>
 <span class="normal">474</span>
 <span class="normal">475</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_alarm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alarm</span><span class="p">:</span> <span class="n">Alarm</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the alarm parameters.</span>
+<span class="w">    </span><span class="sd">"""Set the alarm parameters.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        alarm: The alarm parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">alarm</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">alarm</span><span class="o">.</span><span class="n">alarm_min</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">alarm</span><span class="o">.</span><span class="n">alarm_max</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">alarm</span><span class="o">.</span><span class="n">ok_min</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">alarm</span><span class="o">.</span><span class="n">ok_max</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">alarm</span><span class="o">.</span><span class="n">limit_min</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">alarm</span><span class="o">.</span><span class="n">limit_max</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;&quot;</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">alarm</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">alarm</span><span class="o">.</span><span class="n">alarm_min</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">alarm</span><span class="o">.</span><span class="n">alarm_max</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">alarm</span><span class="o">.</span><span class="n">ok_min</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;"</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">alarm</span><span class="o">.</span><span class="n">ok_max</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">alarm</span><span class="o">.</span><span class="n">limit_min</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">alarm</span><span class="o">.</span><span class="n">limit_max</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;"</span>
     <span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"c"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6350,16 +6350,16 @@
 <span class="normal">485</span>
 <span class="normal">486</span>
 <span class="normal">487</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_control</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">control</span><span class="p">:</span> <span class="n">Control</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the PID control parameters.</span>
+<span class="w">    </span><span class="sd">"""Set the PID control parameters.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        control: The control parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">control</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">control</span><span class="o">.</span><span class="n">p</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">control</span><span class="o">.</span><span class="n">i</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">control</span><span class="o">.</span><span class="n">d</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">control</span><span class="o">.</span><span class="n">d_filter</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">control</span><span class="o">.</span><span class="n">dead_band</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">control</span><span class="o">.</span><span class="n">power_up_state</span><span class="si">}</span><span class="s2">;&quot;</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">control</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">control</span><span class="o">.</span><span class="n">p</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">control</span><span class="o">.</span><span class="n">i</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">control</span><span class="o">.</span><span class="n">d</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;"</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">control</span><span class="o">.</span><span class="n">d_filter</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">control</span><span class="o">.</span><span class="n">dead_band</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">control</span><span class="o">.</span><span class="n">power_up_state</span><span class="si">}</span><span class="s2">;"</span>
     <span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6433,13 +6433,13 @@
 <span class="normal">494</span>
 <span class="normal">495</span>
 <span class="normal">496</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">Output</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the output parameters.</span>
+<span class="w">    </span><span class="sd">"""Set the output parameters.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        output: The output parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output</span><span class="o">.</span><span class="n">polarity</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">output</span><span class="o">.</span><span class="n">minimum</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">output</span><span class="o">.</span><span class="n">maximum</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">output</span><span class="o">.</span><span class="n">frequency</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">output</span><span class="o">.</span><span class="n">polarity</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">output</span><span class="o">.</span><span class="n">minimum</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">output</span><span class="o">.</span><span class="n">maximum</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">output</span><span class="o">.</span><span class="n">frequency</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;"</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"g"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6519,13 +6519,13 @@
 <span class="normal">503</span>
 <span class="normal">504</span>
 <span class="normal">505</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_output_drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">enable</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the output drive state and value.</span>
+<span class="w">    </span><span class="sd">"""Set the output drive state and value.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        enable: Whether to enable or disable the output drive.</span>
 <span class="sd">        value: Percent drive output.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;m&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">enable</span><span class="p">)</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"m"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">enable</span><span class="p">)</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6601,15 +6601,15 @@
 <span class="normal">514</span>
 <span class="normal">515</span>
 <span class="normal">516</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_sensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sensor</span><span class="p">:</span> <span class="n">Sensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the sensor type and the sensor parameters.</span>
+<span class="w">    </span><span class="sd">"""Set the sensor type and the sensor parameters.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        sensor: The sensor parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sensor</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">sensor</span><span class="o">.</span><span class="n">x2</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">sensor</span><span class="o">.</span><span class="n">x</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">sensor</span><span class="o">.</span><span class="n">c</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">sensor</span><span class="o">.</span><span class="n">unit</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">sensor</span><span class="o">.</span><span class="n">averaging</span><span class="p">)</span><span class="si">}</span><span class="s2">;&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">sensor</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">sensor</span><span class="o">.</span><span class="n">x2</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">sensor</span><span class="o">.</span><span class="n">x</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">sensor</span><span class="o">.</span><span class="n">c</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">sensor</span><span class="o">.</span><span class="n">unit</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">sensor</span><span class="o">.</span><span class="n">averaging</span><span class="p">)</span><span class="si">}</span><span class="s2">;"</span>
     <span class="k">if</span> <span class="n">sensor</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">SensorType</span><span class="o">.</span><span class="n">NTC_THERMISTOR</span><span class="p">,</span> <span class="n">SensorType</span><span class="o">.</span><span class="n">RES</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sensor</span><span class="o">.</span><span class="n">r</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">sensor</span><span class="o">.</span><span class="n">r</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;"</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"e"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6683,13 +6683,13 @@
 <span class="normal">523</span>
 <span class="normal">524</span>
 <span class="normal">525</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_setpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">setpoint</span><span class="p">:</span> <span class="n">Setpoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the setpoint parameters.</span>
+<span class="w">    </span><span class="sd">"""Set the setpoint parameters.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        setpoint: The setpoint parameters.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">setpoint</span><span class="o">.</span><span class="n">method</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">setpoint</span><span class="o">.</span><span class="n">value</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">setpoint</span><span class="o">.</span><span class="n">pot_range</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">setpoint</span><span class="o">.</span><span class="n">pot_offset</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">setpoint</span><span class="o">.</span><span class="n">method</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">setpoint</span><span class="o">.</span><span class="n">value</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">setpoint</span><span class="o">.</span><span class="n">pot_range</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">setpoint</span><span class="o">.</span><span class="n">pot_offset</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">;"</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"i"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6788,7 +6788,7 @@
 <span class="normal">544</span>
 <span class="normal">545</span>
 <span class="normal">546</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the test parameters.</span>
+<span class="w">    </span><span class="sd">"""Set the test parameters.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        mode: The test mode. One of:</span>
@@ -6800,13 +6800,13 @@
 <span class="sd">            * `4`: Auto tune</span>
 
 <span class="sd">        data: The test data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">mode</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">mode</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid test mode=</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">. Must be 0, 1, 2, 3 or 4&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid test mode=</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">. Must be 0, 1, 2, 3 or 4"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">values</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">values</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="s2">";"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s2">"k"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">values</span><span class="si">}</span><span class="s2">;"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7674,7 +7674,7 @@ Range 20 to 1000 Hz.</p>
 <span class="normal">231</span>
 <span class="normal">232</span>
 <span class="normal">233</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">polarity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Polarity</span><span class="p">,</span> <span class="n">minimum</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">maximum</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">frequency</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Output parameters.</span>
+<span class="w">    </span><span class="sd">"""Output parameters.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        polarity: Output drive polarity.</span>
@@ -7682,18 +7682,18 @@ Range 20 to 1000 Hz.</p>
 <span class="sd">        maximum: The maximum value limit of the output. Range -100 to +100.</span>
 <span class="sd">        frequency: Sets the pulse-width modulation repetition frequency of the output drive.</span>
 <span class="sd">            Range 20 to 1000 Hz.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">minimum</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid minimum=</span><span class="si">{</span><span class="n">minimum</span><span class="si">}</span><span class="s2">. Must be between -100 and +100&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid minimum=</span><span class="si">{</span><span class="n">minimum</span><span class="si">}</span><span class="s2">. Must be between -100 and +100"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">maximum</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid maximum=</span><span class="si">{</span><span class="n">maximum</span><span class="si">}</span><span class="s2">. Must be between -100 and +100&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid maximum=</span><span class="si">{</span><span class="n">maximum</span><span class="si">}</span><span class="s2">. Must be between -100 and +100"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">minimum</span> <span class="o">&gt;</span> <span class="n">maximum</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;The minimum=</span><span class="si">{</span><span class="n">minimum</span><span class="si">}</span><span class="s2"> value must be less than the maximum=</span><span class="si">{</span><span class="n">maximum</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"The minimum=</span><span class="si">{</span><span class="n">minimum</span><span class="si">}</span><span class="s2"> value must be less than the maximum=</span><span class="si">{</span><span class="n">maximum</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">frequency</span> <span class="o">&lt;</span> <span class="mi">20</span> <span class="ow">or</span> <span class="n">frequency</span> <span class="o">&gt;</span> <span class="mi">1000</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid frequency=</span><span class="si">{</span><span class="n">frequency</span><span class="si">}</span><span class="s2">. Must be between 20 and 1000&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid frequency=</span><span class="si">{</span><span class="n">frequency</span><span class="si">}</span><span class="s2">. Must be between 20 and 1000"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">polarity</span><span class="p">:</span> <span class="n">Polarity</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">polarity</span><span class="p">,</span> <span class="n">Polarity</span><span class="p">)</span>

@@ -4934,7 +4934,7 @@
 <p>A configuration file uses the eXtensible Markup Language (XML) file format to specify this information.</p>
 <h2 id="config-xml-example">XML Example<a class="headerlink" href="#config-xml-example" title="Permanent link">¤</a></h2>
 <p>The following illustrates an example configuration file.</p>
-<div class="highlight"><pre><span></span><code><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
 <span class="nt">&lt;config&gt;</span><span class="w"> </span><span class="cm">&lt;!-- The name of the root tag can be anything you want. --&gt;</span>
 
 <span class="w">  </span><span class="cm">&lt;!-- OPTIONAL: Set the path to the D2XX library file (for FTDI communication).</span>
@@ -4969,14 +4969,14 @@
 <span class="w">  </span><span class="cm">&lt;!-- OPTIONAL: Add paths to where library files are located.</span>
 
 <span class="cm">    The paths are appended to the PATH environment variable. If a</span>
-<span class="cm">    recursive=&quot;true&quot; attribute is included, then recursively adds the</span>
+<span class="cm">    recursive="true" attribute is included, then recursively adds the</span>
 <span class="cm">    specified directory and all sub-directories to PATH. Adding &lt;path&gt;</span>
 <span class="cm">    elements is useful if communication to equipment requires the</span>
-<span class="cm">    manufacturer&#39;s Software Development Kit (SDK). The &lt;path&gt; element</span>
+<span class="cm">    manufacturer's Software Development Kit (SDK). The &lt;path&gt; element</span>
 <span class="cm">    may be specified multiple times.</span>
 <span class="cm">  --&gt;</span>
 <span class="w">  </span><span class="nt">&lt;path&gt;</span>C:\Program<span class="w"> </span>Files\Manufacturer\lib<span class="nt">&lt;/path&gt;</span>
-<span class="w">  </span><span class="nt">&lt;path</span><span class="w"> </span><span class="na">recursive=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>D:\code\SDKs<span class="nt">&lt;/path&gt;</span>
+<span class="w">  </span><span class="nt">&lt;path</span><span class="w"> </span><span class="na">recursive=</span><span class="s">"true"</span><span class="nt">&gt;</span>D:\code\SDKs<span class="nt">&lt;/path&gt;</span>
 
 <span class="w">  </span><span class="cm">&lt;!-- Specify the equipment that is required to perform the measurement.</span>
 
@@ -4995,9 +4995,9 @@
 <span class="cm">    can save the &lt;equipment/&gt; information (or just the equipment IDs) to the</span>
 <span class="cm">    output file.</span>
 <span class="cm">   --&gt;</span>
-<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.M.092&quot;</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;dmm&quot;</span><span class="w"> </span><span class="na">comment=</span><span class="s">&quot;borrowed from Kibble lab&quot;</span><span class="nt">/&gt;</span>
-<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.103&quot;</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;photodiode&quot;</span><span class="w"> </span><span class="na">manufacturer=</span><span class="s">&quot;MSL&quot;</span><span class="w"> </span><span class="na">std=</span><span class="s">&quot;B03&quot;</span><span class="nt">/&gt;</span>
-<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">&quot;MSLE.O.061&quot;</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;monochromator&quot;</span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">"MSLE.M.092"</span><span class="w"> </span><span class="na">name=</span><span class="s">"dmm"</span><span class="w"> </span><span class="na">comment=</span><span class="s">"borrowed from Kibble lab"</span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">"MSLE.O.103"</span><span class="w"> </span><span class="na">name=</span><span class="s">"photodiode"</span><span class="w"> </span><span class="na">manufacturer=</span><span class="s">"MSL"</span><span class="w"> </span><span class="na">std=</span><span class="s">"B03"</span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;equipment</span><span class="w"> </span><span class="na">eid=</span><span class="s">"MSLE.O.061"</span><span class="w"> </span><span class="na">name=</span><span class="s">"monochromator"</span><span class="nt">/&gt;</span>
 
 <span class="w">  </span><span class="cm">&lt;!-- Equipment registers that the equipment above can be found in.</span>
 
@@ -5024,7 +5024,7 @@
 <span class="w">  </span><span class="nt">&lt;connections&gt;</span>C:\DATA\Connections\transmittance.xml<span class="nt">&lt;/connections&gt;</span>
 
 <span class="w">  </span><span class="cm">&lt;!-- USER SPECIFIC: You may define your own elements. --&gt;</span>
-<span class="w">  </span><span class="nt">&lt;max_temperature</span><span class="w"> </span><span class="na">unit=</span><span class="s">&quot;°C&quot;</span><span class="nt">&gt;</span>30<span class="nt">&lt;/max_temperature&gt;</span>
+<span class="w">  </span><span class="nt">&lt;max_temperature</span><span class="w"> </span><span class="na">unit=</span><span class="s">"°C"</span><span class="nt">&gt;</span>30<span class="nt">&lt;/max_temperature&gt;</span>
 <span class="w">  </span><span class="nt">&lt;auto_zero&gt;</span>true<span class="nt">&lt;/auto_zero&gt;</span>
 <span class="w">  </span><span class="nt">&lt;nd_filter&gt;</span>OD:<span class="w"> </span>2.0<span class="nt">&lt;/nd_filter&gt;</span>
 <span class="w">  </span><span class="nt">&lt;smtp&gt;</span>
@@ -5039,7 +5039,7 @@
 <h2 id="config-python-example">Python Example<a class="headerlink" href="#config-python-example" title="Permanent link">¤</a></h2>
 <p>The <a class="autorefs autorefs-internal" href="../../api/config/#config">Config</a> class is used to load a configuration file</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">&quot;tests/data/config.xml&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">"tests/data/config.xml"</span><span class="p">)</span>
 </code></pre></div>
 <p>You can then access the equipment <a class="autorefs autorefs-internal" title="            registers
 
@@ -5048,9 +5048,9 @@
       property
   " href="../../api/config/#msl.equipment.config.Config.registers">registers</a>,</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">team</span><span class="p">,</span> <span class="n">register</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">registers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">team</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">,</span> <span class="n">register</span><span class="p">)</span>
-<span class="go">Mass: Register(team=&#39;Mass&#39; (3 equipment))</span>
-<span class="go">Light: Register(team=&#39;Light&#39; (4 equipment))</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">team</span><span class="si">}</span><span class="s2">:"</span><span class="p">,</span> <span class="n">register</span><span class="p">)</span>
+<span class="go">Mass: Register(team='Mass' (3 equipment))</span>
+<span class="go">Light: Register(team='Light' (4 equipment))</span>
 </code></pre></div>
 <p>iterate over and access <code>&lt;equipment/&gt;</code> elements that have been defined in the configuration file to access the <a class="autorefs autorefs-internal" href="../../schema/equipment/#equipment">Equipment</a> instances,</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">equipment</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">:</span>
@@ -5059,27 +5059,27 @@
 <span class="go">MSLE.O.103</span>
 <span class="go">MSLE.O.061</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># use the index</span>
-<span class="go">&#39;MSLE.M.092&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;MSLE.M.092&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># use the equipment id</span>
-<span class="go">&#39;MSLE.M.092&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;dmm&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># use the name attribute</span>
-<span class="go">&#39;MSLE.M.092&#39;</span>
+<span class="go">'MSLE.M.092'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">"MSLE.M.092"</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># use the equipment id</span>
+<span class="go">'MSLE.M.092'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">"dmm"</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># use the name attribute</span>
+<span class="go">'MSLE.M.092'</span>
 </code></pre></div>
 <p>access XML elements defined in the configuration file by using the tag name or the path to the element,</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">attrib</span><span class="p">(</span><span class="s2">&quot;max_temperature&quot;</span><span class="p">)</span>
-<span class="go">{&#39;unit&#39;: &#39;°C&#39;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;max_temperature&quot;</span><span class="p">)</span>
-<span class="go">&lt;Element &#39;max_temperature&#39; at ...&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;smtp/recipient&quot;</span><span class="p">)</span>
-<span class="go">[&lt;Element &#39;recipient&#39; at ...&gt;, &lt;Element &#39;recipient&#39; at ...&gt;]</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">attrib</span><span class="p">(</span><span class="s2">"max_temperature"</span><span class="p">)</span>
+<span class="go">{'unit': '°C'}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"max_temperature"</span><span class="p">)</span>
+<span class="go">&lt;Element 'max_temperature' at ...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">"smtp/recipient"</span><span class="p">)</span>
+<span class="go">[&lt;Element 'recipient' at ...&gt;, &lt;Element 'recipient' at ...&gt;]</span>
 </code></pre></div>
 <p>and if the value of an XML element is a boolean (<code>true</code>, <code>false</code> case-insensitive) an integer or a floating-point number, you can use the <a class="autorefs autorefs-internal" title="            value" href="../../api/config/#msl.equipment.config.Config.value">value</a> method to convert the text value to the appropriate Python data type (otherwise the text value will remain as a string).</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;auto_zero&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">"auto_zero"</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;max_temperature&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">"max_temperature"</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 <span class="go">15.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">&quot;nd_filter&quot;</span><span class="p">)</span>
-<span class="go">&#39;OD: 2.0&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">"nd_filter"</span><span class="p">)</span>
+<span class="go">'OD: 2.0'</span>
 </code></pre></div>
 <p>If the equipment supports computer control, you can call the <a class="autorefs autorefs-internal" title="            connect" href="../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect</a> method of the <a class="autorefs autorefs-internal" title="            Equipment
 
@@ -5087,8 +5087,8 @@
   
       dataclass
   " href="../../schema/equipment/#msl.equipment.schema.Equipment">Equipment</a> instance to establish communication.</p>
-<div class="highlight"><pre><span></span><code><span class="n">dmm</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;dmm&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">dmm</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><code><span class="n">dmm</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">"dmm"</span><span class="p">]</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dmm</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"*IDN?"</span><span class="p">))</span>
 <span class="n">dmm</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 </code></pre></div>
 <p>See <a class="autorefs autorefs-internal" title="Python Examples" href="../connections/#connections-python-examples">this section</a> for more details about communicating with equipment.</p>

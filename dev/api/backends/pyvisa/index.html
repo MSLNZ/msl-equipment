@@ -5026,16 +5026,16 @@ value is <code>@ivi</code> if this environment variable is not defined.</p>
 to calling <a class="autorefs autorefs-external" href="https://pyvisa.readthedocs.io/en/stable/api/resourcemanager.html#pyvisa.highlevel.ResourceManager.open_resource">open_resource</a>, e.g.,</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Backend</span><span class="p">,</span> <span class="n">Connection</span>
 
-<span class="n">connection</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;GPIB::12&quot;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">Backend</span><span class="o">.</span><span class="n">PyVISA</span><span class="p">)</span>
+<span class="n">connection</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">"GPIB::12"</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">Backend</span><span class="o">.</span><span class="n">PyVISA</span><span class="p">)</span>
 <span class="n">inst</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">inst</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">inst</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"*IDN?"</span><span class="p">))</span>
 </code></pre></div>
 <p>is equivalent to</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pyvisa</span>
 
 <span class="n">rm</span> <span class="o">=</span> <span class="n">pyvisa</span><span class="o">.</span><span class="n">ResourceManager</span><span class="p">()</span>
-<span class="n">inst</span> <span class="o">=</span> <span class="n">rm</span><span class="o">.</span><span class="n">open_resource</span><span class="p">(</span><span class="s2">&quot;GPIB::12&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">inst</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
+<span class="n">inst</span> <span class="o">=</span> <span class="n">rm</span><span class="o">.</span><span class="n">open_resource</span><span class="p">(</span><span class="s2">"GPIB::12"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">inst</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"*IDN?"</span><span class="p">))</span>
 </code></pre></div>
 <p>You can also combine the packages, use <code>msl-equipment</code> for managing information
 about the equipment and directly use <code>pyvisa</code> for the connection. If you use this
@@ -5044,14 +5044,14 @@ features like code completion and type checking.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pyvisa</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
 
-<span class="c1"># config.xml contains &lt;equipment eid=&quot;MSLE.0.063&quot; name=&quot;dmm&quot;/&gt;</span>
+<span class="c1"># config.xml contains &lt;equipment eid="MSLE.0.063" name="dmm"/&gt;</span>
 <span class="c1"># and specifies where the equipment registers are and the connections file.</span>
-<span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">&quot;config.xml&quot;</span><span class="p">)</span>
-<span class="n">equipment</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">&quot;dmm&quot;</span><span class="p">]</span>
+<span class="n">cfg</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">"config.xml"</span><span class="p">)</span>
+<span class="n">equipment</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">equipment</span><span class="p">[</span><span class="s2">"dmm"</span><span class="p">]</span>
 
 <span class="n">rm</span> <span class="o">=</span> <span class="n">pyvisa</span><span class="o">.</span><span class="n">ResourceManager</span><span class="p">()</span>
 <span class="n">inst</span> <span class="o">=</span> <span class="n">rm</span><span class="o">.</span><span class="n">open_resource</span><span class="p">(</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;READ?&quot;</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"READ?"</span><span class="p">)</span>
 
 <span class="c1"># You could now use the `equipment` instance to apply a correction to the `data`</span>
 </code></pre></div>
@@ -5175,7 +5175,7 @@ features like code completion and type checking.</p>
 <span class="normal">102</span>
 <span class="normal">103</span>
 <span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use [PyVISA] as the backend to communicate with the equipment.</span>
+<span class="w">    </span><span class="sd">"""Use [PyVISA] as the backend to communicate with the equipment.</span>
 
 <span class="sd">    The [backend][msl.equipment.schema.Connection.backend] value must be equal to</span>
 <span class="sd">    `PyVISA` to use this class for the communication backend.</span>
@@ -5193,9 +5193,9 @@ features like code completion and type checking.</p>
 <span class="sd">    ```python</span>
 <span class="sd">    from msl.equipment import Backend, Connection</span>
 
-<span class="sd">    connection = Connection(&quot;GPIB::12&quot;, backend=Backend.PyVISA)</span>
+<span class="sd">    connection = Connection("GPIB::12", backend=Backend.PyVISA)</span>
 <span class="sd">    inst = connection.connect()</span>
-<span class="sd">    print(inst.query(&quot;*IDN?&quot;))</span>
+<span class="sd">    print(inst.query("*IDN?"))</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    is equivalent to</span>
@@ -5204,8 +5204,8 @@ features like code completion and type checking.</p>
 <span class="sd">    import pyvisa</span>
 
 <span class="sd">    rm = pyvisa.ResourceManager()</span>
-<span class="sd">    inst = rm.open_resource(&quot;GPIB::12&quot;)</span>
-<span class="sd">    print(inst.query(&quot;*IDN?&quot;))</span>
+<span class="sd">    inst = rm.open_resource("GPIB::12")</span>
+<span class="sd">    print(inst.query("*IDN?"))</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    You can also combine the packages, use `msl-equipment` for managing information</span>
@@ -5217,14 +5217,14 @@ features like code completion and type checking.</p>
 <span class="sd">    import pyvisa</span>
 <span class="sd">    from msl.equipment import Config</span>
 
-<span class="sd">    # config.xml contains &lt;equipment eid=&quot;MSLE.0.063&quot; name=&quot;dmm&quot;/&gt;</span>
+<span class="sd">    # config.xml contains &lt;equipment eid="MSLE.0.063" name="dmm"/&gt;</span>
 <span class="sd">    # and specifies where the equipment registers are and the connections file.</span>
-<span class="sd">    cfg = Config(&quot;config.xml&quot;)</span>
-<span class="sd">    equipment = cfg.equipment[&quot;dmm&quot;]</span>
+<span class="sd">    cfg = Config("config.xml")</span>
+<span class="sd">    equipment = cfg.equipment["dmm"]</span>
 
 <span class="sd">    rm = pyvisa.ResourceManager()</span>
 <span class="sd">    inst = rm.open_resource(equipment.connection.address)</span>
-<span class="sd">    data = inst.query(&quot;READ?&quot;)</span>
+<span class="sd">    data = inst.query("READ?")</span>
 
 <span class="sd">    # You could now use the `equipment` instance to apply a correction to the `data`</span>
 <span class="sd">    ```</span>
@@ -5233,12 +5233,12 @@ features like code completion and type checking.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_resource</span><span class="p">:</span> <span class="n">Resource</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">pyvisa</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no branch</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;pyvisa is not installed, run: pip install pyvisa&quot;</span>  <span class="c1"># type: ignore[unreachable]</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"pyvisa is not installed, run: pip install pyvisa"</span>  <span class="c1"># type: ignore[unreachable]</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
@@ -5343,10 +5343,10 @@ features like code completion and type checking.</p>
 <span class="normal">130</span>
 <span class="normal">131</span>
 <span class="normal">132</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calls [pyvisa.resources.Resource.close][].&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Calls [pyvisa.resources.Resource.close][]."""</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resource</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_resource</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Disconnected from </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Disconnected from </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_resource</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>

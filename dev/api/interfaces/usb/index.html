@@ -5560,7 +5560,7 @@
 <div class="highlight"><pre><span></span><code><span class="go">winget install 7zip.7zip</span>
 </code></pre></div>
 <p>Then extract the library file and copy the appropriate (i.e., x86 or x64, VS or MinGW) <code>libusb-1.0.dll</code> file to a directory that is on your <code>PATH</code> environment variable. The following command extracts the 64-bit library file that was built with Visual Studio 2022 to the <em>C:\Windows\System32</em> directory, but you may choose to extract a different DLL file to a different directory.</p>
-<div class="highlight"><pre><span></span><code><span class="go">&amp; &#39;C:\Program Files\7-Zip\7z&#39; e libusb.7z -oC:\Windows\System32 VS2022\MS64\dll\libusb-1.0.dll</span>
+<div class="highlight"><pre><span></span><code><span class="go">&amp; 'C:\Program Files\7-Zip\7z' e libusb.7z -oC:\Windows\System32 VS2022\MS64\dll\libusb-1.0.dll</span>
 </code></pre></div>
 <p>Finally, install the <a href="https://zadig.akeo.ie/" target="_blank">Zadig</a> application</p>
 <div class="highlight"><pre><span></span><code><span class="go">winget install akeo.ie.Zadig</span>
@@ -5577,9 +5577,9 @@
 <p>To access a USB device without root privilege you should create a <a href="https://wiki.debian.org/udev" target="_blank">udev</a> configuration file. There are many ways to configure <em>udev</em>, here is a typical setup.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># /etc/udev/rules.d/10-custom.rules</span>
 
-<span class="n">SUBSYSTEM</span><span class="o">==</span><span class="s2">&quot;usb&quot;</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">{</span><span class="n">idVendor</span><span class="p">}</span><span class="o">==</span><span class="s2">&quot;03eb&quot;</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">{</span><span class="n">idProduct</span><span class="p">}</span><span class="o">==</span><span class="s2">&quot;2107&quot;</span><span class="p">,</span> <span class="n">GROUP</span><span class="o">=</span><span class="s2">&quot;plugdev&quot;</span><span class="p">,</span> <span class="n">MODE</span><span class="o">=</span><span class="s2">&quot;0664&quot;</span>
-<span class="n">SUBSYSTEM</span><span class="o">==</span><span class="s2">&quot;usb&quot;</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">{</span><span class="n">idVendor</span><span class="p">}</span><span class="o">==</span><span class="s2">&quot;0403&quot;</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">{</span><span class="n">idProduct</span><span class="p">}</span><span class="o">==</span><span class="s2">&quot;6001&quot;</span><span class="p">,</span> <span class="n">GROUP</span><span class="o">=</span><span class="s2">&quot;plugdev&quot;</span><span class="p">,</span> <span class="n">MODE</span><span class="o">=</span><span class="s2">&quot;0664&quot;</span>
-<span class="n">SUBSYSTEM</span><span class="o">==</span><span class="s2">&quot;usb&quot;</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">{</span><span class="n">idVendor</span><span class="p">}</span><span class="o">==</span><span class="s2">&quot;0403&quot;</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">{</span><span class="n">idProduct</span><span class="p">}</span><span class="o">==</span><span class="s2">&quot;faf0&quot;</span><span class="p">,</span> <span class="n">GROUP</span><span class="o">=</span><span class="s2">&quot;plugdev&quot;</span><span class="p">,</span> <span class="n">MODE</span><span class="o">=</span><span class="s2">&quot;0664&quot;</span>
+<span class="n">SUBSYSTEM</span><span class="o">==</span><span class="s2">"usb"</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">{</span><span class="n">idVendor</span><span class="p">}</span><span class="o">==</span><span class="s2">"03eb"</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">{</span><span class="n">idProduct</span><span class="p">}</span><span class="o">==</span><span class="s2">"2107"</span><span class="p">,</span> <span class="n">GROUP</span><span class="o">=</span><span class="s2">"plugdev"</span><span class="p">,</span> <span class="n">MODE</span><span class="o">=</span><span class="s2">"0664"</span>
+<span class="n">SUBSYSTEM</span><span class="o">==</span><span class="s2">"usb"</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">{</span><span class="n">idVendor</span><span class="p">}</span><span class="o">==</span><span class="s2">"0403"</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">{</span><span class="n">idProduct</span><span class="p">}</span><span class="o">==</span><span class="s2">"6001"</span><span class="p">,</span> <span class="n">GROUP</span><span class="o">=</span><span class="s2">"plugdev"</span><span class="p">,</span> <span class="n">MODE</span><span class="o">=</span><span class="s2">"0664"</span>
+<span class="n">SUBSYSTEM</span><span class="o">==</span><span class="s2">"usb"</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">{</span><span class="n">idVendor</span><span class="p">}</span><span class="o">==</span><span class="s2">"0403"</span><span class="p">,</span> <span class="n">ATTR</span><span class="p">{</span><span class="n">idProduct</span><span class="p">}</span><span class="o">==</span><span class="s2">"faf0"</span><span class="p">,</span> <span class="n">GROUP</span><span class="o">=</span><span class="s2">"plugdev"</span><span class="p">,</span> <span class="n">MODE</span><span class="o">=</span><span class="s2">"0664"</span>
 </code></pre></div>
 <p>You need to <em>unplug</em> / <em>plug back</em> the USB device once this file has been created so that <em>udev</em> loads the rules for the matching device, or alternatively, inform the <code>udev</code> daemon about the changes.</p>
 <div class="highlight"><pre><span></span><code><span class="go">sudo udevadm control --reload-rules</span>
@@ -5935,7 +5935,7 @@ for the connection. If <code>None</code>, selects the first backend that is avai
 <span class="normal">392</span>
 <span class="normal">393</span>
 <span class="normal">394</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: C901, PLR0915</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for (raw) USB communication.</span>
+<span class="w">    </span><span class="sd">"""Base class for (raw) USB communication.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
@@ -5950,9 +5950,9 @@ for the connection. If <code>None</code>, selects the first backend that is avai
 <span class="sd">        bConfigurationValue (int | None): The value of `bConfigurationValue` of the USB Configuration</span>
 <span class="sd">            Descriptor. If `None`, use the first Configuration found. _Default: `None`_</span>
 <span class="sd">        buffer_size (int): The maximum number of bytes to read at a time. _Default: `4096`_</span>
-<span class="sd">        usb_backend (Literal[&quot;libusb1&quot;, &quot;libusb0&quot;, &quot;openusb&quot;] | None): The PyUSB backend library to use</span>
+<span class="sd">        usb_backend (Literal["libusb1", "libusb0", "openusb"] | None): The PyUSB backend library to use</span>
 <span class="sd">            for the connection. If `None`, selects the first backend that is available. _Default: `None`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_detached</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_interface_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_timeout_ms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
@@ -5962,13 +5962,13 @@ for the connection. If <code>None</code>, selects the first backend that is avai
     <span class="k">assert</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># noqa: S101</span>
     <span class="n">parsed</span> <span class="o">=</span> <span class="n">parse_usb_address</span><span class="p">(</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">parsed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid USB address </span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="si">!r}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid USB address </span><span class="si">{</span><span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">address</span><span class="si">!r}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">p</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">properties</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_buffer_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;buffer_size&quot;</span><span class="p">,</span> <span class="mi">4096</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_buffer_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"buffer_size"</span><span class="p">,</span> <span class="mi">4096</span><span class="p">)</span>
 
-    <span class="n">backend</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;usb_backend&quot;</span><span class="p">)</span>
+    <span class="n">backend</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"usb_backend"</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">backend</span> <span class="o">=</span> <span class="n">_usb_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
 
@@ -5976,22 +5976,22 @@ for the connection. If <code>None</code>, selects the first backend that is avai
         <span class="n">device</span> <span class="o">=</span> <span class="n">_find_device</span><span class="p">(</span><span class="n">parsed</span><span class="p">,</span> <span class="n">backend</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">usb</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">NoBackendError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;A PyUSB backend is not available. For tips on how to fix this issue see &quot;</span>
-            <span class="s2">&quot;https://mslnz.github.io/msl-equipment/dev/api/interfaces/usb/&quot;</span>
+            <span class="s2">"A PyUSB backend is not available. For tips on how to fix this issue see "</span>
+            <span class="s2">"https://mslnz.github.io/msl-equipment/dev/api/interfaces/usb/"</span>
         <span class="p">)</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The USB device was not found&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"The USB device was not found"</span>
         <span class="k">if</span> <span class="n">_is_linux_and_not_sudo</span><span class="p">():</span>
-            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; (try running as sudo or create a udev rule)&quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">" (try running as sudo or create a udev rule)"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">device</span>  <span class="c1"># usb.core.Device instance</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_interface_number</span> <span class="o">=</span> <span class="n">parsed</span><span class="o">.</span><span class="n">interface_number</span>
-    <span class="n">configuration_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bConfigurationValue&quot;</span><span class="p">)</span>
-    <span class="n">alternate_setting</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bAlternateSetting&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">configuration_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"bConfigurationValue"</span><span class="p">)</span>
+    <span class="n">alternate_setting</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"bAlternateSetting"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
     <span class="c1"># If a kernel driver is active, the device will be unable to perform I/O</span>
     <span class="c1"># On Windows there is no kernel so NotImplementedError is raised</span>
@@ -6011,10 +6011,10 @@ for the connection. If <code>None</code>, selects the first backend that is avai
             <span class="n">device</span><span class="o">.</span><span class="n">set_configuration</span><span class="p">(</span><span class="n">configuration_value</span><span class="p">)</span>
             <span class="n">cfg</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">get_active_configuration</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid configuration value </span><span class="si">{</span><span class="n">configuration_value</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid configuration value </span><span class="si">{</span><span class="n">configuration_value</span><span class="si">}</span><span class="s2">"</span>
             <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
         <span class="k">except</span> <span class="n">usb</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">USBError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Cannot set configuration to value </span><span class="si">{</span><span class="n">configuration_value</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Cannot set configuration to value </span><span class="si">{</span><span class="n">configuration_value</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
             <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
     <span class="c1"># Get the USB Interface (and maybe set the Alternate Setting)</span>
@@ -6024,7 +6024,7 @@ for the connection. If <code>None</code>, selects the first backend that is avai
         <span class="k">try</span><span class="p">:</span>
             <span class="n">interface</span><span class="o">.</span><span class="n">set_altsetting</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">usb</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">USBError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Cannot set alternate setting for </span><span class="si">{</span><span class="n">interface</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Cannot set alternate setting for </span><span class="si">{</span><span class="n">interface</span><span class="si">!r}</span><span class="s2">, </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
             <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
     <span class="c1"># Get the info about some of the In/Out Endpoints for the selected USB Interface</span>
@@ -6783,7 +6783,7 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 <span class="normal">483</span>
 <span class="normal">484</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_request_type</span><span class="p">(</span><span class="n">direction</span><span class="p">:</span> <span class="n">USB</span><span class="o">.</span><span class="n">CtrlDirection</span><span class="p">,</span> <span class="nb">type</span><span class="p">:</span> <span class="n">USB</span><span class="o">.</span><span class="n">CtrlType</span><span class="p">,</span> <span class="n">recipient</span><span class="p">:</span> <span class="n">USB</span><span class="o">.</span><span class="n">CtrlRecipient</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>  <span class="c1"># noqa: A002</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a `bmRequestType` field for a control request.</span>
+<span class="w">    </span><span class="sd">"""Build a `bmRequestType` field for a control request.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        direction: Transfer direction.</span>
@@ -6792,7 +6792,7 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The `request_type` argument for a [ctrl_transfer][msl.equipment.interfaces.usb.USB.ctrl_transfer].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">request</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">usb</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">build_request_type</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">recipient</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">request</span>
 </code></pre></div></td></tr></table></div>
@@ -6871,12 +6871,12 @@ and <a class="autorefs autorefs-internal" title="            write" href="../#ms
 <span class="normal">504</span>
 <span class="normal">505</span>
 <span class="normal">506</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">clear_halt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">:</span> <span class="n">Endpoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear the halt/stall condition for an endpoint.</span>
+<span class="w">    </span><span class="sd">"""Clear the halt/stall condition for an endpoint.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        endpoint: The endpoint to clear.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.clear_halt(0x</span><span class="si">%02X</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.clear_halt(0x</span><span class="si">%02X</span><span class="s2">)"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">clear_halt</span><span class="p">(</span><span class="n">endpoint</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">usb</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">USBError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -7118,7 +7118,7 @@ value is the data that was read (as an <a class="autorefs autorefs-external" hre
     <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">data_or_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">array</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">bytearray</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">array</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform a control transfer on Endpoint 0.</span>
+<span class="w">    </span><span class="sd">"""Perform a control transfer on Endpoint 0.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        request_type: The *bmRequestType* field of the request. The bitmap value defines the</span>
@@ -7135,10 +7135,10 @@ value is the data that was read (as an <a class="autorefs autorefs-external" hre
 <span class="sd">        For an OUT request or if `data_or_length` is an [array][array.array], the returned</span>
 <span class="sd">            value is the number of bytes transferred. For an IN request, the returned</span>
 <span class="sd">            value is the data that was read (as an [array][array.array]).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># fmt: off</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.ctrl_transfer(0x</span><span class="si">%02X</span><span class="s2">, 0x</span><span class="si">%02X</span><span class="s2">, 0x</span><span class="si">%04X</span><span class="s2">, 0x</span><span class="si">%04X</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%d</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="s2">"</span><span class="si">%s</span><span class="s2">.ctrl_transfer(0x</span><span class="si">%02X</span><span class="s2">, 0x</span><span class="si">%02X</span><span class="s2">, 0x</span><span class="si">%04X</span><span class="s2">, 0x</span><span class="si">%04X</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%d</span><span class="s2">)"</span><span class="p">,</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">request_type</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">data_or_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeout_ms</span>
     <span class="p">)</span>
     <span class="c1"># fmt: on</span>
@@ -7196,8 +7196,8 @@ value is the data that was read (as an <a class="autorefs autorefs-external" hre
 <span class="normal">611</span>
 <span class="normal">612</span>
 <span class="normal">613</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportImplicitOverride]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disconnect from the USB device.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_device&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Disconnect from the USB device."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_device"</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detached</span><span class="p">:</span>
@@ -7525,7 +7525,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">NumpyArray1D</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convenience method for performing a [write][msl.equipment.interfaces.message.Message.write]</span>
+<span class="w">    </span><span class="sd">"""Convenience method for performing a [write][msl.equipment.interfaces.message.Message.write]</span>
 <span class="sd">    followed by a [read][msl.equipment.interfaces.message.Message.read].</span>
 
 <span class="sd">    Args:</span>
@@ -7546,7 +7546,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 <span class="sd">        The message from the equipment. If `dtype` is specified, then the message is</span>
 <span class="sd">            returned as a numpy [ndarray][numpy.ndarray], if `decode` is `True` then the message</span>
 <span class="sd">            is returned as a [str][], otherwise the message is returned as [bytes][].</span>
-<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: D205</span>
+<span class="sd">    """</span>  <span class="c1"># noqa: D205</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">delay</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
@@ -7917,7 +7917,7 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">NumpyArray1D</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a message from the equipment.</span>
+<span class="w">    </span><span class="sd">"""Read a message from the equipment.</span>
 
 <span class="sd">    This method will block until one of the following conditions is fulfilled:</span>
 
@@ -7953,9 +7953,9 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
 <span class="sd">        The message from the equipment. If `dtype` is specified, then the message is returned</span>
 <span class="sd">            as a numpy [ndarray][numpy.ndarray], if `decode` is `True` then the message</span>
 <span class="sd">            is returned as a [str][], otherwise the message is returned as [bytes][].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_read_size</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;max_read_size is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_read_size</span><span class="si">}</span><span class="s2"> bytes, requesting </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"max_read_size is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_read_size</span><span class="si">}</span><span class="s2"> bytes, requesting </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -7963,19 +7963,19 @@ is returned as a <a class="autorefs autorefs-external" href="https://docs.python
     <span class="k">except</span> <span class="p">(</span><span class="n">serial</span><span class="o">.</span><span class="n">SerialTimeoutException</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="ne">TimeoutError</span><span class="p">,</span> <span class="n">USBTimeoutError</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">MSLTimeoutError</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">dtype</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.read(dtype=</span><span class="si">%r</span><span class="s2">, fmt=</span><span class="si">%r</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.read(dtype=</span><span class="si">%r</span><span class="s2">, fmt=</span><span class="si">%r</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.read() -&gt; </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.read() -&gt; </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">!=</span> <span class="n">size</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes, requested </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes, requested </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes"</span>
             <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.read(size=</span><span class="si">%s</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.read(size=</span><span class="si">%s</span><span class="s2">) -&gt; </span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rstrip</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
@@ -8021,12 +8021,12 @@ device state to change (e.g., register values may be reset).</p>
 <span class="normal">630</span>
 <span class="normal">631</span>
 <span class="normal">632</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset_device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform a USB port reset for the device.</span>
+<span class="w">    </span><span class="sd">"""Perform a USB port reset for the device.</span>
 
 <span class="sd">    If your program has to call this method, the reset will cause the</span>
 <span class="sd">    device state to change (e.g., register values may be reset).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.reset_device()&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.reset_device()"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -8056,13 +8056,13 @@ device state to change (e.g., register values may be reset).</p>
 
   
       module-attribute
-   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="s2">&quot;&lt;f&quot;</span><span class="p">,</span>
+   (msl.equipment.typing.MessageDataType)" href="../../typing/#msl.equipment.typing.MessageDataType">MessageDataType</a></span> <span class="o">=</span> <span class="s2">"&lt;f"</span><span class="p">,</span>
     <span class="n">fmt</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 
   
       module-attribute
-   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="s2">&quot;ieee&quot;</span>
+   (msl.equipment.typing.MessageDataFormat)" href="../../typing/#msl.equipment.typing.MessageDataFormat">MessageDataFormat</a></span> <span class="o">=</span> <span class="s2">"ieee"</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span>
 </code></pre></div>
 
@@ -8256,10 +8256,10 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
     <span class="n">message</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Sequence1D</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">MessageDataType</span> <span class="o">=</span> <span class="s2">&quot;&lt;f&quot;</span><span class="p">,</span>
-    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="s2">&quot;ieee&quot;</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">MessageDataType</span> <span class="o">=</span> <span class="s2">"&lt;f"</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="p">:</span> <span class="n">MessageDataFormat</span> <span class="o">=</span> <span class="s2">"ieee"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a message to the equipment.</span>
+<span class="w">    </span><span class="sd">"""Write a message to the equipment.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        message: The message to write to the equipment.</span>
@@ -8267,9 +8267,9 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
 <span class="sd">        dtype: The data type to use to convert each element in `data` to bytes. Ignored if `data`</span>
 <span class="sd">            is `None`. If the `fmt` value is `ascii` then the `dtype` value must be a [str][] and</span>
 <span class="sd">            it is used as the `format_spec` argument in [format][] to convert each element in `data`</span>
-<span class="sd">            to a string (e.g., `dtype=&#39;.2e&#39;` converts each element to scientific notation with two</span>
+<span class="sd">            to a string (e.g., `dtype='.2e'` converts each element to scientific notation with two</span>
 <span class="sd">            digits after the decimal point). For all other values of `fmt` the data type can be any</span>
-<span class="sd">            object that numpy [dtype][numpy.dtype] supports, e.g., `&#39;H&#39;`, `&#39;uint16&#39;` and</span>
+<span class="sd">            object that numpy [dtype][numpy.dtype] supports, e.g., `'H'`, `'uint16'` and</span>
 <span class="sd">            [ushort][numpy.ushort] are equivalent values to convert each element to an *unsigned short*.</span>
 <span class="sd">            See [MessageDataType][msl.equipment.typing.MessageDataType] for more details.</span>
 <span class="sd">        fmt: The format to use to convert `data` to bytes. Ignored if `data` is `None`.</span>
@@ -8277,7 +8277,7 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of bytes written.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_encoding</span><span class="p">)</span>
 
@@ -8287,7 +8287,7 @@ See <a class="autorefs autorefs-internal" title="            MessageDataFormat
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">message</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">):</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.write(</span><span class="si">%r</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2">.write(</span><span class="si">%r</span><span class="s2">)"</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>

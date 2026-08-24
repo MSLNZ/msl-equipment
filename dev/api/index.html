@@ -4960,7 +4960,7 @@
 <p>If you are using type annotations and/or an editor that supports code completion, you can annotate the type of the returned object to get support for these features, for example,</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">GPIB</span><span class="p">,</span> <span class="n">Connection</span>
 
-<span class="n">device</span><span class="p">:</span> <span class="n">GPIB</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;GPIB::22&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="n">device</span><span class="p">:</span> <span class="n">GPIB</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">"GPIB::22"</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 </code></pre></div>
 </div>
 <p>The <a class="autorefs autorefs-internal" title="            MSLConnectionError
@@ -4996,17 +4996,17 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">ZeroMQ</span>
 
 <span class="n">client</span><span class="p">:</span> <span class="n">ZeroMQ</span>
-<span class="k">with</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;ZMQ::192.168.1.8::5555&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+<span class="k">with</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">"ZMQ::192.168.1.8::5555"</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
     <span class="c1"># The client performs a query</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"*IDN?"</span><span class="p">))</span>
 
     <span class="c1"># The client only wants to write a message to the equipment</span>
     <span class="c1"># But the client must still read a response for the REQ-REP protocol</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">&quot;ignored&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*RST&quot;</span><span class="p">])</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">"ignored"</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"*RST"</span><span class="p">])</span>
 
     <span class="c1"># The client only wants to read a message from the equipment</span>
     <span class="c1"># The server knows that an empty request is for a read only</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">""</span><span class="p">))</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
@@ -5017,16 +5017,16 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">DMM</span><span class="p">(</span><span class="n">ZeroMQServer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Allow for a digital multimeter to be available on the network.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Allow for a digital multimeter to be available on the network."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">)</span>
 
         <span class="c1"># Create the connection to the digital multimeter</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="p">:</span> <span class="n">GPIB</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;GPIB::18&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="p">:</span> <span class="n">GPIB</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">"GPIB::18"</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">handle_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ZMQServerResponse</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle a request and return the response.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Handle a request and return the response."""</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg_parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="n">msg_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
@@ -5035,14 +5035,14 @@
 
         <span class="c1"># Otherwise, only write a message (the message is the second item)</span>
         <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="k">return</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>  <span class="c1"># Cannot return None</span>
+        <span class="k">return</span> <span class="sa">b</span><span class="s2">""</span>  <span class="c1"># Cannot return None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">shutdown_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Disconnect from the digital multimeter when the server shuts down.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Disconnect from the digital multimeter when the server shuts down."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">DMM</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">5555</span><span class="p">)</span>
     <span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </code></pre></div>
@@ -5059,20 +5059,20 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">ZeroMQ</span>
 
 <span class="n">client</span><span class="p">:</span> <span class="n">ZeroMQ</span>
-<span class="k">with</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;ZMQ::192.168.1.8::5555&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+<span class="k">with</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">"ZMQ::192.168.1.8::5555"</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
     <span class="c1"># The client wants to query the equipment</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">&quot;query&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">"query"</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"*IDN?"</span><span class="p">]))</span>
 
     <span class="c1"># The client only wants to write a message to the equipment</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">&quot;write&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*RST&quot;</span><span class="p">])</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">"write"</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"*RST"</span><span class="p">])</span>
 
     <span class="c1"># The client only wants to read a message from the equipment</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">&quot;read&quot;</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">"read"</span><span class="p">]))</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><span class="c1"># The client sends the action to perform as the first item in `msg_parts`</span>
-<span class="c1"># The server includes an `allow` keyword argument of the client&#39;s IP address</span>
+<span class="c1"># The server includes an `allow` keyword argument of the client's IP address</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">GPIB</span><span class="p">,</span> <span class="n">ZeroMQServer</span>
@@ -5080,36 +5080,36 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">DMM</span><span class="p">(</span><span class="n">ZeroMQServer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Allow for a digital multimeter to be available on the network.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Allow for a digital multimeter to be available on the network."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">allow</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">allow</span><span class="o">=</span><span class="n">allow</span><span class="p">)</span>
 
         <span class="c1"># Create the connection to the digital multimeter</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="p">:</span> <span class="n">GPIB</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;GPIB::18&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="p">:</span> <span class="n">GPIB</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">"GPIB::18"</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">handle_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ZMQServerResponse</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle a request and return the response.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Handle a request and return the response."""</span>
         <span class="n">action</span><span class="p">,</span> <span class="o">*</span><span class="n">message</span> <span class="o">=</span> <span class="n">msg_parts</span>
-        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;query&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">"query"</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">decode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;write&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">"write"</span><span class="p">:</span>
             <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="k">return</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>  <span class="c1"># Cannot return None</span>
+            <span class="k">return</span> <span class="sa">b</span><span class="s2">""</span>  <span class="c1"># Cannot return None</span>
 
         <span class="c1"># Otherwise, perform a read</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">decode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">shutdown_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Disconnect from the digital multimeter when the server shuts down.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Disconnect from the digital multimeter when the server shuts down."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="c1"># The client has an IP address of 192.168.1.58</span>
     <span class="c1"># You can also specify a sequence of IP addresses to allow</span>
-    <span class="n">server</span> <span class="o">=</span> <span class="n">DMM</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">5555</span><span class="p">,</span> <span class="n">allow</span><span class="o">=</span><span class="s2">&quot;192.168.1.58&quot;</span><span class="p">)</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">DMM</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">5555</span><span class="p">,</span> <span class="n">allow</span><span class="o">=</span><span class="s2">"192.168.1.58"</span><span class="p">)</span>
     <span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </code></pre></div>
 </div>
@@ -5119,26 +5119,26 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">client.py</label><label for="__tabbed_3_2">server.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="c1"># The connection is created using the `socket_type=&quot;PAIR&quot;` keyword argument</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># The connection is created using the `socket_type="PAIR"` keyword argument</span>
 <span class="c1"># The server has an IP address of 192.168.1.8 and is running on port 5555</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">ZeroMQ</span>
 
 <span class="n">client</span><span class="p">:</span> <span class="n">ZeroMQ</span>
-<span class="k">with</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;ZMQ::192.168.1.8::5555&quot;</span><span class="p">,</span> <span class="n">socket_type</span><span class="o">=</span><span class="s2">&quot;PAIR&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+<span class="k">with</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">"ZMQ::192.168.1.8::5555"</span><span class="p">,</span> <span class="n">socket_type</span><span class="o">=</span><span class="s2">"PAIR"</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
     <span class="c1"># The client performs a query</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"*IDN?"</span><span class="p">))</span>
 
     <span class="c1"># The client can perform multiple writes without needing to perform a read</span>
-    <span class="n">client</span><span class="o">.</span><span class="n">write_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">&quot;ignored&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*RST&quot;</span><span class="p">])</span>
-    <span class="n">client</span><span class="o">.</span><span class="n">write_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">&quot;ignored&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*CLS&quot;</span><span class="p">])</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">write_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">"ignored"</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"*RST"</span><span class="p">])</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">write_multipart</span><span class="p">([</span><span class="sa">b</span><span class="s2">"ignored"</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"*CLS"</span><span class="p">])</span>
 
     <span class="c1"># The client only wants to read a message from the equipment</span>
     <span class="c1"># The server knows that an empty request is for a read only</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">""</span><span class="p">))</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><span class="c1"># The server is instantiated using the `socket_type=&quot;PAIR&quot;` keyword argument</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># The server is instantiated using the `socket_type="PAIR"` keyword argument</span>
 <span class="c1"># The server can return `None` to not send a response</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -5147,16 +5147,16 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">DMM</span><span class="p">(</span><span class="n">ZeroMQServer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Allow for a digital multimeter to be available on the network.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Allow for a digital multimeter to be available on the network."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">socket_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">socket_type</span><span class="o">=</span><span class="n">socket_type</span><span class="p">)</span>
 
         <span class="c1"># Create the connection to the digital multimeter</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="p">:</span> <span class="n">GPIB</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;GPIB::18&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="p">:</span> <span class="n">GPIB</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">"GPIB::18"</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">handle_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ZMQServerResponse</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle a request and return the response.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Handle a request and return the response."""</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg_parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="n">msg_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
@@ -5168,12 +5168,12 @@
         <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># Return None to not send a response</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">shutdown_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Disconnect from the digital multimeter when the server shuts down.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Disconnect from the digital multimeter when the server shuts down."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">server</span> <span class="o">=</span> <span class="n">DMM</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">5555</span><span class="p">,</span> <span class="n">socket_type</span><span class="o">=</span><span class="s2">&quot;PAIR&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">DMM</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">5555</span><span class="p">,</span> <span class="n">socket_type</span><span class="o">=</span><span class="s2">"PAIR"</span><span class="p">)</span>
     <span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </code></pre></div>
 </div>
@@ -5187,24 +5187,24 @@
 <span class="c1"># The server has an IP address of 192.168.1.8 and is running on port 5555</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">msl.equipment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">ZeroMQ</span>
 
-<span class="n">identity</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;let me in!&quot;</span>
+<span class="n">identity</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"let me in!"</span>
 
 <span class="n">client</span><span class="p">:</span> <span class="n">ZeroMQ</span>
-<span class="k">with</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;ZMQ::192.168.1.8::5555&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+<span class="k">with</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">"ZMQ::192.168.1.8::5555"</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
     <span class="c1"># The client makes an unauthorised query</span>
-    <span class="c1"># Response is &quot;PermissionError: ...&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">))</span>
+    <span class="c1"># Response is "PermissionError: ..."</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"*IDN?"</span><span class="p">))</span>
 
     <span class="c1"># The client makes a successful authenticated query</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="n">identity</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*IDN?&quot;</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="n">identity</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"*IDN?"</span><span class="p">]))</span>
 
     <span class="c1"># The client only wants to write a message to the equipment</span>
     <span class="c1"># But the client must still read a response for the REQ-REP protocol</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="n">identity</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;ignored&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;*RST&quot;</span><span class="p">])</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="n">identity</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"ignored"</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"*RST"</span><span class="p">])</span>
 
     <span class="c1"># The client only wants to read a message from the equipment</span>
     <span class="c1"># The server knows that an empty request is for a read only</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="n">identity</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">query_multipart</span><span class="p">([</span><span class="n">identity</span><span class="p">,</span> <span class="sa">b</span><span class="s2">""</span><span class="p">]))</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
@@ -5217,21 +5217,21 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">DMM</span><span class="p">(</span><span class="n">ZeroMQServer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Allow for a digital multimeter to be available on the network.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Allow for a digital multimeter to be available on the network."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">)</span>
 
         <span class="c1"># Create the connection to the digital multimeter</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="p">:</span> <span class="n">GPIB</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;GPIB::18&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="p">:</span> <span class="n">GPIB</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">"GPIB::18"</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">handle_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ZMQServerResponse</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle a request and return the response.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Handle a request and return the response."""</span>
         <span class="n">identity</span><span class="p">,</span> <span class="o">*</span><span class="n">request</span> <span class="o">=</span> <span class="n">msg_parts</span>
 
         <span class="c1"># Check the identity of the client</span>
-        <span class="k">if</span> <span class="n">identity</span> <span class="o">!=</span> <span class="sa">b</span><span class="s2">&quot;let me in!&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">b</span><span class="s2">&quot;PermissionError: You are not allowed to do this&quot;</span>
+        <span class="k">if</span> <span class="n">identity</span> <span class="o">!=</span> <span class="sa">b</span><span class="s2">"let me in!"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">b</span><span class="s2">"PermissionError: You are not allowed to do this"</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="n">request</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -5241,14 +5241,14 @@
 
         <span class="c1"># Otherwise, only write a message (the second item in `request`)</span>
         <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">request</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="k">return</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>  <span class="c1"># Cannot return None</span>
+        <span class="k">return</span> <span class="sa">b</span><span class="s2">""</span>  <span class="c1"># Cannot return None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">shutdown_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Disconnect from the digital multimeter when the server shuts down.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Disconnect from the digital multimeter when the server shuts down."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dmm</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">DMM</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">5555</span><span class="p">)</span>
     <span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </code></pre></div>

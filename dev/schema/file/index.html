@@ -5086,24 +5086,24 @@
   
       dataclass
   " href="#msl.equipment.schema.File">File</a>) that represents the following information in an equipment register for data that is stored in a Spreadsheet</p>
-<div class="highlight"><pre><span></span><code><span class="nt">&lt;file</span><span class="w"> </span><span class="na">comment=</span><span class="s">&quot;FEL T647&quot;</span><span class="nt">&gt;</span>
-<span class="w">  </span><span class="nt">&lt;url</span><span class="w"> </span><span class="na">sheet=</span><span class="s">&quot;2024-May&quot;</span><span class="w"> </span><span class="na">cells=</span><span class="s">&quot;A1:C11&quot;</span><span class="nt">&gt;</span>tests\resources\irradiance.xlsx<span class="nt">&lt;/url&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;file</span><span class="w"> </span><span class="na">comment=</span><span class="s">"FEL T647"</span><span class="nt">&gt;</span>
+<span class="w">  </span><span class="nt">&lt;url</span><span class="w"> </span><span class="na">sheet=</span><span class="s">"2024-May"</span><span class="w"> </span><span class="na">cells=</span><span class="s">"A1:C11"</span><span class="nt">&gt;</span>tests\resources\irradiance.xlsx<span class="nt">&lt;/url&gt;</span>
 <span class="w">  </span><span class="nt">&lt;sha256&gt;</span>7a91267cfb529388a99762b891ee4b7a12463e83b5d55809f76a0c8e76c71886<span class="nt">&lt;/sha256&gt;</span>
 <span class="nt">&lt;/file&gt;</span>
 </code></pre></div>
 <p>You can access <em>sha256</em> and <em>comment</em> as attributes of <code>file</code></p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">file</span><span class="o">.</span><span class="n">sha256</span>
-<span class="go">&#39;7a91267cfb529388a99762b891ee4b7a12463e83b5d55809f76a0c8e76c71886&#39;</span>
+<span class="go">'7a91267cfb529388a99762b891ee4b7a12463e83b5d55809f76a0c8e76c71886'</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">file</span><span class="o">.</span><span class="n">comment</span>
-<span class="go">&#39;FEL T647&#39;</span>
+<span class="go">'FEL T647'</span>
 </code></pre></div>
 <p>The <em>url</em> and <em>attributes</em> attributes of <code>file</code> can be used with the <a class="autorefs autorefs-external" href="https://mslnz.github.io/msl-io/latest/api/tables/#msl.io.tables.read_table" target="_blank">read_table</a> function of <a href="https://mslnz.github.io/msl-io/latest/" target="_blank">msl-io</a> to read the Spreadsheet data</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">msl.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_table</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">read_table</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">file</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
-<span class="go">[&#39;Wavelength&#39; &#39;Irradiance&#39; &#39;u(Irradiance)&#39;]</span>
+<span class="go">['Wavelength' 'Irradiance' 'u(Irradiance)']</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span>
-<span class="go">&lt;Dataset &#39;irradiance.xlsx&#39; shape=(10, 3) dtype=&#39;&lt;f8&#39; (1 metadata)&gt;</span>
+<span class="go">&lt;Dataset 'irradiance.xlsx' shape=(10, 3) dtype='&lt;f8' (1 metadata)&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
 <span class="go">array([[2.500000e+02, 1.818000e-02, 2.033000e-02],</span>
 <span class="go">       [3.000000e+02, 1.847800e-01, 1.755000e-02],</span>
@@ -5139,7 +5139,7 @@
     <span class="n">url</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
     <span class="n">sha256</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
     <span class="n">attributes</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">(),</span>
-    <span class="n">comment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">comment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 
@@ -5286,7 +5286,7 @@
   </span>
 
 <a href="#msl.equipment.schema.File.comment" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">comment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">comment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">''</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5505,20 +5505,20 @@ If <code>&lt;scheme&gt;</code> is not specified, it shall be treated as the <cod
 <span class="normal">952</span>
 <span class="normal">953</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_xml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">File</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an XML element into a [File][msl.equipment.schema.File] instance.</span>
+<span class="w">    </span><span class="sd">"""Convert an XML element into a [File][msl.equipment.schema.File] instance.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        element: A [file][type_file] XML element from an equipment register.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [File][msl.equipment.schema.File] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Schema forces order</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-        <span class="n">url</span><span class="o">=</span><span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="n">sha256</span><span class="o">=</span><span class="n">element</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">url</span><span class="o">=</span><span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">,</span>
+        <span class="n">sha256</span><span class="o">=</span><span class="n">element</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">,</span>
         <span class="n">attributes</span><span class="o">=</span><span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">attrib</span><span class="p">,</span>
-        <span class="n">comment</span><span class="o">=</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;comment&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+        <span class="n">comment</span><span class="o">=</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"comment"</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5590,16 +5590,16 @@ If <code>&lt;scheme&gt;</code> is not specified, it shall be treated as the <cod
 <span class="normal">975</span>
 <span class="normal">976</span>
 <span class="normal">977</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the [File][msl.equipment.schema.File] class into an XML element.</span>
+<span class="w">    </span><span class="sd">"""Convert the [File][msl.equipment.schema.File] class into an XML element.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The [File][msl.equipment.schema.File] as an XML element.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">attrib</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">}</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="k">else</span> <span class="p">{}</span>
-    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="n">attrib</span><span class="p">)</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">attrib</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"comment"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">}</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="k">else</span> <span class="p">{}</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">"file"</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="n">attrib</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">"url"</span><span class="p">,</span> <span class="n">attrib</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
     <span class="n">url</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span>
-    <span class="n">sha256</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;sha256&quot;</span><span class="p">)</span>
+    <span class="n">sha256</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">"sha256"</span><span class="p">)</span>
     <span class="n">sha256</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sha256</span>
     <span class="k">return</span> <span class="n">e</span>
 </code></pre></div></td></tr></table></div>

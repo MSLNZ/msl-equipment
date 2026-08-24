@@ -5609,8 +5609,8 @@
 newer drivers may not be compatible.</p>
 <p>Regular-expression patterns that are used to select this Resource when
 <a class="autorefs autorefs-internal" title="            connect" href="../../../schema/equipment/#msl.equipment.schema.Equipment.connect">connect()</a> is called.
-<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Princeton Instruments&quot;</span>
-<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;^(SpectraPro|HRS)&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">manufacturer</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Princeton Instruments"</span>
+<span class="n">model</span><span class="o">=</span><span class="sa">r</span><span class="s2">"^(SpectraPro|HRS)"</span>
 </code></pre></div></p>
 
 
@@ -5682,7 +5682,7 @@ newer drivers may not be compatible.</p>
 <span class="normal"> 98</span>
 <span class="normal"> 99</span>
 <span class="normal">100</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equipment</span><span class="p">:</span> <span class="n">Equipment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Communicate with a SpectraPro Series spectrograph/monochromator from Princeton Instruments.</span>
+<span class="w">    </span><span class="sd">"""Communicate with a SpectraPro Series spectrograph/monochromator from Princeton Instruments.</span>
 
 <span class="sd">    Windows FTDI driver version `2.12.16.0` (released 2016-03-09) has been shown to work,</span>
 <span class="sd">    newer drivers may not be compatible.</span>
@@ -5690,15 +5690,15 @@ newer drivers may not be compatible.</p>
 <span class="sd">    Regular-expression patterns that are used to select this Resource when</span>
 <span class="sd">    [connect()][msl.equipment.schema.Equipment.connect] is called.</span>
 <span class="sd">    ```python</span>
-<span class="sd">    manufacturer=r&quot;Princeton Instruments&quot;</span>
-<span class="sd">    model=r&quot;^(SpectraPro|HRS)&quot;</span>
+<span class="sd">    manufacturer=r"Princeton Instruments"</span>
+<span class="sd">    model=r"^(SpectraPro|HRS)"</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        equipment: An [Equipment][] instance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">equipment</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_termination</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\r</span><span class="s2">"</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_filter_changed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_grating_changed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -6092,13 +6092,13 @@ is finished.</p>
 <span class="normal">114</span>
 <span class="normal">115</span>
 <span class="normal">116</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_filter_wheel_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the position of the filter wheel.</span>
+<span class="w">    </span><span class="sd">"""Get the position of the filter wheel.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The filter-wheel position.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">value</span><span class="p">,</span> <span class="n">remaining</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;?FILTER&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="n">remaining</span><span class="p">,</span> <span class="s2">&quot;getting the filter-wheel position&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">value</span><span class="p">,</span> <span class="n">remaining</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">"?FILTER"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="n">remaining</span><span class="p">,</span> <span class="s2">"getting the filter-wheel position"</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6156,13 +6156,13 @@ is finished.</p>
 <span class="normal">124</span>
 <span class="normal">125</span>
 <span class="normal">126</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_grating_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the grating position.</span>
+<span class="w">    </span><span class="sd">"""Get the grating position.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The grating position.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">value</span><span class="p">,</span> <span class="n">remaining</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;?GRATING&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="n">remaining</span><span class="p">,</span> <span class="s2">&quot;getting the grating position&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">value</span><span class="p">,</span> <span class="n">remaining</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">"?GRATING"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="n">remaining</span><span class="p">,</span> <span class="s2">"getting the grating position"</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6179,7 +6179,7 @@ is finished.</p>
 
 <a href="#msl.equipment_resources.princeton_instruments.spectra_pro.SpectraPro.get_mirror_position" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">get_mirror_position</span><span class="p">(</span><span class="n">mirror</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            Mirror
-(Enum) (msl.equipment_resources.princeton_instruments.spectra_pro.SpectraPro.Mirror)" href="#msl.equipment_resources.princeton_instruments.spectra_pro.SpectraPro.Mirror">Mirror</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">&#39;front&#39;</span><span class="p">,</span> <span class="s1">&#39;side&#39;</span><span class="p">]</span>
+(Enum) (msl.equipment_resources.princeton_instruments.spectra_pro.SpectraPro.Mirror)" href="#msl.equipment_resources.princeton_instruments.spectra_pro.SpectraPro.Mirror">Mirror</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s1">'front'</span><span class="p">,</span> <span class="s1">'side'</span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6263,26 +6263,26 @@ is finished.</p>
 <span class="normal">144</span>
 <span class="normal">145</span>
 <span class="normal">146</span>
-<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_mirror_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mirror</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">SpectraPro</span><span class="o">.</span><span class="n">Mirror</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;front&quot;</span><span class="p">,</span> <span class="s2">&quot;side&quot;</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the position of a diverter mirror.</span>
+<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_mirror_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mirror</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">SpectraPro</span><span class="o">.</span><span class="n">Mirror</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"front"</span><span class="p">,</span> <span class="s2">"side"</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Get the position of a diverter mirror.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        mirror: The mirror to get the position of. Can be an enum member name (case insensitive) or value.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The position (either `front` or `side`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">mirror</span><span class="p">,</span> <span class="n">SpectraPro</span><span class="o">.</span><span class="n">Mirror</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> ?MIR&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;no motor&quot;</span><span class="p">):</span>
-        <span class="c1"># Received &quot;no motor&quot;, need to read another line to consume the &quot; ok\r\n&quot;</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> ?MIR"</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"no motor"</span><span class="p">):</span>
+        <span class="c1"># Received "no motor", need to read another line to consume the " ok\r\n"</span>
         <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2"> is not motorised&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2"> is not motorised"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="n">value</span><span class="p">,</span> <span class="n">remaining</span> <span class="o">=</span> <span class="n">reply</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="n">remaining</span><span class="p">,</span> <span class="s2">&quot;getting the diverter mirror position&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s2">&quot;front&quot;</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;side&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="n">remaining</span><span class="p">,</span> <span class="s2">"getting the diverter mirror position"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">"front"</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">"side"</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6383,24 +6383,24 @@ is finished.</p>
 <span class="normal">166</span>
 <span class="normal">167</span>
 <span class="normal">168</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_slit_width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">SpectraPro</span><span class="o">.</span><span class="n">Slit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the width of a slit.</span>
+<span class="w">    </span><span class="sd">"""Get the width of a slit.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        slit: The slit to get the width of. Can be an enum member name (case insensitive) or value.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The slit width (in um).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">slit</span><span class="p">,</span> <span class="n">SpectraPro</span><span class="o">.</span><span class="n">Slit</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> ?MICRONS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;no motor&quot;</span><span class="p">):</span>
-        <span class="c1"># Received &quot;no motor&quot;, need to read another line to consume the &quot; ok\r\n&quot;</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> ?MICRONS"</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"no motor"</span><span class="p">):</span>
+        <span class="c1"># Received "no motor", need to read another line to consume the " ok\r\n"</span>
         <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2"> is not motorised&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2"> is not motorised"</span>
         <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="n">value</span><span class="p">,</span> <span class="n">remaining</span> <span class="o">=</span> <span class="n">reply</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="n">remaining</span><span class="p">,</span> <span class="s2">&quot;getting the slit width&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="n">remaining</span><span class="p">,</span> <span class="s2">"getting the slit width"</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6472,25 +6472,25 @@ is finished.</p>
 <span class="normal">188</span>
 <span class="normal">189</span>
 <span class="normal">190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gratings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SpectraProGrating</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get information about the installed gratings.</span>
+<span class="w">    </span><span class="sd">"""Get information about the installed gratings.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The grating information.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">gratings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SpectraProGrating</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;?GRATINGS&quot;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">"?GRATINGS"</span><span class="p">)</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="s2">&quot;ok&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="s2">"ok"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">gratings</span>
 
         <span class="n">selected</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1a</span><span class="s2">&quot;</span><span class="p">):</span>  <span class="c1"># current grating in use is marked with an arrow</span>
+        <span class="k">if</span> <span class="n">reply</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"</span><span class="se">\x1a</span><span class="s2">"</span><span class="p">):</span>  <span class="c1"># current grating in use is marked with an arrow</span>
             <span class="n">selected</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">reply</span> <span class="o">=</span> <span class="n">reply</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
         <span class="n">position</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="n">reply</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">description</span> <span class="o">!=</span> <span class="s2">&quot;Not Installed&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">description</span> <span class="o">!=</span> <span class="s2">"Not Installed"</span><span class="p">:</span>
             <span class="n">gratings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SpectraProGrating</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">position</span><span class="p">),</span> <span class="n">description</span><span class="p">,</span> <span class="n">selected</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6572,7 +6572,7 @@ requests while homing the filter wheel.</p>
 <span class="normal">206</span>
 <span class="normal">207</span>
 <span class="normal">208</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">home_filter_wheel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Move the filter wheel to the home position.</span>
+<span class="w">    </span><span class="sd">"""Move the filter wheel to the home position.</span>
 
 <span class="sd">    !!! note</span>
 <span class="sd">        It can take up to 3 seconds for the filter wheel to home.</span>
@@ -6583,9 +6583,9 @@ requests while homing the filter wheel.</p>
 <span class="sd">            to ensure the move has finished. Do not call other methods in this class until the</span>
 <span class="sd">            move has finished, since the spectrograph/monochromator cannot respond to other</span>
 <span class="sd">            requests while homing the filter wheel.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_filter_changed</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;FHOME&quot;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s2">"FHOME"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wait_until_ready</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -6694,7 +6694,7 @@ requests while homing a slit.</p>
 <span class="normal">232</span>
 <span class="normal">233</span>
 <span class="normal">234</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">home_slit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">SpectraPro</span><span class="o">.</span><span class="n">Slit</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Move a slit to the home position.</span>
+<span class="w">    </span><span class="sd">"""Move a slit to the home position.</span>
 
 <span class="sd">    !!! note</span>
 <span class="sd">        It can take up to 45 seconds for a slit to home.</span>
@@ -6706,7 +6706,7 @@ requests while homing a slit.</p>
 <span class="sd">            to ensure the move has finished. Do not call other methods in this class until the</span>
 <span class="sd">            move has finished, since the spectrograph/monochromator cannot respond to other</span>
 <span class="sd">            requests while homing a slit.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">slit</span><span class="p">,</span> <span class="n">SpectraPro</span><span class="o">.</span><span class="n">Slit</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># It is more reliable to set the slit width to a value close to home and then send the</span>
@@ -6715,7 +6715,7 @@ requests while homing a slit.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">set_slit_width</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_slit_changed</span> <span class="o">=</span> <span class="n">s</span>  <span class="c1"># must come after setting the slit width</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> SHOME&quot;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> SHOME"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wait_until_ready</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -6777,14 +6777,14 @@ requests while homing a slit.</p>
 <span class="normal">243</span>
 <span class="normal">244</span>
 <span class="normal">245</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SpectraProInfo</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get information about the spectrograph/monochromator.</span>
+<span class="w">    </span><span class="sd">"""Get information about the spectrograph/monochromator.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The `(model, serial, firmware-version)` numbers of the device.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">model</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;MODEL&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-    <span class="n">serial</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;SERIAL&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-    <span class="n">version</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;VER&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+<span class="sd">    """</span>
+    <span class="n">model</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">"MODEL"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">serial</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">"SERIAL"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">version</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">"VER"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">SpectraProInfo</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">serial</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6813,8 +6813,8 @@ requests while homing a slit.</p>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">247</span>
 <span class="normal">248</span>
 <span class="normal">249</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_wavelength_scanning</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the wavelength is in the process of scanning to the target value.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;MONO-?DONE</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot; 0&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">"""Check if the wavelength is in the process of scanning to the target value."""</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">"MONO-?DONE</span><span class="se">\r</span><span class="s2">"</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s2">" 0"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6886,25 +6886,25 @@ requests while homing a slit.</p>
 <span class="normal">286</span>
 <span class="normal">287</span>
 <span class="normal">288</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">motorised_mirrors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SpectraPro</span><span class="o">.</span><span class="n">Mirror</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the diverter mirrors that are motorised.</span>
+<span class="w">    </span><span class="sd">"""Get the diverter mirrors that are motorised.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The motorised diverter mirrors.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">check_reply</span><span class="p">(</span><span class="n">reply</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">reply</span> <span class="o">=</span> <span class="n">reply</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="s2">&quot;ok&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="s2">"ok"</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
 
-        <span class="c1"># Received &quot;no motor&quot;, need to read another line to consume the &quot; ok\r\n&quot;</span>
+        <span class="c1"># Received "no motor", need to read another line to consume the " ok\r\n"</span>
         <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="n">out</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SpectraPro</span><span class="o">.</span><span class="n">Mirror</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="n">check_reply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;EXIT-MIRROR&quot;</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="n">check_reply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">"EXIT-MIRROR"</span><span class="p">)):</span>
         <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SpectraPro</span><span class="o">.</span><span class="n">Mirror</span><span class="o">.</span><span class="n">EXIT</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">check_reply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;ENT-MIRROR&quot;</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="n">check_reply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">"ENT-MIRROR"</span><span class="p">)):</span>
         <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SpectraPro</span><span class="o">.</span><span class="n">Mirror</span><span class="o">.</span><span class="n">ENTRANCE</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">out</span>
 </code></pre></div></td></tr></table></div>
@@ -6971,18 +6971,18 @@ requests while homing a slit.</p>
 <span class="normal">263</span>
 <span class="normal">264</span>
 <span class="normal">265</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">motorised_slits</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SpectraPro</span><span class="o">.</span><span class="n">Slit</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the slits that are motorised.</span>
+<span class="w">    </span><span class="sd">"""Get the slits that are motorised.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The motorised slits.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">out</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SpectraPro</span><span class="o">.</span><span class="n">Slit</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">SpectraPro</span><span class="o">.</span><span class="n">Slit</span><span class="p">:</span>
         <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="s2">&quot;ok&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="s2">"ok"</span><span class="p">:</span>
             <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Received &quot;no motor&quot;, need to read another line to consume the &quot; ok\r\n&quot;</span>
+            <span class="c1"># Received "no motor", need to read another line to consume the " ok\r\n"</span>
             <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">out</span>
 </code></pre></div></td></tr></table></div>
@@ -7089,7 +7089,7 @@ wavelength to decide if resetting has completed.</p>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">init_wavelength</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reset the spectrograph/monochromator to the start-up settings.</span>
+<span class="w">    </span><span class="sd">"""Reset the spectrograph/monochromator to the start-up settings.</span>
 
 <span class="sd">    Sets the TURRET, GRATING, WAVELENGTH and SCAN-RATE to the initial (start-up) settings.</span>
 
@@ -7101,9 +7101,9 @@ wavelength to decide if resetting has completed.</p>
 <span class="sd">        wait: Whether to wait for resetting to complete before returning to the calling program.</span>
 <span class="sd">        init_wavelength: The value of the start-up wavelength to compare with the current</span>
 <span class="sd">            wavelength to decide if resetting has completed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;MONO-RESET&quot;</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="n">reply</span><span class="p">,</span> <span class="s2">&quot;resetting the spectrograph/monochromator&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">"MONO-RESET"</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="n">reply</span><span class="p">,</span> <span class="s2">"resetting the spectrograph/monochromator"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
         <span class="c1"># sleeping for a bit seems to be required, otherwise reading the wavelength</span>
         <span class="c1"># will either raise an error (invalid reply) or immediately returns 0.0</span>
@@ -7219,7 +7219,7 @@ the spectrograph/monochromator cannot respond to other requests while scanning t
 <span class="normal">349</span>
 <span class="normal">350</span>
 <span class="normal">351</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">scan_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scan to a wavelength at the specified [scan_rate][..scan_rate].</span>
+<span class="w">    </span><span class="sd">"""Scan to a wavelength at the specified [scan_rate][..scan_rate].</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        nm: The target wavelength (in nm).</span>
@@ -7229,9 +7229,9 @@ the spectrograph/monochromator cannot respond to other requests while scanning t
 <span class="sd">            [is_wavelength_scanning][..is_wavelength_scanning], [wait_until_ready][..wait_until_ready],</span>
 <span class="sd">            or [stop][..stop]. Do not call other methods in this class until the scan has finished, since</span>
 <span class="sd">            the spectrograph/monochromator cannot respond to other requests while scanning the wavelength.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nm</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> &gt;NM&quot;</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="n">reply</span><span class="p">,</span> <span class="s2">&quot;setting the scan-to wavelength&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nm</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> &gt;NM"</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="n">reply</span><span class="p">,</span> <span class="s2">"setting the scan-to wavelength"</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength_scanning</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wait_until_ready</span><span class="p">()</span>
@@ -7304,7 +7304,7 @@ The callback function receives one argument, the current wavelength value (in nm
 <span class="normal">361</span>
 <span class="normal">362</span>
 <span class="normal">363</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set a callback function to receive the current wavelength value.</span>
+<span class="w">    </span><span class="sd">"""Set a callback function to receive the current wavelength value.</span>
 
 <span class="sd">    The callback function is called automatically while waiting for a wavelength move to</span>
 <span class="sd">    complete in the [reset][..reset] and [scan_to][..scan_to] methods only.</span>
@@ -7312,7 +7312,7 @@ The callback function receives one argument, the current wavelength value (in nm
 <span class="sd">    Args:</span>
 <span class="sd">        callback: A callback function. Set to `None` to disable callbacks.</span>
 <span class="sd">            The callback function receives one argument, the current wavelength value (in nm).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">callback</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7415,7 +7415,7 @@ requests while changing the filter-wheel position.</p>
 <span class="normal">384</span>
 <span class="normal">385</span>
 <span class="normal">386</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_filter_wheel_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the filter-wheel position.</span>
+<span class="w">    </span><span class="sd">"""Set the filter-wheel position.</span>
 
 <span class="sd">    !!! note</span>
 <span class="sd">        It can take up to 2 seconds for the filter wheel to change position.</span>
@@ -7427,13 +7427,13 @@ requests while changing the filter-wheel position.</p>
 <span class="sd">            to ensure the move has finished. Do not call other methods in this class until the</span>
 <span class="sd">            move has finished, since the spectrograph/monochromator cannot respond to other</span>
 <span class="sd">            requests while changing the filter-wheel position.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">position</span> <span class="o">&gt;</span> <span class="mi">6</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid filter-wheel position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">, must be between 1 and 6 (inclusive)&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid filter-wheel position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">, must be between 1 and 6 (inclusive)"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_filter_changed</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2"> FILTER&quot;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2"> FILTER"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wait_until_ready</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -7537,7 +7537,7 @@ requests while changing the grating position.</p>
 <span class="normal">407</span>
 <span class="normal">408</span>
 <span class="normal">409</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_grating_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the grating to use.</span>
+<span class="w">    </span><span class="sd">"""Set the grating to use.</span>
 
 <span class="sd">    !!! note</span>
 <span class="sd">        It can take approximately 20 seconds for a different grating to come in to position.</span>
@@ -7549,13 +7549,13 @@ requests while changing the grating position.</p>
 <span class="sd">            to ensure the move has finished. Do not call other methods in this class until the</span>
 <span class="sd">            move has finished, since the spectrograph/monochromator cannot respond to other</span>
 <span class="sd">            requests while changing the grating position.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">position</span> <span class="o">&gt;</span> <span class="mi">9</span><span class="p">:</span>  <span class="c1"># noqa: PLR2004</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid grating position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">, must be between 1 and 9 (inclusive)&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid grating position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">, must be between 1 and 9 (inclusive)"</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_grating_changed</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2"> GRATING&quot;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2"> GRATING"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wait_until_ready</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -7575,7 +7575,7 @@ requests while changing the grating position.</p>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">set_mirror_position</span><span class="p">(</span>
     <span class="n">mirror</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" title="            Mirror
 (Enum) (msl.equipment_resources.princeton_instruments.spectra_pro.SpectraPro.Mirror)" href="#msl.equipment_resources.princeton_instruments.spectra_pro.SpectraPro.Mirror">Mirror</a></span><span class="p">,</span>
-    <span class="n">position</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">&quot;front&quot;</span><span class="p">,</span> <span class="s2">&quot;side&quot;</span><span class="p">],</span>
+    <span class="n">position</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="s2">"front"</span><span class="p">,</span> <span class="s2">"side"</span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">wait</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
@@ -7676,9 +7676,9 @@ requests while changing the mirror position.</p>
 <span class="normal">428</span>
 <span class="normal">429</span>
 <span class="normal">430</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_mirror_position</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">mirror</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">SpectraPro</span><span class="o">.</span><span class="n">Mirror</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;front&quot;</span><span class="p">,</span> <span class="s2">&quot;side&quot;</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">mirror</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">SpectraPro</span><span class="o">.</span><span class="n">Mirror</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"front"</span><span class="p">,</span> <span class="s2">"side"</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the position of a diverter mirror.</span>
+<span class="w">    </span><span class="sd">"""Set the position of a diverter mirror.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        mirror: The mirror to set the position of. Can be an enum member name (case insensitive) or value.</span>
@@ -7688,11 +7688,11 @@ requests while changing the mirror position.</p>
 <span class="sd">            to ensure the move has finished. Do not call other methods in this class until the</span>
 <span class="sd">            move has finished, since the spectrograph/monochromator cannot respond to other</span>
 <span class="sd">            requests while changing the mirror position.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">mirror</span><span class="p">,</span> <span class="n">SpectraPro</span><span class="o">.</span><span class="n">Mirror</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_mirror_changed</span> <span class="o">=</span> <span class="n">m</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="s2">&quot;FRONT&quot;</span> <span class="k">if</span> <span class="n">position</span> <span class="o">==</span> <span class="s2">&quot;front&quot;</span> <span class="k">else</span> <span class="s2">&quot;SIDE&quot;</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="s2">"FRONT"</span> <span class="k">if</span> <span class="n">position</span> <span class="o">==</span> <span class="s2">"front"</span> <span class="k">else</span> <span class="s2">"SIDE"</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wait_until_ready</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -7820,7 +7820,7 @@ requests while changing the slit width.</p>
 <span class="normal">453</span>
 <span class="normal">454</span>
 <span class="normal">455</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_slit_width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">SpectraPro</span><span class="o">.</span><span class="n">Slit</span><span class="p">,</span> <span class="n">um</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the width of a slit.</span>
+<span class="w">    </span><span class="sd">"""Set the width of a slit.</span>
 
 <span class="sd">    !!! note</span>
 <span class="sd">        It can take up to 10 seconds for a slit to reach the target width.</span>
@@ -7837,10 +7837,10 @@ requests while changing the slit width.</p>
 <span class="sd">            to ensure the move has finished. Do not call other methods in this class until the</span>
 <span class="sd">            move has finished, since the spectrograph/monochromator cannot respond to other</span>
 <span class="sd">            requests while changing the slit width.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">to_enum</span><span class="p">(</span><span class="n">slit</span><span class="p">,</span> <span class="n">SpectraPro</span><span class="o">.</span><span class="n">Slit</span><span class="p">,</span> <span class="n">to_upper</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_slit_changed</span> <span class="o">=</span> <span class="n">s</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">um</span><span class="p">)</span><span class="si">}</span><span class="s2"> MICRONS&quot;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">um</span><span class="p">)</span><span class="si">}</span><span class="s2"> MICRONS"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wait_until_ready</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -7883,15 +7883,15 @@ This method cannot be used to stop a grating position change.</p>
 <span class="normal">464</span>
 <span class="normal">465</span>
 <span class="normal">466</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stop the wavelength scan from moving.</span>
+<span class="w">    </span><span class="sd">"""Stop the wavelength scan from moving.</span>
 
 <span class="sd">    !!! warning</span>
 <span class="sd">        This method must always be called after [scan_to][..scan_to], otherwise the</span>
 <span class="sd">        spectrograph/monochromator does not retain the final wavelength position in its firmware.</span>
 <span class="sd">        This method cannot be used to stop a grating position change.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;MONO-STOP&quot;</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="n">reply</span><span class="p">,</span> <span class="s2">&quot;requesting the wavelength to stop scanning&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">b</span><span class="s2">"MONO-STOP"</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="n">reply</span><span class="p">,</span> <span class="s2">"requesting the wavelength to stop scanning"</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -7948,25 +7948,25 @@ After calling this method, the device is ready to handle another request.</p>
 <span class="normal">514</span>
 <span class="normal">515</span>
 <span class="normal">516</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">wait_until_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wait until the wavelength, grating, slit or filter wheel has reached the target value.</span>
+<span class="w">    </span><span class="sd">"""Wait until the wavelength, grating, slit or filter wheel has reached the target value.</span>
 
 <span class="sd">    While the spectrograph/monochromator is busy it cannot respond to other requests.</span>
 <span class="sd">    After calling this method, the device is ready to handle another request.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grating_changed</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_changed</span><span class="p">:</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;grating&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grating_changed</span> <span class="k">else</span> <span class="s2">&quot;filter-wheel&quot;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">"grating"</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grating_changed</span> <span class="k">else</span> <span class="s2">"filter-wheel"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_grating_changed</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_filter_changed</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;setting the </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2"> position&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_ok</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">"setting the </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2"> position"</span><span class="p">)</span>
     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slit_changed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mirror_changed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slit_changed</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mirror_changed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_slit_changed</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mirror_changed</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">decode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;no motor&quot;</span><span class="p">:</span>
-            <span class="c1"># Received &quot;no motor&quot;, need to read another line to consume the &quot; ok\r\n&quot;</span>
+        <span class="k">if</span> <span class="n">reply</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">"no motor"</span><span class="p">:</span>
+            <span class="c1"># Received "no motor", need to read another line to consume the " ok\r\n"</span>
             <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2"> is not motorised&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2"> is not motorised"</span>
             <span class="k">raise</span> <span class="n">MSLConnectionError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength_scanning</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wavelength_scanning</span> <span class="o">=</span> <span class="kc">False</span>

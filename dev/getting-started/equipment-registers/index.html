@@ -4955,38 +4955,38 @@
 <span class="p">)</span>
 
 <span class="n">equipment</span> <span class="o">=</span> <span class="n">Equipment</span><span class="p">(</span>
-    <span class="n">manufacturer</span><span class="o">=</span><span class="s2">&quot;HP&quot;</span><span class="p">,</span>
-    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;3458A&quot;</span><span class="p">,</span>
-    <span class="n">connection</span><span class="o">=</span><span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;GPIB::22&quot;</span><span class="p">),</span>
+    <span class="n">manufacturer</span><span class="o">=</span><span class="s2">"HP"</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">"3458A"</span><span class="p">,</span>
+    <span class="n">connection</span><span class="o">=</span><span class="n">Connection</span><span class="p">(</span><span class="s2">"GPIB::22"</span><span class="p">),</span>
     <span class="n">maintenance</span><span class="o">=</span><span class="n">Maintenance</span><span class="p">(</span>
         <span class="n">completed</span><span class="o">=</span><span class="p">(</span>
             <span class="n">CompletedTask</span><span class="p">(</span>
-                <span class="n">task</span><span class="o">=</span><span class="s2">&quot;Clean fan&quot;</span><span class="p">,</span>
+                <span class="n">task</span><span class="o">=</span><span class="s2">"Clean fan"</span><span class="p">,</span>
                 <span class="n">due_date</span><span class="o">=</span><span class="n">date</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
                 <span class="n">completed_date</span><span class="o">=</span><span class="n">date</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
-                <span class="n">performed_by</span><span class="o">=</span><span class="s2">&quot;John&quot;</span><span class="p">,</span>
+                <span class="n">performed_by</span><span class="o">=</span><span class="s2">"John"</span><span class="p">,</span>
             <span class="p">),</span>
         <span class="p">)</span>
     <span class="p">),</span>
     <span class="n">calibrations</span><span class="o">=</span><span class="p">(</span>
         <span class="n">Measurand</span><span class="p">(</span>
-            <span class="n">quantity</span><span class="o">=</span><span class="s2">&quot;Voltage DC&quot;</span><span class="p">,</span>
+            <span class="n">quantity</span><span class="o">=</span><span class="s2">"Voltage DC"</span><span class="p">,</span>
             <span class="n">calibration_interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">components</span><span class="o">=</span><span class="p">(</span>
                 <span class="n">Component</span><span class="p">(</span>
                     <span class="n">reports</span><span class="o">=</span><span class="p">(</span>
                         <span class="n">Report</span><span class="p">(</span>
-                            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;Report No.&quot;</span><span class="p">,</span>
+                            <span class="nb">id</span><span class="o">=</span><span class="s2">"Report No."</span><span class="p">,</span>
                             <span class="n">report_issue_date</span><span class="o">=</span><span class="n">date</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">13</span><span class="p">),</span>
                             <span class="n">measurement_start_date</span><span class="o">=</span><span class="n">date</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
                             <span class="n">measurement_stop_date</span><span class="o">=</span><span class="n">date</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
                             <span class="n">equations</span><span class="o">=</span><span class="p">(</span>
                                 <span class="n">Equation</span><span class="p">(</span>
                                     <span class="n">value</span><span class="o">=</span><span class="n">Evaluable</span><span class="p">(</span>
-                                        <span class="n">equation</span><span class="o">=</span><span class="s2">&quot;0.9999862*v + 1.024e-5&quot;</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">,),</span> <span class="n">ranges</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="n">Range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)}</span>
+                                        <span class="n">equation</span><span class="o">=</span><span class="s2">"0.9999862*v + 1.024e-5"</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="p">(</span><span class="s2">"v"</span><span class="p">,),</span> <span class="n">ranges</span><span class="o">=</span><span class="p">{</span><span class="s2">"v"</span><span class="p">:</span> <span class="n">Range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)}</span>
                                     <span class="p">),</span>
-                                    <span class="n">uncertainty</span><span class="o">=</span><span class="n">Evaluable</span><span class="p">(</span><span class="n">equation</span><span class="o">=</span><span class="s2">&quot;3.2e-6&quot;</span><span class="p">),</span>
-                                    <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;V&quot;</span><span class="p">,</span>
+                                    <span class="n">uncertainty</span><span class="o">=</span><span class="n">Evaluable</span><span class="p">(</span><span class="n">equation</span><span class="o">=</span><span class="s2">"3.2e-6"</span><span class="p">),</span>
+                                    <span class="n">unit</span><span class="o">=</span><span class="s2">"V"</span><span class="p">,</span>
                                 <span class="p">),</span>
                             <span class="p">),</span>
                         <span class="p">),</span>
@@ -4999,7 +4999,7 @@
 
 <span class="c1"># Connect to the digital multimeter and query its identity</span>
 <span class="n">dmm</span> <span class="o">=</span> <span class="n">equipment</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">dmm</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;ID?&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dmm</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"ID?"</span><span class="p">))</span>
 
 <span class="c1"># Configure the multimeter, fetch voltage readings, convert to float(s)</span>
 <span class="n">voltages</span> <span class="o">=</span> <span class="o">...</span>

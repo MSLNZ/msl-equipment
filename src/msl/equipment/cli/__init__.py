@@ -147,6 +147,8 @@ def run_external(name: str, *args: str) -> int:
         )
         _ = sys.stdout.write(msg)
         return e.errno or errno.ENOENT
+    except KeyboardInterrupt:
+        return 0
     else:
         return out.returncode
 

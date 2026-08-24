@@ -1154,6 +1154,133 @@ def test_table_to_string_indent() -> None:
     )
 
 
+def test_table_single_row() -> None:
+    text = """
+    <table>
+        <type>double,int,double,int</type>
+        <unit>mm,mm,mm,mm</unit>
+        <header>Minimum Deviation,Minimum Deviation@,Maximum Deviation,Maximum Deviation@</header>
+        <data>
+            -0.596,8715,0.102,270
+        </data>
+    </table>
+    """
+    t = Table.from_xml(XML(text))
+    assert t.comment == ""
+    assert np.array_equal(t.units.tolist(), ["mm", "mm", "mm", "mm"])
+    assert t.units["Minimum Deviation"] == "mm"
+    assert t.units["Minimum Deviation@"] == "mm"
+    assert t.units["Maximum Deviation"] == "mm"
+    assert t.units["Maximum Deviation@"] == "mm"
+    assert np.array_equal(
+        t.header, ["Minimum Deviation", "Minimum Deviation@", "Maximum Deviation", "Maximum Deviation@"]
+    )
+    assert t.types["Minimum Deviation"] == np.dtype(dtype=float)
+    assert t.types["Minimum Deviation@"] == np.dtype(dtype=int)
+    assert t.types["Maximum Deviation"] == np.dtype(dtype=float)
+    assert t.types["Maximum Deviation@"] == np.dtype(dtype=int)
+    assert np.array_equal(t["Minimum Deviation"], [-0.596])
+    assert np.array_equal(t["Minimum Deviation@"], [8715])
+    assert np.array_equal(t["Maximum Deviation"], [0.102])
+    assert np.array_equal(t["Maximum Deviation@"], [270])
+    assert np.array_equal(t[0].tolist(), [-0.596, 8715, 0.102, 270])
+    assert np.array_equal(t.tolist(), [[-0.596, 8715, 0.102, 270]])
+    assert t.dtype.names is not None
+    assert np.array_equal(t.dtype.names, t.header)
+    assert t.units.dtype.names is not None
+    assert np.array_equal(t.units.dtype.names, t.header)
+
+    # creating an unstructured array from a structured array that contains numerics and strings
+    un = t.unstructured()
+    assert un.dtype == np.float64
+    assert np.array_equal(un, np.array([[-0.596, 8715.0, 0.102, 270.0]], dtype=float))
+
+    _Indent.table_data = 0
+    assert tostring(t.to_xml()) == (
+        b"<table>"
+        b"<type>double,int,double,int</type>"
+        b"<unit>mm,mm,mm,mm</unit>"
+        b"<header>Minimum Deviation,Minimum Deviation@,Maximum Deviation,Maximum Deviation@</header>"
+        b"<data>-0.596,8715,0.102,270\n</data>"
+        b"</table>"
+    )
+
+
+def test_table_single_column() -> None:
+    text = """
+    <table>
+        <type>double</type>
+        <unit>mW</unit>
+        <header>Power</header>
+        <data>
+
+            1.2
+            2.3
+            3.4
+            4.5
+
+        </data>
+    </table>
+    """
+    t = Table.from_xml(XML(text))
+    assert t.comment == ""
+    assert np.array_equal(t.units.tolist(), ["mW"])
+    assert t.units["Power"] == "mW"
+    assert np.array_equal(t.header, ["Power"])
+    assert t.types["Power"] == np.dtype(dtype=float)
+    assert np.array_equal(t["Power"], [1.2, 2.3, 3.4, 4.5])
+    assert np.array_equal(t[0].tolist(), [1.2])
+    assert np.array_equal(t.tolist(), [[1.2], [2.3], [3.4], [4.5]])
+    assert t.dtype.names is not None
+    assert np.array_equal(t.dtype.names, t.header)
+    assert t.units.dtype.names is not None
+    assert np.array_equal(t.units.dtype.names, t.header)
+
+    # creating an unstructured array from a structured array that contains numerics and strings
+    un = t.unstructured()
+    assert un.dtype == np.float64
+    assert np.array_equal(un, np.array([[1.2], [2.3], [3.4], [4.5]], dtype=float))
+
+    _Indent.table_data = 0
+    assert tostring(t.to_xml()) == (
+        b"<table><type>double</type><unit>mW</unit><header>Power</header><data>1.2\n2.3\n3.4\n4.5\n</data></table>"
+    )
+
+
+def test_table_single_value() -> None:
+    text = """
+    <table>
+        <type>double</type>
+        <unit>kg</unit>
+        <header>Mass</header>
+        <data>0.987654321</data>
+    </table>
+    """
+    t = Table.from_xml(XML(text))
+    assert t.comment == ""
+    assert np.array_equal(t.units.tolist(), ["kg"])
+    assert t.units["Mass"] == "kg"
+    assert np.array_equal(t.header, ["Mass"])
+    assert t.types["Mass"] == np.dtype(dtype=float)
+    assert np.array_equal(t["Mass"], [0.987654321])
+    assert np.array_equal(t[0].tolist(), [0.987654321])
+    assert np.array_equal(t.tolist(), [[0.987654321]])
+    assert t.dtype.names is not None
+    assert np.array_equal(t.dtype.names, t.header)
+    assert t.units.dtype.names is not None
+    assert np.array_equal(t.units.dtype.names, t.header)
+
+    # creating an unstructured array from a structured array that contains numerics and strings
+    un = t.unstructured()
+    assert un.dtype == np.float64
+    assert np.array_equal(un, np.array([[0.987654321]], dtype=float))
+
+    _Indent.table_data = 0
+    assert tostring(t.to_xml()) == (
+        b"<table><type>double</type><unit>kg</unit><header>Mass</header><data>0.987654321\n</data></table>"
+    )
+
+
 def test_cvd() -> None:
     text = """
         <cvdCoefficients comment="My favourite PRT">

@@ -10,6 +10,7 @@ theme:
   favicon: assets/images/favicon.ico
   features:
     - content.code.copy
+    - content.code.annotate
     - navigation.footer
     - navigation.indexes
     - navigation.tabs
@@ -241,6 +242,8 @@ extra:
     link: https://github.com/MSLNZ/msl-equipment
   - icon: fontawesome/brands/python
     link: https://pypi.org/project/msl-equipment/
+  annotate:  # Allow comment annotations inside JSON code blocks
+    json: [".s2"]
 
 extra_javascript:
   - javascripts/arithmatex.js

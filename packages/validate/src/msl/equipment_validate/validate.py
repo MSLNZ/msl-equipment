@@ -19,12 +19,17 @@ from GTC.xml_format import (  # type: ignore[import-untyped]  # pyright: ignore[
 from lxml import etree
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
     from typing import Literal
 
     from lxml.etree import Element, ElementTree, XMLSchema
 
     URIScheme = Literal["vs", "vscode", "pycharm"] | None
 
+__all__: list[str] = [
+    "find_xml_files",
+    "recursive_validate",
+]
 
 log = logging.getLogger(__package__)
 
@@ -96,6 +101,33 @@ class Summary:
     def check_exit(self) -> bool:
         """Check if validation should exit early."""
         return self.exit_first and self.num_issues > 0
+
+    @staticmethod
+    def reset() -> None:
+        """Reset the `Summary` attributes to initial values."""
+        for item in dir(Summary):
+            if item.startswith("num"):
+                setattr(Summary, item, 0)
+            elif item.startswith("unchecked"):
+                setattr(Summary, item, ())
+
+
+def find_xml_files(directory: Path) -> list[Path]:
+    """Recursively find XML files starting from a directory.
+
+    Ignores XML files in a hidden directory (a parent directory that has a name that starts with `.`).
+    """
+    files: list[Path] = []
+    if not directory.is_dir():
+        return files
+
+    for file in directory.rglob("*.xml"):
+        # Ignore XML files in hidden directories (e.g., XML files in PyCharm's .idea directory)
+        if any(part.startswith(".") for part in file.parts):
+            continue
+        files.append(file)
+
+    return sorted(files)
 
 
 def _bool(value: str) -> None:
@@ -213,7 +245,7 @@ def maybe_create_osc8_message(
     return f"\033]8;;{uri}\033\\{label}\033]8;;\033\\\n  {message}"
 
 
-def parse(*, file: Path, uri_scheme: URIScheme, no_colour: bool) -> ElementTree | None:
+def parse(*, file: str | Path, uri_scheme: URIScheme, no_colour: bool) -> ElementTree | None:
     """Parse an XML file into an ElementTree.
 
     Returns `None` if there was an error.
@@ -277,7 +309,7 @@ def schema_validate(
 
 def recursive_validate(  # noqa: C901, PLR0912, PLR0913
     *,
-    files: list[Path],
+    files: Sequence[Path],
     er_schema: XMLSchema,
     c_schema: XMLSchema,
     roots: list[str],

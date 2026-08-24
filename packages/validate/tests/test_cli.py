@@ -12,30 +12,11 @@ from msl.equipment_validate import (
     main,
     maybe_enable_ansi,
     modify_windows_registry,
-    recursive,
 )
 from msl.equipment_validate.validate import Summary
 from msl.io import is_admin
 
 root_path = Path(__file__).parent.parent.parent.parent / "tests"
-
-
-def test_recursive() -> None:
-    files = recursive(Path("tests"))
-    assert files == [
-        Path("tests/data/config.xml"),
-        Path("tests/data/connections.xml"),
-        Path("tests/data/light/register.xml"),
-        # the 'tests/mass/.hidden' directory is not included
-        Path("tests/data/mass/not-a-register.xml"),
-        Path("tests/data/mass/register.xml"),
-        Path("tests/data/mass/register2.xml"),
-    ]
-
-
-def test_recursive_empty() -> None:
-    files = recursive(Path("README.md"))
-    assert len(files) == 0
 
 
 @pytest.mark.parametrize(
@@ -146,8 +127,8 @@ def test_configure_parser() -> None:
     assert args.no_colour is True
 
 
-def test_main(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str], reset_summary: None) -> None:  # noqa: PLR0915
-    assert reset_summary is None
+def test_main(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str]) -> None:  # noqa: PLR0915
+    Summary.reset()
     assert Summary.num_issues == 0
     caplog.set_level(logging.INFO, "msl")
 
@@ -260,8 +241,8 @@ def test_main(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[st
         _ = r[31]
 
 
-def test_main_quiet(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str], reset_summary: None) -> None:
-    assert reset_summary is None
+def test_main_quiet(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str]) -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
 
     caplog.set_level(logging.DEBUG, "msl")
@@ -307,10 +288,8 @@ def test_main_quiet(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixt
         _ = r[6]
 
 
-def test_main_quiet_quiet(
-    caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str], reset_summary: None
-) -> None:
-    assert reset_summary is None
+def test_main_quiet_quiet(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str]) -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
 
     caplog.set_level(logging.DEBUG, "msl")
@@ -347,10 +326,8 @@ def test_main_quiet_quiet(
         _ = r[3]
 
 
-def test_main_quiet_quiet_quiet(
-    caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str], reset_summary: None
-) -> None:
-    assert reset_summary is None
+def test_main_quiet_quiet_quiet(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str]) -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
 
     caplog.set_level(logging.DEBUG, "msl")
@@ -430,8 +407,8 @@ def test_cli_version_roots(caplog: pytest.LogCaptureFixture, capsys: pytest.Capt
         _ = r[9]
 
 
-def test_cli_missing_xml_file(caplog: pytest.LogCaptureFixture, reset_summary: None) -> None:
-    assert reset_summary is None
+def test_cli_missing_xml_file(caplog: pytest.LogCaptureFixture) -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
     caplog.set_level(logging.ERROR, "msl")
 
@@ -443,8 +420,8 @@ def test_cli_missing_xml_file(caplog: pytest.LogCaptureFixture, reset_summary: N
     assert r[0].message.endswith("Cannot parse missing.xml")
 
 
-def test_cli_missing_directory(caplog: pytest.LogCaptureFixture, reset_summary: None) -> None:
-    assert reset_summary is None
+def test_cli_missing_directory(caplog: pytest.LogCaptureFixture) -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
     caplog.set_level(logging.ERROR, "msl")
 
@@ -457,8 +434,8 @@ def test_cli_missing_directory(caplog: pytest.LogCaptureFixture, reset_summary: 
     assert len(r) == 1
 
 
-def test_cli_no_colour(reset_summary: None, capsys: pytest.CaptureFixture[str]) -> None:
-    assert reset_summary is None
+def test_cli_no_colour(capsys: pytest.CaptureFixture[str]) -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
 
     code = cli(["--no-colour", str(root_path)])
@@ -469,8 +446,8 @@ def test_cli_no_colour(reset_summary: None, capsys: pytest.CaptureFixture[str]) 
     assert out == "Found 3 issues [0 schema, 3 additional]\n"
 
 
-def test_cli_success_skipped(reset_summary: None, capsys: pytest.CaptureFixture[str]) -> None:
-    assert reset_summary is None
+def test_cli_success_skipped(capsys: pytest.CaptureFixture[str]) -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
 
     code = cli(["--skip-checksum", "-n", str(root_path)])
@@ -481,8 +458,8 @@ def test_cli_success_skipped(reset_summary: None, capsys: pytest.CaptureFixture[
     assert out == "Success, no issues found! [skipped: 3]\n"
 
 
-def test_cli_success(reset_summary: None, capsys: pytest.CaptureFixture[str]) -> None:
-    assert reset_summary is None
+def test_cli_success(capsys: pytest.CaptureFixture[str]) -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
 
     code = cli(["-n", "tests/data/light/register.xml"])
@@ -493,8 +470,8 @@ def test_cli_success(reset_summary: None, capsys: pytest.CaptureFixture[str]) ->
     assert out == "Success, no issues found!\n"
 
 
-def test_duplicate_eid_exit_first(reset_summary: None, caplog: pytest.LogCaptureFixture) -> None:
-    assert reset_summary is None
+def test_duplicate_eid_exit_first(caplog: pytest.LogCaptureFixture) -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
 
     caplog.set_level("ERROR", "msl.equipment_validate")
@@ -512,8 +489,8 @@ def test_duplicate_eid_exit_first(reset_summary: None, caplog: pytest.LogCapture
     assert len(r) == 1
 
 
-def test_duplicate_eid_different_directories(reset_summary: None, caplog: pytest.LogCaptureFixture) -> None:
-    assert reset_summary is None
+def test_duplicate_eid_different_directories(caplog: pytest.LogCaptureFixture) -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
 
     caplog.set_level("ERROR", "msl.equipment_validate")
@@ -557,8 +534,8 @@ def test_duplicate_eid_different_directories(reset_summary: None, caplog: pytest
     assert len(r) == 5
 
 
-def test_no_paths(reset_summary: None) -> None:
-    assert reset_summary is None
+def test_no_paths() -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
 
     # 2 <id> errors
@@ -566,8 +543,8 @@ def test_no_paths(reset_summary: None) -> None:
     assert cli([]) == 5
 
 
-def test_show_unchecked(reset_summary: None, caplog: pytest.LogCaptureFixture) -> None:
-    assert reset_summary is None
+def test_show_unchecked(caplog: pytest.LogCaptureFixture) -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
     assert len(Summary.unchecked_equipment) == 0
 
@@ -617,8 +594,8 @@ def test_show_unchecked(reset_summary: None, caplog: pytest.LogCaptureFixture) -
         _ = r[13]
 
 
-def test_strict(reset_summary: None) -> None:
-    assert reset_summary is None
+def test_strict() -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
     assert Summary.num_warnings == 0
     assert Summary.num_skipped == 0
@@ -635,8 +612,8 @@ def test_strict(reset_summary: None) -> None:
     assert len(Summary.unchecked_performance_checks) == 0
 
 
-def test_strict_skipped(reset_summary: None) -> None:
-    assert reset_summary is None
+def test_strict_skipped() -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
     assert Summary.num_warnings == 0
     assert Summary.num_skipped == 0
@@ -653,8 +630,8 @@ def test_strict_skipped(reset_summary: None) -> None:
     assert len(Summary.unchecked_performance_checks) == 0
 
 
-def test_skip_checksum(reset_summary: None) -> None:
-    assert reset_summary is None
+def test_skip_checksum() -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
 
     with pytest.raises(SystemExit) as e:
@@ -662,10 +639,8 @@ def test_skip_checksum(reset_summary: None) -> None:
     assert e.value.code == 0
 
 
-def test_skip_checksum_strict_warning(
-    reset_summary: None, caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str]
-) -> None:
-    assert reset_summary is None
+def test_skip_checksum_strict_warning(caplog: pytest.LogCaptureFixture, capsys: pytest.CaptureFixture[str]) -> None:
+    Summary.reset()
     assert Summary.num_issues == 0
 
     caplog.set_level(logging.WARNING, "msl")

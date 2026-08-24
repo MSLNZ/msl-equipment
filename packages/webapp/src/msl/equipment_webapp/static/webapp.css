@@ -1,0 +1,68 @@
+.accordion-button:not(.collapsed) {
+    background-color: #F1592A;
+}
+
+.ag-header-cell-text {
+    overflow: hidden;
+    overflow-wrap: normal;
+    text-overflow: ellipsis;
+}
+
+code {
+    color: #552d78;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #F1592A;
+}
+
+.webapp-log-display {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    padding: 15px;
+    overflow-y: auto;
+    font-family: monospace;
+    border-radius: 5px;
+}
+
+.webapp-upload {
+    border-width: 2px;
+    border-style: dashed;
+    border-radius: 10px;
+}
+
+.xml-element {
+    margin-left: 25px;  /* Child indentation */
+}
+
+.xml-tag {
+    color: #0033cc;
+    font-weight: bold;
+}
+
+.xml-attribute-name {
+    color: #990033;
+    font-style: italic;
+}
+
+.xml-attribute-value {
+    color: #006611;
+}
+
+.xml-text {
+    color: #333333;
+    display: inline-block;
+}
+
+.xml-table-data {
+    color: #333333;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 30px;
+    font-family: var(--bs-body-font-family);
+    font-family: var(--bs-body-font-family);
+    font-size: var(--bs-body-font-size);
+    font-weight: var(--bs-body-font-weight);
+    line-height: var(--bs-body-line-height);
+    text-align: var(--bs-body-text-align);
+}

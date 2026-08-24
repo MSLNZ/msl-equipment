@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from msl.equipment_webapp.config import Config, EquipmentRegister
+from msl.equipment_webapp.config import Config, EquipmentRegister, SHA256Validation
 
 
 def test_default() -> None:
@@ -14,13 +14,13 @@ def test_default() -> None:
     assert cfg.host == "0.0.0.0"  # noqa: S104
     assert cfg.port == 17025
     assert cfg.nmi == "MSL"
-    assert cfg.logo.src == ""
-    assert cfg.logo.height == 0
-    assert cfg.logo.margin_left == 5
-    assert cfg.logo.margin_right == 25
-    assert cfg.logo.style == {"marginLeft": 5, "marginRight": 25}
+    assert cfg.navbar.logo.src == ""
+    assert cfg.navbar.logo.height == 0
+    assert cfg.navbar.logo.margin_left == 5
+    assert cfg.navbar.logo.margin_right == 25
+    assert cfg.navbar.logo.style == {"marginLeft": 5, "marginRight": 25}
     assert cfg.navbar.dark is True
-    assert cfg.navbar.color == "dark"
+    assert cfg.navbar.colour == "dark"
     assert cfg.registers == []
     assert cfg.pdflatex == "pdflatex"
     assert cfg.git == "git"
@@ -38,8 +38,7 @@ def test_default() -> None:
         '"currency": ["", ""]}).format(",.2f")(params.value)'
     )
     assert cfg.wordapp == "Word.Application"
-    assert cfg.skip_checksum == {}
-    assert cfg.validation_roots == []
+    assert cfg.sha256_validation == {}
 
 
 def test_load_file_not_found() -> None:
@@ -67,19 +66,18 @@ def test_load_all_options(tmp_path: Path) -> None:
 
     # defining the port as a string is also ok
     _ = file.write_text(
-        """
-            {
+        """{
             "git": "~/the/git",
             "host": "1.2.3.4",
-            "logo": {
-                "src": "logo.ico",
-                "height": 101,
-                "margin_left": 79,
-                "margin_right": 33
-            },
             "navbar": {
-                "color": "light",
-                "dark": false
+                "colour": "light",
+                "dark": false,
+                "logo": {
+                    "src": "logo.ico",
+                    "height": 101,
+                    "margin_left": 79,
+                    "margin_right": 33
+                }
             },
             "nmi": "Any",
             "pdflatex": "~/pdflatex/pdflatex.exe",
@@ -98,16 +96,18 @@ def test_load_all_options(tmp_path: Path) -> None:
                 "tests/data/light"
             ],
             "set_props_delay": 0.025,
-            "skip_checksum": {
-                "Light": true,
-                "Mass": 0
+            "sha256_validation": {
+                "Light": {
+                    "skip": true,
+                    "roots": []
+                },
+                "Mass": {
+                    "skip": false,
+                    "roots": ["M:/data/files"]
+                }
             },
             "static": "~/my/assets",
             "theme": "simplex",
-            "validation_roots": [
-                "L:/data/files",
-                "//msl-nas/extra/data/"
-            ],
             "verapdf": "~/verapdf/verapdf.bat",
             "wordapp": "MS-Word-COM"
             }""",
@@ -122,11 +122,11 @@ def test_load_all_options(tmp_path: Path) -> None:
     assert cfg.static == (home / "my/assets").as_posix()
     assert cfg.git == (home / "the/git").as_posix()
     assert cfg.host == "1.2.3.4"
-    assert cfg.logo.src == "logo.ico"
-    assert cfg.logo.height == 101
-    assert cfg.logo.style == {"marginLeft": 79, "marginRight": 33}
+    assert cfg.navbar.logo.src == "logo.ico"
+    assert cfg.navbar.logo.height == 101
+    assert cfg.navbar.logo.style == {"marginLeft": 79, "marginRight": 33}
     assert cfg.navbar.dark is False
-    assert cfg.navbar.color == "light"
+    assert cfg.navbar.colour == "light"
     assert cfg.nmi == "Any"
     assert cfg.pdflatex == (home / "pdflatex/pdflatex.exe").as_posix()
     assert cfg.port == 8080
@@ -152,20 +152,22 @@ def test_load_all_options(tmp_path: Path) -> None:
     assert cfg.equipment_registers("Mass") == []
     assert cfg.teams == ["Light"]
 
-    assert cfg.skip_checksum == {"Light": True, "Mass": False}
-    assert cfg.validation_roots == ["L:/data/files", "//msl-nas/extra/data/"]
+    assert cfg.sha256_validation == {
+        "Light": SHA256Validation(skip=True, roots=[]),
+        "Mass": SHA256Validation(skip=False, roots=["M:/data/files"]),
+    }
 
     assert cfg.registers[0].files() == [Path("tests/data/light/register.xml")]
 
 
 def test_load_logo_src_local_path(tmp_path: Path) -> None:
     file = tmp_path / "example.json"
-
-    # defining the port as a string is also ok
     _ = file.write_text("""{
-            "logo": {
-                "src": "~/static/logo.png",
-                "margin_left": 33
+            "navbar": {
+                "logo": {
+                    "src": "~/static/logo.png",
+                    "margin_left": 33
+                }
             }
         }""")
 
@@ -173,14 +175,14 @@ def test_load_logo_src_local_path(tmp_path: Path) -> None:
     cfg.load(file)
 
     home = Path("~").expanduser()
-    assert cfg.logo.src == (home / "static" / "logo.png").as_posix()
-    assert cfg.logo.height == 50
-    assert cfg.logo.margin_left == 33
-    assert cfg.logo.margin_right == 25
-    assert cfg.logo.style == {"marginLeft": 33, "marginRight": 25}
+    assert cfg.navbar.logo.src == (home / "static" / "logo.png").as_posix()
+    assert cfg.navbar.logo.height == 50
+    assert cfg.navbar.logo.margin_left == 33
+    assert cfg.navbar.logo.margin_right == 25
+    assert cfg.navbar.logo.style == {"marginLeft": 33, "marginRight": 25}
 
     assert cfg.navbar.dark is True
-    assert cfg.navbar.color == "dark"
+    assert cfg.navbar.colour == "dark"
     assert cfg.registers == []
     assert cfg.pdflatex == "pdflatex"
     assert cfg.git == "git"
@@ -194,32 +196,31 @@ def test_load_logo_src_local_path(tmp_path: Path) -> None:
     assert cfg.price.currency.prefix == ""
     assert cfg.price.currency.suffix == ""
     assert cfg.wordapp == "Word.Application"
-    assert cfg.skip_checksum == {}
-    assert cfg.validation_roots == []
+    assert cfg.sha256_validation == {}
 
 
 def test_load_logo_src_https(tmp_path: Path) -> None:
     file = tmp_path / "example.json"
-
-    # defining the port as a string is also ok
     _ = file.write_text("""{
-            "logo": {
-                "src": "https://www.measurement.govt.nz/assets/Uploads/logo.png",
-                "height": 86
+            "navbar": {
+                "logo": {
+                    "src": "https://www.measurement.govt.nz/assets/Uploads/logo.png",
+                    "height": 86
+                }
             }
         }""")
 
     cfg = Config()
     cfg.load(file)
 
-    assert cfg.logo.src == "https://www.measurement.govt.nz/assets/Uploads/logo.png"
-    assert cfg.logo.height == 86
-    assert cfg.logo.margin_left == 5
-    assert cfg.logo.margin_right == 25
-    assert cfg.logo.style == {"marginLeft": 5, "marginRight": 25}
+    assert cfg.navbar.logo.src == "https://www.measurement.govt.nz/assets/Uploads/logo.png"
+    assert cfg.navbar.logo.height == 86
+    assert cfg.navbar.logo.margin_left == 5
+    assert cfg.navbar.logo.margin_right == 25
+    assert cfg.navbar.logo.style == {"marginLeft": 5, "marginRight": 25}
 
     assert cfg.navbar.dark is True
-    assert cfg.navbar.color == "dark"
+    assert cfg.navbar.colour == "dark"
     assert cfg.registers == []
     assert cfg.pdflatex == "pdflatex"
     assert cfg.git == "git"
@@ -233,14 +234,48 @@ def test_load_logo_src_https(tmp_path: Path) -> None:
     assert cfg.price.currency.prefix == ""
     assert cfg.price.currency.suffix == ""
     assert cfg.wordapp == "Word.Application"
-    assert cfg.skip_checksum == {}
-    assert cfg.validation_roots == []
+    assert cfg.sha256_validation == {}
 
 
-def test_load_navbar_color_only(tmp_path: Path) -> None:
+def test_load_navbar_colour_only(tmp_path: Path) -> None:
+    file = tmp_path / "example.json"
+    _ = file.write_text("""{
+            "navbar": {
+                "colour": "light"
+            }
+        }""")
+
+    cfg = Config()
+    cfg.load(file)
+
+    assert cfg.navbar.dark is True
+    assert cfg.navbar.colour == "light"
+
+    assert cfg.navbar.logo.src == ""
+    assert cfg.navbar.logo.height == 0
+    assert cfg.navbar.logo.margin_left == 5
+    assert cfg.navbar.logo.margin_right == 25
+    assert cfg.navbar.logo.style == {"marginLeft": 5, "marginRight": 25}
+    assert cfg.registers == []
+    assert cfg.pdflatex == "pdflatex"
+    assert cfg.git == "git"
+    assert cfg.verapdf.startswith("verapdf")
+    assert cfg.theme == "BOOTSTRAP"
+    assert cfg.set_props_delay == 0.01
+    assert cfg.price.format == ",.2f"
+    assert cfg.price.decimal == "."
+    assert cfg.price.thousands == ","
+    assert cfg.price.grouping == [3]
+    assert cfg.price.currency.prefix == ""
+    assert cfg.price.currency.suffix == ""
+    assert cfg.wordapp == "Word.Application"
+    assert cfg.sha256_validation == {}
+
+
+def test_load_navbar_bad_keyword(tmp_path: Path) -> None:
     file = tmp_path / "example.json"
 
-    # defining the port as a string is also ok
+    # specified color instead of colour
     _ = file.write_text("""{
             "navbar": {
                 "color": "light"
@@ -248,37 +283,12 @@ def test_load_navbar_color_only(tmp_path: Path) -> None:
         }""")
 
     cfg = Config()
-    cfg.load(file)
-
-    assert cfg.navbar.dark is True
-    assert cfg.navbar.color == "light"
-
-    assert cfg.logo.src == ""
-    assert cfg.logo.height == 0
-    assert cfg.logo.margin_left == 5
-    assert cfg.logo.margin_right == 25
-    assert cfg.logo.style == {"marginLeft": 5, "marginRight": 25}
-    assert cfg.registers == []
-    assert cfg.pdflatex == "pdflatex"
-    assert cfg.git == "git"
-    assert cfg.verapdf.startswith("verapdf")
-    assert cfg.theme == "BOOTSTRAP"
-    assert cfg.set_props_delay == 0.01
-    assert cfg.price.format == ",.2f"
-    assert cfg.price.decimal == "."
-    assert cfg.price.thousands == ","
-    assert cfg.price.grouping == [3]
-    assert cfg.price.currency.prefix == ""
-    assert cfg.price.currency.suffix == ""
-    assert cfg.wordapp == "Word.Application"
-    assert cfg.skip_checksum == {}
-    assert cfg.validation_roots == []
+    with pytest.raises(TypeError, match=r"NavBar.__init__"):
+        cfg.load(file)
 
 
 def test_load_price_keys_missing(tmp_path: Path) -> None:
     file = tmp_path / "example.json"
-
-    # defining the port as a string is also ok
     _ = file.write_text("""{
             "price": {
                 "decimal": "X",
@@ -296,12 +306,12 @@ def test_load_price_keys_missing(tmp_path: Path) -> None:
     assert cfg.price.currency.suffix == ""
 
     assert cfg.navbar.dark is True
-    assert cfg.navbar.color == "dark"
-    assert cfg.logo.src == ""
-    assert cfg.logo.height == 0
-    assert cfg.logo.margin_left == 5
-    assert cfg.logo.margin_right == 25
-    assert cfg.logo.style == {"marginLeft": 5, "marginRight": 25}
+    assert cfg.navbar.colour == "dark"
+    assert cfg.navbar.logo.src == ""
+    assert cfg.navbar.logo.height == 0
+    assert cfg.navbar.logo.margin_left == 5
+    assert cfg.navbar.logo.margin_right == 25
+    assert cfg.navbar.logo.style == {"marginLeft": 5, "marginRight": 25}
     assert cfg.registers == []
     assert cfg.pdflatex == "pdflatex"
     assert cfg.git == "git"
@@ -309,5 +319,120 @@ def test_load_price_keys_missing(tmp_path: Path) -> None:
     assert cfg.theme == "BOOTSTRAP"
     assert cfg.set_props_delay == 0.01
     assert cfg.wordapp == "Word.Application"
-    assert cfg.skip_checksum == {}
-    assert cfg.validation_roots == []
+    assert cfg.sha256_validation == {}
+
+
+def test_load_price_bad_keyword(tmp_path: Path) -> None:
+    file = tmp_path / "example.json"
+    _ = file.write_text("""{
+            "price": {
+                "decimal": "X",
+                "unknown": "anything"
+            }
+        }""")
+
+    cfg = Config()
+    with pytest.raises(TypeError, match=r"Price.__init__"):
+        cfg.load(file)
+
+
+def test_load_currency_bad_keyword(tmp_path: Path) -> None:
+    file = tmp_path / "example.json"
+    _ = file.write_text("""{
+            "price": {
+                "currency": {
+                    "unknown": "anything"
+                }
+            }
+        }""")
+
+    cfg = Config()
+    with pytest.raises(TypeError, match=r"Currency.__init__"):
+        cfg.load(file)
+
+
+def test_load_sha256_validation_skip_missing(tmp_path: Path) -> None:
+    file = tmp_path / "example.json"
+    _ = file.write_text("""{
+            "sha256_validation": {
+                "Light": {
+                    "roots": ["any/path/1", "any/path/2"]
+                }
+            }
+        }""")
+
+    cfg = Config()
+    cfg.load(file)
+    assert cfg.sha256_validation == {"Light": SHA256Validation(skip=False, roots=["any/path/1", "any/path/2"])}
+
+    assert cfg.navbar.dark is True
+    assert cfg.navbar.colour == "dark"
+    assert cfg.navbar.logo.src == ""
+    assert cfg.navbar.logo.height == 0
+    assert cfg.navbar.logo.margin_left == 5
+    assert cfg.navbar.logo.margin_right == 25
+    assert cfg.navbar.logo.style == {"marginLeft": 5, "marginRight": 25}
+    assert cfg.registers == []
+    assert cfg.pdflatex == "pdflatex"
+    assert cfg.price.format == ",.2f"
+    assert cfg.price.decimal == "."
+    assert cfg.price.thousands == ","
+    assert cfg.price.grouping == [3]
+    assert cfg.price.currency.prefix == ""
+    assert cfg.price.currency.suffix == ""
+    assert cfg.git == "git"
+    assert cfg.verapdf.startswith("verapdf")
+    assert cfg.theme == "BOOTSTRAP"
+    assert cfg.set_props_delay == 0.01
+    assert cfg.wordapp == "Word.Application"
+
+
+def test_load_sha256_validation_roots_missing(tmp_path: Path) -> None:
+    file = tmp_path / "example.json"
+    _ = file.write_text("""{
+            "sha256_validation": {
+                "Length": {
+                    "skip": true
+                }
+            }
+        }""")
+
+    cfg = Config()
+    cfg.load(file)
+    assert cfg.sha256_validation == {"Length": SHA256Validation(skip=True, roots=[])}
+
+    assert cfg.navbar.dark is True
+    assert cfg.navbar.colour == "dark"
+    assert cfg.navbar.logo.src == ""
+    assert cfg.navbar.logo.height == 0
+    assert cfg.navbar.logo.margin_left == 5
+    assert cfg.navbar.logo.margin_right == 25
+    assert cfg.navbar.logo.style == {"marginLeft": 5, "marginRight": 25}
+    assert cfg.registers == []
+    assert cfg.pdflatex == "pdflatex"
+    assert cfg.price.format == ",.2f"
+    assert cfg.price.decimal == "."
+    assert cfg.price.thousands == ","
+    assert cfg.price.grouping == [3]
+    assert cfg.price.currency.prefix == ""
+    assert cfg.price.currency.suffix == ""
+    assert cfg.git == "git"
+    assert cfg.verapdf.startswith("verapdf")
+    assert cfg.theme == "BOOTSTRAP"
+    assert cfg.set_props_delay == 0.01
+    assert cfg.wordapp == "Word.Application"
+
+
+def test_load_sha256_validation_bad_keyword(tmp_path: Path) -> None:
+    file = tmp_path / "example.json"
+    _ = file.write_text("""{
+            "sha256_validation": {
+                "Light": {
+                    "bad": 7
+                }
+            }
+        }""")
+
+    cfg = Config()
+    with pytest.raises(TypeError, match=r"SHA256Validation.__init__"):
+        cfg.load(file)

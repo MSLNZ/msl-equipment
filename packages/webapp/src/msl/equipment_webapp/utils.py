@@ -19,7 +19,7 @@ from dash import html
 from lxml import etree
 from msl.equipment_validate import DEFAULT_SCHEMA_DIR, recursive_validate
 from msl.equipment_webapp.app import scope_ctx
-from msl.equipment_webapp.config import cfg
+from msl.equipment_webapp.config import SHA256Validation, cfg
 from msl.loadlib import LoadLibrary
 from pikepdf import Array, AttachedFileSpec, Name, Pdf
 from pikepdf.models.metadata import encode_pdf_date
@@ -693,11 +693,11 @@ async def validate_register(
     Returns:
         Whether the register is valid.
     """
-    skip_checksum = cfg.skip_checksum.get(team, True)
+    sha256_validation = cfg.sha256_validation.get(team, SHA256Validation())
     if update is not None:
         msg = (
             f"Validating {team} register (skipping sha256 checksums)"
-            if skip_checksum
+            if sha256_validation.skip
             else f"Validating {team} register"
         )
         await update(data, msg)
@@ -706,10 +706,10 @@ async def validate_register(
         files=files,
         er_schema=er_schema,
         c_schema=c_schema,
-        roots=cfg.validation_roots,
+        roots=sha256_validation.roots,
         exit_first=True,
         uri_scheme=None,
-        skip_checksum=skip_checksum,
+        skip_checksum=sha256_validation.skip,
         no_colour=True,
     )
     ok = summary.num_issues == 0

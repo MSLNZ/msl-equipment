@@ -12,7 +12,7 @@ from xml.etree.ElementTree import fromstring
 import pytest
 from dash import html
 from msl.equipment_webapp import utils
-from msl.equipment_webapp.config import EquipmentRegister, cfg
+from msl.equipment_webapp.config import EquipmentRegister, SHA256Validation, cfg
 from msl.equipment_webapp.typing import Scope
 from pikepdf import Pdf
 
@@ -25,6 +25,9 @@ if TYPE_CHECKING:
 @pytest.mark.anyio
 async def test_validate_register_success() -> None:
     out: list[tuple[AgGridData, str]] = []
+
+    cfg.sha256_validation.clear()
+    cfg.sha256_validation["Light"] = SHA256Validation(skip=True)
 
     async def update(data: AgGridData, msg: str = "") -> None:
         out.append((data, msg))
@@ -51,7 +54,7 @@ async def test_validate_register_error(tmp_path: Path) -> None:
     success = await utils.validate_register([file], "Mass", [], update)
     assert not success
     assert out[0][0] == []
-    assert out[0][1] == "Validating Mass register (skipping sha256 checksums)"
+    assert out[0][1] == "Validating Mass register"
     assert out[1][0] == []
     assert out[1][1] == "  \u274c ERROR! Mass register invalid (skipping)"
 

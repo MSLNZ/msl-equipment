@@ -90,8 +90,8 @@ def create_app(cfg: Config) -> Dash:
                     [
                         html.A(
                             dbc.Row(
-                                html.Img(src=cfg.logo.src, height=cfg.logo.height),
-                                style=cfg.logo.style,
+                                html.Img(src=cfg.navbar.logo.src, height=cfg.navbar.logo.height),
+                                style=cfg.navbar.logo.style,
                             ),
                             href="/",
                             style={"textDecoration": "none"},
@@ -132,7 +132,7 @@ def create_app(cfg: Config) -> Dash:
                     fluid=True,
                 ),
                 dark=cfg.navbar.dark,
-                color=cfg.navbar.color,
+                color=cfg.navbar.colour,
                 sticky="top",
             ),
             dash.page_container,

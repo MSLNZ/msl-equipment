@@ -46,19 +46,27 @@ class Logo:
 class NavBar:
     """Information about the NavBar."""
 
-    color: str = "dark"
-    """Sets the color of the NavBar.
+    colour: str = "dark"
+    """Sets the colour of the NavBar.
 
     Main options are `primary`, `light` and `dark`. You can also choose one of the other
     contextual classes provided by Bootstrap (secondary, success, warning, danger, info, white)
-    or any valid CSS color of your choice (e.g., a hex code, a decimal code or a CSS color name).
+    or any valid CSS colour of your choice (e.g., a hex code, a decimal code or a CSS colour name).
     """
 
     dark: bool = True
     """Whether to apply the navbar-dark class to the NavBar.
 
-    Causes text in the children of the NavBar to use light colors for contrast/visibility.
+    Causes text in the children of the NavBar to use light colours for contrast/visibility.
     """
+
+    logo: Logo = field(default_factory=Logo)
+    """The logo to use in the navigation bar."""
+
+    def __post_init__(self) -> None:
+        """Called automatically after the __init__ method finishes."""
+        if isinstance(self.logo, dict):
+            self.logo = Logo(**self.logo)  # pyright: ignore[reportUnknownArgumentType]
 
 
 @dataclass
@@ -132,6 +140,20 @@ class Price:
 
 
 @dataclass
+class SHA256Validation:
+    """Controls the validation of `<sha256>` elements in an equipment register."""
+
+    skip: bool = False
+    """Whether to skip validating `<file>` and `<digitalReport>` elements containing a sha256 checksum."""
+
+    roots: list[str] = field(default_factory=list)
+    """Additional root paths to use during validation.
+
+    These paths may be required when validating `<file>` or `<digitalReport>` elements that specify a relative path.
+    """
+
+
+@dataclass
 class Config:
     """Configuration for the web application."""
 
@@ -144,9 +166,6 @@ class Config:
     Default is to listen on all network interfaces.
     """
 
-    logo: Logo = field(default_factory=Logo)
-    """The logo to use in the navigation bar."""
-
     navbar: NavBar = field(default_factory=NavBar)
     """Navigation bar at the top of each webpage in the application."""
 
@@ -154,7 +173,7 @@ class Config:
     """Name of the National Metrology Institute."""
 
     pdflatex: str = "pdflatex"
-    """Path to the `pdflatex` (e.g., [MiKTeX](https://miktex.org/), [TeX Live](https://www.tug.org/texlive/)) executable."""  # noqa: E501
+    """Path to the `pdflatex` executable."""
 
     port: int = 17025
     """The port number to use for the app."""
@@ -163,7 +182,7 @@ class Config:
     """The format to use to display pricing information."""
 
     registers: list[EquipmentRegister] = field(default_factory=list)
-    """A list of `team -> path` mapping for each equipment register."""
+    """A list of equipment registers to make available."""
 
     set_props_delay: float = 0.01
     """The number of seconds to wait after calling `dash.set_props` in a callback.
@@ -171,12 +190,8 @@ class Config:
     If the value is too small, components might not update properly while the dash callback is running.
     """
 
-    skip_checksum: dict[str, bool] = field(default_factory=dict)
-    """Whether to skip validating `<file>` and `<digitalReport>` elements containing a sha256 checksum.
-
-    The key is the name of the Team that is responsible for the equipment register.
-    See also `validation_roots`.
-    """
+    sha256_validation: dict[str, SHA256Validation] = field(default_factory=dict)
+    """The key is the name of the Team that is responsible for the equipment register."""
 
     static: str = "static"
     """Path to the *static* directory.
@@ -186,13 +201,6 @@ class Config:
 
     theme: str = "BOOTSTRAP"
     """A theme name in https://bootswatch.com/."""
-
-    validation_roots: list[str] = field(default_factory=list)
-    """Additional root paths to use during validation.
-
-    These paths may be required when validating `<file>` or `<digitalReport>` elements.
-    See also `skip_checksum`.
-    """
 
     verapdf: str = "verapdf.bat" if sys.platform == "win32" else "verapdf"
     """Path to the [veraPDF](https://verapdf.org/) executable."""
@@ -224,11 +232,11 @@ class Config:
         self.git = Path(d.get("git", self.git)).expanduser().as_posix()
         self.pdflatex = Path(d.get("pdflatex", self.pdflatex)).expanduser().as_posix()
         self.verapdf = Path(d.get("verapdf", self.verapdf)).expanduser().as_posix()
-        self.logo = Logo(**d.get("logo", {}))
         self.navbar = NavBar(**d.get("navbar", {}))
         self.price = Price(**d.get("price", {}))
-        self.skip_checksum = {k: bool(v) for k, v in d.get("skip_checksum", {}).items()}
-        self.validation_roots = d.get("validation_roots", [])
+
+        for k, v in d.get("sha256_validation", {}).items():
+            self.sha256_validation[k] = SHA256Validation(**v)
 
         for reg in d.get("registers", []):
             directory = Path(reg).expanduser()

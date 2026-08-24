@@ -4820,13 +4820,80 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#install" class="md-nav__link">
+  <a href="#webapp-install" class="md-nav__link">
     <span class="md-ellipsis">
       
         Install
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Install">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#webapp-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#webapp-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#webapp-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration File
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#webapp-release-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Release Notes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Release Notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#unreleased" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unreleased
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4865,13 +4932,80 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#install" class="md-nav__link">
+  <a href="#webapp-install" class="md-nav__link">
     <span class="md-ellipsis">
       
         Install
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Install">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#webapp-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#webapp-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#webapp-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration File
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#webapp-release-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Release Notes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Release Notes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#unreleased" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unreleased
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4896,15 +5030,286 @@
 
 
 <h1 id="web-application">Web Application<a class="headerlink" href="#web-application" title="Permanent link">¤</a></h1>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-<p>Development on the web application has not started.</p>
-</div>
-<p>The web application provides a server for running a website that allows people to search for equipment records with equipment registers and (maybe) to add equipment records to a register.</p>
-<h2 id="install">Install<a class="headerlink" href="#install" title="Permanent link">¤</a></h2>
-<p>Eventually...</p>
-<div class="highlight"><pre><span></span><code><span class="go">pip install msl-equipment-webapp</span>
+<p>The web application runs a server on a computer which allows people to interact with equipment registers via a web browser from any computer that is on the same network. Only the computer that runs the server must have access to the equipment registers of each team. That access could either be through a shared network drive or by cloning a repository.</p>
+<p>The web application has pages for viewing equipment that</p>
+<ul>
+<li>is a capital expenditure,</li>
+<li>requires maintenance or recalibration,</li>
+<li>matches a specified search pattern,</li>
+</ul>
+<p>and it can generate PDF/A documents.</p>
+<p>The web application also provides an Application Programming Interface (API) that can be invoked through custom software (via the HTTP methods GET and POST) to extract information from equipment registers or to generate a PDF/A document.</p>
+<h2 id="webapp-install">Install<a class="headerlink" href="#webapp-install" title="Permanent link">¤</a></h2>
+<!--
+`msl-equipment-webapp` is available on [PyPI](https://pypi.org/project/msl-equipment-webapp/) and can be installed with a variety of Python package managers.
+
+=== "pip"
+    <div class="highlight"><pre><span></span><code><span class="go">pip install msl-equipment-webapp</span>
 </code></pre></div>
+
+=== "pipx"
+    <div class="highlight"><pre><span></span><code><span class="go">pipx install msl-equipment-webapp</span>
+</code></pre></div>
+
+=== "uv"
+    <div class="highlight"><pre><span></span><code><span class="go">uv tool install msl-equipment-webapp</span>
+</code></pre></div>
+-->
+
+<p><code>msl-equipment-webapp</code> is currently only available for installation from source. It can be installed using a variety of package managers.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">pip</label><label for="__tabbed_1_2">pipx</label><label for="__tabbed_1_3">uv</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="go"> pip install msl-equipment-webapp@git+https://github.com/MSLNZ/msl-equipment#subdirectory=packages/webapp</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="go">pipx install msl-equipment-webapp@git+https://github.com/MSLNZ/msl-equipment#subdirectory=packages/webapp</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="go">uv tool install msl-equipment-webapp@git+https://github.com/MSLNZ/msl-equipment#subdirectory=packages/webapp</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>This will install a command-line tool to run the web application.</p>
+<h3 id="webapp-dependencies">Dependencies<a class="headerlink" href="#webapp-dependencies" title="Permanent link">¤</a></h3>
+<p>The Python packages that are required to run the web application are automatically installed, but there are non-Python dependencies that can also be installed on the computer that runs the server.</p>
+<p>The web application provides the option to convert <span class="arithmatex">\(\LaTeX\)</span> and Microsoft Word documents to the PDF/A format and the option to sync equipment registers that are cloned from a repository. As such, the following additional executables should be available on the computer that runs the web application, if that feature is to be supported.</p>
+<ul>
+<li><a href="https://git-scm.com/">git</a> &mdash; For syncing an equipment register with its repository.</li>
+</ul>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Windows</label><label for="__tabbed_2_2">Debian/Ubuntu</label><label for="__tabbed_2_3">macOS</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="go">winget install --id Git.Git</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="go">sudo apt install git</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="go">brew install git</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<ul>
+<li>
+<p><a href="https://www.microsoft.com/en/microsoft-365/microsoft-office">Microsoft 365</a> &mdash; To convert Microsoft Word documents to PDF/A.</p>
+</li>
+<li>
+<p><code>pdflatex</code> &mdash; To convert <span class="arithmatex">\(\LaTeX\)</span> documents to PDF/A. You may prefer to install <a href="https://miktex.org/download">MiKTeX</a> on a non-Windows operating system. A benefit of MiKTeX is that it can be configured to automatically install missing packages that may be required to build a <span class="arithmatex">\(\LaTeX\)</span> document. The web application only requires the <code>pdflatex</code> executable to be available, it does not manage a TeX distribution for you.</p>
+</li>
+</ul>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Windows</label><label for="__tabbed_3_2">Debian/Ubuntu</label><label for="__tabbed_3_3">macOS</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="go">winget install --id MiKTeX.MiKTeX</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="go">sudo apt install texlive-latex-base</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="go">brew install --cask basictex</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<ul>
+<li>
+<p><a href="https://verapdf.org/software/">veraPDF</a> &mdash; For validating PDF/A documents. See <a href="https://docs.verapdf.org/install/">here</a> for install instructions.</p>
+</li>
+<li>
+<p><a href="https://www.java.com/en/">java</a> &mdash; Required to run the <code>veraPDF</code> tool. The <code>java</code> runtime executable must be available from your terminal (i.e., running <code>java -version</code> should return the version of java)</p>
+</li>
+</ul>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Windows</label><label for="__tabbed_4_2">Debian/Ubuntu</label><label for="__tabbed_4_3">macOS</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="go">winget install --id Oracle.JDK.26</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="go">sudo apt install default-jre</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><span class="go">brew install openjdk</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="webapp-usage">Usage<a class="headerlink" href="#webapp-usage" title="Permanent link">¤</a></h2>
+<p>Typical usage involves passing the path to a <a class="autorefs autorefs-internal" title="Configuration File" href="#webapp-configuration">configuration file</a> as an argument to the executable.</p>
+<div class="highlight"><pre><span></span><code><span class="go">msl-equipment-webapp path/to/config.json</span>
+</code></pre></div>
+<p>There are a few command-line options that can override values defined in the configuration file. Run the <code>--help</code> command to see what options are supported.</p>
+<div class="highlight"><pre><span></span><code><span class="go">msl-equipment-webapp --help</span>
+</code></pre></div>
+<h2 id="webapp-configuration">Configuration File<a class="headerlink" href="#webapp-configuration" title="Permanent link">¤</a></h2>
+<p>The configuration file uses the <a href="https://www.json.org/json-en.html">JSON</a> format. The following shows an example configuration file that defines every possible name-value pair that can be customised for your requirements; however, every name-value pair is optional and does not need to be defined in your JSON file. If a name-value pair is omitted, the default value is used for the web application.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"git"</span><span class="p">:</span><span class="w"> </span><span class="s2">"git"</span><span class="p">,</span><span class="w"> </span><span class="c1">// (1)!</span>
+<span class="w">  </span><span class="nt">"host"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.0.0.0"</span><span class="p">,</span><span class="w"> </span><span class="c1">// (2)!</span>
+<span class="w">  </span><span class="nt">"navbar"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// (3)!</span>
+<span class="w">    </span><span class="nt">"colour"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dark"</span><span class="p">,</span><span class="w"> </span><span class="c1">// (4)!</span>
+<span class="w">    </span><span class="nt">"dark"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="c1">// (5)!</span>
+<span class="w">    </span><span class="nt">"logo"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// (6)!</span>
+<span class="w">      </span><span class="nt">"height"</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="c1">// (7)!</span>
+<span class="w">      </span><span class="nt">"margin_left"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="c1">// (8)!</span>
+<span class="w">      </span><span class="nt">"margin_right"</span><span class="p">:</span><span class="w"> </span><span class="mi">25</span><span class="p">,</span><span class="w"> </span><span class="c1">// (9)!</span>
+<span class="w">      </span><span class="nt">"src"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.measurement.govt.nz/assets/msl-footer-logo.png"</span><span class="w"> </span><span class="c1">// (10)!</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"nmi"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MSL"</span><span class="p">,</span><span class="w"> </span><span class="c1">// (11)!</span>
+<span class="w">  </span><span class="nt">"pdflatex"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pdflatex"</span><span class="p">,</span><span class="w"> </span><span class="c1">// (12)!</span>
+<span class="w">  </span><span class="nt">"port"</span><span class="p">:</span><span class="w"> </span><span class="mi">17025</span><span class="p">,</span><span class="w"> </span><span class="c1">// (13)!</span>
+<span class="w">  </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// (14)!</span>
+<span class="w">    </span><span class="nt">"format"</span><span class="p">:</span><span class="w"> </span><span class="s2">",.2f"</span><span class="p">,</span><span class="w"> </span><span class="c1">// (15)!</span>
+<span class="w">    </span><span class="nt">"decimal"</span><span class="p">:</span><span class="w"> </span><span class="s2">"."</span><span class="p">,</span><span class="w"> </span><span class="c1">// (16)!</span>
+<span class="w">    </span><span class="nt">"thousands"</span><span class="p">:</span><span class="w"> </span><span class="s2">","</span><span class="p">,</span><span class="w"> </span><span class="c1">// (17)!</span>
+<span class="w">    </span><span class="nt">"grouping"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="c1">// (18)!</span>
+<span class="w">    </span><span class="nt">"currency"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// (19)!</span>
+<span class="w">      </span><span class="nt">"prefix"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> </span><span class="c1">// (20)!</span>
+<span class="w">      </span><span class="nt">"suffix"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="w"> </span><span class="c1">// (21)!</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"registers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="c1">// (22)!</span>
+<span class="w">    </span><span class="s2">"~/repos/Length-register"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"path/to/Mass/register"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"//192.168.1.2/Time/register"</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"set_props_delay"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="c1">// (23)!</span>
+<span class="w">  </span><span class="nt">"sha256_validation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// (24)!</span>
+<span class="w">    </span><span class="nt">"Length"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// (25)!</span>
+<span class="w">      </span><span class="nt">"skip"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="c1">// (26)!</span>
+<span class="w">      </span><span class="nt">"roots"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="c1">// (27)!</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"Time"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"skip"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"roots"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"//192.168.1.2/Time/data-files"</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"static"</span><span class="p">:</span><span class="w"> </span><span class="s2">"static"</span><span class="p">,</span><span class="w"> </span><span class="c1">// (28)!</span>
+<span class="w">  </span><span class="nt">"theme"</span><span class="p">:</span><span class="w"> </span><span class="s2">"simplex"</span><span class="p">,</span><span class="w"> </span><span class="c1">// (29)!</span>
+<span class="w">  </span><span class="nt">"verapdf"</span><span class="p">:</span><span class="w"> </span><span class="s2">"~/verapdf/verapdf.bat"</span><span class="p">,</span><span class="w"> </span><span class="c1">// (30)!</span>
+<span class="w">  </span><span class="nt">"wordapp"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Word.Application"</span><span class="w"> </span><span class="c1">// (31)!</span>
+<span class="p">}</span>
+</code></pre></div>
+<ol>
+<li>
+<p>The path to the <code>git</code> executable. Default value assumes that <code>git</code> is available on the <code>PATH</code> environment variable.</p>
+<p>Can use the <code>~</code> character to expand the user's home directory.</p>
+</li>
+<li>
+<p>The network interface to run the server on. Default value is <code>0.0.0.0</code> (use all network interfaces).</p>
+</li>
+<li>
+<p>Customise the Navigation Bar (at the top of each page).</p>
+</li>
+<li>
+<p>The colour of the Navigation Bar. Default value is <code>dark</code>.</p>
+<p>Main options are <code>primary</code>, <code>light</code> and <code>dark</code>. You can also choose one of the other contextual classes provided by Bootstrap (<code>secondary</code>, <code>success</code>, <code>warning</code>, <code>danger</code>, <code>info</code>, <code>white</code>) or any valid CSS colour of your choice (e.g., a hex code, a decimal code or a CSS colour name).</p>
+</li>
+<li>
+<p>Whether to apply the <code>navbar-dark</code> class to the Navigation Bar. Default value is <code>true</code>.</p>
+<p>Causes text in the children of the Navigation Bar to use light or dark colours for contrast and visibility.</p>
+</li>
+<li>
+<p>Customise the logo (image) to display in the Navigation Bar.</p>
+</li>
+<li>
+<p>Image height (in pixels). Default value is <code>50</code>.</p>
+</li>
+<li>
+<p>Amount of space (in pixels) required on the left side of the image. Default value is <code>5</code>.</p>
+</li>
+<li>
+<p>Amount of space (in pixels) required on the right side of the image. Default value is <code>25</code>.</p>
+</li>
+<li>
+<p>Image source. Default value is an empty string (i.e., do not display an image).</p>
+<p>Can be a relative path to an image file in the <code>static</code> directory (e.g., <code>static/logo.png</code>) or a URL to an image file.</p>
+</li>
+<li>
+<p>Name of the National Metrology Institute. Default value is <code>MSL</code>.</p>
+<p>This text is displayed in the title bar of the web browser and on the API web page.</p>
+</li>
+<li>
+<p>The path to the <code>pdflatex</code> executable. Default value assumes that <code>pdflatex</code> is available on the <code>PATH</code> environment variable.</p>
+<p>Can use the <code>~</code> character to expand the user's home directory.</p>
+</li>
+<li>
+<p>The network port to run the server on. Default value is <code>17025</code>.</p>
+</li>
+<li>
+<p>Customise how pricing information is displayed. See <a href="https://d3js.org/d3-format#formatLocale">d3-formatLocale</a> for more information.</p>
+</li>
+<li>
+<p>The format to use to display the price value. Default value is <code>,.2f</code>. See <a href="https://d3js.org/d3-format">d3-format</a> for more information.</p>
+</li>
+<li>
+<p>The symbol to use for the decimal point. Default value is <code>.</code>.</p>
+</li>
+<li>
+<p>The symbol to use for the group separator. Default value is <code>,</code>.</p>
+<p>Note that the thousands property name is a misnomer, as the grouping definition allows groups other than thousands (3).</p>
+</li>
+<li>
+<p>The array of group sizes, cycled as needed. Default value is <code>[3]</code>.</p>
+</li>
+<li>
+<p>The currency symbols to use for each price.</p>
+</li>
+<li>
+<p>Price prefix symbol. Default value is an empty string.</p>
+</li>
+<li>
+<p>Price suffix symbol. Default value is an empty string.</p>
+</li>
+<li>
+<p>An array of directories to the equipment registers to make available in the web application. Default value is an empty array.</p>
+<p>Can use the <code>~</code> character to expand the user's home directory.</p>
+</li>
+<li>
+<p>The number of seconds to wait after calling <code>dash.set_props</code> in a callback. Default value is <code>0.01</code>.</p>
+<p>If the value is too small, components might not update properly while the dash callback is running.</p>
+</li>
+<li>
+<p>Customise the validation of <code>&lt;sha256&gt;</code> elements in an equipment register. Default is an empty JSON object, which sets <code>skip</code> to <code>false</code> and an empty <code>roots</code> array for every equipment register.</p>
+</li>
+<li>
+<p>The name of the team that is responsible for the equipment register.</p>
+</li>
+<li>
+<p>Whether to skip validating <code>&lt;file&gt;</code> and <code>&lt;digitalReport&gt;</code> elements containing a sha256 checksum. Default value is <code>false</code>.</p>
+</li>
+<li>
+<p>Additional root paths to use during validation. Default value is an empty array.</p>
+<p>These paths may be required when validating <code>&lt;file&gt;</code> or <code>&lt;digitalReport&gt;</code> elements that specify a relative path for the value of the <code>&lt;url&gt;</code> element.</p>
+</li>
+<li>
+<p>Path to the <em>static</em> directory. Default value is <code>static</code>, which is relative to where the <code>msl-equipment-validate</code> package is installed.</p>
+<p>You can save the favicon.ico, webapp.css and the logo image here.</p>
+</li>
+<li>
+<p>The name of a <a href="https://bootswatch.com/">Bootstrap</a> theme to use for the web application. Default value is <code>BOOTSTRAP</code>.</p>
+</li>
+<li>
+<p>Path to the <a href="https://verapdf.org/">veraPDF</a> executable. Default value assumes that <code>verapdf</code> is available on the <code>PATH</code> environment variable.</p>
+<p>Can use the <code>~</code> character to expand the user's home directory.</p>
+</li>
+<li>
+<p>Name of the COM object to load for the <a href="https://learn.microsoft.com/en-us/office/vba/api/word.application">Microsoft Word Application</a>. Default value is <code>Word.Application</code>.</p>
+</li>
+</ol>
+<h2 id="webapp-release-notes">Release Notes<a class="headerlink" href="#webapp-release-notes" title="Permanent link">¤</a></h2>
+<h3 id="unreleased">unreleased<a class="headerlink" href="#unreleased" title="Permanent link">¤</a></h3>
 
 
 
@@ -5015,7 +5420,7 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": {"json": [".s2"]}, "base": "..", "features": ["content.code.copy", "content.code.annotate", "navigation.footer", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "search.highlight", "search.suggest"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>

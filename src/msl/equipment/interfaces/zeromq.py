@@ -172,7 +172,7 @@ class ZeroMQ(Message, regex=REGEX):
         Returns:
             If `copy=True` returns a [list][][[bytes][]], otherwise a [list][][[Frame][zmq.Frame]].
         """  # noqa: E501
-        _ = self._socket.send_multipart(msg_parts)  # pyright: ignore[reportUnknownMemberType]
+        _ = self._socket.send_multipart(msg_parts)
         if delay > 0:
             time.sleep(delay)
         return self._socket.recv_multipart(flags=flags, copy=copy, track=track)
@@ -254,7 +254,7 @@ class ZeroMQ(Message, regex=REGEX):
                 that will have its [done][zmq.MessageTracker.done] property be `False` until
                 the last write has completed.
         """
-        out: MessageTracker | None = self._socket.send_multipart(msg_parts, flags=flags, copy=copy, track=track)  # pyright: ignore[reportUnknownMemberType]
+        out: MessageTracker | None = self._socket.send_multipart(msg_parts, flags=flags, copy=copy, track=track)
         return out
 
 

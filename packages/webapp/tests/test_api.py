@@ -141,7 +141,7 @@ class TestAPI:
         response = self.client.post("/api/pdf", files=files)
         assert response.status_code == 200
         assert response.headers["content-disposition"] == 'attachment; filename="example.pdf"'
-        assert response.headers["content-length"] == "20726"
+        assert int(response.headers["content-length"]) > 19500  # MiKTeX Windows:"20726", TeXLive Ubuntu:"19631"
         assert response.headers["content-type"] == "application/pdf"
         assert response.headers["filename"] == "example.pdf"
         assert len(response.headers["md5-checksum"]) == 32

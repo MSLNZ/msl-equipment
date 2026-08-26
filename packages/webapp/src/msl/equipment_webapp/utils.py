@@ -247,7 +247,7 @@ async def latex_to_pdf(tex: Path) -> str:
     if code == 0:
         return ""
 
-    if stderr:
+    if stderr and not stderr.startswith(b"pdflatex: unrecognized option"):  # -max-print-line is a MiKTeX option
         return (
             "ERROR! `pdflatex` cannot be found. "
             "If it is installed, specify the path to the executable in the configuration file.\n"
@@ -257,7 +257,7 @@ async def latex_to_pdf(tex: Path) -> str:
         )
 
     log_file = tex.with_suffix(".log")
-    msg = log_file.read_text() if log_file.exists() else stdout.decode()
+    msg = log_file.read_text() if log_file.exists() else (stdout or stderr).decode()
     return f"ERROR! Cannot convert.\n\n{msg}"
 
 

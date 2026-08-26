@@ -86,7 +86,7 @@ The web application provides the option to convert $\LaTeX$ and Microsoft Word d
 
 === "Debian/Ubuntu"
     ```console
-    sudo apt install texlive-latex-base
+    sudo apt install texlive-latex-extra
     ```
 
 === "macOS"

@@ -5325,7 +5325,7 @@
 <p class="admonition-title">Tip</p>
 <p>If the equation contains a single variable, you do not need to specify the variable name as a keyword argument. For example, if the above equation only depended on <code>t</code> you could evaluate it using <code>equation.value(20.4)</code> or <code>equation.value(t=20.4)</code> since these function calls are equivalent.</p>
 </div>
-<p>A variable can have multiple values. Any sequence of numbers, i.e., a <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list" target="_blank">list</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple" target="_blank">tuple</a>, <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a>, etc., may be used <em>(tip: using <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> will improve performance since a copy of the values is not required)</em>,</p>
+<p>A variable can have multiple values. Any sequence of numbers, i.e., a <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list" target="_blank">list</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" target="_blank">tuple</a>, <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a>, etc., may be used <em>(tip: using <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> will improve performance since a copy of the values is not required)</em>,</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="p">[</span><span class="mf">50.3</span><span class="p">,</span> <span class="mf">52.1</span><span class="p">,</span> <span class="mf">48.7</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="p">[</span><span class="mf">20.4</span><span class="p">,</span> <span class="mf">19.7</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">])</span>
 <span class="go">array([49.8211466, 51.6104604, 48.1625746])</span>
 </code></pre></div>
@@ -5338,7 +5338,7 @@
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="p">(</span><span class="mf">50.3</span><span class="p">,</span> <span class="mf">52.1</span><span class="p">,</span> <span class="mf">48.7</span><span class="p">),</span> <span class="n">t</span><span class="o">=</span><span class="mf">20.4</span><span class="p">)</span>
 <span class="go">array([49.8211466, 51.6595514, 48.1888586])</span>
 </code></pre></div>
-<p>If you forget to specify a variable (in the following case, <code>t</code>) a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#NameError" target="_blank">NameError</a> will be raised,</p>
+<p>If you forget to specify a variable (in the following case, <code>t</code>) a <a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/exceptions.html#NameError" target="_blank">NameError</a> will be raised,</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mf">50.3</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="c">...</span>
@@ -5349,7 +5349,7 @@
 <span class="go">array(0.355)</span>
 </code></pre></div>
 <p>Notice in the last returned value that the result was printed as <code>array(0.355)</code> even though a single <code>r</code> and <code>t</code> value was specified <em>(although these variables were ignored in this particular example, since the standard uncertainty is a constant, the principle remains the same if they were not ignored)</em>. All evaluated returned types are an instance of a numpy <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> even if a single value is specified. These particular returned array instances are referred to as 0-dimensional <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#arrays-scalars" target="_blank">array scalars</a> in numpy terminology.</p>
-<p>When evaluating an equation, the value(s) of the input variables are checked to ensure that the value(s) are within the ranges that the equation is valid for. The XML data above shows that the temperature, <code>t</code>, value must be in the range <code>15</code> to <code>25</code>. If you evaluate the corrected value at <code>t=30</code> a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#ValueError" target="_blank">ValueError</a> is raised.</p>
+<p>When evaluating an equation, the value(s) of the input variables are checked to ensure that the value(s) are within the ranges that the equation is valid for. The XML data above shows that the temperature, <code>t</code>, value must be in the range <code>15</code> to <code>25</code>. If you evaluate the corrected value at <code>t=30</code> a <a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" target="_blank">ValueError</a> is raised.</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">ranges</span>
 <span class="go">{'r': Range(minimum=30, maximum=80), 't': Range(minimum=15, maximum=25)}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">equation</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mf">50.3</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
@@ -5389,9 +5389,9 @@
   
       dataclass
    (msl.equipment.schema.Evaluable)" href="#msl.equipment.schema.Evaluable">Evaluable</a></span><span class="p">,</span>
-    <span class="n">unit</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
-    <span class="n">degree_freedom</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">(</span><span class="s2">"inf"</span><span class="p">),</span>
-    <span class="n">comment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="n">unit</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">,</span>
+    <span class="n">degree_freedom</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span><span class="p">(</span><span class="s2">"inf"</span><span class="p">),</span>
+    <span class="n">comment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 
@@ -5460,7 +5460,7 @@
                 <code>unit</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5476,7 +5476,7 @@
                 <code>degree_freedom</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5484,7 +5484,7 @@
               </div>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a>(&#39;inf&#39;)</code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a>(&#39;inf&#39;)</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -5492,7 +5492,7 @@
                 <code>comment</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5538,7 +5538,7 @@
   </span>
 
 <a href="#msl.equipment.schema.Equation.comment" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">comment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">''</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">comment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">''</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5563,7 +5563,7 @@
   </span>
 
 <a href="#msl.equipment.schema.Equation.degree_freedom" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">degree_freedom</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">(</span><span class="s1">'inf'</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">degree_freedom</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span><span class="p">(</span><span class="s1">'inf'</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5616,7 +5616,7 @@
   </span>
 
 <a href="#msl.equipment.schema.Equation.unit" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">unit</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">unit</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5671,7 +5671,7 @@
   </span>
 
 <a href="#msl.equipment.schema.Equation.from_xml" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="            Equation
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="            Equation
 
 
   
@@ -5705,7 +5705,7 @@
                 <code>element</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
+                  <code><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5826,7 +5826,7 @@
 
 
 <a href="#msl.equipment.schema.Equation.to_xml" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">to_xml</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">to_xml</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5850,7 +5850,7 @@
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
+                  <code><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5952,9 +5952,9 @@
 
 <a href="#msl.equipment.schema.Evaluable" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">Evaluable</span><span class="p">(</span>
-    <span class="n">equation</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span>
-    <span class="n">variables</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
-    <span class="n">ranges</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="            Range
+    <span class="n">equation</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">,</span>
+    <span class="n">variables</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
+    <span class="n">ranges</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="            Range
 (NamedTuple) (msl.equipment.schema.Range)" href="#msl.equipment.schema.Range">Range</a></span><span class="p">]</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">(),</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -5982,7 +5982,7 @@
                 <code>equation</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5998,7 +5998,7 @@
                 <code>variables</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, ...]</code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a>, ...]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6014,7 +6014,7 @@
                 <code>ranges</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-internal" title="            Range
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a>, <a class="autorefs autorefs-internal" title="            Range
 (NamedTuple) (msl.equipment.schema.Range)" href="#msl.equipment.schema.Range">Range</a>]</code>
             </td>
             <td>
@@ -6062,7 +6062,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
   </span>
 
 <a href="#msl.equipment.schema.Evaluable.equation" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">equation</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">equation</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6087,7 +6087,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
   </span>
 
 <a href="#msl.equipment.schema.Evaluable.ranges" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">ranges</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="            Range
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">ranges</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="            Range
 (NamedTuple) (msl.equipment.schema.Range)" href="#msl.equipment.schema.Range">Range</a></span><span class="p">]</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="dataclasses.field" href="https://docs.python.org/3/library/dataclasses.html#dataclasses.field">field</a></span><span class="p">(</span><span class="n"><span title="dataclasses.field(default_factory)">default_factory</span></span><span class="o">=</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">)</span>
 </code></pre></div>
 
@@ -6113,7 +6113,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
   </span>
 
 <a href="#msl.equipment.schema.Evaluable.variables" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">variables</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">variables</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple">tuple</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6171,7 +6171,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
       instance-attribute
    (msl.equipment.schema.Range.minimum)" href="#msl.equipment.schema.Range.minimum">minimum</a></code></td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6187,7 +6187,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
       instance-attribute
    (msl.equipment.schema.Range.maximum)" href="#msl.equipment.schema.Range.maximum">maximum</a></code></td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6229,7 +6229,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
   </span>
 
 <a href="#msl.equipment.schema.Range.maximum" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">maximum</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">maximum</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6253,7 +6253,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
   </span>
 
 <a href="#msl.equipment.schema.Range.minimum" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">minimum</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">minimum</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6275,7 +6275,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
 
 
 <a href="#msl.equipment.schema.Range.check_within_range" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">check_within_range</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.ArrayLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.ArrayLike">ArrayLike</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="kc">True</span><span class="p">]</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">check_within_range</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.ArrayLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.ArrayLike">ArrayLike</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Literal" href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a></span><span class="p">[</span><span class="kc">True</span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6299,7 +6299,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
                 <code>value</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | <a class="autorefs autorefs-external" title="numpy.typing.ArrayLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.ArrayLike">ArrayLike</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a> | <a class="autorefs autorefs-external" title="numpy.typing.ArrayLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.ArrayLike">ArrayLike</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6329,7 +6329,7 @@ If a range is not defined then a range of <span class="arithmatex">\([-\infty, +
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Always returns <code>True</code>. Raises <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#ValueError">ValueError</a> if
+                <p>Always returns <code>True</code>. Raises <a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError">ValueError</a> if
 <code>value</code> is not within the range.</p>
               </div>
             </td>

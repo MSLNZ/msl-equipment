@@ -5275,8 +5275,8 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">temperature</span><span class="p">([</span><span class="mf">98.7</span><span class="p">,</span> <span class="mf">99.2</span><span class="p">,</span> <span class="mf">100.4</span><span class="p">,</span> <span class="mf">101.7</span><span class="p">,</span> <span class="mf">103.8</span><span class="p">])</span>
 <span class="go">array([-3.36816839, -2.09169544,  0.9738958 ,  4.29823964,  9.67558125])</span>
 </code></pre></div>
-<p>A number or any sequence of numbers, i.e., a <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list" target="_blank">list</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple" target="_blank">tuple</a> or <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> may be used to calculate the temperature or resistance <em>(tip: using <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> will improve performance since a copy of the values is not required)</em>.</p>
-<p>When calculating resistance or temperature, the values of the inputs are checked to ensure that the values are within the range that the CVD coefficients are valid for. The XML data above shows that the temperature must be in the range <span class="arithmatex">\(-10~^\circ\text{C}\)</span> to <span class="arithmatex">\(70~^\circ\text{C}\)</span>, which has a corresponding resistance range of <span class="arithmatex">\(96.099~\Omega\)</span> to <span class="arithmatex">\(127.118~\Omega\)</span> from the equation above. If you calculate resistance from <span class="arithmatex">\(t=-10.2~^\circ\text{C}\)</span> or temperature from <span class="arithmatex">\(R=96.0~\Omega\)</span> a <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#ValueError" target="_blank">ValueError</a> is raised, since the value is outside the range.</p>
+<p>A number or any sequence of numbers, i.e., a <a class="autorefs autorefs-external" href="https://docs.python.org/3/glossary.html#term-list" target="_blank">list</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" target="_blank">tuple</a> or <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> may be used to calculate the temperature or resistance <em>(tip: using <a class="autorefs autorefs-external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" target="_blank">ndarray</a> will improve performance since a copy of the values is not required)</em>.</p>
+<p>When calculating resistance or temperature, the values of the inputs are checked to ensure that the values are within the range that the CVD coefficients are valid for. The XML data above shows that the temperature must be in the range <span class="arithmatex">\(-10~^\circ\text{C}\)</span> to <span class="arithmatex">\(70~^\circ\text{C}\)</span>, which has a corresponding resistance range of <span class="arithmatex">\(96.099~\Omega\)</span> to <span class="arithmatex">\(127.118~\Omega\)</span> from the equation above. If you calculate resistance from <span class="arithmatex">\(t=-10.2~^\circ\text{C}\)</span> or temperature from <span class="arithmatex">\(R=96.0~\Omega\)</span> a <a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" target="_blank">ValueError</a> is raised, since the value is outside the range.</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">cvd</span><span class="o">.</span><span class="n">ranges</span>
 <span class="go">{'t': Range(minimum=-10, maximum=70), 'r': Range(minimum=96.099, maximum=127.118)}</span>
 
@@ -5312,21 +5312,21 @@
 
 <a href="#msl.equipment.schema.CVDEquation" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">CVDEquation</span><span class="p">(</span>
-    <span class="n">R0</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span>
-    <span class="n">A</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span>
-    <span class="n">B</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span>
-    <span class="n">C</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span>
-    <span class="n">D</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span>
+    <span class="n">R0</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span><span class="p">,</span>
+    <span class="n">A</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span><span class="p">,</span>
+    <span class="n">B</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span><span class="p">,</span>
+    <span class="n">C</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span><span class="p">,</span>
+    <span class="n">D</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span><span class="p">,</span>
     <span class="n">uncertainty</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="            Evaluable
 
 
   
       dataclass
    (msl.equipment.schema.Evaluable)" href="../equation/#msl.equipment.schema.Evaluable">Evaluable</a></span><span class="p">,</span>
-    <span class="n">ranges</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="            Range
+    <span class="n">ranges</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="            Range
 (NamedTuple) (msl.equipment.schema.Range)" href="../equation/#msl.equipment.schema.Range">Range</a></span><span class="p">]</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">(),</span>
-    <span class="n">degree_freedom</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">(</span><span class="s2">"inf"</span><span class="p">),</span>
-    <span class="n">comment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="n">degree_freedom</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span><span class="p">(</span><span class="s2">"inf"</span><span class="p">),</span>
+    <span class="n">comment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 
@@ -5353,7 +5353,7 @@
                 <code>R0</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5369,7 +5369,7 @@
                 <code>A</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5385,7 +5385,7 @@
                 <code>B</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5401,7 +5401,7 @@
                 <code>C</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5417,7 +5417,7 @@
                 <code>D</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5456,7 +5456,7 @@ If a calibration report does not specify the <span class="arithmatex">\(D\)</spa
                 <code>ranges</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-internal" title="            Range
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a>, <a class="autorefs autorefs-internal" title="            Range
 (NamedTuple) (msl.equipment.schema.Range)" href="../equation/#msl.equipment.schema.Range">Range</a>]</code>
             </td>
             <td>
@@ -5475,7 +5475,7 @@ key <code>"r"</code>.</p>
                 <code>degree_freedom</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5483,7 +5483,7 @@ key <code>"r"</code>.</p>
               </div>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a>(&#39;inf&#39;)</code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a>(&#39;inf&#39;)</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -5491,7 +5491,7 @@ key <code>"r"</code>.</p>
                 <code>comment</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5536,7 +5536,7 @@ key <code>"r"</code>.</p>
   </span>
 
 <a href="#msl.equipment.schema.CVDEquation.A" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">A</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">A</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5560,7 +5560,7 @@ key <code>"r"</code>.</p>
   </span>
 
 <a href="#msl.equipment.schema.CVDEquation.B" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">B</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">B</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5584,7 +5584,7 @@ key <code>"r"</code>.</p>
   </span>
 
 <a href="#msl.equipment.schema.CVDEquation.C" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">C</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">C</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5608,7 +5608,7 @@ key <code>"r"</code>.</p>
   </span>
 
 <a href="#msl.equipment.schema.CVDEquation.D" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">D</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">D</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5632,7 +5632,7 @@ key <code>"r"</code>.</p>
   </span>
 
 <a href="#msl.equipment.schema.CVDEquation.R0" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">R0</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">R0</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5657,7 +5657,7 @@ key <code>"r"</code>.</p>
   </span>
 
 <a href="#msl.equipment.schema.CVDEquation.comment" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">comment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">''</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">comment</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">''</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5682,7 +5682,7 @@ key <code>"r"</code>.</p>
   </span>
 
 <a href="#msl.equipment.schema.CVDEquation.degree_freedom" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">degree_freedom</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">(</span><span class="s1">'inf'</span><span class="p">)</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">degree_freedom</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#float">float</a></span><span class="p">(</span><span class="s1">'inf'</span><span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5707,7 +5707,7 @@ key <code>"r"</code>.</p>
   </span>
 
 <a href="#msl.equipment.schema.CVDEquation.ranges" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="n">ranges</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="            Range
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">ranges</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="            Range
 (NamedTuple) (msl.equipment.schema.Range)" href="../equation/#msl.equipment.schema.Range">Range</a></span><span class="p">]</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="dataclasses.field" href="https://docs.python.org/3/library/dataclasses.html#dataclasses.field">field</a></span><span class="p">(</span><span class="n"><span title="dataclasses.field(default_factory)">default_factory</span></span><span class="o">=</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/reference/expressions.html#dict">dict</a></span><span class="p">)</span>
 </code></pre></div>
 
@@ -5764,7 +5764,7 @@ the Callendar-Van Dusen coefficients are valid.</p>
   </span>
 
 <a href="#msl.equipment.schema.CVDEquation.from_xml" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="            CVDEquation
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">from_xml</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="            CVDEquation
 
 
   
@@ -5798,7 +5798,7 @@ the Callendar-Van Dusen coefficients are valid.</p>
                 <code>element</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
+                  <code><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5955,7 +5955,7 @@ from an equipment register.</p>
 
 <a href="#msl.equipment.schema.CVDEquation.resistance" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">resistance</span><span class="p">(</span>
-    <span class="n">temperature</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.ArrayLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.ArrayLike">ArrayLike</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.ArrayLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.ArrayLike">ArrayLike</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.NDArray" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.NDArray">NDArray</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="numpy.float64" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64">float64</a></span><span class="p">]</span>
 </code></pre></div>
 
@@ -5996,7 +5996,7 @@ from an equipment register.</p>
                 <code>check_range</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6080,7 +6080,7 @@ from an equipment register.</p>
 
 <a href="#msl.equipment.schema.CVDEquation.temperature" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="doc-signature highlight"><pre><span></span><code><span class="nf">temperature</span><span class="p">(</span>
-    <span class="n">resistance</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.ArrayLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.ArrayLike">ArrayLike</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">resistance</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.ArrayLike" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.ArrayLike">ArrayLike</a></span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_range</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="numpy.typing.NDArray" href="https://numpy.org/doc/stable/reference/typing.html#numpy.typing.NDArray">NDArray</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="numpy.float64" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64">float64</a></span><span class="p">]</span>
 </code></pre></div>
 
@@ -6121,7 +6121,7 @@ from an equipment register.</p>
                 <code>check_range</code>
             </td>
             <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6312,7 +6312,7 @@ from an equipment register.</p>
 
 
 <a href="#msl.equipment.schema.CVDEquation.to_xml" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><span class="nf">to_xml</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">]</span>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">to_xml</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6336,7 +6336,7 @@ from an equipment register.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
+                  <code><a class="autorefs autorefs-external" title="xml.etree.ElementTree.Element" href="https://docs.python.org/3/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element">Element</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">

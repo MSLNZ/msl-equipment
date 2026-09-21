@@ -1,4 +1,4 @@
-# KDC101
+# KDC101/TDC001
 
 ::: msl.equipment_resources.thorlabs.kdc
     options:

@@ -237,7 +237,7 @@ def test_thorlabs_k10cr(manufacturer: str, model: str) -> None:
 
 
 @pytest.mark.parametrize("manufacturer", ["Thorlabs", "Thorlabs Inc."])
-@pytest.mark.parametrize("model", ["KDC101"])
+@pytest.mark.parametrize("model", ["KDC101", "TDC001"])
 def test_thorlabs_kdc(manufacturer: str, model: str) -> None:
     assert find(manufacturer, model) is KDC
 

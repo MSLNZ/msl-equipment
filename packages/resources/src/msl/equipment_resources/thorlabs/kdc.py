@@ -1,4 +1,4 @@
-"""Communicate with a KDC101 motion controller from Thorlabs."""
+"""Communicate with a KDC101/TDC001 motion controller from Thorlabs."""
 
 # cSpell: ignore MGMSG PRMT PRMTZ
 from __future__ import annotations
@@ -20,11 +20,11 @@ if TYPE_CHECKING:
     from msl.equipment.schema import Equipment
 
 
-class KDC(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"KDC"):
-    """Communicate with a KDC101 motion controller from Thorlabs."""
+class KDC(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"[KT]DC"):
+    """Communicate with a KDC101/TDC001 motion controller from Thorlabs."""
 
     def __init__(self, equipment: Equipment) -> None:
-        """Communicate with a KDC101 motion controller from Thorlabs.
+        """Communicate with a KDC101/TDC001 motion controller from Thorlabs.
 
         The Z8, Z9 and PRM series of actuators and stages are supported.
 
@@ -32,14 +32,14 @@ class KDC(ThorlabsMotion, manufacturer=r"Thorlabs", model=r"KDC"):
         [connect()][msl.equipment.schema.Equipment.connect] is called.
         ```python
         manufacturer=r"Thorlabs"
-        model=r"KDC"
+        model=r"[KT]DC"
         ```
 
         Args:
             equipment: An [Equipment][] instance.
 
         A [Connection][msl.equipment.schema.Connection] instance supports the following
-        _properties_ for a `KDC` motion controller, as well as the _properties_ defined in
+        _properties_ for a `KDC` or `TDC` motion controller, as well as the _properties_ defined in
         [ThorlabsMotion][msl.equipment_resources.thorlabs.motion.ThorlabsMotion].
 
         Attributes: Connection Properties:

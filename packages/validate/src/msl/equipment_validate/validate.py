@@ -697,8 +697,9 @@ def validate_table(table: Element, *, info: Info) -> bool:  # noqa: C901, PLR091
     units = [u.strip() for u in e_unit.text.split(",")]
     header = [h.strip() for h in e_header.text.split(",")]
     is_valid = True
+    len_types = len(types)
 
-    if len(types) != len(units):
+    if len_types != len(units):
         msg = (
             f"The table <type> and <unit> have different lengths for {info.debug_name!r}\n"
             f"  type: {types}\n"
@@ -715,7 +716,7 @@ def validate_table(table: Element, *, info: Info) -> bool:  # noqa: C901, PLR091
         if info.exit_first:
             return False
 
-    if len(types) != len(header):
+    if len_types != len(header):
         msg = (
             f"The table <type> and <header> have different lengths for {info.debug_name!r}\n"
             f"  type  : {types}\n"
@@ -732,7 +733,19 @@ def validate_table(table: Element, *, info: Info) -> bool:  # noqa: C901, PLR091
         if info.exit_first:
             return False
 
-    len_types = len(types)
+    if len(set(header)) != len(header):
+        msg = f"The labels in a table <header> must be unique for {info.debug_name!r}\n  header: {header}"
+        log_error(
+            file=info.url,
+            line=e_header.sourceline or 0,
+            message=msg,
+            uri_scheme=info.uri_scheme,
+            no_colour=info.no_colour,
+        )
+        is_valid = False
+        if info.exit_first:
+            return False
+
     sourceline = e_data.sourceline or 0
     all_rows = e_data.text.split("\n")
 

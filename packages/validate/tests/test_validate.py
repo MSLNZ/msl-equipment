@@ -395,6 +395,58 @@ def test_table_exit_first_header(info: Info, caplog: pytest.LogCaptureFixture) -
     assert len(r) == 1
 
 
+def test_table_header_not_unique_and_wrong_length(info: Info, caplog: pytest.LogCaptureFixture) -> None:
+    table = """
+        <table>
+            <type>bool,int,double,string</type>
+            <unit>a, b, c, d</unit>
+            <header>Apple, Pear, Orange, Apple, Kiwi</header>
+            <data>1, 0, 1.2, s</data>
+        </table>
+    """
+
+    info.exit_first = False
+    assert not validate_table(etree.XML(table), info=info)
+
+    r = caplog.records
+    assert r[0].message == (
+        "ERROR register.xml:5:0\n"
+        "  The table <type> and <header> have different lengths for 'Name'\n"
+        "  type  : ['bool', 'int', 'double', 'string']\n"
+        "  header: ['Apple', 'Pear', 'Orange', 'Apple', 'Kiwi']"
+    )
+    assert r[1].message == (
+        "ERROR register.xml:5:0\n"
+        "  The labels in a table <header> must be unique for 'Name'\n"
+        "  header: ['Apple', 'Pear', 'Orange', 'Apple', 'Kiwi']"
+    )
+
+    assert len(r) == 2
+
+
+def test_table_exit_first_header_not_unique(info: Info, caplog: pytest.LogCaptureFixture) -> None:
+    table = """
+        <table>
+            <type>bool,integer,double,string</type>
+            <unit>a, b, c, d</unit>
+            <header>a, b, a, c</header>
+            <data>1, 0, 1.2, s, s</data>
+        </table>
+    """
+
+    info.exit_first = True
+    assert not validate_table(etree.XML(table), info=info)
+
+    r = caplog.records
+    assert r[0].message == (
+        "ERROR register.xml:5:0\n"
+        "  The labels in a table <header> must be unique for 'Name'\n"
+        "  header: ['a', 'b', 'a', 'c']"
+    )
+
+    assert len(r) == 1
+
+
 def test_table_exit_first_data(info: Info, caplog: pytest.LogCaptureFixture) -> None:
     table = """
         <table>

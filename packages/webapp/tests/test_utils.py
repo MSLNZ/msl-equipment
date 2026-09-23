@@ -1214,3 +1214,24 @@ async def test_maintenance(tmp_path: Path) -> None:
             "Serial": "abc",
         },
     ]
+
+
+@pytest.mark.anyio
+@pytest.mark.skipif(not has_pdflatex, reason="pdflatex is not installed")
+async def test_to_pdf_attachment_relative_path(tmp_path: Path) -> None:
+    file = tmp_path / "report.tex"
+    _ = file.write_text("\\documentclass{article}\n\\begin{document}\nHello\n\\end{document}")
+
+    attach_path1 = tmp_path / "sub_dir" / "sub_sub"
+    assert not attach_path1.exists()
+
+    attach_path2 = tmp_path / "sub_dir"
+    assert not attach_path2.exists()
+
+    extra = {"sub_dir/sub_sub/data.txt": b"hi", "sub_dir/foo.txt": b"foo"}
+    pdf, error = await utils.to_pdf(file, extra)
+
+    assert error == ""
+    assert (attach_path1 / "data.txt").read_text() == "hi"
+    assert (attach_path2 / "foo.txt").read_text() == "foo"
+    assert pdf == tmp_path / "report.pdf"

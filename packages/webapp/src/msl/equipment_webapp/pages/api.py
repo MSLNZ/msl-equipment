@@ -208,7 +208,7 @@ ext = [f"`{e}`" for e in utils.CONVERT_EXTENSIONS]
     files = [
         ("source", ("CalibrationReport.tex", open("path/to/CalibrationReport.tex", "rb"))),
         ("attach", ("summary.xlsx", open("path/to/summary.xlsx", "rb"))),
-        ("attach", ("irradiance.csv", open("path/to/irradiance.csv", "rb"))),
+        ("attach", ("sub_folder/irradiance.csv", open("path/to/sub_folder/irradiance.csv", "rb"))),
     ]
 
     response = requests.post("{base_url}/api/pdf", files=files, timeout=30)

@@ -328,12 +328,13 @@ def add_attachments(docx: Path, tmp: Path, extra: dict[str, bytes]) -> None:
         docx: The path to the `.docx` file. Only used to create a filename of the PDF.
         tmp: The path to the temporary PDF file that was exported by Word.
         extra: Extra files that were uploaded to be embedded as attachments.
-            A mapping between the uploaded filename and the file content.
+            A mapping between the uploaded file path and the file content.
     """
     now = encode_pdf_date(datetime.now().astimezone())
     with Pdf.open(tmp) as pdf:
         af_entries = list(pdf.Root.get("/AF", Array()))
-        for filename, content in extra.items():
+        for filepath, content in extra.items():
+            filename = Path(filepath).name
             afs = AttachedFileSpec(
                 pdf,
                 content,
@@ -359,15 +360,18 @@ async def to_pdf(document: Path, extra: dict[str, bytes]) -> tuple[Path, str]:
     Args:
         document: The path to the document to convert.
         extra: Extra files that were uploaded for the conversion.
-            A mapping between the uploaded filename and the file content.
+            A mapping between the uploaded file path and the file content.
 
     Returns:
         The path to the PDF that was created and an error message, if an error occurred.
     """
     pdf = document.with_suffix(".pdf")
     if document.suffix == ".tex":
-        for filename, content in extra.items():
-            _ = (document.parent / filename).write_bytes(content)
+        for filepath, contents in extra.items():
+            path = Path(filepath)
+            if len(path.parts) > 1:
+                (document.parent / path.parent).mkdir(parents=True, exist_ok=True)
+            _ = (document.parent / path).write_bytes(contents)
 
         error = await latex_to_pdf(document)
         if error:

@@ -1,5 +1,6 @@
 """PDF/A-3 page."""
 
+# cSpell: ignore clientside webkitdirectory
 # pyright: reportUnknownVariableType=false, reportUnknownMemberType=false, reportUnknownArgumentType=false
 from __future__ import annotations
 
@@ -8,7 +9,7 @@ import contextlib
 from typing import TYPE_CHECKING
 
 import dash_bootstrap_components as dbc  # type: ignore[import-untyped]  # pyright: ignore[reportMissingTypeStubs]
-from dash import Input, Output, State, callback, dcc, exceptions, html, no_update, register_page, set_props
+from dash import Input, Output, State, callback, dcc, exceptions, get_app, html, no_update, register_page, set_props
 from msl.equipment_webapp import utils
 from msl.equipment_webapp.config import cfg
 
@@ -33,6 +34,7 @@ def layout(**_: str) -> Component:
             dcc.Store(id="pdf-document", storage_type="memory"),
             dcc.Store(id="pdf-extra", storage_type="memory"),
             dcc.Store(id="pdf-scope", storage_type="memory", data=utils.get_scope()),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+            dcc.Store(id="pdf-paths-prompt", storage_type="memory"),
             dbc.Row(
                 [
                     dbc.Col(
@@ -50,7 +52,7 @@ def layout(**_: str) -> Component:
                                                 html.I(
                                                     className="bi bi-cloud-arrow-up fs-1 mx-3 text-primary align-middle"
                                                 ),
-                                                "Drag & Drop or ",
+                                                "Drag & Drop a file or ",
                                                 html.A("Select a File", href="#", className="alert-link"),
                                             ],
                                             className="mb-0",
@@ -85,8 +87,8 @@ def layout(**_: str) -> Component:
                                                 html.I(
                                                     className="bi bi-cloud-arrow-up fs-1 mx-3 text-primary align-middle"
                                                 ),
-                                                "Drag & Drop or ",
-                                                html.A("Select Files", href="#", className="alert-link"),
+                                                "Drag & Drop a file/folder or ",
+                                                html.A("Select a Folder", href="#", className="alert-link"),
                                             ],
                                             className="mb-0",
                                         ),
@@ -147,6 +149,44 @@ def layout(**_: str) -> Component:
         ],
         fluid=True,
     )
+
+    # Injects HTML5 directory attributes and intercepts file selections
+    get_app().clientside_callback(  # type: ignore[no-untyped-call]
+        """
+        function(id) {
+            // Wait briefly for Dash to render the component into the DOM
+            setTimeout(() => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const input = el.querySelector('input[type="file"]');
+                    if (input) {
+                        // Force the browser to accept folder picks
+                        input.setAttribute('webkitdirectory', '');
+                        input.setAttribute('directory', '');
+
+                        // Listen to the native selection change
+                        input.addEventListener('change', function(e) {
+                            const files = e.target.files;
+                            const paths = [];
+
+                            for (let i = 0; i < files.length; i++) {
+                                // webkitRelativePath contains "FolderName/Subfolder/file.ext"
+                                paths.push(files[i].webkitRelativePath);
+                            }
+
+                            // Dynamically update our hidden dcc.Store component
+                            dash_clientside.set_props('pdf-paths-prompt', {data: paths});
+                        });
+                    }
+                }
+            }, 500);
+            return window.dash_clientside.no_update;
+        }
+        """,
+        Output("pdf-upload-extra", "id"),
+        Input("pdf-upload-extra", "id"),
+    )
+
     return c
 
 
@@ -183,35 +223,42 @@ def upload_document(content: str, filename: str) -> tuple[list[str], Component]:
 @callback(
     Output("pdf-extra", "data"),
     Output("pdf-upload-extra-status", "children"),
+    Output("pdf-paths-prompt", "data"),
     Input("pdf-upload-extra", "contents"),
     State("pdf-upload-extra", "filename"),
     State("pdf-extra", "data"),
+    State("pdf-paths-prompt", "data"),
     prevent_initial_call=True,
 )
 def upload_extra(
-    contents: list[str], filenames: list[str], extra: dict[str, str] | None
-) -> tuple[dict[str, str], Component]:
+    contents: list[str], paths: list[str], extra: dict[str, str] | None, prompt_paths: list[str] | None
+) -> tuple[dict[str, str], Component, None]:
     """Read the contents of the attachment files.
 
     Args:
         contents: The file content (base64 encoded) for each file.
-        filenames: The filenames of each file.
+        paths: The path of each file.
         extra: The extra files that have already been uploaded.
             A mapping between the uploaded filename and the file content (base64 encoded).
+        prompt_paths: When a Drag 'n Drop is performed this value is `None`, however, when a
+            directory is chosen using the web browser's "open dialog" prompt this value contains
+            the file paths with the parent-directory information included and the `paths` value
+            only contains the file names (without the parent-directory information).
 
     Returns:
-        The `extra` updated to include the newly uploaded files and `dbc.Alert`.
+        The `extra` updated to include the newly uploaded files, a `dbc.Alert` and `None`.
     """
     if extra is None:
         extra = {}
 
-    for content, filename in zip(contents, filenames):
+    filepaths = prompt_paths or paths
+    for content, file in zip(contents, filepaths):
         _, b64_string = content.split(",", maxsplit=1)
-        extra[filename] = b64_string
+        extra[file] = b64_string
 
-    message = [item for filename in extra for item in (filename, html.Br())]
+    message = [item for file in extra for item in (file, html.Br())]
     alert = dbc.Alert(message[:-1], color="success", className="text-center")
-    return extra, alert
+    return extra, alert, None
 
 
 @callback(
@@ -227,7 +274,7 @@ async def clear_extra(_n_clicks: int) -> dict[str, str]:  # type: ignore[misc]
     Returns:
         An empty `dict`.
     """
-    # Dash raised exceptions when Output("upload-document-status", "children") was defined as a callback argument
+    # Dash raised an exception when Output("pdf-upload-extra-status", "children") was defined as a callback argument
     # Using set_props is a workaround
     set_props("pdf-upload-extra-status", {"children": None})
     await utils.process_events()

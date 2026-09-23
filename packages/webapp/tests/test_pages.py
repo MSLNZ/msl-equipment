@@ -30,7 +30,7 @@ def test_home_layout() -> None:
 
 def test_page_layout() -> None:
     div = pdf.layout()
-    assert len(div.children) == 8
+    assert len(div.children) == 9
     assert isinstance(div.children[0], dcc.Store)
 
 
@@ -308,13 +308,14 @@ def test_pdf_upload_document() -> None:
 
 
 def test_pdf_upload_extra_none() -> None:
-    extra, alert = pdf.upload_extra(["ignored,foo"], ["a.csv"], None)
+    extra, alert, n = pdf.upload_extra(["ignored,foo"], ["a.csv"], None, None)
     assert extra == {"a.csv": "foo"}
     assert alert.children == ["a.csv"]
+    assert n is None
 
 
 def test_pdf_upload_extra_some() -> None:
-    extra, alert = pdf.upload_extra(["ignored,bar", "ignored,baz"], ["b.txt", "c.png"], {"a.csv": "foo"})
+    extra, alert, n = pdf.upload_extra(["ignored,bar", "ignored,baz"], ["b.txt", "c.png"], {"a.csv": "foo"}, None)
     assert extra == {"a.csv": "foo", "b.txt": "bar", "c.png": "baz"}
     assert len(alert.children) == 5
     assert alert.children[0] == "a.csv"
@@ -322,6 +323,7 @@ def test_pdf_upload_extra_some() -> None:
     assert alert.children[2] == "b.txt"
     assert isinstance(alert.children[3], html.Br)
     assert alert.children[4] == "c.png"
+    assert n is None
 
 
 @pytest.mark.anyio

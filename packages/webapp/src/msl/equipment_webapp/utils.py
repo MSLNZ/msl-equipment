@@ -333,7 +333,8 @@ def add_attachments(docx: Path, tmp: Path, extra: dict[str, bytes]) -> None:
     now = encode_pdf_date(datetime.now().astimezone())
     with Pdf.open(tmp) as pdf:
         af_entries = list(pdf.Root.get("/AF", Array()))
-        for filename, content in extra.items():
+        for filepath, content in extra.items():
+            filename = Path(filepath).name
             afs = AttachedFileSpec(
                 pdf,
                 content,
@@ -366,8 +367,11 @@ async def to_pdf(document: Path, extra: dict[str, bytes]) -> tuple[Path, str]:
     """
     pdf = document.with_suffix(".pdf")
     if document.suffix == ".tex":
-        for filename, content in extra.items():
-            _ = (document.parent / filename).write_bytes(content)
+        for filepath, contents in extra.items():
+            path = Path(filepath)
+            if len(path.parts) > 1:
+                (document.parent / path.parent).mkdir(parents=True, exist_ok=True)
+            _ = (document.parent / path).write_bytes(contents)
 
         error = await latex_to_pdf(document)
         if error:

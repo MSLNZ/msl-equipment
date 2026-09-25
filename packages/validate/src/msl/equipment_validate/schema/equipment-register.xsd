@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema version="0.2.1.dev40+gd3f76db10"
+<xsd:schema version="0.2.1.dev42+g83bdf482a"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
             xmlns:gtc="https://measurement.govt.nz/gtc/xml"
@@ -169,6 +169,7 @@
             <xsd:enumeration value="Furnace assembly room"/>
             <xsd:enumeration value="Goniospectrophotometer"/>
             <xsd:enumeration value="Hilger Lab"/>
+            <xsd:enumeration value="Humidity Lab"/>
             <xsd:enumeration value="Kibble Balance"/>
             <xsd:enumeration value="Laser Lab"/>
             <xsd:enumeration value="Long Room"/>
@@ -3033,6 +3034,7 @@
                     <xsd:documentation>
                         The label of each column in the `table`.
                         Each label shall be separated by a comma.
+                        Each label shall uniquely identify a column in the `table`.
                         Whitespace may be used.
                     </xsd:documentation>
                 </xsd:annotation>

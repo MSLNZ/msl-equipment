@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, NamedTuple
 
 import numpy as np
 
-from msl.equipment import Interface
+from msl.equipment.schema import Interface
 
 from .wlm_data import Callback, WLMData
 

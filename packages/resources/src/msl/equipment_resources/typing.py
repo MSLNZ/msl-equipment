@@ -8,6 +8,9 @@ from typing import Callable
 AvaSpecCallback = Callable[[_Pointer[c_int32], _Pointer[c_int32]], None]
 """Callback handler for the [AvaSpec][msl.equipment_resources.avantes.avaspec.AvaSpec] SDK."""
 
+HighFinesseCallback = Callable[[int, int, int, float, int], None]
+"""Callback handler for the [HighFinesse][msl.equipment_resources.high_finesse.HighFinesse] SDK."""
+
 NKTPortStatusCallback = Callable[[str, int, int, int, int], None]
 """Callback handler for the [NKTDLL][msl.equipment_resources.nkt.nktpdll.NKTDLL] SDK when a port changes."""
 

@@ -10,6 +10,7 @@ from .dataray import DataRay
 from .electron_dynamics import TCSeries
 from .energetiq import EQ99
 from .greisinger import GMH3000
+from .high_finesse import HighFinesse, high_finesse_callback
 from .isotech import MilliK
 from .mks import PR4000B
 from .nkt import NKT, NKTDLL, SuperK
@@ -45,6 +46,7 @@ __all__: list[str] = [
     "AvaSpec",
     "DataRay",
     "FWxx2C",
+    "HighFinesse",
     "MXSeries",
     "MilliK",
     "OLxxA",
@@ -57,6 +59,7 @@ __all__: list[str] = [
     "avantes",
     "cmi",
     "electron_dynamics",
+    "high_finesse_callback",
     "isotech",
     "mks",
     "nkt",

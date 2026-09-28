@@ -118,20 +118,22 @@ specify multiple `team`s by repeating the `team=value` pair.
 pdf_help = """
 ##### Create a PDF/A-3 document
 
-Upload a $\\LaTeX$ or Microsoft Word document to convert it to PDF/A-3 with digital files embedded.
-After conversion, the [veraPDF](https://verapdf.org/) tool validates the PDF file, the MD5
-checksum of the PDF file is calculated and the PDF file is available to download.
+Upload a $\\LaTeX$ or Microsoft Word document to convert it to the PDF/A-3 format with digital
+files embedded. After the PDF document is produced, the [veraPDF](https://verapdf.org/) tool
+verifies that it complies with the PDF/A-3 standard, the MD5 checksum is displayed and the PDF
+document is available to download.
 
 When converting a Microsoft Word document, all extra files that are uploaded are embedded in the
 PDF file.
 
 When converting a $\\LaTeX$ document, all uploaded files are saved to the same temporary directory
-before running `pdflatex`. As such, when converting a $\\LaTeX$ document, all external file
-references must be set appropriately (i.e., references to files in subdirectories or different
-parent directories should not be used). The $\\LaTeX$ document must specify which of the extra files
-that are uploaded are to be embedded in the PDF file and which files (if any) are required (but missing)
-for the build process. Typically, you would only upload extra files that are to be embedded in the PDF,
-as the build requirements *should* already be available on the web server.
+before running `pdflatex`. As such, when a $\\LaTeX$ document is compiled, all file references must
+be to files in the same directory. If you prefer to retain a subdirectory structure, you must use
+the [API](api/docs#/Report%20Generation/pdf_api_pdf_post). The $\\LaTeX$ document must specify which
+of the extra files that are uploaded are to be embedded in the PDF file and which files (if any)
+are required (but missing) for the build process. Typically, you would only upload extra files that
+are to be embedded in the PDF, as the build requirements *should* already be available on the computer
+running the web server.
 """
 
 

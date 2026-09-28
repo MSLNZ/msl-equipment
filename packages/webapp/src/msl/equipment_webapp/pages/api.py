@@ -57,7 +57,7 @@ class Table(BaseModel):
     description=dedent(f"""
     Get equipment that are capital assets.
 
-    Example Python script (requires the [requests](https://pypi.org/project/requests/) package):
+    Example Python script (requires the [requests](https://pypi.org/project/requests/) package).
 
     ```python
     import requests
@@ -90,7 +90,7 @@ async def assets(
     description=dedent(f"""
     Find equipment that has planned maintenance.
 
-    Example Python script (requires the [requests](https://pypi.org/project/requests/) package):
+    Example Python script (requires the [requests](https://pypi.org/project/requests/) package).
 
     ```python
     import requests
@@ -124,7 +124,7 @@ async def maintenance(
     description=dedent(f"""
     Find equipment that must be recalibrated.
 
-    Example Python script (requires the [requests](https://pypi.org/project/requests/) package):
+    Example Python script (requires the [requests](https://pypi.org/project/requests/) package).
 
     ```python
     import requests
@@ -158,7 +158,7 @@ async def recalibrations(
     description=dedent(f"""
     Search for equipment.
 
-    Example Python script (requires the [requests](https://pypi.org/project/requests/) package):
+    Example Python script (requires the [requests](https://pypi.org/project/requests/) package).
 
     ```python
     import requests
@@ -200,7 +200,7 @@ ext = [f"`{e}`" for e in utils.CONVERT_EXTENSIONS]
     description=dedent(f"""
     Create a PDF/A-3 document (with embedded attachments).
 
-    Example Python script (requires the [requests](https://pypi.org/project/requests/) package):
+    Example Python script (requires the [requests](https://pypi.org/project/requests/) package).
 
     ```python
     import requests

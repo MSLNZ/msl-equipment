@@ -681,6 +681,32 @@ def test_table_invalid_data_exit_first(info: Info, caplog: pytest.LogCaptureFixt
     assert len(r) == 1
 
 
+def test_table_number_with_underscores(info: Info, caplog: pytest.LogCaptureFixture) -> None:
+    text = """
+        <table>
+            <type>double,int</type>
+            <unit>d,i</unit>
+            <header>a,b</header>
+            <data>
+                1.200   , 3_000
+                1_234.0 , 5000
+            </data>
+        </table>
+    """
+    assert not validate_table(etree.XML(text), info=info)
+
+    r = caplog.records
+    assert r[0].message == (
+        "ERROR register.xml:7:0\n  Invalid table <data> for 'Name': "
+        "'3_000' cannot contain an underscore for an `int` data type"
+    )
+    assert r[1].message == (
+        "ERROR register.xml:8:0\n  Invalid table <data> for 'Name': "
+        "'1_234.0' cannot contain an underscore for a `double` data type"
+    )
+    assert len(r) == 2
+
+
 def test_serialized_unknown_tag(info: Info, caplog: pytest.LogCaptureFixture) -> None:
     serialised = """
         <serialised>

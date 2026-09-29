@@ -139,12 +139,21 @@ def _bool(value: str) -> None:
 
 
 def _int32(value: str) -> None:
-    """An int in the table data must be in the int32 range."""
+    """An int in the table data must be in the int32 range.
+
+    The value cannot contain an underscore as a thousands separator (PEP-515)
+    because np.loadtxt does not support underscores and other programming
+    languages parsing the value from a string might not either.
+    """
     try:
         int32 = int(value)
     except ValueError:
         msg = f"{value!r} is not valid for an `int` data type"
         raise ValueError(msg) from None
+    else:
+        if "_" in value:
+            msg = f"{value!r} cannot contain an underscore for an `int` data type"
+            raise ValueError(msg)
 
     if int32 < -2147483648 or int32 > 2147483647:  # noqa: PLR2004
         msg = f"{value!r} must be in the range [-2147483648, 2147483647]"
@@ -152,12 +161,21 @@ def _int32(value: str) -> None:
 
 
 def _double(value: str) -> None:
-    """A double in the table data must be able to be converted to a float."""
+    """A double in the table data must be able to be converted to a float.
+
+    The value cannot contain an underscore as a thousands separator (PEP-515)
+    because np.loadtxt does not support underscores and other programming
+    languages parsing the value from a string might not either.
+    """
     try:
         _ = float(value)
     except ValueError:
         msg = f"{value!r} is not valid for a `double` data type"
         raise ValueError(msg) from None
+    else:
+        if "_" in value:
+            msg = f"{value!r} cannot contain an underscore for a `double` data type"
+            raise ValueError(msg)
 
 
 def _string(value: str) -> None:

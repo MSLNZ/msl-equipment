@@ -86,7 +86,7 @@ def layout(**kwargs: str) -> html.Div:
     Input(f"{PAGE}-download-button", "n_clicks"),
     prevent_initial_call=True,
 )
-async def export_data_as_csv(n_clicks: int) -> bool:  # type: ignore[misc]
+async def export_data_as_csv(n_clicks: int) -> bool:
     """Export the data in the table as a CSV file."""
     return n_clicks > 0
 
@@ -108,7 +108,7 @@ async def export_data_as_csv(n_clicks: int) -> bool:  # type: ignore[misc]
     persistent=True,
     websocket=True,
 )
-async def update_table(  # type: ignore[misc]
+async def update_table(
     teams: list[str],
     text: str | None,
     sync: bool,  # noqa: FBT001

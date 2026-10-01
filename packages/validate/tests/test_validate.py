@@ -306,6 +306,76 @@ def test_table_string_value_ok(info: Info) -> None:
     assert validate_table(table, info=info)
 
 
+@pytest.mark.parametrize(
+    "value",
+    [
+        "nan",
+        "NaN",
+        "NAN",
+        "inf",
+        "+inf",
+        "infinity",
+        "+Inf",
+        "Inf",
+        "+INF",
+        "+INFINITY",
+        "-inf",
+        "-infinity",
+        "-Inf",
+        "-INF",
+        "-Infinity",
+        "-INFINITY",
+    ],
+)
+def test_table_double_nan_inf_ok(value: str, info: Info) -> None:
+    table = E.table(E.type("double"), E.unit("n/a"), E.header("double"), E.data(f"0\n2e9\n{value}\n1.2"))
+    assert validate_table(table, info=info)
+
+
+@pytest.mark.parametrize("value", ["n/a", "N/A", "n.a.", "infinite", "Infinite", "INFINITE"])
+def test_table_double_nan_inf_error(value: str, info: Info, caplog: pytest.LogCaptureFixture) -> None:
+    table = E.table(E.type("double"), E.unit("n/a"), E.header("double"), E.data(f"0\n2e9\n{value}\n1.2"))
+    assert not validate_table(table, info=info)
+
+    r = caplog.records
+    assert r[0].message == (
+        f"ERROR register.xml:2:0\n  Invalid table <data> for 'Name': '{value}' is not valid for a `double` data type"
+    )
+    assert len(r) == 1
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "nan",
+        "NaN",
+        "NAN",
+        "inf",
+        "+inf",
+        "infinity",
+        "+Inf",
+        "Inf",
+        "+INF",
+        "+INFINITY",
+        "-inf",
+        "-infinity",
+        "-Inf",
+        "-INF",
+        "-Infinity",
+        "-INFINITY",
+    ],
+)
+def test_table_int_nan_inf_error(value: str, info: Info, caplog: pytest.LogCaptureFixture) -> None:
+    table = E.table(E.type("int"), E.unit("n/a"), E.header("int32"), E.data(f"0\n1\n{value}\n3"))
+    assert not validate_table(table, info=info)
+
+    r = caplog.records
+    assert r[0].message == (
+        f"ERROR register.xml:2:0\n  Invalid table <data> for 'Name': '{value}' is not valid for an `int` data type"
+    )
+    assert len(r) == 1
+
+
 def test_table_multiple_issues(info: Info, caplog: pytest.LogCaptureFixture) -> None:
     table = """
         <table>
